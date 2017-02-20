@@ -1,3 +1,5 @@
+import java.util.regex.Matcher
+
 buildscript {
 	ext {
 		springBootVersion = '1.5.1.RELEASE'
@@ -7,7 +9,13 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath 'net.researchgate:gradle-release:2.4.0'
 	}
+
+}
+
+plugins {
+	id 'net.researchgate.release' version '2.4.0'
 }
 
 apply plugin: 'java'
@@ -21,9 +29,43 @@ jar {
 
 sourceCompatibility = 1.8
 
+
 repositories {
-	mavenCentral()
+
+
+	maven {
+		url "${nexusUrl}/content/repositories/releases"
+	}
+		mavenCentral()
 }
+
+
+release {
+	failOnCommitNeeded = true
+	failOnPublishNeeded = true
+	failOnSnapshotDependencies = true
+	failOnUnversionedFiles = true
+	failOnUpdateNeeded = true
+	revertOnFail = true
+	tagCommitMessage = 'creating tag: '
+	newVersionCommitMessage = 'new version commit: '
+	versionProperties = []
+	buildTasks = ['build']
+	versionPatterns = [
+			/(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${(m[0][1] as int) + 1}${m[0][2]}") }
+	]
+	scmAdapters = [
+			net.researchgate.release.GitAdapter,
+	]
+
+	git {
+		requireBranch = 'master'
+		pushToRemote = 'origin'
+		commitVersionFileOnly = false
+	}
+}
+
+
 
 
 dependencies {
