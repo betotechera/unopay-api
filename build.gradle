@@ -24,7 +24,11 @@ apply plugin: 'org.springframework.boot'
 
 jar {
 	baseName = 'unopay-api'
-	version = '0.0.1-SNAPSHOT'
+	version = "${version}-SNAPSHOT"
+}
+
+springBoot {
+	executable = true
 }
 
 sourceCompatibility = 1.8
