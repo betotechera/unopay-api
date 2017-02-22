@@ -24,7 +24,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
 	baseName = 'unopay-api'
-	version = "${version}-SNAPSHOT"
+	version = ''
 }
 
 springBoot {
@@ -67,8 +67,6 @@ release {
 		commitVersionFileOnly = false
 	}
 }
-
-
 
 
 dependencies {
