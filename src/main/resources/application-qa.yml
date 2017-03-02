@@ -1,0 +1,11 @@
+spring:
+    jpa:
+        hibernate.ddl-auto: none
+    datasource:
+        platform: hsqldb
+        continueOnError: true
+    datasourceUsers:
+        url: jdbc:oracle:thin:@192.168.0.1:1521:ORCL
+        username: administrator
+        password: thUHegu4wU5r
+        driverClassName: oracle.jdbc.OracleDriver

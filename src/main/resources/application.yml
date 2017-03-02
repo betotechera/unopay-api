@@ -1,0 +1,24 @@
+server:
+    tomcat:
+        max-threads: 800
+health:
+  config:
+    enabled: false
+management:
+  security:
+    enabled: false
+  context-path: /devops
+spring:
+  mvc:
+    locale: en_US
+  jackson:
+    locale: en_US
+    mapper:
+        DEFAULT_VIEW_INCLUSION: true
+    date-format: "yyyy-MM-dd'T'HH:mm:ssZ"
+    write-dates-as-timestamps: false
+    time-zone: "UTC"
+    serialization-inclusion: non_null
+    indent_output: true
+    deserialization:
+        READ_UNKNOWN_ENUM_VALUES_AS_NULL: true
