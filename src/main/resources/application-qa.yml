@@ -4,7 +4,7 @@ spring:
     datasource:
         platform: hsqldb
         continueOnError: true
-    datasourceBlzUsers:
+    datasourceUsers:
         url: jdbc:oracle:thin:@192.168.0.1:1521:ORCL
         username: administrator
         password: thUHegu4wU5r
