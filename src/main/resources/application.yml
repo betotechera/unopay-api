@@ -1,6 +1,10 @@
 server:
     tomcat:
         max-threads: 800
+flyway:
+    baselineOnMigrate: true
+    clean: true
+    locations: db/migration/{vendor}, dev/db/migration/{vendor}
 health:
   config:
     enabled: false

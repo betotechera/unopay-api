@@ -35,16 +35,10 @@ sourceCompatibility = 1.8
 
 
 repositories {
-    maven {
-        credentials {
-            username 'emerson@unovation.com.br'
-            password 'Abcd1234'
-        }
-        url "https://maven.oracle.com"
-    }
-
-		mavenCentral()
-        mavenLocal()
+    maven { url "${nexusUrl}/content/repositories/thirdparty/" }
+    maven { url "${nexusUrl}/nexus/content/repositories/releases/" }
+    mavenCentral()
+    mavenLocal()
 }
 
 
@@ -86,11 +80,11 @@ dependencies {
     compile 'org.springframework.hateoas:spring-hateoas'
 	compile 'com.google.guava:guava:11.0.2'
 	compile 'org.springframework.boot:spring-boot-starter-redis:1.0.0.RELEASE'
-    compile 'redis.clients:jedis'
+    compile 'redis.clients:jedis:2.9.0'
     compile 'org.apache.commons:commons-pool2'
-    compile 'com.oracle.jdbc:ojdbc7:12.1.0.2'
+    compile 'com.oracle.jdbc:ojdbc8:12.2.0.1'
 	compile 'org.hsqldb:hsqldb'
-
+    compile "org.flywaydb:flyway-core:4.1.1"
 	compileOnly 'org.projectlombok:lombok:1.16.14'
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'com.jayway.jsonpath:json-path'

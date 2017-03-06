@@ -1,4 +1,3 @@
-flyway.locations: db/migration/{vendor}
 spring:
     jpa:
         hibernate.ddl-auto: none
