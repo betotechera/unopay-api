@@ -35,16 +35,14 @@ sourceCompatibility = 1.8
 
 
 repositories {
-    maven {
-        credentials {
-            username 'emerson@unovation.com.br'
-            password 'Abcd1234'
-        }
-        url "https://maven.oracle.com"
-    }
-
-		mavenCentral()
-        mavenLocal()
+	mavenCentral()
+	mavenLocal()
+	maven {
+		url 'http://172.31.36.95:8081/nexus/content/repositories/thirdparty/'
+	}
+	maven {
+		url 'http://172.31.36.95:8081/nexus/content/repositories/releases/'
+	}
 }
 
 
@@ -88,7 +86,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-redis:1.0.0.RELEASE'
     compile 'redis.clients:jedis'
     compile 'org.apache.commons:commons-pool2'
-    compile 'com.oracle.jdbc:ojdbc7:12.1.0.2'
+    compile 'com.oracle.jdbc:ojdbc8:12.2.0.1'
 	compile 'org.hsqldb:hsqldb'
 
 	compileOnly 'org.projectlombok:lombok:1.16.14'
