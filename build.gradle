@@ -37,12 +37,8 @@ sourceCompatibility = 1.8
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven {
-		url 'http://172.31.36.95:8081/nexus/content/repositories/thirdparty/'
-	}
-	maven {
-		url 'http://172.31.36.95:8081/nexus/content/repositories/releases/'
-	}
+	maven { url "${nexusUrl}/content/repositories/thirdparty/" }
+	maven { url "${nexusUrl}/nexus/content/repositories/releases/" }
 }
 
 
