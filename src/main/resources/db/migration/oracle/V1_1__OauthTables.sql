@@ -1,3 +1,8 @@
+create table authority (
+  name VARCHAR(256),
+  description VARCHAR(256)
+);
+
 create table oauth_client_details (
   client_id VARCHAR(256) PRIMARY KEY,
   resource_ids VARCHAR(256),
@@ -16,7 +21,6 @@ create table oauth_user_details (
   id VARCHAR(256) PRIMARY KEY,
   email VARCHAR(256),
   password VARCHAR(256),
-  shop_id VARCHAR(256),
   version integer
 );
 
@@ -62,12 +66,6 @@ create table oauth_approvals (
 	lastModifiedAt TIMESTAMP
 );
 
-create index oauth_user_details_email_idx on oauth_user_details(shop_id, email);
-create unique index oauth_user_details_uk on oauth_user_details(shop_id, email);
+create index oauth_user_details_email_idx on oauth_user_details(email);
 
-create table authority (
-  name VARCHAR(256),
-  description VARCHAR(256)
-);
 
-ALTER TABLE oauth_user_authorities ADD FOREIGN KEY (authority) REFERENCES authority(name);

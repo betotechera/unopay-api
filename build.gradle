@@ -81,7 +81,6 @@ dependencies {
 	compile 'com.google.guava:guava:11.0.2'
 	compile 'org.springframework.boot:spring-boot-starter-redis:1.0.0.RELEASE'
     compile 'redis.clients:jedis:2.9.0'
-    compile 'org.apache.commons:commons-pool2'
     compile 'com.oracle.jdbc:ojdbc8:12.2.0.1'
 	compile 'org.hsqldb:hsqldb'
     compile "org.flywaydb:flyway-core:4.1.1"
