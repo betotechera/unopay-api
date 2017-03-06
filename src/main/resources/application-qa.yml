@@ -1,11 +1,14 @@
+flyway.locations: db/migration/{vendor}
 spring:
     jpa:
         hibernate.ddl-auto: none
+        database-platform: org.hibernate.dialect.Oracle10gDialect
+        generate-ddl: false
+        database: ORACLE
     datasource:
-        platform: hsqldb
-        continueOnError: true
-    datasourceUsers:
-        url: jdbc:oracle:thin:@192.168.0.1:1521:ORCL
+        url: jdbc:oracle:thin:@unovation-desenv.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:1521:ORCL
         username: administrator
         password: thUHegu4wU5r
         driverClassName: oracle.jdbc.OracleDriver
+    redis:
+        host: redis.qa.unvlocal.com.br

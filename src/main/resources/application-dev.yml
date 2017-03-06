@@ -1,0 +1,6 @@
+spring:
+    jpa:
+        hibernate.ddl-auto: none
+    datasource:
+        platform: hsqldb
+        continueOnError: true
