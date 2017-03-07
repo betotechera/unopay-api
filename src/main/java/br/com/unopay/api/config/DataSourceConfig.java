@@ -32,8 +32,7 @@ public class DataSourceConfig {
                 .setType(EmbeddedDatabaseType.HSQL)
                 .continueOnError(true)
                 .setName("uaa")
-                .addScript("classpath:schema-hsqldb.sql")
-                .addScript("classpath:data-hsqldb.sql").build();
+                .build();
         return embeddedDatabase;
     }
 

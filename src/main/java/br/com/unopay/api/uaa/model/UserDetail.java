@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "oauth_user_details", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"organization_id","email"})
+        @UniqueConstraint(columnNames = {"email"})
 })
 @Data
 public class UserDetail implements Serializable {
@@ -37,10 +37,6 @@ public class UserDetail implements Serializable {
     @NotNull(groups = Create.class)
     @Column(name="password")
     private String password;
-
-    @JsonView(Views.Public.class)
-    @Column(name="organization_id")
-    private String organization;
 
     @Version
     Long version;
@@ -78,7 +74,6 @@ public class UserDetail implements Serializable {
         return "UserDetail{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", organization='" + organization + '\'' +
                 ", authorities=" + authorities +
                 '}';
     }
