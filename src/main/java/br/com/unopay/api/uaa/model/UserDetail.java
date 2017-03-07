@@ -4,6 +4,7 @@ import br.com.unopay.api.uaa.model.groups.Create;
 import br.com.unopay.api.uaa.model.groups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -24,8 +25,9 @@ public class UserDetail implements Serializable {
 
     @JsonView(Views.Public.class)
     @Id
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
-    @NotNull(groups = {Create.class})
     private String id;
 
     @JsonView(Views.Public.class)

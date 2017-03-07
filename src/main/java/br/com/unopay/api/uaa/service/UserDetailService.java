@@ -5,6 +5,8 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.bootcommons.exception.ConflictException;
+import br.com.unopay.bootcommons.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,5 +86,41 @@ public class UserDetailService implements UserDetailsService {
                 username,
                 user.getPassword(),
                 authorities);
+    }
+
+    public UserDetail getById(String id) {
+        UserDetail user = this.userDetailRepository.findOne(id);
+        if (user == null) {
+            throw new NotFoundException();
+        }
+        return user;
+    }
+
+    public UserDetail update(UserDetail user) {
+
+        UserDetail current = userDetailRepository.findOne(user.getId());
+        if (current == null) {
+            throw new NotFoundException();
+        }
+
+        if (user.getPassword() != null) {
+            current.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        if (user.getEmail() != null) {
+            current.setEmail(user.getEmail());
+        }
+
+        if (user.getAuthorities() != null) {
+            current.setAuthorities(getExistingAuthorities(user.getAuthorities()));
+        }
+
+        try {
+            return userDetailRepository.save(current);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
+            throw new ConflictException();
+        }
+
     }
 }
