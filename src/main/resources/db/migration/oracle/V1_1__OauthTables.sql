@@ -67,6 +67,5 @@ create table oauth_approvals (
 	lastModifiedAt TIMESTAMP
 );
 
-create index oauth_user_details_email_idx on oauth_user_details(email);
 
 
