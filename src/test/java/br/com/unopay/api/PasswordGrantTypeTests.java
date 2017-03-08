@@ -25,8 +25,7 @@ public class PasswordGrantTypeTests extends AuthServerApplicationTests {
                 .param("password", "test"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token", is(notNullValue())))
-                .andExpect(jsonPath("$.token_type", is(equalTo("bearer"))))
-                .andExpect(jsonPath("$.refresh_token", is(notNullValue())));
+                .andExpect(jsonPath("$.token_type", is(equalTo("bearer"))));
 
     }
 

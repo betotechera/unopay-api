@@ -1,6 +1,7 @@
 package br.com.unopay.api.uaa.model;
 
 import br.com.unopay.api.uaa.model.groups.Create;
+import br.com.unopay.api.uaa.model.groups.Update;
 import br.com.unopay.api.uaa.model.groups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class UserDetail implements Serializable {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 

@@ -17,8 +17,8 @@ public class AuthorityControllerTests extends AuthServerApplicationTests {
         this.mvc.perform(
                 get("/authorities?access_token={access_token}", accessToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$..items[0].name", is(notNullValue())))
-                .andExpect(jsonPath("$..items[0].description", is(notNullValue())));
+                .andExpect(jsonPath("$..[0].name", is(notNullValue())))
+                .andExpect(jsonPath("$..[0].description", is(notNullValue())));
     }
 
 

@@ -123,4 +123,20 @@ public class UserDetailService implements UserDetailsService {
         }
 
     }
+
+    public UserDetail getByEmail(String email) {
+        UserDetail user = this.userDetailRepository.findByEmail(email);
+        if (user == null) {
+            throw new NotFoundException();
+        }
+        return user;
+    }
+
+    public List<UserDetail> getByAuthority(String authority) {
+        List<UserDetail> users = this.userDetailRepository.findByAuthoritiesOrderByEmail(authority);
+        if (users == null || users.isEmpty()) {
+            throw new NotFoundException();
+        }
+        return users;
+    }
 }

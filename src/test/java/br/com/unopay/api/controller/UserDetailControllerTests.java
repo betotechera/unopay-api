@@ -3,10 +3,12 @@ package br.com.unopay.api.controller;
 
 import br.com.unopay.api.AuthServerApplicationTests;
 import br.com.unopay.api.uaa.model.UserDetail;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
@@ -31,7 +33,6 @@ public class UserDetailControllerTests extends AuthServerApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(user)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.links", is(notNullValue())))
                 .andExpect(header().string("Location", is(notNullValue())));
 
         passwordFlow(user.getEmail(), user.getPassword())
@@ -81,11 +82,14 @@ public class UserDetailControllerTests extends AuthServerApplicationTests {
         String accessToken = getClientAccessToken();
 
         UserDetail user = user();
-        this.mvc.perform(
+        MockHttpServletResponse result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(user)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated()).andReturn().getResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        user.setId(mapper.readValue(result.getContentAsString(), UserDetail.class).getId());
 
         passwordFlow(user.getEmail(), user.getPassword())
                 .andExpect(status().isOk())
@@ -147,7 +151,7 @@ public class UserDetailControllerTests extends AuthServerApplicationTests {
                 get("/users/search?authority={authority}&access_token={access_token}", authority, accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$..items[0].email", is(notNullValue())));
+                .andExpect(jsonPath("$..[0].email", is(notNullValue())));
     }
 
     @Test
@@ -165,7 +169,7 @@ public class UserDetailControllerTests extends AuthServerApplicationTests {
 
     private UserDetail user() {
         UserDetail user = new UserDetail();
-        user.setId(randomAlphabetic(5));
+        user.setId(randomAlphabetic(4));
         user.setEmail(String.format("%s@gmail.com", randomAlphabetic(3)));
         user.setPassword(randomAlphabetic(5));
         return user;
