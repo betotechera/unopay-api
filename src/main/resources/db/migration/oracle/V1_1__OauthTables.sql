@@ -21,7 +21,8 @@ create table oauth_user_details (
   id VARCHAR(256) PRIMARY KEY,
   email VARCHAR(256),
   password VARCHAR(256),
-  version integer
+  version integer,
+  CONSTRAINT oauth_user_details_uk UNIQUE (email)
 );
 
 create table oauth_user_authorities (
@@ -67,6 +68,5 @@ create table oauth_approvals (
 );
 
 create index oauth_user_details_email_idx on oauth_user_details(email);
-create unique index oauth_user_details_uk on oauth_user_details(email);
 
 

@@ -76,13 +76,6 @@ dependencies {
 
 }
 
-sourceSets {
-	test {
-		groovy {
-			srcDirs = ['test/groovy']
-		}
-	}
-}
 
 release {
 	failOnCommitNeeded = true
