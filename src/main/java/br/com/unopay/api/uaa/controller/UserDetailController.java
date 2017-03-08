@@ -65,6 +65,29 @@ public class UserDetailController {
 
     @PreAuthorize("#oauth2.isUser()")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/users/me", method = RequestMethod.GET)
+    public void getMe(OAuth2Authentication authentication,
+                         @Validated(Update.class) @RequestBody UserDetail user) {
+
+        UserDetail userDetail = userDetailService.getByEmail(authentication.getName());
+
+        user.setId(userDetail.getId());
+
+        LOGGER.info("updating uaa user me {}", user);
+        userDetailService.update(user);
+    }
+
+    @JsonView(Views.Public.class)
+    @PreAuthorize("#oauth2.isUser()")
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public UserDetail getMe(OAuth2Authentication authentication) {
+        LOGGER.info("get uaa user={}", authentication.getName());
+        return userDetailService.getByEmail(authentication.getName());
+    }
+
+    @PreAuthorize("#oauth2.isUser()")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/users/me/revokeTokens", method = RequestMethod.POST)
     public void revoke(OAuth2Authentication authentication) {
         Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(authentication.getOAuth2Request().getClientId(), authentication.getName());
