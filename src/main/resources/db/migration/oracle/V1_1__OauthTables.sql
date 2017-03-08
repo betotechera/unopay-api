@@ -1,4 +1,8 @@
--- used in tests that use HSQL
+create table authority (
+  name VARCHAR(256),
+  description VARCHAR(256)
+);
+
 create table oauth_client_details (
   client_id VARCHAR(256) PRIMARY KEY,
   resource_ids VARCHAR(256),
@@ -9,7 +13,7 @@ create table oauth_client_details (
   authorities VARCHAR(256),
   access_token_validity INTEGER,
   refresh_token_validity INTEGER,
-  additional_information VARCHAR(4096),
+  additional_information VARCHAR(4000),
   autoapprove VARCHAR(256)
 );
 
@@ -27,7 +31,7 @@ create table oauth_user_authorities (
 
 create table oauth_client_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
+  token BLOB,
   authentication_id VARCHAR(256) PRIMARY KEY,
   user_name VARCHAR(256),
   client_id VARCHAR(256)
@@ -35,22 +39,22 @@ create table oauth_client_token (
 
 create table oauth_access_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
+  token BLOB,
   authentication_id VARCHAR(256) PRIMARY KEY,
   user_name VARCHAR(256),
   client_id VARCHAR(256),
-  authentication LONGVARBINARY,
+  authentication BLOB,
   refresh_token VARCHAR(256)
 );
 
 create table oauth_refresh_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
-  authentication LONGVARBINARY
+  token BLOB,
+  authentication BLOB
 );
 
 create table oauth_code (
-  code VARCHAR(256), authentication LONGVARBINARY
+  code VARCHAR(256), authentication BLOB
 );
 
 create table oauth_approvals (
@@ -62,7 +66,7 @@ create table oauth_approvals (
 	lastModifiedAt TIMESTAMP
 );
 
-create table authority (
-  name VARCHAR(256),
-  description VARCHAR(256)
-);
+create index oauth_user_details_email_idx on oauth_user_details(email);
+create unique index oauth_user_details_uk on oauth_user_details(email);
+
+

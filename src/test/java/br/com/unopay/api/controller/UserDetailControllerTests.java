@@ -115,8 +115,6 @@ public class UserDetailControllerTests extends AuthServerApplicationTests {
     }
 
     @Test
-    @FlywayTest(invokeInitDB = true)
-    @Ignore
     public void should_not_allow_duplicated_users() throws Exception {
 
         String accessToken = getClientAccessToken();

@@ -1,5 +1,6 @@
 package br.com.unopay.api;
 
+import org.flywaydb.test.annotation.FlywayTest;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,13 +15,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import spock.lang.Specification;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
+@FlywayTest(locationsForMigrate = {"/test/db/migration"})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class })
-public abstract class UnopayApiApplicationTests {
+public abstract class UnopayApiApplicationTests extends Specification{
 
 	@Autowired
 	protected WebApplicationContext context;

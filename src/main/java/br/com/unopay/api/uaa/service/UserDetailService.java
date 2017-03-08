@@ -49,7 +49,7 @@ public class UserDetailService implements UserDetailsService {
 
         } catch (DataIntegrityViolationException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
-            throw new RuntimeException("user email already exists"); //TODO change to Conflict exception
+            throw new ConflictException(); //TODO change to Conflict exception
         }
     }
 

@@ -66,3 +66,6 @@ create table authority (
   name VARCHAR(256),
   description VARCHAR(256)
 );
+
+create unique index oauth_user_details_uk on oauth_user_details(email);
+
