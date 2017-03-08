@@ -1,6 +1,7 @@
 package br.com.unopay.api;
 
 
+import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
@@ -12,8 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PasswordGrantTypeTests extends AuthServerApplicationTests {
-
     @Test
+    @FlywayTest(locationsForMigrate = {"db/migration"})
     public void should_return_access_token() throws Exception {
         this.mvc.perform(post("/oauth/token")
                 .contentType(

@@ -18,9 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "oauth_user_details", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"})
-})
+@Table(name = "oauth_user_details")
 @Data
 public class UserDetail implements Serializable {
 
@@ -34,7 +32,7 @@ public class UserDetail implements Serializable {
 
     @JsonView(Views.Public.class)
     @NotNull(groups = Create.class)
-    @Column(name="email")
+    @Column(name="email", unique = true)
     private String email;
 
     @JsonView(Views.Internal.class)
