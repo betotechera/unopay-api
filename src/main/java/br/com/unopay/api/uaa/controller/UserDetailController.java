@@ -6,6 +6,7 @@ import br.com.unopay.api.uaa.model.groups.Update;
 import br.com.unopay.api.uaa.model.groups.Views;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
+@Timed(prefix = "api")
 @RestController
 public class UserDetailController {
 
