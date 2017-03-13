@@ -34,6 +34,10 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("description", random(String.class,"grupo 1", "grupo 2"));
         }});
 
+        Fixture.of(Group.class).addTemplate("without-name", new Rule(){{
+            add("description", random(String.class,"grupo 1", "grupo 2"));
+        }});
+
         Fixture.of(Authority.class).addTemplate("valid", new Rule(){{
             add("name", "ROLE_ADMIN");
             add("description", random(String.class,"Role 1", "Role 2"));

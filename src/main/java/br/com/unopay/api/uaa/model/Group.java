@@ -5,6 +5,7 @@ import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Update;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
+@Data
 @Table(name = "oauth_groups")
 public class Group implements Serializable{
 
