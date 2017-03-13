@@ -25,17 +25,17 @@ import spock.lang.Specification
 class SpockApplicationTests extends Specification{
 
     @Autowired
-    protected WebApplicationContext context;
+    protected WebApplicationContext context
 
     @Autowired
-    protected FilterChainProxy filterChainProxy;
+    protected FilterChainProxy filterChainProxy
 
-    protected MockMvc mvc;
+    protected MockMvc mvc
 
     void setup() {
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(this.context)
                 .addFilter(filterChainProxy)
-                .build();
+                .build()
     }
 }

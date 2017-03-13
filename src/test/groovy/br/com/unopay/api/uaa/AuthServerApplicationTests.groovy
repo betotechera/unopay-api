@@ -1,6 +1,7 @@
-package br.com.unopay.api;
+package br.com.unopay.api.uaa;
 
 
+import br.com.unopay.api.SpockApplicationTests;
 import br.com.unopay.api.uaa.model.UserDetail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public abstract class AuthServerApplicationTests  extends  UnopayApiApplicationTests{
+abstract class AuthServerApplicationTests  extends SpockApplicationTests {
 
     protected ResultActions clientCredentials() throws Exception {
         return this.mvc.perform(post("/oauth/token")
@@ -93,12 +94,12 @@ public abstract class AuthServerApplicationTests  extends  UnopayApiApplicationT
     protected String clientCredentialsAccessToken() throws Exception {
         MvcResult result = clientCredentials()
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.access_token", is(notNullValue())))
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
                 .andReturn();
 
         return JsonPath.read(
                 result.getResponse().getContentAsString(),
-                "$.access_token");
+                '$.access_token');
     }
 
 }
