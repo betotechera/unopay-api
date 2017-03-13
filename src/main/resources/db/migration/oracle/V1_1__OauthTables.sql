@@ -67,5 +67,22 @@ create table oauth_approvals (
 	lastModifiedAt TIMESTAMP
 );
 
+create table oauth_groups (
+	 id VARCHAR(256) PRIMARY KEY,
+	group_name varchar(50) not null,
+	description VARCHAR(256)
+);
 
+create table oauth_group_authorities (
+	group_id varchar(256) not null,
+	authority varchar(50) not null,
+	constraint fk_group_authorities_group foreign key(group_id) references oauth_groups(id)
+);
+
+create table oauth_group_members (
+	 id VARCHAR(256) PRIMARY KEY,
+	user_id varchar(256) not null,
+	group_id varchar(256) not null,
+	constraint fk_group_members_group foreign key(group_id) references oauth_groups(id)
+);
 
