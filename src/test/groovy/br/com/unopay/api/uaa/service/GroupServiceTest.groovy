@@ -5,6 +5,8 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.bootcommons.jsoncollections.Results
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -76,7 +78,7 @@ class GroupServiceTest extends SpockApplicationTests {
         service.create(group2)
 
         when:
-        PageRequest page = new PageRequest(0,10)
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
         Page<Group> groups = service.findAll(page)
 
         then:
@@ -86,7 +88,7 @@ class GroupServiceTest extends SpockApplicationTests {
     @FlywayTest(invokeCleanDB = true)
     void 'given unknown groups should return empty list'(){
         when:
-        PageRequest page = new PageRequest(0,10)
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(1)}}
         Page<Group> groups = service.findAll(page)
 
         then:

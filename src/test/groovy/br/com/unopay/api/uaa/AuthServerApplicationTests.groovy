@@ -1,37 +1,45 @@
-package br.com.unopay.api.uaa;
+package br.com.unopay.api.uaa
 
 
-import br.com.unopay.api.SpockApplicationTests;
-import br.com.unopay.api.uaa.model.UserDetail;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
-import com.jayway.jsonpath.JsonPath;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.crypto.codec.Base64;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.base.Throwables
+import com.jayway.jsonpath.JsonPath
+import org.junit.Before
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.security.crypto.codec.Base64
+import org.springframework.security.web.FilterChainProxy
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.context.WebApplicationContext
 
-import java.io.UnsupportedEncodingException;
+import java.io.UnsupportedEncodingException
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.core.Is.is
+import static org.hamcrest.core.IsNull.notNullValue
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 abstract class AuthServerApplicationTests  extends SpockApplicationTests {
+
+    protected String getClientAccessToken() throws Exception {
+        MvcResult result = clientCredentials()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
+                .andReturn()
+        return getAccessToken(result)
+    }
 
     protected ResultActions clientCredentials() throws Exception {
         return this.mvc.perform(post("/oauth/token")
@@ -39,7 +47,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
                         MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "client_credentials")
                 .param("client_id", "client")
-                .param("client_secret", "secret"));
+                .param("client_secret", "secret"))
     }
 
 
@@ -51,7 +59,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
                 .param("client_id", "client")
                 .param("client_secret", "secret")
                 .param("username", username)
-                .param("password", password));
+                .param("password", password))
     }
 
 
@@ -61,7 +69,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
                         MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "client_credentials")
                 .param("client_id", "manager")
-                .param("client_secret", "secret"));
+                .param("client_secret", "secret"))
     }
 
     protected ResultActions wrongClientCredentials() throws Exception {
@@ -69,37 +77,52 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "client_credentials")
                 .param("client_id", "wrong")
-                .param("client_secret", "wrong"));
+                .param("client_secret", "wrong"))
     }
 
     protected String getAuthorizationHeader(String clientId, String clientSecret) {
-        String creds = String.format("%s:%s", clientId, clientSecret);
+        String creds = String.format("%s:%s", clientId, clientSecret)
         try {
-            return "Basic " + new String(Base64.encode(creds.getBytes("UTF-8")));
+            return "Basic " + new String(Base64.encode(creds.getBytes("UTF-8")))
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Could not convert String");
+            throw new IllegalStateException("Could not convert String")
         }
     }
 
-    protected String toJson(UserDetail user) {
+    protected String toJson(Object user) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(user);
+            ObjectMapper objectMapper = new ObjectMapper()
+            return objectMapper.writeValueAsString(user)
         } catch (JsonProcessingException e) {
-            Throwables.propagate(e);
-            return null;
+            Throwables.propagate(e)
+            return null
         }
+    }
+
+    protected String getUAAManagerAccessToken() throws Exception {
+        MvcResult result = uaaManagerClientCredentials()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
+                .andReturn()
+
+        return getAccessToken(result)
     }
 
     protected String clientCredentialsAccessToken() throws Exception {
         MvcResult result = clientCredentials()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath('$.access_token', is(notNullValue())))
-                .andReturn();
+                .andReturn()
 
         return JsonPath.read(
                 result.getResponse().getContentAsString(),
-                '$.access_token');
+                '$.access_token')
+    }
+
+    protected String getAccessToken(MvcResult result) throws UnsupportedEncodingException {
+        return JsonPath.read(
+                result.getResponse().getContentAsString(),
+                '$.access_token')
     }
 
 }

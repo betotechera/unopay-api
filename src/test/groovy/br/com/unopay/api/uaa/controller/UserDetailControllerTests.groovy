@@ -171,29 +171,4 @@ then:
         return user
     }
 
-    private String getClientAccessToken() throws Exception {
-        MvcResult result = clientCredentials()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath('$.access_token', is(notNullValue())))
-                .andReturn()
-        return getAccessToken(result)
-    }
-
-    private String getUAAManagerAccessToken() throws Exception {
-        MvcResult result = uaaManagerClientCredentials()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath('$.access_token', is(notNullValue())))
-                .andReturn()
-
-        return getAccessToken(result)
-    }
-
-
-    private String getAccessToken(MvcResult result) throws UnsupportedEncodingException {
-        return JsonPath.read(
-                result.getResponse().getContentAsString(),
-                '$.access_token')
-    }
-
-
 }

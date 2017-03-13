@@ -46,7 +46,7 @@ public class UserDetailController {
         LOGGER.info("creating uaa user {}", user);
         UserDetail created = userDetailService.create(user);
         return ResponseEntity
-                .created(URI.create("/users"+created.getId()))
+                .created(URI.create("/users/"+created.getId()))
                 .body(created);
 
     }

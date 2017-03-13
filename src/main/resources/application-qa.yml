@@ -1,3 +1,5 @@
+unopay:
+  api: api.qa.unvlocal.com.br:8080
 spring:
     jpa:
         hibernate.ddl-auto: none

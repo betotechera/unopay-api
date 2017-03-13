@@ -2,6 +2,7 @@ package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.service.AuthorityService;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@Timed(prefix = "api")
 @PreAuthorize("#oauth2.isClient()")
 public class AuthorityController {
 
