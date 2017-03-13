@@ -10,5 +10,5 @@ spring:
         password: thUHegu4wU5r
         driverClassName: oracle.jdbc.OracleDriver
     redis:
-        host: 172.31.41.245
+        host: redis.unvlocal.com.br
         port: 6379
