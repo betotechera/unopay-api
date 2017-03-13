@@ -8,14 +8,10 @@ class FixTureTest  extends SpockApplicationTests{
 
     void 'when load known template should be found'(){
         when:
-        UserDetail userDetail = Fixture.from(UserDetail.class).gimme("valid")
+        UserDetail userDetail = Fixture.from(UserDetail.class).gimme("without-group")
 
         then:
         userDetail != null
-        userDetail.id != null
-        userDetail.email != null
-        userDetail.password != null
-
     }
 
     void 'when load unknown template should not be found'(){

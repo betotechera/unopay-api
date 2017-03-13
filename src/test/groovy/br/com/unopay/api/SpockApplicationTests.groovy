@@ -19,7 +19,7 @@ import spock.lang.Specification
 @WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
-@FlywayTest(locationsForMigrate = ["/test/db/migration"])
+@FlywayTest
 @ContextConfiguration
 @TestExecutionListeners([DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class ])
 class SpockApplicationTests extends Specification{

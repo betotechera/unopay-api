@@ -1,8 +1,8 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.uaa.model.groups.Create;
-import br.com.unopay.api.uaa.model.groups.Update;
-import br.com.unopay.api.uaa.model.groups.Views;
+import br.com.unopay.api.uaa.model.valistionsgroups.Create;
+import br.com.unopay.api.uaa.model.valistionsgroups.Update;
+import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -51,6 +51,13 @@ public class UserDetail implements Serializable {
     )
     @Column(name="authority")
     private Set<String> authorities;
+
+
+    @JsonView(Views.Public.class)
+    @ManyToMany
+    @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
+    @Column(name="authority")
+    private Set<Group> groups;
 
     public UserDetail() {}
 

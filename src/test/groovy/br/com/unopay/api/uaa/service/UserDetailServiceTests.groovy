@@ -3,12 +3,10 @@ package br.com.unopay.api.uaa.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.service.UserDetailService
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
 
-import static com.google.common.collect.Sets.newHashSet
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.not
 import static spock.util.matcher.HamcrestSupport.that
@@ -20,10 +18,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
     void 'when create user unknown authorities should not be saved'() {
         given:
-        UserDetail user = new UserDetail(randomNumeric(5),
-                "test@integrationtest.com",
-                "123",
-                newHashSet("ROLE_UNKNOWN", "ROLE_ADMIN"))
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         when:
         service.create(user)
         UserDetail created = service.getById(user.getId())
@@ -36,10 +31,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
     @FlywayTest(invokeCleanDB = true)
     void 'when create user known authorities should be saved'() {
         given:
-        UserDetail user = new UserDetail(randomNumeric(5),
-                "test@integrationtest.com",
-                "123",
-                newHashSet("ROLE_UNKNOWN", "ROLE_ADMIN"))
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         when:
         service.create(user)
         UserDetail created = service.getById(user.getId())
@@ -53,10 +45,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
     void 'when update user unknown authorities should not be saved'() {
 
         given:
-        UserDetail user = new UserDetail(randomNumeric(5),
-                "test@integrationtest.com",
-                "123",
-                newHashSet("ROLE_UNKNOWN", "ROLE_ADMIN"))
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         when:
         service.create(user)
         UserDetail created = service.getById(user.getId())
@@ -72,10 +61,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
     void 'when update user known authorities should be saved'() {
 
         given:
-        UserDetail user = new UserDetail(randomNumeric(5),
-                "test@integrationtest.com",
-                "123",
-                newHashSet("ROLE_UNKNOWN", "ROLE_ADMIN"))
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         when:
         service.create(user)
         UserDetail created = service.getById(user.getId())
@@ -87,12 +73,26 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that updated.getAuthorities(), contains("ROLE_ADMIN")
     }
 
-    void 'user with group should be created'(){
+    @FlywayTest(invokeCleanDB = true)
+    void 'given user with group should not be created'(){
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+        when:
+        service.create(user)
 
+        then:
+        thrown(UnprocessableEntityException)
     }
 
-    void 'user without group should be created'(){
+    void 'given user without group should be created'(){
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        when:
+        service.create(user)
+        UserDetail created = service.getById(user.getId())
 
+        then:
+        created != null
     }
 
     void 'when create user with group should be return authorities'(){

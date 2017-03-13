@@ -7,6 +7,8 @@ import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,23 +27,27 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Timed
 public class UserDetailService implements UserDetailsService {
 
     private UserDetailRepository userDetailRepository;
     private AuthorityRepository authorityRepository;
     private PasswordEncoder passwordEncoder;
+    private GroupService groupService;
 
     @Autowired
-    public UserDetailService(UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder) {
+    public UserDetailService(UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
         this.userDetailRepository = userDetailRepository;
         this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
+        this.groupService = groupService;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
     public UserDetail create(UserDetail user) {
 
+        if(user.getGroups() != null && !user.getGroups().isEmpty()) throw new UnprocessableEntityException("user cant be created with groups");
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setAuthorities(getExistingAuthorities(user.getAuthorities()));
@@ -49,7 +55,7 @@ public class UserDetailService implements UserDetailsService {
 
         } catch (DataIntegrityViolationException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
-            throw new ConflictException(); //TODO change to Conflict exception
+            throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }
     }
 
@@ -91,7 +97,7 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail getById(String id) {
         UserDetail user = this.userDetailRepository.findOne(id);
         if (user == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("user not found");
         }
         return user;
     }
@@ -100,7 +106,7 @@ public class UserDetailService implements UserDetailsService {
 
         UserDetail current = userDetailRepository.findOne(user.getId());
         if (current == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("current user not found");
         }
 
         if (user.getPassword() != null) {
@@ -119,7 +125,7 @@ public class UserDetailService implements UserDetailsService {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
-            throw new ConflictException();
+            throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }
 
     }
@@ -127,7 +133,7 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail getByEmail(String email) {
         UserDetail user = this.userDetailRepository.findByEmail(email);
         if (user == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("user not found");
         }
         return user;
     }
@@ -135,7 +141,7 @@ public class UserDetailService implements UserDetailsService {
     public List<UserDetail> getByAuthority(String authority) {
         List<UserDetail> users = this.userDetailRepository.findByAuthoritiesOrderByEmail(authority);
         if (users == null || users.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("users not found");
         }
         return users;
     }

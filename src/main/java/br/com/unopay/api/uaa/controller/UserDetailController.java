@@ -1,9 +1,9 @@
 package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.groups.Create;
-import br.com.unopay.api.uaa.model.groups.Update;
-import br.com.unopay.api.uaa.model.groups.Views;
+import br.com.unopay.api.uaa.model.valistionsgroups.Create;
+import br.com.unopay.api.uaa.model.valistionsgroups.Update;
+import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
@@ -113,7 +113,7 @@ public class UserDetailController {
         String authority = request.getParameter("authority");
 
         if (authority == null || authority.isEmpty()) {
-            throw new BadRequestException();
+            throw new BadRequestException("Authority required");
         }
 
         LOGGER.info("get uaa user by authority={}", authority);
