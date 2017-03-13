@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.service
 
+import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService

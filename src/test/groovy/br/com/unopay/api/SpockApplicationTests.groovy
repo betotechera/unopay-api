@@ -1,8 +1,8 @@
 package br.com.unopay.api
 
+import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
-import org.junit.Before
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.web.FilterChainProxy
@@ -33,9 +33,12 @@ class SpockApplicationTests extends Specification{
     protected MockMvc mvc
 
     void setup() {
+
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(this.context)
                 .addFilter(filterChainProxy)
                 .build()
+
+        FixtureFactoryLoader.loadTemplates("br.com.unopay.api")
     }
 }
