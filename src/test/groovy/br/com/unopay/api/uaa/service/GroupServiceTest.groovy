@@ -41,7 +41,7 @@ class GroupServiceTest extends SpockApplicationTests {
         result != null
     }
 
-    void 'given without name group should not bet created'(){
+    void 'given group without name should not bet created'(){
         given:
         Group group = Fixture.from(Group.class).gimme("without-name")
 
@@ -179,7 +179,7 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
     @FlywayTest(invokeCleanDB = true)
-    void 'should create group with members'(){
+    void 'should create group with known members'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
         def result = service.create(group)
