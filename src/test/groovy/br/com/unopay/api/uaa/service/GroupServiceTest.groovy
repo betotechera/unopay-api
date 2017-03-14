@@ -85,7 +85,7 @@ class GroupServiceTest extends SpockApplicationTests {
         Page<Group> groups = service.findAll(page)
 
         then:
-        that groups.content, hasSize(2)
+        that groups.content, hasSize(4)
     }
 
     @FlywayTest(invokeCleanDB = true)
@@ -95,7 +95,7 @@ class GroupServiceTest extends SpockApplicationTests {
         Page<Group> groups = service.findAll(page)
 
         then:
-        that groups.content, hasSize(0)
+        that groups.content, hasSize(1)
     }
 
     @FlywayTest(invokeCleanDB = true)

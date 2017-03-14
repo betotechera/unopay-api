@@ -100,7 +100,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
-                .andExpect(jsonPath('$.total', is(equalTo(2))))
+                .andExpect(jsonPath('$.total', is(equalTo(4))))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
                 .andExpect(jsonPath('$.items[0].description', is(notNullValue())))
     }
