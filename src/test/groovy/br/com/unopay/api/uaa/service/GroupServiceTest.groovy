@@ -188,4 +188,46 @@ class GroupServiceTest extends SpockApplicationTests {
         users?.any { members.any { m -> m.email == it.email } }
     }
 
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find authority with unknown group id should return empty result'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        def members = service.findAuhtorities('1111', page)
+
+        then:
+        that members?.content, hasSize(0)
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find authority without group id should return error'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        service.findAuhtorities(null, page)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.message == 'Group id required'
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find member with unknown group id should return empty result'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        def members = service.findMembers('1111', page)
+
+        then:
+        that members?.content, hasSize(0)
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find member without group id should return error'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        service.findMembers(null, page)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.message == 'Group id required'
+    }
+
 }

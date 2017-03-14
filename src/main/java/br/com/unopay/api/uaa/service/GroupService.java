@@ -67,6 +67,7 @@ public class GroupService {
     }
 
     public Page<UserDetail> findMembers(String id, UnovationPageRequest pageRequest) {
+        if(id == null) throw new UnprocessableEntityException("Group id required");
         Page<UserDetail> members =  userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
         return members;
     }
@@ -83,6 +84,7 @@ public class GroupService {
     }
 
     public Page<Authority> findAuhtorities(String id, UnovationPageRequest pageRequest) {
-           return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        if(id == null) throw new UnprocessableEntityException("Group id required");
+        return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 }
