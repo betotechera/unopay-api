@@ -27,6 +27,13 @@ values('3', 'withouanyrole@unovation.com.br', '25449269c801e35004f0eb163ee00df06
 insert into oauth_user_details(id, email, password)
 values('5', 'ti@unovation.com.br', 'c7bfc8f1ce2b3bcbdec9ae12dc4f04af0d9d1ad0253dcdcf8205b0a31bd4c6e5c4494095a762b79b');
 
+insert into oauth_groups(id, group_name, description)
+values('1', 'administrador', 'grupo de administradores');
+
+insert into oauth_groups(id, group_name, description)
+values('2', 'atendente', 'grupo de atendentes');
+
+
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
 

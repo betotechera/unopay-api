@@ -1,6 +1,7 @@
 package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Group;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Timed(prefix = "api")
 @RestController
@@ -66,6 +70,22 @@ public class GroupController {
     Results<Group> findAllGroups(@Valid UnovationPageRequest pageable) {
         LOGGER.info("getting all groups");
         Page<Group> page =  service.findAll(pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), api);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.PUT)
+    public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> membersIds) {
+        LOGGER.info("add members={} to group={}", membersIds.stream().collect(Collectors.joining(",")), id);
+        service.addMembers(id, membersIds);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.GET)
+    public Results<UserDetail> getGroupMembers(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
+        LOGGER.info("get members to group={}", id);
+        Page<UserDetail> page =  service.findMembers(id, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), api);
     }
