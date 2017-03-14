@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Authority
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.repository.GroupRepository
 import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -23,7 +24,10 @@ class GroupServiceTest extends SpockApplicationTests {
     GroupService service
 
     @Autowired
-    UserDetailRepository userDetailRepository;
+    UserDetailRepository userDetailRepository
+
+    @Autowired
+    GroupRepository repository
 
     void 'should create group'(){
         given:
@@ -77,6 +81,7 @@ class GroupServiceTest extends SpockApplicationTests {
     @FlywayTest(invokeCleanDB = true)
     void 'given known groups should return all'(){
         given:
+        repository.deleteAll()
         List<Group> groupsCreate = Fixture.from(Group.class).gimme(2, "valid")
         groupsCreate.forEach { service.create(it) }
 
@@ -85,17 +90,20 @@ class GroupServiceTest extends SpockApplicationTests {
         Page<Group> groups = service.findAll(page)
 
         then:
-        that groups.content, hasSize(4)
+        that groups.content, hasSize(2)
     }
 
     @FlywayTest(invokeCleanDB = true)
     void 'given unknown groups should return empty list'(){
+        given:
+        repository.deleteAll()
+
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(1)}}
         Page<Group> groups = service.findAll(page)
 
         then:
-        that groups.content, hasSize(1)
+        that groups.content, hasSize(0)
     }
 
     @FlywayTest(invokeCleanDB = true)
