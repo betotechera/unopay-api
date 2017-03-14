@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AuthorityRepository extends CrudRepository<Authority,String> {
 
-    //Page<Authority> findByGroupsId(String id, Pageable pageable);
+    Page<Authority> findByGroupsId(String id, Pageable pageable);
 }

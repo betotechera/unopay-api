@@ -77,12 +77,12 @@ public class GroupService {
         if(id == null || group == null) throw new UnprocessableEntityException("Group required");
         List<Authority> authorities = StreamSupport.stream(authorityRepository.findAll(authoritiesIds).spliterator(), false).collect(Collectors.toList());
         if(authorities.isEmpty()) throw new UnprocessableEntityException("known authorities required");
-        //authorities.forEach(a -> group.getAuthorities().add(a));
+        authorities.forEach(a -> group.getAuthorities().add(a));
         repository.save(group);
 
     }
 
     public Page<Authority> findAuhtorities(String id, UnovationPageRequest pageRequest) {
-           return null; //authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+           return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 }

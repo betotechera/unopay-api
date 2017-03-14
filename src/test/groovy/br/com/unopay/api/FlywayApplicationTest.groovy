@@ -14,7 +14,7 @@ class FlywayApplicationTest extends SpockApplicationTests {
         def result = this.template.queryForObject(
                 "SELECT COUNT(*) from AUTHORITY", Integer.class)
         then:
-        new Integer(1) == result
+        new Integer(2) == result
     }
 
     def 'should return user details'() {

@@ -1,7 +1,5 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.uaa.model.valistionsgroups.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,6 +20,10 @@ public class Authority {
         this.description = description;
         this.name = name;
     }
+
+    @ManyToMany
+    @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "authority") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
+    private Set<Group> groups;
 
     @Override
     public String toString() {

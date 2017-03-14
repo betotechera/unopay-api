@@ -99,7 +99,6 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
     @FlywayTest(invokeCleanDB = true)
-    @Ignore
     void 'should create group with authorities'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -113,7 +112,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         that members?.content, hasSize(authorities?.size())
-        authorities?.first()?.name == members?.content?.first()?.name
+        authorities?.any { members.any { m -> m.name == it.name } }
 
     }
 

@@ -39,13 +39,13 @@ public class UaaTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Authority.class).addTemplate("valid", new Rule(){{
-            add("name", "ROLE_ADMIN");
-            add("description", random("Role 1", "Role 2"));
+            add("name", uniqueRandom("ROLE_ADMIN", "ROLE_USER"));
+            add("description", uniqueRandom("Role 1", "Role 2"));
         }});
 
         Fixture.of(Authority.class).addTemplate("invalid", new Rule(){{
             add("name", "ROLE_UNKNOWN");
-            add("description", random("Role 1", "Role 2"));
+            add("description", uniqueRandom("Role 1", "Role 2"));
         }});
 
 

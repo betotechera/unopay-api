@@ -28,6 +28,7 @@ insert into oauth_user_details(id, email, password)
 values('5', 'ti@unovation.com.br', 'c7bfc8f1ce2b3bcbdec9ae12dc4f04af0d9d1ad0253dcdcf8205b0a31bd4c6e5c4494095a762b79b');
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
+insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
 
 insert into oauth_user_authorities(user_id, authority) values('1', 'ROLE_USER');
 insert into oauth_user_authorities(user_id, authority) values('1', 'ROLE_ADMIN');
