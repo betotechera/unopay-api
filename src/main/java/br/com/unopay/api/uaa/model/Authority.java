@@ -1,10 +1,11 @@
 package br.com.unopay.api.uaa.model;
 
+import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Data

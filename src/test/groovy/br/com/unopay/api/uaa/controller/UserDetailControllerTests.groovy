@@ -119,7 +119,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(user)))
                 .andExpect(status().isCreated())
-then:
+        then:
         this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)

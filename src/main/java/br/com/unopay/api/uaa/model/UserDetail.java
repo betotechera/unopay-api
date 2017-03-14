@@ -49,14 +49,13 @@ public class UserDetail implements Serializable {
             name = "oauth_user_authorities",
             joinColumns=@JoinColumn(name = "user_id", referencedColumnName = "id")
     )
-    @Column(name="authority")
+    @Column(name = "authority")
     private Set<String> authorities;
 
 
     @JsonView(Views.Public.class)
     @ManyToMany
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
-    @Column(name="authority")
     private Set<Group> groups;
 
     public UserDetail() {}

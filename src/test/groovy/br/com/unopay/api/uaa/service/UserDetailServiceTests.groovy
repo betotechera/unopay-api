@@ -94,12 +94,4 @@ class UserDetailServiceTests extends SpockApplicationTests {
         then:
         created != null
     }
-
-    void 'when create user with group should be return authorities'(){
-
-    }
-
-    void 'when create user without group should not be return authorities'(){
-
-    }
 }

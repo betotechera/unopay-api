@@ -10,4 +10,5 @@ public interface GroupRepository extends CrudRepository<Group,String> {
     Group findById(String id);
 
     Page<Group> findAll(Pageable pageable);
+
 }

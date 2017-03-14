@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Data
@@ -33,4 +34,10 @@ public class Group implements Serializable{
     @JsonView(Views.Public.class)
     @Column(name="description")
     private String description;
+
+    @JsonView(Views.Public.class)
+    @ManyToMany
+    @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
+    private Set<UserDetail> members;
+
 }
