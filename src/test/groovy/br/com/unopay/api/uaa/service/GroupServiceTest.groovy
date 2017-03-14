@@ -117,7 +117,34 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
     @FlywayTest(invokeCleanDB = true)
-    void 'given unknown members when create addMember should return error'(){
+    void 'given unknown authorities when add Authority should return error'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        service.create(group)
+        Set<Authority> authorities = Fixture.from(Authority.class).gimme(2, "unknown")
+        Set<String> authoritiesIds = authorities.collect { it.name }
+        when:
+        service.addAuthorities(group.getId(), authoritiesIds)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert  ex.getMessage() == "known authorities required"
+    }
+
+    void 'should not add authorities without group id'(){
+        given:
+        Set<Authority> authorities = Fixture.from(Authority.class).gimme(2, "unknown")
+        Set<String> authoritiesIds = authorities.collect { it.name }
+        when:
+        service.addAuthorities(null, authoritiesIds)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert  ex.getMessage() == "Group required"
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'given unknown members when add members should return error'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
         service.create(group)
