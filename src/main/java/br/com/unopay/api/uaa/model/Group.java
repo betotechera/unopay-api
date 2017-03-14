@@ -4,6 +4,7 @@ package br.com.unopay.api.uaa.model;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Update;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,13 +36,13 @@ public class Group implements Serializable{
     @Column(name="description")
     private String description;
 
-    @JsonView(Views.Public.class)
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
     private Set<UserDetail> members;
 
 
-    @JsonView(Views.Public.class)
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;

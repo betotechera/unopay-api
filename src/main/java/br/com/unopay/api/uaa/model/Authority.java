@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ public class Authority {
         this.name = name;
     }
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "authority") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;

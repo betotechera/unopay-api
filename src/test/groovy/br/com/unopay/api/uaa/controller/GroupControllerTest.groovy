@@ -5,19 +5,13 @@ import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.http.MediaType
-import spock.lang.Ignore
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class GroupControllerTest extends AuthServerApplicationTests {
 
@@ -107,7 +101,6 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
 
     @FlywayTest(invokeCleanDB = true)
-    @Ignore
     void 'given known group and user should be add member to group'() {
         given:
         String accessToken = getClientAccessToken()
@@ -119,10 +112,62 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
         when:
         def result = this.mvc.perform(get("/groups/{groupId}/members?access_token={access_token}&page=1&size=20", groupId, accessToken))
+
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
                 .andExpect(jsonPath('$.total', is(equalTo(2))))
                 .andExpect(jsonPath('$.items[0].email', is(notNullValue())))
+    }
+
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'given known group and authority should be add authority to group'() {
+        given:
+        String accessToken = getClientAccessToken()
+        String groupId = '1'
+        this.mvc.perform(
+                put("/groups/{groupId}/authorities?access_token={access_token}", groupId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""["ROLE_ADMIN", "ROLE_USER"]"""))
+
+        when:
+        def result = this.mvc.perform(get("/groups/{groupId}/authorities?access_token={access_token}&page=1&size=20", groupId, accessToken))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', hasSize(2)))
+                .andExpect(jsonPath('$.total', is(equalTo(2))))
+                .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
+    }
+
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'should return error when add authorities without list'() {
+        given:
+        String accessToken = getClientAccessToken()
+        String groupId = '1'
+        when:
+        def result = this.mvc.perform(
+                put("/groups/{groupId}/authorities?access_token={access_token}", groupId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""""""))
+
+        then:
+        result.andExpect(status().isBadRequest())
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'should return error when add members without list'() {
+        given:
+        String accessToken = getClientAccessToken()
+        String groupId = '1'
+        when:
+        def result = this.mvc.perform(
+                put("/groups/{groupId}/members?access_token={access_token}", groupId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""""""))
+        then:
+        result.andExpect(status().isBadRequest())
     }
 }

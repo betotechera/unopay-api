@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
@@ -10,6 +11,7 @@ import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -82,10 +85,29 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.Public.class)
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.GET)
     public Results<UserDetail> getGroupMembers(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
         LOGGER.info("get members to group={}", id);
         Page<UserDetail> page =  service.findMembers(id, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), api);
+    }
+
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.PUT)
+    public void groupAuthorities(@PathVariable("id") String id, @RequestBody Set<String> authoritiesIds) {
+        LOGGER.info("add authorities={} to group={}", authoritiesIds.stream().collect(Collectors.joining(",")), id);
+        service.addAuthorities(id, authoritiesIds);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.Public.class)
+    @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
+    public Results<Authority> getGroupAuthorities(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
+        LOGGER.info("get authorities to group={}", id);
+        Page<Authority> page =  service.findAuhtorities(id, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), api);
     }
