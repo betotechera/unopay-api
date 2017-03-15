@@ -248,9 +248,9 @@ class GroupServiceTest extends SpockApplicationTests {
         def result = userDetailRepository.save(user)
         Set<String> groupsIds = groups.collect { it.id }
         when:
-        service.associateUserWithGroups(user.getEmail(), groupsIds)
+        service.associateUserWithGroups(user.getId(), groupsIds)
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        Page<Group> userGroups = service.findUserGroups(result.getEmail(), page)
+        Page<Group> userGroups = service.findUserGroups(result.getId(), page)
 
         then:
         that userGroups?.content, hasSize(groups?.size())
@@ -265,7 +265,7 @@ class GroupServiceTest extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         userDetailRepository.save(user)
         when:
-        service.associateUserWithGroups(user.getEmail(), groupsIds)
+        service.associateUserWithGroups(user.getId(), groupsIds)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -302,7 +302,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.message == 'User email required'
+        ex.message == 'User id required'
     }
 
 }

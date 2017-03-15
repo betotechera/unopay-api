@@ -1,16 +1,23 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Update;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
+import br.com.unopay.bootcommons.jsoncollections.Results;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +28,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Timed(prefix = "api")
 @RestController
@@ -33,10 +43,16 @@ public class UserDetailController {
 
     private UserDetailService userDetailService;
     private TokenStore tokenStore;
+    private GroupService groupService;
+
+    @Value("${unopay.api}")
+    private String api;
+
     @Autowired
-    public UserDetailController(UserDetailService userDetailService, TokenStore tokenStore) {
+    public UserDetailController(UserDetailService userDetailService, TokenStore tokenStore, GroupService groupService) {
         this.userDetailService = userDetailService;
         this.tokenStore = tokenStore;
+        this.groupService = groupService;
     }
 
     @JsonView(Views.Public.class)
@@ -128,5 +144,22 @@ public class UserDetailController {
         user.setId(id);
         LOGGER.info("updating uaa user {}", user);
         userDetailService.update(user);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.PUT)
+    public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> groupsIds) {
+        LOGGER.info("associate user={} wiith groups={}", id, groupsIds.stream().collect(Collectors.joining(",")));
+        groupService.associateUserWithGroups(id, groupsIds);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.Public.class)
+    @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.GET)
+    public Results<Group> getGroups(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
+        LOGGER.info("get members to group={}", id);
+        Page<Group> page =  groupService.findUserGroups(id, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/groups", api));
     }
 }

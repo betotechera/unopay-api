@@ -120,7 +120,6 @@ class GroupControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items[0].email', is(notNullValue())))
     }
 
-
     @FlywayTest(invokeCleanDB = true)
     void 'given known group and authority should be add authority to group'() {
         given:

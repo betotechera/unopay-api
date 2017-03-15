@@ -4,12 +4,15 @@ import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.JsonPath
+import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 
 import static com.google.common.collect.Sets.newHashSet
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -170,5 +173,42 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         user.setPassword(randomAlphabetic(5))
         return user
     }
+
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'given known group and user should be associate user with group'() {
+        given:
+        String accessToken = getClientAccessToken()
+        String groupId = '1'
+        this.mvc.perform(
+                put("/users/{id}/groups?access_token={access_token}", groupId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""["1", "2"]"""))
+
+        when:
+        def result = this.mvc.perform(get("/users/{id}/groups?access_token={access_token}&page=1&size=20", groupId, accessToken))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', hasSize(2)))
+                .andExpect(jsonPath('$.total', is(equalTo(2))))
+                .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'should return error when associate groups without list'() {
+        given:
+        String accessToken = getClientAccessToken()
+        String userId = '1'
+        when:
+        def result = this.mvc.perform(
+                put("/users/{userId}/groups?access_token={access_token}", userId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""""""))
+
+        then:
+        result.andExpect(status().isBadRequest())
+    }
+
 
 }

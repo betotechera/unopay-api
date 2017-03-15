@@ -88,7 +88,7 @@ public class GroupController {
         LOGGER.info("get members to group={}", id);
         Page<UserDetail> page =  service.findMembers(id, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), api);
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/users", api));
     }
 
 
@@ -106,6 +106,6 @@ public class GroupController {
         LOGGER.info("get authorities to group={}", id);
         Page<Authority> page =  service.findAuhtorities(id, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), api);
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/authorities", api));
     }
 }
