@@ -108,7 +108,7 @@ public class UserDetailController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/users/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = RequestMethod.GET, params = "authority")
     public List<UserDetail> getByAuthority(OAuth2Authentication authentication, HttpServletRequest request) {
         String authority = request.getParameter("authority");
 

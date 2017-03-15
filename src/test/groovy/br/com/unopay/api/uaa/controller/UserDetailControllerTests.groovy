@@ -143,13 +143,13 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(status().isCreated())
 
         this.mvc.perform(
-                get("/users/search?authority={authority}&access_token={access_token}", authority, accessToken)
+                get("/users?authority={authority}&access_token={access_token}", authority, accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath('$..[0].email', is(notNullValue())))
     }
 
-    void shoult_not_allow_client_authentication_on_user_me() throws Exception {
+    void should_not_allow_client_authentication_on_user_me() throws Exception {
 
         String accessToken = clientCredentialsAccessToken()
         when:
