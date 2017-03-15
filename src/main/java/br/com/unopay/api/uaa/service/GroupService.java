@@ -87,4 +87,19 @@ public class GroupService {
         if(id == null) throw new UnprocessableEntityException("Group id required");
         return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
+
+    @Transactional
+    public void associateUserWithGroups(String email, Set<String> groupsIds) {
+        UserDetail user = userDetailRepository.findByEmail(email);
+        if(email == null || user == null) throw new UnprocessableEntityException("User required");
+        List<Group> groups = StreamSupport.stream(repository.findAll(groupsIds).spliterator(), false).collect(Collectors.toList());
+        if(groups.isEmpty()) throw new UnprocessableEntityException("known groups required");
+        List<GroupMember> groupMembers = groups.stream().map(group -> new GroupMember(user, group)).collect(Collectors.toList());
+        groupMemberRepository.save(groupMembers);
+    }
+
+    public Page<Group> findUserGroups(String email, UnovationPageRequest pageRequest) {
+        if(email == null) throw new UnprocessableEntityException("User email required");
+        return repository.findByMembersEmail(email, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+    }
 }

@@ -34,7 +34,6 @@ class CheckTokenTests extends AuthServerApplicationTests {
                         .andExpect(jsonPath('$.client_id', is(equalTo("client"))))
                         .andExpect(jsonPath('$.organization', is(equalTo("1"))))
                         .andReturn()
-
     }
 
 

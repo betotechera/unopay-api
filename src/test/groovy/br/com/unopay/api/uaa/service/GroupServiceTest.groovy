@@ -13,7 +13,6 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import spock.lang.Ignore
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import static spock.util.matcher.HamcrestSupport.that
@@ -179,7 +178,7 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
     @FlywayTest(invokeCleanDB = true)
-    void 'should create group with known members'(){
+    void 'should add known members to known group'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
         def result = service.create(group)
@@ -195,6 +194,7 @@ class GroupServiceTest extends SpockApplicationTests {
         that members?.content, hasSize(users?.size())
         users?.any { members.any { m -> m.email == it.email } }
     }
+
 
     @FlywayTest(invokeCleanDB = true)
     void 'when find authority with unknown group id should return empty result'(){
@@ -236,6 +236,73 @@ class GroupServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.message == 'Group id required'
+    }
+
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'should connect known groups to known member'(){
+        given:
+        Set<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
+        repository.save(groups)
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def result = userDetailRepository.save(user)
+        Set<String> groupsIds = groups.collect { it.id }
+        when:
+        service.associateUserWithGroups(user.getEmail(), groupsIds)
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<Group> userGroups = service.findUserGroups(result.getEmail(), page)
+
+        then:
+        that userGroups?.content, hasSize(groups?.size())
+        groups?.any { userGroups.any { m -> m.name == it.name } }
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'given unknown groups when connect to user should return error'(){
+        given:
+        Set<Group> groups = Fixture.from(Group.class).gimme(2, "with-id")
+        Set<String> groupsIds = groups.collect { it.id }
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        userDetailRepository.save(user)
+        when:
+        service.associateUserWithGroups(user.getEmail(), groupsIds)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert  ex.getMessage() == "known groups required"
+    }
+
+    void 'should not add group without user id'(){
+        given:
+        Set<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
+        Set<String> groupsIds = groups.collect { it.id }
+        when:
+        service.associateUserWithGroups(null, groupsIds)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert  ex.getMessage() == "User required"
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find group with unknown user email should return empty result'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        def groups = service.findUserGroups('asdf@sadf', page)
+
+        then:
+        that groups?.content, hasSize(0)
+    }
+
+    @FlywayTest(invokeCleanDB = true)
+    void 'when find group without user email should return error'(){
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        service.findUserGroups(null, page)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.message == 'User email required'
     }
 
 }
