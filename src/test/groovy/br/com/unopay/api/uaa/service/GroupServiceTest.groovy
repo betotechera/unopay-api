@@ -7,6 +7,7 @@ import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.repository.GroupRepository
 import br.com.unopay.api.uaa.repository.UserDetailRepository
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -38,6 +39,19 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         result != null
+    }
+
+    void 'should not allow create groups with same name'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+
+        when:
+        service.create(group)
+        service.create(group.with { id = null; it })
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.message == 'Group name already exists'
     }
 
     void 'given group without name should not bet created'(){
@@ -77,7 +91,6 @@ class GroupServiceTest extends SpockApplicationTests {
         thrown(NotFoundException)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'given known groups should return all'(){
         given:
         repository.deleteAll()
@@ -92,7 +105,6 @@ class GroupServiceTest extends SpockApplicationTests {
         that groups.content, hasSize(2)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'given unknown groups should return empty list'(){
         given:
         repository.deleteAll()
@@ -105,7 +117,6 @@ class GroupServiceTest extends SpockApplicationTests {
         that groups.content, hasSize(0)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'should create group with authorities'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -123,7 +134,6 @@ class GroupServiceTest extends SpockApplicationTests {
 
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'given unknown authorities when add Authority should return error'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -150,7 +160,6 @@ class GroupServiceTest extends SpockApplicationTests {
         assert  ex.getMessage() == "Group required"
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'given unknown members when add members should return error'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -177,7 +186,6 @@ class GroupServiceTest extends SpockApplicationTests {
         assert  ex.getMessage() == "Group required"
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'should add known members to known group'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -196,7 +204,6 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find authority with unknown group id should return empty result'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
@@ -206,7 +213,6 @@ class GroupServiceTest extends SpockApplicationTests {
         that members?.content, hasSize(0)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find authority without group id should return error'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
@@ -217,7 +223,6 @@ class GroupServiceTest extends SpockApplicationTests {
         ex.message == 'Group id required'
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find member with unknown group id should return empty result'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
@@ -227,7 +232,6 @@ class GroupServiceTest extends SpockApplicationTests {
         that members?.content, hasSize(0)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find member without group id should return error'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
@@ -239,7 +243,6 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
     void 'should connect known groups to known member'(){
         given:
         Set<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
@@ -257,7 +260,6 @@ class GroupServiceTest extends SpockApplicationTests {
         groups?.any { userGroups.any { m -> m.name == it.name } }
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'given unknown groups when connect to user should return error'(){
         given:
         Set<Group> groups = Fixture.from(Group.class).gimme(2, "with-id")
@@ -284,7 +286,6 @@ class GroupServiceTest extends SpockApplicationTests {
         assert  ex.getMessage() == "User required"
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find group with unknown user email should return empty result'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
@@ -294,7 +295,6 @@ class GroupServiceTest extends SpockApplicationTests {
         that groups?.content, hasSize(0)
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'when find group without user email should return error'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}

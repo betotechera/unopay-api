@@ -1,6 +1,7 @@
 package br.com.unopay.api
 
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
+import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +31,9 @@ class SpockApplicationTests extends Specification{
     @Autowired
     protected FilterChainProxy filterChainProxy
 
+    @Autowired
+    protected Flyway flyway;
+
     protected MockMvc mvc
 
     void setup() {
@@ -40,5 +44,7 @@ class SpockApplicationTests extends Specification{
                 .build()
 
         FixtureFactoryLoader.loadTemplates("br.com.unopay.api")
+        flyway.clean()
+        flyway.migrate()
     }
 }

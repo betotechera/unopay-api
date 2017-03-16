@@ -31,13 +31,13 @@ public class UaaTemplateLoader implements TemplateLoader {
 
 
         Fixture.of(Group.class).addTemplate("valid", new Rule(){{
-            add("name", uniqueRandom("administrador", "atendente"));
+            add("name", uniqueRandom("adm", "atndente"));
             add("description", random("grupo 1", "grupo 2"));
         }});
 
         Fixture.of(Group.class).addTemplate("with-id", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("name", uniqueRandom("administrador", "atendente"));
+            add("name", uniqueRandom("adm", "atndente"));
             add("description", random("grupo 1", "grupo 2"));
         }});
 

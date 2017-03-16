@@ -8,6 +8,7 @@ import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.GroupMemberRepository;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -44,7 +45,7 @@ public class GroupService {
         try {
             return repository.save(group);
         }catch (DataIntegrityViolationException ex){
-            return null;
+            throw new ConflictException("Group name already exists");
         }
     }
 

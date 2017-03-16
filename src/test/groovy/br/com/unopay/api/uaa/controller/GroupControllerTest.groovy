@@ -3,7 +3,9 @@ package br.com.unopay.api.uaa.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.Group
+import br.com.unopay.api.uaa.repository.GroupRepository
 import org.flywaydb.test.annotation.FlywayTest
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 
 import static org.hamcrest.Matchers.equalTo
@@ -15,6 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class GroupControllerTest extends AuthServerApplicationTests {
 
+    @Autowired
+    private GroupRepository groupRepository
+
+    
     void 'should create group'() {
 
         String accessToken = getClientAccessToken()
@@ -30,7 +36,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
                 .andExpect(header().string("Location", is(notNullValue())))
 
     }
-
+   
     void 'known group should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
@@ -73,9 +79,9 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
     }
 
-    @FlywayTest(invokeCleanDB = true)
     void 'known groups should be found when find all'() {
         given:
+        groupRepository.deleteAll()
         String accessToken = getClientAccessToken()
         Group group = Fixture.from(Group.class).gimme("valid")
         this.mvc.perform(
@@ -85,7 +91,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
         this.mvc.perform(
                 post("/groups?access_token={access_token}", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(group)))
+                        .content(toJson(group.with { name = 'temp'; it })))
 
         when:
         def result = this.mvc.perform(
@@ -94,13 +100,13 @@ class GroupControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
-                .andExpect(jsonPath('$.total', is(equalTo(4))))
+                .andExpect(jsonPath('$.total', is(equalTo(2))))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
                 .andExpect(jsonPath('$.items[0].description', is(notNullValue())))
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'given known group and user should be add member to group'() {
         given:
         String accessToken = getClientAccessToken()
@@ -120,7 +126,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items[0].email', is(notNullValue())))
     }
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'given known group and authority should be add authority to group'() {
         given:
         String accessToken = getClientAccessToken()
@@ -141,7 +147,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'should return error when add authorities without list'() {
         given:
         String accessToken = getClientAccessToken()
@@ -156,7 +162,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isBadRequest())
     }
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'should return error when add members without list'() {
         given:
         String accessToken = getClientAccessToken()

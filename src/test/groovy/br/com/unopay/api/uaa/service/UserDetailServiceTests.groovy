@@ -28,7 +28,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
     }
 
-    @FlywayTest(invokeCleanDB = true)
+    
     void 'when create user known authorities should be saved'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
@@ -41,7 +41,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
+    
     void 'when update user unknown authorities should not be saved'() {
 
         given:
@@ -57,7 +57,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that updated.getAuthorities(), not(contains("ROLE_UNKNOWN"))
     }
 
-    @FlywayTest(invokeCleanDB = true)
+    
     void 'when update user known authorities should be saved'() {
 
         given:
@@ -73,7 +73,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that updated.getAuthorities(), contains("ROLE_ADMIN")
     }
 
-    @FlywayTest(invokeCleanDB = true)
+    
     void 'given user with group should not be created'(){
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")

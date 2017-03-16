@@ -175,7 +175,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     }
 
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'given known group and user should be associate user with group'() {
         given:
         String accessToken = getClientAccessToken()
@@ -195,7 +195,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
     }
 
-    @FlywayTest(invokeCleanDB = true)
+   
     void 'should return error when associate groups without list'() {
         given:
         String accessToken = getClientAccessToken()
