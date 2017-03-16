@@ -12,11 +12,13 @@ import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,7 +41,11 @@ public class GroupService {
 
     public Group create(Group group) {
         if(group.getName() == null) throw new UnprocessableEntityException("Name is required");
-        return repository.save(group);
+        try {
+            return repository.save(group);
+        }catch (DataIntegrityViolationException ex){
+            return null;
+        }
     }
 
     public Group getById(String id) {

@@ -87,4 +87,5 @@ create table oauth_group_members (
 );
 
 create unique index oauth_user_details_uk on oauth_user_details(email);
+create unique index oauth_groups_uk on oauth_groups(group_name);
 
