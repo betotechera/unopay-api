@@ -55,7 +55,7 @@ public class UserDetail implements Serializable {
 
 
     @JsonIgnore
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 

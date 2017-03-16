@@ -37,13 +37,13 @@ public class Group implements Serializable{
     private String description;
 
     @JsonIgnore
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
     private Set<UserDetail> members;
 
 
     @JsonIgnore
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 
