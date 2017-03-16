@@ -32,7 +32,7 @@ class SpockApplicationTests extends Specification{
     protected FilterChainProxy filterChainProxy
 
     @Autowired
-    protected Flyway flyway;
+    protected Flyway flyway
 
     protected MockMvc mvc
 

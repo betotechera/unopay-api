@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.controller
 
+import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -42,7 +43,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         String accessToken = getClientAccessToken()
 
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
         when:
         def result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -58,7 +59,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         user.setPassword("otherpass")
         user.setEmail(randomAlphabetic(7)+"@gmail.com")
-        user.setAuthorities(newHashSet("ROLE_NEW", "ROLE_CLIENT"))
 
         this.mvc.perform(
                 put("/users/me?access_token={access_token}", userAccessToken)
@@ -78,7 +78,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         String accessToken = getClientAccessToken()
 
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
         when:
         MockHttpServletResponse result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -95,7 +95,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         user.setPassword("otherpass")
         user.setEmail(randomAlphabetic(7)+"@gmail.com")
-        user.setAuthorities(newHashSet("ROLE_NEW", "ROLE_CLIENT"))
 
         String uaaManagerAccessToken = getUAAManagerAccessToken()
 
@@ -131,13 +130,13 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     }
 
 
+
      void should_get_users_by_authority() throws Exception {
 
         String accessToken = getClientAccessToken()
         String authority = "ROLE_ADMIN"
 
         UserDetail user = user()
-        user.setAuthorities(newHashSet(authority))
 
         this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)

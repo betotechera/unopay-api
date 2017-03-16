@@ -11,6 +11,5 @@ public interface UserDetailRepository extends CrudRepository<UserDetail,String> 
 
     UserDetail findByEmail(String email);
     UserDetail findById(String id);
-    List<UserDetail> findByAuthoritiesOrderByEmail(String authority);
     Page<UserDetail> findByGroupsId(String id, Pageable pageable);
 }

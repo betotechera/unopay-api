@@ -13,10 +13,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "oauth_user_details")
@@ -41,40 +40,39 @@ public class UserDetail implements Serializable {
     @Column(name="password")
     private String password;
 
-    @Version
-    Long version;
-
-    @JsonView(Views.Public.class)
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "oauth_user_authorities",
-            joinColumns=@JoinColumn(name = "user_id", referencedColumnName = "id")
-    )
-    @Column(name = "authority")
-    private Set<String> authorities;
-
-
     @JsonIgnore
     @OneToMany
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 
+
+    @Version
+    Long version;
+
+
     public UserDetail() {}
 
-    public UserDetail(String id, String email, String password, Set<String> authorities) {
+    public UserDetail(String id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.authorities = authorities;
     }
 
 
-    public Collection<? extends GrantedAuthority> toGrantedAuthorities() {
-        if (authorities == null) {
+    public List<SimpleGrantedAuthority> toGrantedAuthorities(List<Group> groups) {
+        return getAuthoritiesNames(groups).stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<Authority> getAuthorities(List<Group> groups) {
+        if (groups == null) {
             return Collections.emptyList();
         }
-        return authorities.stream()
-                .map(SimpleGrantedAuthority::new)
+        return groups.stream()
+                .filter(g -> g.getAuthorities() != null)
+                .map(Group::getAuthorities)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +81,15 @@ public class UserDetail implements Serializable {
         return "UserDetail{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", authorities=" + authorities +
                 '}';
+    }
+
+    public List<String> getAuthoritiesNames(List<Group> groups) {
+        return getAuthorities(groups).stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    public void addToMyGroups(Group group){
+        if( getGroups() == null) setGroups(new HashSet<>());
+        getGroups().add(group);
     }
 }

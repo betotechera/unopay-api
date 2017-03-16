@@ -2,10 +2,8 @@ package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
-import br.com.unopay.api.uaa.model.GroupMember;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
-import br.com.unopay.api.uaa.repository.GroupMemberRepository;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
@@ -19,8 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -35,7 +34,7 @@ public class GroupService {
     private UserDetailRepository userDetailRepository;
 
     @Autowired
-    private GroupMemberRepository groupMemberRepository;
+    private UserDetailRepository groupMemberRepository;
 
     @Autowired
     private AuthorityRepository authorityRepository;
@@ -60,7 +59,7 @@ public class GroupService {
     }
 
     public Page<Group> findAll(UnovationPageRequest pageRequest) {
-        return  repository.findAll(new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        return repository.findAll(new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 
     @Transactional
@@ -69,14 +68,13 @@ public class GroupService {
         if(id == null || group == null) throw new UnprocessableEntityException("Group required");
         List<UserDetail> users = StreamSupport.stream(userDetailRepository.findAll(memberIds).spliterator(), false).collect(Collectors.toList());
         if(users.isEmpty()) throw new UnprocessableEntityException("known members required");
-        List<GroupMember> groupMembers = users.stream().map(u -> new GroupMember(u, group)).collect(Collectors.toList());
-        groupMemberRepository.save(groupMembers);
+        users.forEach(group::addToMyMembers);
+        repository.save(group);
     }
 
     public Page<UserDetail> findMembers(String id, UnovationPageRequest pageRequest) {
         if(id == null) throw new UnprocessableEntityException("Group id required");
-        Page<UserDetail> members =  userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
-        return members;
+        return userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 
     @Transactional
@@ -85,7 +83,7 @@ public class GroupService {
         if(id == null || group == null) throw new UnprocessableEntityException("Group required");
         List<Authority> authorities = StreamSupport.stream(authorityRepository.findAll(authoritiesIds).spliterator(), false).collect(Collectors.toList());
         if(authorities.isEmpty()) throw new UnprocessableEntityException("known authorities required");
-        authorities.forEach(a -> group.getAuthorities().add(a));
+        authorities.forEach(group::addToMyAuthorities);
         repository.save(group);
 
     }
@@ -99,14 +97,29 @@ public class GroupService {
     public void associateUserWithGroups(String userId, Set<String> groupsIds) {
         UserDetail user = userDetailRepository.findById(userId);
         if(userId == null || user == null) throw new UnprocessableEntityException("User required");
-        List<Group> groups = StreamSupport.stream(repository.findAll(groupsIds).spliterator(), false).collect(Collectors.toList());
+        Set<Group> groups = getGroupsById(groupsIds);
         if(groups.isEmpty()) throw new UnprocessableEntityException("known groups required");
-        List<GroupMember> groupMembers = groups.stream().map(group -> new GroupMember(user, group)).collect(Collectors.toList());
-        groupMemberRepository.save(groupMembers);
+        groups.forEach(user::addToMyGroups);
+        userDetailRepository.save(user);
     }
 
-    public Page<Group> findUserGroups(String userId, UnovationPageRequest pageRequest) {
+    private Set<Group> getGroupsById(Set<String> groupsIds) {
+        return StreamSupport.stream(repository.findAll(groupsIds).spliterator(), false).collect(Collectors.toSet());
+    }
+
+    public Set<Group> loadKnownUserGroups(UserDetail user){
+        if(user.getGroups() != null && !user.getGroups().isEmpty()){
+            Set<String> groupIds = user.getGroups().stream()
+                                        .map(Group::getId)
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.toSet());
+           return getGroupsById(groupIds);
+        }
+        return Collections.emptySet();
+    }
+
+    public List<Group> findUserGroups(String userId) {
         if(userId == null) throw new UnprocessableEntityException("User id required");
-        return repository.findByMembersId(userId, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        return repository.findByMembersId(userId);
     }
 }

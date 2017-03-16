@@ -252,11 +252,10 @@ class GroupServiceTest extends SpockApplicationTests {
         Set<String> groupsIds = groups.collect { it.id }
         when:
         service.associateUserWithGroups(user.getId(), groupsIds)
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        Page<Group> userGroups = service.findUserGroups(result.getId(), page)
+        def userGroups = service.findUserGroups(result.getId())
 
         then:
-        that userGroups?.content, hasSize(groups?.size())
+        that userGroups, hasSize(groups?.size())
         groups?.any { userGroups.any { m -> m.name == it.name } }
     }
 
@@ -288,17 +287,15 @@ class GroupServiceTest extends SpockApplicationTests {
 
     void 'when find group with unknown user email should return empty result'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def groups = service.findUserGroups('asdf@sadf', page)
+        def groups = service.findUserGroups('asdf@sadf')
 
         then:
-        that groups?.content, hasSize(0)
+        that groups, hasSize(0)
     }
 
     void 'when find group without user email should return error'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        service.findUserGroups(null, page)
+        service.findUserGroups(null)
 
         then:
         def ex = thrown(UnprocessableEntityException)

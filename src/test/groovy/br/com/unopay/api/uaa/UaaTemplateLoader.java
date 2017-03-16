@@ -18,7 +18,6 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("password", regex("\\d{3,5}"));
-            add("authorities", Arrays.asList("ROLE_ADMIN", "ROLE_UNKNOWN"));
         }});
 
         Fixture.of(UserDetail.class).addTemplate("with-group", new Rule(){{
@@ -26,27 +25,48 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("password", regex("\\d{3,5}"));
             add("groups", has(1).of(Group.class, "valid"));
-            add("authorities", Arrays.asList("ROLE_ADMIN", "ROLE_UNKNOWN"));
+        }});
+
+        Fixture.of(UserDetail.class).addTemplate("group-with-unknown-role", new Rule(){{
+            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
+            add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
+            add("password", regex("\\d{3,5}"));
+            add("groups", has(1).of(Group.class, "with-unknown-role"));
         }});
 
 
         Fixture.of(Group.class).addTemplate("valid", new Rule(){{
             add("name", uniqueRandom("adm", "atndente"));
             add("description", random("grupo 1", "grupo 2"));
+            add("authorities", has(1).of(Authority.class, "valid-admin"));
         }});
 
         Fixture.of(Group.class).addTemplate("with-id", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("name", uniqueRandom("adm", "atndente"));
             add("description", random("grupo 1", "grupo 2"));
+            add("authorities", Arrays.asList("ROLE_ADMIN", "ROLE_UNKNOWN"));
+        }});
+
+
+        Fixture.of(Group.class).addTemplate("with-unknown-role", new Rule(){{
+            add("name", uniqueRandom("adm", "atndente"));
+            add("description", random("grupo 1", "grupo 2"));
+            add("authorities", has(1).of(Authority.class, "unknown"));
         }});
 
         Fixture.of(Group.class).addTemplate("without-name", new Rule(){{
             add("description", random("grupo 1", "grupo 2"));
+            add("authorities", Arrays.asList("ROLE_ADMIN", "ROLE_UNKNOWN"));
         }});
 
         Fixture.of(Authority.class).addTemplate("valid", new Rule(){{
             add("name", uniqueRandom("ROLE_ADMIN", "ROLE_USER"));
+            add("description", uniqueRandom("Role 1", "Role 2"));
+        }});
+
+        Fixture.of(Authority.class).addTemplate("valid-admin", new Rule(){{
+            add("name", uniqueRandom("ROLE_ADMIN"));
             add("description", uniqueRandom("Role 1", "Role 2"));
         }});
 

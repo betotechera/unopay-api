@@ -1,13 +1,12 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.uaa.model.Authority;
+import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +20,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Timed
@@ -34,6 +33,7 @@ public class UserDetailService implements UserDetailsService {
     private AuthorityRepository authorityRepository;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
+
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
@@ -45,28 +45,17 @@ public class UserDetailService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
+    @Transactional
     public UserDetail create(UserDetail user) {
-
-        if(user.getGroups() != null && !user.getGroups().isEmpty()) throw new UnprocessableEntityException("user cant be created with groups");
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setAuthorities(getExistingAuthorities(user.getAuthorities()));
+           // Set<Group> groups = groupService.loadKnownUserGroups(user);
+            //user.setGroups(groups);
             return this.userDetailRepository.save(user);
-
         } catch (DataIntegrityViolationException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
             throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }
-    }
-
-    private Set<String> getExistingAuthorities(Set<String> authorities) {
-        if (authorities == null || authorities.isEmpty()) {
-            return null;
-        }
-        Iterable<Authority> all = authorityRepository.findAll(authorities);
-        return StreamSupport.stream(all.spliterator(), false)
-                .map(Authority::getName)
-                .collect(Collectors.toSet());
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,10 +70,7 @@ public class UserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("bad credentials");
         }
 
-        List<SimpleGrantedAuthority> authorities = user.getAuthorities()
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
 
         AuthUserContextHolder.setAuthUserId(user.getId());
 
@@ -117,10 +103,6 @@ public class UserDetailService implements UserDetailsService {
             current.setEmail(user.getEmail());
         }
 
-        if (user.getAuthorities() != null) {
-            current.setAuthorities(getExistingAuthorities(user.getAuthorities()));
-        }
-
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
@@ -139,7 +121,7 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public List<UserDetail> getByAuthority(String authority) {
-        List<UserDetail> users = this.userDetailRepository.findByAuthoritiesOrderByEmail(authority);
+        List<UserDetail> users = Collections.emptyList();
         if (users == null || users.isEmpty()) {
             throw new NotFoundException("users not found");
         }

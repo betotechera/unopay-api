@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -46,5 +47,15 @@ public class Group implements Serializable{
     @OneToMany
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
+
+    public void addToMyAuthorities(Authority authority){
+        if( getAuthorities() == null) setAuthorities(new HashSet<>());
+        getAuthorities().add(authority);
+    }
+
+    public void addToMyMembers(UserDetail user){
+        if( getMembers() == null) setMembers(new HashSet<>());
+        getMembers().add(user);
+    }
 
 }
