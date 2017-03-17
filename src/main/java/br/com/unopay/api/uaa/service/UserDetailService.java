@@ -46,7 +46,6 @@ public class UserDetailService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
-    @Transactional
     public UserDetail create(UserDetail user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
