@@ -82,8 +82,7 @@ create table oauth_group_authorities (
 );
 
 create table oauth_group_members (
-	 id VARCHAR(256) PRIMARY KEY,
 	user_id varchar(256) not null,
 	group_id varchar(256) not null,
-	constraint fk_group_members_group foreign key(group_id) references oauth_groups(id)
+	constraint fk_oauth_group_members foreign key(group_id) references oauth_groups(id)
 );
