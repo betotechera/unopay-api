@@ -40,4 +40,6 @@ insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao 
 insert into oauth_user_authorities(user_id, authority) values('1', 'ROLE_USER');
 insert into oauth_user_authorities(user_id, authority) values('1', 'ROLE_ADMIN');
 
+insert into oauth_group_authorities(authority, group_id) values('ROLE_ADMIN', '1');
+
 

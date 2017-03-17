@@ -2,6 +2,7 @@ package br.com.unopay.api.uaa.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.JsonPath
@@ -165,10 +166,19 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         result.andExpect(status().isForbidden())
     }
 
-    @Ignore
     void 'should return groups and authorities when get profile'() {
 
         UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+
+        String accessToken = clientCredentialsAccessToken()
+
+        user.getGroups().find().setId('1')
+
+        this.mvc.perform(
+                post("/users?access_token={access_token}", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(user)))
+                .andExpect(status().isCreated())
 
         MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
                 .andExpect(status().isOk())
@@ -178,14 +188,42 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         String userAccessToken = getAccessToken(mvcResult)
         when:
         def result = this.mvc.perform(
-                put("/users/me?access_token={access_token}", userAccessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(user)))
+                get("/users/me/profile?access_token={access_token}", userAccessToken))
+
 
         then:
         result.andExpect(status().isOk())
-                .andExpect(jsonPath('$.items[0].groups', hasSize(2)))
-                .andExpect(jsonPath('$.items[0].groups[0].authorities', hasSize(1)))
+                .andExpect(jsonPath('$.groups', hasSize(1)))
+                .andExpect(jsonPath('$.groups[0].authorities', hasSize(1)))
+    }
+
+
+    void 'when create users with unknown group should not return groups'() {
+
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+
+        String accessToken = clientCredentialsAccessToken()
+
+        this.mvc.perform(
+                post("/users?access_token={access_token}", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(user)))
+                .andExpect(status().isCreated())
+
+        MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
+                .andReturn()
+
+        String userAccessToken = getAccessToken(mvcResult)
+        when:
+        def result = this.mvc.perform(
+                get("/users/me/profile?access_token={access_token}", userAccessToken))
+
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.groups', hasSize(0)))
     }
 
 
