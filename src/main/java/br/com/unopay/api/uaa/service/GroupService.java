@@ -1,14 +1,13 @@
 package br.com.unopay.api.uaa.service;
 
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
-import br.com.unopay.bootcommons.exception.ConflictException;
-import br.com.unopay.bootcommons.exception.NotFoundException;
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
+import br.com.unopay.bootcommons.exception.*;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +22,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static br.com.unopay.api.uaa.exception.Errors.USER_IS_REQUIRED;
 
 @Service
 public class GroupService {
@@ -40,17 +41,17 @@ public class GroupService {
     private AuthorityRepository authorityRepository;
 
     public Group create(Group group) {
-        if(group.getName() == null) throw new UnprocessableEntityException("Name is required");
+        if(group.getName() == null)  throw UnovationExceptions.unprocessableEntity().withErrors(USER_IS_REQUIRED);
         try {
             return repository.save(group);
         }catch (DataIntegrityViolationException ex){
-            throw new ConflictException("Group name already exists");
+            throw UnovationExceptions.conflict().withErrors(Errors.GROUP_NAME_ALREADY_EXISTS).withArguments(group.getName());
         }
     }
 
     public Group getById(String id) {
         Group group =  repository.findById(id);
-        if(group == null) throw new NotFoundException("Group not found");
+        if(group == null) throw UnovationExceptions.notFound();
         return group;
     }
 
@@ -120,7 +121,7 @@ public class GroupService {
     }
 
     public List<Group> findUserGroups(String userId) {
-        if(userId == null) throw new UnprocessableEntityException("User id required");
+        if(userId == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_IS_REQUIRED);
         return repository.findByMembersId(userId);
     }
 }
