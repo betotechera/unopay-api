@@ -6,6 +6,7 @@ import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 @Entity
 @Table(name = "oauth_user_details")
 @Data
+@EqualsAndHashCode(exclude = { "groups" })
 public class UserDetail implements Serializable {
 
     @JsonView(Views.Public.class)

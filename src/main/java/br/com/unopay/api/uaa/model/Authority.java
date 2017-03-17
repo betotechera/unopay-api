@@ -2,6 +2,7 @@ package br.com.unopay.api.uaa.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "authority")
+@EqualsAndHashCode(exclude = { "groups" })
 public class Authority {
 
     @Id

@@ -7,6 +7,7 @@ import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "oauth_groups")
+@EqualsAndHashCode(exclude = {"members", "authorities"})
 public class Group implements Serializable{
 
     @JsonView(Views.Public.class)
@@ -44,7 +46,7 @@ public class Group implements Serializable{
 
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 

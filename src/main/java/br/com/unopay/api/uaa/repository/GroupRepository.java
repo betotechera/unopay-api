@@ -6,11 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface GroupRepository extends CrudRepository<Group,String> {
 
     Group findById(String id);
-    List<Group> findByMembersId(String email);
+    List<Group> findByMembersId(String id);
     Page<Group> findAll(Pageable pageable);
+    Set<Group> findByIdIn(Set<String> ids);
 
 }

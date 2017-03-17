@@ -49,12 +49,13 @@ public class GroupService {
     }
 
     public Group getById(String id) {
-        return repository.findById(id);
+        Group group =  repository.findById(id);
+        if(group == null) throw new NotFoundException("Group not found");
+        return group;
     }
 
     public void delete(String id) {
-        Group group = getById(id);
-        if(group == null) throw new NotFoundException("Group not found");
+        getById(id);
         repository.delete(id);
     }
 
@@ -88,7 +89,7 @@ public class GroupService {
 
     }
 
-    public Page<Authority> findAuhtorities(String id, UnovationPageRequest pageRequest) {
+    public Page<Authority> findAuthorities(String id, UnovationPageRequest pageRequest) {
         if(id == null) throw new UnprocessableEntityException("Group id required");
         return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
@@ -104,7 +105,7 @@ public class GroupService {
     }
 
     private Set<Group> getGroupsById(Set<String> groupsIds) {
-        return StreamSupport.stream(repository.findAll(groupsIds).spliterator(), false).collect(Collectors.toSet());
+        return repository.findByIdIn(groupsIds);
     }
 
     public Set<Group> loadKnownUserGroups(UserDetail user){

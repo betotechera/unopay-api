@@ -70,7 +70,8 @@ create table authority (
 create table oauth_groups (
 	 id VARCHAR(256) PRIMARY KEY,
 	group_name varchar(50) not null,
-	description VARCHAR(256)
+	description VARCHAR(256),
+	version integer
 );
 
 create table oauth_group_authorities (

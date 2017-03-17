@@ -8,6 +8,9 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
 
+import javax.transaction.Transaction
+import javax.transaction.Transactional
+
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.not
@@ -46,13 +49,17 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userGroups = groupService.findUserGroups(user.getId())
 
         then:
-        that user.getAuthoritiesNames(userGroups), contains("ROLE_ADMIN")
+        that userGroups, hasSize(1)
     }
 
     
     void 'when create user known authorities should be saved'() {
         given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        Group group = Fixture.from(Group.class).gimme("valid")
+        groupService.create(group)
+        user.addToMyGroups(group)
+
         when:
         service.create(user)
         def userGroups = groupService.findUserGroups(user.getId())
@@ -77,33 +84,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that updated.getAuthoritiesNames(), not(contains("ROLE_UNKNOWN"))
     }
 
-    
-    void 'when update user known authorities should be saved'() {
-
-        given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
-        when:
-        service.create(user)
-        UserDetail created = service.getById(user.getId())
-        user.getAuthorities().add("ROLE_USER")
-        service.update(created)
-        UserDetail updated = service.getById(user.getId())
-
-        then:
-        that updated.getAuthoritiesNames(), contains("ROLE_ADMIN")
-    }
-
-    
-    void 'given user with group should  be created'(){
-        given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
-        when:
-        service.create(user)
-        UserDetail created = service.getById(user.getId())
-
-        then:
-        that created.getGroups(), hasSize(1)
-    }
 
     void 'given user without group should be created'(){
         given:

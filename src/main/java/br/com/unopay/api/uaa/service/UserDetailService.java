@@ -8,6 +8,7 @@ import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,10 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail create(UserDetail user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-           // Set<Group> groups = groupService.loadKnownUserGroups(user);
-            //user.setGroups(groups);
+            Set<Group> groups = groupService.loadKnownUserGroups(user);
+            user.setGroups(groups);
             return this.userDetailRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
+        } catch (RuntimeException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
             throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }

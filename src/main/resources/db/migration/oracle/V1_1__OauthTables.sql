@@ -71,6 +71,7 @@ create table oauth_groups (
 	 id VARCHAR(256) PRIMARY KEY,
 	group_name varchar(50) not null,
 	description VARCHAR(256),
+	version integer,
 	 CONSTRAINT oauth_group_uk UNIQUE (group_name)
 );
 
