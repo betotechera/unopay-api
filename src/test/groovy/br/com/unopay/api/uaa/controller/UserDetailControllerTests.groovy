@@ -111,7 +111,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     }
 
-    @Ignore
     void should_not_allow_duplicated_users() {
 
         String accessToken = getClientAccessToken()
