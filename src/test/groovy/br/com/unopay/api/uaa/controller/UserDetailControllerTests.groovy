@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.controller
 
+import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -8,6 +9,7 @@ import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
+import spock.lang.Ignore
 
 import static com.google.common.collect.Sets.newHashSet
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
@@ -42,7 +44,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         String accessToken = getClientAccessToken()
 
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
         when:
         def result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -58,7 +60,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         user.setPassword("otherpass")
         user.setEmail(randomAlphabetic(7)+"@gmail.com")
-        user.setAuthorities(newHashSet("ROLE_NEW", "ROLE_CLIENT"))
 
         this.mvc.perform(
                 put("/users/me?access_token={access_token}", userAccessToken)
@@ -78,7 +79,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         String accessToken = getClientAccessToken()
 
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
         when:
         MockHttpServletResponse result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -95,7 +96,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         user.setPassword("otherpass")
         user.setEmail(randomAlphabetic(7)+"@gmail.com")
-        user.setAuthorities(newHashSet("ROLE_NEW", "ROLE_CLIENT"))
 
         String uaaManagerAccessToken = getUAAManagerAccessToken()
 
@@ -111,11 +111,12 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     }
 
-    void should_not_allow_duplicated_users() throws Exception {
+    @Ignore
+    void should_not_allow_duplicated_users() {
 
         String accessToken = getClientAccessToken()
 
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         when:
         this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -131,13 +132,13 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     }
 
 
+
      void should_get_users_by_authority() throws Exception {
 
         String accessToken = getClientAccessToken()
         String authority = "ROLE_ADMIN"
 
         UserDetail user = user()
-        user.setAuthorities(newHashSet(authority))
 
         this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
@@ -191,7 +192,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
-                .andExpect(jsonPath('$.total', is(equalTo(2))))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
     }
 

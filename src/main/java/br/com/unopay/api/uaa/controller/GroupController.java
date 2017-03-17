@@ -104,7 +104,7 @@ public class GroupController {
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
     public Results<Authority> getGroupAuthorities(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
         LOGGER.info("get authorities to group={}", id);
-        Page<Authority> page =  service.findAuhtorities(id, pageable);
+        Page<Authority> page =  service.findAuthorities(id, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/authorities", api));
     }

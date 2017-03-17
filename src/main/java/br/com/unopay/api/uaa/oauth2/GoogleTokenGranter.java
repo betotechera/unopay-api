@@ -55,7 +55,7 @@ public class GoogleTokenGranter extends AbstractTokenGranter {
 
         AuthUserContextHolder.setAuthUserId(user.getId());
 
-        Authentication userAuth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, user.toGrantedAuthorities());
+        Authentication userAuth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, null); //TODO: get authorities from user group
         OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
         return new OAuth2Authentication(storedOAuth2Request, userAuth);
     }

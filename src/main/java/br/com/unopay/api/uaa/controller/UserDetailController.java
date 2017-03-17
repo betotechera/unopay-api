@@ -156,10 +156,9 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
     @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.GET)
-    public Results<Group> getGroups(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
+    public Results<Group> getGroups(@PathVariable("id") String id) {
         LOGGER.info("get members to group={}", id);
-        Page<Group> page =  groupService.findUserGroups(id, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/groups", api));
+        List<Group> groups =  groupService.findUserGroups(id);
+        return new Results<>(groups);
     }
 }

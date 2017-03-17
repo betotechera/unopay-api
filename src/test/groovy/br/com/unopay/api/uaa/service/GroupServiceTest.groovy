@@ -11,7 +11,6 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
-import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 
@@ -73,15 +72,16 @@ class GroupServiceTest extends SpockApplicationTests {
 
         when:
         service.delete(group.getId())
-        Group result = service.getById(group.getId())
+        service.getById(group.getId())
 
         then:
         found != null
-        result == null
+        thrown(NotFoundException)
     }
 
     void 'unknown group should not be deleted'(){
         given:
+        repository.deleteAll()
         Group group = Fixture.from(Group.class).gimme("valid")
 
         when:
@@ -126,7 +126,7 @@ class GroupServiceTest extends SpockApplicationTests {
         when:
         service.addAuthorities(group.getId(), authoritiesIds)
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def members = service.findAuhtorities(result.getId(), page)
+        def members = service.findAuthorities(result.getId(), page)
 
         then:
         that members?.content, hasSize(authorities?.size())
@@ -150,6 +150,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
     void 'should not add authorities without group id'(){
         given:
+        repository.deleteAll()
         Set<Authority> authorities = Fixture.from(Authority.class).gimme(2, "unknown")
         Set<String> authoritiesIds = authorities.collect { it.name }
         when:
@@ -176,6 +177,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
     void 'should not add member without group id'(){
         given:
+        repository.deleteAll()
         Set<UserDetail> users = Fixture.from(UserDetail.class).gimme(2, "without-group")
         Set<String> membersIds = users.collect { it.id }
         when:
@@ -207,7 +209,7 @@ class GroupServiceTest extends SpockApplicationTests {
     void 'when find authority with unknown group id should return empty result'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def members = service.findAuhtorities('1111', page)
+        def members = service.findAuthorities('1111', page)
 
         then:
         that members?.content, hasSize(0)
@@ -216,7 +218,7 @@ class GroupServiceTest extends SpockApplicationTests {
     void 'when find authority without group id should return error'(){
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        service.findAuhtorities(null, page)
+        service.findAuthorities(null, page)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -252,11 +254,10 @@ class GroupServiceTest extends SpockApplicationTests {
         Set<String> groupsIds = groups.collect { it.id }
         when:
         service.associateUserWithGroups(user.getId(), groupsIds)
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        Page<Group> userGroups = service.findUserGroups(result.getId(), page)
+        def userGroups = service.findUserGroups(result.getId())
 
         then:
-        that userGroups?.content, hasSize(groups?.size())
+        that userGroups, hasSize(groups?.size())
         groups?.any { userGroups.any { m -> m.name == it.name } }
     }
 
@@ -288,17 +289,15 @@ class GroupServiceTest extends SpockApplicationTests {
 
     void 'when find group with unknown user email should return empty result'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def groups = service.findUserGroups('asdf@sadf', page)
+        def groups = service.findUserGroups('asdf@sadf')
 
         then:
-        that groups?.content, hasSize(0)
+        that groups, hasSize(0)
     }
 
     void 'when find group without user email should return error'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        service.findUserGroups(null, page)
+        service.findUserGroups(null)
 
         then:
         def ex = thrown(UnprocessableEntityException)

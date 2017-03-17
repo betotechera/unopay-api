@@ -71,6 +71,7 @@ create table oauth_groups (
 	 id VARCHAR(256) PRIMARY KEY,
 	group_name varchar(50) not null,
 	description VARCHAR(256),
+	version integer,
 	 CONSTRAINT oauth_group_uk UNIQUE (group_name)
 );
 
@@ -87,3 +88,4 @@ create table oauth_group_members (
 	constraint fk_group_members_group foreign key(group_id) references oauth_groups(id)
 );
 
+select * from oauth_user_details
