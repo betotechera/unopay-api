@@ -92,7 +92,7 @@ public class UserDetailController {
 
     @PreAuthorize("#oauth2.isUser()")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/users/me/revokeTokens", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/me/tokens", method = RequestMethod.DELETE)
     public void revoke(OAuth2Authentication authentication) {
         Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(authentication.getOAuth2Request().getClientId(), authentication.getName());
         accessTokens.forEach(accessToken -> {
