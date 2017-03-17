@@ -50,7 +50,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(ConflictException)
-        ex.message == 'Group name already exists'
+        ex.errors.first().logref == 'GROUP_NAME_ALREADY_EXISTS'
     }
 
     void 'given group without name should not bet created'(){
@@ -145,7 +145,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "known authorities required"
+        assert  ex.errors.first().logref == "KNOWN_AUTHORITIES_REQUIRED"
     }
 
     void 'should not add authorities without group id'(){
@@ -158,7 +158,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "Group required"
+        assert  ex.errors.first().logref == 'GROUP_REQUIRED'
     }
 
     void 'given unknown members when add members should return error'(){
@@ -172,7 +172,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "known members required"
+        assert  ex.errors.first().logref == "KNOWN_MEMBERS_REQUIRED"
     }
 
     void 'should not add member without group id'(){
@@ -185,7 +185,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "Group required"
+        assert  ex.errors.first().getMessage() == "Group required"
     }
 
     void 'should add known members to known group'(){
@@ -222,7 +222,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.message == 'Group id required'
+        ex.errors.first().logref == 'GROUP_REQUIRED'
     }
 
     void 'when find member with unknown group id should return empty result'(){
@@ -241,7 +241,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.message == 'Group id required'
+        ex.errors.first().logref == 'GROUP_REQUIRED'
     }
 
 
@@ -272,7 +272,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "known groups required"
+        assert  ex.errors.first().logref == "KNOWN_GROUPS_REQUIRED"
     }
 
     void 'should not add group without user id'(){
@@ -284,7 +284,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert  ex.getMessage() == "User required"
+        assert  ex.errors.first().logref == "USER_REQUIRED"
     }
 
     void 'when find group with unknown user email should return empty result'(){
@@ -301,7 +301,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.message == 'User id required'
+        ex.errors.first().logref == 'USER_REQUIRED'
     }
 
 }
