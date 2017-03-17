@@ -50,7 +50,7 @@ repositories {
 
 dependencies {
 	compile 'br.com.unopay:unopay-common-dependencies:0.0.5'
-	compile 'br.com.unopay:unopay-boot-commons:0.0.15'
+	compile 'br.com.unopay:unopay-boot-commons:0.0.18'
 
 	compile 'org.springframework.boot:spring-boot-starter-security'
 	compile 'org.springframework.security.oauth:spring-security-oauth2'
