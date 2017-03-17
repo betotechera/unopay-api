@@ -79,14 +79,6 @@ public class UserDetail implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public String toString() {
-        return "UserDetail{" +
-                "id='" + id + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
     public List<String> getAuthoritiesNames(List<Group> groups) {
         return getAuthorities(groups).stream().map(Authority::getName).collect(Collectors.toList());
     }
@@ -94,5 +86,18 @@ public class UserDetail implements Serializable {
     public void addToMyGroups(Group group){
         if( getGroups() == null) setGroups(new HashSet<>());
         getGroups().add(group);
+    }
+
+    public List<Authority> getGroupAuthorities() {
+        if(groups == null) return Collections.emptyList();
+        return groups.stream().map(Group::getAuthorities).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetail{" +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

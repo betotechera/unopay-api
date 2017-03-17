@@ -69,6 +69,28 @@ class UserDetailServiceTests extends SpockApplicationTests {
     }
 
 
+    void 'when get user should return all groups authorities'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        Group group1 = Fixture.from(Group.class).gimme("valid")
+        Group group2 = Fixture.from(Group.class).gimme("valid")
+        group1.getAuthorities().find().name = 'ROLE_ADMIN'
+        group2.getAuthorities().find().name = 'ROLE_USER'
+        groupService.create(group1)
+        groupService.create(group2)
+        user.addToMyGroups(group1)
+        user.addToMyGroups(group2)
+
+        when:
+        service.create(user)
+        def userResult = service.getById(user.getId())
+
+        then:
+        userResult.getGroupAuthorities()?.any { it.name == "ROLE_ADMIN" }
+        userResult.getGroupAuthorities()?.any { it.name == "ROLE_USER" }
+    }
+
+
     
     void 'when update user unknown authorities should not be saved'() {
 

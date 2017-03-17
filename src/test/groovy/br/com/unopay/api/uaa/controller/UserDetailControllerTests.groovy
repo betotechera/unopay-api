@@ -199,6 +199,37 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.groups[0].authorities', hasSize(1)))
     }
 
+    void 'should return groups authorities inline when get profile'() {
+
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+
+        String accessToken = clientCredentialsAccessToken()
+
+        user.getGroups().find().setId('1')
+
+        this.mvc.perform(
+                post("/users?access_token={access_token}", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(user)))
+                .andExpect(status().isCreated())
+
+        MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
+                .andReturn()
+
+        String userAccessToken = getAccessToken(mvcResult)
+        when:
+        def result = this.mvc.perform(
+                get("/users/me/profile?access_token={access_token}", userAccessToken))
+
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.groups', hasSize(1)))
+                .andExpect(jsonPath('$.groupAuthorities', hasSize(1)))
+    }
+
 
     void 'when create users with unknown group should not return groups'() {
 
