@@ -227,7 +227,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.groups', hasSize(1)))
-                .andExpect(jsonPath('$.groupAuthorities', hasSize(1)))
+                .andExpect(jsonPath('$.groupsAuthorities', hasSize(1)))
     }
 
 

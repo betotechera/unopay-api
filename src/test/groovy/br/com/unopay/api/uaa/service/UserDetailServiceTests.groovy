@@ -4,12 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import org.flywaydb.test.annotation.FlywayTest
 import org.springframework.beans.factory.annotation.Autowired
-
-import javax.transaction.Transaction
-import javax.transaction.Transactional
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.hasSize
@@ -86,8 +81,8 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userResult = service.getById(user.getId())
 
         then:
-        userResult.getGroupAuthorities()?.any { it.name == "ROLE_ADMIN" }
-        userResult.getGroupAuthorities()?.any { it.name == "ROLE_USER" }
+        userResult.getGroupsAuthorities()?.any { it.name == "ROLE_ADMIN" }
+        userResult.getGroupsAuthorities()?.any { it.name == "ROLE_USER" }
     }
 
 
