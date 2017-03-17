@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,15 +44,14 @@ public class UserDetail implements Serializable {
     @Column(name="password")
     private String password;
 
-    @JsonIgnore
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 
-
     @Version
+    @JsonIgnore
     Long version;
-
 
     public UserDetail() {}
 

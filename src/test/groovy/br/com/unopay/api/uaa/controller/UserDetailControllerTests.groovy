@@ -165,6 +165,32 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         result.andExpect(status().isForbidden())
     }
 
+    @Ignore
+    void 'should return groups and authorities when get profile'() {
+
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+
+        MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath('$.access_token', is(notNullValue())))
+                .andReturn()
+
+        String userAccessToken = getAccessToken(mvcResult)
+        when:
+        def result = this.mvc.perform(
+                put("/users/me?access_token={access_token}", userAccessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(user)))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items[0].groups', hasSize(2)))
+                .andExpect(jsonPath('$.items[0].groups[0].authorities', hasSize(1)))
+    }
+
+
+
+
 
     private UserDetail user() {
         UserDetail user = new UserDetail()
@@ -192,6 +218,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
+
     }
 
    

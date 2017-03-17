@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -45,10 +46,15 @@ public class Group implements Serializable{
     private Set<UserDetail> members;
 
 
-    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
+
+    @Version
+    @JsonIgnore
+    Long version;
+
 
     public void addToMyAuthorities(Authority authority){
         if( getAuthorities() == null) setAuthorities(new HashSet<>());
