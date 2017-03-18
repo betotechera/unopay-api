@@ -113,6 +113,7 @@ task copyrelease(type: Copy) {
 	doLast {
 		grgit.add(patterns: ['releases'])
 		grgit.commit(message: "Committing release jar version ${version}", amend: true)
+		grgit.pull()
 		grgit.push()
 	}
 }
