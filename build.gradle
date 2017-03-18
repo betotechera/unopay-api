@@ -106,6 +106,6 @@ bootRun {
 }
 
 task copyrelease(type: Copy) {
-	from "build/libs/$project.name-${version}.jar"
+	from "build/libs/unopay-api-${version}.jar"
 	into 'releases'
 }
