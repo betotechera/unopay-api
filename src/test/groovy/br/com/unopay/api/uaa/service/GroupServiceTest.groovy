@@ -75,6 +75,19 @@ class GroupServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'LARGE_GROUP_DESCRIPTION'
     }
 
+    void 'should not create group with short name'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        group.name = "aa"
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'SHORT_GROUP_NAME'
+    }
+
     void 'should not allow create groups with same name'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")

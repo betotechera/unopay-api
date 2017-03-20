@@ -15,6 +15,8 @@ public class Errors {
 
     public static final UnovationError LARGE_GROUP_DESCRIPTION = new UnovationError("LARGE_GROUP_DESCRIPTION","Lager group name. Max 250 characters");
 
+    public static final UnovationError SHORT_GROUP_NAME = new UnovationError("SHORT_GROUP_NAME","Short group name. Min 3 characters");
+
     public static final UnovationError KNOWN_MEMBERS_REQUIRED = new UnovationError("KNOWN_MEMBERS_REQUIRED","Known members required");
 
     public static final UnovationError KNOWN_AUTHORITIES_REQUIRED = new UnovationError("KNOWN_AUTHORITIES_REQUIRED","Known authorities required");

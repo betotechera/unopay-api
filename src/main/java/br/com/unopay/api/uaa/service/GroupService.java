@@ -30,6 +30,7 @@ public class GroupService {
 
     public static final int MAX_GROUP_NAME = 50;
     public static final int MAX_GROUP_DESCRIPTION = 250;
+    public static final int MIN_GROUP_NAME = 3;
     @Autowired
     private GroupRepository repository;
 
@@ -130,8 +131,6 @@ public class GroupService {
         return repository.findByMembersId(userId);
     }
 
-
-
     public void update(String id, Group group) {
         Group entity = getById(id);
         entity.updateModel(group);
@@ -144,5 +143,6 @@ public class GroupService {
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
         if (group.getDescription().length() > MAX_GROUP_DESCRIPTION)
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
+        if(group.getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
     }
 }
