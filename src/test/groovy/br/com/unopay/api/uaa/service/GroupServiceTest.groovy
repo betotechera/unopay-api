@@ -160,11 +160,10 @@ class GroupServiceTest extends SpockApplicationTests {
         Set<String> authoritiesIds = authorities.collect { it.name }
         when:
         service.addAuthorities(group.getId(), authoritiesIds)
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def groupAuthorities = service.findAuthorities(result.getId(), page)
+        List<Authority> groupAuthorities = service.findAuthorities(result.getId())
 
         then:
-        that groupAuthorities?.content, hasSize(groupAuthorities?.size())
+        that groupAuthorities, hasSize(groupAuthorities?.size())
         groupAuthorities?.any { groupAuthorities.any { m -> m.name == it.name } }
 
     }
@@ -243,17 +242,15 @@ class GroupServiceTest extends SpockApplicationTests {
 
     void 'when find authority with unknown group id should return empty result'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def members = service.findAuthorities('1111', page)
+        def members = service.findAuthorities('1111')
 
         then:
-        that members?.content, hasSize(0)
+        that members, hasSize(0)
     }
 
     void 'when find authority without group id should return error'(){
         when:
-        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        service.findAuthorities(null, page)
+        service.findAuthorities(null)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -350,6 +347,24 @@ class GroupServiceTest extends SpockApplicationTests {
         then:
         thrown(NotFoundException)
     }
+
+
+    void 'should update group '(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        def created = service.create(group)
+
+        when:
+        group.name = 'Updated'
+        group.description = 'Test Update'
+        service.update(created.id,group)
+        def result = service.getById(created.id)
+        then:
+        assert result.name == 'Updated'
+        assert result.description == 'Test Update'
+
+    }
+
 
 
     void 'should not delete group when has known members'(){
