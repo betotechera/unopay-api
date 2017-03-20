@@ -40,6 +40,41 @@ class GroupServiceTest extends SpockApplicationTests {
         result != null
     }
 
+    void 'should not create group with large name'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        group.name = """In sem justo, commodo ut, suscipit at, pharetra vitae, 
+                        orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. 
+                        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
+                        Aliquam id dolor. Class aptent taciti sociosqu ad litora"""
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'LARGE_GROUP_NAME'
+    }
+
+    void 'should not create group with large description'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        group.description = """In sem justo, commodo ut, suscipit at, pharetra vitae, 
+                        orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. 
+                        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
+                        Aliquam id dolor. Class aptent taciti sociosqu ad litora
+                        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
+                        Aliquam id dolor. Class aptent taciti sociosqu ad litora
+                        """
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'LARGE_GROUP_DESCRIPTION'
+    }
+
     void 'should not allow create groups with same name'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -331,7 +366,6 @@ class GroupServiceTest extends SpockApplicationTests {
         def ex = thrown(ConflictException)
         ex.errors.first().logref == 'GROUP_WITH_MEMBERS'
     }
-
 
 
 }

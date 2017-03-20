@@ -28,6 +28,8 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Service
 public class GroupService {
 
+    public static final int MAX_GROUP_NAME = 50;
+    public static final int MAX_GROUP_DESCRIPTION = 250;
     @Autowired
     private GroupRepository repository;
 
@@ -41,7 +43,7 @@ public class GroupService {
     private AuthorityRepository authorityRepository;
 
     public Group create(Group group) {
-        if(group.getName() == null)  throw UnovationExceptions.unprocessableEntity().withErrors(USER_REQUIRED);
+        validateGroup(group);
         try {
             return repository.save(group);
         }catch (DataIntegrityViolationException ex){
@@ -126,5 +128,12 @@ public class GroupService {
     public List<Group> findUserGroups(String userId) {
         if(userId == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_REQUIRED);
         return repository.findByMembersId(userId);
+    }
+
+
+    private void validateGroup(Group group) {
+        if(group.getName() == null)  throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
+        if(group.getName().length() > MAX_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
+        if(group.getDescription().length() > MAX_GROUP_DESCRIPTION) throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
     }
 }

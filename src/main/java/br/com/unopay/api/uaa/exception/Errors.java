@@ -9,6 +9,12 @@ public class Errors {
 
     public static final UnovationError GROUP_REQUIRED = new UnovationError("GROUP_REQUIRED","Group required");
 
+    public static final UnovationError GROUP_NAME_REQUIRED = new UnovationError("GROUP_NAME_REQUIRED","Group name required");
+
+    public static final UnovationError LARGE_GROUP_NAME = new UnovationError("LARGE_GROUP_NAME","Lager group name. Max 50 characters");
+
+    public static final UnovationError LARGE_GROUP_DESCRIPTION = new UnovationError("LARGE_GROUP_DESCRIPTION","Lager group name. Max 250 characters");
+
     public static final UnovationError KNOWN_MEMBERS_REQUIRED = new UnovationError("KNOWN_MEMBERS_REQUIRED","Known members required");
 
     public static final UnovationError KNOWN_AUTHORITIES_REQUIRED = new UnovationError("KNOWN_AUTHORITIES_REQUIRED","Known authorities required");
