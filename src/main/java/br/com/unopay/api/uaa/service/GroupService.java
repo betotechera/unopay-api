@@ -95,9 +95,9 @@ public class GroupService {
 
     }
 
-    public Page<Authority> findAuthorities(String id, UnovationPageRequest pageRequest) {
+    public List<Authority> findAuthorities(String id) {
         if(id == null) throw  UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        return authorityRepository.findByGroupsId(id);
     }
 
     @Transactional
@@ -131,9 +131,18 @@ public class GroupService {
     }
 
 
+
+    public void update(String id, Group group) {
+        Group entity = getById(id);
+        entity.updateModel(group);
+        repository.save(entity);
+    }
+
     private void validateGroup(Group group) {
-        if(group.getName() == null)  throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
-        if(group.getName().length() > MAX_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
-        if(group.getDescription().length() > MAX_GROUP_DESCRIPTION) throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
+        if (group.getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
+        if (group.getName().length() > MAX_GROUP_NAME)
+            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
+        if (group.getDescription().length() > MAX_GROUP_DESCRIPTION)
+            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
     }
 }

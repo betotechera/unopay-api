@@ -4,4 +4,6 @@ public interface Views {
     interface Public {}
 
     interface Internal {}
+
+    interface List {}
 }
