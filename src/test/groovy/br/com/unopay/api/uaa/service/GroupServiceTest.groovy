@@ -290,7 +290,7 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'should connect known groups to known member'(){
+    void 'should associate known groups to known member'(){
         given:
         Set<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
         repository.save(groups)
@@ -306,7 +306,7 @@ class GroupServiceTest extends SpockApplicationTests {
         groups?.any { userGroups.any { m -> m.name == it.name } }
     }
 
-    void 'given unknown groups when connect to user should return error'(){
+    void 'given unknown groups when associate to user should return error'(){
         given:
         Set<Group> groups = Fixture.from(Group.class).gimme(2, "with-id")
         Set<String> groupsIds = groups.collect { it.id }
