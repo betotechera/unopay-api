@@ -7,7 +7,9 @@ public class Errors {
 
     public static final UnovationError USER_REQUIRED = new UnovationError("USER_REQUIRED","User required");
 
-    public static final UnovationError GROUP_REQUIRED = new UnovationError("GROUP_REQUIRED","Group required");
+    public static final UnovationError GROUP_ID_REQUIRED = new UnovationError("GROUP_ID_REQUIRED","Group id required");
+
+    public static final UnovationError GROUP_NOT_FOUND = new UnovationError("GROUP_NOT_FOUND","Group not found");
 
     public static final UnovationError GROUP_NAME_REQUIRED = new UnovationError("GROUP_NAME_REQUIRED","Group name required");
 

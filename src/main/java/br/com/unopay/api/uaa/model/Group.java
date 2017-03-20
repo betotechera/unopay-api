@@ -4,6 +4,7 @@ package br.com.unopay.api.uaa.model;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Update;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -19,11 +20,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static br.com.unopay.api.uaa.exception.Errors.*;
+
 @Entity
 @Data
 @Table(name = "oauth_groups")
 @EqualsAndHashCode(exclude = {"members", "authorities"})
 public class Group implements Serializable{
+
+    public static final int MAX_GROUP_NAME = 50;
+    public static final int MAX_GROUP_DESCRIPTION = 250;
+    public static final int MIN_GROUP_NAME = 3;
 
     @Id
     @JsonView({Views.Public.class,Views.List.class})
@@ -72,5 +79,14 @@ public class Group implements Serializable{
     public void updateModel(Group group) {
         this.name = group.getName();
         this.description = group.getDescription();
+    }
+
+    public void validate(){
+        if (getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
+        if (getName().length() > MAX_GROUP_NAME)
+            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
+        if (getDescription().length() > MAX_GROUP_DESCRIPTION)
+            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
+        if(getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
     }
 }

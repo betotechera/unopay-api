@@ -21,16 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Service
 public class GroupService {
 
-    public static final int MAX_GROUP_NAME = 50;
-    public static final int MAX_GROUP_DESCRIPTION = 250;
-    public static final int MIN_GROUP_NAME = 3;
     @Autowired
     private GroupRepository repository;
 
@@ -44,7 +40,7 @@ public class GroupService {
     private AuthorityRepository authorityRepository;
 
     public Group create(Group group) {
-        validateGroup(group);
+        group.validate();
         try {
             return repository.save(group);
         }catch (DataIntegrityViolationException ex){
@@ -54,15 +50,13 @@ public class GroupService {
 
     public Group getById(String id) {
         Group group =  repository.findById(id);
-        if(group == null) throw UnovationExceptions.notFound();
+        if(group == null) throw UnovationExceptions.notFound().withErrors(GROUP_NOT_FOUND);
         return group;
     }
 
     public void delete(String id) {
         getById(id);
-        Page<UserDetail> members = findMembers(id, new UnovationPageRequest());
-        if(members.getContent() != null && !members.getContent().isEmpty())
-            throw UnovationExceptions.conflict().withErrors(GROUP_WITH_MEMBERS);
+        verifyIfGroupContainsMembers(id);
         repository.delete(id);
     }
 
@@ -72,43 +66,39 @@ public class GroupService {
 
     @Transactional
     public void addMembers(String id, Set<String> memberIds) {
-        Group group = repository.findById(id);
-        if(id == null || group == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        List<UserDetail> users = StreamSupport.stream(userDetailRepository.findAll(memberIds).spliterator(), false).collect(Collectors.toList());
+        Group group = getById(id);
+        Set<UserDetail> users = userDetailRepository.findByIdIn(memberIds);
         if(users.isEmpty()) throw UnovationExceptions.unprocessableEntity().withErrors(KNOWN_MEMBERS_REQUIRED);
         users.forEach(group::addToMyMembers);
         repository.save(group);
     }
 
-    public Page<UserDetail> findMembers(String id, UnovationPageRequest pageRequest) {
-        if(id == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        return userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
-    }
-
     @Transactional
     public void addAuthorities(String id, Set<String> authoritiesIds) {
-        Group group = repository.findById(id);
-        if(id == null || group == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        List<Authority> authorities = StreamSupport.stream(authorityRepository.findAll(authoritiesIds).spliterator(), false).collect(Collectors.toList());
+        Group group = getById(id);
+        Set<Authority> authorities = authorityRepository.findByNameIn(authoritiesIds);
         if(authorities.isEmpty()) throw  UnovationExceptions.unprocessableEntity().withErrors(KNOWN_AUTHORITIES_REQUIRED);
         authorities.forEach(group::addToMyAuthorities);
         repository.save(group);
-
-    }
-
-    public List<Authority> findAuthorities(String id) {
-        if(id == null) throw  UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        return authorityRepository.findByGroupsId(id);
     }
 
     @Transactional
     public void associateUserWithGroups(String userId, Set<String> groupsIds) {
-        UserDetail user = userDetailRepository.findById(userId);
-        if(userId == null || user == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_REQUIRED);
+        UserDetail user = getValidUser(userId);
         Set<Group> groups = getGroupsById(groupsIds);
         if(groups.isEmpty()) throw  UnovationExceptions.unprocessableEntity().withErrors(KNOWN_GROUP_REQUIRED);
         groups.forEach(user::addToMyGroups);
         userDetailRepository.save(user);
+    }
+
+    public Page<UserDetail> findMembers(String id, UnovationPageRequest pageRequest) {
+        if(id == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_ID_REQUIRED);
+        return userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+    }
+
+    public List<Authority> findAuthorities(String id) {
+        if(id == null) throw  UnovationExceptions.unprocessableEntity().withErrors(GROUP_ID_REQUIRED);
+        return authorityRepository.findByGroupsId(id);
     }
 
     private Set<Group> getGroupsById(Set<String> groupsIds) {
@@ -137,12 +127,15 @@ public class GroupService {
         repository.save(entity);
     }
 
-    private void validateGroup(Group group) {
-        if (group.getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
-        if (group.getName().length() > MAX_GROUP_NAME)
-            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
-        if (group.getDescription().length() > MAX_GROUP_DESCRIPTION)
-            throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
-        if(group.getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
+    private UserDetail getValidUser(String userId) {
+        UserDetail user = userDetailRepository.findById(userId);
+        if(userId == null || user == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_REQUIRED);
+        return user;
+    }
+
+    private void verifyIfGroupContainsMembers(String id) {
+        Page<UserDetail> members = findMembers(id, new UnovationPageRequest());
+        if(members.getContent() != null && !members.getContent().isEmpty())
+            throw UnovationExceptions.conflict().withErrors(GROUP_WITH_MEMBERS);
     }
 }
