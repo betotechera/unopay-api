@@ -112,4 +112,18 @@ class UserDetailServiceTests extends SpockApplicationTests {
         then:
         created != null
     }
+
+    void 'when create user should return all required attributes'(){
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        when:
+        service.create(user)
+        UserDetail created = service.getById(user.getId())
+
+        then:
+        created.id != null
+        created.email != null
+        created.password != null
+
+    }
 }
