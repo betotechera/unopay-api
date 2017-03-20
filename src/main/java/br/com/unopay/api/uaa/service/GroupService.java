@@ -127,4 +127,10 @@ public class GroupService {
         if(userId == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_REQUIRED);
         return repository.findByMembersId(userId);
     }
+
+    public void update(String id, Group group) {
+        Group entity = getById(id);
+        entity.updateModel(group);
+        repository.save(entity);
+    }
 }

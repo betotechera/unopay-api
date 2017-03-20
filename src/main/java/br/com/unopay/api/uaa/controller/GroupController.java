@@ -40,7 +40,6 @@ public class GroupController {
     @Autowired
     private GroupService service;
 
-    @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
     public ResponseEntity<Group> create(@Validated(Create.class) @RequestBody Group group) {
@@ -59,6 +58,14 @@ public class GroupController {
         service.delete(id);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/groups/{id}", method = RequestMethod.PUT)
+    public void delete(@PathVariable("id") String id,@RequestBody Group group) {
+        LOGGER.info("updating uaa group {} {}", id, group);
+        service.update(id,group);
+    }
+
+
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/groups/{id}", method = RequestMethod.GET)
@@ -68,6 +75,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.List.class)
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     Results<Group> findAllGroups(@Valid UnovationPageRequest pageable) {
         LOGGER.info("getting all groups");

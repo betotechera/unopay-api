@@ -24,20 +24,20 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"members", "authorities"})
 public class Group implements Serializable{
 
-    @JsonView(Views.Public.class)
     @Id
+    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = Create.class)
     @Column(name="group_name", unique = true)
     private String name;
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Public.class,Views.List.class})
     @Column(name="description")
     private String description;
 
@@ -49,6 +49,7 @@ public class Group implements Serializable{
 
     @OneToMany(fetch = FetchType.EAGER)
     @BatchSize(size = 10)
+    @JsonView({Views.Public.class})
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 
@@ -65,5 +66,10 @@ public class Group implements Serializable{
     public void addToMyMembers(UserDetail user){
         if( getMembers() == null) setMembers(new HashSet<>());
         getMembers().add(user);
+    }
+
+    public void updateModel(Group group) {
+        this.name = group.getName();
+        this.description = group.getDescription();
     }
 }
