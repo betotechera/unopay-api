@@ -126,11 +126,11 @@ class GroupServiceTest extends SpockApplicationTests {
         when:
         service.addAuthorities(group.getId(), authoritiesIds)
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
-        def members = service.findAuthorities(result.getId(), page)
+        def groupAuthorities = service.findAuthorities(result.getId(), page)
 
         then:
-        that members?.content, hasSize(authorities?.size())
-        authorities?.any { members.any { m -> m.name == it.name } }
+        that groupAuthorities?.content, hasSize(groupAuthorities?.size())
+        groupAuthorities?.any { groupAuthorities.any { m -> m.name == it.name } }
 
     }
 
@@ -303,5 +303,35 @@ class GroupServiceTest extends SpockApplicationTests {
         def ex = thrown(UnprocessableEntityException)
         ex.errors.first().logref == 'USER_REQUIRED'
     }
+
+    void 'should delete group '(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        def created = service.create(group)
+
+        when:
+        service.delete(created.id)
+        service.getById(created.id)
+        then:
+        thrown(NotFoundException)
+    }
+
+
+    void 'should not delete group when has known members'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        def result = service.create(group)
+        Set<UserDetail> users = Fixture.from(UserDetail.class).gimme(2, "without-group")
+        userDetailRepository.save(users)
+        Set<String> membersIds = users.collect { it.id }
+        when:
+        service.addMembers(group.getId(), membersIds)
+        service.delete(result.id)
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'GROUP_WITH_MEMBERS'
+    }
+
+
 
 }
