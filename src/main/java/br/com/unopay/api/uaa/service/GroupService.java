@@ -57,6 +57,9 @@ public class GroupService {
 
     public void delete(String id) {
         getById(id);
+        Page<UserDetail> members = findMembers(id, new UnovationPageRequest());
+        if(members.getContent() != null && !members.getContent().isEmpty())
+            throw UnovationExceptions.conflict().withErrors(GROUP_WITH_MEMBERS);
         repository.delete(id);
     }
 
