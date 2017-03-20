@@ -16,6 +16,7 @@ create table oauth_client_details (
 create table oauth_user_details (
   id VARCHAR(256) PRIMARY KEY,
   email VARCHAR(256),
+  name VARCHAR(256),
   password VARCHAR(256),
   version integer
 );

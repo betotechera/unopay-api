@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,11 +38,20 @@ public class UserDetail implements Serializable {
     @JsonView(Views.Public.class)
     @NotNull(groups = Create.class)
     @Column(name="email", unique = true)
+    @Size(min=5, max = 50, groups = {Create.class, Update.class})
     private String email;
+
+
+    @JsonView(Views.Public.class)
+    @NotNull(groups = Create.class)
+    @Column(name="name")
+    @Size(min=2, max = 50, groups = {Create.class, Update.class})
+    private String name;
 
     @JsonView(Views.Internal.class)
     @NotNull(groups = Create.class)
     @Column(name="password")
+    @Size(min=5, max = 50, groups = {Create.class, Update.class})
     private String password;
 
     @OneToMany(fetch = FetchType.EAGER)

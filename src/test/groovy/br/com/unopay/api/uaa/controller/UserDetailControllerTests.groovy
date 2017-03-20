@@ -27,7 +27,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
         String accessToken = getClientAccessToken()
         when:
-        UserDetail user = user()
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
         def result = this.mvc.perform(
                 post("/users?access_token={access_token}", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)

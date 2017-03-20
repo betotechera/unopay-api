@@ -20,6 +20,7 @@ create table oauth_client_details (
 create table oauth_user_details (
   id VARCHAR(256) PRIMARY KEY,
   email VARCHAR(256),
+  email VARCHAR(256),
   password VARCHAR(256),
   version integer,
   CONSTRAINT oauth_user_details_uk UNIQUE (email)

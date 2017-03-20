@@ -123,6 +123,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         then:
         created.id != null
         created.email != null
+        created.name != null
         created.password != null
 
     }
