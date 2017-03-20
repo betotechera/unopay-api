@@ -18,7 +18,7 @@ public class TokenStoreConfig {
 
 
     @Bean
-    @Profile({"qa", "prod"})
+    @Profile({"qa", "hm", "prod"})
     public TokenStore redisTokenStore(RedisConnectionFactory connectionFactory, DataSource dataSource) {
         UnopayRedisTokenStore redisTokenStore = new UnopayRedisTokenStore(connectionFactory);
         JdbcTokenStore jdbcTokenStore = new JdbcTokenStore(dataSource);

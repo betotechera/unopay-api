@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
-    @Profile({"qa", "prod"})
+    @Profile({"qa", "hm", "prod"})
     @Primary
     @Bean(name = "datasource")
     @ConfigurationProperties(prefix="spring.datasource")
