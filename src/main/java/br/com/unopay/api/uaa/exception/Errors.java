@@ -26,5 +26,8 @@ public class Errors {
     public static final UnovationError KNOWN_GROUP_REQUIRED = new UnovationError("KNOWN_GROUPS_REQUIRED","Known groups required");
 
     public static final UnovationError GROUP_WITH_MEMBERS =  new UnovationError("GROUP_WITH_MEMBERS","Cannot exclude group with members");
+
+    public static final UnovationError UNKNOWN_GROUP_FOUND =  new UnovationError("UNKNOWN_GROUP_FOUND","Unknown group found in group list");
+
 }
 

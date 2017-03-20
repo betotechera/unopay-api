@@ -306,6 +306,23 @@ class GroupServiceTest extends SpockApplicationTests {
         groups?.any { userGroups.any { m -> m.name == it.name } }
     }
 
+    void 'should not be associate any group when unknown groups found'(){
+        given:
+        Set<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
+        repository.save(groups)
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        userDetailRepository.save(user)
+        Set<String> groupsIds = groups.collect { it.id }
+        groupsIds.add('id_not_found')
+        when:
+        service.associateUserWithGroups(user.getId(), groupsIds)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.find().logref == 'UNKNOWN_GROUP_FOUND'
+        assert '[id_not_found]' in ex.errors.find().arguments.find()
+    }
+
     void 'given unknown groups when associate to user should return error'(){
         given:
         Set<Group> groups = Fixture.from(Group.class).gimme(2, "with-id")

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 
@@ -87,6 +88,7 @@ public class GroupService {
         UserDetail user = getValidUser(userId);
         Set<Group> groups = getGroupsById(groupsIds);
         if(groups.isEmpty()) throw  UnovationExceptions.unprocessableEntity().withErrors(KNOWN_GROUP_REQUIRED);
+        verifyIfAllGroupsFound(groupsIds, groups);
         groups.forEach(user::addToMyGroups);
         userDetailRepository.save(user);
     }
@@ -137,5 +139,11 @@ public class GroupService {
         Page<UserDetail> members = findMembers(id, new UnovationPageRequest());
         if(members.getContent() != null && !members.getContent().isEmpty())
             throw UnovationExceptions.conflict().withErrors(GROUP_WITH_MEMBERS);
+    }
+
+    private void verifyIfAllGroupsFound(Set<String> groupsIds, Set<Group> groups) {
+        List<String> foundsIds =  groups.stream().map(Group::getId).collect(Collectors.toList());
+        List<String> notFoundIds = groupsIds.stream().filter(id -> !foundsIds.contains(id) ).collect(Collectors.toList());
+        if(!notFoundIds.isEmpty()) throw  UnovationExceptions.unprocessableEntity().withErrors(UNKNOWN_GROUP_FOUND.withArguments(notFoundIds));
     }
 }
