@@ -314,6 +314,24 @@ class GroupServiceTest extends SpockApplicationTests {
     }
 
 
+    void 'should update group '(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        def created = service.create(group)
+
+        when:
+        group.name = 'Updated'
+        group.description = 'Test Update'
+        service.update(created.id,group)
+        def result = service.getById(created.id)
+        then:
+        assert result.name == 'Updated'
+        assert result.description == 'Test Update'
+
+    }
+
+
+
     void 'should not delete group when has known members'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
