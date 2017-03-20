@@ -6,6 +6,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
+import br.com.unopay.bootcommons.jsoncollections.ListResults;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -102,10 +104,9 @@ public class GroupController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
-    public Results<Authority> getGroupAuthorities(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
+    public Results<Authority> getGroupAuthorities(@PathVariable("id") String id) {
         LOGGER.info("get authorities to group={}", id);
-        Page<Authority> page =  service.findAuthorities(id, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/authorities", api));
+        List<Authority> authorities =  service.findAuthorities(id);
+        return new ListResults<>(authorities, String.format("%s/authorities", api));
     }
 }

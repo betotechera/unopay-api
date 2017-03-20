@@ -93,9 +93,9 @@ public class GroupService {
 
     }
 
-    public Page<Authority> findAuthorities(String id, UnovationPageRequest pageRequest) {
+    public List<Authority> findAuthorities(String id) {
         if(id == null) throw  UnovationExceptions.unprocessableEntity().withErrors(GROUP_REQUIRED);
-        return authorityRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        return authorityRepository.findByGroupsId(id);
     }
 
     @Transactional
