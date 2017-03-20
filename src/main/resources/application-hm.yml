@@ -1,0 +1,16 @@
+unopay:
+  api: api.qa.unvlocal.com.br:8080
+spring:
+    jpa:
+        hibernate.ddl-auto: none
+        database-platform: org.hibernate.dialect.Oracle10gDialect
+        generate-ddl: false
+        database: ORACLE
+    datasource:
+        url: jdbc:oracle:thin:@172.31.1.103:1521:ORCL
+        username: administrator
+        password: thUHegu4wU5r
+        driverClassName: oracle.jdbc.OracleDriver
+    redis:
+        host: redis.unvlocal.com.br
+        port: 6379
