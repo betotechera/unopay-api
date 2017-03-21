@@ -23,7 +23,7 @@ create table user_type (
      name VARCHAR(50),
      description VARCHAR(256),
      version integer,
-     CONSTRAINT oauth_user_type_uk UNIQUE (name),
+     CONSTRAINT oauth_user_type_uk UNIQUE (name)
 );
 
 create table oauth_user_details (
