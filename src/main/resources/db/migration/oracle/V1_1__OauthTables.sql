@@ -26,11 +26,6 @@ create table oauth_user_details (
   CONSTRAINT oauth_user_details_uk UNIQUE (email)
 );
 
-create table oauth_user_authorities (
-  user_id VARCHAR(256),
-  authority VARCHAR(256)
-);
-
 create table oauth_client_token (
   token_id VARCHAR(256),
   token BLOB,
