@@ -75,6 +75,17 @@ class GroupServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'LARGE_GROUP_DESCRIPTION'
     }
 
+    void 'should create group without description'(){
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        group.description = null
+        when:
+        def created = service.create(group)
+
+        then:
+        created != null
+    }
+
     void 'should not create group with short name'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")

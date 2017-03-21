@@ -85,7 +85,7 @@ public class Group implements Serializable{
         if (getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
         if (getName().length() > MAX_GROUP_NAME)
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
-        if (getDescription().length() > MAX_GROUP_DESCRIPTION)
+        if (getDescription() != null && getDescription().length() > MAX_GROUP_DESCRIPTION)
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
         if(getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
     }
