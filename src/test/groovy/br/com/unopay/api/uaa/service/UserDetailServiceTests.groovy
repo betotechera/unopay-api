@@ -4,6 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.model.UserType
+import br.com.unopay.api.uaa.repository.UserTypeRepository
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 import static org.hamcrest.Matchers.contains
@@ -15,6 +18,9 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
     @Autowired
     UserDetailService service
+
+    @Autowired
+    UserTypeRepository userTypeRepository
 
     @Autowired
     GroupService groupService
@@ -85,8 +91,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
         userResult.getGroupsAuthorities()?.any { it.name == "ROLE_USER" }
     }
 
-
-    
     void 'when update user unknown authorities should not be saved'() {
 
         given:
@@ -125,6 +129,44 @@ class UserDetailServiceTests extends SpockApplicationTests {
         created.email != null
         created.name != null
         created.password != null
+    }
 
+    void 'should create user with existing userType'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        UserType userType = Fixture.from(UserType.class).gimme("valid")
+        userTypeRepository.save(userType)
+        user.type = userType
+
+        when:
+        def created = service.create(user)
+
+        then:
+        assert created.type != null
+    }
+
+    void 'when create user without user type should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        user.type = null
+        when:
+        service.create(user)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'USER_TYPE_REQUIRED'
+    }
+
+    void 'when create user with unknown user type should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        UserType userType = Fixture.from(UserType.class).gimme("valid")
+        user.type = userType.with { id = null; it }
+        when:
+        service.create(user)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'USER_TYPE_NOT_FOUND'
     }
 }

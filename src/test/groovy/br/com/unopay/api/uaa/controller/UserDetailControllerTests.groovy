@@ -159,12 +159,13 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void should_not_allow_client_authentication_on_user_me() throws Exception {
 
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         String accessToken = clientCredentialsAccessToken()
         when:
         def result = this.mvc.perform(
                 put("/users/me?access_token={access_token}", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(user())))
+                        .content(toJson(user)))
 
         then:
         result.andExpect(status().isForbidden())
@@ -259,20 +260,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.groups', hasSize(0)))
     }
 
-
-
-
-
-    private UserDetail user() {
-        UserDetail user = new UserDetail()
-        user.setId(randomAlphabetic(4))
-        user.setEmail(String.format("%s@gmail.com", randomAlphabetic(3)))
-        user.setPassword(randomAlphabetic(5))
-        return user
-    }
-
-
-   
     void 'given known group and user should be associate user with group'() {
         given:
         String accessToken = getClientAccessToken()

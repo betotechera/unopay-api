@@ -13,12 +13,22 @@ create table oauth_client_details (
   autoapprove VARCHAR(256)
 );
 
+
+create table user_type (
+    id VARCHAR(256) PRIMARY KEY,
+     name VARCHAR(50),
+     description VARCHAR(256),
+     version integer
+);
+
 create table oauth_user_details (
   id VARCHAR(256) PRIMARY KEY,
   email VARCHAR(256),
   name VARCHAR(256),
+  type VARCHAR(256),
   password VARCHAR(256),
-  version integer
+  version integer,
+  constraint fk_user_details_user_type foreign key(type) references user_type(id)
 );
 
 create table oauth_client_token (

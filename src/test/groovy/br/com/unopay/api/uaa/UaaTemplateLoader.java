@@ -6,6 +6,7 @@ import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserType;
 
 import java.util.Arrays;
 
@@ -18,6 +19,7 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("name", firstName());
+            add("type", one(UserType.class, "valid"));
             add("password", regex("\\d{5,8}"));
         }});
 
@@ -26,6 +28,7 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("password", regex("\\d{5,8}"));
             add("name", firstName());
+            add("type", one(UserType.class, "valid"));
             add("groups", has(1).of(Group.class, "valid"));
         }});
 
@@ -34,6 +37,7 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("name", firstName());
             add("password", regex("\\d{5,8}"));
+            add("type", one(UserType.class, "valid"));
             add("groups", has(1).of(Group.class, "with-unknown-role"));
         }});
 
@@ -78,6 +82,11 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("description", uniqueRandom("Role 1", "Role 2"));
         }});
 
+        Fixture.of(UserType.class).addTemplate("valid", new Rule(){{
+            add("id", "1");
+            add("name", uniqueRandom("MASTER", "SUPER"));
+            add("description", uniqueRandom("User type 1", "User type 2"));
+        }});
 
     }
 }

@@ -48,6 +48,12 @@ public class UserDetail implements Serializable {
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 
+    @JsonView(Views.Public.class)
+    @NotNull(groups = {Create.class, Update.class})
+    @ManyToOne
+    @JoinColumn(name="type")
+    private UserType type;
+
     @JsonView(Views.Internal.class)
     @NotNull(groups = Create.class)
     @Column(name="password")

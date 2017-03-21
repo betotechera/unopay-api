@@ -2,11 +2,14 @@ package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import ch.qos.logback.core.net.SyslogOutputStream;
 import org.slf4j.Logger;
@@ -26,20 +29,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
+
 @Service
 @Timed
 public class UserDetailService implements UserDetailsService {
 
     private UserDetailRepository userDetailRepository;
-    private AuthorityRepository authorityRepository;
+    private UserTypeRepository userTypeRepository;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
 
 
     @Autowired
-    public UserDetailService(UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
+    public UserDetailService(UserDetailRepository userDetailRepository, UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
         this.userDetailRepository = userDetailRepository;
-        this.authorityRepository = authorityRepository;
+        this.userTypeRepository = userTypeRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
     }
@@ -49,15 +55,15 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail create(UserDetail user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
             return this.userDetailRepository.save(user);
-        } catch (RuntimeException e) {
+        } catch (DataIntegrityViolationException e) {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
             throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }
     }
-
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -126,5 +132,11 @@ public class UserDetailService implements UserDetailsService {
             throw new NotFoundException("users not found");
         }
         return users;
+    }
+
+    private void validateUserType(UserDetail user) {
+        if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
+        UserType type = userTypeRepository.findById(user.getType().getId());
+        if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
     }
 }
