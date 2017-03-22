@@ -5,6 +5,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserParams;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
+import br.com.unopay.api.uaa.repository.SimplePredicateCreator;
 import br.com.unopay.api.uaa.repository.UserByFields;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
@@ -39,6 +40,9 @@ public class UserDetailService implements UserDetailsService {
     private UserTypeRepository userTypeRepository;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
+
+    @Autowired
+    private SimplePredicateCreator predicateCreator;
 
 
     @Autowired
@@ -140,6 +144,6 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public List<UserDetail> findByCriteria(UserParams params) {
-        return userDetailRepository.findAll(new UserByFields(params));
+        return userDetailRepository.findAll(new UserByFields(params, predicateCreator));
     }
 }

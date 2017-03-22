@@ -1,21 +1,23 @@
 package br.com.unopay.api.uaa.repository;
 
-import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserParams;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserByFields implements Specification<UserDetail>{
 
     private UserParams user;
+    private SimplePredicateCreator predicateCreator;
 
-    public UserByFields(UserParams user){
+    public UserByFields(UserParams user, SimplePredicateCreator predicateCreator){
         this.user = user;
+        this.predicateCreator = predicateCreator;
     }
 
     @Override
@@ -23,16 +25,8 @@ public class UserByFields implements Specification<UserDetail>{
         HashMap<String, String> simpleFields = new HashMap<String, String>(){{
             put("name", user.getName());
             put("email", user.getEmail());
+            put("groups.name", user.getGroupName());
         }};
-        List<Predicate> predicates = simpleFields.entrySet().stream()
-                                    .filter(pair -> pair.getValue() != null)
-                                    .map(pair -> cb.equal(root.get(pair.getKey()), pair.getValue()))
-                                    .collect(Collectors.toList());
-        if( user.getGroupName() != null) {
-            Join<UserDetail, Group> groups = root.join("groups");
-            predicates.add(cb.equal(groups.get("name"), user.getGroupName()));
-        }
-
-        return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        return predicateCreator.create(root, cb, simpleFields);
     }
 }
