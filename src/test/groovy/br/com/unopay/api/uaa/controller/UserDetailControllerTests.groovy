@@ -294,5 +294,26 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         result.andExpect(status().isBadRequest())
     }
 
+    void 'when search user by params should return'() {
+        given:
+        String accessToken = getClientAccessToken()
+
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-group")
+
+        this.mvc.perform(
+                post("/users?access_token={access_token}", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(user)))
+                .andExpect(status().isCreated())
+        when:
+        def name = user.getName()
+        def result = this.mvc.perform(
+                get("/users?name={name}&access_token={access_token}", name, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath('$.items', is(notNullValue())))
+                .andExpect(jsonPath('$.items[0].name', equalTo(name)))
+    }
 
 }

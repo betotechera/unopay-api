@@ -2,16 +2,16 @@ package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserParams;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
-import br.com.unopay.api.uaa.repository.AuthorityRepository;
+import br.com.unopay.api.uaa.repository.UserByFields;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
-import ch.qos.logback.core.net.SyslogOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -138,5 +137,9 @@ public class UserDetailService implements UserDetailsService {
         if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
         UserType type = userTypeRepository.findById(user.getType().getId());
         if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
+    }
+
+    public List<UserDetail> findByCriteria(UserParams params) {
+        return userDetailRepository.findAll(new UserByFields(params));
     }
 }

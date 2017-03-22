@@ -4,12 +4,15 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.model.UserParams
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.not
 import static spock.util.matcher.HamcrestSupport.that
@@ -168,5 +171,65 @@ class UserDetailServiceTests extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find()?.logref == 'USER_TYPE_NOT_FOUND'
+    }
+
+
+    void 'when find user by known name should return'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        service.create(user)
+        def userSearch = new UserParams().with { name = user.name; it }
+
+        when:
+        List<UserDetail> users = service.findByCriteria(userSearch)
+
+        then:
+        that users, hasSize(1)
+    }
+
+    void 'when find user by known email should return'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        service.create(user)
+        def userSearch = new UserParams().with { email = user.email; it }
+
+        when:
+        List<UserDetail> users = service.findByCriteria(userSearch)
+
+        then:
+        that users, hasSize(1)
+    }
+
+    void 'when find user by known group name should return'() {
+        given:
+        List<UserDetail> users = Fixture.from(UserDetail.class).gimme(2, "without-group")
+        List<Group> groups = Fixture.from(Group.class).gimme(2, "valid")
+        groups.each { groupService.create(it) }
+        def user1 = users.find()
+        def user2 = users.last()
+        user1.addToMyGroups(groups)
+        user2.addToMyGroups(groups.last())
+        service.create(user1)
+        service.create(user2)
+        def userSearch = new UserParams().with { groupName = groups.find().name; it }
+
+        when:
+        List<UserDetail> usersFound = service.findByCriteria(userSearch)
+
+        then:
+        that usersFound, hasSize(1)
+    }
+
+    void 'when find user by unknown name should return'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        service.create(user)
+        def userSearch = new UserParams().with { name = 'ze'; it }
+
+        when:
+        List<UserDetail> users = service.findByCriteria(userSearch)
+
+        then:
+        that users, hasSize(0)
     }
 }

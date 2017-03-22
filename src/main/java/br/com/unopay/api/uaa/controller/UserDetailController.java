@@ -2,6 +2,7 @@ package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserParams;
 import br.com.unopay.api.uaa.model.valistionsgroups.Create;
 import br.com.unopay.api.uaa.model.valistionsgroups.Update;
 import br.com.unopay.api.uaa.model.valistionsgroups.Views;
@@ -146,5 +147,14 @@ public class UserDetailController {
         LOGGER.info("get members to group={}", id);
         List<Group> groups =  groupService.findUserGroups(id);
         return new Results<>(groups);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.Public.class)
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public Results<UserDetail> getByParams(UserParams params) {
+        LOGGER.info("search users by filter with params={}", params);
+        List<UserDetail> users =  userDetailService.findByCriteria(params);
+        return new Results<>(users);
     }
 }

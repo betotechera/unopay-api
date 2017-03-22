@@ -104,6 +104,11 @@ public class UserDetail implements Serializable {
         getGroups().add(group);
     }
 
+    public void addToMyGroups(List<Group> groups){
+        if(groups == null) return;
+        groups.forEach(this::addToMyGroups);
+    }
+
     public List<Authority> getGroupsAuthorities() {
         if(groups == null) return Collections.emptyList();
         return groups.stream().map(Group::getAuthorities).flatMap(Collection::stream).collect(Collectors.toList());
