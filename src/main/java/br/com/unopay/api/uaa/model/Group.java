@@ -61,7 +61,7 @@ public class Group implements Serializable{
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="user_type")
