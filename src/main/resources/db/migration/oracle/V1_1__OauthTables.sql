@@ -80,7 +80,7 @@ create table oauth_groups (
 	description VARCHAR(256),
 	user_type VARCHAR(256),
 	version integer,
-	constraint fk_groups_user_type foreign key(user_type) references user_type(id)
+	constraint fk_groups_user_type foreign key(user_type) references user_type(id),
 	CONSTRAINT oauth_group_uk UNIQUE (group_name)
 );
 
