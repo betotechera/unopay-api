@@ -26,12 +26,13 @@ Insert into AUTHORITY(name, description) values('ROLE_LIST_ISSUERS','Permite lis
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUERS','Permite gerenciar Emissores');
 Insert into AUTHORITY(name, description) values('ROLE_LIST_GROUPS','Permite listar Perfis de Acesso');
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_GROUPS','Permite gerenciar Perfis de Acesso');
-
+Insert into AUTHORITY(name, description) values('ROLE_LIST_USERS','Permite listar Usuarios');
+Insert into AUTHORITY(name, description) values('ROLE_MANAGE_USERS','Permite gerenciar Usuarios');
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_ADMIN', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ISSUERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ISSUERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_GROUPS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_GROUPS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-
-
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_USERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_USERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
