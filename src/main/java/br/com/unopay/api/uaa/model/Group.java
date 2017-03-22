@@ -85,6 +85,7 @@ public class Group implements Serializable{
     public void updateModel(Group group) {
         this.name = group.getName();
         this.description = group.getDescription();
+        this.userType = group.getUserType();
     }
 
     public void validate(){

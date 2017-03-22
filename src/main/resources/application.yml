@@ -26,3 +26,8 @@ spring:
     indent_output: true
     deserialization:
         READ_UNKNOWN_ENUM_VALUES_AS_NULL: true
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /docs
