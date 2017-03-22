@@ -75,11 +75,13 @@ create table oauth_approvals (
 );
 
 create table oauth_groups (
-	 id VARCHAR(256) PRIMARY KEY,
+	id VARCHAR(256) PRIMARY KEY,
 	group_name varchar(50) not null,
 	description VARCHAR(256),
+	user_type VARCHAR(256),
 	version integer,
-	 CONSTRAINT oauth_group_uk UNIQUE (group_name)
+	constraint fk_groups_user_type foreign key(user_type) references user_type(id)
+	CONSTRAINT oauth_group_uk UNIQUE (group_name)
 );
 
 create table oauth_group_authorities (

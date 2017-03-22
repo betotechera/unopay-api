@@ -14,7 +14,7 @@ insert into user_type(id, name, description, version) values('92af025e-1580-4c49
 insert into oauth_user_details(id, email,name, type, password, version)
 values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation', '92af025e-1580-4c49-8246-f965e48c5721',  'a023dceb3b15e9b9586bc149e02b57d0f0b6929db9b84bfcaa607216d8fe638c4faf2ca543d2304a', 0);
 
-insert into oauth_groups(id, group_name, description, version) values('99bf9ba6-75e4-4109-b5be-e4858f3f68b2','admin', 'Permite acesso completo ao sistema', 0);
+insert into oauth_groups(id, group_name, description, version, user_type) values('99bf9ba6-75e4-4109-b5be-e4858f3f68b2','admin', 'Permite acesso completo ao sistema', 0, '92af025e-1580-4c49-8246-f965e48c5721');
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 

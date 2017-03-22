@@ -4,9 +4,11 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.*;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +42,14 @@ public class GroupService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
+    @Autowired
+    private UserTypeRepository userTypeRepository;
+
     public Group create(Group group) {
         group.validate();
         try {
+            UserType type = userTypeRepository.findById(group.getUserType().getId());
+            if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
             return repository.save(group);
         }catch (DataIntegrityViolationException ex){
             throw UnovationExceptions.conflict().withErrors(Errors.GROUP_NAME_ALREADY_EXISTS).withArguments(group.getName());

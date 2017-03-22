@@ -77,7 +77,9 @@ create table oauth_groups (
 	 id VARCHAR(256) PRIMARY KEY,
 	group_name varchar(50) not null,
 	description VARCHAR(256),
-	version integer
+	user_type VARCHAR(256),
+	version integer,
+	constraint fk_groups_user_type foreign key(user_type) references user_type(id)
 );
 
 create table oauth_group_authorities (

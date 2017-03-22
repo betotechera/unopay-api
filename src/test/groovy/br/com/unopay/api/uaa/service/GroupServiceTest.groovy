@@ -5,8 +5,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Authority
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.GroupRepository
 import br.com.unopay.api.uaa.repository.UserDetailRepository
+import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -24,6 +26,9 @@ class GroupServiceTest extends SpockApplicationTests {
 
     @Autowired
     UserDetailRepository userDetailRepository
+
+    @Autowired
+    UserTypeRepository userTypeRepository
 
     @Autowired
     GroupRepository repository
@@ -406,8 +411,6 @@ class GroupServiceTest extends SpockApplicationTests {
 
     }
 
-
-
     void 'should not delete group when has known members'(){
         given:
         Group group = Fixture.from(Group.class).gimme("valid")
@@ -423,5 +426,44 @@ class GroupServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'GROUP_WITH_MEMBERS'
     }
 
+    void 'should create group with existing userType'() {
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+
+        UserType userType = Fixture.from(UserType.class).gimme("valid")
+        userTypeRepository.save(userType)
+        group.userType = userType
+
+        when:
+        def created =  service.create(group)
+
+        then:
+        assert created.userType != null
+    }
+
+    void 'when create user without user type should return error'() {
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        group.userType = null
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'USER_TYPE_REQUIRED'
+    }
+
+    void 'when create user with unknown user type should return error'() {
+        given:
+        Group group = Fixture.from(Group.class).gimme("valid")
+        UserType userType = Fixture.from(UserType.class).gimme("valid")
+        group.userType = userType.with { id = null; it }
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'USER_TYPE_NOT_FOUND'
+    }
 
 }

@@ -25,7 +25,7 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Entity
 @Data
 @Table(name = "oauth_groups")
-@EqualsAndHashCode(exclude = {"members", "authorities"})
+@EqualsAndHashCode(exclude = {"members", "authorities", "userType"})
 public class Group implements Serializable{
 
     public static final int MAX_GROUP_NAME = 50;
@@ -61,6 +61,12 @@ public class Group implements Serializable{
     @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 
+    @JsonView(Views.Public.class)
+    @NotNull(groups = {Create.class, Update.class})
+    @ManyToOne
+    @JoinColumn(name="user_type")
+    private UserType userType;
+
     @Version
     @JsonIgnore
     Long version;
@@ -88,5 +94,6 @@ public class Group implements Serializable{
         if (getDescription() != null && getDescription().length() > MAX_GROUP_DESCRIPTION)
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
         if(getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
+        if(getUserType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
     }
 }
