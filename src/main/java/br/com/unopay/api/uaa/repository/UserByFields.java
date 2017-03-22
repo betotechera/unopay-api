@@ -6,7 +6,6 @@ import br.com.unopay.api.uaa.model.UserParams;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.Metamodel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,11 +20,11 @@ public class UserByFields implements Specification<UserDetail>{
 
     @Override
     public Predicate toPredicate(Root<UserDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        HashMap<String, String> fields = new HashMap<String, String>(){{
+        HashMap<String, String> simpleFields = new HashMap<String, String>(){{
             put("name", user.getName());
             put("email", user.getEmail());
         }};
-        List<Predicate> predicates = fields.entrySet().stream()
+        List<Predicate> predicates = simpleFields.entrySet().stream()
                                     .filter(pair -> pair.getValue() != null)
                                     .map(pair -> cb.equal(root.get(pair.getKey()), pair.getValue()))
                                     .collect(Collectors.toList());
