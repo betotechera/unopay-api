@@ -110,7 +110,11 @@ bootRun {
 	systemProperties System.properties
 }
 
-task copyrelease(type: Copy) {
+task removeReleases(type: Exec) {
+	commandLine "bash", "-c", " cd releases; ls -t | tail -n 1 | xargs rm"
+}
+
+task copyrelease(type: Copy, dependsOn: removeReleases) {
 	from "build/libs/unopay-api-${version}.jar"
 	into 'releases'
 	doLast {
@@ -120,3 +124,5 @@ task copyrelease(type: Copy) {
 		grgit.push()
 	}
 }
+
+
