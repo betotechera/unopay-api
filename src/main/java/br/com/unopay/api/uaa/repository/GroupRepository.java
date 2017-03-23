@@ -15,4 +15,5 @@ public interface GroupRepository extends CrudRepository<Group,String> {
     Page<Group> findAll(Pageable pageable);
     Set<Group> findByIdIn(Set<String> ids);
 
+    List<Group> findByUserTypeId(String userTypeId);
 }

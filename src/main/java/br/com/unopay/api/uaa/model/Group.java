@@ -31,19 +31,19 @@ public class Group implements Serializable{
     public static final int MIN_GROUP_NAME = 3;
 
     @Id
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @NotNull(groups = Create.class)
     @Column(name="group_name", unique = true)
     private String name;
 
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @Column(name="description")
     private String description;
 
