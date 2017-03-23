@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.service;
 
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
@@ -61,8 +62,7 @@ public class UserDetailService implements UserDetailsService {
             user.setGroups(groups);
             return this.userDetailRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
-            throw new ConflictException(String.format("user email already exists %s", user.toString()));
+            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
     }
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
