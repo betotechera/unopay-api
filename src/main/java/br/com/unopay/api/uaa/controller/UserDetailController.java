@@ -2,7 +2,7 @@ package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserFilter;
+import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;

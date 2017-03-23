@@ -2,7 +2,7 @@ package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserFilter;
+import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
