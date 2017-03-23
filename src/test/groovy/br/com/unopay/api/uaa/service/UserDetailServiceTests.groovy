@@ -7,6 +7,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.model.filter.UserFilter
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.UserTypeRepository
+import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -235,5 +236,29 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
         then:
         that users.content, hasSize(0)
+    }
+
+    void 'should delete known user'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def created = service.create(user)
+
+        when:
+        service.delete(created.getId())
+        def result = userTypeRepository.findById(created.getId())
+
+        then:
+        result == null
+    }
+
+    void 'when delete unknown user should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+
+        when:
+        service.delete(user.getId())
+
+        then:
+        thrown(NotFoundException)
     }
 }

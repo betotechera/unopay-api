@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 
@@ -122,7 +123,7 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail getByEmail(String email) {
         UserDetail user = this.userDetailRepository.findByEmail(email);
         if (user == null) {
-            throw new NotFoundException("user not found");
+            throw UnovationExceptions.unprocessableEntity().withErrors(USER_NOT_FOUND);
         }
         return user;
     }
@@ -130,7 +131,7 @@ public class UserDetailService implements UserDetailsService {
     public List<UserDetail> getByAuthority(String authority) {
         List<UserDetail> users = Collections.emptyList();
         if (users == null || users.isEmpty()) {
-            throw new NotFoundException("users not found");
+            throw UnovationExceptions.unprocessableEntity().withErrors(USER_NOT_FOUND);
         }
         return users;
     }
@@ -146,6 +147,7 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public void delete(String id) {
+        getById(id);
         userDetailRepository.delete(id);
     }
 }
