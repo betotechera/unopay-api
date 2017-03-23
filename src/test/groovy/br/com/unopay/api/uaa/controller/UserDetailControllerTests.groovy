@@ -313,6 +313,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         then:
         result.andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath('$.items', is(notNullValue())))
+                .andExpect(jsonPath('$.total', equalTo(1)))
                 .andExpect(jsonPath('$.items[0].name', equalTo(name)))
     }
 

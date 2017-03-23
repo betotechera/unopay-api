@@ -11,11 +11,15 @@ import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -139,7 +143,7 @@ public class UserDetailService implements UserDetailsService {
         if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
     }
 
-    public List<UserDetail> findByFilter(UserFilter userFilter) {
-        return userDetailRepository.findAll(new Filter<>(userFilter));
+    public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
+        return userDetailRepository.findAll(new Filter<>(userFilter), new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }

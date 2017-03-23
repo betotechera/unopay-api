@@ -9,13 +9,16 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -148,9 +151,10 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public Results<UserDetail> getByParams(UserFilter params) {
+    public Results<UserDetail> getByParams(UserFilter params,@Validated UnovationPageRequest pageable) {
         LOGGER.info("search users by filter with params={}", params);
-        List<UserDetail> users =  userDetailService.findByFilter(params);
-        return new Results<>(users);
+        Page<UserDetail> page =  userDetailService.findByFilter(params, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/users", api));
     }
 }

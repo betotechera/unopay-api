@@ -8,7 +8,9 @@ import br.com.unopay.api.uaa.model.UserFilter
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.hasSize
@@ -179,10 +181,11 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { name = user.name; it }
 
         when:
-        List<UserDetail> users = service.findByFilter(userSearch)
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<UserDetail> users = service.findByFilter(userSearch, page)
 
         then:
-        that users, hasSize(1)
+        that users.content, hasSize(1)
     }
 
     void 'when find user by known email should return'() {
@@ -192,10 +195,11 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { email = user.email; it }
 
         when:
-        List<UserDetail> users = service.findByFilter(userSearch)
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<UserDetail> users = service.findByFilter(userSearch, page)
 
         then:
-        that users, hasSize(1)
+        that users.content, hasSize(1)
     }
 
     void 'when find user by known group name should return'() {
@@ -212,10 +216,11 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { groupName = groups.find().name; it }
 
         when:
-        List<UserDetail> usersFound = service.findByFilter(userSearch)
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<UserDetail> usersFound = service.findByFilter(userSearch, page)
 
         then:
-        that usersFound, hasSize(1)
+        that usersFound.content, hasSize(1)
     }
 
     void 'when find user by unknown name should return'() {
@@ -225,9 +230,10 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { name = 'ze'; it }
 
         when:
-        List<UserDetail> users = service.findByFilter(userSearch)
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<UserDetail> users = service.findByFilter(userSearch, page)
 
         then:
-        that users, hasSize(0)
+        that users.content, hasSize(0)
     }
 }
