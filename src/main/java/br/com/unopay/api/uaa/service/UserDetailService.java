@@ -1,6 +1,5 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.repository.Filter;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserFilter;
