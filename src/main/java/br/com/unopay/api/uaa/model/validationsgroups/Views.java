@@ -1,4 +1,4 @@
-package br.com.unopay.api.uaa.model.valistionsgroups;
+package br.com.unopay.api.uaa.model.validationsgroups;
 
 public interface Views {
     interface Public {}

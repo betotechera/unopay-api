@@ -2,23 +2,20 @@ package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserParams;
-import br.com.unopay.api.uaa.model.valistionsgroups.Create;
-import br.com.unopay.api.uaa.model.valistionsgroups.Update;
-import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import br.com.unopay.api.uaa.model.UserFilter;
+import br.com.unopay.api.uaa.model.validationsgroups.Create;
+import br.com.unopay.api.uaa.model.validationsgroups.Update;
+import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
-import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +26,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -152,7 +148,7 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public Results<UserDetail> getByParams(UserParams params) {
+    public Results<UserDetail> getByParams(UserFilter params) {
         LOGGER.info("search users by filter with params={}", params);
         List<UserDetail> users =  userDetailService.findByCriteria(params);
         return new Results<>(users);

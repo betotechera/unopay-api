@@ -4,15 +4,13 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.model.UserParams
+import br.com.unopay.api.uaa.model.UserFilter
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.not
 import static spock.util.matcher.HamcrestSupport.that
@@ -178,7 +176,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         service.create(user)
-        def userSearch = new UserParams().with { name = user.name; it }
+        def userSearch = new UserFilter().with { name = user.name; it }
 
         when:
         List<UserDetail> users = service.findByCriteria(userSearch)
@@ -191,7 +189,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         service.create(user)
-        def userSearch = new UserParams().with { email = user.email; it }
+        def userSearch = new UserFilter().with { email = user.email; it }
 
         when:
         List<UserDetail> users = service.findByCriteria(userSearch)
@@ -211,7 +209,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         user2.addToMyGroups(groups.last())
         service.create(user1)
         service.create(user2)
-        def userSearch = new UserParams().with { groupName = groups.find().name; it }
+        def userSearch = new UserFilter().with { groupName = groups.find().name; it }
 
         when:
         List<UserDetail> usersFound = service.findByCriteria(userSearch)
@@ -224,7 +222,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         service.create(user)
-        def userSearch = new UserParams().with { name = 'ze'; it }
+        def userSearch = new UserFilter().with { name = 'ze'; it }
 
         when:
         List<UserDetail> users = service.findByCriteria(userSearch)

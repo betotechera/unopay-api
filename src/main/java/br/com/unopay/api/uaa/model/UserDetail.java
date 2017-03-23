@@ -1,16 +1,14 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.uaa.model.valistionsgroups.Create;
-import br.com.unopay.api.uaa.model.valistionsgroups.Update;
-import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import br.com.unopay.api.uaa.model.validationsgroups.Create;
+import br.com.unopay.api.uaa.model.validationsgroups.Update;
+import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
@@ -19,7 +17,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Entity
 @Table(name = "oauth_user_details")

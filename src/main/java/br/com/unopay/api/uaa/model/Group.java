@@ -1,9 +1,9 @@
 package br.com.unopay.api.uaa.model;
 
 
-import br.com.unopay.api.uaa.model.valistionsgroups.Create;
-import br.com.unopay.api.uaa.model.valistionsgroups.Update;
-import br.com.unopay.api.uaa.model.valistionsgroups.Views;
+import br.com.unopay.api.uaa.model.validationsgroups.Create;
+import br.com.unopay.api.uaa.model.validationsgroups.Update;
+import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -14,10 +14,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
