@@ -6,4 +6,6 @@ public interface Views {
     interface Internal {}
 
     interface List {}
+
+    interface GroupUserType {}
 }
