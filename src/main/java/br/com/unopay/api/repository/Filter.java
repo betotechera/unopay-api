@@ -5,13 +5,13 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Filter<T> implements Specification<T> {
 
@@ -28,34 +28,38 @@ public class Filter<T> implements Specification<T> {
         return create(root, cb, searchableFieldsToMap());
     }
 
-    private HashMap<String, String> searchableFieldsToMap()  {
-        HashMap<String, String> simpleFields = new HashMap<>();
-        for (Field field : searchableType.getDeclaredFields()) {
-            if (field.isAnnotationPresent(SearchableField.class)) {
-                Annotation annotation = field.getAnnotation(SearchableField.class);
-                SearchableField searchableField = (SearchableField) annotation;
-                field.setAccessible(true);
-                try {
-                    String value = (String) field.get(fields);
-                    String fieldValue = Objects.equals(searchableField.field(), "") ? field.getName() : searchableField.field();
-                    simpleFields.put(fieldValue, value);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return simpleFields;
+    private Map<String, String> searchableFieldsToMap()  {
+        return Stream.of(searchableType.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(SearchableField.class))
+                .filter(f -> Objects.nonNull(getFieldValue(f)))
+                .collect(Collectors.toMap(this::getField, this::getFieldValue));
     }
 
-    private <T> Predicate create(Root<T> root, CriteriaBuilder cb, HashMap<String, String> simpleFields) {
+    private String getField(Field field){
+        Annotation annotation = field.getAnnotation(SearchableField.class);
+        SearchableField searchableField = (SearchableField) annotation;
+        return  Objects.equals(searchableField.field(), "") ? field.getName() : searchableField.field();
+    }
+
+    private String getFieldValue(Field field){
+        try {
+            field.setAccessible(true);
+            return (String) field.get(fields);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
+
+    private <T> Predicate create(Root<T> root, CriteriaBuilder cb, Map<String, String> simpleFields) {
         List<Predicate> predicates = simpleFields.entrySet().stream()
                 .filter(pair -> pair.getValue() != null)
-                .map(pair -> create(pair, cb, root))
+                .map(pair -> createAndPredicate(pair, cb, root))
                 .collect(Collectors.toList());
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    private <T> Predicate create(Map.Entry<String, String> pair, CriteriaBuilder cb, Root<T> root){
+    private <T> Predicate createAndPredicate(Map.Entry<String, String> pair, CriteriaBuilder cb, Root<T> root){
         Pattern r = Pattern.compile("(\\w+)\\.(\\w+)");
         Matcher m = r.matcher(pair.getKey());
         if(m.matches()){
