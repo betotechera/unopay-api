@@ -149,7 +149,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.List.class)
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public Results<UserDetail> getByParams(UserFilter userFilter,@Validated UnovationPageRequest pageable) {
         LOGGER.info("search users by filter with filter={}", userFilter);

@@ -24,31 +24,31 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(exclude = { "groups" })
 public class UserDetail implements Serializable {
 
-    @JsonView(Views.Public.class)
     @Id
+    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 
-    @JsonView(Views.Public.class)
     @NotNull(groups = Create.class)
     @Column(name="email", unique = true)
+    @JsonView({Views.Public.class,Views.List.class})
     @Size(min=5, max = 50, groups = {Create.class, Update.class})
     private String email;
 
 
-    @JsonView(Views.Public.class)
-    @NotNull(groups = Create.class)
     @Column(name="name")
+    @NotNull(groups = Create.class)
+    @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 
-    @JsonView(Views.Public.class)
-    @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="type")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private UserType type;
 
     @JsonView(Views.Internal.class)
@@ -57,8 +57,9 @@ public class UserDetail implements Serializable {
     @Size(min=5, max = 50, groups = {Create.class, Update.class})
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
     @BatchSize(size = 10)
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonView({Views.Public.class,Views.List.class})
     @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 
@@ -106,6 +107,7 @@ public class UserDetail implements Serializable {
         groups.forEach(this::addToMyGroups);
     }
 
+    @JsonView(Views.Public.class)
     public List<Authority> getGroupsAuthorities() {
         if(groups == null) return Collections.emptyList();
         return groups.stream().map(Group::getAuthorities).flatMap(Collection::stream).collect(Collectors.toList());
