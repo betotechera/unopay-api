@@ -1,5 +1,6 @@
 package br.com.unopay.api.repository;
 
+import com.google.common.base.Strings;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -30,33 +31,33 @@ public class Filter<T> implements Specification<T> {
 
     private Map<String, String> searchableFieldsToMap()  {
         return Stream.of(searchableType.getDeclaredFields())
-                .filter(f -> f.isAnnotationPresent(SearchableField.class))
-                .filter(f -> Objects.nonNull(getFieldValue(f)))
-                .collect(Collectors.toMap(this::getField, this::getFieldValue));
+                .filter(field -> field.isAnnotationPresent(SearchableField.class))
+                .filter(field -> Objects.nonNull(getFieldValue(field)))
+                .collect(Collectors.toMap(this::getFieldName, this::getFieldValue));
     }
 
     private <T> Predicate create(Root<T> root, CriteriaBuilder cb, Map<String, String> simpleFields) {
         List<Predicate> predicates = simpleFields.entrySet().stream()
-                .filter(pair -> pair.getValue() != null)
-                .map(pair -> createAndPredicate(pair, cb, root))
+                .filter(entry -> Objects.nonNull(entry.getValue()))
+                .map(entry -> createAndPredicate(entry, cb, root))
                 .collect(Collectors.toList());
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
     private <T> Predicate createAndPredicate(Map.Entry<String, String> pair, CriteriaBuilder cb, Root<T> root){
-        Pattern r = Pattern.compile("(\\w+)\\.(\\w+)");
-        Matcher m = r.matcher(pair.getKey());
-        if(m.matches()){
-            Join<T, Object> groups = root.join(m.group(1));
-            return cb.equal(groups.get(m.group(2)), pair.getValue());
+        Pattern pattern = Pattern.compile("(\\w+)\\.(\\w+)");
+        Matcher matcher = pattern.matcher(pair.getKey());
+        if(matcher.matches()){
+            Join<T, Object> groups = root.join(matcher.group(1));
+            return cb.equal(groups.get(matcher.group(2)), pair.getValue());
         }
         return cb.equal(root.get(pair.getKey()), pair.getValue());
     }
 
-    private String getField(Field field){
+    private String getFieldName(Field field){
         Annotation annotation = field.getAnnotation(SearchableField.class);
         SearchableField searchableField = (SearchableField) annotation;
-        return  Objects.equals(searchableField.field(), "") ? field.getName() : searchableField.field();
+        return Strings.isNullOrEmpty(searchableField.field()) ? field.getName() : searchableField.field();
     }
 
     private String getFieldValue(Field field){
