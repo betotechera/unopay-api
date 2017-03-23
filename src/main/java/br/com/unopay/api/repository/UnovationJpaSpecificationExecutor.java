@@ -6,13 +6,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface UnovationJpaSpecificationExecutor<T, R> extends JpaSpecificationExecutor {
+public interface UnovationJpaSpecificationExecutor<T, F> extends JpaSpecificationExecutor {
 
-    default Page<T> findAll(R spec, Pageable pageable){
-        return findAll(new Filter<T>(spec), pageable);
+    default Page<T> findAll(F filter, Pageable pageable){
+        return findAll(new Filter<T>(filter), pageable);
     }
 
-    default List<T> findAll(R spec){
+    default List<T> findAll(F spec){
         return findAll(new Filter<T>(spec));
     }
 
