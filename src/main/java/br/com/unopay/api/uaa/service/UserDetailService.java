@@ -144,4 +144,8 @@ public class UserDetailService implements UserDetailsService {
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
         return userDetailRepository.findAll(userFilter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
+
+    public void delete(String id) {
+        userDetailRepository.delete(id);
+    }
 }
