@@ -35,22 +35,6 @@ public class Filter<T> implements Specification<T> {
                 .collect(Collectors.toMap(this::getField, this::getFieldValue));
     }
 
-    private String getField(Field field){
-        Annotation annotation = field.getAnnotation(SearchableField.class);
-        SearchableField searchableField = (SearchableField) annotation;
-        return  Objects.equals(searchableField.field(), "") ? field.getName() : searchableField.field();
-    }
-
-    private String getFieldValue(Field field){
-        try {
-            field.setAccessible(true);
-            return (String) field.get(fields);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return  null;
-    }
-
     private <T> Predicate create(Root<T> root, CriteriaBuilder cb, Map<String, String> simpleFields) {
         List<Predicate> predicates = simpleFields.entrySet().stream()
                 .filter(pair -> pair.getValue() != null)
@@ -67,6 +51,22 @@ public class Filter<T> implements Specification<T> {
             return cb.equal(groups.get(m.group(2)), pair.getValue());
         }
         return cb.equal(root.get(pair.getKey()), pair.getValue());
+    }
+
+    private String getField(Field field){
+        Annotation annotation = field.getAnnotation(SearchableField.class);
+        SearchableField searchableField = (SearchableField) annotation;
+        return  Objects.equals(searchableField.field(), "") ? field.getName() : searchableField.field();
+    }
+
+    private String getFieldValue(Field field){
+        try {
+            field.setAccessible(true);
+            return (String) field.get(fields);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 
 }
