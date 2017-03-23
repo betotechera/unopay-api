@@ -151,9 +151,9 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public Results<UserDetail> getByParams(UserFilter params,@Validated UnovationPageRequest pageable) {
-        LOGGER.info("search users by filter with params={}", params);
-        Page<UserDetail> page =  userDetailService.findByFilter(params, pageable);
+    public Results<UserDetail> getByParams(UserFilter userFilter,@Validated UnovationPageRequest pageable) {
+        LOGGER.info("search users by filter with filter={}", userFilter);
+        Page<UserDetail> page =  userDetailService.findByFilter(userFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/users", api));
     }
