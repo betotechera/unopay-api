@@ -131,6 +131,12 @@ public class UserDetailController {
         LOGGER.info("updating uaa user {}", user);
         userDetailService.update(user);
     }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    public void remove(@PathVariable  String id) {
+        LOGGER.info("removing uaa userId={}", id);
+        userDetailService.delete(id);
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.PUT)
