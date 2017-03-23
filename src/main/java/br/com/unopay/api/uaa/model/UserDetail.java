@@ -121,4 +121,18 @@ public class UserDetail implements Serializable {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    public void updateModel(UserDetail user) {
+
+        if (user.getEmail() != null) {
+            this.setEmail(user.getEmail());
+        }
+        if (user.getName() != null) {
+            this.setName(user.getName());
+        }
+        if (user.getType() != null) {
+            this.setType(user.getType());
+        }
+
+    }
 }
