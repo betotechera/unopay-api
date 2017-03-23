@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.model.UserFilter
+import br.com.unopay.api.uaa.model.filter.UserFilter
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

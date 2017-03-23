@@ -1,4 +1,4 @@
-package br.com.unopay.api.uaa.model;
+package br.com.unopay.api.uaa.model.filter;
 
 import br.com.unopay.api.repository.SearchableField;
 import lombok.Data;
