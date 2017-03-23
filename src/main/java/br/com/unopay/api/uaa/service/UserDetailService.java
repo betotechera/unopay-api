@@ -143,6 +143,6 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
-        return userDetailRepository.findAll(new Filter<>(userFilter), new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+        return userDetailRepository.findAll(userFilter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }
