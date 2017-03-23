@@ -150,7 +150,7 @@ public class UserDetailController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public Results<UserDetail> getByParams(UserFilter params) {
         LOGGER.info("search users by filter with params={}", params);
-        List<UserDetail> users =  userDetailService.findByCriteria(params);
+        List<UserDetail> users =  userDetailService.findByFilter(params);
         return new Results<>(users);
     }
 }

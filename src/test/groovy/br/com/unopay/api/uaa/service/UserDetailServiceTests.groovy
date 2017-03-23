@@ -179,7 +179,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { name = user.name; it }
 
         when:
-        List<UserDetail> users = service.findByCriteria(userSearch)
+        List<UserDetail> users = service.findByFilter(userSearch)
 
         then:
         that users, hasSize(1)
@@ -192,7 +192,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { email = user.email; it }
 
         when:
-        List<UserDetail> users = service.findByCriteria(userSearch)
+        List<UserDetail> users = service.findByFilter(userSearch)
 
         then:
         that users, hasSize(1)
@@ -212,7 +212,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { groupName = groups.find().name; it }
 
         when:
-        List<UserDetail> usersFound = service.findByCriteria(userSearch)
+        List<UserDetail> usersFound = service.findByFilter(userSearch)
 
         then:
         that usersFound, hasSize(1)
@@ -225,7 +225,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def userSearch = new UserFilter().with { name = 'ze'; it }
 
         when:
-        List<UserDetail> users = service.findByCriteria(userSearch)
+        List<UserDetail> users = service.findByFilter(userSearch)
 
         then:
         that users, hasSize(0)

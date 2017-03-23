@@ -139,7 +139,7 @@ public class UserDetailService implements UserDetailsService {
         if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
     }
 
-    public List<UserDetail> findByCriteria(UserFilter userFilter) {
+    public List<UserDetail> findByFilter(UserFilter userFilter) {
         return userDetailRepository.findAll(new Filter<>(userFilter));
     }
 }
