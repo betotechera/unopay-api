@@ -57,7 +57,9 @@ public class UserDetailService implements UserDetailsService {
 
     public UserDetail create(UserDetail user) {
         try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if(user.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);

@@ -149,6 +149,18 @@ class UserDetailServiceTests extends SpockApplicationTests {
         assert created.type != null
     }
 
+    void 'should create user without password'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        user.password = null
+
+        when:
+        def created = service.create(user)
+
+        then:
+        assert created.type != null
+    }
+
     void 'when create user without user type should return error'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
