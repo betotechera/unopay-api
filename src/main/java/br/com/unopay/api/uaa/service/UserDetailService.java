@@ -104,15 +104,11 @@ public class UserDetailService implements UserDetailsService {
         if (current == null) {
             throw new NotFoundException("current user not found");
         }
-
         if (user.getPassword() != null) {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        if (user.getEmail() != null) {
-            current.setEmail(user.getEmail());
-        }
-
+        current.updateModel(user);
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
