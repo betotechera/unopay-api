@@ -4,6 +4,7 @@ import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
+import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
@@ -71,7 +72,7 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/users/me", method = RequestMethod.PUT)
     public void updateMe(OAuth2Authentication authentication,
-                         @Validated(Update.class) @RequestBody UserDetail user) {
+                         @Validated({Update.class, PasswordRequired.class}) @RequestBody UserDetail user) {
 
         UserDetail userDetail = userDetailService.getByEmail(authentication.getName());
 
