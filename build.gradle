@@ -133,5 +133,6 @@ test.finalizedBy('sonarqube')
 sonarqube {
     properties {
         property 'sonar.projectName', 'unopay-api'
+		property 'sonar.projectKey', 'unopay-api'
     }
 }
