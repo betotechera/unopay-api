@@ -1,6 +1,8 @@
 package br.com.unopay.api.repository;
 
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Filter<T> implements Specification<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Filter.class);
 
     private Class<?> searchableType;
     private Object fields;
@@ -69,7 +72,7 @@ public class Filter<T> implements Specification<T> {
             field.setAccessible(true);
             return (String) field.get(fields);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.warn("could not get field value", e);
             return  null;
         }
     }
