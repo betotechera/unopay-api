@@ -110,7 +110,8 @@ public class UserDetailService implements UserDetailsService {
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("user email already exists %s", user.toString()));
+            LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
+            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
 
     }
