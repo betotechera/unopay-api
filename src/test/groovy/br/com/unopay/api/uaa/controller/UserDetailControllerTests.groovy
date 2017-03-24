@@ -108,7 +108,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
             UserDetail user = getUserWithoutGroup()
         when:
-            performPostToUser(accessToken, user).andExpect(status().isCreated())
+            expectUserCreated(accessToken, user)
         then:
             performPostToUser(accessToken, user).andExpect(status().isConflict())
     }
@@ -155,13 +155,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
             user.getGroups().find().setId('1')
 
-            performPostToUser(accessToken, user).andExpect(status().isCreated())
-
-            MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.access_token', is(notNullValue())))
-                    .andReturn()
-
+            MvcResult mvcResult = expectUserCreatedAndPasswordFlowOk(accessToken, user)
             String userAccessToken = getAccessToken(mvcResult)
         when:
             def result = this.mvc.perform(
@@ -204,27 +198,25 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.groupsAuthorities', is(notNullValue())))
     }
 
-
     void 'when create users with unknown group should not return groups'() {
         given:
             UserDetail user = getUserWithGroup()
 
             String accessToken = clientCredentialsAccessToken()
 
-            performPostToUser(accessToken, user).andExpect(status().isCreated())
-
-            MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.access_token', is(notNullValue())))
-                    .andReturn()
+            MvcResult mvcResult = expectUserCreatedAndPasswordFlowOk(accessToken, user)
 
             String userAccessToken = getAccessToken(mvcResult)
         when:
-            def result = this.mvc.perform(
-                get(PROFILE_ENDPOINT, userAccessToken))
+            def result = this.mvc.perform(get(PROFILE_ENDPOINT, userAccessToken))
         then:
-            result.andExpect(status().isOk())
-                .andExpect(jsonPath('$.groups', hasSize(0)))
+            result.andExpect(status().isOk()).andExpect(jsonPath('$.groups', hasSize(0)))
+    }
+
+    private MvcResult expectUserCreatedAndPasswordFlowOk(String accessToken, UserDetail user) {
+        expectUserCreated(accessToken, user)
+        MvcResult mvcResult = passwordFlow(user.getEmail(), user.getPassword()).andExpect(status().isOk()).andExpect(jsonPath('$.access_token', is(notNullValue()))).andReturn()
+        mvcResult
     }
 
     void 'given known group and user should be associate user with group'() {
@@ -264,7 +256,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
             UserDetail user = getUserWithGroup()
 
-            performPostToUser(accessToken, user).andExpect(status().isCreated())
+            expectUserCreated(accessToken, user)
         when:
             def name = user.getName()
             def result = this.mvc.perform(
@@ -291,6 +283,10 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     ResultActions performPostToUser(String accessToken, UserDetail user) {
         this.mvc.perform(postToUserEndpoint(accessToken, user))
+    }
+
+    ResultActions expectUserCreated(String accessToken, UserDetail user) {
+        performPostToUser(accessToken, user).andExpect(status().isCreated())
     }
 
 }
