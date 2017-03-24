@@ -134,5 +134,6 @@ sonarqube {
     properties {
         property 'sonar.projectName', 'unopay-api'
 		property 'sonar.projectKey', 'unopay-api'
+		property 'sonar.exclusions', '**/*.html'
     }
 }

@@ -3,8 +3,8 @@ package br.com.unopay.api.uaa.service;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.model.UserType;
+import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
@@ -31,9 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Service
 @Timed
@@ -112,7 +110,6 @@ public class UserDetailService implements UserDetailsService {
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
-            LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
             throw new ConflictException(String.format("user email already exists %s", user.toString()));
         }
 
@@ -128,7 +125,7 @@ public class UserDetailService implements UserDetailsService {
 
     public List<UserDetail> getByAuthority(String authority) {
         List<UserDetail> users = Collections.emptyList();
-        if (users == null || users.isEmpty()) {
+        if (users.isEmpty()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(USER_NOT_FOUND);
         }
         return users;
