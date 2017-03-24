@@ -32,14 +32,14 @@ public class Filter<T> implements Specification<T> {
         return createValidPredicate(root, cb, searchableFieldsToMap());
     }
 
-    private Map<String, String> searchableFieldsToMap()  {
+    private Map<String, Object> searchableFieldsToMap()  {
         return Stream.of(searchableType.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(SearchableField.class))
                 .filter(field -> Objects.nonNull(getFieldValue(field)))
                 .collect(Collectors.toMap(this::getFieldName, this::getFieldValue));
     }
 
-    private <T> Predicate createValidPredicate(Root<T> root, CriteriaBuilder cb, Map<String, String> simpleFields) {
+    private <T> Predicate createValidPredicate(Root<T> root, CriteriaBuilder cb, Map<String, Object> simpleFields) {
         List<Predicate> predicates = simpleFields.entrySet().stream()
                 .filter(entry -> Objects.nonNull(entry.getValue()))
                 .map(entry -> createPredicate(entry, cb, root))
@@ -47,7 +47,7 @@ public class Filter<T> implements Specification<T> {
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    private <T> Predicate createPredicate(Map.Entry<String, String> pair, CriteriaBuilder cb, Root<T> root){
+    private <T> Predicate createPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root){
         Pattern referencePattern = Pattern.compile("(\\w+)\\.(\\w+)");
         Matcher joinMatcher = referencePattern.matcher(pair.getKey());
         if(joinMatcher.matches()){
@@ -56,7 +56,7 @@ public class Filter<T> implements Specification<T> {
         return cb.equal(root.get(pair.getKey()), pair.getValue());
     }
 
-    private <T> Predicate createJoinPredicate(Map.Entry<String, String> pair, CriteriaBuilder cb, Root<T> root, Matcher joinMatcher) {
+    private <T> Predicate createJoinPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root, Matcher joinMatcher) {
         Join<T, Object> groups = root.join(joinMatcher.group(1));
         return cb.equal(groups.get(joinMatcher.group(2)), pair.getValue());
     }
@@ -67,10 +67,10 @@ public class Filter<T> implements Specification<T> {
         return Strings.isNullOrEmpty(searchableField.field()) ? field.getName() : searchableField.field();
     }
 
-    private String getFieldValue(Field field){
+    private Object getFieldValue(Field field){
         try {
             field.setAccessible(true);
-            return (String) field.get(fields);
+            return field.get(fields);
         } catch (IllegalAccessException e) {
             LOGGER.warn("could not get field value", e);
             return  null;
