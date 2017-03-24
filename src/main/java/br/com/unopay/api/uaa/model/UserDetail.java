@@ -1,7 +1,7 @@
 package br.com.unopay.api.uaa.model;
 
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.NeedPassword;
+import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,7 +55,7 @@ public class UserDetail implements Serializable {
     @JsonView(Views.Internal.class)
     @NotNull(groups = Create.class)
     @Column(name="password")
-    @Size(min=5, max = 50, groups = {NeedPassword.class })
+    @Size(min=5, max = 50, groups = {PasswordRequired.class })
     private String password;
 
     @BatchSize(size = 10)
