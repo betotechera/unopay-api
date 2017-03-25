@@ -41,6 +41,8 @@ public class Errors {
 
     public static UnovationError USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP =  new UnovationError("USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP","User type must set a PaymentRuleGroup");
 
-    public static UnovationError PAYMENT_RULE_GROUP_NOT_FOUND =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
+    public static UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
+
+    public static UnovationError PAYMENT_RULE_GROUP_WITH_USERS =  new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
 }
 

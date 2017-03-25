@@ -3,6 +3,8 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_WITH_MEMBERS;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -20,9 +24,12 @@ public class PaymentRuleGroupService {
 
     private PaymentRuleGroupRepository repository;
 
+    private UserDetailRepository userDetailRepository;
+
     @Autowired
-    public PaymentRuleGroupService(PaymentRuleGroupRepository repository) {
+    public PaymentRuleGroupService(PaymentRuleGroupRepository repository,UserDetailRepository userDetailRepository) {
         this.repository = repository;
+        this.userDetailRepository = userDetailRepository;
     }
 
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
@@ -60,6 +67,14 @@ public class PaymentRuleGroupService {
 
     public void delete(String id) {
         getById(id);
+        if(hasUser(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_WITH_USERS);
+        }
+
         repository.delete(id);
+    }
+
+    private Boolean hasUser(String id) {
+        return userDetailRepository.countByPaymentRuleGroupId(id) > 0;
     }
 }
