@@ -112,7 +112,7 @@ public class UaaTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(UserType.class).addTemplate("payment-rule-group", new Rule(){{
-            add("id", "1");
+            add("id", "2");
             add("name", "ARRANJO");
             add("description", "Arranjo de Pagamento");
         }});
