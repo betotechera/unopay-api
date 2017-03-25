@@ -15,4 +15,6 @@ public interface UserDetailRepository extends CrudRepository<UserDetail,String>,
     UserDetail findById(String id);
     Page<UserDetail> findByGroupsId(String id, Pageable pageable);
     Set<UserDetail> findByIdIn(Set<String> usersIds);
+
+    Long countByPaymentRuleGroupId(String id);
 }
