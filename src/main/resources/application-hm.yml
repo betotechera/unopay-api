@@ -14,3 +14,15 @@ spring:
     redis:
         host: redis.unvlocal.com.br
         port: 6379
+    rabbitmq:
+        host: rabbitmq.qa.unvlocal.com.br
+        port: 5672
+        username: notifications
+        password: 1234
+    mail:
+      default-encoding: UTF-8
+      host: localhost
+      port: 1025
+      test-connection: false
+      properties:
+        mail.smtp.host: smtp.gmail.com
