@@ -59,7 +59,7 @@ public class UserDetail implements Serializable {
     private PaymentRuleGroup paymentRuleGroup;
 
     @JsonView(Views.Internal.class)
-    @NotNull(groups = Create.class)
+    @NotNull(groups = PasswordRequired.class)
     @Column(name="password")
     @Size(min=5, max = 50, groups = {PasswordRequired.class })
     private String password;
