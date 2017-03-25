@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.model;
 
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -51,6 +52,11 @@ public class UserDetail implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private UserType type;
+
+    @ManyToOne
+    @JoinColumn(name="payment_rule_group_id")
+    @JsonView({Views.Public.class})
+    private PaymentRuleGroup paymentRuleGroup;
 
     @JsonView(Views.Internal.class)
     @NotNull(groups = Create.class)

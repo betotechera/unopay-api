@@ -57,7 +57,8 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that userGroups, hasSize(1)
     }
 
-    
+
+
     void 'when create user known authorities should be saved'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
@@ -172,6 +173,27 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find()?.logref == 'USER_TYPE_REQUIRED'
     }
+    void 'when create user with type ARRANJO should have a PaymentRuleGroup'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-payment-rule-group")
+        when:
+        service.create(user)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP'
+    }
+
+    void 'success creating user with type ARRANJO and a PaymentRuleGroup'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-payment-rule-group")
+        when:
+        def created = service.create(user)
+
+        then:
+            assert  created.id
+    }
+
 
     void 'when create user with unknown user type should return error'() {
         given:

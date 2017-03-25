@@ -35,9 +35,12 @@ public class Errors {
 
     public static final UnovationError UNKNOWN_GROUP_FOUND =  new UnovationError("UNKNOWN_GROUP_FOUND","Unknown group found in group list");
 
-
     public static UnovationError USER_EMAIL_ALREADY_EXISTS =  new UnovationError("USER_EMAIL_ALREADY_EXISTS","User email already exists");
 
     public static UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =  new UnovationError("PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS","Payment rule code already exists");
+
+    public static UnovationError USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP =  new UnovationError("USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP","User type must set a PaymentRuleGroup");
+
+    public static UnovationError PAYMENT_RULE_GROUP_NOT_FOUND =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
 }
 

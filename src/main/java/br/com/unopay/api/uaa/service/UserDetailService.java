@@ -1,14 +1,16 @@
 package br.com.unopay.api.uaa.service;
 
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
+import br.com.unopay.api.uaa.model.UserTypeNames;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
-import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -32,23 +34,27 @@ import java.util.List;
 import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.model.UserTypeNames.PAYMENT_RULE_GROUP;
 
 @Service
 @Timed
 public class UserDetailService implements UserDetailsService {
 
     private UserDetailRepository userDetailRepository;
+    private PaymentRuleGroupRepository paymentRuleGroupRepository;
     private UserTypeRepository userTypeRepository;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
 
 
     @Autowired
-    public UserDetailService(UserDetailRepository userDetailRepository, UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
+    public UserDetailService(UserDetailRepository userDetailRepository, UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder, GroupService groupService,
+                             PaymentRuleGroupRepository paymentRuleGroupRepository) {
         this.userDetailRepository = userDetailRepository;
         this.userTypeRepository = userTypeRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
+        this.paymentRuleGroupRepository = paymentRuleGroupRepository;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
@@ -136,6 +142,15 @@ public class UserDetailService implements UserDetailsService {
         if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
         UserType type = userTypeRepository.findById(user.getType().getId());
         if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
+        if(type.getName().equals(PAYMENT_RULE_GROUP)){
+            if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null)
+               throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP);
+            else{
+                PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findOne(user.getPaymentRuleGroup().getId());
+                if(paymentRuleGroup == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
+            }
+
+        }
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {

@@ -9,7 +9,7 @@ insert into user_type(id, name, description, version) values('701ca5dc-a6ac-47df
 insert into user_type(id, name, description, version) values('0c6c0e54-3ea6-41a6-901c-d1ec0fca3d05', 'CONTRATANTE', 'Contratante', 0);
 insert into user_type(id, name, description, version) values('865b362c-fc31-4a35-b118-6da78147559f', 'CONTRATADO', 'Contratado', 0);
 insert into user_type(id, name, description, version) values('5ba95e66-5e88-4ba8-bdf4-66a7a480c252', 'PARCEIRO', 'Parceiro', 0);
-insert into user_type(id, name, description, version) values('92af025e-1580-4c49-8246-f965e48c5721', 'ARRANJO', 'Arranjo de pagamento', 0);
+insert into user_type(id, name, description, version) values('92af025e-1580-4c49-8246-f965e48c5721', 'PAYMENT_RULE_GROUP', 'Arranjo de pagamento', 0);
 
 insert into oauth_user_details(id, email,name, type, password, version)
 values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation', '92af025e-1580-4c49-8246-f965e48c5721',  'a023dceb3b15e9b9586bc149e02b57d0f0b6929db9b84bfcaa607216d8fe638c4faf2ca543d2304a', 0);

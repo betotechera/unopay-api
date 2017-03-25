@@ -3,6 +3,7 @@ package br.com.unopay.api.uaa;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -22,6 +23,24 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("type", one(UserType.class, "valid"));
             add("password", regex("\\d{5,8}"));
         }});
+
+        Fixture.of(UserDetail.class).addTemplate("without-payment-rule-group", new Rule(){{
+            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
+            add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
+            add("name", firstName());
+            add("type", one(UserType.class, "payment-rule-group"));
+            add("password", regex("\\d{5,8}"));
+        }});
+
+        Fixture.of(UserDetail.class).addTemplate("with-payment-rule-group", new Rule(){{
+            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
+            add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
+            add("name", firstName());
+            add("type", one(UserType.class, "payment-rule-group"));
+            add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
+            add("password", regex("\\d{5,8}"));
+        }});
+
 
         Fixture.of(UserDetail.class).addTemplate("with-group", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
@@ -90,6 +109,12 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("id", "1");
             add("name", uniqueRandom("MASTER", "SUPER"));
             add("description", uniqueRandom("User type 1", "User type 2"));
+        }});
+
+        Fixture.of(UserType.class).addTemplate("payment-rule-group", new Rule(){{
+            add("id", "1");
+            add("name", "ARRANJO");
+            add("description", "Arranjo de Pagamento");
         }});
 
     }
