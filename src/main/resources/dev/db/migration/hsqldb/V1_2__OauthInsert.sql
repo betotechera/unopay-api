@@ -33,11 +33,13 @@ values('1', 'administrador', 'grupo de administradores', 0);
 insert into oauth_groups(id, group_name, description, version)
 values('2', 'atendente', 'grupo de atendentes', 0);
 
-insert into user_type(id, name, description, version)
-values('1', 'ARRANJO', 'Arranjo de pagamento', 0);
 
 insert into user_type(id, name, description, version)
-values('2', 'EMISSORA', 'Emissora', 0);
+values('1', 'EMISSORA', 'Emissora', 0);
+
+insert into user_type(id, name, description, version)
+values('2', 'ARRANJO', 'Arranjo de pagamento', 0);
+
 
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
