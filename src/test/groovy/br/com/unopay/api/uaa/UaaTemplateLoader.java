@@ -37,7 +37,7 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("name", firstName());
             add("type", one(UserType.class, "payment-rule-group"));
-            add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
+            add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
             add("password", regex("\\d{5,8}"));
         }});
 

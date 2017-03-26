@@ -17,4 +17,4 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_PAYME
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_PAYMENT_RULE_GROUP', '1');
 ALTER TABLE oauth_user_details ADD payment_rule_group_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fk_user_details_rule_group FOREIGN KEY(payment_rule_group_id) REFERENCES payment_rule_group(id);
-
+UPDATE OAUTH_USER_DETAILS set payment_rule_group_id = '1' where id = '1'
