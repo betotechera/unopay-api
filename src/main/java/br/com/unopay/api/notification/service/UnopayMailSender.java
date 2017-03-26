@@ -1,5 +1,6 @@
 package br.com.unopay.api.notification.service;
 
+import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.engine.TemplateProcessor;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.notification.repository.NotificationRepository;
@@ -25,6 +26,9 @@ public class UnopayMailSender {
 
     @Autowired
     private NotificationRepository repository;
+
+    @Autowired
+    private MailValidator mailValidator;
 
     @Autowired
     TemplateProcessor templateProcessor;
@@ -57,7 +61,7 @@ public class UnopayMailSender {
     }
 
     private boolean valid(Notification notification){
-        boolean valid = notification.getEmail() != null && notification.getEmail().getTo() != null; //TODO validate email
+        boolean valid = notification.getEmail() != null && notification.getEmail().getTo() != null && !mailValidator.isValid(notification.getEmail().getTo());
         if(!valid){
             log.warn("Invalid notification mail. Type={}", notification.getEventType());
         }

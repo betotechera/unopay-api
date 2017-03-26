@@ -44,7 +44,7 @@ public class MimeMessageFactory {
     }
 
     private void validateEmailTo(Email email) {
-        if (email.getTo() == null || email.getTo().isEmpty()) //TODO: validate emails
+        if (email.getTo() == null || email.getTo().isEmpty() || !mailValidator.isValid(email.getTo()))
             throw new IllegalArgumentException("Invalid mail to");
     }
 
