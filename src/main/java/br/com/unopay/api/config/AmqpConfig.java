@@ -1,4 +1,4 @@
-package br.com.unopay.api.notification.config;
+package br.com.unopay.api.config;
 
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;

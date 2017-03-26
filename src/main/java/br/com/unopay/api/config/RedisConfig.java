@@ -1,4 +1,4 @@
-package br.com.unopay.api.notification.config;
+package br.com.unopay.api.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

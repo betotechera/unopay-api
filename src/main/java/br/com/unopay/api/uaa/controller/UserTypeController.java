@@ -1,7 +1,12 @@
 package br.com.unopay.api.uaa.controller;
 
 
+import br.com.unopay.api.notification.model.Email;
+import br.com.unopay.api.notification.model.EventType;
+import br.com.unopay.api.notification.model.Notification;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.model.Group;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.UserTypeService;
@@ -16,7 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Timed(prefix = "api")
 @RestController
@@ -30,13 +37,25 @@ public class UserTypeController {
     @Value("${unopay.api}")
     private String api;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/user-types", method = RequestMethod.GET)
     public Results<UserType> findAll() {
         LOGGER.info("find all user types");
+        notifyTeste();
         List<UserType> types = service.findAll();
         return new Results<>(types);
+    }
+
+    private void notifyTeste(){
+        Email email = new Email(){{setTo("teste@teste.com.br");}};
+        UserDetail user = new UserDetail() {{ setName("ze"); }};
+        Map<String, Object> payload = new HashMap<String, Object>() {{ put("user",user); }};
+        Notification notification = new Notification(){{setEmail(email); setContent("TESTE"); setEventType(EventType.CREATE_PASSWORD); setPayload(payload);}};
+        notificationService.notify(notification);
     }
 
     @JsonView(Views.GroupUserType.class)
