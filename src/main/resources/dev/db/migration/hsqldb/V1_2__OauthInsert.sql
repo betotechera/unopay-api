@@ -44,13 +44,9 @@ values('2', 'ARRANJO', 'Arranjo de pagamento', 0);
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
-Insert into AUTHORITY(name, description) values('ROLE_LIST_ISSUERS','Permite listar Emissores');
-Insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUERS','Permite gerenciar Emissores');
 Insert into AUTHORITY(name, description) values('ROLE_LIST_GROUPS','Permite listar Perfis de Acesso');
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_GROUPS','Permite gerenciar Perfis de Acesso');
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_ADMIN', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ISSUERS', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ISSUERS', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_GROUPS', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_GROUPS', '1');
