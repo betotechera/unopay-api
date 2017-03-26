@@ -6,13 +6,14 @@ import br.com.unopay.api.notification.repository.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 
 import javax.mail.internet.MimeMessage;
-import javax.security.auth.Subject;
 import java.util.Date;
 
 
 @Slf4j
+@Component
 public class UnopayMailSender {
 
 
@@ -21,9 +22,6 @@ public class UnopayMailSender {
 
     @Autowired
     private MimeMessageFactory messageFactory;
-
-    @Autowired
-    private Subject subject;
 
     @Autowired
     private NotificationRepository repository;

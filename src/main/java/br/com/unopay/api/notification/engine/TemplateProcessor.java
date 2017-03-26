@@ -2,6 +2,7 @@ package br.com.unopay.api.notification.engine;
 
 import br.com.unopay.api.notification.model.Notification;
 import com.hubspot.jinjava.Jinjava;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,15 @@ import java.util.Map;
 
 @Component
 @Slf4j
+@Data
 public class TemplateProcessor {
 
     static HashMap<String, String> cache = new HashMap<>();
 
     @Autowired
-    Jinjava jinjava;
+    private Jinjava jinjava;
+
+    private TemplateLoader templateLoader;
 
     public String renderHtml(Notification notification) {
         log.info("getting html notification");
@@ -31,17 +35,16 @@ public class TemplateProcessor {
     }
 
     private void validateNotification(Notification notification) {
-        Validate.notNull(notification.getEventType());
-        Validate.notNull(notification.getPayload());
+        if(notification.getEventType() == null) throw new IllegalArgumentException();
+        if(notification.getPayload() == null) throw new IllegalArgumentException();
     }
 
     private String getCachedTemplate(Notification notification) {
         if (!cache.containsKey(cacheKey(notification))) {
             try {
-                String template = ""; //TODO getTemplate
-                cache.put(notification.getEventType().toString(), template);
+                String template = templateLoader.getTemplate(notification.getEventType().toString());
                 cache.put(cacheKey(notification), template);
-            } catch(Exception e){ //TODO IOEXECPTION
+            } catch(Exception e){
                 log.error("template not found to event={}", notification.getEventType());
                 throw new IllegalStateException("template not found to event");
             }
