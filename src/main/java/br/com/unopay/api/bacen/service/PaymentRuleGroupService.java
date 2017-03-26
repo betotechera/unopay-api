@@ -32,6 +32,7 @@ public class PaymentRuleGroupService {
 
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
         try {
+            paymentRuleGroup.validate();
           return repository.save(paymentRuleGroup);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("PaymentRuleGroup code already exists %s", paymentRuleGroup.toString()), e);
@@ -51,8 +52,8 @@ public class PaymentRuleGroupService {
         return paymentRuleGroup;
     }
 
-    public void update(PaymentRuleGroup paymentRuleGroup) {
-        PaymentRuleGroup current = repository.findOne(paymentRuleGroup.getId());
+    public void update(String id, PaymentRuleGroup paymentRuleGroup) {
+        PaymentRuleGroup current = repository.findOne(id);
         current.updateModel(paymentRuleGroup);
 
         try {

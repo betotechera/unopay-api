@@ -15,22 +15,16 @@ values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation
 
 insert into oauth_groups(id, group_name, description, version, user_type) values('99bf9ba6-75e4-4109-b5be-e4858f3f68b2','admin', 'Permite acesso completo ao sistema', 0, '92af025e-1580-4c49-8246-f965e48c5721');
 
-insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
-
 insert into oauth_group_members(user_id, group_id) values('643f406a-0cfa-422c-bea2-e80dfc63af15', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
-Insert into AUTHORITY(name, description) values('ROLE_LIST_ISSUERS','Permite listar Emissores');
-Insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUERS','Permite gerenciar Emissores');
 Insert into AUTHORITY(name, description) values('ROLE_LIST_GROUPS','Permite listar Perfis de Acesso');
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_GROUPS','Permite gerenciar Perfis de Acesso');
 Insert into AUTHORITY(name, description) values('ROLE_LIST_USERS','Permite listar Usuarios');
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_USERS','Permite gerenciar Usuarios');
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_ADMIN', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ISSUERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ISSUERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_GROUPS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_GROUPS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_USERS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');

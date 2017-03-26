@@ -63,7 +63,7 @@ public class PaymentRuleGroupController {
                        @Validated(Update.class) @RequestBody PaymentRuleGroup paymentRuleGroup) {
         paymentRuleGroup.setId(id);
         log.info("updating paymentRuleGroup {}", paymentRuleGroup);
-        paymentRuleGroupService.update(paymentRuleGroup);
+        paymentRuleGroupService.update(id,paymentRuleGroup);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

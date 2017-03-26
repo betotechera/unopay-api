@@ -29,7 +29,7 @@ public class NotificationTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Email.class).addTemplate("invalid-email", new Rule() {{
-            add("to", uniqueRandom("nerdgmail.com", "news-gmail", "ze@asdf.ze"));
+            add("to", uniqueRandom("nerdgmail.com", "news-gmail", "ze@asdf,ze"));
             add("subject", random("User create", "Create password"));
             add("from", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("personalFrom", "Unopay");

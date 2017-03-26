@@ -19,13 +19,13 @@ public class UnopayMailSender {
 
 
     @Autowired
-    private JavaMailSender mailSender;
+    JavaMailSender mailSender;
 
     @Autowired
     private MimeMessageFactory messageFactory;
 
     @Autowired
-    private NotificationRepository repository;
+    NotificationRepository repository;
 
     @Autowired
     private MailValidator mailValidator;
