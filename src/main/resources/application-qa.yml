@@ -15,13 +15,13 @@ spring:
         host: redis.unvlocal.com.br
         port: 6379
     rabbitmq:
-        host: rabbitmq.qa.unvlocal.com.br
+        host: rabbit.unvlocal.com.br
         port: 5672
-        username: notifications
-        password: 1234
+        username: guest
+        password: guest
     mail:
       default-encoding: UTF-8
-      host: localhost
+      host: smtp.unvlocal.com.br
       port: 1025
       test-connection: false
       properties:
