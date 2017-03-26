@@ -22,9 +22,9 @@ public class NotificationTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Email.class).addTemplate("valid", new Rule() {{
-            add("to", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
+            add("to", uniqueRandom("nerd@gmail.com.br", "news@gmail.com.br"));
             add("subject", random("User create", "Create password"));
-            add("from", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
+            add("from", uniqueRandom("nerd@gmail.com.br", "news@gmail.com.br"));
             add("personalFrom", "Unopay");
         }});
 
