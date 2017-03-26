@@ -13,6 +13,9 @@ create table payment_rule_group (
 Insert into AUTHORITY(name, description) values('ROLE_LIST_PAYMENT_RULE_GROUP','Permite listar Arranjos de Pagamento');
 Insert into AUTHORITY(name, description) values('ROLE_MANAGE_PAYMENT_RULE_GROUP','Permite gerenciar Arranjos de Pagamento');
 
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_PAYMENT_RULE_GROUP', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_PAYMENT_RULE_GROUP', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
 insert into PAYMENT_RULE_GROUP(id,name,code,purpose,scope,USER_RELATIONSHIP) values('66eac89e-10f8-11e7-93ae-92361f002671','Unovation','1234','BUY','DOMESTIC','PREPAID');
 
 ALTER TABLE oauth_user_details ADD payment_rule_group_id VARCHAR(256);
