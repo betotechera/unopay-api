@@ -8,7 +8,6 @@ import java.util.Map;
 @Data
 public class Notification {
 
-    private String personId;
     private Email email;
     private String content;
     private EventType eventType;

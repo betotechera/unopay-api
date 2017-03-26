@@ -1,6 +1,7 @@
 package br.com.unopay.api.notification.service;
 
 
+import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class MimeMessageFactory {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private MailValidator mailValidator;
+
 
     public MimeMessage create(Email email, String content, EventType eventType) throws MessagingException, UnsupportedEncodingException {
         validate(email, content, eventType);
@@ -28,7 +32,7 @@ public class MimeMessageFactory {
         }};
         mimeMessageHelper.setFrom(email.getFrom(), email.getPersonalFrom());
         mimeMessageHelper.setText(content, true);
-        //TODO: email validate
+        if(!mailValidator.isValid(email.getTo())) throw new IllegalArgumentException();
         return message;
     }
 

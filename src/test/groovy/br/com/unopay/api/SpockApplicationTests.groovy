@@ -6,6 +6,8 @@ import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.web.FilterChainProxy
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -16,6 +18,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import spock.lang.Specification
+
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
+import static org.mockito.Mockito.when
 
 @WebAppConfiguration
 @SpringBootTest
@@ -46,5 +52,12 @@ class SpockApplicationTests extends Specification{
         FixtureFactoryLoader.loadTemplates("br.com.unopay.api")
         flyway.clean()
         flyway.migrate()
+    }
+
+    void clientAuthenticated() {
+        OAuth2Authentication authentication = mock(OAuth2Authentication.class)
+        when(authentication.isAuthenticated()).thenReturn(true)
+        when(authentication.isClientOnly()).thenReturn(true)
+        SecurityContextHolder.getContext().setAuthentication(authentication)
     }
 }
