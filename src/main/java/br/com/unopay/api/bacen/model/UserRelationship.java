@@ -1,14 +1,12 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.bacen.util.rest.PurposeDeserialize;
-import br.com.unopay.api.bacen.util.rest.PurposeSerialize;
-import br.com.unopay.api.bacen.util.rest.UserRelationshipDeserialize;
-import br.com.unopay.api.bacen.util.rest.UserRelationshipSerialize;
+import br.com.unopay.api.bacen.util.rest.UserRelationshipDeserializer;
+import br.com.unopay.api.bacen.util.rest.UserRelationshipSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonDeserialize(using = UserRelationshipDeserialize.class)
-@JsonSerialize(using = UserRelationshipSerialize.class)
+@JsonDeserialize(using = UserRelationshipDeserializer.class)
+@JsonSerialize(using = UserRelationshipSerializer.class)
 
 public enum UserRelationship {
 

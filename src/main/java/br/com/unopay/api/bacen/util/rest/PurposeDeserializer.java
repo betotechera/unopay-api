@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 
-public class PurposeDeserialize extends JsonDeserializer {
+public class PurposeDeserializer extends JsonDeserializer {
 
     @Override
     public Purpose deserialize(JsonParser jp, DeserializationContext dc) throws IOException {

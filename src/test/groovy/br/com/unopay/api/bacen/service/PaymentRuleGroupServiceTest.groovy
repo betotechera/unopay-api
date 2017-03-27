@@ -46,37 +46,7 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         result != null
     }
 
-    void 'should not create paymentRuleGroup with large name'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        group.name = """In sem justo, commodo ut, suscipit at, pharetra vitae, 
-                        orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. 
-                        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
-                        Aliquam id dolor. Class aptent taciti sociosqu ad litora"""
 
-        when:
-        service.create(group)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'LARGE_PAYMENT_RULE_GROUP_NAME'
-    }
-
-    void 'should not create paymentRuleGroup with large code'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        group.code = """In sem justo, commodo ut, suscipit at, pharetra vitae, 
-                        orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. 
-                        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
-                        Aliquam id dolor. Class aptent taciti sociosqu ad litora"""
-
-        when:
-        service.create(group)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'LARGE_PAYMENT_RULE_GROUP_CODE'
-    }
 
 
     void 'should create paymentRuleGroup without optional values'(){
@@ -89,32 +59,6 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
 
         then:
         created != null
-    }
-
-    void 'should not create paymentRuleGroup with short name'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        group.name = "aa"
-
-        when:
-        service.create(group)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'SHORT_PAYMENT_RULE_GROUP_NAME'
-    }
-
-    void 'should not create paymentRuleGroup with short code'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        group.code = "aa"
-
-        when:
-        service.create(group)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'SHORT_PAYMENT_RULE_GROUP_CODE'
     }
 
     void 'should not allow create paymentRuleGroups with same codes'(){
@@ -230,17 +174,7 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'when create paymentRuleGroup without userRelationship should return error'() {
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        group.userRelationship = null
-        when:
-        service.create(group)
 
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find()?.logref == 'USER_RELATIONSHIP_REQUIRED'
-    }
 
 
 }
