@@ -1,5 +1,7 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.uaa.model.validationsgroups.Create;
+import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -7,6 +9,11 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
@@ -20,6 +27,23 @@ public class LegalPersonDetail {
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
+
+    private Date creation;
+
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(STRING)
+    @Column(name="activity")
+    @JsonView({Views.Public.class,Views.List.class})
+    private CompanyActivity activity;
+
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(STRING)
+    @Column(name="type")
+    @JsonView({Views.Public.class,Views.List.class})
+    private CompanyType type;
+
 
     @Column(name="fantasy_name")
     @JsonView({Views.Public.class,Views.List.class})
@@ -40,7 +64,6 @@ public class LegalPersonDetail {
             @AttributeOverride(name = "registryEntity", column = @Column(name = "responsible_registry_entity"))
     })
     @JsonView({Views.Public.class})
-
     private Document responsibleDocument;
 
 }
