@@ -3,6 +3,7 @@ package br.com.unopay.api.infra
 import br.com.unopay.api.SpockApplicationTests
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import org.springframework.cache.support.SimpleValueWrapper
 
 class CacheServiceTest extends SpockApplicationTests {
 
@@ -18,7 +19,7 @@ class CacheServiceTest extends SpockApplicationTests {
         given:
         String name = 'cachename'
         String key = 'token'
-        cache.get(key) >> 'value'
+        cache.get(key) >> new SimpleValueWrapper('value')
 
         when:
         def result = cacheService.get(name, key)
