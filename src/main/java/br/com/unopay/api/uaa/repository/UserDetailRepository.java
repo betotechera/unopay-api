@@ -18,5 +18,4 @@ public interface UserDetailRepository extends CrudRepository<UserDetail,String>,
 
     Long countByPaymentRuleGroupId(String id);
 
-    Long countByInstitutionId(String id);
 }
