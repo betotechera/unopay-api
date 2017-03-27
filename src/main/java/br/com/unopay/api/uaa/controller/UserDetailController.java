@@ -171,7 +171,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/users/password", method = PUT, params = "token")
+    @RequestMapping(value = "/users/password", method = PUT)
     public void updatePasswordByToken(@RequestBody @Validated NewPassword passwordChange) {
         LOGGER.info("password token change request. change={}", passwordChange);
         userDetailService.updatePasswordByToken(passwordChange);
