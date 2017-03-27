@@ -4,7 +4,9 @@ package br.com.unopay.api.notification.service;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -12,8 +14,12 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
+@Data
+@ConfigurationProperties(prefix = "unopay.notification")
 public class MimeMessageFactory {
 
     @Autowired
@@ -22,22 +28,25 @@ public class MimeMessageFactory {
     @Autowired
     private MailValidator mailValidator;
 
+    private Map<EventType, String> subjectByEvent = new HashMap<>();
+
+    private Email defaultMail;
+
 
     public MimeMessage create(Email email, String content, EventType eventType) throws MessagingException, UnsupportedEncodingException {
         validate(email, content, eventType);
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8"){{
            setTo(email.getTo());
-           setSubject(email.getSubject());
+           setSubject(subjectByEvent.get(eventType));
         }};
-        mimeMessageHelper.setFrom(email.getFrom(), email.getPersonalFrom());
+        mimeMessageHelper.setFrom(defaultMail.getFrom(), defaultMail.getPersonalFrom());
         mimeMessageHelper.setText(content, true);
         if(!mailValidator.isValid(email.getTo())) throw new IllegalArgumentException();
         return message;
     }
 
     private void validate(Email email, String content, EventType eventType) {
-        notEmpty(email.getSubject(), "subject");
         notEmpty(content, "content");
         notEmpty(eventType.toString(), "eventType");
         validateEmailTo(email);

@@ -14,8 +14,6 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
     MimeMessageFactory factory
 
     def to = 'ze@unovation.com.br'
-    def subject = 'criaçao de senha'
-    def unopayFrom = 'no-reply@unovation.com.br'
     def eventType = EventType.CREATE_PASSWORD
 
     def content = """
@@ -25,21 +23,24 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
                 </html>
             """
 
-    def "given a valid email object should create valid mail message"(){
+    def "given a email with only to should create mail with default information"(){
         given:
-        def mail = new Email(to: to, subject: subject, from: unopayFrom)
+        def mail = new Email(to: to)
 
         when:
         def createdMailMessage = factory.create(mail, content, eventType)
 
         then:
         createdMailMessage.getRecipients(Message.RecipientType.TO).find().toString() == to
+        createdMailMessage.getRecipients(Message.RecipientType.TO).find().toString() == to
+        createdMailMessage.getFrom().find().toString() == 'RoadCard <no-reply@roadcard.com.br>'
+        createdMailMessage.getSubject() == 'Crie sua nova senha'
 
     }
 
     def "given a email object with invalid email to should return error"(){
         given:
-        def mail = new Email(to: 'joao@adsfcom', subject: subject, from: unopayFrom)
+        def mail = new Email(to: 'joao@adsfcom')
 
         when:
         factory.create(mail, content, eventType)
@@ -50,7 +51,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
 
     def "given a email object without email to should return error"(){
         given:
-        def mail = new Email(subject: subject, from: unopayFrom)
+        def mail = new Email()
 
         when:
         factory.create(mail, content, eventType)
@@ -61,7 +62,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
 
     def "given a email object with empty email to should return error"(){
         given:
-        def mail = new Email(to: '',subject: subject, from: unopayFrom)
+        def mail = new Email(to: '')
 
         when:
         factory.create(mail, content, eventType)
@@ -72,7 +73,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
 
     def "given a email object with empty content to should return error"(){
         given:
-        def mail = new Email(to: to, subject: subject, from: unopayFrom)
+        def mail = new Email(to: to)
 
         when:
         factory.create(mail, '', eventType)
@@ -83,7 +84,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
 
     def "given a email object without content to should return error"(){
         given:
-        def mail = new Email(to: to, subject: subject, from: unopayFrom)
+        def mail = new Email(to: to)
 
         when:
         factory.create(mail, null, eventType)
@@ -91,39 +92,5 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
         then:
         thrown IllegalArgumentException
     }
-
-    def "given a email object with empty subject to should return error"(){
-        given:
-        def mail = new Email(to: to, subject: '', from: unopayFrom)
-
-        when:
-        factory.create(mail, content, eventType)
-
-        then:
-        thrown IllegalArgumentException
-    }
-
-    def "given a email object without subject to should return error"(){
-        given:
-        def mail = new Email(to: to, subject: null, from: unopayFrom)
-
-        when:
-        factory.create(mail, content, eventType)
-
-        then:
-        thrown IllegalArgumentException
-    }
-
-    def "given a email object should create mail message with unopay from mail"(){
-        given:
-        def mail = new Email(to: to, subject: subject, from: unopayFrom)
-
-        when:
-        def createdMailMessage = factory.create(mail, content, eventType)
-
-        then:
-        createdMailMessage.from.first().toString() == unopayFrom
-    }
-
 
 }

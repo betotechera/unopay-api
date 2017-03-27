@@ -1,5 +1,15 @@
 unopay:
   api: api.qa.unvlocal.com.br:8080
+  resetPassword:
+        url: 'http://unpay.qa.unvlocal.com.br/senha/nova'
+  notification:
+    defaultTemplate: "email-templates/%s/%s.html"
+    subjectByEvent:
+      'CREATE_PASSWORD' : "Crie sua nova senha"
+      'USER_CREATED' : "Seu usuario foi criado"
+    defaultMail:
+      from: 'no-reply@roadcard.com.br'
+      personalFrom: 'RoadCard'
 spring:
     jpa:
         hibernate.ddl-auto: none
