@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 public class NewPassword {
 
     private String token;
-
     @NotNull
     private String password;
 

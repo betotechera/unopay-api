@@ -39,6 +39,7 @@ import java.util.Set;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Timed(prefix = "api")
@@ -90,7 +91,7 @@ public class UserDetailController {
     @JsonView(Views.Public.class)
     @PreAuthorize("#oauth2.isUser()")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "users/me/profile", method = RequestMethod.GET)
+    @RequestMapping(value = "users/me/profile", method = GET)
     public UserDetail getMe(OAuth2Authentication authentication) {
         LOGGER.info("get uaa user={}", authentication.getName());
         return userDetailService.getByEmail(authentication.getName());
@@ -106,7 +107,7 @@ public class UserDetailController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{id}", method = GET)
     public UserDetail get(@PathVariable  String id) {
         LOGGER.info("get uaa user={}", id);
         return userDetailService.getById(id);
@@ -114,7 +115,7 @@ public class UserDetailController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/users", method = RequestMethod.GET, params = "authority")
+    @RequestMapping(value = "/users", method = GET, params = "authority")
     public List<UserDetail> getByAuthority(OAuth2Authentication authentication, HttpServletRequest request) {
         String authority = request.getParameter("authority");
 
@@ -152,7 +153,7 @@ public class UserDetailController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Public.class)
-    @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{id}/groups", method = GET)
     public Results<Group> getGroups(@PathVariable("id") String id) {
         LOGGER.info("get members to group={}", id);
         List<Group> groups =  groupService.findUserGroups(id);
@@ -161,7 +162,7 @@ public class UserDetailController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.List.class)
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = GET)
     public Results<UserDetail> getByParams(UserFilter userFilter,@Validated UnovationPageRequest pageable) {
         LOGGER.info("search users by filter with filter={}", userFilter);
         Page<UserDetail> page =  userDetailService.findByFilter(userFilter, pageable);
@@ -184,6 +185,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/users/me/password", method = DELETE)
     public void resetPassword(OAuth2Authentication authentication) {
         LOGGER.info("password reset request. to user={}", authentication.getName());
@@ -191,9 +193,18 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/users/me/password", method = PUT)
     public void updatePassword(OAuth2Authentication authentication, @RequestBody @Validated NewPassword passwordChange) {
         LOGGER.info("password change request. to user={}", authentication.getName());
         userDetailService.updatePasswordByEmail(authentication.getName(), passwordChange);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/password", method = GET, params = "email")
+    public void resetPasswordByEmail(HttpServletRequest request) {
+        String email = request.getParameter("email");
+        LOGGER.info("password reset request. to user={}", email);
+        userDetailService.resetPasswordByEmail(email);
     }
 }
