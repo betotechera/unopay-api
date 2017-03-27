@@ -2,6 +2,7 @@ package br.com.unopay.api.uaa.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.model.filter.UserFilter
@@ -29,6 +30,12 @@ class UserDetailServiceTests extends SpockApplicationTests {
     @Autowired
     GroupService groupService
 
+    NotificationService notificationService = Mock(NotificationService)
+
+    def setup(){
+        service.notificationService = notificationService
+    }
+
     void 'when create user unknown authorities should not be saved'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("group-with-unknown-role")
@@ -55,6 +62,17 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
         then:
         that userGroups, hasSize(1)
+    }
+
+    void 'when create user should send password notification'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+
+        when:
+        service.create(user)
+
+        then:
+        1 * notificationService.sendNewPassword(user)
     }
 
 

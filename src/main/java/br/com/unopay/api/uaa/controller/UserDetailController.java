@@ -1,6 +1,7 @@
 package br.com.unopay.api.uaa.controller;
 
 import br.com.unopay.api.uaa.model.Group;
+import br.com.unopay.api.uaa.model.NewPassword;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
@@ -36,6 +37,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 @Timed(prefix = "api")
 @RestController
 public class UserDetailController {
@@ -69,8 +74,8 @@ public class UserDetailController {
     }
 
     @PreAuthorize("#oauth2.isUser()")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/users/me", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/me", method = PUT)
     public void updateMe(OAuth2Authentication authentication,
                          @Validated({Update.class, PasswordRequired.class}) @RequestBody UserDetail user) {
 
@@ -92,7 +97,7 @@ public class UserDetailController {
     }
 
     @PreAuthorize("#oauth2.isUser()")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/me/tokens", method = RequestMethod.DELETE)
     public void revoke(OAuth2Authentication authentication) {
         Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(authentication.getOAuth2Request().getClientId(), authentication.getName());
@@ -124,8 +129,8 @@ public class UserDetailController {
     }
 
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/{id}", method = PUT)
     public void update(@PathVariable  String id,
                        @Validated(Update.class) @RequestBody UserDetail user) {
         user.setId(id);
@@ -133,15 +138,15 @@ public class UserDetailController {
         userDetailService.update(user);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         LOGGER.info("removing uaa userId={}", id);
         userDetailService.delete(id);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/users/{id}/groups", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/{id}/groups", method = PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> groupsIds) {
         LOGGER.info("associate user={} wiith groups={}", id, groupsIds.stream().collect(Collectors.joining(",")));
         groupService.associateUserWithGroups(id, groupsIds);
@@ -164,5 +169,26 @@ public class UserDetailController {
         Page<UserDetail> page =  userDetailService.findByFilter(userFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/users", api));
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/password", method = PUT, params = "token")
+    public void updatePasswordByToken(@RequestBody @Validated NewPassword passwordChange) {
+        LOGGER.info("password token change request. change={}", passwordChange);
+        userDetailService.updatePasswordByToken(passwordChange);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/{id}/password", method = DELETE)
+    public void resetPasswordByToken(@PathVariable("id") String id) {
+        LOGGER.info("password change request. to user={}", id);
+        userDetailService.resetPasswordByToken(id);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/me/password", method = DELETE)
+    public void resetPassword(OAuth2Authentication authentication, @RequestBody @Validated NewPassword passwordChange) {
+        LOGGER.info("password change request. to user={}", authentication.getName());
+        userDetailService.resetPasswordEmail(authentication.getName(), passwordChange);
     }
 }

@@ -1,7 +1,7 @@
 unopay:
   api: api.qa.unvlocal.com.br:8080
   resetPassword:
-        url: 'http://unpay.qa.unvlocal.com.br/senha/nova'
+        url: 'http://unpay.qa.unvlocal.com.br/#/password/'
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:

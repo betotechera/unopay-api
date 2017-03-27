@@ -1,7 +1,7 @@
 unopay:
   api: localhost:8080
   resetPassword:
-        url: 'http://unpay.qa.unvlocal.com.br/senha/nova'
+    url: 'http://unpay.qa.unvlocal.com.br/#/password/'
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:
@@ -17,7 +17,7 @@ spring:
         platform: hsqldb
         continueOnError: true
     redis:
-      host: 172.17.0.2
+      host: localhost
       port: 6379
     rabbitmq:
         host: rabbit.unvlocal.com.br
@@ -26,7 +26,7 @@ spring:
         password: user
     mail:
       default-encoding: UTF-8
-      host: localhost
+      host: smtp.unvlocal.com.br
       port: 1025
       test-connection: false
       properties:

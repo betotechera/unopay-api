@@ -4,12 +4,17 @@ import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
+import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,6 +22,8 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@Data
+@Configuration("unopay.resetPassword")
 public class NotificationService {
 
     @Autowired
@@ -26,10 +33,17 @@ public class NotificationService {
     RabbitMessagingTemplate messagingTemplate;
 
 
-    public void sendNewPassword(UserDetail user, String token) {
+    @Autowired
+    PasswordTokenService passwordTokenService;
+
+    private String url = "http://unpay.qa.unvlocal.com.br/#/password/";
+
+
+    public void sendNewPassword(UserDetail user) {
         user.setPassword(null);
         Email email = new Email(){{setTo(user.getEmail()); }};
-        Map<String, Object> payload = new HashMap<String, Object>() {{ put("user", user); }};
+        String token = passwordTokenService.createToken(user);
+        Map<String, Object> payload = new HashMap<String, Object>() {{ put("user", user); put("link", url);  put("token", token); }};
         Notification notification = new Notification(){{setEmail(email); setEventType(EventType.CREATE_PASSWORD); setPayload(payload);}};
         notify(notification);
         log.info("reset password message sent to the queue for {}", user);

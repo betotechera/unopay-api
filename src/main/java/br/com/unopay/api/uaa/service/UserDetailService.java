@@ -2,11 +2,10 @@ package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.Group;
-import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserType;
-import br.com.unopay.api.uaa.model.UserTypeNames;
+import br.com.unopay.api.uaa.infra.PasswordTokenService;
+import br.com.unopay.api.uaa.model.*;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -15,6 +14,8 @@ import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -38,24 +41,24 @@ import static br.com.unopay.api.uaa.model.UserTypeNames.PAYMENT_RULE_GROUP;
 
 @Service
 @Timed
+@Getter @Setter
 public class UserDetailService implements UserDetailsService {
 
+    @Autowired
     private UserDetailRepository userDetailRepository;
+    @Autowired
     private PaymentRuleGroupRepository paymentRuleGroupRepository;
+    @Autowired
     private UserTypeRepository userTypeRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
     private GroupService groupService;
-
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
-    public UserDetailService(UserDetailRepository userDetailRepository, UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder, GroupService groupService,
-                             PaymentRuleGroupRepository paymentRuleGroupRepository) {
-        this.userDetailRepository = userDetailRepository;
-        this.userTypeRepository = userTypeRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.groupService = groupService;
-        this.paymentRuleGroupRepository = paymentRuleGroupRepository;
-    }
+    private PasswordTokenService passwordTokenService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
@@ -67,7 +70,9 @@ public class UserDetailService implements UserDetailsService {
             validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
-            return this.userDetailRepository.save(user);
+            UserDetail created =  this.userDetailRepository.save(user);
+            notificationService.sendNewPassword(created);
+            return created;
         } catch (DataIntegrityViolationException e) {
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
@@ -88,7 +93,7 @@ public class UserDetailService implements UserDetailsService {
 
         AuthUserContextHolder.setAuthUserId(user.getId());
 
-        return new org.springframework.security.core.userdetails.User(
+        return new User(
                 username,
                 user.getPassword(),
                 authorities);
@@ -160,5 +165,33 @@ public class UserDetailService implements UserDetailsService {
     public void delete(String id) {
         getById(id);
         userDetailRepository.delete(id);
+    }
+
+    @Transactional(rollbackOn = Throwable.class)
+    public void updatePasswordByToken(NewPassword newPassword) {
+        String token = newPassword.getToken();
+        String userId = passwordTokenService.getUserIdByToken(token);
+        UserDetail user = getById(userId);
+        if(user == null) {
+            throw UnovationExceptions.notFound();
+        }
+        updatePasswordByUser(user,newPassword);
+        passwordTokenService.remove(token);
+    }
+
+    public void resetPasswordByToken(String userId) {
+        UserDetail user = getById(userId);
+        notificationService.sendNewPassword(user);
+    }
+
+    public void resetPasswordEmail(String email, NewPassword newPassword) {
+        UserDetail user = getByEmail(email);
+        updatePasswordByUser(user, newPassword);
+    }
+
+    @Transactional(rollbackOn = Throwable.class)
+    private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
+        userDetailRepository.save(user);
     }
 }
