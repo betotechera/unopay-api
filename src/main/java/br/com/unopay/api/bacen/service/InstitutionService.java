@@ -62,15 +62,9 @@ public class InstitutionService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.INSTITUTION_WITH_USERS);
-        }
         repository.delete(id);
     }
 
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByInstitutionId(id) > 0;
-    }
 
     public Page<Institution> findByFilter(InstitutionFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
