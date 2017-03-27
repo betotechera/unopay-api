@@ -21,6 +21,7 @@ public class TemplateProcessor {
     @Autowired
     private Jinjava jinjava;
 
+    @Autowired
     private TemplateLoader templateLoader;
 
     public String renderHtml(Notification notification) {

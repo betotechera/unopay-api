@@ -17,8 +17,8 @@ spring:
     rabbitmq:
         host: rabbit.unvlocal.com.br
         port: 5672
-        username: guest
-        password: guest
+        username: user
+        password: user
     mail:
       default-encoding: UTF-8
       host: smtp.unvlocal.com.br

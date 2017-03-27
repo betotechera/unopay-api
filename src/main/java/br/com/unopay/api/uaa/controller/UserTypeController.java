@@ -51,10 +51,10 @@ public class UserTypeController {
     }
 
     private void notifyTeste(){
-        Email email = new Email(){{setTo("teste@teste.com.br");}};
+        Email email = new Email(){{setTo("teste@teste.com.br"); setSubject("teste"); setPersonalFrom("unopay"); setFrom("teste@unovation.com.br");}};
         UserDetail user = new UserDetail() {{ setName("ze"); }};
         Map<String, Object> payload = new HashMap<String, Object>() {{ put("user",user); }};
-        Notification notification = new Notification(){{setEmail(email); setContent("TESTE"); setEventType(EventType.CREATE_PASSWORD); setPayload(payload);}};
+        Notification notification = new Notification(){{setEmail(email); setContent("TESTE");  setEventType(EventType.CREATE_PASSWORD); setPayload(payload);}};
         notificationService.notify(notification);
     }
 

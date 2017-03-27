@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Repository
@@ -21,16 +22,17 @@ public class NotificationRepository {
         opsForValue().set(key, getValue());
     }
 
-    public Date getDateWhenSent(Notification notification, String content) {
-        return (Date) opsForValue().get(getKey(notification, content));
+    public Object getDateWhenSent(Notification notification, String content) {
+        return  opsForValue().get(getKey(notification, content));
     }
 
     private String hashContent(String content) {
         return DigestUtils.md5Hex(content);
     }
 
-    private Date getValue() {
-        return new Date();
+    private String getValue() {
+        SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss dd-MM-yyyy");
+        return format.format(new Date());
     }
 
     private String formatEventTypeString(EventType eventType) {

@@ -38,7 +38,7 @@ public class UnopayMailSender {
             try {
                 String content = templateProcessor.renderHtml(notification);
                 MimeMessage mailMessage = messageFactory.create(notification.getEmail(), content,notification.getEventType());
-                Date dateSent = repository.getDateWhenSent(notification, content);
+                Object dateSent = repository.getDateWhenSent(notification, content);
                 if(dateSent != null) {
                     mailAlreadySent(notification, dateSent);
                     return;
@@ -50,7 +50,7 @@ public class UnopayMailSender {
         }
     }
 
-    private void mailAlreadySent(Notification notification, Date dateSent) {
+    private void mailAlreadySent(Notification notification, Object dateSent) {
         log.info("Mail already sent type={} to={} sentDate={}", notification.getEventType(), notification.getEmail().getTo(), dateSent);
     }
 
