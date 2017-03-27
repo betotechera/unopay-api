@@ -5,6 +5,7 @@ unopay:
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:
+      'PASSWORD_RESET' : "Foi requisitado a mudança de senha"
       'CREATE_PASSWORD' : "Crie sua nova senha"
       'USER_CREATED' : "Seu usuario foi criado"
     defaultMail:
