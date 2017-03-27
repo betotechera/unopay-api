@@ -3,6 +3,8 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InstitutionFilter;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
+import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.PersonFilter;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -33,9 +35,18 @@ public class InstitutionService {
     }
 
     public Institution create(Institution institution) {
+            Person person;
+            try {
+                 person = personService.findByDocument(new PersonFilter(institution.getPerson().getDocument()));
+                 person.updateModel(person);
+                 institution.setPerson(person);
+            } catch(Exception e){
+                person = institution.getPerson();
+                log.info("Person not found. Creating {}", person);
+            }
 
+            personService.save(person);
         try {
-            personService.save(institution.getPerson());
             return repository.save(institution);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person institution already exists %s", institution.getPerson()), e);
