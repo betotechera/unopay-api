@@ -1,13 +1,13 @@
 package br.com.unopay.api.bacen.model;
 
 
-import br.com.unopay.api.bacen.util.rest.ScopeDeserialize;
-import br.com.unopay.api.bacen.util.rest.ScopeSerialize;
+import br.com.unopay.api.bacen.util.rest.ScopeDeserializer;
+import br.com.unopay.api.bacen.util.rest.ScopeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonDeserialize(using = ScopeDeserialize.class)
-@JsonSerialize(using = ScopeSerialize.class)
+@JsonDeserialize(using = ScopeDeserializer.class)
+@JsonSerialize(using = ScopeSerializer.class)
 
 public enum Scope {
     DOMESTIC("Domestico"), INTERNATIONAL("Internacional");

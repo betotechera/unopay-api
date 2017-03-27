@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.util.rest;
 
-import br.com.unopay.api.bacen.model.UserRelationship;
+import br.com.unopay.api.bacen.model.Scope;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,13 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 
-public class UserRelationshipDeserialize extends JsonDeserializer {
+public class ScopeDeserializer extends JsonDeserializer {
 
     @Override
-    public UserRelationship deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
+    public Scope deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
         ObjectCodec oc = jp.getCodec();
         JsonNode node = oc.readTree(jp);
-        return UserRelationship.valueOf(node.get("code").asText());
+        return Scope.valueOf(node.get("code").asText());
     }
 
 }

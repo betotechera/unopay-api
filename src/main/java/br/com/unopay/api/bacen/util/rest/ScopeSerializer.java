@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class ScopeSerialize extends JsonSerializer<Scope> {
+public class ScopeSerializer extends JsonSerializer<Scope> {
 
 
     @Override

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class UserRelationshipSerialize extends JsonSerializer<UserRelationship> {
+public class UserRelationshipSerializer extends JsonSerializer<UserRelationship> {
 
 
     @Override
