@@ -16,8 +16,8 @@ public class TemplateLoader {
     @SneakyThrows
     @Autowired
     public TemplateLoader(ResourceLoader resourceLoader){
-        Resource createPassword = resourceLoader.getResource("classpath:/password-reset.html");
-        Resource passwordReset = resourceLoader.getResource("classpath:/create-password.html");
+        Resource passwordReset = resourceLoader.getResource("classpath:/password-reset.html");
+        Resource createPassword  = resourceLoader.getResource("classpath:/create-password.html");
         PASSWORD_RESET =  IOUtils.toString(passwordReset.getInputStream());
         CREATE_PASSWORD =  IOUtils.toString(createPassword.getInputStream());
 
