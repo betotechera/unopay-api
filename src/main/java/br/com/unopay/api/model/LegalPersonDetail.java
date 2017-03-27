@@ -26,11 +26,11 @@ public class LegalPersonDetail {
     private String fantasyName;
 
     @Column(name="responsible_name")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private String responsibleName;
 
     @Column(name="responsible_email")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private String responsibleEmail;
 
     @Embedded
@@ -39,6 +39,8 @@ public class LegalPersonDetail {
             @AttributeOverride(name = "number", column = @Column(name = "responsible_document_number")),
             @AttributeOverride(name = "registryEntity", column = @Column(name = "responsible_registry_entity"))
     })
+    @JsonView({Views.Public.class})
+
     private Document responsibleDocument;
 
 }
