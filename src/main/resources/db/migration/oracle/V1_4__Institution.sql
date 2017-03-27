@@ -46,7 +46,7 @@ create table person (
     constraint fk_legal_person_detail foreign key(legal_person_detail_id) references legal_person_detail(id)
 );
 
-create table instituition (
+create table institution (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
     payment_rule_group_id VARCHAR(256),
@@ -56,11 +56,11 @@ create table instituition (
     constraint fk_inst_prg foreign key(payment_rule_group_id) references payment_rule_group(id)
 );
 
-Insert into AUTHORITY(name, description) values('ROLE_LIST_INSTITUITION','Permite listar Instituidores');
-Insert into AUTHORITY(name, description) values('ROLE_MANAGE_INSTITUITION','Permite gerenciar Instituidores');
+Insert into AUTHORITY(name, description) values('ROLE_LIST_INSTITUTION','Permite listar Instituidores');
+Insert into AUTHORITY(name, description) values('ROLE_MANAGE_INSTITUTION','Permite gerenciar Instituidores');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_INSTITUITION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_INSTITUITION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_INSTITUTION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_INSTITUTION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
-ALTER TABLE oauth_user_details ADD instituition_id VARCHAR(256);
-ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_inst FOREIGN KEY(instituition_id) REFERENCES instituition(id);
+ALTER TABLE oauth_user_details ADD institution_id VARCHAR(256);
+ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_inst FOREIGN KEY(institution_id) REFERENCES institution(id);

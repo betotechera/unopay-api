@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import static javax.persistence.EnumType.STRING;
@@ -17,15 +18,17 @@ import static javax.persistence.EnumType.STRING;
 @Embeddable
 public class Document {
 
+    @NotNull
     @Enumerated(STRING)
     @Column(name="document_type")
     @JsonView({Views.Public.class,Views.List.class})
-    private DocumentType documentType;
+    private DocumentType type;
 
+    @NotNull
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
-    private String documentNumber;
+    private String number;
 
     @Enumerated(STRING)
     @Column(name="registry_entity")

@@ -1,0 +1,61 @@
+package br.com.unopay.api.service;
+
+import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.PersonFilter;
+import br.com.unopay.api.repository.AddressRepository;
+import br.com.unopay.api.repository.LegalPersonDetailRepository;
+import br.com.unopay.api.repository.PersonRepository;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationErrors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+public class PersonService {
+
+    private PersonRepository repository;
+
+    private AddressRepository addressRepository;
+
+    private LegalPersonDetailRepository legalPersonDetailRepository;
+
+    @Autowired
+    public PersonService(PersonRepository repository,AddressRepository addressRepository,
+                         LegalPersonDetailRepository legalPersonDetailRepository) {
+        this.repository = repository;
+        this.addressRepository = addressRepository;
+        this.legalPersonDetailRepository = legalPersonDetailRepository;
+    }
+
+    public Person save(Person person){
+        try {
+            person.validate();
+            addressRepository.save(person.getAddress());
+            if(person.isLegal())
+                legalPersonDetailRepository.save(person.getLegalPersonDetail());
+            return repository.save(person);
+        } catch (DataIntegrityViolationException e) {
+            log.warn(String.format("Person document already exists %s", person.toString()), e);
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_DOCUMENT_ALREADY_EXISTS).withArguments(person.getDocument());
+        }
+    }
+
+    public Person findByDocument(PersonFilter personFilter){
+        Page<Person> person = repository.findAll(personFilter, singlePageRequest());
+        if(person.hasContent())
+          return  person.getContent().get(0);
+        throw UnovationExceptions.notFound().withErrors(Errors.PERSON_WITH_DOCUMENT_NOT_FOUND);
+    }
+
+    private PageRequest singlePageRequest() {
+
+        return new PageRequest(0, 1);
+    }
+
+}

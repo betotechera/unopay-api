@@ -8,13 +8,14 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "instituition")
-public class Instituition {
+@Table(name = "institution")
+public class Institution {
 
     @Id
     @Column(name="id")
@@ -23,11 +24,13 @@ public class Instituition {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
     @JsonView({Views.Public.class})
     private PaymentRuleGroup paymentRuleGroup;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name="person_id")
     @JsonView({Views.Public.class})

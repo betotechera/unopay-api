@@ -35,8 +35,8 @@ public class LegalPersonDetail {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "documentType", column = @Column(name = "responsible_document_type")) ,
-            @AttributeOverride(name = "documentNumber", column = @Column(name = "responsible_document_number")),
+            @AttributeOverride(name = "type", column = @Column(name = "responsible_document_type")) ,
+            @AttributeOverride(name = "number", column = @Column(name = "responsible_document_number")),
             @AttributeOverride(name = "registryEntity", column = @Column(name = "responsible_registry_entity"))
     })
     private Document responsibleDocument;
