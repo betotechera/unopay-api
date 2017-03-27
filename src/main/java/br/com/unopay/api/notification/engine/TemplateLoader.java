@@ -10,25 +10,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class TemplateLoader {
 
-    private String USER_CREATED;
+    private String PASSWORD_RESET;
     private String CREATE_PASSWORD;
-
-
-    ;
 
     @SneakyThrows
     @Autowired
     public TemplateLoader(ResourceLoader resourceLoader){
         Resource createPassword = resourceLoader.getResource("classpath:/password-reset.html");
-        Resource userCreated = resourceLoader.getResource("classpath:/create-password.html");
-        USER_CREATED =  IOUtils.toString(userCreated.getInputStream());
+        Resource passwordReset = resourceLoader.getResource("classpath:/create-password.html");
+        PASSWORD_RESET =  IOUtils.toString(passwordReset.getInputStream());
         CREATE_PASSWORD =  IOUtils.toString(createPassword.getInputStream());
 
     }
 
     public String getTemplate(String template){
-        if("USER_CREATED".equals(template))
-            return USER_CREATED;
+        if("PASSWORD_RESET".equals(template))
+            return PASSWORD_RESET;
         if("CREATE_PASSWORD".equals(template))
             return CREATE_PASSWORD;
         return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} para gerar sua nova senha clicando nesse link: </h3>";
