@@ -196,7 +196,7 @@ public class UserDetailService implements UserDetailsService {
     }
     public void resetPasswordByEmail(String email) {
         UserDetail user = getByEmail(email);
-        notificationService.sendNewPassword(user, EventType.CREATE_PASSWORD);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
     }
 
     public void updatePasswordByEmail(String email, NewPassword newPassword) {
