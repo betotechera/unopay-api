@@ -36,7 +36,6 @@ public class PaymentRuleGroup implements Serializable {
     @NotNull(groups = Create.class)
     @Column(name="code", unique = true)
     @JsonView({Views.Public.class,Views.List.class})
-    @Size(max = 50, groups = {Create.class, Update.class})
     private String code;
 
     @Column(name="name")
@@ -74,6 +73,7 @@ public class PaymentRuleGroup implements Serializable {
 
     public void validate(){
         if (getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_NAME_REQUIRED);
+        if (code == null) throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_CODE_REQUIRED);
         if (userRelationship == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_RELATIONSHIP_REQUIRED);
         if (getName().length() > MAX) throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_PAYMENT_RULE_GROUP_NAME);
         if (getName().length() < MIN) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_PAYMENT_RULE_GROUP_NAME);
