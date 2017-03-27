@@ -2,6 +2,7 @@ package br.com.unopay.api.notification.service;
 
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.notification.model.Email;
+import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -35,7 +36,7 @@ public class NotificationService {
     @Autowired
     private PasswordTokenService passwordTokenService;
 
-    public void sendNewPassword(UserDetail user) {
+    public void sendNewPassword(UserDetail user, EventType eventType) {
         user.setPassword(null);
         Email email = new Email(user.getEmail());
         String token = passwordTokenService.createToken(user);
@@ -43,6 +44,10 @@ public class NotificationService {
         Notification notification = new Notification(email, null, CREATE_PASSWORD, payload);
         notify(notification);
         log.info("reset password message sent to the queue for {}", user);
+    }
+
+    public void sendNewPassword(UserDetail user) {
+        sendNewPassword(user, CREATE_PASSWORD);
     }
 
     public void notify(Notification notification) {

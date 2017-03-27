@@ -3,6 +3,7 @@ package br.com.unopay.api.uaa.service;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
+import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
@@ -195,7 +196,7 @@ public class UserDetailService implements UserDetailsService {
     }
     public void resetPasswordByEmail(String email) {
         UserDetail user = getByEmail(email);
-        notificationService.sendNewPassword(user);
+        notificationService.sendNewPassword(user, EventType.CREATE_PASSWORD);
     }
 
     public void updatePasswordByEmail(String email, NewPassword newPassword) {
