@@ -5,7 +5,10 @@ import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
-import br.com.unopay.api.uaa.model.*;
+import br.com.unopay.api.uaa.model.Group;
+import br.com.unopay.api.uaa.model.NewPassword;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -43,6 +46,7 @@ import static br.com.unopay.api.uaa.model.UserTypeNames.PAYMENT_RULE_GROUP;
 @Timed
 @Getter @Setter
 public class UserDetailService implements UserDetailsService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
     @Autowired
     private UserDetailRepository userDetailRepository;
@@ -60,8 +64,6 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     private PasswordTokenService passwordTokenService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
-
     public UserDetail create(UserDetail user) {
         try {
             if(user.getPassword() != null) {
@@ -74,9 +76,12 @@ public class UserDetailService implements UserDetailsService {
             notificationService.sendNewPassword(created);
             return created;
         } catch (DataIntegrityViolationException e) {
+            LOGGER.warn(String.format("user already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
     }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {

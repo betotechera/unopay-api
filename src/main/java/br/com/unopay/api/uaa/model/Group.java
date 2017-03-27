@@ -24,7 +24,7 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Data
 @Table(name = "oauth_groups")
 @EqualsAndHashCode(exclude = {"members", "authorities", "userType"})
-public class Group implements Serializable{
+public class Group implements Serializable {
 
     public static final int MAX_GROUP_NAME = 50;
     public static final int MAX_GROUP_DESCRIPTION = 250;
@@ -71,12 +71,16 @@ public class Group implements Serializable{
 
 
     public void addToMyAuthorities(Authority authority){
-        if( getAuthorities() == null) setAuthorities(new HashSet<>());
+        if(getAuthorities() == null) {
+            setAuthorities(new HashSet<>());
+        }
         getAuthorities().add(authority);
     }
 
     public void addToMyMembers(UserDetail user){
-        if( getMembers() == null) setMembers(new HashSet<>());
+        if(getMembers() == null) {
+            setMembers(new HashSet<>());
+        }
         getMembers().add(user);
     }
 
@@ -87,12 +91,24 @@ public class Group implements Serializable{
     }
 
     public void validate(){
-        if (getName() == null) throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
-        if (getName().length() > MAX_GROUP_NAME)
+        if (getName() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_NAME_REQUIRED);
+        }
+
+        if (getName().length() > MAX_GROUP_NAME) {
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_NAME);
-        if (getDescription() != null && getDescription().length() > MAX_GROUP_DESCRIPTION)
+        }
+
+        if (getDescription() != null && getDescription().length() > MAX_GROUP_DESCRIPTION) {
             throw UnovationExceptions.unprocessableEntity().withErrors(LARGE_GROUP_DESCRIPTION);
-        if(getName().length() < MIN_GROUP_NAME) throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
-        if(getUserType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
+        }
+
+        if(getName().length() < MIN_GROUP_NAME) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_GROUP_NAME);
+        }
+
+        if(getUserType() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
+        }
     }
 }

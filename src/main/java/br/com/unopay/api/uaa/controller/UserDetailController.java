@@ -10,6 +10,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.StringJoiner;
 import br.com.unopay.bootcommons.exception.BadRequestException;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -35,7 +36,6 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -101,9 +101,7 @@ public class UserDetailController {
     @RequestMapping(value = "/users/me/tokens", method = RequestMethod.DELETE)
     public void revoke(OAuth2Authentication authentication) {
         Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(authentication.getOAuth2Request().getClientId(), authentication.getName());
-        accessTokens.forEach(accessToken -> {
-            tokenStore.removeAccessToken(accessToken);
-        });
+        accessTokens.forEach(tokenStore::removeAccessToken);
     }
 
     @JsonView(Views.Public.class)
@@ -148,7 +146,7 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/{id}/groups", method = PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> groupsIds) {
-        LOGGER.info("associate user={} wiith groups={}", id, groupsIds.stream().collect(Collectors.joining(",")));
+        LOGGER.info("associate user={} with groups={}", id, StringJoiner.join(groupsIds));
         groupService.associateUserWithGroups(id, groupsIds);
     }
 

@@ -6,6 +6,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
+import br.com.unopay.api.util.StringJoiner;
 import br.com.unopay.bootcommons.jsoncollections.ListResults;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -26,7 +27,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Timed(prefix = "api")
 @RestController
@@ -87,7 +87,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> membersIds) {
-        LOGGER.info("add members={} to group={}", membersIds.stream().collect(Collectors.joining(",")), id);
+        LOGGER.info("add members={} to group={}", StringJoiner.join(membersIds), id);
         service.addMembers(id, membersIds);
     }
 
@@ -105,7 +105,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.PUT)
     public void groupAuthorities(@PathVariable("id") String id, @RequestBody Set<String> authoritiesIds) {
-        LOGGER.info("add authorities={} to group={}", authoritiesIds.stream().collect(Collectors.joining(",")), id);
+        LOGGER.info("add authorities={} to group={}", StringJoiner.join(authoritiesIds), id);
         service.addAuthorities(id, authoritiesIds);
     }
 
@@ -114,7 +114,7 @@ public class GroupController {
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
     public Results<Authority> getGroupAuthorities(@PathVariable("id") String id) {
         LOGGER.info("get authorities to group={}", id);
-        List<Authority> authorities =  service.findAuthorities(id);
+        List<Authority> authorities = service.findAuthorities(id);
         return new ListResults<>(authorities, String.format("%s/authorities", api));
     }
 }

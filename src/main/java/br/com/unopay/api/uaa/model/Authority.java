@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Data
 @Table(name = "authority")
 @EqualsAndHashCode(exclude = { "groups" })
-public class Authority {
+public class Authority implements Serializable {
 
     @Id
     private String name;

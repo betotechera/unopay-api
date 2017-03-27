@@ -49,7 +49,7 @@ class AmqpConfig {
     }
 
     private void declareQueue(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {
-        Map<String,Object> args = new HashMap<String,Object>(){{ put("x-delayed-type", "direct");}};
+        Map<String,Object> args = getArgsMap();
         Exchange exchange = new CustomExchange(exchangeName, "x-delayed-message", true, false, args);
         Queue queue = new Queue(queueName, true);
         Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName).and(args);
@@ -58,5 +58,9 @@ class AmqpConfig {
         amqpAdmin.declareBinding(binding);
     }
 
-
+    private Map<String, Object> getArgsMap() {
+        Map<String, Object> argsMap = new HashMap<>();
+        argsMap.put("x-delayed-type", "direct");
+        return argsMap;
+    }
 }

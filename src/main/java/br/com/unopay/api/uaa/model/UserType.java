@@ -11,12 +11,13 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user_type")
 @Data
-@EqualsAndHashCode()
-public class UserType {
+@EqualsAndHashCode
+public class UserType implements Serializable {
 
     @Id
     @JsonView({Views.Public.class,Views.List.class})

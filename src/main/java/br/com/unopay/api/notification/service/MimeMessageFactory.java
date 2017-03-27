@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 @Component
 @Data
@@ -28,21 +27,25 @@ public class MimeMessageFactory {
     @Autowired
     private MailValidator mailValidator;
 
-    private Map<EventType, String> subjectByEvent = new HashMap<>();
+    private EnumMap<EventType, String> subjectByEvent = new EnumMap<>(EventType.class);
 
     private Email defaultMail;
 
 
     public MimeMessage create(Email email, String content, EventType eventType) throws MessagingException, UnsupportedEncodingException {
         validate(email, content, eventType);
+
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8"){{
-           setTo(email.getTo());
-           setSubject(subjectByEvent.get(eventType));
-        }};
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8");
+        mimeMessageHelper.setTo(email.getTo());
+        mimeMessageHelper.setSubject(subjectByEvent.get(eventType));
         mimeMessageHelper.setFrom(defaultMail.getFrom(), defaultMail.getPersonalFrom());
         mimeMessageHelper.setText(content, true);
-        if(!mailValidator.isValid(email.getTo())) throw new IllegalArgumentException();
+
+        if(!mailValidator.isValid(email.getTo())) {
+            throw new IllegalArgumentException();
+        }
+
         return message;
     }
 
@@ -53,12 +56,15 @@ public class MimeMessageFactory {
     }
 
     private void validateEmailTo(Email email) {
-        if (email.getTo() == null || email.getTo().isEmpty() || !mailValidator.isValid(email.getTo()))
+        if (email.getTo() == null || email.getTo().isEmpty() || !mailValidator.isValid(email.getTo())) {
             throw new IllegalArgumentException("Invalid mail to");
+        }
     }
 
     private void notEmpty(String value, String fieldName) {
-        if (value == null || value.isEmpty()) throw new IllegalArgumentException(String.format("%s cannot be null",fieldName));
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(String.format("%s cannot be null",fieldName));
+        }
     }
 
 }

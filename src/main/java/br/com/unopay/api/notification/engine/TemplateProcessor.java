@@ -4,7 +4,6 @@ import br.com.unopay.api.notification.model.Notification;
 import com.hubspot.jinjava.Jinjava;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +35,13 @@ public class TemplateProcessor {
     }
 
     private void validateNotification(Notification notification) {
-        if(notification.getEventType() == null) throw new IllegalArgumentException();
-        if(notification.getPayload() == null) throw new IllegalArgumentException();
+        if(notification.getEventType() == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if(notification.getPayload() == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private String getCachedTemplate(Notification notification) {
@@ -45,9 +49,9 @@ public class TemplateProcessor {
             try {
                 String template = templateLoader.getTemplate(notification.getEventType().toString());
                 cache.put(cacheKey(notification), template);
-            } catch(Exception e){
+            } catch(Exception e) {
                 log.error("template not found to event={}", notification.getEventType());
-                throw new IllegalStateException("template not found to event");
+                throw new IllegalStateException("template not found for event" + notification.getEventType(), e);
             }
         }
         return cache.get(cacheKey(notification));

@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -20,7 +21,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @EqualsAndHashCode
 @Table(name = "payment_rule_group")
-public class PaymentRuleGroup {
+public class PaymentRuleGroup implements Serializable {
 
     private static final int MAX = 50;
     private static final int MIN = 3;

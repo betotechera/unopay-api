@@ -10,7 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
 
 
 @Slf4j
@@ -44,8 +43,8 @@ public class UnopayMailSender {
                     return;
                 }
                 sendMail(mailMessage, notification, content);
-            } catch (Exception ex){
-                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), ex.getMessage());
+            } catch (Exception ex) {
+                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), ex.getMessage(), ex);
             }
         }
     }

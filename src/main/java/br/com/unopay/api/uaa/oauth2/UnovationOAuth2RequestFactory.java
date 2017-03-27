@@ -40,11 +40,11 @@ public class UnovationOAuth2RequestFactory extends DefaultOAuth2RequestFactory i
         }
         String grantType = requestParameters.get(OAuth2Utils.GRANT_TYPE);
 
-        Set<String> scopes = extractScopes(requestParameters, clientId);
+        Set<String> scopes = extractUnovationScopes(requestParameters, clientId);
         return new UnovationTokenRequest(requestParameters, clientId, scopes, grantType);
     }
 
-    private Set<String> extractScopes(Map<String, String> requestParameters, String clientId) {
+    private Set<String> extractUnovationScopes(Map<String, String> requestParameters, String clientId) {
         Set<String> scopes = OAuth2Utils.parseParameterList(requestParameters.get(OAuth2Utils.SCOPE));
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
 

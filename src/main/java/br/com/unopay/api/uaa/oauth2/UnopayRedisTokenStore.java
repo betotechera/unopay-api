@@ -182,8 +182,7 @@ public class UnopayRedisTokenStore implements TokenStore {
                     ExpiringOAuth2RefreshToken expiringRefreshToken = (ExpiringOAuth2RefreshToken) refreshToken;
                     Date expiration = expiringRefreshToken.getExpiration();
                     if (expiration != null) {
-                        int seconds = Long.valueOf((expiration.getTime() - System.currentTimeMillis()) / 1000L)
-                                .intValue();
+                        int seconds = getExpirationInSeconds(expiration.getTime());
                         conn.expire(refreshToAccessKey, seconds);
                         conn.expire(accessToRefreshKey, seconds);
                     }
@@ -273,8 +272,7 @@ public class UnopayRedisTokenStore implements TokenStore {
                 ExpiringOAuth2RefreshToken expiringRefreshToken = (ExpiringOAuth2RefreshToken) refreshToken;
                 Date expiration = expiringRefreshToken.getExpiration();
                 if (expiration != null) {
-                    int seconds = Long.valueOf((expiration.getTime() - System.currentTimeMillis()) / 1000L)
-                            .intValue();
+                    int seconds = getExpirationInSeconds(expiration.getTime());
                     conn.expire(refreshKey, seconds);
                     conn.expire(refreshAuthKey, seconds);
                 }
@@ -284,6 +282,8 @@ public class UnopayRedisTokenStore implements TokenStore {
             conn.close();
         }
     }
+
+
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
@@ -359,15 +359,15 @@ public class UnopayRedisTokenStore implements TokenStore {
         } finally {
             conn.close();
         }
-        if (byteList == null || byteList.size() == 0) {
-            return Collections.<OAuth2AccessToken> emptySet();
+        if (byteList == null || byteList.isEmpty()) {
+            return Collections.emptySet();
         }
-        List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>(byteList.size());
+        List<OAuth2AccessToken> accessTokens = new ArrayList<>(byteList.size());
         for (byte[] bytes : byteList) {
             OAuth2AccessToken accessToken = deserializeAccessToken(bytes);
             accessTokens.add(accessToken);
         }
-        return Collections.<OAuth2AccessToken> unmodifiableCollection(accessTokens);
+        return Collections.unmodifiableCollection(accessTokens);
     }
 
     @Override
@@ -380,15 +380,18 @@ public class UnopayRedisTokenStore implements TokenStore {
         } finally {
             conn.close();
         }
-        if (byteList == null || byteList.size() == 0) {
-            return Collections.<OAuth2AccessToken> emptySet();
+        if (byteList == null || byteList.isEmpty()) {
+            return Collections.emptySet();
         }
-        List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>(byteList.size());
+        List<OAuth2AccessToken> accessTokens = new ArrayList<>(byteList.size());
         for (byte[] bytes : byteList) {
             OAuth2AccessToken accessToken = deserializeAccessToken(bytes);
             accessTokens.add(accessToken);
         }
-        return Collections.<OAuth2AccessToken> unmodifiableCollection(accessTokens);
+        return Collections.unmodifiableCollection(accessTokens);
     }
 
+    private int getExpirationInSeconds(long time) {
+        return (int) ((time - System.currentTimeMillis()) / 1000L);
+    }
 }

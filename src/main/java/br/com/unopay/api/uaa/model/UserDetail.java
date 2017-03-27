@@ -105,18 +105,24 @@ public class UserDetail implements Serializable {
     }
 
     public void addToMyGroups(Group group){
-        if( getGroups() == null) setGroups(new HashSet<>());
+        if(getGroups() == null) {
+            setGroups(new HashSet<>());
+        }
         getGroups().add(group);
     }
 
     public void addToMyGroups(List<Group> groups){
-        if(groups == null) return;
+        if(groups == null) {
+            return;
+        }
         groups.forEach(this::addToMyGroups);
     }
 
     @JsonView(Views.Public.class)
     public List<Authority> getGroupsAuthorities() {
-        if(groups == null) return Collections.emptyList();
+        if(groups == null) {
+            return Collections.emptyList();
+        }
         return groups.stream().map(Group::getAuthorities).flatMap(Collection::stream).collect(Collectors.toList());
     }
 

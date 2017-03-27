@@ -35,29 +35,28 @@ public class Errors {
 
     public static final UnovationError UNKNOWN_GROUP_FOUND =  new UnovationError("UNKNOWN_GROUP_FOUND","Unknown group found in group list");
 
-    public static UnovationError USER_EMAIL_ALREADY_EXISTS =  new UnovationError("USER_EMAIL_ALREADY_EXISTS","User email already exists");
+    public static final UnovationError USER_EMAIL_ALREADY_EXISTS =  new UnovationError("USER_EMAIL_ALREADY_EXISTS","User email already exists");
 
-    public static UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =  new UnovationError("PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS","Payment rule code already exists");
+    public static final UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =  new UnovationError("PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS","Payment rule code already exists");
 
-    public static UnovationError USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP =  new UnovationError("USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP","User type must set a PaymentRuleGroup");
+    public static final UnovationError USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP =  new UnovationError("USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP","User type must set a PaymentRuleGroup");
 
-    public static UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
+    public static final UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
 
-    public static UnovationError PAYMENT_RULE_GROUP_WITH_USERS =  new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
+    public static final UnovationError PAYMENT_RULE_GROUP_WITH_USERS =  new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
 
-    public static UnovationError PAYMENT_RULE_GROUP_NAME_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_NAME_REQUIRED","Name is Required");
+    public static final UnovationError PAYMENT_RULE_GROUP_NAME_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_NAME_REQUIRED","Name is Required");
 
-    public static UnovationError PAYMENT_RULE_GROUP_CODE_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_CODE_REQUIRED","Code is Required");
+    public static final UnovationError PAYMENT_RULE_GROUP_CODE_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_CODE_REQUIRED","Code is Required");
 
-    public static UnovationError USER_RELATIONSHIP_REQUIRED =  new UnovationError("USER_RELATIONSHIP_REQUIRED","UserRelationship is Required");
+    public static final UnovationError USER_RELATIONSHIP_REQUIRED =  new UnovationError("USER_RELATIONSHIP_REQUIRED","UserRelationship is Required");
 
-    public static UnovationError LARGE_PAYMENT_RULE_GROUP_NAME =  new UnovationError("LARGE_PAYMENT_RULE_GROUP_NAME","Name is too large");
+    public static final UnovationError LARGE_PAYMENT_RULE_GROUP_NAME =  new UnovationError("LARGE_PAYMENT_RULE_GROUP_NAME","Name is too large");
 
-    public static UnovationError SHORT_PAYMENT_RULE_GROUP_NAME =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
+    public static final UnovationError SHORT_PAYMENT_RULE_GROUP_NAME =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
 
-    public static UnovationError LARGE_PAYMENT_RULE_GROUP_CODE =  new UnovationError("LARGE_PAYMENT_RULE_GROUP_CODE","Code is too large");
+    public static final UnovationError LARGE_PAYMENT_RULE_GROUP_CODE =  new UnovationError("LARGE_PAYMENT_RULE_GROUP_CODE","Code is too large");
 
-    public static UnovationError SHORT_PAYMENT_RULE_GROUP_CODE =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_CODE","Code is too short");
+    public static final UnovationError SHORT_PAYMENT_RULE_GROUP_CODE =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_CODE","Code is too short");
 
 }
-
