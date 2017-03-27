@@ -41,7 +41,7 @@ public class NotificationService {
         Email email = new Email(user.getEmail());
         String token = passwordTokenService.createToken(user);
         Map<String, Object> payload = buildPayload(user, token);
-        Notification notification = new Notification(email, null, CREATE_PASSWORD, payload);
+        Notification notification = new Notification(email, null, eventType, payload);
         notify(notification);
         log.info("reset password message sent to the queue for {}", user);
     }
