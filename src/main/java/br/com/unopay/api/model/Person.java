@@ -83,4 +83,13 @@ public class Person {
     public boolean isLegal() {
         return PersonType.LEGAL.equals(this.type);
     }
+
+    public void updateModel(Person person) {
+       this.name =  person.getName();
+       this.type = person.getType();
+       if(this.type.equals(PersonType.LEGAL))
+           this.legalPersonDetail.updateModel(person.getLegalPersonDetail());
+       this.address = person.getAddress();
+       this.telephone = person.getTelephone();
+    }
 }
