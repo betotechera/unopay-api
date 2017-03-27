@@ -25,7 +25,7 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Data
 @Configuration("unopay.resetPassword")
 public class NotificationService {
-    private static final String url = "http://unpay.qa.unvlocal.com.br/#/password/";
+    private static final String url = "http://unopay.qa.unovation.com.br/#/password/";
 
     @Autowired
     private ObjectMapper objectMapper;
