@@ -212,29 +212,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
             assert  created.id
     }
 
-    void 'when create user with type EMISSORA should have a Institution'() {
-        given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("without-institution")
-        when:
-        service.create(user)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find()?.logref == 'USER_TYPE_MUST_SET_AN_INSTITUTION'
-    }
-
-    void 'success creating user with type EMISSORA and a Institution'() {
-        given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("with-institution")
-        when:
-        def created = service.create(user)
-
-        then:
-        assert  created.id
-    }
-
-
-
     void 'when create user with unknown user type should return error'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")

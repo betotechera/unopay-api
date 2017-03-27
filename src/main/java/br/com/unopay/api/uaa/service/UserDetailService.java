@@ -1,6 +1,5 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
-import static br.com.unopay.api.uaa.model.UserTypeNames.INSTITUTION;
 import static br.com.unopay.api.uaa.model.UserTypeNames.PAYMENT_RULE_GROUP;
 
 @Service
@@ -165,14 +163,6 @@ public class UserDetailService implements UserDetailsService {
             else{
                 PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findOne(user.getPaymentRuleGroup().getId());
                 if(paymentRuleGroup == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
-            }
-
-        }else if  (type.getName().equals(INSTITUTION)){
-            if(user.getInstitution() == null || user.getInstitution().getId() == null)
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
-            else{
-                Institution institution = institutionRepository.findOne(user.getInstitution().getId());
-                if(institution == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTITUTION_NOT_FOUND);
             }
 
         }

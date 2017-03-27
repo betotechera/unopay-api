@@ -59,11 +59,6 @@ public class UserDetail implements Serializable {
     @JsonView({Views.Public.class})
     private PaymentRuleGroup paymentRuleGroup;
 
-    @ManyToOne
-    @JoinColumn(name="institution_id")
-    @JsonView({Views.Public.class})
-    private Institution institution;
-
     @JsonView(Views.Internal.class)
     @NotNull(groups = PasswordRequired.class)
     @Column(name="password")
