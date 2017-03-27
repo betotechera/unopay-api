@@ -28,6 +28,8 @@ public class LegalPersonDetail {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name="creation_date")
     private Date creation;
 
     @Valid
