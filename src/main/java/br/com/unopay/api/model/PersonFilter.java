@@ -10,6 +10,8 @@ public class PersonFilter {
         this.documentType = document.getType();
     }
 
+    public PersonFilter(){}
+
     @SearchableField(field = "document.number")
     private String documentNumber;
 
