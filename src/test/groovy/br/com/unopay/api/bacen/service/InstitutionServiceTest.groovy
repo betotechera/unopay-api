@@ -4,15 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.InstitutionFilter
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.uaa.model.Group
-import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -26,9 +20,6 @@ class InstitutionServiceTest extends SpockApplicationTests {
     InstitutionService service
     @Autowired
     PaymentRuleGroupRepository repository
-
-    @Autowired
-    UserDetailRepository userDetailRepository
 
     void 'should create Institution'(){
         given:
@@ -90,18 +81,6 @@ class InstitutionServiceTest extends SpockApplicationTests {
 
         then:
             assert Institutions.content.size() > 1
-    }
-
-
-    void 'known paymentRuleGroup should not be deleted if has user associated'(){
-        given:
-        Institution institution = Fixture.from(Institution.class).gimme("persisted")
-
-        when:
-        service.delete(institution.id)
-        then:
-        def ex = thrown(ConflictException)
-        ex.errors.first().logref == 'INSTITUTION_WITH_USERS'
     }
 
 
