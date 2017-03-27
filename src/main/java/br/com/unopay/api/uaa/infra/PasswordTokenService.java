@@ -18,9 +18,9 @@ public class PasswordTokenService {
     public static final String PASSWORD_RESET = "newUserPassword";
 
     public String createToken(UserDetail user){
-        String token = RandomStringUtils.randomAlphanumeric(8);
+        String token = RandomStringUtils.randomAlphanumeric(12);
         cacheService.put(PASSWORD_RESET, token, user.getId());
-        return  token;
+        return token;
     }
 
     public String getUserIdByToken(String token){
