@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
@@ -28,6 +29,8 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
     @Autowired
     PaymentRuleGroupService service
 
+    @Autowired
+    InstitutionService institutionService
     @Autowired
     PaymentRuleGroupRepository repository
 
@@ -134,7 +137,7 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
             assert groups.content.size() > 2
     }
 
-    void 'should delete group '(){
+    void 'should delete PaymentRuleGroup '(){
         given:
         PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
         def created = service.create(group)
@@ -156,6 +159,22 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         def ex = thrown(ConflictException)
         ex.errors.first().logref == 'PAYMENT_RULE_GROUP_WITH_USERS'
     }
+
+    void 'known paymentRuleGroup should not be deleted if has institutions associated'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        Institution institution = Fixture.from(Institution.class).gimme("valid")
+        when:
+        service.create(group)
+        institution.paymentRuleGroup = group
+        institutionService.create(institution)
+        service.delete(group.id)
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'PAYMENT_RULE_GROUP_WITH_INSTITUTIONS'
+    }
+
+
 
     void 'should update paymentRuleGroup '(){
         given:

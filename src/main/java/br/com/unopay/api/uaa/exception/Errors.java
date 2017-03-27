@@ -64,5 +64,10 @@ public class Errors {
 
     public static UnovationError LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON","LegalPersonDetail is required for PersonType.LEGAL");
     public static UnovationError PERSON_DOCUMENT_ALREADY_EXISTS  = new UnovationError("PERSON_DOCUMENT_ALREADY_EXISTS","Person with document already exists");
-    public static UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not foud");
+    public static UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not found");
+    public static UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
+    public static UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
+    public static UnovationError INSTITUTION_WITH_USERS = new UnovationError("INSTITUTION_WITH_USERS","Institution has users");
+    public static UnovationError USER_TYPE_MUST_SET_AN_INSTITUTION = new UnovationError("USER_TYPE_MUST_SET_AN_INSTITUTION","UserType must set an institution");
+    public static UnovationError INSTITUTION_NOT_FOUND = new UnovationError("INSTITUTION_NOT_FOUND","Institution not found");
 }

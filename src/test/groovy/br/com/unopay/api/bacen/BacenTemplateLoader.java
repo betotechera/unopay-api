@@ -3,10 +3,9 @@ package br.com.unopay.api.bacen;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.Purpose;
-import br.com.unopay.api.bacen.model.Scope;
-import br.com.unopay.api.bacen.model.UserRelationship;
+import br.com.unopay.api.bacen.model.*;
+import br.com.unopay.api.model.Document;
+import br.com.unopay.api.model.Person;
 
 
 public class BacenTemplateLoader implements TemplateLoader {
@@ -42,6 +41,17 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
         }});
+        Fixture.of(Institution.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
+        }});
+
+        Fixture.of(Institution.class).addTemplate("persisted", new Rule(){{
+            add("id", "1");
+            add("person", one(Person.class, "legal"));
+            add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
+        }});
+
 
 
     }

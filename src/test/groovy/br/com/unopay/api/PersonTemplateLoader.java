@@ -44,7 +44,7 @@ public class PersonTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Document.class).addTemplate("valid-cnpj", new Rule(){{
-            add("number", "28004825000101");
+            add("number", uniqueRandom("28004825000101","45241782000199","22190238000160","83084877000135"));
             add("type", DocumentType.CNPJ);
             add("registryEntity", RegistryEntity.DIC);
         }});

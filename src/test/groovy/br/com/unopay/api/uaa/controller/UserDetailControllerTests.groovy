@@ -9,7 +9,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import spock.lang.Ignore
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import static org.hamcrest.Matchers.equalTo
@@ -111,30 +110,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
             expectUserCreated(accessToken, user)
         then:
             performPostToUser(accessToken, user).andExpect(status().isConflict())
-    }
-
-
-
-    @Ignore
-     void should_get_users_by_authority() throws Exception {
-        given:
-            String accessToken = getClientAccessToken()
-            String authority = "ROLE_ADMIN"
-
-            UserDetail user = userWithGroup()
-
-            this.mvc.perform(
-                    post(USER_ENDPOINT, accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(toJson(user)))
-                    .andExpect(status().isCreated())
-        when:
-            def result = this.mvc.perform(
-                get("/users?authority={authority}&access_token={access_token}", authority, accessToken)
-                        .contentType(MediaType.APPLICATION_JSON))
-        then:
-            result.andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath('$..[0].email', is(notNullValue())))
     }
 
     void should_not_allow_client_authentication_on_user_me() throws Exception {

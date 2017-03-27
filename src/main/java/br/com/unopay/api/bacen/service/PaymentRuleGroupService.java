@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter;
+import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -24,10 +25,13 @@ public class PaymentRuleGroupService {
 
     private UserDetailRepository userDetailRepository;
 
+    private InstitutionRepository institutionRepository;
+
     @Autowired
-    public PaymentRuleGroupService(PaymentRuleGroupRepository repository,UserDetailRepository userDetailRepository) {
+    public PaymentRuleGroupService(PaymentRuleGroupRepository repository, UserDetailRepository userDetailRepository, InstitutionRepository institutionRepository) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
+        this.institutionRepository = institutionRepository;
     }
 
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
@@ -69,8 +73,15 @@ public class PaymentRuleGroupService {
         if(hasUser(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_WITH_USERS);
         }
+        if(hasInstitution(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_WITH_INSTITUTIONS);
+        }
 
         repository.delete(id);
+    }
+
+    private boolean hasInstitution(String id) {
+        return institutionRepository.countByPaymentRuleGroupId(id) > 0;
     }
 
     private Boolean hasUser(String id) {

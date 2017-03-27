@@ -64,5 +64,13 @@ Insert into AUTHORITY(name, description) values('ROLE_MANAGE_institution','Permi
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_institution', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_institution', '1');
 
+
 ALTER TABLE oauth_user_details ADD institution_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_inst FOREIGN KEY(institution_id) REFERENCES institution(id);
+INSERT INTO ADDRESS(id,ZIP_CODE,STREET_NAME,STREET_NUMBER,DISTRICT,CITY,STATE) values ('1','22222222','Test','12','Test','ACD','SP')
+INSERT INTO LEGAL_PERSON_DETAIL (ID,FANTASY_NAME) values ('1','Test');
+
+INSERT INTO PERSON (ID,NAME,"TYPE",DOCUMENT_TYPE,DOCUMENT_NUMBER,ADDRESS_ID,LEGAL_PERSON_DETAIL_ID) values ('1','Test','LEGAL','CNPJ','11111111111111','1','1');
+insert into institution(id,person_id,payment_rule_group_id) values('1','1','1')
+
+update oauth_user_details set institution_id = '1' where id = '3'

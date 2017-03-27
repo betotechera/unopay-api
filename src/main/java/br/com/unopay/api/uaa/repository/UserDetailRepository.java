@@ -17,4 +17,6 @@ public interface UserDetailRepository extends CrudRepository<UserDetail,String>,
     Set<UserDetail> findByIdIn(Set<String> usersIds);
 
     Long countByPaymentRuleGroupId(String id);
+
+    Long countByInstitutionId(String id);
 }
