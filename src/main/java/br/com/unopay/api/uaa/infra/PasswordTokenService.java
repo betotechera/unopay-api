@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.TOKEN_NOT_FOUND;
+
 @Service
 public class PasswordTokenService {
 
@@ -24,7 +26,7 @@ public class PasswordTokenService {
     public String getUserIdByToken(String token){
         String userId = cacheService.get(PASSWORD_RESET, token);
         if(userId== null) {
-            throw UnovationExceptions.notFound();
+            throw UnovationExceptions.notFound().withErrors(TOKEN_NOT_FOUND);
         }
         return userId;
     }

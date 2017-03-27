@@ -12,6 +12,9 @@ unopay:
       from: 'no-reply@roadcard.com.br'
       personalFrom: 'RoadCard'
 spring:
+  redis:
+    host: redis.unvlocal.com.br
+    port: 6379
   rabbitmq:
       host: rabbit.unvlocal.com.br
       port: 5672

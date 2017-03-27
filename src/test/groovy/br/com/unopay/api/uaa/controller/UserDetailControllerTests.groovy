@@ -9,7 +9,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import spock.lang.Ignore
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import static org.hamcrest.Matchers.equalTo
@@ -19,7 +18,6 @@ import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@Ignore
 class UserDetailControllerTests extends AuthServerApplicationTests {
     private static final String USER_ENDPOINT = '/users?access_token={access_token}'
     private static final String USER_ME_ENDPOINT = '/users/me?access_token={access_token}'

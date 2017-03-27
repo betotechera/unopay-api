@@ -15,7 +15,6 @@ import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
-import br.com.unopay.bootcommons.exception.NotFoundException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
@@ -89,45 +88,34 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UsernameNotFoundException("bad credentials");
         }
-
         UserDetail user = this.userDetailRepository.findByEmail(username);
-
         if (user == null) {
             throw new UsernameNotFoundException("bad credentials");
         }
-
         List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
-
         AuthUserContextHolder.setAuthUserId(user.getId());
-
-        return new User(
-                username,
-                user.getPassword(),
-                authorities);
+        return new User(username, user.getPassword(), authorities);
     }
 
     public UserDetail getById(String id) {
-        UserDetail user = this.userDetailRepository.findOne(id);
+        UserDetail user = this.userDetailRepository.findById(id);
         if (user == null) {
-            throw new NotFoundException("user not found");
+            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
         }
         return user;
     }
 
     public UserDetail update(UserDetail user) {
-
-        UserDetail current = userDetailRepository.findOne(user.getId());
+        UserDetail current = userDetailRepository.findById(user.getId());
         if (current == null) {
-            throw new NotFoundException("current user not found");
+            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
         }
         if (user.getPassword() != null) {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-
         current.updateModel(user);
         try {
             return userDetailRepository.save(current);
@@ -135,13 +123,12 @@ public class UserDetailService implements UserDetailsService {
             LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
-
     }
 
     public UserDetail getByEmail(String email) {
         UserDetail user = this.userDetailRepository.findByEmail(email);
         if (user == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(USER_NOT_FOUND);
+            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
         }
         return user;
     }
@@ -149,24 +136,9 @@ public class UserDetailService implements UserDetailsService {
     public List<UserDetail> getByAuthority(String authority) {
         List<UserDetail> users = Collections.emptyList();
         if (users.isEmpty()) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(USER_NOT_FOUND);
+            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
         }
         return users;
-    }
-
-    private void validateUserType(UserDetail user) {
-        if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
-        UserType type = userTypeRepository.findById(user.getType().getId());
-        if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
-        if(type.getName().equals(PAYMENT_RULE_GROUP)){
-            if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null)
-               throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP);
-            else{
-                PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findOne(user.getPaymentRuleGroup().getId());
-                if(paymentRuleGroup == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
-            }
-
-        }
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
@@ -183,9 +155,6 @@ public class UserDetailService implements UserDetailsService {
         String token = newPassword.getToken();
         String userId = passwordTokenService.getUserIdByToken(token);
         UserDetail user = getById(userId);
-        if(user == null) {
-            throw UnovationExceptions.notFound();
-        }
         updatePasswordByUser(user,newPassword);
         passwordTokenService.remove(token);
     }
@@ -199,14 +168,32 @@ public class UserDetailService implements UserDetailsService {
         notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
     }
 
+    @Transactional(rollbackOn = Throwable.class)
     public void updatePasswordByEmail(String email, NewPassword newPassword) {
         UserDetail user = getByEmail(email);
         updatePasswordByUser(user, newPassword);
     }
 
-    @Transactional(rollbackOn = Throwable.class)
     private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
         userDetailRepository.save(user);
+    }
+
+    private void validateUserType(UserDetail user) {
+        if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
+        UserType type = userTypeRepository.findById(user.getType().getId());
+        if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
+        if(type.getName().equals(PAYMENT_RULE_GROUP)){
+            validatePaymentRuleGroup(user);
+
+        }
+    }
+    private void validatePaymentRuleGroup(UserDetail user) {
+        if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP);
+        else{
+            PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findById(user.getPaymentRuleGroup().getId());
+            if(paymentRuleGroup == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
+        }
     }
 }

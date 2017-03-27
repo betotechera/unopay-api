@@ -7,4 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentRuleGroupRepository extends CrudRepository<PaymentRuleGroup,String> , UnovationJpaSpecificationExecutor<PaymentRuleGroup, PaymentRuleGroupFilter> {}
+public interface PaymentRuleGroupRepository extends CrudRepository<PaymentRuleGroup,String> , UnovationJpaSpecificationExecutor<PaymentRuleGroup, PaymentRuleGroupFilter> {
+    PaymentRuleGroup findById(String id);
+}

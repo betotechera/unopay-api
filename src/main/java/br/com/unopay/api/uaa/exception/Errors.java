@@ -14,6 +14,8 @@ public class Errors {
 
     public static final UnovationError USER_NOT_FOUND = new UnovationError("USER_NOT_FOUND","User not found");
 
+    public static final UnovationError TOKEN_NOT_FOUND = new UnovationError("TOKEN_NOT_FOUND","Token not found");
+
     public static final UnovationError GROUP_ID_REQUIRED = new UnovationError("GROUP_ID_REQUIRED","Group id required");
 
     public static final UnovationError GROUP_NOT_FOUND = new UnovationError("GROUP_NOT_FOUND","Group not found");

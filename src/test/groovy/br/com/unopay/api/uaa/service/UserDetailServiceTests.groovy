@@ -2,21 +2,23 @@ package br.com.unopay.api.uaa.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.api.uaa.infra.PasswordTokenService
 import br.com.unopay.api.uaa.model.Group
+import br.com.unopay.api.uaa.model.NewPassword
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.model.filter.UserFilter
 import br.com.unopay.api.uaa.model.UserType
+import br.com.unopay.api.uaa.model.filter.UserFilter
 import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.security.crypto.password.PasswordEncoder
 
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.not
+import static org.hamcrest.Matchers.*
 import static spock.util.matcher.HamcrestSupport.that
 
 class UserDetailServiceTests extends SpockApplicationTests {
@@ -31,9 +33,13 @@ class UserDetailServiceTests extends SpockApplicationTests {
     GroupService groupService
 
     NotificationService notificationService = Mock(NotificationService)
+    PasswordEncoder passwordEncoder = Mock(PasswordEncoder)
+    PasswordTokenService passwordTokenService = Mock(PasswordTokenService)
 
     def setup(){
         service.notificationService = notificationService
+        service.passwordEncoder = passwordEncoder
+        service.passwordTokenService = passwordTokenService
     }
 
     void 'when create user unknown authorities should not be saved'() {
@@ -151,7 +157,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
         created.id != null
         created.email != null
         created.name != null
-        created.password != null
     }
 
     void 'should create user with existing userType'() {
@@ -312,4 +317,115 @@ class UserDetailServiceTests extends SpockApplicationTests {
         then:
         thrown(NotFoundException)
     }
+
+
+    void 'given a known user should update password by email'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def created = service.create(user)
+        def newPassword = 'teste'
+        def pwd = new NewPassword(password: newPassword)
+
+        when:
+        service.updatePasswordByEmail(created.getEmail(), pwd)
+        def result = service.getById(created.getId())
+
+        then:
+        1 * passwordEncoder.encode(_) >> newPassword
+        result.password == newPassword
+    }
+
+    void 'given a unknown user when update password by email should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+
+        when:
+        def pwd = new NewPassword(password: 'teste')
+        service.updatePasswordByEmail(user.getId(), pwd)
+
+        then:
+        thrown(NotFoundException)
+    }
+
+    void 'given a known user should send reset password by email'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def created = service.create(user)
+        when:
+        service.resetPasswordByEmail(created.getEmail())
+
+        then:
+        1 * notificationService.sendNewPassword(_, EventType.PASSWORD_RESET)
+    }
+
+    void 'given a unknown user when set reset password by email should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+
+        when:
+        service.resetPasswordByEmail(user.getEmail())
+
+        then:
+        thrown(NotFoundException)
+    }
+
+    void 'given a known user should send reset password by id'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def created = service.create(user)
+        when:
+        service.resetPasswordById(created.getId())
+
+        then:
+        1 * notificationService.sendNewPassword(_)
+    }
+
+    void 'given a unknown user when set reset password by id should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+
+        when:
+        service.resetPasswordById(user.getEmail())
+
+        then:
+        thrown(NotFoundException)
+    }
+
+    void 'given a known user when update password by token with valid token should updated'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def created = service.create(user)
+        def newPassword = 'teste'
+        def token = 'ADSKIRFE'
+        def pwd = new NewPassword(password: newPassword, token: token)
+
+        when:
+        service.updatePasswordByToken(pwd)
+        def result = service.getById(created.getId())
+
+        then:
+        1 * passwordTokenService.getUserIdByToken(token) >> created.id
+        1 * passwordEncoder.encode(_) >> newPassword
+        1 * passwordTokenService.remove(token)
+        result.password == newPassword
+    }
+
+    void 'given a known user when update password by token with invalid token should updated'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        service.create(user)
+        def newPassword = 'teste'
+        def token = 'ADSKIRFE'
+        def pwd = new NewPassword(password: newPassword, token: token)
+
+        when:
+        service.updatePasswordByToken(pwd)
+
+        then:
+        1 * passwordTokenService.getUserIdByToken(token) >> null
+        0 * passwordEncoder.encode(_) >> newPassword
+        0 * passwordTokenService.remove(token)
+        thrown(NotFoundException)
+    }
+
 }

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when
 @SpringBootTest
 @ActiveProfiles("test")
 @FlywayTest
-@ContextConfiguration
+@ContextConfiguration(classes = [Mocks, UnopayApiApplication])
 @TestExecutionListeners([DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class ])
 class SpockApplicationTests extends Specification{
 
