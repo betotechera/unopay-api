@@ -146,6 +146,10 @@ public class UserDetail implements Serializable {
         if (user.getType() != null) {
             this.setType(user.getType());
         }
+        if(user.getPaymentRuleGroup() != null){
+            this.setPaymentRuleGroup(user.getPaymentRuleGroup());
+        }
+
 
     }
 }
