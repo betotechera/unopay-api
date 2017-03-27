@@ -181,14 +181,21 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/{id}/password", method = DELETE)
     public void resetPasswordByToken(@PathVariable("id") String id) {
-        LOGGER.info("password change request. to user={}", id);
-        userDetailService.resetPasswordByToken(id);
+        LOGGER.info("password reset request. to user={}", id);
+        userDetailService.resetPasswordById(id);
     }
 
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/me/password", method = DELETE)
-    public void resetPassword(OAuth2Authentication authentication, @RequestBody @Validated NewPassword passwordChange) {
+    public void resetPassword(OAuth2Authentication authentication) {
+        LOGGER.info("password reset request. to user={}", authentication.getName());
+        userDetailService.resetPasswordByEmail(authentication.getName());
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/users/me/password", method = PUT)
+    public void updatePassword(OAuth2Authentication authentication, @RequestBody @Validated NewPassword passwordChange) {
         LOGGER.info("password change request. to user={}", authentication.getName());
-        userDetailService.resetPasswordEmail(authentication.getName(), passwordChange);
+        userDetailService.updatePasswordByEmail(authentication.getName(), passwordChange);
     }
 }

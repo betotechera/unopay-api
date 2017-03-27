@@ -179,12 +179,16 @@ public class UserDetailService implements UserDetailsService {
         passwordTokenService.remove(token);
     }
 
-    public void resetPasswordByToken(String userId) {
+    public void resetPasswordById(String userId) {
         UserDetail user = getById(userId);
         notificationService.sendNewPassword(user);
     }
+    public void resetPasswordByEmail(String email) {
+        UserDetail user = getByEmail(email);
+        notificationService.sendNewPassword(user);
+    }
 
-    public void resetPasswordEmail(String email, NewPassword newPassword) {
+    public void updatePasswordByEmail(String email, NewPassword newPassword) {
         UserDetail user = getByEmail(email);
         updatePasswordByUser(user, newPassword);
     }
