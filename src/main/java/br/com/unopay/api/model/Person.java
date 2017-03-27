@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -32,34 +33,40 @@ public class Person {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @NotNull
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
     @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 
-    @NotNull
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
     private PersonType type;
 
-    @NotNull
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
     @Embedded
     private Document document;
 
     @OneToOne
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
-    @NotNull
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JsonView({Views.Public.class})
     @JoinColumn(name="address_id")
     private Address address;
 
     @Column(name="telephone")
+    @JsonView({Views.Public.class})
+
     @Pattern(regexp = "^\\d{10,13}$")
     private String telephone;
 
