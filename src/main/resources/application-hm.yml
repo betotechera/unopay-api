@@ -1,5 +1,7 @@
+server:
+  port: 7070
 unopay:
-  api: api.qa.unvlocal.com.br:8080
+  api: 10.10.0.193:7070
   resetPassword:
         url: 'http://unopay.qa.unvlocal.com.br/senha/nova'
   notification:
@@ -18,21 +20,21 @@ spring:
         generate-ddl: false
         database: ORACLE
     datasource:
-        url: jdbc:oracle:thin:@172.31.1.103:1521:ORCL
-        username: administrator
-        password: thUHegu4wU5r
+        url: jdbc:oracle:thin:@10.10.0.94:1521:ORCLD
+        username: road_pp_h
+        password: road_pp_h
         driverClassName: oracle.jdbc.OracleDriver
     redis:
-        host: redis.unvlocal.com.br
+        host: 10.10.0.193
         port: 6379
     rabbitmq:
-        host: rabbit.unvlocal.com.br
+        host: 10.10.0.193
         port: 5672
-        username: user
-        password: user
+        username: guest
+        password: guest
     mail:
       default-encoding: UTF-8
-      host: localhost
+      host:  10.10.0.61
       port: 1025
       test-connection: false
       properties:
