@@ -1,16 +1,12 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.repository.SearchableField;
+import lombok.Data;
+import lombok.ToString;
 
+@Data
+@ToString
 public class PersonFilter {
-
-
-    public PersonFilter(Document document){
-        this.documentNumber = document.getNumber();
-        this.documentType = document.getType();
-    }
-
-    public PersonFilter(){}
 
     @SearchableField(field = "document.number")
     private String documentNumber;
