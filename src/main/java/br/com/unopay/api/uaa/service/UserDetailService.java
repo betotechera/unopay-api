@@ -180,20 +180,27 @@ public class UserDetailService implements UserDetailsService {
     }
 
     private void validateUserType(UserDetail user) {
-        if(user.getType() == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
-        UserType type = userTypeRepository.findById(user.getType().getId());
-        if(type == null) throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
-        if(type.getName().equals(PAYMENT_RULE_GROUP)){
-            validatePaymentRuleGroup(user);
+        if(user.getType() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
+        }
 
+        UserType type = userTypeRepository.findById(user.getType().getId());
+        if(type == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
+        }
+
+        if(type.getName().equals(PAYMENT_RULE_GROUP)) {
+            validatePaymentRuleGroup(user);
         }
     }
     private void validatePaymentRuleGroup(UserDetail user) {
-        if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null)
+        if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP);
-        else{
+        } else {
             PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findById(user.getPaymentRuleGroup().getId());
-            if(paymentRuleGroup == null) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
+            if(paymentRuleGroup == null) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
+            }
         }
     }
 }

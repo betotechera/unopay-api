@@ -2,8 +2,7 @@ package br.com.unopay.api.uaa.exception;
 
 import br.com.unopay.bootcommons.exception.UnovationError;
 
-public class Errors {
-    private Errors(){}
+public final class Errors {
 
     public static final UnovationError GROUP_NAME_ALREADY_EXISTS = new UnovationError("GROUP_NAME_ALREADY_EXISTS","Group name already exists");
 
@@ -70,4 +69,7 @@ public class Errors {
     public static final UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not found");
     public static final UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
     public static final UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
+
+    private Errors(){}
+
 }
