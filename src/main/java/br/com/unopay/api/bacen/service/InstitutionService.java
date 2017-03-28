@@ -30,18 +30,8 @@ public class InstitutionService {
     }
 
     public Institution create(Institution institution) {
-            Person person;
-            try {
-                 person = personService.findByDocument(new PersonFilter(institution.getPerson().getDocument()));
-                 person.updateModel(person);
-                 institution.setPerson(person);
-            } catch(Exception e){
-                person = institution.getPerson();
-                log.info("Person not found. Creating {}.", person, e);
-            }
-
-            personService.save(person);
         try {
+            personService.save(institution.getPerson());
             return repository.save(institution);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person institution already exists %s", institution.getPerson()), e);
