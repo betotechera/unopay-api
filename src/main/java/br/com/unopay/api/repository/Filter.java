@@ -70,7 +70,7 @@ public class Filter<T> implements Specification<T> {
             Join<T, Object> second = first.join(fields[1]);
             return cb.equal(second.get(fields[2]), pair.getValue());
         }
-        throw new UnprocessableEntityException("Invalid filter length: "+fields.length);
+        throw new UnprocessableEntityException("Invalid filter join length: "+fields.length);
 
     }
 
