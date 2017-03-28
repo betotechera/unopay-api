@@ -15,16 +15,16 @@ public class PasswordTokenService {
     @Autowired
     private CacheService cacheService;
 
-    public static final String PASSWORD_RESET = "newUserPassword";
+    public static final String EVENT_RESET = "newUserPassword";
 
     public String createToken(UserDetail user){
         String token = RandomStringUtils.randomAlphanumeric(12);
-        cacheService.put(PASSWORD_RESET, token, user.getId());
+        cacheService.put(EVENT_RESET, token, user.getId());
         return token;
     }
 
     public String getUserIdByToken(String token){
-        String userId = cacheService.get(PASSWORD_RESET, token);
+        String userId = cacheService.get(EVENT_RESET, token);
         if(userId== null) {
             throw UnovationExceptions.notFound().withErrors(TOKEN_NOT_FOUND);
         }
@@ -32,7 +32,7 @@ public class PasswordTokenService {
     }
 
     public void remove(String token){
-        cacheService.evict(PASSWORD_RESET, token);
+        cacheService.evict(EVENT_RESET, token);
     }
 
 }
