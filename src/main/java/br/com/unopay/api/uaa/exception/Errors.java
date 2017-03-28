@@ -1,9 +1,9 @@
 package br.com.unopay.api.uaa.exception;
 
 import br.com.unopay.bootcommons.exception.UnovationError;
-import br.com.unopay.bootcommons.exception.UnovationErrors;
 
-public class Errors {
+public final class Errors {
+
     public static final UnovationError GROUP_NAME_ALREADY_EXISTS = new UnovationError("GROUP_NAME_ALREADY_EXISTS","Group name already exists");
 
     public static final UnovationError USER_REQUIRED = new UnovationError("USER_REQUIRED","User required");
@@ -62,11 +62,14 @@ public class Errors {
 
     public static final UnovationError SHORT_PAYMENT_RULE_GROUP_CODE =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_CODE","Code is too short");
 
-    public static UnovationError INVALID_DOCUMENT_TYPE_FOR_USER = new UnovationError("INVALID_DOCUMENT_TYPE_FOR_USER","Invalid document type for user");
+    public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER = new UnovationError("INVALID_DOCUMENT_TYPE_FOR_USER","Invalid document type for user");
 
-    public static UnovationError LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON","LegalPersonDetail is required for PersonType.LEGAL");
-    public static UnovationError PERSON_DOCUMENT_ALREADY_EXISTS  = new UnovationError("PERSON_DOCUMENT_ALREADY_EXISTS","Person with document already exists");
-    public static UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not found");
-    public static UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
-    public static UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
+    public static final UnovationError LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON","LegalPersonDetail is required for PersonType.LEGAL");
+    public static final UnovationError PERSON_DOCUMENT_ALREADY_EXISTS  = new UnovationError("PERSON_DOCUMENT_ALREADY_EXISTS","Person with document already exists");
+    public static final UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not found");
+    public static final UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
+    public static final UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
+
+    private Errors(){}
+
 }

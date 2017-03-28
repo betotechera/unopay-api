@@ -1,6 +1,5 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
@@ -28,10 +27,10 @@ import java.util.stream.Collectors;
 public class UserDetail implements Serializable {
 
     @Id
+    @NotNull(groups = Update.class)
     @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
-    @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 
@@ -75,7 +74,9 @@ public class UserDetail implements Serializable {
     @JsonIgnore
     Long version;
 
-    public UserDetail() {}
+    public UserDetail() {
+        //for serialization only
+    }
 
     public UserDetail(String id, String email, String password) {
         this.id = id;
@@ -95,7 +96,7 @@ public class UserDetail implements Serializable {
             return Collections.emptyList();
         }
         return groups.stream()
-                .filter(g -> g.getAuthorities() != null)
+                .filter(Objects::nonNull)
                 .map(Group::getAuthorities)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

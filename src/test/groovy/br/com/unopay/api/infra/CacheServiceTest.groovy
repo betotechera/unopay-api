@@ -38,4 +38,16 @@ class CacheServiceTest extends SpockApplicationTests {
         then:
         assert result == null
     }
+
+    def 'when no cacheManager provided then should not throw npe'() {
+        given:
+            CacheService cacheService = new CacheService()
+        when:
+            cacheService.put('name', 'key', 'value')
+            def result = cacheService.get('name', 'key')
+            cacheService.evict('name', 'key')
+        then:
+            noExceptionThrown()
+            assert !result
+    }
 }

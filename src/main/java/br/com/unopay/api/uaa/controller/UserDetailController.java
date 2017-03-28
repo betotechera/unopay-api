@@ -38,9 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Timed(prefix = "api")
 @RestController
@@ -147,7 +145,8 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/{id}/groups", method = PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> groupsIds) {
-        LOGGER.info("associate user={} with groups={}", id, StringJoiner.join(groupsIds));
+        String groupsAsString = StringJoiner.join(groupsIds);
+        LOGGER.info("associate user={} with groups={}", id, groupsAsString);
         groupService.associateUserWithGroups(id, groupsIds);
     }
 

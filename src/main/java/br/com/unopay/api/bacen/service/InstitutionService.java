@@ -20,18 +20,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class InstitutionService {
-
     private InstitutionRepository repository;
-
-   private PersonService personService;
-
-    private UserDetailRepository userDetailRepository;
+    private PersonService personService;
 
     @Autowired
-    public InstitutionService(InstitutionRepository repository, PersonService personService, UserDetailRepository userDetailRepository) {
+    public InstitutionService(InstitutionRepository repository, PersonService personService) {
         this.repository = repository;
         this.personService = personService;
-        this.userDetailRepository = userDetailRepository;
     }
 
     public Institution create(Institution institution) {
@@ -42,7 +37,7 @@ public class InstitutionService {
                  institution.setPerson(person);
             } catch(Exception e){
                 person = institution.getPerson();
-                log.info("Person not found. Creating {}", person);
+                log.info("Person not found. Creating {}.", person, e);
             }
 
             personService.save(person);

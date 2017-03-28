@@ -1,5 +1,9 @@
 package br.com.unopay.api.repository;
 
+import br.com.unopay.bootcommons.exception.UnovationError;
+import br.com.unopay.bootcommons.exception.UnovationErrors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +52,26 @@ public class Filter<T> implements Specification<T> {
     }
 
     private <T> Predicate createPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root){
-        Pattern referencePattern = Pattern.compile("(\\w+)\\.(\\w+)");
-        Matcher joinMatcher = referencePattern.matcher(pair.getKey());
-        if(joinMatcher.matches()){
-            return createJoinPredicate(pair, cb, root, joinMatcher);
+        String[] split = pair.getKey().split("\\.");
+
+        if(split.length > 1){
+            return createJoinPredicate(pair, cb, root,split);
         }
         return cb.equal(root.get(pair.getKey()), pair.getValue());
     }
 
-    private <T> Predicate createJoinPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root, Matcher joinMatcher) {
-        Join<T, Object> groups = root.join(joinMatcher.group(1));
-        return cb.equal(groups.get(joinMatcher.group(2)), pair.getValue());
+    private <T> Predicate createJoinPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root, String... fields) {
+        if(fields.length == 2){
+            Join<T, Object> groups = root.join(fields[0]);
+            return cb.equal(groups.get(fields[1]), pair.getValue());
+        }
+        if(fields.length == 3){
+            Join<T, Object> first = root.join(fields[0]);
+            Join<T, Object> second = first.join(fields[1]);
+            return cb.equal(second.get(fields[2]), pair.getValue());
+        }
+        throw new UnprocessableEntityException("Invalid filter join length: "+fields.length);
+
     }
 
     private String getFieldName(Field field){
