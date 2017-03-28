@@ -30,8 +30,8 @@ spring:
     rabbitmq:
         host: 10.10.0.193
         port: 5672
-        username: guest
-        password: guest
+        username: unopay
+        password: unopay
     mail:
       default-encoding: UTF-8
       host:  10.10.0.61
