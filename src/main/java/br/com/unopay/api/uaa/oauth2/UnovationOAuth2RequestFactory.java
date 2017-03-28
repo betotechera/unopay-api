@@ -9,12 +9,11 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 @Component
-public class UnovationOAuth2RequestFactory extends DefaultOAuth2RequestFactory implements Serializable {
+public class UnovationOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
 
     private ClientDetailsService clientDetailsService;
 

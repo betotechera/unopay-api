@@ -87,7 +87,8 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> membersIds) {
-        LOGGER.info("add members={} to group={}", StringJoiner.join(membersIds), id);
+        String memberIdsAsString = StringJoiner.join(membersIds);
+        LOGGER.info("add members={} to group={}", memberIdsAsString, id);
         service.addMembers(id, membersIds);
     }
 
@@ -105,7 +106,8 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.PUT)
     public void groupAuthorities(@PathVariable("id") String id, @RequestBody Set<String> authoritiesIds) {
-        LOGGER.info("add authorities={} to group={}", StringJoiner.join(authoritiesIds), id);
+        String authorityIdsAsString = StringJoiner.join(authoritiesIds);
+        LOGGER.info("add authorities={} to group={}", authorityIdsAsString, id);
         service.addAuthorities(id, authoritiesIds);
     }
 
