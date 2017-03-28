@@ -1,8 +1,5 @@
 package br.com.unopay.api.repository;
 
-import br.com.unopay.bootcommons.exception.UnovationError;
-import br.com.unopay.bootcommons.exception.UnovationErrors;
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
@@ -15,8 +12,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

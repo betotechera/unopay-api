@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,10 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Service
 @Slf4j
 @Data
-@Configuration("unopay.resetPassword")
+@ConfigurationProperties("unopay.resetPassword")
 public class NotificationService {
-    private static final String url = "http://unopay.qa.unovation.com.br/#/password/";
+
+    private String url;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -69,10 +71,10 @@ public class NotificationService {
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {
-        Map<String, Object> payloadMap = new HashMap<>();
-        payloadMap.put("user", user);
-        payloadMap.put("link", url);
-        payloadMap.put("token", token);
-        return payloadMap;
+        return new HashMap<String, Object>(){{
+            put("user", user);
+            put("link", url);
+            put("token", token);
+        }};
     }
 }
