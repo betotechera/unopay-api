@@ -12,6 +12,8 @@ public final class Errors {
 
     public static final UnovationError USER_TYPE_NOT_FOUND = new UnovationError("USER_TYPE_NOT_FOUND","User type not found");
 
+    public static final UnovationError ISSUER_NOT_FOUND = new UnovationError("ISSUER_NOT_FOUND","Issuer not found");
+
     public static final UnovationError USER_NOT_FOUND = new UnovationError("USER_NOT_FOUND","User not found");
 
     public static final UnovationError TOKEN_NOT_FOUND = new UnovationError("TOKEN_NOT_FOUND","Token not found");
