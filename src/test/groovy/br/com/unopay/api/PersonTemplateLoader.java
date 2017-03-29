@@ -36,6 +36,17 @@ public class PersonTemplateLoader implements TemplateLoader {
             add("telephone", "11999999999");
         }});
 
+
+        Fixture.of(Person.class).addTemplate("persisted", new Rule(){{
+            add("id", "1");
+            add("name", "Teste");
+            add("type", PersonType.LEGAL);
+            add("document", one(Document.class, "valid-cnpj"));
+            add("legalPersonDetail", one(LegalPersonDetail.class, "legal-person"));
+            add("address", one(Address.class, "address"));
+            add("telephone", "11999999999");
+        }});
+
         Fixture.of(LegalPersonDetail.class).addTemplate("legal-person", new Rule(){{
             add("fantasyName", "Teste");
             add("responsibleName", "Diretor");

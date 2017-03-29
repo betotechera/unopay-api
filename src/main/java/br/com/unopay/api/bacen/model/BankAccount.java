@@ -41,13 +41,18 @@ public class BankAccount {
     @Column
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
+    private String dvAgency;
+
+    @Column
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private String accountNumber;
 
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String dvAccountNumber;
 
-    @Column
+    @Column(name = "account_type")
     @Enumerated(value = EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})

@@ -18,9 +18,9 @@ import javax.persistence.Table;
 public class Bank {
 
     @Id
-    @Column
+    @Column(name = "bacen_cod")
     @JsonView({Views.Public.class,Views.List.class})
-    private Integer bacenCod;
+    private Integer bacenCode;
 
     @Column
     @JsonView({Views.Public.class,Views.List.class})

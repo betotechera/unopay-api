@@ -7,6 +7,8 @@ import br.com.unopay.api.bacen.model.*;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.Person;
 
+import java.util.Random;
+
 
 public class BacenTemplateLoader implements TemplateLoader {
     @Override
@@ -52,7 +54,38 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
         }});
 
+        Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "persisted"));
+            add("paymentRuleGroup", has(1).of(PaymentRuleGroup.class, "persisted"));
+            add("tax", random(Double.class));
+            add("paymentAccount", one(BankAccount.class, "persisted"));
+            add("movementAccount", one(BankAccount.class, "persisted"));
+        }});
 
+        Fixture.of(BankAccount.class).addTemplate("persisted", new Rule(){{
+            add("id", random("1", "2"));
+            add("bank", one(Bank.class, "valid"));
+            add("agency", random("6465", "55794", "004456"));
+            add("dvAgency", random("a2", "1", "A"));
+            add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
+            add("dvAccountNumber", random("a2", "1", "A"));
+            add("type", random(BankAccountType.class));
+        }});
+
+        Fixture.of(BankAccount.class).addTemplate("valid", new Rule(){{
+            add("bank", one(Bank.class, "valid"));
+            add("agency", random("6465", "55794", "004456"));
+            add("dvAgency", random("a2", "1", "A"));
+            add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
+            add("dvAccountNumber", random("a2", "1", "A"));
+            add("type", random(BankAccountType.class));
+        }});
+
+
+        Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
+            add("bacenCode", random(341, 1, 753,555));
+            add("name", random("Itau", "Bradesco", "BB"));
+        }});
 
     }
 }
