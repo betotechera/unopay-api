@@ -1,3 +1,20 @@
+create table bank(
+ bacen_cod integer PRIMARY KEY,
+ name varchar(255) not null
+);
+
+create table bank_account(
+ id VARCHAR(256) PRIMARY KEY,
+ bacen_cod integer not null,
+ agency varchar(20) not null,
+ dv_agency varchar(10) not null,
+ account_number varchar(50) not null,
+ dv_account_number varchar(10) not null,
+ account_type varchar(50) not null,
+ constraint fk_bank_account foreign key(bacen_cod) references bank(bacen_cod)
+
+);
+
 create table issuer (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
@@ -18,22 +35,6 @@ create table payment_rule_group_issuer (
 	constraint fk_payment_rule_group_issuer foreign key(payment_rule_group_id) references payment_rule_group(id)
 );
 
-create table bank_account(
- id VARCHAR(256) PRIMARY KEY,
- bacen_cod integer not null,
- agency varchar(20) not null,
- dv_agency varchar(10) not null,
- account_number varchar(50) not null,
- dv_account_number varchar(10) not null,
- account_type varchar(50) not null,
- constraint fk_bank_account foreign key(bacen_cod) references bank(bacen_cod)
-
-);
-
-create table bank(
- bacen_cod integer PRIMARY KEY,
- name varchar(255) not null
-);
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_ISSUER','Permite listar Emissores');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUER','Permite gerenciar Emissores');
