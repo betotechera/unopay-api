@@ -49,6 +49,7 @@ targetCompatibility = 1.8
 repositories {
 	mavenLocal()
     mavenCentral()
+	jcenter()
 	maven { url "${nexusUrl}/content/repositories/thirdparty/" }
 	maven { url "${nexusUrl}/content/repositories/releases/" }
 }
@@ -86,6 +87,7 @@ dependencies {
 	testRuntime "cglib:cglib-nodep:3.2.4"
     testRuntime "org.objenesis:objenesis:2.5.1"
 	testCompile 'br.com.six2six:fixture-factory:3.1.0'
+	testRuntime 'com.athaydes:spock-reports:1.2.7'
 }
 
 
