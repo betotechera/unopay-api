@@ -35,7 +35,7 @@ spring:
     mail:
       default-encoding: UTF-8
       host:  10.10.0.61
-      port: 1025
+      port: 25
       test-connection: false
       properties:
         mail.smtp.host: smtp.gmail.com
