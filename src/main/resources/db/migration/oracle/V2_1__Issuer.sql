@@ -11,14 +11,13 @@ create table bank_account(
  account_number varchar(50) not null,
  dv_account_number varchar(10) not null,
  account_type varchar(50) not null,
- constraint fk_bank_account foreign key(bacen_cod) references bank(bacen_cod)
+ constraint fk_bank_account foreign key(bacen_cod) REFERENCES bank(bacen_cod)
 
 );
 
 create table issuer (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
-    payment_rule_group_id VARCHAR(256),
     tax decimal(3,2),
     payment_account_id varchar(256) not null,
     movement_account_id varchar(256) not null,
