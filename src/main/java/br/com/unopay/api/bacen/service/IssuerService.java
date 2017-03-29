@@ -24,9 +24,9 @@ public class IssuerService {
         return  issuer;
     }
 
-    public Issuer update(String id, Issuer updateIssuer) {
-        Issuer issuer = findById(id);
-        issuer.setTax(updateIssuer.getTax());
-        return  repository.save(issuer);
+    public Issuer update(String id, Issuer issuer) {
+        Issuer current = findById(id);
+        current.updateMe(issuer);
+        return  repository.save(current);
     }
 }

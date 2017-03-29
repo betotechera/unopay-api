@@ -61,4 +61,12 @@ public class Issuer {
     @JoinColumn(name="movement_account_id")
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount movementAccount;
+
+    public void updateMe(Issuer other){
+        setTax(other.getTax());
+        setMovementAccount(other.getMovementAccount());
+        setPaymentAccount(other.getPaymentAccount());
+        setPaymentRuleGroup(other.getPaymentRuleGroup());
+        setPerson(other.getPerson());
+    }
 }
