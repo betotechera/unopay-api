@@ -80,9 +80,15 @@ public class Issuer {
     }
 
     public void validate(){
-        if(person == null) throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
-        if(paymentAccount == null) throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_ACCOUNT_REQUIRED);
-        if(movementAccount == null) throw UnovationExceptions.unprocessableEntity().withErrors(MOVEMENT_ACCOUNT_REQUIRED);
+        if(person == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
+        }
+        if(paymentAccount == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_ACCOUNT_REQUIRED);
+        }
+        if(movementAccount == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(MOVEMENT_ACCOUNT_REQUIRED);
+        }
     }
 
     @JsonIgnore
