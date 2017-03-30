@@ -46,7 +46,7 @@ public class AccreditedNetwork {
 
     @DecimalMin("0")
     @DecimalMax("100")
-    @Column(name = "mdr")
+    @Column(name = "merchant_discount_rate")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal merchantDiscountRate;
@@ -74,4 +74,13 @@ public class AccreditedNetwork {
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 
+    public void validate() {
+    }
+
+    public void updateModel(AccreditedNetwork accreditedNetwork) {
+        this.person.updateForAccreditedNetwork(accreditedNetwork.getPerson());
+        this.merchantDiscountRate = accreditedNetwork.getMerchantDiscountRate();
+        this.bankAccount = accreditedNetwork.getBankAccount();
+        this.paymentMethod.updateModel(accreditedNetwork.getPaymentMethod());
+    }
 }

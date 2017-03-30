@@ -40,4 +40,9 @@ public class PaymentMethod {
     @JsonView({Views.Public.class})
     @Column(name="closing_payment_days")
     private Integer closingPaymentDays;
+
+    public void updateModel(PaymentMethod paymentMethod) {
+        this.movementPeriod = paymentMethod.getMovementPeriod();
+        this.authorizeTransfer = paymentMethod.getAuthorizeTransfer();
+    }
 }

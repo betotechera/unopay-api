@@ -70,13 +70,14 @@ public class LegalPersonDetail {
     @JsonView({Views.Public.class})
     private Document responsibleDocument;
 
-    public void updateModel(LegalPersonDetail legalPersonDetail) {
-        this.creation = legalPersonDetail.getCreation();
-        this.activity = legalPersonDetail.getActivity();
-        this.fantasyName = legalPersonDetail.getFantasyName();
-        this.type = legalPersonDetail.getType();
-        this.responsibleName = legalPersonDetail.getResponsibleName();
-        this.responsibleEmail = legalPersonDetail.getResponsibleEmail();
-        this.responsibleDocument = legalPersonDetail.getResponsibleDocument();
+    void updateForAccreditedNetwork(LegalPersonDetail legalPersonDetail) {
+        this.setResponsibleName(legalPersonDetail.getResponsibleName());
+        this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
+    }
+
+    void updateForInstitution(LegalPersonDetail legalPersonDetail) {
+        this.setResponsibleName(legalPersonDetail.getResponsibleName());
+        this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
+        this.setResponsibleDocument(legalPersonDetail.getResponsibleDocument());
     }
 }

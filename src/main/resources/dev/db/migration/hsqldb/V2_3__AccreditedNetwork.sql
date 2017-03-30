@@ -5,7 +5,7 @@ create table accredited_network (
     merchant_discount_rate decimal(3,2),
     type VARCHAR(10),
     movement_period VARCHAR(16),
-    authorize_transfer number(1),
+    authorize_transfer boolean,
     closing_payment_days integer,
     minimum_deposit_value decimal(10,2),
     invoice_receipt_period  VARCHAR(16),
@@ -28,8 +28,8 @@ create table accredited_payment_rules (
 insert into AUTHORITY(name, description) values('ROLE_LIST_ACCREDITED_NETWORK','Permite listar Rede Credenciada');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_ACCREDITED_NETWORK','Permite gerenciar Rede Credenciada');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ACCREDITED_NETWORK', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ACCREDITED_NETWORK', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ACCREDITED_NETWORK', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ACCREDITED_NETWORK', '1');
 
 ALTER TABLE oauth_user_details ADD accredited_network_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_accredited_network FOREIGN KEY(accredited_network_id) REFERENCES accredited_network(id);
