@@ -8,6 +8,16 @@ public final class Errors {
 
     public static final UnovationError USER_REQUIRED = new UnovationError("USER_REQUIRED","User required");
 
+    public static final UnovationError PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
+
+    public static final UnovationError PERSON_NOT_FOUND = new UnovationError("PERSON_NOT_FOUND","Person not found");
+
+    public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");
+
+    public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");
+
+    public static final UnovationError MOVEMENT_ACCOUNT_REQUIRED = new UnovationError("MOVEMENT_ACCOUNT_REQUIRED","Movement account required");
+
     public static final UnovationError USER_TYPE_REQUIRED = new UnovationError("USER_TYPE_REQUIRED","User type required");
 
     public static final UnovationError USER_TYPE_NOT_FOUND = new UnovationError("USER_TYPE_NOT_FOUND","User type not found");

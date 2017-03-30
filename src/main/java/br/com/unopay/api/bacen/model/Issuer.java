@@ -5,6 +5,8 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +16,17 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static br.com.unopay.api.uaa.exception.Errors.MOVEMENT_ACCOUNT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = "paymentRuleGroup")
+@EqualsAndHashCode(exclude = "paymentRuleGroups")
 @Table(name = "issuer")
 public class Issuer {
 
@@ -41,7 +49,7 @@ public class Issuer {
     @OneToMany(fetch = FetchType.EAGER)
     @JsonView({Views.Public.class,Views.List.class})
     @JoinTable(name = "payment_rule_group_issuer", joinColumns = { @JoinColumn(name = "issuer_id") }, inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
-    private List<PaymentRuleGroup> paymentRuleGroup;
+    private List<PaymentRuleGroup> paymentRuleGroups;
 
 
     @Column
@@ -66,7 +74,25 @@ public class Issuer {
         setTax(other.getTax());
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
-        setPaymentRuleGroup(other.getPaymentRuleGroup());
+        setPaymentRuleGroups(other.getPaymentRuleGroups());
         setPerson(other.getPerson());
+    }
+
+    public void validate(){
+        if(person == null) throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
+        if(paymentAccount == null) throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_ACCOUNT_REQUIRED);
+        if(movementAccount == null) throw UnovationExceptions.unprocessableEntity().withErrors(MOVEMENT_ACCOUNT_REQUIRED);
+    }
+
+    public List<String> getAccountsIds() {
+        return Arrays.asList(getPaymentAccount().getId(), getMovementAccount().getId());
+    }
+    public List<String> getPaymentRuleGroupIds() {
+        return paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
+    }
+
+
+    public boolean hasPaymentRuleGroup(){
+        return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();
     }
 }

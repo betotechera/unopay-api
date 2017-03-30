@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
+
 @Slf4j
 @Service
 public class PersonService {
@@ -51,6 +53,12 @@ public class PersonService {
         if(person.hasContent())
           return  person.getContent().get(0);
         throw UnovationExceptions.notFound().withErrors(Errors.PERSON_WITH_DOCUMENT_NOT_FOUND);
+    }
+
+    public Person findById(String id){
+        Person person = repository.findOne(id);
+        if(person == null) throw UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id));
+        return  person;
     }
 
     private PageRequest singlePageRequest() {

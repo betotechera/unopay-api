@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
@@ -15,7 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -54,6 +59,14 @@ public class PaymentRuleGroupService {
             throw UnovationExceptions.notFound();
         }
         return paymentRuleGroup;
+    }
+
+    public List<PaymentRuleGroup> findAll(List<String> ids){
+        List<PaymentRuleGroup> paymentRuleGroups = repository.findByIdIn(ids);
+        List<String> founds = paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
+        List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
+        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND.withArguments(notFounds));
+        return  paymentRuleGroups;
     }
 
     public void update(String id, PaymentRuleGroup paymentRuleGroup) {

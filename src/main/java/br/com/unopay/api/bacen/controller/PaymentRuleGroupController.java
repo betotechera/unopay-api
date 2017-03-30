@@ -54,7 +54,7 @@ public class PaymentRuleGroupController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-rule-groups/{id}", method = RequestMethod.GET)
     public PaymentRuleGroup get(@PathVariable  String id) {
-        log.info("get paymentRuleGroup={}", id);
+        log.info("get paymentRuleGroups={}", id);
         return paymentRuleGroupService.getById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -62,7 +62,7 @@ public class PaymentRuleGroupController {
     public void update(@PathVariable  String id,
                        @Validated(Update.class) @RequestBody PaymentRuleGroup paymentRuleGroup) {
         paymentRuleGroup.setId(id);
-        log.info("updating paymentRuleGroup {}", paymentRuleGroup);
+        log.info("updating paymentRuleGroups {}", paymentRuleGroup);
         paymentRuleGroupService.update(id,paymentRuleGroup);
     }
 

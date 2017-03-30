@@ -12,7 +12,7 @@ public class InstitutionFilter {
     @SearchableField(field = "person.legalPersonDetail.fantasyName")
     private String fantasyName;
 
-    @SearchableField(field = "paymentRuleGroup.name")
+    @SearchableField(field = "paymentRuleGroups.name")
     private String paymentRuleGroupName;
 
 }
