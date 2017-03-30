@@ -300,4 +300,30 @@ class IssuerServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'ISSUER_NOT_FOUND'
     }
 
+    def 'a known issuer should be deleted'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        Issuer created = service.create(issuer)
+
+        when:
+        def found = service.findById(created.id)
+        service.delete(created.id)
+        service.findById(created.id)
+
+        then:
+        found != null
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ISSUER_NOT_FOUND'
+    }
+
+
+    def 'given a unknown issuer when delete should not be found'(){
+        when:
+        service.delete('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ISSUER_NOT_FOUND'
+    }
+
 }

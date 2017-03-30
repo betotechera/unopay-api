@@ -7,6 +7,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,14 +85,16 @@ public class Issuer {
         if(movementAccount == null) throw UnovationExceptions.unprocessableEntity().withErrors(MOVEMENT_ACCOUNT_REQUIRED);
     }
 
+    @JsonIgnore
     public List<String> getAccountsIds() {
         return Arrays.asList(getPaymentAccount().getId(), getMovementAccount().getId());
     }
+    @JsonIgnore
     public List<String> getPaymentRuleGroupIds() {
         return paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
     }
 
-
+    @JsonIgnore
     public boolean hasPaymentRuleGroup(){
         return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();
     }

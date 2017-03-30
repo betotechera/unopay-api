@@ -1,10 +1,14 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
@@ -50,5 +54,14 @@ public class IssuerService {
         if(issuer.hasPaymentRuleGroup()){
             paymentRuleGroupService.findAll(issuer.getPaymentRuleGroupIds());
         }
+    }
+
+    public void delete(String id) {
+        findById(id);
+        repository.delete(id);
+    }
+
+    public Page<Issuer> findByFilter(IssuerFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }

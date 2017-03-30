@@ -13,9 +13,13 @@ insert into user_type(id, name, description, version) values('5ba95e66-5e88-4ba8
 insert into oauth_user_details(id, email,name, type, password, version)
 values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation', '92af025e-1580-4c49-8246-f965e48c5721',  'a023dceb3b15e9b9586bc149e02b57d0f0b6929db9b84bfcaa607216d8fe638c4faf2ca543d2304a', 0);
 
+insert into oauth_user_details(id, email,name, type, password, version)
+values('aa183b19-b6a9-4a15-8805-10c4bdad8cd4', 'qualidade@roadcard.com.br', 'qualidade', '92af025e-1580-4c49-8246-f965e48c5721',  '5d61e4717663bb81738c84bd25db68d66928cbcc56ce487a9afdcd1bd18f85f8f082bf6fecda473f', 0);
+
 insert into oauth_groups(id, group_name, description, version, user_type) values('99bf9ba6-75e4-4109-b5be-e4858f3f68b2','admin', 'Permite acesso completo ao sistema', 0, '92af025e-1580-4c49-8246-f965e48c5721');
 
 insert into oauth_group_members(user_id, group_id) values('643f406a-0cfa-422c-bea2-e80dfc63af15', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_members(user_id, group_id) values('aa183b19-b6a9-4a15-8805-10c4bdad8cd4', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
