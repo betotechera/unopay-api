@@ -30,14 +30,16 @@ public class BankAccountService {
     }
 
     public BankAccount create(BankAccount account) {
-        Bank bank = bankService.findBacenCode(account.getBank().getBacenCode());
-        account.setBank(bank);
+        account.validate();
+        addKnownBank(account);
         return repository.save(account);
     }
 
     public BankAccount update(String id, BankAccount account) {
+        account.validate();
         BankAccount current = findBydId(id);
-        current.setAgency(account.getAgency());
+        addKnownBank(account);
+        current.updateMe(account);
         return  repository.save(current);
     }
 
@@ -48,6 +50,12 @@ public class BankAccountService {
     }
 
     public void delete(String id) {
+        findBydId(id);
         repository.delete(id);
+    }
+
+    private void addKnownBank(BankAccount account) {
+        Bank bank = bankService.findBacenCode(account.getBacenCode());
+        account.setBank(bank);
     }
 }

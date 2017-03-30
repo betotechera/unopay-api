@@ -4,6 +4,7 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +13,9 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
 
 @Data
 @Entity
@@ -57,5 +61,30 @@ public class BankAccount {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccountType type;
+
+    public void updateMe(BankAccount other){
+        setBank(other.getBank());
+        setAgency(other.getAgency());
+        setDvAgency(other.getDvAgency());
+        setAccountNumber(other.getAccountNumber());
+        setDvAccountNumber(other.getDvAccountNumber());
+        setType(other.getType());
+    }
+
+    public void validate(){
+        if(getBank() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_REQUIRED);
+        }
+        if(getBank().getBacenCode() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_CODE_REQUIRED);
+        }
+    }
+
+    public Integer getBacenCode(){
+        if(getBank() != null && getBank().getBacenCode() != null){
+            return getBank().getBacenCode();
+        }
+        return null;
+    }
 
 }

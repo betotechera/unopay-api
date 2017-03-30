@@ -20,6 +20,10 @@ public final class Errors {
 
     public static final UnovationError BANK_NOT_FOUND = new UnovationError("BANK_NOT_FOUND","Bank not found");
 
+    public static final UnovationError BANK_REQUIRED = new UnovationError("BANK_REQUIRED","Bank required");
+
+    public static final UnovationError BANK_CODE_REQUIRED = new UnovationError("BANK_CODE_REQUIRED","Bank code required");
+
     public static final UnovationError MOVEMENT_ACCOUNT_REQUIRED = new UnovationError("MOVEMENT_ACCOUNT_REQUIRED","Movement account required");
 
     public static final UnovationError USER_TYPE_REQUIRED = new UnovationError("USER_TYPE_REQUIRED","User type required");
