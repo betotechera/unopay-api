@@ -6,7 +6,6 @@ import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -21,9 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static br.com.unopay.api.uaa.exception.Errors.MOVEMENT_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
