@@ -55,7 +55,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
-            add("person", one(Person.class, "persisted"));
+            add("person", one(Person.class, "legal"));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
             add("tax", random(Double.class));
             add("paymentAccount", one(BankAccount.class, "persisted"));

@@ -15,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 
 @Slf4j
 @Service
@@ -56,6 +58,7 @@ public class PersonService {
     }
 
     public Person findById(String id){
+        if(id == null) throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         Person person = repository.findOne(id);
         if(person == null) throw UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id));
         return  person;

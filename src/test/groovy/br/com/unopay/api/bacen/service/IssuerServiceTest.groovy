@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import org.hamcrest.core.Is
 import org.springframework.beans.factory.annotation.Autowired
 
 class IssuerServiceTest  extends SpockApplicationTests {
@@ -94,19 +95,17 @@ class IssuerServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'MOVEMENT_ACCOUNT_REQUIRED'
     }
 
-    def 'a valid issuer with unknown person should not be created'(){
+    def 'a valid issuer with unknown person should be created'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def idNotFound = '55588899'
         issuer.getPerson().setId(idNotFound)
 
         when:
-        service.create(issuer)
-
+        Issuer created = service.create(issuer)
+        Issuer result = service.findById(created.id)
         then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'PERSON_NOT_FOUND'
-        ex.errors.find().arguments.find() == idNotFound
+        result != null
     }
 
     def 'a valid issuer without payment rule groups should be created'(){
@@ -166,6 +165,35 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'ISSUER_NOT_FOUND'
+    }
+
+    def 'given a issuer without person id when updated should not be processable'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        Issuer created = service.create(issuer)
+        issuer.getPerson().setId(null)
+
+        issuer.with { tax = 0.3 }
+        when:
+        service.update(created.id, issuer)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PERSON_ID_REQUIRED'
+    }
+
+    def 'given a issuer without person when updated should not be processable'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        issuer.setPerson(null)
+
+        issuer.with { tax = 0.3 }
+        when:
+        service.update('', issuer)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PERSON_REQUIRED'
     }
 
     def 'a valid issuer without person should not be updated'(){

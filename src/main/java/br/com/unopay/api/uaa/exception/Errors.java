@@ -10,6 +10,8 @@ public final class Errors {
 
     public static final UnovationError PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
 
+    public static final UnovationError PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
+
     public static final UnovationError PERSON_NOT_FOUND = new UnovationError("PERSON_NOT_FOUND","Person not found");
 
     public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");

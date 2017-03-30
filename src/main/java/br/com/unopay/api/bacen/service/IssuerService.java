@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -30,6 +31,8 @@ public class IssuerService {
 
     public Issuer create(Issuer issuer) {
         issuer.validate();
+        Person person = personService.save(issuer.getPerson());
+        issuer.setPerson(person);
         validateReferences(issuer);
         return repository.save(issuer);
     }
@@ -42,8 +45,8 @@ public class IssuerService {
 
     public Issuer update(String id, Issuer issuer) {
         issuer.validate();
-        validateReferences(issuer);
         Issuer current = findById(id);
+        validateReferences(issuer);
         current.updateMe(issuer);
         return  repository.save(current);
     }

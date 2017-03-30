@@ -41,7 +41,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/issuers/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(issuer.with { id= extractId(location);  tax = 0.3d ;it }))
+                .content(toJson(issuer.with { id= extractId(location);  tax = 0.3d ; person.id = '1'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
