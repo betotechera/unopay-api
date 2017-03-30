@@ -14,8 +14,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
@@ -78,6 +77,22 @@ public class BankAccount {
         if(getBank().getBacenCode() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_CODE_REQUIRED);
         }
+        if(getAgency() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(AGENCY_REQUIRED);
+        }
+        if(getDvAgency() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(AGENCY_DV_REQUIRED);
+        }
+        if(getAccountNumber() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(ACCOUNT_NUMBER_REQUIRED);
+        }
+        if(getDvAccountNumber() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(ACCOUNT_NUMBER_DV_REQUIRED);
+        }
+        if(getType() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(TYPE_REQUIRED);
+        }
+
     }
 
     public Integer getBacenCode(){

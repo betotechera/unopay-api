@@ -12,6 +12,16 @@ public final class Errors {
 
     public static final UnovationError PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
 
+    public static final UnovationError AGENCY_REQUIRED = new UnovationError("AGENCY_REQUIRED","Agency required");
+
+    public static final UnovationError AGENCY_DV_REQUIRED = new UnovationError("AGENCY_DV_REQUIRED","Agency dv required");
+
+    public static final UnovationError ACCOUNT_NUMBER_DV_REQUIRED = new UnovationError("ACCOUNT_NUMBER_DV_REQUIRED","Account number dv required");
+
+    public static final UnovationError ACCOUNT_NUMBER_REQUIRED = new UnovationError("ACCOUNT_NUMBER_REQUIRED","Account number required");
+
+    public static final UnovationError TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
+
     public static final UnovationError PERSON_NOT_FOUND = new UnovationError("PERSON_NOT_FOUND","Person not found");
 
     public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");
