@@ -13,6 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @EqualsAndHashCode(exclude = {"paymentRuleGroups"})
 @Table(name = "accredited_network")
-public class AccreditedNetwork {
+public class AccreditedNetwork implements Serializable {
 
     @Id
     @Column(name="id")
