@@ -1,8 +1,6 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Bank;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.InstitutionFilter;
 import br.com.unopay.api.bacen.service.BankService;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
