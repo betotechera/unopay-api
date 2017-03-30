@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -84,12 +83,18 @@ public class Person {
         return PersonType.LEGAL.equals(this.type);
     }
 
-    public void updateModel(Person person) {
-       this.name =  person.getName();
-       this.type = person.getType();
-       if(this.type.equals(PersonType.LEGAL))
-           this.legalPersonDetail.updateModel(person.getLegalPersonDetail());
-       this.address = person.getAddress();
-       this.telephone = person.getTelephone();
+    public void updateForInstitution(Person person) {
+        this.setName(person.getName());
+        this.legalPersonDetail.updateForInstitution(person.getLegalPersonDetail());
+        this.setAddress(person.getAddress());
+        this.setTelephone(person.getTelephone());
+    }
+
+    public void updateForAccreditedNetwork(Person person) {
+        this.setName(person.getName());
+        this.setTelephone(person.getTelephone());
+        this.legalPersonDetail.updateForAccreditedNetwork(person.getLegalPersonDetail());
+        this.setAddress(person.getAddress());
+
     }
 }

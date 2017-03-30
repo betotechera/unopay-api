@@ -43,10 +43,6 @@ public class Institution {
     private Person person;
 
     public void updateModel(Institution institution) {
-        Person person = institution.getPerson();
-        this.person.setName(person.getName());
-        this.person.setLegalPersonDetail(person.getLegalPersonDetail());
-        this.person.setAddress(person.getAddress());
-        this.person.setTelephone(person.getTelephone());
+        this.person.updateForInstitution(institution.getPerson());
     }
 }
