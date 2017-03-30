@@ -1,7 +1,5 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.InstitutionFilter;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.IssuerFilter;
 import br.com.unopay.api.bacen.service.IssuerService;
