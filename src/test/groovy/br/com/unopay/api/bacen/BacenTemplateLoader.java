@@ -83,7 +83,7 @@ public class BacenTemplateLoader implements TemplateLoader {
 
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
-            add("bacenCode", random(341, 1, 753,555));
+            add("bacenCode", random(341, 1, 33));
             add("name", random("Itau", "Bradesco", "BB"));
         }});
 
