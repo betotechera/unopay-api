@@ -69,7 +69,7 @@ public class InstitutionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
-        log.info("removing payment rule groups id={}", id);
+        log.info("removing institution id={}", id);
         service.delete(id);
     }
 
