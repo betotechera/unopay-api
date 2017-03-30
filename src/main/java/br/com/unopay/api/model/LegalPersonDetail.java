@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.util.Date;
 
 import static javax.persistence.EnumType.STRING;
@@ -30,6 +31,7 @@ public class LegalPersonDetail {
 
     @Temporal(TemporalType.DATE)
     @Column(name="creation_date")
+    @Past(groups = {Create.class,Update.class})
     private Date creation;
 
     @Valid
