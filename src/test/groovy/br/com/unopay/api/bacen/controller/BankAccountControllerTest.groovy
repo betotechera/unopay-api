@@ -7,7 +7,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
