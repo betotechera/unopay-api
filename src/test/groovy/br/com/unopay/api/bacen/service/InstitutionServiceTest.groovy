@@ -14,9 +14,6 @@ import org.springframework.data.domain.Page
 class InstitutionServiceTest extends SpockApplicationTests {
 
     @Autowired
-    PaymentRuleGroupService paymentRuleGroupService
-
-    @Autowired
     InstitutionService service
     @Autowired
     PaymentRuleGroupRepository repository

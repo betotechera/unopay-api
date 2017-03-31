@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "serivce")
-public class Service implements Serializable {
+@Table(name = "service")
+public class Provider implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
