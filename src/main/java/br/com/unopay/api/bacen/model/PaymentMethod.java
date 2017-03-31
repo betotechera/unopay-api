@@ -1,19 +1,19 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -46,5 +46,10 @@ public class PaymentMethod implements Serializable {
     public void updateModel(PaymentMethod paymentMethod) {
         this.movementPeriod = paymentMethod.getMovementPeriod();
         this.authorizeTransfer = paymentMethod.getAuthorizeTransfer();
+    }
+
+    public void validate() {
+        if(minimumDepositValue != null && minimumDepositValue < 0)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MINIMUM_DEPOSIT_VALUE);
     }
 }

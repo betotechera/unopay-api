@@ -1,9 +1,11 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,9 +14,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
@@ -76,6 +77,8 @@ public class AccreditedNetwork implements Serializable {
     private BankAccount bankAccount;
 
     public void validate() {
+        if(merchantDiscountRate < 0 || merchantDiscountRate > 1D) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MERCHANT_DISCOUNT_RATE_RANGE);
+        paymentMethod.validate();
     }
 
     public void updateModel(AccreditedNetwork accreditedNetwork) {
