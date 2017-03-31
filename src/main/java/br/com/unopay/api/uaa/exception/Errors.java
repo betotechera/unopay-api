@@ -24,6 +24,10 @@ public final class Errors {
 
     public static final UnovationError PERSON_NOT_FOUND = new UnovationError("PERSON_NOT_FOUND","Person not found");
 
+    public static final UnovationError EVENT_NOT_FOUND = new UnovationError("EVENT_NOT_FOUND","Event not found");
+
+    public static final UnovationError PROVIDER_NOT_FOUND = new UnovationError("PROVIDER_NOT_FOUND","Provider not found");
+
     public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");
 
     public static final UnovationError PAYMENT_ACCOUNT_ID_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_ID_REQUIRED","Payment account id required");
