@@ -71,10 +71,10 @@ public class NotificationService {
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {
-        return new HashMap<String, Object>(){{
-            put("user", user);
-            put("link", url);
-            put("token", token);
-        }};
+        Map<String,Object> payload = new HashMap<>();
+        payload.put("user",user);
+        payload.put("link",url);
+        payload.put("token",token);
+        return payload;
     }
 }

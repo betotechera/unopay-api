@@ -46,7 +46,7 @@ public class AccreditedNetworkService {
             return repository.save(accreditedNetwork);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person institution already exists %s", accreditedNetwork.getPerson()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_INSTITUTION_ALREADY_EXISTS);
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS);
 
         }
     }
@@ -56,19 +56,11 @@ public class AccreditedNetworkService {
     }
 
     public AccreditedNetwork getById(String id) {
-        AccreditedNetwork AccreditedNetwork = repository.findOne(id);
-        if (AccreditedNetwork == null) {
+        AccreditedNetwork accreditedNetwork = repository.findOne(id);
+        if (accreditedNetwork == null) {
             throw UnovationExceptions.notFound();
         }
-        return AccreditedNetwork;
-    }
-
-    public List<AccreditedNetwork> findAll(List<String> ids){
-        List<AccreditedNetwork> AccreditedNetworks = repository.findByIdIn(ids);
-        List<String> founds = AccreditedNetworks.stream().map(AccreditedNetwork::getId).collect(Collectors.toList());
-        List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
-        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND.withArguments(notFounds));
-        return  AccreditedNetworks;
+        return accreditedNetwork;
     }
 
     public void update(String id, AccreditedNetwork accreditedNetwork) {
@@ -80,9 +72,8 @@ public class AccreditedNetworkService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_WITH_USERS);
-        }
+        if(hasUser(id))
+            throw UnovationExceptions.conflict().withErrors(Errors.ACCREDITED_NETWORK_WITH_USERS);
 
         repository.delete(id);
     }

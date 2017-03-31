@@ -80,7 +80,7 @@ public final class Errors {
 
     public static final UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
 
-    public static final UnovationError PAYMENT_RULE_GROUP_WITH_USERS =  new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
+    public static final UnovationError PAYMENT_RULE_GROUP_WITH_USERS = new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
 
     public static final UnovationError PAYMENT_RULE_GROUP_NAME_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_NAME_REQUIRED","Name is Required");
 
@@ -92,18 +92,18 @@ public final class Errors {
 
     public static final UnovationError SHORT_PAYMENT_RULE_GROUP_NAME =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
 
-    public static final UnovationError LARGE_PAYMENT_RULE_GROUP_CODE =  new UnovationError("LARGE_PAYMENT_RULE_GROUP_CODE","Code is too large");
-
-    public static final UnovationError SHORT_PAYMENT_RULE_GROUP_CODE =  new UnovationError("SHORT_PAYMENT_RULE_GROUP_CODE","Code is too short");
-
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER = new UnovationError("INVALID_DOCUMENT_TYPE_FOR_USER","Invalid document type for user");
 
+    /* Person */
     public static final UnovationError LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON","LegalPersonDetail is required for PersonType.LEGAL");
     public static final UnovationError PERSON_DOCUMENT_ALREADY_EXISTS  = new UnovationError("PERSON_DOCUMENT_ALREADY_EXISTS","Person with document already exists");
     public static final UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND = new UnovationError("PERSON_WITH_DOCUMENT_NOT_FOUND","Person with document not found");
+
+    /* Institution */
     public static final UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
     public static final UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
 
-    private Errors(){}
-
+    /* AccreditedNetwork */
+    public static UnovationError ACCREDITED_NETWORK_WITH_USERS = new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
+    public static UnovationError PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS = new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS","Person AccreditedNetwork already exists");
 }
