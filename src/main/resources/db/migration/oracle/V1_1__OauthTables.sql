@@ -95,5 +95,3 @@ create table oauth_group_members (
 	group_id varchar(256) not null,
 	constraint fk_oauth_group_members foreign key(group_id) references oauth_groups(id)
 );
-
-select * from OAUTH_USER_DETAILS
