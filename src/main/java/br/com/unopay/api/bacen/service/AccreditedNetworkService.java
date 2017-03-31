@@ -33,16 +33,22 @@ public class AccreditedNetworkService {
 
     private PersonService personService;
 
+    private BankAccountService bankAccountService;
+
+
     @Autowired
-    public AccreditedNetworkService(AccreditedNetworkRepository repository, UserDetailRepository userDetailRepository, PersonService personService) {
+    public AccreditedNetworkService(AccreditedNetworkRepository repository, UserDetailRepository userDetailRepository, PersonService personService,
+                                    BankAccountService bankAccountService) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
         this.personService = personService;
+        this.bankAccountService = bankAccountService;
     }
 
     public AccreditedNetwork create(AccreditedNetwork accreditedNetwork) {
         try {
             personService.save(accreditedNetwork.getPerson());
+            bankAccountService.create(accreditedNetwork.getBankAccount());
             return repository.save(accreditedNetwork);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person institution already exists %s", accreditedNetwork.getPerson()), e);
