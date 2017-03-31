@@ -39,19 +39,18 @@ class IssuerServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'PERSON_REQUIRED'
     }
 
-    def 'a valid issuer with unknown payment account should not be created'(){
+    def 'a valid issuer with unknown payment account should be created'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def idNotFound = '567498879'
         issuer.getPaymentAccount().setId(idNotFound)
 
         when:
-        service.create(issuer)
+        def created = service.create(issuer)
+        Issuer result = service.findById(created.getId())
 
         then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
-        ex.errors.find().arguments.find() == "[$idNotFound]"
+        result != null
     }
 
     def 'a valid issuer without payment account should not be created'(){
@@ -79,7 +78,6 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
-        ex.errors.find().arguments.find() == "[$idNotFound]"
     }
 
     def 'a valid issuer without movement account should not be created'(){
@@ -222,8 +220,21 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
-        ex.errors.find().arguments.find() == "[$idNotFound]"
+        ex.errors.find().logref == 'PAYMENT_ACCOUNT_NOT_FOUND'
+    }
+
+    def 'a valid issuer without payment account id should not be updated'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        Issuer created = service.create(issuer)
+        issuer.getPaymentAccount().setId(null)
+
+        when:
+        service.update(created.id, issuer)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'PAYMENT_ACCOUNT_ID_REQUIRED'
     }
 
     def 'a valid issuer without payment account should not be updated'(){
@@ -253,7 +264,6 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
-        ex.errors.find().arguments.find() == "[$idNotFound]"
     }
 
     def 'a valid issuer without movement account should not be updated'(){

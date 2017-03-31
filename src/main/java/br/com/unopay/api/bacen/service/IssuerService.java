@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.IssuerFilter;
+import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.service.PersonService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
@@ -27,12 +30,15 @@ public class IssuerService {
     private BankAccountService bankAccountService;
 
     @Autowired
+    private PaymentBankAccountService paymentBankAccountService;
+
+    @Autowired
     private PaymentRuleGroupService paymentRuleGroupService;
 
+    @Transactional
     public Issuer create(Issuer issuer) {
         issuer.validate();
-        Person person = personService.save(issuer.getPerson());
-        issuer.setPerson(person);
+        createRequiredReferences(issuer);
         validateReferences(issuer);
         return repository.save(issuer);
     }
@@ -53,7 +59,8 @@ public class IssuerService {
 
     private void validateReferences(Issuer issuer) {
         personService.findById(issuer.getPerson().getId());
-        bankAccountService.findAll(issuer.getAccountsIds());
+        bankAccountService.findById(issuer.getMomentAccountId());
+        paymentBankAccountService.findById(issuer.getPaymentAccountId());
         if(issuer.hasPaymentRuleGroup()){
             paymentRuleGroupService.findAll(issuer.getPaymentRuleGroupIds());
         }
@@ -66,5 +73,12 @@ public class IssuerService {
 
     public Page<Issuer> findByFilter(IssuerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private void createRequiredReferences(Issuer issuer) {
+        Person person = personService.save(issuer.getPerson());
+        PaymentBankAccount paymentBankAccount = paymentBankAccountService.create(issuer.getPaymentAccount());
+        issuer.setPaymentAccount(paymentBankAccount);
+        issuer.setPerson(person);
     }
 }

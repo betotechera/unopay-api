@@ -15,6 +15,15 @@ create table bank_account(
 
 );
 
+create table payment_bank_account (
+ id VARCHAR(256) PRIMARY KEY,
+ bank_account_id VARCHAR(256) not null,
+ transfer_authorized char(1) not null,
+ deposit_period varchar(50) not null,
+ constraint fk_payment_bank_account foreign key(bank_account_id) REFERENCES bank_account(id)
+);
+
+
 create table issuer (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),

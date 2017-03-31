@@ -26,6 +26,10 @@ public final class Errors {
 
     public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");
 
+    public static final UnovationError PAYMENT_ACCOUNT_ID_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_ID_REQUIRED","Payment account id required");
+
+    public static final UnovationError PAYMENT_ACCOUNT_NOT_FOUND = new UnovationError("PAYMENT_ACCOUNT_NOT_FOUND","Payment account not found");
+
     public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");
 
     public static final UnovationError BANK_NOT_FOUND = new UnovationError("BANK_NOT_FOUND","Bank not found");

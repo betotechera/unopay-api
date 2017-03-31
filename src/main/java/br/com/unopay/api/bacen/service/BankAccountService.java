@@ -37,20 +37,20 @@ public class BankAccountService {
 
     public BankAccount update(String id, BankAccount account) {
         account.validate();
-        BankAccount current = findBydId(id);
+        BankAccount current = findById(id);
         addKnownBank(account);
         current.updateMe(account);
         return  repository.save(current);
     }
 
-    public BankAccount findBydId(String id) {
+    public BankAccount findById(String id) {
         BankAccount account = repository.findOne(id);
         if(account == null) throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND);
         return account;
     }
 
     public void delete(String id) {
-        findBydId(id);
+        findById(id);
         repository.delete(id);
     }
 

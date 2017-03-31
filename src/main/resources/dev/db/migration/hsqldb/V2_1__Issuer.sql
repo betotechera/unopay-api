@@ -15,6 +15,14 @@ create table bank_account(
 
 );
 
+create table payment_bank_account (
+ id VARCHAR(256) PRIMARY KEY,
+ bank_account_id VARCHAR(256) not null,
+ transfer_authorized char(1) not null,
+ deposit_period varchar(50) not null,
+ constraint fk_payment_bank_account foreign key(bank_account_id) REFERENCES bank_account(id)
+);
+
 create table issuer (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
@@ -24,7 +32,7 @@ create table issuer (
     version integer,
     CONSTRAINT issuer_pers_id UNIQUE (person_id),
     constraint fk_issuer_pers foreign key(person_id) references person(id),
-    constraint fk_payment_account foreign key(payment_account_id) references bank_account(id),
+    constraint fk_payment_account foreign key(payment_account_id) references payment_bank_account(id),
     constraint fk_movement_account foreign key(movement_account_id) references bank_account(id)
 );
 

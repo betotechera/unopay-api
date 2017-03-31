@@ -196,7 +196,7 @@ class BankAccountServiceTest extends SpockApplicationTests {
 
         when:
         service.update(created.id, account)
-        BankAccount result = service.findBydId(created.id)
+        BankAccount result = service.findById(created.id)
 
         then:
         result != null
@@ -253,9 +253,9 @@ class BankAccountServiceTest extends SpockApplicationTests {
         BankAccount created = service.create(account)
 
         when:
-        BankAccount result = service.findBydId(created.id)
+        BankAccount result = service.findById(created.id)
         service.delete(created.id)
-        service.findBydId(created.id)
+        service.findById(created.id)
 
         then:
         result != null
@@ -278,7 +278,7 @@ class BankAccountServiceTest extends SpockApplicationTests {
         BankAccount created = service.create(account)
 
         when:
-        BankAccount result = service.findBydId(created.id)
+        BankAccount result = service.findById(created.id)
 
         then:
         result != null
@@ -286,7 +286,7 @@ class BankAccountServiceTest extends SpockApplicationTests {
 
     def 'a unknown account should not be found'(){
         when:
-        service.findBydId('')
+        service.findById('')
 
         then:
         def ex = thrown(NotFoundException)

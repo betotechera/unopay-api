@@ -58,7 +58,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("person", one(Person.class, "legal"));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
             add("tax", random(Double.class));
-            add("paymentAccount", one(BankAccount.class, "persisted"));
+            add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
         }});
 
@@ -81,6 +81,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("type", random(BankAccountType.class));
         }});
 
+        Fixture.of(PaymentBankAccount.class).addTemplate("valid", new Rule(){{
+            add("bankAccount", one(BankAccount.class, "persisted"));
+            add("transferAuthorized", random(Boolean.class));
+            add("depositPeriod", random(DepositPeriod.class));
+        }});
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
             add("bacenCode", random(341, 1, 33));

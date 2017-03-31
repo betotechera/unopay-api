@@ -59,7 +59,7 @@ public class Issuer {
     @OneToOne
     @JoinColumn(name="payment_account_id")
     @JsonView({Views.Public.class,Views.List.class})
-    private BankAccount paymentAccount;
+    private PaymentBankAccount paymentAccount;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
@@ -89,9 +89,21 @@ public class Issuer {
     }
 
     @JsonIgnore
-    public List<String> getAccountsIds() {
-        return Arrays.asList(getPaymentAccount().getId(), getMovementAccount().getId());
+    public String getMomentAccountId() {
+        if(getMovementAccount() != null){
+            return getMovementAccount().getId();
+        }
+        return  null;
     }
+
+    @JsonIgnore
+    public String getPaymentAccountId() {
+        if(getPaymentAccount() != null){
+            return getPaymentAccount().getId();
+        }
+        return  null;
+    }
+
     @JsonIgnore
     public List<String> getPaymentRuleGroupIds() {
         return paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());

@@ -2,22 +2,15 @@ package br.com.unopay.api.bacen.controller;
 
 
 import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.InstitutionFilter;
 import br.com.unopay.api.bacen.service.BankAccountService;
-import br.com.unopay.api.bacen.service.InstitutionService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
-import br.com.unopay.bootcommons.jsoncollections.PageableResults;
-import br.com.unopay.bootcommons.jsoncollections.Results;
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +45,7 @@ public class BankAccountController {
     @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.GET)
     public BankAccount get(@PathVariable  String id) {
         log.info("get bank account={}", id);
-        return service.findBydId(id);
+        return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.PUT)
