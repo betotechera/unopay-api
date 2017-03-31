@@ -104,8 +104,8 @@ public final class Errors {
     public static final UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
 
     /* AccreditedNetwork */
-    public static UnovationError ACCREDITED_NETWORK_WITH_USERS = new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
-    public static UnovationError PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS = new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS","Person AccreditedNetwork already exists");
-    public static UnovationError INVALID_MERCHANT_DISCOUNT_RATE_RANGE = new UnovationError("INVALID_MERCHANT_DISCOUNT_RATE_RANGE","merchantDiscountRate must be between 0 and 1");
-    public static UnovationError INVALID_MINIMUM_DEPOSIT_VALUE = new UnovationError("INVALID_MINIMUM_DEPOSIT_VALUE","minimumDepositValue must be a positive value");
+    public static final UnovationError ACCREDITED_NETWORK_WITH_USERS = new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
+    public static final UnovationError PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS = new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS","Person AccreditedNetwork already exists");
+    public static final UnovationError INVALID_MERCHANT_DISCOUNT_RATE_RANGE = new UnovationError("INVALID_MERCHANT_DISCOUNT_RATE_RANGE","merchantDiscountRate must be between 0 and 1");
+    public static final UnovationError INVALID_MINIMUM_DEPOSIT_VALUE = new UnovationError("INVALID_MINIMUM_DEPOSIT_VALUE","minimumDepositValue must be a positive value");
 }
