@@ -12,13 +12,17 @@ import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import java.io.Serializable;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "address")
-public class Address {
+public class Address implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

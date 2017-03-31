@@ -10,12 +10,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "bank")
-public class Bank {
+public class Bank implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name = "bacen_cod")

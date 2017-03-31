@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import java.io.Serializable;
 import java.util.Date;
 
 import static javax.persistence.EnumType.STRING;
@@ -20,7 +21,9 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @EqualsAndHashCode
 @Table(name = "legal_person_detail")
-public class LegalPersonDetail {
+public class LegalPersonDetail implements Serializable{
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

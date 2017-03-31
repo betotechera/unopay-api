@@ -12,13 +12,16 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "institution")
-public class Institution {
+public class Institution implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

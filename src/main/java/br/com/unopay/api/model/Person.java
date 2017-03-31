@@ -27,6 +27,8 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "person")
 public class Person implements Serializable{
 
+    public static final Long serialVersionUID = 1L;
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

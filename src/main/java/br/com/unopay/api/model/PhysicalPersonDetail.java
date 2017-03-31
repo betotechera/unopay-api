@@ -7,12 +7,15 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "physical_person_detail")
-public class PhysicalPersonDetail {
+public class PhysicalPersonDetail implements Serializable{
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

@@ -23,6 +23,8 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Table(name = "bank_account")
 public class BankAccount implements Serializable{
 
+    public static final Long serialVersionUID = 1L;
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

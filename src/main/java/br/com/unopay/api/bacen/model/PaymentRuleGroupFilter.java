@@ -13,10 +13,15 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.io.Serializable;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
-public class PaymentRuleGroupFilter {
+public class PaymentRuleGroupFilter implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
+
     @SearchableField
     private String code;
 
