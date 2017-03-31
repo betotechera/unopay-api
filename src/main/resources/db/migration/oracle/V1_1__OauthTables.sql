@@ -97,6 +97,3 @@ create table oauth_group_members (
 );
 
 select * from OAUTH_USER_DETAILS
-
-
-update OAUTH_USER_DETAILS set PASSWORD='5d61e4717663bb81738c84bd25db68d66928cbcc56ce487a9afdcd1bd18f85f8f082bf6fecda473f' where id = 'aa183b19-b6a9-4a15-8805-10c4bdad8cd4'
