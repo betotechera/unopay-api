@@ -13,7 +13,6 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.io.Serializable;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
