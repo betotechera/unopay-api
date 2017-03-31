@@ -25,6 +25,8 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "accredited_network")
 public class AccreditedNetwork implements Serializable {
 
+    public static final Long serialVersionUID = 1L;
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

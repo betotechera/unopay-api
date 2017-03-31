@@ -12,11 +12,15 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.io.Serializable;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable
-public class Document {
+public class Document implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
 
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)

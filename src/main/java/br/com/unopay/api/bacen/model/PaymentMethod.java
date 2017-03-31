@@ -21,6 +21,8 @@ import static javax.persistence.EnumType.STRING;
 @Embeddable
 public class PaymentMethod implements Serializable {
 
+    public static final Long serialVersionUID = 1L;
+
     @Enumerated(STRING)
     @Column(name="movement_period")
     @JsonView({Views.Public.class})

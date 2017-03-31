@@ -23,6 +23,8 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "payment_rule_group")
 public class PaymentRuleGroup implements Serializable {
 
+    public static final Long serialVersionUID = 1L;
+
     private static final int MAX = 50;
     private static final int MIN = 3;
 

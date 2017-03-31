@@ -16,6 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +27,9 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Entity
 @EqualsAndHashCode(exclude = "paymentRuleGroups")
 @Table(name = "issuer")
-public class Issuer {
+public class Issuer implements Serializable{
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

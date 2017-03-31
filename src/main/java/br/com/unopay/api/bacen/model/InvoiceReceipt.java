@@ -19,6 +19,8 @@ import static javax.persistence.EnumType.STRING;
 @Embeddable
 public class InvoiceReceipt implements Serializable{
 
+    public static final Long serialVersionUID = 1L;
+
     @Enumerated(STRING)
     @Column(name="invoice_receipt_type")
     @JsonView({Views.Public.class})
