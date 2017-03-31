@@ -45,12 +45,10 @@ public class AccreditedNetwork implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
-    @DecimalMin("0")
-    @DecimalMax("100")
     @Column(name = "merchant_discount_rate")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private BigDecimal merchantDiscountRate;
+    private Double merchantDiscountRate;
 
     @Valid
     @Enumerated(STRING)

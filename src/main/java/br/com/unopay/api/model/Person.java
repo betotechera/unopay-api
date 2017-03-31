@@ -17,13 +17,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import java.io.Serializable;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "person")
-public class Person {
+public class Person implements Serializable{
 
     @Id
     @Column(name="id")

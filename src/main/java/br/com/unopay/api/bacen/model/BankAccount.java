@@ -14,13 +14,15 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "bank_account")
-public class BankAccount {
+public class BankAccount implements Serializable{
 
     @Id
     @Column(name="id")

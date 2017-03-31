@@ -11,11 +11,13 @@ import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable
-public class InvoiceReceipt {
+public class InvoiceReceipt implements Serializable{
 
     @Enumerated(STRING)
     @Column(name="invoice_receipt_type")

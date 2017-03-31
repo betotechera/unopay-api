@@ -33,8 +33,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
         }});
-
-
         Fixture.of(PaymentRuleGroup.class).addTemplate("persisted", new Rule(){{
             add("id", "1");
             add("code", "1234");
@@ -61,6 +59,28 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
         }});
+        Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
+            add("merchantDiscountRate", random(Double.class));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+            add("type", random((Object[]) AccreditedNetworkType.values()));
+            add("paymentMethod", one(PaymentMethod.class,"valid"));
+            add("invoiceReceipt", one(InvoiceReceipt.class,"valid"));
+        }});
+
+        Fixture.of(PaymentMethod.class).addTemplate("valid", new Rule(){{
+            add("movementPeriod", random((Object[]) Period.values()));
+            add("authorizeTransfer", random(true,false));
+            add("minimumDepositValue", random(Double.class));
+            add("closingPaymentDays", random(Integer.class,range(1,31)));
+        }});
+
+        Fixture.of(InvoiceReceipt.class).addTemplate("valid", new Rule(){{
+            add("period", random(Period.values()));
+            add("type", random( InvoiceReceiptType.values()));
+        }});
+
 
         Fixture.of(BankAccount.class).addTemplate("persisted", new Rule(){{
             add("id", random("1", "2"));

@@ -12,13 +12,14 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable
-public class PaymentMethod {
+public class PaymentMethod implements Serializable {
 
     @Enumerated(STRING)
     @Column(name="movement_period")
@@ -31,10 +32,9 @@ public class PaymentMethod {
     @NotNull(groups = {Create.class, Update.class})
     private Boolean authorizeTransfer;
 
-    @DecimalMin("0.01")
     @JsonView({Views.Public.class})
     @Column(name="minimum_deposit_value")
-    private BigDecimal minimumDepositValue;
+    private Double minimumDepositValue;
 
     @Min(0)
     @JsonView({Views.Public.class})
