@@ -62,7 +62,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
-            add("merchantDiscountRate", random(Double.class));
+            add("merchantDiscountRate", random(Double.class,range(0D,1.0D)));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("type", random((Object[]) AccreditedNetworkType.values()));
             add("paymentMethod", one(PaymentMethod.class,"valid"));
@@ -72,7 +72,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(PaymentMethod.class).addTemplate("valid", new Rule(){{
             add("movementPeriod", random((Object[]) Period.values()));
             add("authorizeTransfer", random(true,false));
-            add("minimumDepositValue", random(Double.class));
+            add("minimumDepositValue", random(Double.class,range(1D,1000D)));
             add("closingPaymentDays", random(Integer.class,range(1,31)));
         }});
 

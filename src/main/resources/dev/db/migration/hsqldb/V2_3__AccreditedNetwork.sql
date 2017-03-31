@@ -7,7 +7,7 @@ create table accredited_network (
     movement_period VARCHAR(16),
     authorize_transfer boolean,
     closing_payment_days integer,
-    minimum_deposit_value  decimal(3,2),
+    minimum_deposit_value  decimal(10,2),
     invoice_receipt_period  VARCHAR(16),
     invoice_receipt_type varchar(10),
     bank_account_id varchar(256),
