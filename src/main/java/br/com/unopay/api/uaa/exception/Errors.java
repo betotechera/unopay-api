@@ -28,6 +28,8 @@ public final class Errors {
 
     public static final UnovationError PROVIDER_NOT_FOUND = new UnovationError("PROVIDER_NOT_FOUND","Provider not found");
 
+    public static final UnovationError PROVIDER_REQUIRED = new UnovationError("PROVIDER_REQUIRED","Provider required");
+
     public static final UnovationError PAYMENT_ACCOUNT_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_REQUIRED","Payment account required");
 
     public static final UnovationError PAYMENT_ACCOUNT_ID_REQUIRED = new UnovationError("PAYMENT_ACCOUNT_ID_REQUIRED","Payment account id required");

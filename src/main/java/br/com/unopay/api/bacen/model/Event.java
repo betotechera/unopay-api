@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +13,8 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+
+import static br.com.unopay.api.uaa.exception.Errors.PROVIDER_REQUIRED;
 
 @Data
 @Entity
@@ -53,4 +56,25 @@ public class Event implements Serializable {
     @Column
     @JsonView({Views.Public.class,Views.List.class})
     private String quantityUnity;
+
+    public void updateMe(Event other){
+        setName(other.getName());
+        setNcmCode(other.getNcmCode());
+        setProvider(other.getProvider());
+        setQuantityUnity(other.getQuantityUnity());
+        setRequestQuantity(other.isRequestQuantity());
+    }
+
+    public void validate(){
+        if(getProvider() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PROVIDER_REQUIRED);
+        }
+    }
+
+    public String getProviderId(){
+        if(getProvider() != null){
+            return getProvider().getId();
+        }
+        return null;
+    }
 }

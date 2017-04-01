@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class EventServiceTest extends SpockApplicationTests {
@@ -19,6 +20,32 @@ class EventServiceTest extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+    def 'given a event with unknown provider should not be created'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        event.getProvider().setId('')
+
+        when:
+        service.create(event)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'PROVIDER_NOT_FOUND'
+    }
+
+    def 'given a event without provider should not be created'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        event.setProvider(null)
+
+        when:
+        service.create(event)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PROVIDER_REQUIRED'
     }
 
     def 'a valid event should be updated'(){
@@ -69,6 +96,34 @@ class EventServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'EVENT_NOT_FOUND'
+    }
+
+    def 'given a event with unknown provider should not be updated'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        def created = service.create(event)
+        event.getProvider().setId('')
+
+        when:
+        service.update(created.id, event)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'PROVIDER_NOT_FOUND'
+    }
+
+    def 'given a event without provider should not be updated'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        def created = service.create(event)
+        event.setProvider(null)
+
+        when:
+        service.update(created.id, event)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PROVIDER_REQUIRED'
     }
 
     def 'a unknown event should not be deleted'(){

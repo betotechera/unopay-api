@@ -14,13 +14,20 @@ public class EventService {
     @Autowired
     private EventRepository repository;
 
+    @Autowired
+    private ProviderService providerService;
+
     public Event create(Event event) {
+        event.validate();
+        providerService.findById(event.getProviderId());
         return repository.save(event);
     }
 
     public void update(String id, Event event) {
         Event current = findById(id);
-        current.setName(event.getName());
+        event.validate();
+        providerService.findById(event.getProviderId());
+        current.updateMe(event);
         repository.save(current);
 
     }
