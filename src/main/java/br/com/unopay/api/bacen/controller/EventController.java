@@ -1,8 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
-
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.bacen.service.BankAccountService;
+import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -18,47 +17,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+
 @Slf4j
 @RestController
 @Timed(prefix = "api")
-public class BankAccountController {
+public class EventController {
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    private BankAccountService service;
+    private EventService service;
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/bankAccounts", method = RequestMethod.POST)
-    public ResponseEntity<BankAccount> create(@Validated(Create.class) @RequestBody BankAccount bankAccount) {
-        log.info("creating bank account {}", bankAccount);
-        BankAccount created = service.create(bankAccount);
+    @RequestMapping(value = "/events", method = RequestMethod.POST)
+    public ResponseEntity<Event> create(@Validated(Create.class) @RequestBody Event event) {
+        log.info("creating event {}", event);
+        Event created = service.create(event);
         return ResponseEntity
-                .created(URI.create("/bankAccounts/"+created.getId()))
+                .created(URI.create("/events/"+created.getId()))
                 .body(created);
 
     }
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.GET)
-    public BankAccount get(@PathVariable  String id) {
-        log.info("get bank account={}", id);
+    @RequestMapping(value = "/events/{id}", method = RequestMethod.GET)
+    public Event get(@PathVariable String id) {
+        log.info("get event={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody BankAccount bankAccount) {
-        bankAccount.setId(id);
-        log.info("updating bank account {}", bankAccount);
-        service.update(id,bankAccount);
+    @RequestMapping(value = "/events/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Event event) {
+        event.setId(id);
+        log.info("updating event {}", event);
+        service.update(id,event);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/events/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
-        log.info("removing bank account id={}", id);
+        log.info("removing event id={}", id);
         service.delete(id);
     }
 

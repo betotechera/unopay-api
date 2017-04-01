@@ -1,8 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
-
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.bacen.service.BankAccountService;
+import br.com.unopay.api.bacen.model.Provider;
+import br.com.unopay.api.bacen.service.ProviderService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -21,42 +20,42 @@ import java.net.URI;
 @Slf4j
 @RestController
 @Timed(prefix = "api")
-public class BankAccountController {
+public class ProviderController {
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    private BankAccountService service;
+    private ProviderService service;
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/bankAccounts", method = RequestMethod.POST)
-    public ResponseEntity<BankAccount> create(@Validated(Create.class) @RequestBody BankAccount bankAccount) {
-        log.info("creating bank account {}", bankAccount);
-        BankAccount created = service.create(bankAccount);
+    @RequestMapping(value = "/providers", method = RequestMethod.POST)
+    public ResponseEntity<Provider> create(@Validated(Create.class) @RequestBody Provider provider) {
+        log.info("creating bank account {}", provider);
+        Provider created = service.create(provider);
         return ResponseEntity
-                .created(URI.create("/bankAccounts/"+created.getId()))
+                .created(URI.create("/providers/"+created.getId()))
                 .body(created);
 
     }
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.GET)
-    public BankAccount get(@PathVariable  String id) {
+    @RequestMapping(value = "/providers/{id}", method = RequestMethod.GET)
+    public Provider get(@PathVariable String id) {
         log.info("get bank account={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody BankAccount bankAccount) {
-        bankAccount.setId(id);
-        log.info("updating bank account {}", bankAccount);
-        service.update(id,bankAccount);
+    @RequestMapping(value = "/providers/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Provider provider) {
+        provider.setId(id);
+        log.info("updating bank account {}", provider);
+        service.update(id,provider);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/providers/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing bank account id={}", id);
         service.delete(id);

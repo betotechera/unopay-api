@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.bacen.model.BankAccount
+import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
@@ -12,77 +12,77 @@ import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class BankAccountControllerTest extends AuthServerApplicationTests {
+class EventControllerTest extends AuthServerApplicationTests {
 
-    void 'valid bank account should be created'() {
+    void 'valid event should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
+        Event event = Fixture.from(Event.class).gimme("valid")
 
         when:
-        def result = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(account)))
+                .content(toJson(event)))
         then:
         result.andExpect(status().isCreated())
     }
 
-    void 'known bank account should be updated'() {
+    void 'known event should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
+        Event event = Fixture.from(Event.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(account))).andReturn()
+                .content(toJson(event))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(put('/bankAccounts/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(account.with { id= extractId(location);  agency = '56456'; it }))
+        def result = this.mvc.perform(put('/events/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(event.with { id= extractId(location);  name = '56456'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
 
-    void 'known bank account should be deleted'() {
+    void 'known event should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
+        Event event = Fixture.from(Event.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(account))).andReturn()
+                .content(toJson(event))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(delete('/bankAccounts/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(delete('/events/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
 
-    void 'known bank accounts should be found'() {
+    void 'known events should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
+        Event event = Fixture.from(Event.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(account)))
+                .content(toJson(event)))
                 .andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(get('/bankAccounts/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(get('/events/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.agency', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
     }
 
     private String extractId(String location) {
-        location.replaceAll('/bankAccounts/', "")
+        location.replaceAll('/events/', "")
     }
 
     private String getLocationHeader(MvcResult mvcResult) {
