@@ -8,6 +8,6 @@ insert into bank(bacen_cod, name) values(477, 'CITIBANK N.A. Banco Comercial Est
 insert into bank(bacen_cod, name) values(479, 'BANCO ITAUBANK S.A');
 
 
-insert into bank_account(id, bacen_cod, agency,dv_agency, account_number, dv_account_number, account_type) values ('1', 341, '1234', 'A', '5467884', 'A1', 'PAYMENT')
-insert into bank_account(id, bacen_cod, agency,dv_agency, account_number, dv_account_number, account_type) values ('2', 341, '558', '2', '79789444', '1', 'PAYMENT')
+insert into bank_account(id, bacen_cod, agency,dv_agency, account_number, dv_account_number, account_type) values ('1', 341, '1234', 'A', '5467884', 'A1', 'CURRENT')
+insert into bank_account(id, bacen_cod, agency,dv_agency, account_number, dv_account_number, account_type) values ('2', 341, '558', '2', '79789444', '1', 'CURRENT')
 insert into payment_bank_account(id, bank_account_id, transfer_authorized,deposit_period) values ('1', '1', '1', 'WEEKLY')
