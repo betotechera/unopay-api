@@ -45,7 +45,6 @@ public class BankAccount implements Serializable{
     private String agency;
 
     @Column
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String dvAgency;
 
@@ -54,7 +53,6 @@ public class BankAccount implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private String accountNumber;
 
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String dvAccountNumber;
 
@@ -83,14 +81,8 @@ public class BankAccount implements Serializable{
         if(getAgency() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(AGENCY_REQUIRED);
         }
-        if(getDvAgency() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(AGENCY_DV_REQUIRED);
-        }
         if(getAccountNumber() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCOUNT_NUMBER_REQUIRED);
-        }
-        if(getDvAccountNumber() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(ACCOUNT_NUMBER_DV_REQUIRED);
         }
         if(getType() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(TYPE_REQUIRED);
