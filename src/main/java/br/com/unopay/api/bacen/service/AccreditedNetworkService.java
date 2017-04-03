@@ -73,6 +73,7 @@ public class AccreditedNetworkService {
         AccreditedNetwork current = repository.findOne(id);
         current.updateModel(accreditedNetwork);
         personService.save(accreditedNetwork.getPerson());
+        bankAccountService.update(current.getBankAccount().getId(),current.getBankAccount());
         repository.save(current);
     }
 
