@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static br.com.unopay.api.uaa.exception.Errors.BANK_NOT_FOUND;
 
 @Service
@@ -26,7 +24,7 @@ public class BankService {
         return bank;
     }
 
-    public List<Bank> findAll(){
-        return repository.findAll();
+    public Page<Bank> findAll(UnovationPageRequest pageRequest){
+        return repository.findAll(new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 }
