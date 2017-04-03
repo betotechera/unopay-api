@@ -35,43 +35,6 @@ class BankAccountServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'AGENCY_REQUIRED'
     }
 
-    def 'given a account without agency dv should not be created'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        account.setDvAgency(null)
-        when:
-        service.create(account)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'AGENCY_DV_REQUIRED'
-    }
-
-    def 'given a account without number dv should not be updated'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        BankAccount created = service.create(account)
-        account.setDvAccountNumber(null)
-        when:
-        service.update(created.id, account)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'ACCOUNT_NUMBER_DV_REQUIRED'
-    }
-
-    def 'given a account without number should not be updated'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        BankAccount created = service.create(account)
-        account.setDvAccountNumber(null)
-        when:
-        service.update(created.id, account)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'ACCOUNT_NUMBER_DV_REQUIRED'
-    }
 
     def 'given a account without type should not be updated'(){
         given:
@@ -99,42 +62,7 @@ class BankAccountServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'AGENCY_REQUIRED'
     }
 
-    def 'given a account without agency dv should not be updated'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        BankAccount created = service.create(account)
-        account.setDvAgency(null)
-        when:
-        service.update(created.id, account)
 
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'AGENCY_DV_REQUIRED'
-    }
-
-    def 'given a account without number dv should not be created'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        account.setDvAccountNumber(null)
-        when:
-        service.create(account)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'ACCOUNT_NUMBER_DV_REQUIRED'
-    }
-
-    def 'given a account without number should not be created'(){
-        given:
-        BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
-        account.setDvAccountNumber(null)
-        when:
-        service.create(account)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'ACCOUNT_NUMBER_DV_REQUIRED'
-    }
 
     def 'given a account without type should not be created'(){
         given:
