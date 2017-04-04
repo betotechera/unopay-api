@@ -6,4 +6,7 @@ import br.com.unopay.api.repository.UnovationJpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 public interface IssuerRepository extends CrudRepository<Issuer,String>, UnovationJpaSpecificationExecutor<Issuer, IssuerFilter> {
+
+    Long countByPaymentRuleGroupsId(String id);
+
 }

@@ -13,4 +13,7 @@ public interface AccreditedNetworkRepository extends CrudRepository<AccreditedNe
     AccreditedNetwork findById(String id);
 
     List<AccreditedNetwork> findByIdIn(List<String> ids);
+
+    Long countByPaymentRuleGroupsId(String id);
+
 }

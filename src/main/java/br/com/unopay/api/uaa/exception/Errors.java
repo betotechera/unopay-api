@@ -51,7 +51,8 @@ public final class Errors {
     /* payment rule group */
     public static final UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =  new UnovationError("PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS","Payment rule code already exists");
     public static final UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
-    public static final UnovationError PAYMENT_RULE_GROUP_WITH_USERS = new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
+    public static final UnovationError PAYMENT_RULE_GROUP_IN_ISSUER = new UnovationError("PAYMENT_RULE_GROUP_IN_ISSUER","PaymentRuleGroup is associated with issuers");
+    public static final UnovationError PAYMENT_RULE_GROUP_IN_ACCREDITED_NETWORK = new UnovationError("PAYMENT_RULE_GROUP_IN_ACCREDITED_NETWORK","PaymentRuleGroup is associated with AccreditedNetwork");
     public static final UnovationError PAYMENT_RULE_GROUP_NAME_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_NAME_REQUIRED","Name is Required");
     public static final UnovationError PAYMENT_RULE_GROUP_CODE_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_CODE_REQUIRED","Code is Required");
     public static final UnovationError USER_RELATIONSHIP_REQUIRED =  new UnovationError("USER_RELATIONSHIP_REQUIRED","UserRelationship is Required");
