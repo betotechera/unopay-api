@@ -38,11 +38,12 @@ insert into user_type(id, name, description, version)
 values('1', 'EMISSORA', 'Emissora', 0);
 
 insert into user_type(id, name, description, version)
-values('2', 'ARRANJO', 'Arranjo de pagamento', 0);
+values('2', 'INSTITUIDOR', 'Instituidora', 0);
 
 insert into user_type(id, name, description, version)
 values('3', 'TEST', 'Test', 0);
-
+insert into user_type(id, name, description, version)
+values('4', 'CREDENCIADORA', 'Credenciadora', 0);
 
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');

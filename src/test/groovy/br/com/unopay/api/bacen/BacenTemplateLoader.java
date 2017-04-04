@@ -18,12 +18,23 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(PaymentRuleGroup.class).addTemplate("valid", new Rule(){{
             add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
             add("name", "Arranjo");
+            add("institution", one(Institution.class, "persisted"));
             add("purpose", Purpose.BUY);
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
         }});
+
+        Fixture.of(PaymentRuleGroup.class).addTemplate("without-institution", new Rule(){{
+            add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
+            add("name", "Arranjo");
+            add("purpose", Purpose.BUY);
+            add("scope", Scope.DOMESTIC);
+            add("userRelationship", UserRelationship.POSTPAID);
+        }});
+
         Fixture.of(PaymentRuleGroup.class).addTemplate("without-name", new Rule(){{
             add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
+            add("institution", one(Institution.class, "persisted"));
             add("purpose", Purpose.BUY);
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
@@ -31,6 +42,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(PaymentRuleGroup.class).addTemplate("without-code", new Rule(){{
             add("name", "Arranjo");
             add("purpose", Purpose.BUY);
+            add("institution", one(Institution.class, "persisted"));
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
         }});
@@ -44,14 +56,18 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
         Fixture.of(Institution.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
-            add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
         }});
 
         Fixture.of(Institution.class).addTemplate("persisted", new Rule(){{
             add("id", "1");
             add("person", one(Person.class, "legal"));
-            add("paymentRuleGroups", one(PaymentRuleGroup.class, "persisted"));
         }});
+
+        Fixture.of(Institution.class).addTemplate("user", new Rule(){{
+            add("id", "2");
+            add("person", one(Person.class, "legal"));
+        }});
+
 
         Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
@@ -129,8 +145,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("name", firstName());
             add("requestQuantity",random(Boolean.class));
             add("quantityUnity",random("litros", "arroba"));
-
-
         }});
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{

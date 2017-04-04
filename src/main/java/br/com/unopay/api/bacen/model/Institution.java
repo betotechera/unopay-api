@@ -33,17 +33,10 @@ public class Institution implements Serializable {
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
-    @JoinColumn(name="payment_rule_group_id")
-    @JsonView({Views.Public.class,Views.List.class})
-    private PaymentRuleGroup paymentRuleGroup;
-
-
-    @Valid
-    @NotNull(groups = {Create.class, Update.class})
-    @ManyToOne
     @JoinColumn(name="person_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Person person;
+
 
     public void updateModel(Institution institution) {
         this.person.updateForInstitution(institution.getPerson());
