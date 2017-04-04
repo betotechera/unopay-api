@@ -1,9 +1,13 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter;
+import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
+import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -26,15 +30,15 @@ public class PaymentRuleGroupService {
 
     private PaymentRuleGroupRepository repository;
 
-    private UserDetailRepository userDetailRepository;
+    private IssuerRepository issuerRepository;
 
-    private InstitutionRepository institutionRepository;
+    private AccreditedNetworkRepository accreditedNetworkRepository;
 
     @Autowired
-    public PaymentRuleGroupService(PaymentRuleGroupRepository repository, UserDetailRepository userDetailRepository, InstitutionRepository institutionRepository) {
+    public PaymentRuleGroupService(PaymentRuleGroupRepository repository, IssuerRepository issuerRepository, AccreditedNetworkRepository accreditedNetworkRepository) {
         this.repository = repository;
-        this.userDetailRepository = userDetailRepository;
-        this.institutionRepository = institutionRepository;
+        this.issuerRepository = issuerRepository;
+        this.accreditedNetworkRepository = accreditedNetworkRepository;
     }
 
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
@@ -81,7 +85,19 @@ public class PaymentRuleGroupService {
 
     public void delete(String id) {
         getById(id);
+        if(hasIssuer(id))
+            throw  UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ISSUER);
+        if(hasAccreditedNetwork(id))
+            throw  UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ACCREDITED_NETWORK);
         repository.delete(id);
+    }
+
+    private boolean hasAccreditedNetwork(String id) {
+        return accreditedNetworkRepository.countByPaymentRuleGroupsId(id) > 0;
+    }
+
+    private boolean hasIssuer(String id) {
+        return issuerRepository.countByPaymentRuleGroupsId(id) > 0;
     }
 
 
