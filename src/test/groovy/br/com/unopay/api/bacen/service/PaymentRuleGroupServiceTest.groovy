@@ -149,33 +149,6 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         thrown(NotFoundException)
     }
 
-    void 'known paymentRuleGroup should not be deleted if has user associated'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("persisted")
-
-        when:
-        service.delete(group.id)
-        then:
-        def ex = thrown(ConflictException)
-        ex.errors.first().logref == 'PAYMENT_RULE_GROUP_WITH_USERS'
-    }
-
-    void 'known paymentRuleGroup should not be deleted if has institutions associated'(){
-        given:
-        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        Institution institution = Fixture.from(Institution.class).gimme("valid")
-        when:
-        service.create(group)
-        institution.paymentRuleGroup = group
-        institutionService.create(institution)
-        service.delete(group.id)
-        then:
-        def ex = thrown(ConflictException)
-        ex.errors.first().logref == 'PAYMENT_RULE_GROUP_WITH_INSTITUTIONS'
-    }
-
-
-
     void 'should update paymentRuleGroup '(){
         given:
         PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")

@@ -1,6 +1,8 @@
 package br.com.unopay.api.uaa.model;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
@@ -55,14 +57,19 @@ public class UserDetail implements Serializable {
     private UserType type;
 
     @ManyToOne
-    @JoinColumn(name="payment_rule_group_id")
+    @JoinColumn(name="institution_id")
     @JsonView({Views.Public.class})
-    private PaymentRuleGroup paymentRuleGroup;
+    private Institution institution;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @JsonView({Views.Public.class})
     private AccreditedNetwork accreditedNetwork;
+
+    @ManyToOne
+    @JoinColumn(name="issuer_id")
+    @JsonView({Views.Public.class})
+    private Issuer issuer;
 
     @JsonView(Views.Internal.class)
     @NotNull(groups = PasswordRequired.class)
@@ -153,8 +160,14 @@ public class UserDetail implements Serializable {
         if (user.getType() != null) {
             this.setType(user.getType());
         }
-        if(user.getPaymentRuleGroup() != null){
-            this.setPaymentRuleGroup(user.getPaymentRuleGroup());
+        if(user.getIssuer() != null){
+            this.setIssuer(user.getIssuer());
+        }
+        if(user.getInstitution() != null){
+            this.setInstitution(user.getInstitution());
+        }
+        if(user.getAccreditedNetwork() != null){
+            this.setAccreditedNetwork(user.getAccreditedNetwork());
         }
 
 

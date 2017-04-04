@@ -25,7 +25,6 @@ class UserDetailTest extends Specification {
                 email: 'unovation@unovation.com.br',
                 name: 'Test Name',
                 type: new UserType(id: UUID.randomUUID().toString()),
-                paymentRuleGroup: new PaymentRuleGroup(id: UUID.randomUUID().toString())
             )
         when:
             userDetail.updateModel(otherUser)
@@ -33,19 +32,16 @@ class UserDetailTest extends Specification {
             assert userDetail.email == otherUser.email
             assert userDetail.name == otherUser.name
             assert userDetail.type.id == otherUser.type.id
-            assert userDetail.paymentRuleGroup.id == otherUser.paymentRuleGroup.id
     }
 
     def 'given an user when updating model then should not update null properties'() {
         given:
             String userTypeId = UUID.randomUUID().toString()
-            String paymentRuleGroupId = UUID.randomUUID().toString()
 
             UserDetail userDetail = new UserDetail(
                 email: 'unovation@unovation.com.br',
                 name: 'Test Name',
                 type: new UserType(id: userTypeId),
-                paymentRuleGroup: new PaymentRuleGroup(id: paymentRuleGroupId)
             )
             UserDetail otherUser = new UserDetail()
         when:
@@ -54,7 +50,6 @@ class UserDetailTest extends Specification {
             assert userDetail.email == 'unovation@unovation.com.br'
             assert userDetail.name == 'Test Name'
             assert userDetail.type.id == userTypeId
-            assert userDetail.paymentRuleGroup.id == paymentRuleGroupId
     }
 
     def 'given an user when adding null list to groups then should do nothing'() {

@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -61,6 +62,13 @@ public class PaymentRuleGroup implements Serializable {
     @Column(name="user_relationship")
     @JsonView({Views.Public.class,Views.List.class})
     private UserRelationship userRelationship;
+
+    @Valid
+    @NotNull(groups = {Create.class, Update.class})
+    @ManyToOne
+    @JoinColumn(name="institution_id")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Institution institution;
 
     public void updateModel(PaymentRuleGroup ruleGroup) {
         if(ruleGroup.getCode() !=null)

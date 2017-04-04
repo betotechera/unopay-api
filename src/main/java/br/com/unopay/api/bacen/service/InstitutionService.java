@@ -3,8 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InstitutionFilter;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
-import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.PersonFilter;
+import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -22,11 +21,16 @@ import org.springframework.stereotype.Service;
 public class InstitutionService {
     private InstitutionRepository repository;
     private PersonService personService;
+    private UserDetailRepository userDetailRepository;
+    private PaymentRuleGroupRepository paymentRuleGroupRepository;
 
     @Autowired
-    public InstitutionService(InstitutionRepository repository, PersonService personService) {
+    public InstitutionService(InstitutionRepository repository, PersonService personService,
+                              UserDetailRepository userDetailRepository, PaymentRuleGroupRepository paymentRuleGroupRepository) {
         this.repository = repository;
         this.personService = personService;
+        this.userDetailRepository = userDetailRepository;
+        this.paymentRuleGroupRepository = paymentRuleGroupRepository;
     }
 
     public Institution create(Institution institution) {
@@ -58,9 +62,21 @@ public class InstitutionService {
 
     public void delete(String id) {
         getById(id);
+        if(hasUser(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.INSTITUTION_WITH_USERS);
+        }
+        if(hasPaymentRuleGroup(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.INSTITUTION_WITH_PAYMENT_RULE_GROUPS);
+        }
         repository.delete(id);
     }
+    private boolean hasPaymentRuleGroup(String id) {
+        return paymentRuleGroupRepository.countByInstitutionId(id) > 0;
+    }
 
+    private Boolean hasUser(String id) {
+        return userDetailRepository.countByInstitutionId(id) > 0;
+    }
 
     public Page<Institution> findByFilter(InstitutionFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));

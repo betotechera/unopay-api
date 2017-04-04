@@ -25,23 +25,6 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("password", regex("\\d{5,8}"));
         }});
 
-        Fixture.of(UserDetail.class).addTemplate("without-payment-rule-group", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
-            add("name", firstName());
-            add("type", one(UserType.class, "payment-rule-group"));
-            add("password", regex("\\d{5,8}"));
-        }});
-
-        Fixture.of(UserDetail.class).addTemplate("with-payment-rule-group", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
-            add("name", firstName());
-            add("type", one(UserType.class, "payment-rule-group"));
-            add("paymentRuleGroup", one(PaymentRuleGroup.class, "persisted"));
-            add("password", regex("\\d{5,8}"));
-        }});
-
         Fixture.of(UserDetail.class).addTemplate("without-institution", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
@@ -50,12 +33,13 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("password", regex("\\d{5,8}"));
         }});
 
+
         Fixture.of(UserDetail.class).addTemplate("with-institution", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("email", uniqueRandom("nerd@gmail.com", "news@gmail.com"));
             add("name", firstName());
             add("type", one(UserType.class, "institution"));
-            add("institution", one(Institution.class, "persisted"));
+            add("institution", one(Institution.class, "user"));
             add("password", regex("\\d{5,8}"));
         }});
 
@@ -130,17 +114,13 @@ public class UaaTemplateLoader implements TemplateLoader {
             add("description", uniqueRandom("User type 1", "User type 2"));
         }});
 
-        Fixture.of(UserType.class).addTemplate("payment-rule-group", new Rule(){{
-            add("id", "2");
-            add("name", "ARRANJO");
-            add("description", "Arranjo de Pagamento");
-        }});
 
         Fixture.of(UserType.class).addTemplate("institution", new Rule(){{
-            add("id", "1");
-            add("name", "EMISSORA");
-            add("description", "Arranjo de Pagamento");
+            add("id", "2");
+            add("name", "INSTITUIDOR");
+            add("description", "Instituidor de arranjo de Pagamento");
         }});
+
 
     }
 }
