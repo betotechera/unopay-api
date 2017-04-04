@@ -63,11 +63,10 @@ public class PaymentRuleGroup implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private UserRelationship userRelationship;
 
-    @Valid
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="institution_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private Institution institution;
 
     public void updateModel(PaymentRuleGroup ruleGroup) {
