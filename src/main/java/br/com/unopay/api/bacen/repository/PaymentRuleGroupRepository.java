@@ -12,4 +12,7 @@ public interface PaymentRuleGroupRepository extends CrudRepository<PaymentRuleGr
     PaymentRuleGroup findById(String id);
 
     List<PaymentRuleGroup> findByIdIn(List<String> ids);
+
+    Long countByInstitutionId(String id);
+
 }

@@ -1,16 +1,18 @@
 package br.com.unopay.api.uaa.service;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
+import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
-import br.com.unopay.api.uaa.model.Group;
-import br.com.unopay.api.uaa.model.NewPassword;
-import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserType;
+import br.com.unopay.api.uaa.model.*;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -41,7 +43,6 @@ import java.util.List;
 import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
-import static br.com.unopay.api.uaa.model.UserTypeNames.PAYMENT_RULE_GROUP;
 
 @Service
 @Timed
@@ -51,8 +52,12 @@ public class UserDetailService implements UserDetailsService {
 
     @Autowired
     private UserDetailRepository userDetailRepository;
+
     @Autowired
-    private PaymentRuleGroupRepository paymentRuleGroupRepository;
+    private IssuerRepository issuerRepository;
+
+    @Autowired
+    private AccreditedNetworkRepository accreditedNetworkRepository;
 
     @Autowired
     private InstitutionRepository institutionRepository;
@@ -189,18 +194,49 @@ public class UserDetailService implements UserDetailsService {
             throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
         }
 
-        if(type.getName().equals(PAYMENT_RULE_GROUP)) {
-            validatePaymentRuleGroup(user);
+        if(type.getName().equals(UserTypeNames.INSTITUTION)) {
+            validateInstitution(user);
+        }
+        if(type.getName().equals(UserTypeNames.ACCREDITED_NETWORK)) {
+            validateAccreditedNetwork(user);
+        }
+        if(type.getName().equals(UserTypeNames.ISSUER)) {
+            validateIssuer(user);
         }
     }
-    private void validatePaymentRuleGroup(UserDetail user) {
-        if(user.getPaymentRuleGroup() == null || user.getPaymentRuleGroup().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP);
+
+    private void validateIssuer(UserDetail user) {
+        if(user.getIssuer() == null || user.getIssuer().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ISSUER);
         } else {
-            PaymentRuleGroup paymentRuleGroup = paymentRuleGroupRepository.findById(user.getPaymentRuleGroup().getId());
-            if(paymentRuleGroup == null) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_RULE_GROUP_NOT_FOUND);
+            Issuer issuer = issuerRepository.findOne(user.getIssuer().getId());
+            if(issuer == null) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ISSUER_NOT_FOUND);
             }
         }
     }
+
+    private void validateAccreditedNetwork(UserDetail user) {
+        if(user.getAccreditedNetwork() == null || user.getAccreditedNetwork().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
+        } else {
+            AccreditedNetwork accreditedNetwork = accreditedNetworkRepository.findOne(user.getIssuer().getId());
+            if(accreditedNetwork == null) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND);
+            }
+        }
+    }
+
+    private void validateInstitution(UserDetail user) {
+        if(user.getInstitution() == null || user.getInstitution().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
+        } else {
+            Institution institution = institutionRepository.findOne(user.getInstitution().getId());
+            if(institution == null) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTITUTION_NOT_FOUND);
+            }
+        }
+
+    }
+
 }

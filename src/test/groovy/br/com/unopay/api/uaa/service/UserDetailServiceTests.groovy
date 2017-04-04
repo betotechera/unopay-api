@@ -196,20 +196,20 @@ class UserDetailServiceTests extends SpockApplicationTests {
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find()?.logref == 'USER_TYPE_REQUIRED'
     }
-    void 'when create user with type ARRANJO should have a PaymentRuleGroup'() {
+    void 'when create user with type INSTITUIDOR should have a INSTITUTION'() {
         given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("without-payment-rule-group")
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-institution")
         when:
         service.create(user)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find()?.logref == 'USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP'
+        ex.errors.find()?.logref == 'USER_TYPE_MUST_SET_AN_INSTITUTION'
     }
 
-    void 'success creating user with type ARRANJO and a PaymentRuleGroup'() {
+    void 'success creating user with type INSTITUIDOR and a Insitution'() {
         given:
-        UserDetail user = Fixture.from(UserDetail.class).gimme("with-payment-rule-group")
+        UserDetail user = Fixture.from(UserDetail.class).gimme("with-institution")
         when:
         def created = service.create(user)
 

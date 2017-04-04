@@ -18,8 +18,6 @@ public final class Errors {
     public static final UnovationError BANK_REQUIRED = new UnovationError("BANK_REQUIRED","Bank required");
     public static final UnovationError BANK_CODE_REQUIRED = new UnovationError("BANK_CODE_REQUIRED","Bank code required");
     public static final UnovationError AGENCY_REQUIRED = new UnovationError("AGENCY_REQUIRED","Agency required");
-    public static final UnovationError AGENCY_DV_REQUIRED = new UnovationError("AGENCY_DV_REQUIRED","Agency dv required");
-    public static final UnovationError ACCOUNT_NUMBER_DV_REQUIRED = new UnovationError("ACCOUNT_NUMBER_DV_REQUIRED","Account number dv required");
     public static final UnovationError ACCOUNT_NUMBER_REQUIRED = new UnovationError("ACCOUNT_NUMBER_REQUIRED","Account number required");
 
     /* issuer */
@@ -28,6 +26,7 @@ public final class Errors {
     public static final UnovationError PAYMENT_ACCOUNT_NOT_FOUND = new UnovationError("PAYMENT_ACCOUNT_NOT_FOUND","Payment account not found");
     public static final UnovationError MOVEMENT_ACCOUNT_REQUIRED = new UnovationError("MOVEMENT_ACCOUNT_REQUIRED","Movement account required");
     public static final UnovationError ISSUER_NOT_FOUND = new UnovationError("ISSUER_NOT_FOUND","Issuer not found");
+    public static final UnovationError USER_TYPE_MUST_SET_AN_ISSUER = new UnovationError("USER_TYPE_MUST_SET_AN_ISSUER","UserType must set an Issuer");
 
     /* uaa */
     public static final UnovationError USER_TYPE_REQUIRED = new UnovationError("USER_TYPE_REQUIRED","User type required");
@@ -51,7 +50,6 @@ public final class Errors {
 
     /* payment rule group */
     public static final UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =  new UnovationError("PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS","Payment rule code already exists");
-    public static final UnovationError USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP =  new UnovationError("USER_TYPE_MUST_SET_A_PAYMENT_RULE_GROUP","User type must set a PaymentRuleGroup");
     public static final UnovationError PAYMENT_RULE_GROUP_NOT_FOUND  =  new UnovationError("PAYMENT_RULE_GROUP_NOT_FOUND","PaymentRuleGroup not found");
     public static final UnovationError PAYMENT_RULE_GROUP_WITH_USERS = new UnovationError("PAYMENT_RULE_GROUP_WITH_USERS","PaymentRuleGroup has users");
     public static final UnovationError PAYMENT_RULE_GROUP_NAME_REQUIRED =  new UnovationError("PAYMENT_RULE_GROUP_NAME_REQUIRED","Name is Required");
@@ -69,13 +67,20 @@ public final class Errors {
     public static final UnovationError PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
     public static final UnovationError PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
 
+
     /* Institution */
     public static final UnovationError PERSON_INSTITUTION_ALREADY_EXISTS = new UnovationError("PERSON_INSTITUTION_ALREADY_EXISTS","Person Institution already exists");
-    public static final UnovationError PAYMENT_RULE_GROUP_WITH_INSTITUTIONS = new UnovationError("PAYMENT_RULE_GROUP_WITH_INSTITUTIONS","PaymentRuleGroup has Institutions");
+    public static final UnovationError USER_TYPE_MUST_SET_AN_INSTITUTION = new UnovationError("USER_TYPE_MUST_SET_AN_INSTITUTION","UserType must set an Institution");
+    public static final UnovationError INSTITUTION_NOT_FOUND = new UnovationError("INSTITUTION_NOT_FOUND","Institution not found");
+    public static final UnovationError INSTITUTION_WITH_USERS = new UnovationError("INSTITUTION_WITH_USERS"," Institution has Users");
+    public static final UnovationError INSTITUTION_WITH_PAYMENT_RULE_GROUPS = new UnovationError("INSTITUTION_WITH_PAYMENT_RULE_GROUPS"," Institution has PaymentRuleGroups");
 
     /* AccreditedNetwork */
     public static final UnovationError ACCREDITED_NETWORK_WITH_USERS = new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
     public static final UnovationError PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS = new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS","Person AccreditedNetwork already exists");
     public static final UnovationError INVALID_MERCHANT_DISCOUNT_RATE_RANGE = new UnovationError("INVALID_MERCHANT_DISCOUNT_RATE_RANGE","merchantDiscountRate must be between 0 and 1");
     public static final UnovationError INVALID_MINIMUM_DEPOSIT_VALUE = new UnovationError("INVALID_MINIMUM_DEPOSIT_VALUE","minimumDepositValue must be a positive value");
+    public static final UnovationError USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK = new UnovationError("USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK","UserType must set an AccreditedNetwork");
+    public static final UnovationError ACCREDITED_NETWORK_NOT_FOUND = new UnovationError("ACCREDITED_NETWORK_NOT_FOUND","AccreditedNetwork not found");
+
 }
