@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(using = CompanyTypeSerializer.class)
 public enum CompanyType {
 
-    LIMITED_PARTNERSHIP("Sociedade por quotas de responsbailidade limitada\n"),
+    LIMITED_PARTNERSHIP("Sociedade por quotas de responsabilidade limitada"),
     STOCK_COMPANY("Sociedade por ações - S.A"),
     COOPERATIVE_SOCIETY("Sociedade simples / cooperativa"),
     MICRO("Micro empresa de pequeno porte"),

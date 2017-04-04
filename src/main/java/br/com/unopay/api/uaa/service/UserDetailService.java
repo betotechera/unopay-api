@@ -220,7 +220,7 @@ public class UserDetailService implements UserDetailsService {
         if(user.getAccreditedNetwork() == null || user.getAccreditedNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
         } else {
-            AccreditedNetwork accreditedNetwork = accreditedNetworkRepository.findOne(user.getIssuer().getId());
+            AccreditedNetwork accreditedNetwork = accreditedNetworkRepository.findOne(user.getAccreditedNetwork().getId());
             if(accreditedNetwork == null) {
                 throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND);
             }
