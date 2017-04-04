@@ -1,9 +1,11 @@
+logging:
+  file: /var/unopay/unpay-api.log
 server:
   port: 7070
 unopay:
   api: 10.10.0.193:7070
   resetPassword:
-        url: 'http://unopay.qa.unvlocal.com.br/senha/nova'
+        url: 'http://qualidade.roadcard.com.br/plataformaprepaga/#/password/'
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:
