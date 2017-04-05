@@ -1,8 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.IssuerFilter;
+import br.com.unopay.api.bacen.model.EventFilter;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.stream.EventFilter;
 import java.net.URI;
 
 

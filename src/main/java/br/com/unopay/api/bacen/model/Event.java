@@ -38,7 +38,7 @@ public class Event implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private Service service;
 
-    @Column
+    @Column(name = "ncm_code")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String ncmCode;
