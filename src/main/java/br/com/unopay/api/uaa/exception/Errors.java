@@ -11,6 +11,7 @@ public final class Errors {
     /* service */
     public static final UnovationError SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
     public static final UnovationError SERVICE_REQUIRED = new UnovationError("SERVICE_REQUIRED","Service required");
+    public static final UnovationError INVALID_TAX_PERCENT = new UnovationError("INVALID_TAX_PERCENT","taxPercent must be between 0 and 1");
 
     /* bank account */
     public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");

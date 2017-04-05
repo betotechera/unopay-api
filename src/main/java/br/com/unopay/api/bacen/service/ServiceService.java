@@ -18,12 +18,14 @@ public class ServiceService {
     private ServiceRepository repository;
 
     public Service create(Service service) {
+        service.validate();
         return repository.save(service);
     }
 
-    public void update(String id, Service event) {
+    public void update(String id, Service service) {
+        service.validate();
         Service current = findById(id);
-        current.setName(event.getName());
+        current.updateModel(service);
         repository.save(current);
 
     }
