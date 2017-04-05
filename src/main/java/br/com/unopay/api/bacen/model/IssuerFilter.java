@@ -13,8 +13,8 @@ public class IssuerFilter implements Serializable{
     @SearchableField(field = "person.document.number")
     private String documentNumber;
 
-    @SearchableField(field = "person.legalPersonDetail.fantasyName")
-    private String fantasyName;
+    @SearchableField(field = "person.name")
+    private String personName;
 
     @SearchableField(field = "person.address.streetName")
     private String streetName;
