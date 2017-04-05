@@ -3,8 +3,13 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import javax.xml.stream.EventFilter;
 
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 
@@ -41,5 +46,9 @@ public class EventService {
     public void delete(String id) {
         findById(id);
         repository.delete(id);
+    }
+
+    public Page<Event> findByFilter(EventFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }

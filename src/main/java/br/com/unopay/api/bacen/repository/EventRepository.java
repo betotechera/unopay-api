@@ -1,7 +1,9 @@
 package br.com.unopay.api.bacen.repository;
 
 import br.com.unopay.api.bacen.model.Event;
-import org.springframework.data.repository.CrudRepository;
+import br.com.unopay.api.repository.UnovationFilterRepository;
 
-public interface EventRepository extends CrudRepository<Event,String>{
+import javax.xml.stream.EventFilter;
+
+public interface EventRepository extends UnovationFilterRepository<Event,String, EventFilter> {
 }

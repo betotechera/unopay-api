@@ -1,6 +1,6 @@
 package br.com.unopay.api.uaa.repository;
 
-import br.com.unopay.api.repository.UnovationJpaSpecificationExecutor;
+import br.com.unopay.api.repository.UnovationFilterRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Set;
 
-public interface UserDetailRepository extends CrudRepository<UserDetail,String>, UnovationJpaSpecificationExecutor<UserDetail, UserFilter> {
+public interface UserDetailRepository extends UnovationFilterRepository<UserDetail,String, UserFilter> {
 
     UserDetail findByEmail(String email);
     UserDetail findById(String id);

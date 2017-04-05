@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PersonRepository extends CrudRepository<Person,String>, UnovationJpaSpecificationExecutor<Person, PersonFilter> {}
+public interface PersonRepository extends UnovationFilterRepository<Person,String, PersonFilter> {}
 
