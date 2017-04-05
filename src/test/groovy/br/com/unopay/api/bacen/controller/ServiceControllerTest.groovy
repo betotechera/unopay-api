@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.bacen.model.Provider
+import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
@@ -12,69 +12,69 @@ import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class ProviderControllerTest  extends AuthServerApplicationTests {
+class ServiceControllerTest extends AuthServerApplicationTests {
 
-    void 'valid provider should be created'() {
+    void 'valid service should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        Provider provider = Fixture.from(Provider.class).gimme("valid")
+        Service service = Fixture.from(Service.class).gimme("valid")
 
         when:
-        def result = this.mvc.perform(post('/providers?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(provider)))
+                .content(toJson(service)))
         then:
         result.andExpect(status().isCreated())
     }
 
-    void 'known provider should be updated'() {
+    void 'known service should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        Provider provider = Fixture.from(Provider.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/providers?access_token={access_token}', accessToken)
+        Service service = Fixture.from(Service.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(provider))).andReturn()
+                .content(toJson(service))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(put('/providers/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(provider.with { id= extractId(location); name = '56456'; it }))
+        def result = this.mvc.perform(put('/services/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(service.with { id= extractId(location); name = '56456'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
 
-    void 'known provider should be deleted'() {
+    void 'known service should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        Provider provider = Fixture.from(Provider.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/providers?access_token={access_token}', accessToken)
+        Service service = Fixture.from(Service.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(provider))).andReturn()
+                .content(toJson(service))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(delete('/providers/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(delete('/services/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
 
-    void 'known providers should be found'() {
+    void 'known services should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        Provider provider = Fixture.from(Provider.class).gimme("valid")
-        def mvcResult = this.mvc.perform(post('/providers?access_token={access_token}', accessToken)
+        Service service = Fixture.from(Service.class).gimme("valid")
+        def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(provider)))
+                .content(toJson(service)))
                 .andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(get('/providers/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(get('/services/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -82,7 +82,7 @@ class ProviderControllerTest  extends AuthServerApplicationTests {
     }
 
     private String extractId(String location) {
-        location.replaceAll('/providers/', "")
+        location.replaceAll('/services/', "")
     }
 
     private String getLocationHeader(MvcResult mvcResult) {

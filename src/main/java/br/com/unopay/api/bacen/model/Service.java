@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Entity
 @EqualsAndHashCode
 @Table(name = "service")
-public class Provider implements Serializable {
+public class Service implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
@@ -27,6 +27,11 @@ public class Provider implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
+
+    @Column
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private Integer code;
 
     @Column
     @NotNull(groups = {Create.class, Update.class})

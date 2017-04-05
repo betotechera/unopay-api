@@ -22,30 +22,30 @@ class EventServiceTest extends SpockApplicationTests {
         created != null
     }
 
-    def 'given a event with unknown provider should not be created'(){
+    def 'given a event with unknown service should not be created'(){
         given:
         Event event = Fixture.from(Event.class).gimme("valid")
-        event.getProvider().setId('')
+        event.getService().setId('')
 
         when:
         service.create(event)
 
         then:
         def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'PROVIDER_NOT_FOUND'
+        ex.errors.find().logref == 'SERVICE_NOT_FOUND'
     }
 
-    def 'given a event without provider should not be created'(){
+    def 'given a event without service should not be created'(){
         given:
         Event event = Fixture.from(Event.class).gimme("valid")
-        event.setProvider(null)
+        event.setService(null)
 
         when:
         service.create(event)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'PROVIDER_REQUIRED'
+        ex.errors.find().logref == 'SERVICE_REQUIRED'
     }
 
     def 'a valid event should be updated'(){
@@ -98,32 +98,32 @@ class EventServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'EVENT_NOT_FOUND'
     }
 
-    def 'given a event with unknown provider should not be updated'(){
+    def 'given a event with unknown service should not be updated'(){
         given:
         Event event = Fixture.from(Event.class).gimme("valid")
         def created = service.create(event)
-        event.getProvider().setId('')
+        event.getService().setId('')
 
         when:
         service.update(created.id, event)
 
         then:
         def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'PROVIDER_NOT_FOUND'
+        ex.errors.find().logref == 'SERVICE_NOT_FOUND'
     }
 
-    def 'given a event without provider should not be updated'(){
+    def 'given a event without service should not be updated'(){
         given:
         Event event = Fixture.from(Event.class).gimme("valid")
         def created = service.create(event)
-        event.setProvider(null)
+        event.setService(null)
 
         when:
         service.update(created.id, event)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'PROVIDER_REQUIRED'
+        ex.errors.find().logref == 'SERVICE_REQUIRED'
     }
 
     def 'a unknown event should not be deleted'(){

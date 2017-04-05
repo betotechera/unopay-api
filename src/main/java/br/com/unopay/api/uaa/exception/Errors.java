@@ -8,9 +8,9 @@ public final class Errors {
     public static final UnovationError TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
     public static final UnovationError EVENT_NOT_FOUND = new UnovationError("EVENT_NOT_FOUND","Event not found");
 
-    /* provider */
-    public static final UnovationError PROVIDER_NOT_FOUND = new UnovationError("PROVIDER_NOT_FOUND","Provider not found");
-    public static final UnovationError PROVIDER_REQUIRED = new UnovationError("PROVIDER_REQUIRED","Provider required");
+    /* service */
+    public static final UnovationError SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
+    public static final UnovationError SERVICE_REQUIRED = new UnovationError("SERVICE_REQUIRED","Service required");
 
     /* bank account */
     public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");

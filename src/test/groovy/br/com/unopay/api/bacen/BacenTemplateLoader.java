@@ -4,11 +4,9 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.*;
-import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.Person;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 
 public class BacenTemplateLoader implements TemplateLoader {
@@ -124,23 +122,25 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("depositPeriod", random(DepositPeriod.class));
         }});
 
-        Fixture.of(Provider.class).addTemplate("valid", new Rule(){{
+        Fixture.of(Service.class).addTemplate("valid", new Rule(){{
             add("name", firstName());
+            add("code", random(Integer.class));
             add("type", random(ServiceType.class));
             add("taxVal", random(BigDecimal.class));
             add("taxPercent", random(Double.class));
         }});
 
-        Fixture.of(Provider.class).addTemplate("persisted", new Rule(){{
+        Fixture.of(Service.class).addTemplate("persisted", new Rule(){{
             add("id", "1");
             add("name", firstName());
             add("type", random(ServiceType.class));
+            add("code", random(Integer.class));
             add("taxVal", random(BigDecimal.class));
             add("taxPercent", random(Double.class));
         }});
 
         Fixture.of(Event.class).addTemplate("valid", new Rule(){{
-            add("provider", one(Provider.class, "persisted"));
+            add("service", one(Service.class, "persisted"));
             add("ncmCode", random("445661", "879879"));
             add("name", firstName());
             add("requestQuantity",random(Boolean.class));

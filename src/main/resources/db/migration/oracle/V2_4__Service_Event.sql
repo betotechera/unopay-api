@@ -1,6 +1,7 @@
 create table service (
  id VARCHAR(256) PRIMARY KEY,
  type varchar(50) not null,
+ code integer not null,
  name varchar(256) not null,
  tax_val decimal(*,2) not null,
  tax_percent decimal(3,2) not null

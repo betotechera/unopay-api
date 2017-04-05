@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-import static br.com.unopay.api.uaa.exception.Errors.PROVIDER_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
 
 @Data
 @Entity
@@ -36,7 +36,7 @@ public class Event implements Serializable {
     @OneToOne
     @JoinColumn(name="service_id")
     @JsonView({Views.Public.class,Views.List.class})
-    private Provider provider;
+    private Service service;
 
     @Column
     @NotNull(groups = {Create.class, Update.class})
@@ -60,20 +60,20 @@ public class Event implements Serializable {
     public void updateMe(Event other){
         setName(other.getName());
         setNcmCode(other.getNcmCode());
-        setProvider(other.getProvider());
+        setService(other.getService());
         setQuantityUnity(other.getQuantityUnity());
         setRequestQuantity(other.isRequestQuantity());
     }
 
     public void validate(){
-        if(getProvider() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(PROVIDER_REQUIRED);
+        if(getService() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_REQUIRED);
         }
     }
 
     public String getProviderId(){
-        if(getProvider() != null){
-            return getProvider().getId();
+        if(getService() != null){
+            return getService().getId();
         }
         return null;
     }
