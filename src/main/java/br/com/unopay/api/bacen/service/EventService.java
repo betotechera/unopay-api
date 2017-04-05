@@ -20,18 +20,18 @@ public class EventService {
     private EventRepository repository;
 
     @Autowired
-    private ProviderService providerService;
+    private ServiceService serviceService;
 
     public Event create(Event event) {
         event.validate();
-        providerService.findById(event.getProviderId());
+        serviceService.findById(event.getProviderId());
         return repository.save(event);
     }
 
     public void update(String id, Event event) {
         Event current = findById(id);
         event.validate();
-        providerService.findById(event.getProviderId());
+        serviceService.findById(event.getProviderId());
         current.updateMe(event);
         repository.save(current);
 
