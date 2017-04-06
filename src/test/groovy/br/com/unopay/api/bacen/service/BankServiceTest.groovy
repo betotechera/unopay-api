@@ -15,7 +15,7 @@ class BankServiceTest extends SpockApplicationTests {
         def result = service.findAll(page)
 
         then:
-        !result.content.isEmpty()
-        result.totalElements > 0
+        !result.isEmpty()
+        result.size() > 0
     }
 }
