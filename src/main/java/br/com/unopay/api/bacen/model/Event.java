@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -48,12 +49,12 @@ public class Event implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String name;
 
-    @Column
+    @Column(name ="request_quantity")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private boolean requestQuantity;
 
-    @Column
+    @Column(name ="quantity_unity")
     @JsonView({Views.Public.class,Views.List.class})
     private String quantityUnity;
 
@@ -69,6 +70,8 @@ public class Event implements Serializable {
         if(getService() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_REQUIRED);
         }
+        if(requestQuantity && quantityUnity == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.QUANTITY_UNITY_REQUIRED);
     }
 
     public String getProviderId(){
