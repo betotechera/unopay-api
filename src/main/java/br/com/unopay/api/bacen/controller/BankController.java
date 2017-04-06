@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @Timed(prefix = "api")
@@ -35,8 +37,7 @@ public class BankController {
     @RequestMapping(value = "/banks", method = RequestMethod.GET)
     public Results<Bank> getAll(@Validated UnovationPageRequest pageable) {
         log.info("get banks");
-        Page<Bank> page =  service.findAll(pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/banks", api));
+        List<Bank> banks =  service.findAll("all");
+        return new Results<>(banks);
     }
 }
