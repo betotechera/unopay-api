@@ -15,7 +15,12 @@ public class PaymentBankAccountService {
     @Autowired
     private PaymentBankAccountRepository repository;
 
+    @Autowired
+    private BankAccountService bankAccountService;
+
+
     public PaymentBankAccount create(PaymentBankAccount paymentAccount) {
+        bankAccountService.create(paymentAccount.getBankAccount());
         return repository.save(paymentAccount);
     }
 
