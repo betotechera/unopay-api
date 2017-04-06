@@ -13,7 +13,10 @@ public class EventFilter  implements Serializable {
     @SearchableField(field = "service.name")
     private String serviceName;
 
-    @SearchableField(field = "paymentRuleGroups.name")
-    private String paymentRuleGroupName;
+    @SearchableField
+    private String name;
+
+    @SearchableField
+    private String ncmCode;
 
 }
