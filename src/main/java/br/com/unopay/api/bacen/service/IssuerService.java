@@ -79,9 +79,8 @@ public class IssuerService {
     private void createRequiredReferences(Issuer issuer) {
         Person person = personService.save(issuer.getPerson());
         PaymentBankAccount paymentBankAccount = paymentBankAccountService.create(issuer.getPaymentAccount());
-        BankAccount movementAccount = bankAccountService.create(issuer.getMovementAccount());
+        bankAccountService.create(issuer.getMovementAccount());
         issuer.setPaymentAccount(paymentBankAccount);
         issuer.setPerson(person);
-        issuer.setMovementAccount(movementAccount);
     }
 }
