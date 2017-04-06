@@ -85,4 +85,8 @@ public final class Errors {
     public static final UnovationError USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK = new UnovationError("USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK","UserType must set an AccreditedNetwork");
     public static final UnovationError ACCREDITED_NETWORK_NOT_FOUND = new UnovationError("ACCREDITED_NETWORK_NOT_FOUND","AccreditedNetwork not found");
 
+    /* file upload */
+    public static final UnovationError FILE_SERVICE_NOT_CONFIGURED = new UnovationError("FILE_SERVICE_NOT_CONFIGURED","File service not configured.");
+
+
 }

@@ -79,7 +79,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
             add("merchantDiscountRate", random(Double.class,range(0D,1.0D)));
             add("bankAccount", one(BankAccount.class, "persisted"));
-            add("type", random((Object[]) AccreditedNetworkType.values()));
+            add("type", random((AccreditedNetworkType.class)));
             add("paymentMethod", one(PaymentMethod.class,"valid"));
             add("invoiceReceipt", one(InvoiceReceipt.class,"valid"));
         }});
@@ -92,8 +92,8 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(InvoiceReceipt.class).addTemplate("valid", new Rule(){{
-            add("period", random(Period.values()));
-            add("type", random( InvoiceReceiptType.values()));
+            add("period", random(Period.class));
+            add("type", random( InvoiceReceiptType.class));
         }});
 
 

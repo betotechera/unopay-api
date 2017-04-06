@@ -11,6 +11,21 @@ unopay:
     defaultMail:
       from: 'no-reply@roadcard.com.br'
       personalFrom: 'RoadCard'
+  file-uploader:
+    configs:
+      avatar:
+        folder: avatar
+      ciot:
+        folder: ciot
+amazon:
+  s3:
+    bucketName: unopay-files
+    cdn:
+      uri: https://s3-us-west-2.amazonaws.com/unopay-files
+    accessKey: AKIAIVBZ43OSHKREK4XQ
+    secretKey: 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
+multipart:
+  max-file-size: 9000Kb
 spring:
     jpa:
         hibernate.ddl-auto: nones
