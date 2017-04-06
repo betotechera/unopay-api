@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.model.EventFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.xml.stream.EventFilter;
 
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 

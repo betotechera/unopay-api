@@ -11,11 +11,10 @@ class BankServiceTest extends SpockApplicationTests {
 
     def 'should return when find'(){
         when:
-        def page = new UnovationPageRequest(page: 1, size: 10)
-        def result = service.findAll(page)
+        def result = service.findAll("all")
 
         then:
-        !result.content.isEmpty()
-        result.totalElements > 0
+        !result.isEmpty()
+        result.size() > 0
     }
 }

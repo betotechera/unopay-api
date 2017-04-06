@@ -3,12 +3,13 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.repository.BankRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static br.com.unopay.api.config.CacheConfig.BANKS;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_NOT_FOUND;
 
 @Service
@@ -24,7 +25,8 @@ public class BankService {
         return bank;
     }
 
-    public Page<Bank> findAll(UnovationPageRequest pageRequest){
-        return repository.findAll(new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+    @Cacheable(key="#key",value = BANKS)
+    public List<Bank> findAll(String key){
+        return repository.findAll();
     }
 }

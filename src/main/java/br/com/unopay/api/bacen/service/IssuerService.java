@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.IssuerFilter;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
@@ -78,6 +79,7 @@ public class IssuerService {
     private void createRequiredReferences(Issuer issuer) {
         Person person = personService.save(issuer.getPerson());
         PaymentBankAccount paymentBankAccount = paymentBankAccountService.create(issuer.getPaymentAccount());
+        bankAccountService.create(issuer.getMovementAccount());
         issuer.setPaymentAccount(paymentBankAccount);
         issuer.setPerson(person);
     }

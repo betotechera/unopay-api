@@ -7,6 +7,7 @@ public final class Errors {
     /* event */
     public static final UnovationError TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
     public static final UnovationError EVENT_NOT_FOUND = new UnovationError("EVENT_NOT_FOUND","Event not found");
+    public static final UnovationError QUANTITY_UNITY_REQUIRED= new UnovationError("QUANTITY_UNITY_REQUIRED","quantityUnity is required");
 
     /* service */
     public static final UnovationError SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");

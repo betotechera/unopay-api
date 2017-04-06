@@ -33,7 +33,7 @@ create table issuer (
     version integer,
     CONSTRAINT issuer_pers_id UNIQUE (person_id),
     constraint fk_issuer_pers foreign key(person_id) references person(id),
-    constraint fk_payment_account foreign key(payment_account_id) references bank_account(id),
+    constraint fk_payment_account foreign key(payment_account_id) references payment_bank_account(id),
     constraint fk_movement_account foreign key(movement_account_id) references bank_account(id)
 );
 
