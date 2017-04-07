@@ -27,7 +27,7 @@ public class NotificationRepository {
     }
 
     private String hashContent(String content) {
-        return DigestUtils.sha1Hex(content);
+        return DigestUtils.sha256Hex(content);
     }
 
     private String getValue() {
