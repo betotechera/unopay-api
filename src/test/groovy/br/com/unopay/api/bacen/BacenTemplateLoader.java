@@ -85,7 +85,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(PaymentMethod.class).addTemplate("valid", new Rule(){{
-            add("movementPeriod", random(RecurrencePeriod.class));
+            add("period", random(RecurrencePeriod.class));
             add("authorizeTransfer", random(true,false));
             add("minimumDepositValue", random(Double.class,range(1D,1000D)));
             add("closingPaymentDays", random(Integer.class,range(1,31)));
