@@ -7,12 +7,13 @@ public final class Errors {
     /* event */
     public static final UnovationError TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
     public static final UnovationError EVENT_NOT_FOUND = new UnovationError("EVENT_NOT_FOUND","Event not found");
-    public static final UnovationError QUANTITY_UNITY_REQUIRED= new UnovationError("QUANTITY_UNITY_REQUIRED","quantityUnity is required");
+    public static final UnovationError QUANTITY_UNITY_REQUIRED = new UnovationError("QUANTITY_UNITY_REQUIRED","quantityUnity is required");
 
     /* service */
     public static final UnovationError SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
     public static final UnovationError SERVICE_REQUIRED = new UnovationError("SERVICE_REQUIRED","Service required");
     public static final UnovationError INVALID_TAX_PERCENT = new UnovationError("INVALID_TAX_PERCENT","taxPercent must be between 0 and 1");
+    public static final UnovationError SERVICE_WITH_EVENTS = new UnovationError("SERVICE_WITH_EVENTS","Service has events");
 
     /* bank account */
     public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");
