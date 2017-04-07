@@ -36,7 +36,6 @@ public class IssuerService {
     @Autowired
     private PaymentRuleGroupService paymentRuleGroupService;
 
-    @Transactional
     public Issuer create(Issuer issuer) {
         issuer.validate();
         createRequiredReferences(issuer);

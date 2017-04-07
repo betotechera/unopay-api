@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
+
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
 
