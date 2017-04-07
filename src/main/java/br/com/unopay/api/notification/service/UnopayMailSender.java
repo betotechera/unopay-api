@@ -52,7 +52,7 @@ public class UnopayMailSender {
                 }
                 sendMail(mailMessage, notification, content);
             } catch (MessagingException | UnsupportedEncodingException e) {
-                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), ex.getMessage(), ex);
+                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), e.getMessage(), e);
             }
         }
     }
