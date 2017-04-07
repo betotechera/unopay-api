@@ -27,7 +27,7 @@ public class PaymentMethod implements Serializable {
     @Column(name="movement_period")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
-    private Period movementPeriod;
+    private MovementPeriod movementPeriod;
 
     @Column(name="authorize_transfer")
     @JsonView({Views.Public.class})

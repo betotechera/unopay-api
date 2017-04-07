@@ -31,6 +31,6 @@ public class InvoiceReceipt implements Serializable{
     @Column(name="invoice_receipt_period")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
-    private Period period;
+    private MovementPeriod period;
 
 }
