@@ -14,8 +14,12 @@ import java.util.Date;
 @Repository
 public class NotificationRepository {
 
-    @Autowired
     private RedisTemplate template;
+
+    @Autowired
+    public NotificationRepository(RedisTemplate template) {
+        this.template = template;
+    }
 
     public void record(Notification notification, String content) {
         String key = getKey(notification, content);

@@ -12,12 +12,15 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_NOT_FOUND;
 @Service
 public class PaymentBankAccountService {
 
-    @Autowired
     private PaymentBankAccountRepository repository;
 
-    @Autowired
     private BankAccountService bankAccountService;
 
+    @Autowired
+    public PaymentBankAccountService(PaymentBankAccountRepository repository, BankAccountService bankAccountService) {
+        this.repository = repository;
+        this.bankAccountService = bankAccountService;
+    }
 
     public PaymentBankAccount create(PaymentBankAccount paymentAccount) {
         bankAccountService.create(paymentAccount.getBankAccount());

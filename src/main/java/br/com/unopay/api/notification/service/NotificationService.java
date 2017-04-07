@@ -29,14 +29,19 @@ public class NotificationService {
 
     private String url;
 
-    @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
     private RabbitMessagingTemplate messagingTemplate;
 
-    @Autowired
     private PasswordTokenService passwordTokenService;
+
+    @Autowired
+    public NotificationService(ObjectMapper objectMapper, RabbitMessagingTemplate messagingTemplate,
+                               PasswordTokenService passwordTokenService) {
+        this.objectMapper = objectMapper;
+        this.messagingTemplate = messagingTemplate;
+        this.passwordTokenService = passwordTokenService;
+    }
 
     public void sendNewPassword(UserDetail user, EventType eventType) {
         user.setPassword(null);

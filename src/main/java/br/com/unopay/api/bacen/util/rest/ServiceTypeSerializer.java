@@ -12,7 +12,7 @@ public class ServiceTypeSerializer extends JsonSerializer<ServiceType> {
 
 
     @Override
-    public void serialize(ServiceType value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(ServiceType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());

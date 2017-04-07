@@ -14,11 +14,15 @@ import java.io.IOException;
 @Slf4j
 class NotificationReceiver {
 
-    @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
     private UnopayMailSender unopayMailSender;
+
+    @Autowired
+    public NotificationReceiver(ObjectMapper objectMapper, UnopayMailSender unopayMailSender) {
+        this.objectMapper = objectMapper;
+        this.unopayMailSender = unopayMailSender;
+    }
 
     @RabbitListener(queues = Queues.UNOPAY_NOTIFICAITON)
     void notifyCustomer(String notificationAsString) {

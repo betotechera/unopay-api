@@ -17,11 +17,15 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_FOUND;
 @org.springframework.stereotype.Service
 public class ServiceService {
 
-    @Autowired
     private ServiceRepository repository;
 
-    @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    public ServiceService(ServiceRepository repository, EventRepository eventRepository) {
+        this.repository = repository;
+        this.eventRepository = eventRepository;
+    }
 
     public Service create(Service service) {
         service.validate();

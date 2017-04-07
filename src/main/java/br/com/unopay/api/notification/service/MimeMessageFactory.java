@@ -21,16 +21,19 @@ import java.util.EnumMap;
 @ConfigurationProperties(prefix = "unopay.notification")
 public class MimeMessageFactory {
 
-    @Autowired
     private JavaMailSender mailSender;
 
-    @Autowired
     private MailValidator mailValidator;
 
     private EnumMap<EventType, String> subjectByEvent = new EnumMap<>(EventType.class);
 
     private Email defaultMail;
 
+    @Autowired
+    public MimeMessageFactory(JavaMailSender mailSender, MailValidator mailValidator) {
+        this.mailSender = mailSender;
+        this.mailValidator = mailValidator;
+    }
 
     public MimeMessage create(Email email, String content, EventType eventType) throws MessagingException, UnsupportedEncodingException {
         validate(email, content, eventType);

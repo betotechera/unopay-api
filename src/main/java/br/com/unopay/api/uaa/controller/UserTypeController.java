@@ -24,11 +24,15 @@ public class UserTypeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserTypeController.class);
 
-    @Autowired
     private UserTypeService service;
 
     @Value("${unopay.api}")
     private String api;
+
+    @Autowired
+    public UserTypeController(UserTypeService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)

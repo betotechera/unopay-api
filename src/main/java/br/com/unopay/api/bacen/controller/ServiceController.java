@@ -30,8 +30,12 @@ public class ServiceController {
     @Value("${unopay.api}")
     private String api;
 
-    @Autowired
     private ServiceService service;
+
+    @Autowired
+    public ServiceController(ServiceService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)

@@ -16,11 +16,15 @@ import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 @Service
 public class EventService {
 
-    @Autowired
     private EventRepository repository;
 
-    @Autowired
     private ServiceService serviceService;
+
+    @Autowired
+    public EventService(EventRepository repository, ServiceService serviceService) {
+        this.repository = repository;
+        this.serviceService = serviceService;
+    }
 
     public Event create(Event event) {
         event.validate();

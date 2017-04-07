@@ -30,22 +30,24 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Service
 public class GroupService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
-    @Autowired
     private GroupRepository repository;
 
-    @Autowired
     private UserDetailRepository userDetailRepository;
 
-    @Autowired
-    private UserDetailRepository groupMemberRepository;
-
-    @Autowired
     private AuthorityRepository authorityRepository;
 
-    @Autowired
     private UserTypeRepository userTypeRepository;
+
+    @Autowired
+    public GroupService(GroupRepository repository, UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, UserTypeRepository userTypeRepository) {
+        this.repository = repository;
+        this.userDetailRepository = userDetailRepository;
+        this.authorityRepository = authorityRepository;
+        this.userTypeRepository = userTypeRepository;
+    }
 
     public Group create(Group group) {
         group.validate();

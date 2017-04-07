@@ -20,14 +20,17 @@ public class AuthorityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorityController.class);
 
-    @Autowired
     private AuthorityService authorityService;
+
+    @Autowired
+    public AuthorityController(AuthorityService authorityService) {
+        this.authorityService = authorityService;
+    }
 
     @RequestMapping(value = "/authorities", method = RequestMethod.GET)
     public List<Authority> getAuthorities() {
         LOGGER.info("getting all authorities");
-        List<Authority> authorities = authorityService.getAll();
-        return authorities;
+        return authorityService.getAll();
     }
 
 }

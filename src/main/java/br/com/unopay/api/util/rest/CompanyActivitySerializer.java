@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CompanyActivitySerializer extends JsonSerializer<CompanyActivity> {
 
     @Override
-    public void serialize(CompanyActivity value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(CompanyActivity value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());

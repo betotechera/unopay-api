@@ -12,19 +12,15 @@ public class Slug {
 
     public static String makeSlug(String value) {
 
-        if(value == null || value.trim().equals("")) {
+        if(value == null || "".equals(value.trim())) {
             return "";
         }
 
-        value = value.toLowerCase();
-        value = value.replaceAll("\\.", " ");
-        value = value.replaceAll("\\+", " ");
-        value = WHITESPACE.matcher(value).replaceAll("-");
-        value = value.replaceAll("&", "e");
-        value = DASH_REPLACE_PATTERN.matcher(value).replaceAll("");
-        value = Normalizer.normalize(value, Normalizer.Form.NFD);
-        value = VALID_CHARACTERS.matcher(value).replaceAll("");
-        value = MULTIPLE_DASHES_PATTERN.matcher(value).replaceAll("-");
-        return value;
+        String replacedCharacters = value.toLowerCase().replaceAll("\\.", " ").replaceAll("\\+", " ");
+        String whitespaceReplaced = WHITESPACE.matcher(replacedCharacters).replaceAll("-").replaceAll("&", "e");
+        String dashReplaced = DASH_REPLACE_PATTERN.matcher(whitespaceReplaced).replaceAll("");
+        String normalized = Normalizer.normalize(dashReplaced, Normalizer.Form.NFD);
+        String validCharacters = VALID_CHARACTERS.matcher(normalized).replaceAll("");
+        return MULTIPLE_DASHES_PATTERN.matcher(validCharacters).replaceAll("-");
     }
 }

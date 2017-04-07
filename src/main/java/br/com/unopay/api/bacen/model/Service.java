@@ -56,6 +56,8 @@ public class Service implements Serializable {
     @JsonView({Views.Public.class, Views.List.class})
     private Double taxPercent;
 
+    public Service() {}
+
     public void validate() {
         if (taxPercent < 0 || taxPercent > 1D)
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_TAX_PERCENT);

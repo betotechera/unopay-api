@@ -22,6 +22,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,32 +48,44 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Service
 @Timed
 @Getter @Setter
+@Slf4j
 public class UserDetailService implements UserDetailsService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
 
-    @Autowired
     private UserDetailRepository userDetailRepository;
 
-    @Autowired
     private IssuerRepository issuerRepository;
 
-    @Autowired
     private AccreditedNetworkRepository accreditedNetworkRepository;
 
-    @Autowired
     private InstitutionRepository institutionRepository;
 
-    @Autowired
     private UserTypeRepository userTypeRepository;
-    @Autowired
+
     private PasswordEncoder passwordEncoder;
-    @Autowired
+
     private GroupService groupService;
-    @Autowired
+
     private NotificationService notificationService;
 
-    @Autowired
     private PasswordTokenService passwordTokenService;
+
+    @Autowired
+    public UserDetailService(UserDetailRepository userDetailRepository, IssuerRepository issuerRepository,
+                             AccreditedNetworkRepository accreditedNetworkRepository,
+                             InstitutionRepository institutionRepository,
+                             UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder,
+                             GroupService groupService, NotificationService notificationService,
+                             PasswordTokenService passwordTokenService) {
+        this.userDetailRepository = userDetailRepository;
+        this.issuerRepository = issuerRepository;
+        this.accreditedNetworkRepository = accreditedNetworkRepository;
+        this.institutionRepository = institutionRepository;
+        this.userTypeRepository = userTypeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.groupService = groupService;
+        this.notificationService = notificationService;
+        this.passwordTokenService = passwordTokenService;
+    }
 
     public UserDetail create(UserDetail user) {
         try {
@@ -86,7 +99,7 @@ public class UserDetailService implements UserDetailsService {
             notificationService.sendNewPassword(created);
             return created;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.warn(String.format("user already exists %s", user.toString()), e);
+            log.warn(String.format("user already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
     }
@@ -125,7 +138,7 @@ public class UserDetailService implements UserDetailsService {
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
-            LOGGER.warn(String.format("user email already exists %s", user.toString()), e);
+            log.warn(String.format("user email already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
         }
     }

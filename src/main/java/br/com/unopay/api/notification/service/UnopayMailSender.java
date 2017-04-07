@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 
 @Slf4j
@@ -17,20 +19,26 @@ import javax.mail.internet.MimeMessage;
 public class UnopayMailSender {
 
 
-    @Autowired
     JavaMailSender mailSender;
 
-    @Autowired
     private MimeMessageFactory messageFactory;
 
-    @Autowired
     NotificationRepository repository;
 
-    @Autowired
     private MailValidator mailValidator;
 
-    @Autowired
     TemplateProcessor templateProcessor;
+
+    @Autowired
+    public UnopayMailSender(JavaMailSender mailSender, MimeMessageFactory messageFactory,
+                            NotificationRepository repository, MailValidator mailValidator,
+                            TemplateProcessor templateProcessor) {
+        this.mailSender = mailSender;
+        this.messageFactory = messageFactory;
+        this.repository = repository;
+        this.mailValidator = mailValidator;
+        this.templateProcessor = templateProcessor;
+    }
 
     public void send(Notification notification) {
         if(valid(notification)) {
@@ -43,8 +51,8 @@ public class UnopayMailSender {
                     return;
                 }
                 sendMail(mailMessage, notification, content);
-            } catch (Exception ex) {
-                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), ex.getMessage(), ex);
+            } catch (MessagingException | UnsupportedEncodingException  | IllegalArgumentException e) {
+                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), e.getMessage(), e);
             }
         }
     }

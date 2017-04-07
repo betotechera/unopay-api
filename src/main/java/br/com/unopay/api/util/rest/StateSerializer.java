@@ -11,7 +11,7 @@ import java.io.IOException;
 public class StateSerializer extends JsonSerializer<State> {
 
     @Override
-    public void serialize(State value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(State value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());
