@@ -46,7 +46,7 @@ public class PaymentBankAccount implements Serializable{
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private MovementPeriod depositPeriod;
+    private RecurrencePeriod depositPeriod;
 
     @JsonView({Views.Public.class})
     @Column(name = "minimum_deposit_value")

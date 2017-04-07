@@ -7,9 +7,9 @@ create table bank_account(
  id VARCHAR(256) PRIMARY KEY,
  bank_bacen_code integer not null,
  agency varchar(20) not null,
- agency_dv varchar(10) not null,
+ agency_digit varchar(10),
  account_number varchar(50) not null,
- account_number_dv varchar(10) not null,
+ account_number_digit varchar(10),
  account_type varchar(50) not null,
  constraint fk_bank_account foreign key(bank_bacen_code) REFERENCES bank(bacen_code)
 
