@@ -35,26 +35,27 @@ public class BankAccount implements Serializable{
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JoinColumn(name="bacen_cod")
+    @JoinColumn(name="bank_bacen_code")
     @JsonView({Views.Public.class,Views.List.class})
     private Bank bank;
 
-    @Column
+    @Column(name = "agency")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String agency;
 
-    @Column
+    @Column(name = "agency_dv")
     @JsonView({Views.Public.class,Views.List.class})
-    private String dvAgency;
+    private String agencyDv;
 
-    @Column
+    @Column(name = "account_number")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String accountNumber;
 
     @JsonView({Views.Public.class,Views.List.class})
-    private String dvAccountNumber;
+    @Column(name = "account_number_dv")
+    private String accountNumberDv;
 
     @Column(name = "account_type")
     @Enumerated(value = EnumType.STRING)
@@ -65,9 +66,9 @@ public class BankAccount implements Serializable{
     public void updateMe(BankAccount other){
         setBank(other.getBank());
         setAgency(other.getAgency());
-        setDvAgency(other.getDvAgency());
+        setAgencyDv(other.getAgencyDv());
         setAccountNumber(other.getAccountNumber());
-        setDvAccountNumber(other.getDvAccountNumber());
+        setAccountNumberDv(other.getAccountNumberDv());
         setType(other.getType());
     }
 

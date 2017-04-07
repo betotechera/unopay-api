@@ -37,23 +37,23 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 
-    @Column
+    @Column(name = "authorize_transfer")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private Boolean transferAuthorized;
+    private Boolean authorizeTransfer;
 
-    @Column
+    @Column(name = "deposit_period")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private MovementPeriod depositPeriod;
 
     @JsonView({Views.Public.class})
-    @Column
+    @Column(name = "minimum_deposit_value")
     private Double minimumDepositValue;
 
     @Min(0)
-    @Column
+    @Column(name = "closing_payment_days")
     @JsonView({Views.Public.class})
     private Integer closingPaymentDays;
 

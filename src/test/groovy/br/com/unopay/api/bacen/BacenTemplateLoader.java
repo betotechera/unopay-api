@@ -101,24 +101,24 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("id", random("1", "2"));
             add("bank", one(Bank.class, "valid"));
             add("agency", random("6465", "55794", "004456"));
-            add("dvAgency", random("a2", "1", "A"));
+            add("agencyDv", random("a2", "1", "A"));
             add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
-            add("dvAccountNumber", random("a2", "1", "A"));
+            add("accountNumberDv", random("a2", "1", "A"));
             add("type", random(BankAccountType.class));
         }});
 
         Fixture.of(BankAccount.class).addTemplate("valid", new Rule(){{
             add("bank", one(Bank.class, "valid"));
             add("agency", random("6465", "55794", "004456"));
-            add("dvAgency", random("a2", "1", "A"));
+            add("agencyDv", random("a2", "1", "A"));
             add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
-            add("dvAccountNumber", random("a2", "1", "A"));
+            add("accountNumberDv", random("a2", "1", "A"));
             add("type", random(BankAccountType.class));
         }});
 
         Fixture.of(PaymentBankAccount.class).addTemplate("valid", new Rule(){{
             add("bankAccount", one(BankAccount.class, "persisted"));
-            add("transferAuthorized", random(Boolean.class));
+            add("authorizeTransfer", random(Boolean.class));
             add("depositPeriod", random(MovementPeriod.class));
             add("minimumDepositValue", random(Double.class,range(1D,1000D)));
             add("closingPaymentDays", random(Integer.class,range(1,31)));

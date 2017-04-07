@@ -1,24 +1,24 @@
 create table bank(
- bacen_cod integer PRIMARY KEY,
+ bacen_code integer PRIMARY KEY,
  name varchar(255) not null
 );
 
 create table bank_account(
  id VARCHAR(256) PRIMARY KEY,
- bacen_cod integer not null,
+ bank_bacen_code integer not null,
  agency varchar(20) not null,
- dv_agency varchar(10) not null,
+ agency_dv varchar(10) not null,
  account_number varchar(50) not null,
- dv_account_number varchar(10) not null,
+ account_number_dv varchar(10) not null,
  account_type varchar(50) not null,
- constraint fk_bank_account foreign key(bacen_cod) REFERENCES bank(bacen_cod)
+ constraint fk_bank_account foreign key(bank_bacen_code) REFERENCES bank(bacen_code)
 
 );
 
 create table payment_bank_account (
  id VARCHAR(256) PRIMARY KEY,
  bank_account_id VARCHAR(256) not null,
- transfer_authorized char(1) not null,
+ authorize_transfer char(1) not null,
  deposit_period varchar(50) not null,
  closing_payment_days integer,
  minimum_deposit_value  decimal(10,2),

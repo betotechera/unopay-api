@@ -21,11 +21,11 @@ public class Bank implements Serializable {
     public static final Long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "bacen_cod")
+    @Column(name = "bacen_code")
     @JsonView({Views.Public.class,Views.List.class})
     private Integer bacenCode;
 
-    @Column
+    @Column(name = "name")
     @JsonView({Views.Public.class,Views.List.class})
     private String name;
 }

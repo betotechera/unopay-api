@@ -53,7 +53,7 @@ public class Issuer implements Serializable{
     private List<PaymentRuleGroup> paymentRuleGroups;
 
 
-    @Column
+    @Column(name = "tax")
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;
 
