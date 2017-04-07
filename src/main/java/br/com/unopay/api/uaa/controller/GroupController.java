@@ -37,8 +37,12 @@ public class GroupController {
     @Value("${unopay.api}")
     private String api;
 
-    @Autowired
     private GroupService service;
+
+    @Autowired
+    public GroupController(GroupService service) {
+        this.service = service;
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
