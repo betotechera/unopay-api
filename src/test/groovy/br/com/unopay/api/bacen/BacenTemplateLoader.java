@@ -85,14 +85,14 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(PaymentMethod.class).addTemplate("valid", new Rule(){{
-            add("movementPeriod", random((Object[]) Period.values()));
+            add("movementPeriod", random(MovementPeriod.class));
             add("authorizeTransfer", random(true,false));
             add("minimumDepositValue", random(Double.class,range(1D,1000D)));
             add("closingPaymentDays", random(Integer.class,range(1,31)));
         }});
 
         Fixture.of(InvoiceReceipt.class).addTemplate("valid", new Rule(){{
-            add("period", random(Period.class));
+            add("period", random(MovementPeriod.class));
             add("type", random( InvoiceReceiptType.class));
         }});
 
@@ -119,7 +119,9 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(PaymentBankAccount.class).addTemplate("valid", new Rule(){{
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("transferAuthorized", random(Boolean.class));
-            add("depositPeriod", random(DepositPeriod.class));
+            add("depositPeriod", random(MovementPeriod.class));
+            add("minimumDepositValue", random(Double.class,range(1D,1000D)));
+            add("closingPaymentDays", random(Integer.class,range(1,31)));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

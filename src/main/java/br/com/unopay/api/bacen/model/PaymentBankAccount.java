@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -39,12 +40,21 @@ public class PaymentBankAccount implements Serializable{
     @Column
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private boolean transferAuthorized;
+    private Boolean transferAuthorized;
 
     @Column
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private DepositPeriod depositPeriod;
+    private MovementPeriod depositPeriod;
+
+    @JsonView({Views.Public.class})
+    @Column
+    private Double minimumDepositValue;
+
+    @Min(0)
+    @Column
+    @JsonView({Views.Public.class})
+    private Integer closingPaymentDays;
 
 }
