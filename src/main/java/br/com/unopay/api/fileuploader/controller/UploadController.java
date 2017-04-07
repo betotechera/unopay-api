@@ -23,13 +23,17 @@ public class UploadController {
     private static final Pattern IMAGES_PATTERN = Pattern.compile("^.+\\.(png|jpe?g|gif|bmp|svg)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern DOC_PATTERN = Pattern.compile("^.+\\.(pdf|doc?)$", Pattern.CASE_INSENSITIVE);
 
-    @Autowired
     private FileUploaderService fileUploaderService;
+
+    @Autowired
+    public UploadController(FileUploaderService fileUploaderService) {
+        this.fileUploaderService = fileUploaderService;
+    }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/images/{service}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
     public String uploadPictureFile(
-            @RequestParam MultipartFile file, @PathVariable String service) throws Exception {
+            @RequestParam MultipartFile file, @PathVariable String service){
         String fileName = file.getOriginalFilename();
         LOGGER.info("uploading file {}", fileName);
         if (!IMAGES_PATTERN.matcher(fileName).matches())
@@ -40,7 +44,7 @@ public class UploadController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/docs/{service}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
     public String uploadDocFile(
-            @RequestParam MultipartFile file, @PathVariable String service) throws Exception {
+            @RequestParam MultipartFile file, @PathVariable String service) {
         String fileName = file.getOriginalFilename();
         LOGGER.info("uploading file {}", fileName);
         if (!DOC_PATTERN.matcher(fileName).matches())
@@ -50,7 +54,7 @@ public class UploadController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/images", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
-    public String uploadImage(@RequestParam MultipartFile file, @RequestParam String imagePath) throws Exception {
+    public String uploadImage(@RequestParam MultipartFile file, @RequestParam String imagePath) {
         String fileName = file.getOriginalFilename();
         if (!IMAGES_PATTERN.matcher(fileName).matches())
             throw new BadRequestException("File extension not supported");
@@ -59,7 +63,7 @@ public class UploadController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/images", method = RequestMethod.DELETE)
-    public void delete(@RequestBody String filePath) throws Exception {
+    public void delete(@RequestBody String filePath){
         fileUploaderService.deleteFile(filePath);
     }
 }

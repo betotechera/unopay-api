@@ -1,5 +1,6 @@
 package br.com.unopay.api.fileuploader.service;
 
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.internal.Mimetypes;
@@ -31,18 +32,22 @@ public class AmazonS3Service {
     @Value("${amazon.s3.cdn.uri}")
     private String cdnUri;
 
-    @Autowired
     private TransferManager transferManager;
 
-    public String upload(String objectKey, byte[] binaryFile) {
+    @Autowired
+    public AmazonS3Service(TransferManager transferManager) {
+        this.transferManager = transferManager;
+    }
+
+    String upload(String objectKey, byte[] binaryFile) {
         try {
-            Upload bucketUpload = uploadToBucket(bucketName, objectKey, binaryFile);
+            Upload  bucketUpload = uploadToBucket(bucketName, objectKey, binaryFile);
             bucketUpload.waitForUploadResult();
             return cdnUri.concat(objectKey);
-        } catch (Exception e) {
-            logger.error("Error when try upload file on Amazon bucket");
-            Throwables.propagate(e);
-            return null;
+
+        } catch (InterruptedException e) {
+            logger.info("Error on upload",e);
+            throw UnovationExceptions.internalError();
         }
     }
 

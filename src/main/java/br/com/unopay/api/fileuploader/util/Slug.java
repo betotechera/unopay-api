@@ -12,7 +12,7 @@ public class Slug {
 
     public static String makeSlug(String value) {
 
-        if(value == null || value.trim().equals("")) {
+        if(value == null || "".equals(value.trim())) {
             return "";
         }
 
