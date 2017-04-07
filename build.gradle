@@ -124,7 +124,7 @@ bootRun {
 }
 
 task removeReleases(type: Exec) {
-	commandLine "bash", "-c", " cd releases; ls -t | tail -n 1 | xargs rm"
+	commandLine "bash", "-c", " cd releases; ls -t | tail -n 2 | xargs rm"
 }
 
 task backupJar(type: Copy, dependsOn: removeReleases) {
