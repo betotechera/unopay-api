@@ -120,8 +120,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("authorizeTransfer", random(Boolean.class));
             add("depositPeriod", random(RecurrencePeriod.class));
-            add("minimumDepositValue", random(Double.class,range(1D,1000D)));
-            add("closingPaymentDays", random(Integer.class,range(1,31)));
+            add("postPaidPaymentDays", random(Integer.class,range(1,31)));
+            add("prePaidPaymentDays", random(Integer.class,range(1,31)));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

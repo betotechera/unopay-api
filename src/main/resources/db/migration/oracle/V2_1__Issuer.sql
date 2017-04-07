@@ -20,8 +20,8 @@ create table payment_bank_account (
  bank_account_id VARCHAR(256) not null,
  authorize_transfer char(1) not null,
  deposit_period varchar(50) not null,
- closing_payment_days integer,
- minimum_deposit_value  decimal(10,2),
+ post_paid_payment_days integer not null,
+ pre_paid_payment_days integer not null,
  constraint fk_payment_bank_account foreign key(bank_account_id) REFERENCES bank_account(id)
 );
 
@@ -51,6 +51,7 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUER','Permite ge
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ISSUER', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ISSUER', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
 
 ALTER TABLE oauth_user_details ADD issuer_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_issuer FOREIGN KEY(issuer_id) REFERENCES issuer(id);

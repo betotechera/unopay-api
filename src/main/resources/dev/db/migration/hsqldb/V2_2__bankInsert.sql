@@ -10,4 +10,4 @@ insert into bank(bacen_code, name) values(479, 'BANCO ITAUBANK S.A');
 
 insert into bank_account(id, bank_bacen_code, agency,agency_digit, account_number, account_number_digit, account_type) values ('1', 341, '1234', 'A', '5467884', 'A1', 'CURRENT')
 insert into bank_account(id, bank_bacen_code, agency,agency_digit, account_number, account_number_digit, account_type) values ('2', 341, '558', '2', '79789444', '1', 'CURRENT')
-insert into payment_bank_account(id, bank_account_id, authorize_transfer,deposit_period) values ('1', '1', '1', 'WEEKLY')
+insert into payment_bank_account(id, bank_account_id, authorize_transfer,deposit_period, pre_paid_payment_days, post_paid_payment_days) values ('1', '1', '1', 'WEEKLY', 1, 1)
