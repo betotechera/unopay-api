@@ -27,7 +27,7 @@ public class PaymentMethod implements Serializable {
     @Column(name="movement_period")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
-    private RecurrencePeriod recurrencePeriod;
+    private RecurrencePeriod period;
 
     @Column(name="authorize_transfer")
     @JsonView({Views.Public.class})
@@ -44,7 +44,7 @@ public class PaymentMethod implements Serializable {
     private Integer closingPaymentDays;
 
     public void updateModel(PaymentMethod paymentMethod) {
-        this.recurrencePeriod = this.getRecurrencePeriod();
+        this.period = this.getPeriod();
         this.authorizeTransfer = paymentMethod.getAuthorizeTransfer();
     }
 
