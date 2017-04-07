@@ -75,11 +75,13 @@ public class Person implements Serializable{
 
     public void validate() {
 
-        if(!this.document.getType().isValidDocumentFor(this.type))
+        if(!this.document.getType().isValidDocumentFor(this.type)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_DOCUMENT_TYPE_FOR_USER);
+        }
 
-        if(PersonType.LEGAL.equals(this.type) && this.legalPersonDetail == null)
+        if(PersonType.LEGAL.equals(this.type) && this.legalPersonDetail == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON);
+        }
     }
 
     @JsonIgnore

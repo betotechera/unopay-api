@@ -80,7 +80,9 @@ public class UserDetail implements Serializable {
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
     @JsonView({Views.Public.class,Views.List.class})
-    @JoinTable(name = "oauth_group_members", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
+    @JoinTable(name = "oauth_group_members",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 
     @Version
@@ -138,7 +140,8 @@ public class UserDetail implements Serializable {
         if(groups == null) {
             return Collections.emptyList();
         }
-        return groups.stream().map(Group::getAuthorities).flatMap(Collection::stream).collect(Collectors.toList());
+        return groups.stream().map(Group::getAuthorities)
+                .flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override

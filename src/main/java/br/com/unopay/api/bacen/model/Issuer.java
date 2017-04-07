@@ -49,7 +49,9 @@ public class Issuer implements Serializable{
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
     @JsonView({Views.Public.class,Views.List.class})
-    @JoinTable(name = "payment_rule_group_issuer", joinColumns = { @JoinColumn(name = "issuer_id") }, inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
+    @JoinTable(name = "payment_rule_group_issuer",
+            joinColumns = { @JoinColumn(name = "issuer_id") },
+            inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
     private List<PaymentRuleGroup> paymentRuleGroups;
 
 

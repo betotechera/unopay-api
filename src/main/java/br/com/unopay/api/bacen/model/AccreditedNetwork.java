@@ -38,7 +38,9 @@ public class AccreditedNetwork implements Serializable {
     @ManyToMany
     @BatchSize(size = 10)
     @JsonView({Views.Public.class})
-    @JoinTable(name = "accredited_payment_rules", joinColumns = { @JoinColumn(name = "accredited_network_id") }, inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
+    @JoinTable(name = "accredited_payment_rules",
+            joinColumns = { @JoinColumn(name = "accredited_network_id") },
+            inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
     private Set<PaymentRuleGroup> paymentRuleGroups;
 
     @Valid
@@ -77,7 +79,9 @@ public class AccreditedNetwork implements Serializable {
     private BankAccount bankAccount;
 
     public void validate() {
-        if(merchantDiscountRate < 0 || merchantDiscountRate > 1D) throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MERCHANT_DISCOUNT_RATE_RANGE);
+        if(merchantDiscountRate < 0 || merchantDiscountRate > 1D) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MERCHANT_DISCOUNT_RATE_RANGE);
+        }
         paymentMethod.validate();
     }
 

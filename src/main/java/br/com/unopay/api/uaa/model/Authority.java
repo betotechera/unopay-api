@@ -27,7 +27,9 @@ public class Authority implements Serializable {
 
     @JsonIgnore
     @OneToMany
-    @JoinTable(name = "oauth_group_authorities", joinColumns = { @JoinColumn(name = "authority") }, inverseJoinColumns = { @JoinColumn(name = "group_id") })
+    @JoinTable(name = "oauth_group_authorities",
+            joinColumns = { @JoinColumn(name = "authority") },
+            inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
 
     @Override
