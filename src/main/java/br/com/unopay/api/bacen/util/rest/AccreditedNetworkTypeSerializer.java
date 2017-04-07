@@ -12,7 +12,7 @@ public class AccreditedNetworkTypeSerializer extends JsonSerializer<AccreditedNe
 
 
     @Override
-    public void serialize(AccreditedNetworkType value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(AccreditedNetworkType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());

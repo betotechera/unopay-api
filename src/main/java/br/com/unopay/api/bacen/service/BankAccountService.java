@@ -15,11 +15,15 @@ import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_NOT_FOUND;
 @Service
 public class BankAccountService {
 
-    @Autowired
     private BankAccountRepository repository;
 
-    @Autowired
     private BankService bankService;
+
+    @Autowired
+    public BankAccountService(BankAccountRepository repository, BankService bankService) {
+        this.repository = repository;
+        this.bankService = bankService;
+    }
 
     public List<BankAccount> findAll(List<String> ids){
         List<BankAccount> bankAccounts = repository.findByIdIn(ids);

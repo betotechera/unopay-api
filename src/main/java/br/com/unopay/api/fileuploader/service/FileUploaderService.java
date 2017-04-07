@@ -23,16 +23,20 @@ public class FileUploaderService extends UploadService {
 
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(15);
 
-    private static final SimpleDateFormat folderDateFormat = new SimpleDateFormat("yyyy_MM_dd");
+    private SimpleDateFormat folderDateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
     @Resource(name = "configs")
     private Map<String, UploadConfiguration> configs;
 
-    @Autowired
     private AmazonS3Service amazonS3Service;
 
     @Value("${amazon.s3.cdn.uri}")
     private String cdnUri;
+
+    @Autowired
+    public FileUploaderService(AmazonS3Service amazonS3Service) {
+        this.amazonS3Service = amazonS3Service;
+    }
 
     public String uploadFile(MultipartFile file, String filePath) {
         log.info("uploading file {}", filePath);

@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 @Data
 public class CacheService {
 
-    @Autowired(required = false)
     private CacheManager cacheManager;
+
+    @Autowired(required = false)
+    public CacheService(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     public <T> T get(String name, Object key) {
         Cache cache = getCache(name);

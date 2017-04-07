@@ -12,10 +12,14 @@ import static br.com.unopay.api.uaa.exception.Errors.TOKEN_NOT_FOUND;
 @Service
 public class PasswordTokenService {
 
-    @Autowired
     private CacheService cacheService;
 
-    public static final String EVENT_RESET = "newUserPassword";
+    private static final String EVENT_RESET = "newUserPassword";
+
+    @Autowired
+    public PasswordTokenService(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
 
     public String createToken(UserDetail user){
         String token = RandomStringUtils.randomAlphanumeric(12);

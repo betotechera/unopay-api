@@ -30,11 +30,20 @@ public class IssuerService {
     @Autowired
     private BankAccountService bankAccountService;
 
-    @Autowired
     private PaymentBankAccountService paymentBankAccountService;
 
-    @Autowired
     private PaymentRuleGroupService paymentRuleGroupService;
+
+    @Autowired
+    public IssuerService(IssuerRepository repository, PersonService personService, BankAccountService bankAccountService,
+                         PaymentBankAccountService paymentBankAccountService,
+                         PaymentRuleGroupService paymentRuleGroupService) {
+        this.repository = repository;
+        this.personService = personService;
+        this.bankAccountService = bankAccountService;
+        this.paymentBankAccountService = paymentBankAccountService;
+        this.paymentRuleGroupService = paymentRuleGroupService;
+    }
 
     public Issuer create(Issuer issuer) {
         issuer.validate();

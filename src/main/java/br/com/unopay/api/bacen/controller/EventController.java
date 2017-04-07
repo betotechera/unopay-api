@@ -31,8 +31,12 @@ public class EventController {
     @Value("${unopay.api}")
     private String api;
 
-    @Autowired
     private EventService service;
+
+    @Autowired
+    public EventController(EventService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)

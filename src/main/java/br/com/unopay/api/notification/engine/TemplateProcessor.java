@@ -17,11 +17,15 @@ public class TemplateProcessor {
 
     static HashMap<String, String> cache = new HashMap<>();
 
-    @Autowired
     private Jinjava jinjava;
 
-    @Autowired
     private TemplateLoader templateLoader;
+
+    @Autowired
+    public TemplateProcessor(Jinjava jinjava, TemplateLoader templateLoader) {
+        this.jinjava = jinjava;
+        this.templateLoader = templateLoader;
+    }
 
     public String renderHtml(Notification notification) {
         log.info("getting html notification");
@@ -46,13 +50,8 @@ public class TemplateProcessor {
 
     private String getCachedTemplate(Notification notification) {
         if (!cache.containsKey(cacheKey(notification))) {
-            try {
-                String template = templateLoader.getTemplate(notification.getEventType().toString());
-                cache.put(cacheKey(notification), template);
-            } catch(Exception e) {
-                log.error("template not found to event={}", notification.getEventType());
-                throw new IllegalStateException("template not found for event" + notification.getEventType(), e);
-            }
+            String template = templateLoader.getTemplate(notification.getEventType().toString());
+            cache.put(cacheKey(notification), template);
         }
         return cache.get(cacheKey(notification));
     }

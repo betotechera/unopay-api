@@ -47,6 +47,7 @@ public class AmazonS3Service {
 
         } catch (InterruptedException e) {
             logger.info("Error on upload",e);
+            Thread.currentThread().interrupt();
             throw UnovationExceptions.internalError();
         }
     }

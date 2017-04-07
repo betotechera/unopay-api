@@ -29,8 +29,12 @@ public class BankController {
     @Value("${unopay.api}")
     private String api;
 
-    @Autowired
     private BankService service;
+
+    @Autowired
+    public BankController(BankService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)

@@ -12,7 +12,7 @@ public class PurposeSerializer extends JsonSerializer<Purpose> {
 
 
     @Override
-    public void serialize(Purpose value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(Purpose value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());

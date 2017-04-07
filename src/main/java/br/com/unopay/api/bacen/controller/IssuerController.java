@@ -27,11 +27,15 @@ import java.net.URI;
 @Timed(prefix = "api")
 public class IssuerController {
 
-    @Autowired
     private IssuerService service;
 
     @Value("${unopay.api}")
     private String api;
+
+    @Autowired
+    public IssuerController(IssuerService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
