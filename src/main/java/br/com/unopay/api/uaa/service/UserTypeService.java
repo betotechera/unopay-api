@@ -12,13 +12,14 @@ import java.util.List;
 @Service
 public class UserTypeService {
 
-    @Autowired
     private UserTypeRepository repository;
-    @Autowired
     private GroupRepository groupRepository;
 
     @Autowired
-    private GroupService groupService;
+    public UserTypeService(UserTypeRepository repository, GroupRepository groupRepository, GroupService groupService) {
+        this.repository = repository;
+        this.groupRepository = groupRepository;
+    }
 
     public List<UserType> findAll(){
         return repository.findAll();
