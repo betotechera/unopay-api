@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.hamcrest.core.Is
@@ -24,6 +25,19 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         then:
         result != null
+    }
+
+    def 'should not create issuer with existing document'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        service.create(issuer)
+        service.create(issuer.with { person.id = null; it })
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'PERSON_DOCUMENT_ALREADY_EXISTS'
     }
 
     def 'a valid issuer without person should not be created'(){
