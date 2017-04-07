@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Service
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -70,7 +71,7 @@ class ServiceServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'SERVICE_NOT_FOUND'
     }
 
-    def 'a known event should be deleted'(){
+    def 'a known service should be deleted'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
         Service created = service.create(provider)
@@ -83,7 +84,16 @@ class ServiceServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'SERVICE_NOT_FOUND'
     }
+    def 'a known service with event should not be deleted'(){
+        given:
 
+        when:
+        service.delete('2')
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'SERVICE_WITH_EVENTS'
+    }
     def 'a unknown event should not be deleted'(){
         when:
         service.delete('')

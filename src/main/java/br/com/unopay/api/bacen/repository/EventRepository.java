@@ -6,4 +6,7 @@ import br.com.unopay.api.repository.UnovationFilterRepository;
 
 
 public interface EventRepository extends UnovationFilterRepository<Event,String, EventFilter> {
+
+    int countByServiceId(String id);
+
 }

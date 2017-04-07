@@ -18,3 +18,5 @@ create table event (
 );
 
 insert into service(id, code,type, name, tax_val, tax_percent) values ('1', 1,'ELECTRONIC_TOLL', 'Super servicço master', 2300.45, 0.3);
+insert into service(id, code,type, name, tax_val, tax_percent) values ('2', 2,'FREIGHT', 'Serviço teste', 5, 0.1);
+insert into event(id, service_id,ncm_code, name, request_quantity) values ('1', '2','1','Evento',0);
