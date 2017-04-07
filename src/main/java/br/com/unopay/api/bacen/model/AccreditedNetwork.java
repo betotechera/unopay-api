@@ -64,7 +64,7 @@ public class AccreditedNetwork implements Serializable {
     @Valid
     @Embedded
     @JsonView({Views.Public.class})
-    private PaymentMethod paymentMethod;
+    private Checkout checkout;
 
     @Valid
     @Embedded
@@ -82,13 +82,13 @@ public class AccreditedNetwork implements Serializable {
         if(merchantDiscountRate < 0 || merchantDiscountRate > 1D) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MERCHANT_DISCOUNT_RATE_RANGE);
         }
-        paymentMethod.validate();
+        checkout.validate();
     }
 
     public void updateModel(AccreditedNetwork accreditedNetwork) {
         this.person.updateForAccreditedNetwork(accreditedNetwork.getPerson());
         this.merchantDiscountRate = accreditedNetwork.getMerchantDiscountRate();
         this.bankAccount = accreditedNetwork.getBankAccount();
-        this.paymentMethod.updateModel(accreditedNetwork.getPaymentMethod());
+        this.checkout.updateModel(this.getCheckout());
     }
 }

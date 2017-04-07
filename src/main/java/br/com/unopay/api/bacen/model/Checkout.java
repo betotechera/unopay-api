@@ -19,7 +19,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable
-public class PaymentMethod implements Serializable {
+public class Checkout implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
@@ -43,9 +43,9 @@ public class PaymentMethod implements Serializable {
     @Column(name="closing_payment_days")
     private Integer closingPaymentDays;
 
-    public void updateModel(PaymentMethod paymentMethod) {
+    public void updateModel(Checkout checkout) {
         this.period = this.getPeriod();
-        this.authorizeTransfer = paymentMethod.getAuthorizeTransfer();
+        this.authorizeTransfer = checkout.getAuthorizeTransfer();
     }
 
     public void validate() {

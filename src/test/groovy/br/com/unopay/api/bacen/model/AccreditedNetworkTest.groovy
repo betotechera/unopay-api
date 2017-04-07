@@ -21,7 +21,7 @@ class AccreditedNetworkTest extends SpockApplicationTests {
     def "should return error if minimumDepositValue is negative"() {
         given:
         AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
-        accreditedNetwork.paymentMethod.minimumDepositValue = -1000D
+        accreditedNetwork.checkout.minimumDepositValue = -1000D
         when:
         accreditedNetwork.validate()
         then:

@@ -80,11 +80,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("merchantDiscountRate", random(Double.class,range(0D,1.0D)));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("type", random((AccreditedNetworkType.class)));
-            add("paymentMethod", one(PaymentMethod.class,"valid"));
+            add("checkout", one(Checkout.class,"valid"));
             add("invoiceReceipt", one(InvoiceReceipt.class,"valid"));
         }});
 
-        Fixture.of(PaymentMethod.class).addTemplate("valid", new Rule(){{
+        Fixture.of(Checkout.class).addTemplate("valid", new Rule(){{
             add("period", random(RecurrencePeriod.class));
             add("authorizeTransfer", random(true,false));
             add("minimumDepositValue", random(Double.class,range(1D,1000D)));
