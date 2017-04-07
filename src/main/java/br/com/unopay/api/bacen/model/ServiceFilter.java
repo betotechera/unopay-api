@@ -15,4 +15,6 @@ public class ServiceFilter implements Serializable {
 
     @SearchableField
     private String name;
+
+    public ServiceFilter() {}
 }

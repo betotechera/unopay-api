@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonDeserialize(using = ScopeDeserializer.class)
 @JsonSerialize(using = ScopeSerializer.class)
-
 public enum Scope {
     DOMESTIC("Domestico"), INTERNATIONAL("Internacional");
 

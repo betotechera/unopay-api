@@ -30,4 +30,6 @@ public class PaymentRuleGroupFilter implements Serializable {
 
     @SearchableField
     private UserRelationship userRelationship;
+
+    public PaymentRuleGroupFilter() {}
 }
