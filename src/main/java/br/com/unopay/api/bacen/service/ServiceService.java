@@ -2,7 +2,10 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.ServiceFilter;
+import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.api.bacen.repository.ServiceRepository;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ public class ServiceService {
 
     @Autowired
     private ServiceRepository repository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     public Service create(Service service) {
         service.validate();
@@ -38,7 +44,14 @@ public class ServiceService {
 
     public void delete(String id) {
         findById(id);
+        if(hasEvents(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_WITH_EVENTS);
+        }
         repository.delete(id);
+    }
+
+    private boolean hasEvents(String id) {
+     return eventRepository.countByServiceId(id) > 0;
     }
 
     public Page<Service> findByFilter(ServiceFilter filter, UnovationPageRequest pageable) {
