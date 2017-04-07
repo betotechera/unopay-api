@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class ServiceServiceTest extends SpockApplicationTests {
@@ -84,9 +85,52 @@ class ServiceServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'SERVICE_NOT_FOUND'
     }
-    def 'a known service with event should not be deleted'(){
-        given:
 
+    def 'given a service with val tax only should be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.setTaxVal(100.0)
+        provider.setTaxPercent(null)
+
+        when:
+        Service created = service.create(provider)
+        def result = service.findById(created.id)
+
+        then:
+        result.taxVal == 100.0
+        result.taxPercent == null
+    }
+
+    def 'given a service with percent tax only should be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.setTaxVal(null)
+        provider.setTaxPercent(1.0)
+
+        when:
+        Service created = service.create(provider)
+        def result = service.findById(created.id)
+
+        then:
+        result.taxVal == null
+        result.taxPercent == 1.0d
+    }
+
+    def 'given a service without tax should be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.setTaxVal(null)
+        provider.setTaxPercent(null)
+
+        when:
+        service.create(provider)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'LEAST_ONE_TAX_REQUIRED'
+    }
+
+    def 'a known service with event should not be deleted'(){
         when:
         service.delete('2')
 

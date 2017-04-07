@@ -30,37 +30,39 @@ public class Service implements Serializable {
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
-    @Column
+    @Column(name = "code")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class, Views.List.class})
     private Integer code;
 
-    @Column
+    @Column(name = "name")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class, Views.List.class})
     private String name;
 
-    @Column
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class, Views.List.class})
     private ServiceType type;
 
-    @Column
-    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "tax_val")
     @JsonView({Views.Public.class, Views.List.class})
     private BigDecimal taxVal;
 
-    @Column
-    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "tax_percent")
     @JsonView({Views.Public.class, Views.List.class})
     private Double taxPercent;
 
     public Service() {}
 
     public void validate() {
-        if (taxPercent < 0 || taxPercent > 1D)
+        if(taxPercent == null && taxVal == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEAST_ONE_TAX_REQUIRED);
+        }
+        if ((taxPercent != null  && taxPercent < 0) || (taxPercent != null && taxPercent > 1D)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_TAX_PERCENT);
+        }
 
     }
 

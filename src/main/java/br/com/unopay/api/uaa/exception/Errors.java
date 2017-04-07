@@ -14,6 +14,9 @@ public final class Errors {
     public static final UnovationError SERVICE_REQUIRED = new UnovationError("SERVICE_REQUIRED","Service required");
     public static final UnovationError INVALID_TAX_PERCENT = new UnovationError("INVALID_TAX_PERCENT","taxPercent must be between 0 and 1");
     public static final UnovationError SERVICE_WITH_EVENTS = new UnovationError("SERVICE_WITH_EVENTS","Service has events");
+    public static final UnovationError LEAST_ONE_TAX_REQUIRED = new UnovationError("LEAST_ONE_TAX_REQUIRED","Least one service tax required");
+
+
 
     /* bank account */
     public static final UnovationError BANK_ACCOUNT_NOT_FOUND = new UnovationError("BANK_ACCOUNT_NOT_FOUND","Bank account not found");

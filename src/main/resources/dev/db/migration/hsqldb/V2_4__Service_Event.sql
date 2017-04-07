@@ -3,8 +3,8 @@ create table service (
  type varchar(50) not null,
  name varchar(256) not null,
   code integer not null,
- tax_val decimal(20,2) not null,
- tax_percent decimal(3,2) not null
+ tax_val decimal(20,2),
+ tax_percent decimal(3,2)
 );
 
 create table event (
