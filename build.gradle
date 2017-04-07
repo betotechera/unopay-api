@@ -138,7 +138,19 @@ task backupJar(type: Copy, dependsOn: removeReleases) {
 	}
 }
 
-afterReleaseBuild.dependsOn backupJar
+task copyJacoco(type: Copy) {
+	from "build/jacoco/test.exec"
+	into "releases"
+	rename ('test.exec', "jacoco-api-${version}.exec")
+	doLast {
+		grgit.add(patterns: ['releases'])
+		grgit.commit(message: "Committing jacoco report to version: ${version}", amend: true)
+		grgit.pull()
+		grgit.push()
+	}
+}
+
+afterReleaseBuild.dependsOn backupJar, copyJacoco
 
 test.finalizedBy('sonarqube')
 
