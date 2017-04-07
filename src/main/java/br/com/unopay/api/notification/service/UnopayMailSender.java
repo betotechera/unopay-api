@@ -42,8 +42,8 @@ public class UnopayMailSender {
 
     public void send(Notification notification) {
         if(valid(notification)) {
-            String content = templateProcessor.renderHtml(notification);
             try {
+                String content = templateProcessor.renderHtml(notification);
                 MimeMessage mailMessage = messageFactory.create(notification.getEmail(), content,notification.getEventType());
                 Object dateSent = repository.getDateWhenSent(notification, content);
                 if(dateSent != null) {
@@ -51,7 +51,7 @@ public class UnopayMailSender {
                     return;
                 }
                 sendMail(mailMessage, notification, content);
-            } catch (MessagingException | UnsupportedEncodingException e) {
+            } catch (MessagingException | UnsupportedEncodingException  | IllegalArgumentException e) {
                 log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), e.getMessage(), e);
             }
         }
