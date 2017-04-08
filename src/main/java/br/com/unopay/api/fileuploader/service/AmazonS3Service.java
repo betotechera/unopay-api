@@ -10,6 +10,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.google.common.base.Throwables;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,13 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+@Slf4j
 @Service
 public class AmazonS3Service {
 
-    private static final Logger logger = LoggerFactory.getLogger(AmazonS3Service.class);
+    private static final long ONE_EYAR = 31536000;
 
-    private static final long MAX_AGE_IN_SECONDS = 31536000; //one year
+    private static final long MAX_AGE_IN_SECONDS = ONE_EYAR;
 
     @Value("${amazon.s3.bucketName}")
     private String bucketName;
@@ -41,26 +44,28 @@ public class AmazonS3Service {
 
     String upload(String objectKey, byte[] binaryFile) {
         try {
-            Upload  bucketUpload = uploadToBucket(bucketName, objectKey, binaryFile);
+            Upload bucketUpload = uploadToBucket(bucketName, objectKey, binaryFile);
             bucketUpload.waitForUploadResult();
             return cdnUri.concat(objectKey);
 
         } catch (InterruptedException e) {
-            logger.info("Error on upload",e);
+            log.info("Error on upload", e);
             Thread.currentThread().interrupt();
             throw UnovationExceptions.internalError();
         }
     }
 
-    public void delete(String objectKey) throws AmazonClientException {
-        logger.info("Removing file {} from Amazon bucket {}", objectKey, bucketName);
+    public void delete(String objectKey) {
+        log.info("Removing file {} from Amazon bucket {}", objectKey, bucketName);
         transferManager.getAmazonS3Client().deleteObject(bucketName, objectKey);
     }
 
-    private Upload uploadToBucket(String bucketName, String objectKey, byte[] binaryFile) throws InterruptedException {
-        logger.info("Sending file {} to bucket {}", objectKey, bucketName);
+    @SneakyThrows
+    private Upload uploadToBucket(String bucketName, String objectKey, byte[] binaryFile) {
+        log.info("Sending file {} to bucket {}", objectKey, bucketName);
         ObjectMetadata metadata = new ObjectMetadata();
-        PutObjectRequest request = createPutObjectRequest(bucketName, objectKey, new ByteArrayInputStream(binaryFile), metadata);
+        PutObjectRequest request = createPutObjectRequest(bucketName, objectKey,
+                new ByteArrayInputStream(binaryFile), metadata);
         addHeaders(metadata);
         setContentTypeAndContentLength(metadata, objectKey, binaryFile.length);
         return transferPutObjectRequest(request);
@@ -88,19 +93,13 @@ public class AmazonS3Service {
         metadata.setContentLength(size);
     }
 
-    private PutObjectRequest createPutObjectRequest(String bucketName, String objectKey, InputStream inputStream, ObjectMetadata metadata) {
+    private PutObjectRequest createPutObjectRequest(String bucketName, String objectKey,
+                                                    InputStream inputStream, ObjectMetadata metadata) {
         return new PutObjectRequest(bucketName, objectKey, inputStream, metadata);
     }
 
-    private Upload transferPutObjectRequest(PutObjectRequest request) throws AmazonClientException, InterruptedException {
+    private Upload transferPutObjectRequest(PutObjectRequest request)
+            throws AmazonClientException, InterruptedException {
         return transferManager.upload(request);
-    }
-
-    private Upload createFolder(String folder, String bucketName) {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(0L);
-        InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folder + "/", emptyContent, metadata);
-        return transferManager.upload(putObjectRequest);
     }
 }

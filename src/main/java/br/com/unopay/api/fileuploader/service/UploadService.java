@@ -7,7 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class UploadService {
-    private static final Pattern IMAGE_EXTENSION_PATTERN = Pattern.compile("\\.(png|jpe?g|gif|bmp|svg)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern IMAGE_EXTENSION_PATTERN = Pattern
+            .compile("\\.(png|jpe?g|gif|bmp|svg)$", Pattern.CASE_INSENSITIVE);
 
     protected String slugfyIgnoringExtension(String originalFilename) {
         Matcher matcher = IMAGE_EXTENSION_PATTERN.matcher(originalFilename);

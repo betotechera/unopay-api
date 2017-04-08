@@ -3,11 +3,9 @@ package br.com.unopay.api.uaa.service;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -23,8 +21,6 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -51,41 +47,32 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Slf4j
 public class UserDetailService implements UserDetailsService {
 
+    @Autowired
     private UserDetailRepository userDetailRepository;
 
+    @Autowired
     private IssuerRepository issuerRepository;
 
+    @Autowired
     private AccreditedNetworkRepository accreditedNetworkRepository;
 
+    @Autowired
     private InstitutionRepository institutionRepository;
 
+    @Autowired
     private UserTypeRepository userTypeRepository;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
     private GroupService groupService;
 
+    @Autowired
     private NotificationService notificationService;
 
-    private PasswordTokenService passwordTokenService;
-
     @Autowired
-    public UserDetailService(UserDetailRepository userDetailRepository, IssuerRepository issuerRepository,
-                             AccreditedNetworkRepository accreditedNetworkRepository,
-                             InstitutionRepository institutionRepository,
-                             UserTypeRepository userTypeRepository, PasswordEncoder passwordEncoder,
-                             GroupService groupService, NotificationService notificationService,
-                             PasswordTokenService passwordTokenService) {
-        this.userDetailRepository = userDetailRepository;
-        this.issuerRepository = issuerRepository;
-        this.accreditedNetworkRepository = accreditedNetworkRepository;
-        this.institutionRepository = institutionRepository;
-        this.userTypeRepository = userTypeRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.groupService = groupService;
-        this.notificationService = notificationService;
-        this.passwordTokenService = passwordTokenService;
-    }
+    private PasswordTokenService passwordTokenService;
 
     public UserDetail create(UserDetail user) {
         try {
