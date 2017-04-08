@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class FileUploaderService extends UploadService {
                 List<Runnable> runnable = Collections.singletonList(() -> amazonS3Service.upload(filePath, content));
                 runnable.parallelStream().forEach(Runnable::run);
             }).get();
-        } catch (Exception e) {
+        } catch (ExecutionException | InterruptedException e) {
             log.error("Error uploading file '{}' to buckets", filePath, e);
             throw new InternalServerErrorException(e.getMessage(), e);
         }
@@ -56,7 +57,8 @@ public class FileUploaderService extends UploadService {
 
     public String upload(MultipartFile file, String service) {
         String relativePath = getRelativePath(service);
-        String uploadName = String.format("%s-%s",UUID.randomUUID().toString(),slugfyIgnoringExtension(file.getOriginalFilename()));
+        String uploadName = String.format("%s-%s",UUID.randomUUID().toString(),
+                slugfyIgnoringExtension(file.getOriginalFilename()));
         return uploadFile(file, String.format("%s/%s",relativePath, uploadName));
     }
 
@@ -71,9 +73,11 @@ public class FileUploaderService extends UploadService {
 
     public String getRelativePath(String service) {
         UploadConfiguration configuration = configs.get(service);
-        if (configuration != null)
-            return String.format("%s/%s",configuration.getFolder(),folderDateFormat.format(new Date()));
-        throw UnovationExceptions.unprocessableEntity().withArguments(service).withErrors(Errors.FILE_SERVICE_NOT_CONFIGURED);
+        if (configuration != null) {
+            return String.format("%s/%s", configuration.getFolder(), folderDateFormat.format(new Date()));
+        }
+        throw UnovationExceptions.unprocessableEntity().withArguments(service)
+                .withErrors(Errors.FILE_SERVICE_NOT_CONFIGURED);
     }
 
 

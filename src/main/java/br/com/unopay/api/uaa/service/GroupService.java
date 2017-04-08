@@ -42,7 +42,10 @@ public class GroupService {
     private UserTypeRepository userTypeRepository;
 
     @Autowired
-    public GroupService(GroupRepository repository, UserDetailRepository userDetailRepository, AuthorityRepository authorityRepository, UserTypeRepository userTypeRepository) {
+    public GroupService(GroupRepository repository,
+                        UserDetailRepository userDetailRepository,
+                        AuthorityRepository authorityRepository,
+                        UserTypeRepository userTypeRepository) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
         this.authorityRepository = authorityRepository;
@@ -59,7 +62,8 @@ public class GroupService {
             return repository.save(group);
         } catch (DataIntegrityViolationException ex) {
             LOGGER.warn("user not created.", ex);
-            throw UnovationExceptions.conflict().withErrors(Errors.GROUP_NAME_ALREADY_EXISTS).withArguments(group.getName());
+            throw UnovationExceptions.conflict().withErrors(Errors.GROUP_NAME_ALREADY_EXISTS)
+                    .withArguments(group.getName());
         }
     }
 
@@ -119,7 +123,8 @@ public class GroupService {
         if(id == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(GROUP_ID_REQUIRED);
         }
-        return userDetailRepository.findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+        return userDetailRepository
+                .findByGroupsId(id, new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 
     public List<Authority> findAuthorities(String id) {
@@ -174,9 +179,11 @@ public class GroupService {
 
     private void verifyIfAllGroupsFound(Set<String> groupsIds, Set<Group> groups) {
         List<String> foundsIds =  groups.stream().map(Group::getId).collect(Collectors.toList());
-        List<String> notFoundIds = groupsIds.stream().filter(id -> !foundsIds.contains(id) ).collect(Collectors.toList());
+        List<String> notFoundIds = groupsIds.stream()
+                                            .filter(id -> !foundsIds.contains(id) ).collect(Collectors.toList());
         if(!notFoundIds.isEmpty()) {
-            throw  UnovationExceptions.unprocessableEntity().withErrors(UNKNOWN_GROUP_FOUND.withArguments(notFoundIds));
+            throw  UnovationExceptions.unprocessableEntity()
+                    .withErrors(UNKNOWN_GROUP_FOUND.withArguments(notFoundIds));
         }
     }
 }

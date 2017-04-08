@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.IssuerFilter;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
@@ -35,7 +32,8 @@ public class IssuerService {
     private PaymentRuleGroupService paymentRuleGroupService;
 
     @Autowired
-    public IssuerService(IssuerRepository repository, PersonService personService, BankAccountService bankAccountService,
+    public IssuerService(IssuerRepository repository, PersonService personService,
+                         BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
                          PaymentRuleGroupService paymentRuleGroupService) {
         this.repository = repository;

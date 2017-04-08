@@ -12,7 +12,8 @@ public class UserRelationshipSerializer extends JsonSerializer<UserRelationship>
 
 
     @Override
-    public void serialize(UserRelationship value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(UserRelationship value, JsonGenerator gen, SerializerProvider serializers)
+            throws IOException {
         gen.writeStartObject();
         gen.writeStringField("code",value.name());
         gen.writeStringField("description",value.getDescription());

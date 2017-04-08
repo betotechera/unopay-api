@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +19,8 @@ import java.util.regex.Pattern;
 public class UploadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadController.class);
-    private static final Pattern IMAGES_PATTERN = Pattern.compile("^.+\\.(png|jpe?g|gif|bmp|svg)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern IMAGES_PATTERN =
+            Pattern.compile("^.+\\.(png|jpe?g|gif|bmp|svg)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern DOC_PATTERN = Pattern.compile("^.+\\.(pdf|doc?)$", Pattern.CASE_INSENSITIVE);
 
     private FileUploaderService fileUploaderService;
@@ -31,33 +31,39 @@ public class UploadController {
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/images/{service}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
+    @RequestMapping(value = "/images/{service}", method = RequestMethod.POST,
+            consumes = "multipart/form-data", produces = "text/plain")
     public String uploadPictureFile(
             @RequestParam MultipartFile file, @PathVariable String service){
         String fileName = file.getOriginalFilename();
         LOGGER.info("uploading file {}", fileName);
-        if (!IMAGES_PATTERN.matcher(fileName).matches())
+        if (!IMAGES_PATTERN.matcher(fileName).matches()) {
             throw new BadRequestException("File extension not supported");
+        }
         return fileUploaderService.upload(file,service);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/docs/{service}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
+    @RequestMapping(value = "/docs/{service}", method = RequestMethod.POST,
+            consumes = "multipart/form-data", produces = "text/plain")
     public String uploadDocFile(
             @RequestParam MultipartFile file, @PathVariable String service) {
         String fileName = file.getOriginalFilename();
         LOGGER.info("uploading file {}", fileName);
-        if (!DOC_PATTERN.matcher(fileName).matches())
+        if (!DOC_PATTERN.matcher(fileName).matches()) {
             throw new BadRequestException("File extension not supported");
+        }
         return fileUploaderService.upload(file,service);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/images", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "text/plain")
+    @RequestMapping(value = "/images", method = RequestMethod.POST,
+            consumes = "multipart/form-data", produces = "text/plain")
     public String uploadImage(@RequestParam MultipartFile file, @RequestParam String imagePath) {
         String fileName = file.getOriginalFilename();
-        if (!IMAGES_PATTERN.matcher(fileName).matches())
+        if (!IMAGES_PATTERN.matcher(fileName).matches()) {
             throw new BadRequestException("File extension not supported");
+        }
         return fileUploaderService.uploadFile(file, imagePath);
     }
 
