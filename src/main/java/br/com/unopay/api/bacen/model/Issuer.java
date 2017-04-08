@@ -73,12 +73,16 @@ public class Issuer implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount movementAccount;
 
+    @Version
+    @JsonIgnore
+    Long version;
+
     public void updateMe(Issuer other){
         setTax(other.getTax());
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
-        setPerson(other.getPerson());
+        getPerson().update(other.getPerson());
     }
 
     public void validate(){

@@ -73,6 +73,12 @@ public class LegalPersonDetail implements Serializable{
     @JsonView({Views.Public.class})
     private Document responsibleDocument;
 
+    void update(LegalPersonDetail legalPersonDetail) {
+        this.setResponsibleName(legalPersonDetail.getResponsibleName());
+        this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
+        this.setResponsibleDocument(legalPersonDetail.getResponsibleDocument());
+    }
+
     void updateForAccreditedNetwork(LegalPersonDetail legalPersonDetail) {
         this.setResponsibleName(legalPersonDetail.getResponsibleName());
         this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());

@@ -10,10 +10,16 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.hamcrest.core.Is
 import org.springframework.beans.factory.annotation.Autowired
 
+import static org.hamcrest.Matchers.hasSize
+import static spock.util.matcher.HamcrestSupport.that
+
 class IssuerServiceTest  extends SpockApplicationTests {
 
     @Autowired
     IssuerService service
+
+    @Autowired
+    PaymentRuleGroupService paymentRuleGroupService
 
     def 'a valid issuer should be created'(){
         given:
@@ -164,6 +170,84 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
         result.tax == 0.3d
+    }
+
+    def 'a person issuer should be updated'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        Issuer created = service.create(issuer)
+        def name = 'newName'
+        def phone = '115566778899'
+        issuer.person.name = name
+        issuer.person.telephone = phone
+
+        when:
+        service.update(created.id, issuer)
+        Issuer result = service.findById(created.id)
+
+        then:
+        result != null
+        result.person.name == name
+        result.person.telephone == phone
+    }
+
+    def 'a movement account should be updated'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        Issuer created = service.create(issuer)
+        def newAccountNumber = '5464656'
+        issuer.movementAccount.accountNumber = newAccountNumber
+
+        when:
+        service.update(created.id, issuer)
+        Issuer result = service.findById(created.id)
+
+        then:
+        result != null
+        issuer.movementAccount.accountNumber == newAccountNumber
+    }
+
+    def 'a payment account should be updated'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        Issuer created = service.create(issuer)
+        def newAccountNumber = '5464656'
+        def postPaid = 50
+        def prePaid = 6
+        issuer.paymentAccount.bankAccount.accountNumber = newAccountNumber
+        issuer.paymentAccount.postPaidPaymentDays = postPaid
+        issuer.paymentAccount.prePaidPaymentDays = prePaid
+
+        when:
+        service.update(created.id, issuer)
+        Issuer result = service.findById(created.id)
+
+        then:
+        result != null
+        issuer.paymentAccount.bankAccount.accountNumber  == newAccountNumber
+        issuer.paymentAccount.postPaidPaymentDays == postPaid
+        issuer.paymentAccount.prePaidPaymentDays == prePaid
+    }
+
+    def 'a payment rule group reference should be updated'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        Issuer created = service.create(issuer)
+        PaymentRuleGroup paymentRuleGroupCreated = paymentRuleGroupService.create(paymentRuleGroup)
+        issuer.paymentRuleGroups = [paymentRuleGroupCreated]
+
+        when:
+        service.update(created.id, issuer)
+        Issuer result = service.findById(created.id)
+
+        then:
+        result != null
+        that result.paymentRuleGroups, hasSize(1)
+        result.paymentRuleGroups.find()?.id == paymentRuleGroupCreated.id
+
     }
 
     def 'given a unknown issuer when updated should not be found'(){
