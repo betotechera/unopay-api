@@ -89,6 +89,13 @@ public class Person implements Serializable{
         return PersonType.LEGAL.equals(this.type);
     }
 
+    public void update(Person person) {
+        this.setName(person.getName());
+        this.legalPersonDetail.update(person.getLegalPersonDetail());
+        this.setAddress(person.getAddress());
+        this.setTelephone(person.getTelephone());
+    }
+
     public void updateForInstitution(Person person) {
         this.setName(person.getName());
         this.legalPersonDetail.updateForInstitution(person.getLegalPersonDetail());
@@ -101,6 +108,5 @@ public class Person implements Serializable{
         this.setTelephone(person.getTelephone());
         this.legalPersonDetail.updateForAccreditedNetwork(person.getLegalPersonDetail());
         this.setAddress(person.getAddress());
-
     }
 }

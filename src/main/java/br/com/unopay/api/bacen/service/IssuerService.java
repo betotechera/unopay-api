@@ -61,6 +61,7 @@ public class IssuerService {
         Issuer current = findById(id);
         validateReferences(issuer);
         current.updateMe(issuer);
+        personService.save(current.getPerson());
         return  repository.save(current);
     }
 
