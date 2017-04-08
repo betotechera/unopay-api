@@ -60,5 +60,5 @@ create table establishment_service (
 insert into AUTHORITY(name, description) values('ROLE_LIST_ESTABLISHMENT','Permite listar Estabelecimentos');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_ESTABLISHMENT','Permite gerenciar Estabelecimentos');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTABLISHMENT', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTABLISHMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
