@@ -40,21 +40,21 @@ create table establishment (
     invoice_receipt_period  VARCHAR(16),
     invoice_receipt_type varchar(10),
     version integer,
-    CONSTRAINT establishment_pers_id UNIQUE (person_id),
-    constraint fk_establishment_person foreign key(person_id) references person(id),
-    constraint fk_establishment_accredited_network foreign key(accredited_network_id) references accredited_network(id),
-    constraint fk_establishment_movement_account foreign key(movement_account_id) references bank_account(id),
-    constraint fk_establishment_brand_flag foreign key(brand_flag_id) references brand_flag(id),
-    constraint fk_establishment_operational_contact foreign key(operational_contact_id) references brand_flag(id),
-    constraint fk_establishment_administrative_contact foreign key(administrative_contact_id) references brand_flag(id),
-    constraint fk_establishment_financier_contact foreign key(financier_contact_id) references brand_flag(id)
+    CONSTRAINT est_pers_id UNIQUE (person_id),
+    constraint fk_est_person foreign key(person_id) references person(id),
+    constraint fk_est_accredited_network foreign key(accredited_network_id) references accredited_network(id),
+    constraint fk_est_movement_account foreign key(movement_account_id) references bank_account(id),
+    constraint fk_est_brand_flag foreign key(brand_flag_id) references brand_flag(id),
+    constraint fk_est_operational_contact foreign key(operational_contact_id) references brand_flag(id),
+    constraint fk_est_administrative_contact foreign key(administrative_contact_id) references brand_flag(id),
+    constraint fk_est_financier_contact foreign key(financier_contact_id) references brand_flag(id)
 );
 
 create table establishment_service (
 	establishment_id varchar(256) not null,
 	service_id varchar(256) not null,
-	constraint fk_establishment_service_service foreign key(service_id) references service(id),
-	constraint fk_establishment_service_establishment foreign key(establishment_id) references establishment(id)
+	constraint fk_est_service_service foreign key(service_id) references service(id),
+	constraint fk_est_service_est foreign key(establishment_id) references establishment(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_ESTABLISHMENT','Permite listar Estabelecimentos');

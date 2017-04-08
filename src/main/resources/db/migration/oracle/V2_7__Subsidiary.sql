@@ -20,17 +20,10 @@ create table subsidiary (
     invoice_receipt_period  VARCHAR(16),
     invoice_receipt_type varchar(10),
     version integer,
-    CONSTRAINT subsidiary_pers_id UNIQUE (person_id),
-    constraint fk_subsidiary_person foreign key(person_id) references person(id),
-    constraint fk_subsidiary_matrix foreign key(matrix_id) references establishment(id),
-    constraint fk_subsidiary_movement_account foreign key(movement_account_id) references bank_account(id),
-);
-
-create table subsidiary_service (
-	subsidiary_id varchar(256) not null,
-	service_id varchar(256) not null,
-	constraint fk_subsidiary_service_service foreign key(service_id) references service(id),
-	constraint fk_subsidiary_service_subsidiary foreign key(subsidiary_id) references subsidiary(id)
+    CONSTRAINT sub_pers_id UNIQUE (person_id),
+    constraint fk_sub_person foreign key(person_id) references person(id),
+    constraint fk_sub_matrix foreign key(matrix_id) references establishment(id),
+    constraint fk_sub_movement_account foreign key(movement_account_id) references bank_account(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_SUBSIDIARY','Permite listar Filiais');
