@@ -174,6 +174,10 @@ public final class Errors {
             new UnovationError("BRAND_FLAG_REQUIRED","Brand flag is required.");
     public static final UnovationError CONTACT_REQUIRED =
             new UnovationError("CONTACT_REQUIRED","Contact is required.");
+    public static final UnovationError BANK_ACCOUNT_REQUIRED =
+            new UnovationError("BANK_ACCOUNT_REQUIRED","Bank account is required");
+    public static final UnovationError BANK_ACCOUNT_ID_REQUIRED =
+            new UnovationError("BANK_ACCOUNT_ID_REQUIRED","Bank account id is required");
 
 
 

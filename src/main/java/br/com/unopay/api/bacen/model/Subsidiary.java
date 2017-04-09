@@ -5,6 +5,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_REQUIRED;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -95,10 +98,16 @@ public class Subsidiary {
     @JsonView({Views.Public.class})
     private Checkout checkout;
 
-    public void validateCreate() {
-        
+    public void validateCreate(){
+        if(getBankAccount() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
+        }
     }
 
     public void validateUpdate() {
+        validateCreate();
+        if(getBankAccount().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
+        }
     }
 }

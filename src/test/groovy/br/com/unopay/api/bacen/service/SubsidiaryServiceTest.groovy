@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Subsidiary
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class SubsidiaryServiceTest  extends SpockApplicationTests {
@@ -35,6 +36,71 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+
+    def 'a valid subsidiary without bank account should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.bankAccount = null
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_REQUIRED'
+    }
+
+    def 'a valid subsidiary without bank account id should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.bankAccount.id = null
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_ID_REQUIRED'
+    }
+
+    def 'a valid subsidiary with unknown bank account id should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.bankAccount.id = ''
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
+    }
+
+    def 'a valid subsidiary without bank account should not be created'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        subsidiary.bankAccount = null
+        when:
+        service.create(subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_REQUIRED'
+    }
+
+    def 'a valid subsidiary without bank account id should be created'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        subsidiary.bankAccount.id = null
+        when:
+        def created = service.create(subsidiary)
+        def result = service.findById(created.id)
+        then:
+        result != null
     }
 
     def 'a valid subsidiary should be updated'(){

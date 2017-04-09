@@ -34,6 +34,9 @@ public class EstablishmentService {
     @Autowired
     private BrandFlagService brandFlagService;
 
+    @Autowired
+    private BankAccountService bankAccountService;
+
 
     public Establishment create(Establishment establishment) {
         establishment.validateCreate();
@@ -69,6 +72,7 @@ public class EstablishmentService {
         contactService.create(establishment.getFinancierContact());
         contactService.create(establishment.getOperationalContact());
         personService.save(establishment.getPerson());
+        bankAccountService.create(establishment.getBankAccount());
     }
 
     private void validateExistingReferences(Establishment establishment) {
@@ -77,6 +81,7 @@ public class EstablishmentService {
         contactService.findById(establishment.getOperationalContact().getId());
         contactService.findById(establishment.getFinancierContact().getId());
         contactService.findById(establishment.getAdministrativeContact().getId());
+        bankAccountService.findById(establishment.getBankAccount().getId());
     }
 
 }

@@ -23,6 +23,9 @@ public class SubsidiaryService {
     @Autowired
     private EstablishmentService establishmentService;
 
+    @Autowired
+    private BankAccountService bankAccountService;
+
     public Subsidiary create(Subsidiary subsidiary) {
         subsidiary.validateCreate();
         createReferences(subsidiary);
@@ -51,10 +54,13 @@ public class SubsidiaryService {
 
     private void createReferences(Subsidiary subsidiary) {
         personService.save(subsidiary.getPerson());
+        bankAccountService.create(subsidiary.getBankAccount());
+
     }
 
     private void validateExistingReferences(Subsidiary subsidiary) {
         establishmentService.findById(subsidiary.getMatrix().getId());
+        bankAccountService.findById(subsidiary.getBankAccount().getId());
     }
 
     public List<Subsidiary> findByMatrixId(String matrixId) {

@@ -139,6 +139,9 @@ public class Establishment {
     private Checkout checkout;
 
     public void validateCreate(){
+        if(getBankAccount() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
+        }
         if(getNetwork() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_REQUIRED);
         }
@@ -164,6 +167,9 @@ public class Establishment {
 
     public void validateUpdate(){
         validateCreate();
+        if(getBankAccount().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
+        }
         if(getAdministrativeContact().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }

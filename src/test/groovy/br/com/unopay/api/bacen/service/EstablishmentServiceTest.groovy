@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Subsidiary
 import br.com.unopay.bootcommons.exception.ConflictException
@@ -20,10 +21,17 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     @Autowired
     SubsidiaryService subsidiaryService
 
+    AccreditedNetwork networkUnderTest
+
+    void setup(){
+        AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
+        networkUnderTest = networkService.create(accreditedNetwork)
+    }
+
     def 'a valid establishment should be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
 
         when:
         Establishment created = service.create(establishment)
@@ -34,8 +42,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment should be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         Establishment created = service.create(establishment)
 
         def newField = "teste"
@@ -74,10 +82,79 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'ACCREDITED_NETWORK_ID_REQUIRED'
     }
 
+    def 'a valid establishment without bank account should not be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
+        establishment.bankAccount = null
+        when:
+        service.create(establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_REQUIRED'
+    }
+
+    def 'a valid establishment without bank account id should be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
+        establishment.bankAccount.id = null
+        when:
+        def created = service.create(establishment)
+        def result = service.findById(created.id)
+        then:
+        result != null
+    }
+
+    def 'a valid establishment without bank account should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.bankAccount = null
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_REQUIRED'
+    }
+
+    def 'a valid establishment without bank account id should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.bankAccount.id = null
+
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_ID_REQUIRED'
+    }
+
+    def 'a valid establishment with unknown bank account id should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.bankAccount.id = ''
+
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
+    }
+
     def 'a valid establishment with unknown brand flag should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         establishment.brandFlag.id = ''
         when:
         service.create(establishment)
@@ -89,8 +166,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without brand flag id should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         establishment.brandFlag.id = null
         when:
         service.create(establishment)
@@ -102,8 +179,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown operational contact should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         establishment.operationalContact.id = ''
         when:
         service.create(establishment)
@@ -115,8 +192,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without operational contact id should be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         establishment.operationalContact.id = null
 
         when:
@@ -129,8 +206,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown administrative contact should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         establishment.administrativeContact.id = ''
         when:
         service.create(establishment)
@@ -142,8 +219,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without administrative contact id should be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         establishment.administrativeContact.id = null
 
         when:
@@ -156,8 +233,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown financier contact should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         establishment.financierContact.id = ''
         when:
         service.create(establishment)
@@ -169,8 +246,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without financier contact id should be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         establishment.financierContact.id = null
 
         when:
@@ -183,8 +260,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without brand flag should not be created'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         establishment.brandFlag = null
         when:
         service.create(establishment)
@@ -208,8 +285,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown network should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.network.id = ''
         when:
@@ -222,8 +299,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without network id should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.network.id = null
         when:
@@ -236,8 +313,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without network should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.network = null
         when:
@@ -251,8 +328,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown brand flag should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.brandFlag.id = ''
         when:
@@ -265,8 +342,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without brand flag id should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.brandFlag.id = null
         when:
@@ -279,8 +356,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without brand flag should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.brandFlag = null
         when:
@@ -294,8 +371,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown operational contact should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.operationalContact.id = ''
         when:
@@ -308,8 +385,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without operational contact id should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.operationalContact.id = null
         when:
@@ -322,8 +399,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown administrative contact should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.administrativeContact.id = ''
         when:
@@ -336,8 +413,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without administrative contact id should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                            .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.administrativeContact.id = null
         when:
@@ -350,8 +427,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment with unknown financier contact should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.financierContact.id = ''
         when:
@@ -364,8 +441,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a valid establishment without financier contact id should not be updated'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         def created = service.create(establishment)
         establishment.financierContact.id = null
         when:
@@ -378,8 +455,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a known establishment should be found'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         Establishment created = service.create(establishment)
 
         when:
@@ -400,8 +477,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a known establishment should be deleted'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         Establishment created = service.create(establishment)
 
         when:
@@ -415,9 +492,9 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     def 'a known establishment with subsidiary should not be deleted'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
         Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
-        networkService.create(establishment.getNetwork())
         Establishment created = service.create(establishment)
         subsidiary.matrix = created
         subsidiaryService.create(subsidiary)
