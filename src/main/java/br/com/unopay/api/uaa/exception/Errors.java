@@ -200,6 +200,12 @@ public final class Errors {
     /* subsidiary */
     public static final UnovationError SUBSIDIARY_NOT_FOUND =
             new UnovationError("SUBSIDIARY_NOT_FOUND","Subsidiary not found.");
+    public static final UnovationError MATRIX_REQUIRED =
+            new UnovationError("MATRIX_REQUIRED","Matrix required.");
+    public static final UnovationError CANNOT_CHANGE_MATRIX =
+            new UnovationError("CANNOT_CHANGE_MATRIX","Cannot change matrix.");
+
+
 
 
 }

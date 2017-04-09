@@ -16,8 +16,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_REQUIRED;
+import java.util.Objects;
+
+import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -99,15 +100,30 @@ public class Subsidiary {
     private Checkout checkout;
 
     public void validateCreate(){
+        if(getMatrix() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(MATRIX_REQUIRED);
+        }
+        if(getPerson() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
+        }
         if(getBankAccount() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
         }
     }
 
-    public void validateUpdate() {
+    public void validateUpdate(Subsidiary current) {
         validateCreate();
         if(getBankAccount().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
+        }
+        if(getMatrix().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_MATRIX);
+        }
+        if(!Objects.equals(getMatrix().getId(), current.getMatrix().getId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_MATRIX);
+        }
+        if(getPerson().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         }
     }
 }

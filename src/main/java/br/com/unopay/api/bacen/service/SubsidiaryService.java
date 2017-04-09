@@ -34,8 +34,8 @@ public class SubsidiaryService {
     }
 
     public void update(String id, Subsidiary subsidiary) {
-        subsidiary.validateUpdate();
         Subsidiary current = findById(id);
+        subsidiary.validateUpdate(current);
         validateExistingReferences(subsidiary);
         current.setTechnicalContact(subsidiary.getTechnicalContact());
         repository.save(current);
@@ -61,6 +61,7 @@ public class SubsidiaryService {
     private void validateExistingReferences(Subsidiary subsidiary) {
         establishmentService.findById(subsidiary.getMatrix().getId());
         bankAccountService.findById(subsidiary.getBankAccount().getId());
+        personService.findById(subsidiary.getPerson().getId());
     }
 
     public List<Subsidiary> findByMatrixId(String matrixId) {

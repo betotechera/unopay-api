@@ -22,10 +22,10 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
     Establishment matrixUnderTest
 
     void setup(){
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        accreditedNetworkService.create(establishment.network)
-        matrixUnderTest = establishmentService.create(establishment)
+        matrixUnderTest = createMatrix()
     }
+
+
 
     def 'a valid subsidiary should be created'(){
         given:
@@ -118,6 +118,114 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
         result.technicalContact == newField
     }
 
+    def 'a valid subsidiary without person should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.person = null
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PERSON_REQUIRED'
+    }
+
+    def 'a valid subsidiary without person id should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.person.id = null
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PERSON_ID_REQUIRED'
+    }
+
+    def 'a valid subsidiary with unknown person id should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.person.id = ''
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'PERSON_NOT_FOUND'
+    }
+
+    def 'a valid subsidiary without person should not be created'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        subsidiary.person = null
+        when:
+        service.create(subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'PERSON_REQUIRED'
+    }
+
+    def 'a valid subsidiary without matrix should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.matrix = null
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'MATRIX_REQUIRED'
+    }
+
+    def 'a valid subsidiary without matrix id should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def created = service.create(subsidiary)
+        subsidiary.matrix.id = null
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CANNOT_CHANGE_MATRIX'
+    }
+
+    def 'a subsidiary with changed matrix should not be updated'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        def newMatrix = createMatrix()
+        def created = service.create(subsidiary)
+        subsidiary.matrix = newMatrix
+
+        when:
+        service.update(created.id, subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CANNOT_CHANGE_MATRIX'
+    }
+
+    def 'a valid subsidiary without matrix should not be created'(){
+        given:
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
+        subsidiary.matrix = null
+        when:
+        service.create(subsidiary)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'MATRIX_REQUIRED'
+    }
+
     def 'a known subsidiary should be found'(){
         given:
         Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
@@ -160,5 +268,11 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'SUBSIDIARY_NOT_FOUND'
+    }
+
+    private Establishment createMatrix() {
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        accreditedNetworkService.create(establishment.network)
+        establishmentService.create(establishment)
     }
 }
