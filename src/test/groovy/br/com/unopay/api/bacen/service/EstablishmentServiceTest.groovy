@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.model.Subsidiary
+import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -19,7 +19,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     AccreditedNetworkService networkService
 
     @Autowired
-    SubsidiaryService subsidiaryService
+    BranchService branchService
 
     AccreditedNetwork networkUnderTest
 
@@ -490,21 +490,21 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'ESTABLISHMENT_NOT_FOUND'
     }
 
-    def 'a known establishment with subsidiary should not be deleted'(){
+    def 'a known establishment with branch should not be deleted'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                                         .gimme("valid").with { network = networkUnderTest; it }
-        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
+        Branch branch = Fixture.from(Branch.class).gimme("valid")
         Establishment created = service.create(establishment)
-        subsidiary.matrix = created
-        subsidiaryService.create(subsidiary)
+        branch.headOffice = created
+        branchService.create(branch)
 
         when:
         service.delete(created.id)
 
         then:
         def ex = thrown(ConflictException)
-        ex.errors.find().logref == 'ESTABLISHMENT_WITH_SUBSIDIARY'
+        ex.errors.find().logref == 'ESTABLISHMENT_WITH_BRANCH'
     }
     def 'a unknown establishment should not be deleted'(){
         when:

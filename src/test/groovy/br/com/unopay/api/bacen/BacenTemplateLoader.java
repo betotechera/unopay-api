@@ -199,16 +199,16 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("checkout", one(Checkout.class,"valid"));
         }});
 
-        Fixture.of(Subsidiary.class).addTemplate("valid", new Rule(){{
+        Fixture.of(Branch.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
-            add("matrix", one(Establishment.class, "valid"));
+            add("headOffice", one(Establishment.class, "valid"));
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
             add("tax", random(Double.class, range(0.00, 1)));
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("subsidiaryPhotoUri", "/tmp/path");
+            add("branchPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");
             add("gatheringChannel", random(EstablishmentType.class));
             add("bankAccount", one(BankAccount.class, "persisted"));

@@ -24,8 +24,8 @@ import static javax.persistence.EnumType.STRING;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "subsidiary")
-public class Subsidiary {
+@Table(name = "branch")
+public class Branch {
 
     @Id
     @Column(name="id")
@@ -43,10 +43,10 @@ public class Subsidiary {
 
     @Valid
     @ManyToOne
-    @JoinColumn(name="matrix_id")
+    @JoinColumn(name="head_office_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private Establishment matrix;
+    private Establishment headOffice;
 
     @Column(name="contact_mail")
     @NotNull(groups = {Create.class, Update.class})
@@ -75,8 +75,8 @@ public class Subsidiary {
     @Column(name = "technical_contact")
     private String technicalContact;
 
-    @Column(name = "subsidiary_photo_uri")
-    private String subsidiaryPhotoUri;
+    @Column(name = "branch_photo_uri")
+    private String branchPhotoUri;
 
     @Column(name = "contract_uri")
     private String contractUri;
@@ -100,8 +100,8 @@ public class Subsidiary {
     private Checkout checkout;
 
     public void validateCreate(){
-        if(getMatrix() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(MATRIX_REQUIRED);
+        if(getHeadOffice() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(HEAD_OFFICE_REQUIRED);
         }
         if(getPerson() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
@@ -111,16 +111,16 @@ public class Subsidiary {
         }
     }
 
-    public void validateUpdate(Subsidiary current) {
+    public void validateUpdate(Branch current) {
         validateCreate();
         if(getBankAccount().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
         }
-        if(getMatrix().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_MATRIX);
+        if(getHeadOffice().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_HEAD_OFFICE);
         }
-        if(!Objects.equals(getMatrix().getId(), current.getMatrix().getId())) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_MATRIX);
+        if(!Objects.equals(getHeadOffice().getId(), current.getHeadOffice().getId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_HEAD_OFFICE);
         }
         if(getPerson().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);

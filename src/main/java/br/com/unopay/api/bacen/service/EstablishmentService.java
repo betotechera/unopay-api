@@ -1,9 +1,9 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Subsidiary;
 import br.com.unopay.api.bacen.repository.EstablishmentRepository;
-import br.com.unopay.api.bacen.repository.SubsidiaryRepository;
+import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -18,7 +18,7 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 public class EstablishmentService {
 
     private EstablishmentRepository repository;
-    private SubsidiaryRepository subsidiaryRepository;
+    private BranchRepository branchRepository;
     private ContactService contactService;
     private PersonService personService;
     private AccreditedNetworkService networkService;
@@ -27,14 +27,14 @@ public class EstablishmentService {
 
     @Autowired
     public EstablishmentService(EstablishmentRepository repository,
-                                SubsidiaryRepository subsidiaryRepository,
+                                BranchRepository branchRepository,
                                 ContactService contactService,
                                 PersonService personService,
                                 AccreditedNetworkService networkService,
                                 BrandFlagService brandFlagService,
                                 BankAccountService bankAccountService){
         this.repository = repository;
-        this.subsidiaryRepository = subsidiaryRepository;
+        this.branchRepository = branchRepository;
         this.contactService = contactService;
         this.personService = personService;
         this.networkService = networkService;
@@ -69,8 +69,8 @@ public class EstablishmentService {
 
     public void delete(String id) {
         findById(id);
-        List<Subsidiary> subsidiaries =  subsidiaryRepository.findByMatrixId(id);
-        if(!subsidiaries.isEmpty()) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_SUBSIDIARY);
+        List<Branch> branches =  branchRepository.findByHeadOfficeId(id);
+        if(!branches.isEmpty()) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
         repository.delete(id);
     }
 

@@ -172,8 +172,8 @@ public final class Errors {
     /* establishment */
     public static final UnovationError ESTABLISHMENT_NOT_FOUND =
             new UnovationError("ESTABLISHMENT_NOT_FOUND","Establishment not found.");
-    public static final UnovationError ESTABLISHMENT_WITH_SUBSIDIARY =
-            new UnovationError("ESTABLISHMENT_WITH_SUBSIDIARY","Establishment with subsidiary.");
+    public static final UnovationError ESTABLISHMENT_WITH_BRANCH =
+            new UnovationError("ESTABLISHMENT_WITH_BRANCH","Establishment with branch.");
     public static final UnovationError ACCREDITED_NETWORK_REQUIRED =
             new UnovationError("ACCREDITED_NETWORK_REQUIRED","Accredited network is required.");
     public static final UnovationError ACCREDITED_NETWORK_ID_REQUIRED =
@@ -201,13 +201,13 @@ public final class Errors {
     public static final UnovationError CONTACT_NOT_FOUND =
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
 
-    /* subsidiary */
-    public static final UnovationError SUBSIDIARY_NOT_FOUND =
-            new UnovationError("SUBSIDIARY_NOT_FOUND","Subsidiary not found.");
-    public static final UnovationError MATRIX_REQUIRED =
-            new UnovationError("MATRIX_REQUIRED","Matrix required.");
-    public static final UnovationError CANNOT_CHANGE_MATRIX =
-            new UnovationError("CANNOT_CHANGE_MATRIX","Cannot change matrix.");
+    /* branch */
+    public static final UnovationError BRANCH_NOT_FOUND =
+            new UnovationError("BRANCH_NOT_FOUND","Branch not found.");
+    public static final UnovationError HEAD_OFFICE_REQUIRED =
+            new UnovationError("HEAD_OFFICE_REQUIRED","Head office required.");
+    public static final UnovationError CANNOT_CHANGE_HEAD_OFFICE =
+            new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
 
 
 
