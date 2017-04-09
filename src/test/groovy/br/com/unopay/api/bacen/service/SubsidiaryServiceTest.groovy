@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Subsidiary
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,9 +12,23 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
     @Autowired
     SubsidiaryService service
 
+    @Autowired
+    EstablishmentService establishmentService
+
+    @Autowired
+    AccreditedNetworkService accreditedNetworkService
+
+    Establishment matrixUnderTest
+
+    void setup(){
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        accreditedNetworkService.create(establishment.network)
+        matrixUnderTest = establishmentService.create(establishment)
+    }
+
     def 'a valid subsidiary should be created'(){
         given:
-        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
 
         when:
         Subsidiary created = service.create(subsidiary)
@@ -24,7 +39,7 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
 
     def 'a valid subsidiary should be updated'(){
         given:
-        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
         Subsidiary created = service.create(subsidiary)
         def newField = "teste"
         subsidiary.technicalContact = newField
@@ -39,7 +54,7 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
 
     def 'a known subsidiary should be found'(){
         given:
-        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
         Subsidiary created = service.create(subsidiary)
 
         when:
@@ -60,7 +75,7 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
 
     def 'a known subsidiary should be deleted'(){
         given:
-        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid")
+        Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
         Subsidiary created = service.create(subsidiary)
 
         when:

@@ -68,14 +68,11 @@ public class Subsidiary {
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;
 
-    @Column(name = "logo_uri")
-    private String logoUri;
-
     @Column(name = "technical_contact")
     private String technicalContact;
 
-    @Column(name = "establishment_photo_uri")
-    private String establishmentPhotoUri;
+    @Column(name = "subsidiary_photo_uri")
+    private String subsidiaryPhotoUri;
 
     @Column(name = "contract_uri")
     private String contractUri;
@@ -97,4 +94,11 @@ public class Subsidiary {
     @Embedded
     @JsonView({Views.Public.class})
     private Checkout checkout;
+
+    public void validateCreate() {
+        
+    }
+
+    public void validateUpdate() {
+    }
 }

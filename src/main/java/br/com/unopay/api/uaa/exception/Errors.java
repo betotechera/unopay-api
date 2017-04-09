@@ -189,4 +189,9 @@ public final class Errors {
     public static final UnovationError CONTACT_NOT_FOUND =
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
 
+    /* subsidiary */
+    public static final UnovationError SUBSIDIARY_NOT_FOUND =
+            new UnovationError("SUBSIDIARY_NOT_FOUND","Subsidiary not found.");
+
+
 }

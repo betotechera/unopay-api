@@ -60,7 +60,7 @@ public class EstablishmentService {
     public void delete(String id) {
         findById(id);
         List<Subsidiary> subsidiaries =  subsidiaryService.findByMatrixId(id);
-        if(!subsidiaries.isEmpty()) throw UnovationExceptions.notFound().withErrors(ESTABLISHMENT_WITH_SUBSIDIARY);
+        if(!subsidiaries.isEmpty()) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_SUBSIDIARY);
         repository.delete(id);
     }
 
