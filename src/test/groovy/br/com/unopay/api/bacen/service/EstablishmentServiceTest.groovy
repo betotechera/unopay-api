@@ -57,6 +57,74 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         result.technicalContact == newField
     }
 
+    def 'a establishment person should be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        Establishment created = service.create(establishment)
+
+        def newField = "teste"
+        establishment.person.name = newField
+
+        when:
+        service.update(created.id, establishment)
+        Establishment result = service.findById(created.id)
+
+        then:
+        result.person.name == newField
+    }
+
+    def 'a establishment contact should be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        Establishment created = service.create(establishment)
+
+        def newField = "teste"
+        establishment.operationalContact.name = newField
+
+        when:
+        service.update(created.id, establishment)
+        Establishment result = service.findById(created.id)
+
+        then:
+        result.operationalContact.name == newField
+    }
+
+    def 'a establishment network should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        Establishment created = service.create(establishment)
+
+        def newField = 10.0
+        establishment.network.merchantDiscountRate = newField
+
+        when:
+        service.update(created.id, establishment)
+        Establishment result = service.findById(created.id)
+
+        then:
+        result.network.merchantDiscountRate != newField
+    }
+
+    def 'a establishment bank account should be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        Establishment created = service.create(establishment)
+
+        def newField = "teste"
+        establishment.bankAccount.agency = newField
+
+        when:
+        service.update(created.id, establishment)
+        Establishment result = service.findById(created.id)
+
+        then:
+        result.bankAccount.agency == newField
+    }
+
     def 'a valid establishment with unknown network should not be created'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")

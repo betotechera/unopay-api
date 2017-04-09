@@ -28,7 +28,7 @@ public class BranchService {
 
     public Branch create(Branch branch) {
         branch.validateCreate();
-        createReferences(branch);
+        saveReferences(branch);
         validateExistingReferences(branch);
         return repository.save(branch);
     }
@@ -37,6 +37,7 @@ public class BranchService {
         Branch current = findById(id);
         branch.validateUpdate(current);
         validateExistingReferences(branch);
+        saveReferences(branch);
         current.updateMe(branch);
         repository.save(current);
     }
@@ -50,7 +51,7 @@ public class BranchService {
         repository.delete(id);
     }
 
-    private void createReferences(Branch branch) {
+    private void saveReferences(Branch branch) {
         personService.save(branch.getPerson());
         bankAccountService.create(branch.getBankAccount());
     }

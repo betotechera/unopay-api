@@ -43,22 +43,20 @@ public class EstablishmentService {
         this.bankAccountService = bankAccountService;
     }
 
-
-
     public Establishment create(Establishment establishment) {
         establishment.validateCreate();
-        createReferences(establishment);
-        validateExistingReferences(establishment);
+        saveReferences(establishment);
+        validateReferences(establishment);
         return repository.save(establishment);
     }
 
     public void update(String id, Establishment establishment) {
         establishment.validateUpdate();
         Establishment current = findById(id);
-        validateExistingReferences(establishment);
+        validateReferences(establishment);
+        saveReferences(establishment);
         current.updateMe(establishment);
         repository.save(current);
-
     }
 
     public Establishment findById(String id) {
@@ -74,15 +72,15 @@ public class EstablishmentService {
         repository.delete(id);
     }
 
-    private void createReferences(Establishment establishment) {
-        contactService.create(establishment.getAdministrativeContact());
-        contactService.create(establishment.getFinancierContact());
-        contactService.create(establishment.getOperationalContact());
+    private void saveReferences(Establishment establishment) {
+        contactService.save(establishment.getAdministrativeContact());
+        contactService.save(establishment.getFinancierContact());
+        contactService.save(establishment.getOperationalContact());
         personService.save(establishment.getPerson());
         bankAccountService.create(establishment.getBankAccount());
     }
 
-    private void validateExistingReferences(Establishment establishment) {
+    private void validateReferences(Establishment establishment) {
         brandFlagService.findById(establishment.getBrandFlag().getId());
         networkService.getById(establishment.getNetwork().getId());
         contactService.findById(establishment.getOperationalContact().getId());

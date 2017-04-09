@@ -100,19 +100,49 @@ class BranchServiceTest extends SpockApplicationTests {
         result != null
     }
 
-    def 'a valid branch should be updated'(){
+    def 'a branch person should be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         Branch created = service.create(branch)
         def newField = "teste"
-        branch.technicalContact = newField
+        branch.person.name = newField
 
         when:
         service.update(created.id, branch)
         Branch result = service.findById(created.id)
 
         then:
-        result.technicalContact == newField
+        result.person.name == newField
+    }
+
+    def 'a branch head office should not be updated'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
+        Branch created = service.create(branch)
+        def newField = "teste"
+        branch.headOffice.contactMail = newField
+
+        when:
+        service.update(created.id, branch)
+        Branch result = service.findById(created.id)
+
+        then:
+        result.headOffice.contactMail != newField
+    }
+
+    def 'a branch bank account should be updated'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
+        Branch created = service.create(branch)
+        def newField = "teste"
+        branch.bankAccount.agency = newField
+
+        when:
+        service.update(created.id, branch)
+        Branch result = service.findById(created.id)
+
+        then:
+        result.bankAccount.agency == newField
     }
 
     def 'a valid branch without person should not be updated'(){
