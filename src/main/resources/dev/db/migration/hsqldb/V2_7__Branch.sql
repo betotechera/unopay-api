@@ -37,3 +37,6 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_BRANCH','Permite ge
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BRANCH', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BRANCH', '1');
+
+ALTER TABLE PERSON MODIFY name varchar(150);
+ALTER TABLE LEGAL_PERSON_DETAIL MODIFY fantasy_name varchar(150);
