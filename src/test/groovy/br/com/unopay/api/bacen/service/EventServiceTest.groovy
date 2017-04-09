@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,30 @@ class EventServiceTest extends SpockApplicationTests {
         then:
         created != null
     }
+
+    def 'given an event with the same name, it should not be created'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        when:
+        service.create(event)
+        service.create(event.with{it.ncmCode = 'update';it})
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'EVENT_NAME_ALREADY_EXISTS'
+    }
+    def 'given an event with the same code, it should not be created'(){
+        given:
+        Event event = Fixture.from(Event.class).gimme("valid")
+        when:
+        service.create(event)
+        service.create(event.with{it.name = 'update';it})
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'EVENT_CODE_ALREADY_EXISTS'
+    }
+
+
 
     def 'given a event with unknown service should not be created'(){
         given:
