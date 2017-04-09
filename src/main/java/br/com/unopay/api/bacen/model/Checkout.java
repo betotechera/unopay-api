@@ -15,6 +15,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+import static java.lang.Boolean.FALSE;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -31,8 +32,7 @@ public class Checkout implements Serializable {
 
     @Column(name="authorize_transfer")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private Boolean authorizeTransfer;
+    private Boolean authorizeTransfer = FALSE;
 
     @JsonView({Views.Public.class})
     @Column(name="minimum_deposit_value")
