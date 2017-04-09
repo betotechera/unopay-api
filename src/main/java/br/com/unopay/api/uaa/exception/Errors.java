@@ -27,6 +27,10 @@ public final class Errors {
             SERVICE_WITH_EVENTS = new UnovationError("SERVICE_WITH_EVENTS","Service has events");
     public static final UnovationError LEAST_ONE_TAX_REQUIRED =
             new UnovationError("LEAST_ONE_TAX_REQUIRED","Least one service tax required");
+    public static final UnovationError SERVICE_NAME_ALREADY_EXISTS =
+            new UnovationError("SERVICE_NAME_ALREADY_EXISTS","Service name already exists");
+    public static final UnovationError SERVICE_CODE_ALREADY_EXISTS =
+            new UnovationError("SERVICE_CODE_ALREADY_EXISTS","Service code already exists");
 
 
 
