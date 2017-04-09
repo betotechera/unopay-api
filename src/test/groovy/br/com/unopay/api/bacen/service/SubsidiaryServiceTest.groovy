@@ -25,8 +25,6 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
         matrixUnderTest = createMatrix()
     }
 
-
-
     def 'a valid subsidiary should be created'(){
         given:
         Subsidiary subsidiary = Fixture.from(Subsidiary.class).gimme("valid").with { matrix = matrixUnderTest; it }
@@ -37,7 +35,6 @@ class SubsidiaryServiceTest  extends SpockApplicationTests {
         then:
         created != null
     }
-
 
     def 'a valid subsidiary without bank account should not be updated'(){
         given:

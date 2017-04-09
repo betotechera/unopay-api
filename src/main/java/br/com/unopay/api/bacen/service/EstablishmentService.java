@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Subsidiary;
 import br.com.unopay.api.bacen.repository.EstablishmentRepository;
+import br.com.unopay.api.bacen.repository.SubsidiaryRepository;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -16,26 +17,32 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Service
 public class EstablishmentService {
 
-    @Autowired
     private EstablishmentRepository repository;
-
-    @Autowired
-    private SubsidiaryService subsidiaryService;
-
-    @Autowired
+    private SubsidiaryRepository subsidiaryRepository;
     private ContactService contactService;
-
-    @Autowired
     private PersonService personService;
-
-    @Autowired
     private AccreditedNetworkService networkService;
-
-    @Autowired
     private BrandFlagService brandFlagService;
+    private BankAccountService bankAccountService;
 
     @Autowired
-    private BankAccountService bankAccountService;
+    public EstablishmentService(EstablishmentRepository repository,
+                                SubsidiaryRepository subsidiaryRepository,
+                                ContactService contactService,
+                                PersonService personService,
+                                AccreditedNetworkService networkService,
+                                BrandFlagService brandFlagService,
+                                BankAccountService bankAccountService){
+        this.repository = repository;
+        this.subsidiaryRepository = subsidiaryRepository;
+        this.contactService = contactService;
+        this.personService = personService;
+        this.networkService = networkService;
+        this.bankAccountService = bankAccountService;
+        this.brandFlagService = brandFlagService;
+        this.bankAccountService = bankAccountService;
+    }
+
 
 
     public Establishment create(Establishment establishment) {
@@ -62,7 +69,7 @@ public class EstablishmentService {
 
     public void delete(String id) {
         findById(id);
-        List<Subsidiary> subsidiaries =  subsidiaryService.findByMatrixId(id);
+        List<Subsidiary> subsidiaries =  subsidiaryRepository.findByMatrixId(id);
         if(!subsidiaries.isEmpty()) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_SUBSIDIARY);
         repository.delete(id);
     }

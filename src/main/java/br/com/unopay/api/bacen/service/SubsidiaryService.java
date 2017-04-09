@@ -14,17 +14,22 @@ import static br.com.unopay.api.uaa.exception.Errors.SUBSIDIARY_NOT_FOUND;
 @Service
 public class SubsidiaryService {
 
-    @Autowired
     private SubsidiaryRepository repository;
-
-    @Autowired
     private PersonService personService;
-
-    @Autowired
     private EstablishmentService establishmentService;
+    private BankAccountService bankAccountService;
 
     @Autowired
-    private BankAccountService bankAccountService;
+    public SubsidiaryService(BankAccountService bankAccountService,
+                             EstablishmentService establishmentService,
+                             PersonService personService,
+                             SubsidiaryRepository repository){
+        this.repository = repository;
+        this.bankAccountService = bankAccountService;
+        this.establishmentService = establishmentService;
+        this.personService = personService;
+
+    }
 
     public Subsidiary create(Subsidiary subsidiary) {
         subsidiary.validateCreate();
@@ -42,9 +47,7 @@ public class SubsidiaryService {
     }
 
     public Subsidiary findById(String id) {
-        Subsidiary subsidiary = repository.findOne(id);
-        if(subsidiary == null) throw UnovationExceptions.notFound().withErrors(SUBSIDIARY_NOT_FOUND);
-        return subsidiary;
+        return  repository.findById(id);
     }
 
     public void delete(String id) {
