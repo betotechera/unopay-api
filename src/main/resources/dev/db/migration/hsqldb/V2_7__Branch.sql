@@ -25,18 +25,8 @@ create table branch (
     constraint fk_branch_movement_account foreign key(movement_account_id) references bank_account(id),
 );
 
-create table branch_service (
-	branch_id varchar(256) not null,
-	service_id varchar(256) not null,
-	constraint fk_branch_service_service foreign key(service_id) references service(id),
-	constraint fk_branch_service_branch foreign key(branch_id) references branch(id)
-);
-
 insert into AUTHORITY(name, description) values('ROLE_LIST_BRANCH','Permite listar Filiais');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_BRANCH','Permite gerenciar Filiais');
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BRANCH', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BRANCH', '1');
-
-ALTER TABLE PERSON MODIFY name varchar(150);
-ALTER TABLE LEGAL_PERSON_DETAIL MODIFY fantasy_name varchar(150);

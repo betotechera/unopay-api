@@ -1,6 +1,6 @@
 create table legal_person_detail (
   id VARCHAR(256) PRIMARY KEY,
-  fantasy_name VARCHAR(50),
+  fantasy_name VARCHAR(150),
   responsible_name VARCHAR(50),
   responsible_email VARCHAR(50),
   responsible_document_type VARCHAR(50),
@@ -30,7 +30,7 @@ create table address (
 
 create table person (
      id VARCHAR(256) PRIMARY KEY,
-     name VARCHAR(50),
+     name VARCHAR(150),
      type VARCHAR(50),
      document_type VARCHAR(50),
      document_number VARCHAR(50),
