@@ -61,7 +61,6 @@ public class Establishment {
     private String bachShipmentMail;
 
     @Column(name="alternative_mail")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String alternativeMail;
 
@@ -124,6 +123,13 @@ public class Establishment {
     @Column(name="gathering_channel")
     @JsonView({Views.Public.class,Views.List.class})
     private EstablishmentType gatheringChannel;
+
+    @Valid
+    @ManyToOne
+    @JoinColumn(name="movement_account_id")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private BankAccount bankAccount;
 
     @Valid
     @Embedded

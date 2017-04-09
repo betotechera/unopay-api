@@ -4,6 +4,8 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.*;
+import br.com.unopay.api.model.BrandFlag;
+import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.Person;
 
 import java.math.BigDecimal;
@@ -65,7 +67,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("id", "2");
             add("person", one(Person.class, "legal"));
         }});
-
 
         Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
@@ -152,6 +153,57 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
             add("bacenCode", random(341, 1, 33));
             add("name", random("Itau", "Bradesco", "BB"));
+        }});
+
+        Fixture.of(BrandFlag.class).addTemplate("valid", new Rule(){{
+            add("name", random("Visa", "Master", "Elo"));
+            add("description", firstName());
+        }});
+
+        Fixture.of(Contact.class).addTemplate("valid", new Rule(){{
+            add("name",firstName());
+            add("mail", random("${name}@gmail.com", "${name}@uol.com.br", "${name}@new.me"));
+            add("cellphone", random("1199557788", "(11) 99556-8866"));
+            add("phone", random("1199557788", "(11) 99556-8866"));
+        }});
+
+        Fixture.of(Establishment.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("type", random(EstablishmentType.class));
+            add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("bachShipmentMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
+            add("cancellationTolerance", random(Integer.class, range(0, 60)));
+            add("tax", random(Double.class, range(0.00, 1)));
+            add("network", one(AccreditedNetwork.class, "valid"));
+            add("logoUri", "/tmp/path");
+            add("operationalContact", one(Contact.class, "valid"));
+            add("administrativeContact", one(Contact.class, "valid"));
+            add("financierContact", one(Contact.class, "valid"));
+            add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("establishmentPhotoUri", "/tmp/path");
+            add("contractUri", "/tmp/path");
+            add("gatheringChannel", random(EstablishmentType.class));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+            add("checkout", one(Checkout.class,"valid"));
+        }});
+
+        Fixture.of(Subsidiary.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("matrix", one(Establishment.class, "valid"));
+            add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
+            add("cancellationTolerance", random(Integer.class, range(0, 60)));
+            add("tax", random(Double.class, range(0.00, 1)));
+            add("logoUri", "/tmp/path");
+            add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
+            add("establishmentPhotoUri", "/tmp/path");
+            add("contractUri", "/tmp/path");
+            add("gatheringChannel", random(EstablishmentType.class));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+            add("checkout", one(Checkout.class,"valid"));
         }});
 
     }

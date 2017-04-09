@@ -87,6 +87,13 @@ public class Subsidiary {
     private EstablishmentType gatheringChannel;
 
     @Valid
+    @ManyToOne
+    @JoinColumn(name="movement_account_id")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private BankAccount bankAccount;
+
+    @Valid
     @Embedded
     @JsonView({Views.Public.class})
     private Checkout checkout;
