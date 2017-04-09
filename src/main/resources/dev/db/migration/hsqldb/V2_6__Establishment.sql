@@ -34,7 +34,7 @@ create table establishment (
     gathering_channel varchar(256),
     movement_account_id varchar(256) not null,
     movement_period VARCHAR(16),
-    authorize_transfer varchar(1),
+    authorize_transfer char(1),
     closing_payment_days integer,
     minimum_deposit_value decimal(10,2),
     invoice_receipt_period  VARCHAR(16),
@@ -45,9 +45,9 @@ create table establishment (
     constraint fk_establishment_accredited_network foreign key(accredited_network_id) references accredited_network(id),
     constraint fk_establishment_movement_account foreign key(movement_account_id) references bank_account(id),
     constraint fk_establishment_brand_flag foreign key(brand_flag_id) references brand_flag(id),
-    constraint fk_establishment_operational_contact foreign key(operational_contact_id) references brand_flag(id),
-    constraint fk_establishment_administrative_contact foreign key(administrative_contact_id) references brand_flag(id),
-    constraint fk_establishment_financier_contact foreign key(financier_contact_id) references brand_flag(id)
+    constraint fk_establishment_operational_contact foreign key(operational_contact_id) references contact(id),
+    constraint fk_establishment_administrative_contact foreign key(administrative_contact_id) references contact(id),
+    constraint fk_establishment_financier_contact foreign key(financier_contact_id) references contact(id)
 );
 
 create table establishment_service (
@@ -62,3 +62,6 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_ESTABLISHMENT','Per
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTABLISHMENT', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT', '1');
+
+insert into brand_flag(id, name) values ('1', 'visa');
+insert into contact(id,name, mail, cell_phone, phone) values ('1', 'ze', 'ze@gmail.com', '1199885566', '1141559988')

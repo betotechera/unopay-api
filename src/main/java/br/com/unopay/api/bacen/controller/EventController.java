@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.EventFilter;
+import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;

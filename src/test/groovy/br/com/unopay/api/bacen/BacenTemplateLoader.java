@@ -87,7 +87,7 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(Checkout.class).addTemplate("valid", new Rule(){{
             add("period", random(RecurrencePeriod.class));
-            add("authorizeTransfer", random(true,false));
+            add("authorizeTransfer", random(Boolean.class));
             add("minimumDepositValue", random(Double.class,range(1D,1000D)));
             add("closingPaymentDays", random(Integer.class,range(1,31)));
         }});
@@ -155,7 +155,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("name", random("Itau", "Bradesco", "BB"));
         }});
 
-        Fixture.of(BrandFlag.class).addTemplate("valid", new Rule(){{
+        Fixture.of(BrandFlag.class).addTemplate("persisted", new Rule(){{
+            add("id", "1");
             add("name", random("Visa", "Master", "Elo"));
             add("description", firstName());
         }});
@@ -163,7 +164,15 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(Contact.class).addTemplate("valid", new Rule(){{
             add("name",firstName());
             add("mail", random("${name}@gmail.com", "${name}@uol.com.br", "${name}@new.me"));
-            add("cellphone", random("1199557788", "(11) 99556-8866"));
+            add("cellPhone", random("1199557788", "(11) 99556-8866"));
+            add("phone", random("1199557788", "(11) 99556-8866"));
+        }});
+
+        Fixture.of(Contact.class).addTemplate("persisted", new Rule(){{
+            add("id","1");
+            add("name",firstName());
+            add("mail", random("${name}@gmail.com", "${name}@uol.com.br", "${name}@new.me"));
+            add("cellPhone", random("1199557788", "(11) 99556-8866"));
             add("phone", random("1199557788", "(11) 99556-8866"));
         }});
 
@@ -177,10 +186,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
             add("tax", random(Double.class, range(0.00, 1)));
             add("network", one(AccreditedNetwork.class, "valid"));
+            add("brandFlag", one(BrandFlag.class, "persisted"));
             add("logoUri", "/tmp/path");
-            add("operationalContact", one(Contact.class, "valid"));
-            add("administrativeContact", one(Contact.class, "valid"));
-            add("financierContact", one(Contact.class, "valid"));
+            add("operationalContact", one(Contact.class, "persisted"));
+            add("administrativeContact", one(Contact.class, "persisted"));
+            add("financierContact", one(Contact.class, "persisted"));
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("establishmentPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");

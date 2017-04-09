@@ -161,5 +161,32 @@ public final class Errors {
     public static final UnovationError FILE_SERVICE_NOT_CONFIGURED =
             new UnovationError("FILE_SERVICE_NOT_CONFIGURED","File service not configured.");
 
+    /* establishment */
+    public static final UnovationError ESTABLISHMENT_NOT_FOUND =
+            new UnovationError("ESTABLISHMENT_NOT_FOUND","Establishment not found.");
+    public static final UnovationError ESTABLISHMENT_WITH_SUBSIDIARY =
+            new UnovationError("ESTABLISHMENT_WITH_SUBSIDIARY","Establishment with subsidiary.");
+    public static final UnovationError ACCREDITED_NETWORK_REQUIRED =
+            new UnovationError("ACCREDITED_NETWORK_REQUIRED","Accredited network is required.");
+    public static final UnovationError ACCREDITED_NETWORK_ID_REQUIRED =
+            new UnovationError("ACCREDITED_NETWORK_ID_REQUIRED","Accredited network id is required.");
+    public static final UnovationError BRAND_FLAG_REQUIRED =
+            new UnovationError("BRAND_FLAG_REQUIRED","Brand flag is required.");
+    public static final UnovationError CONTACT_REQUIRED =
+            new UnovationError("CONTACT_REQUIRED","Contact is required.");
+
+
+
+    /* brand flag */
+    public static final UnovationError BRAND_FLAG_NOT_FOUND =
+            new UnovationError("BRAND_FLAG_NOT_FOUND","Brand flag not found.");
+    public static final UnovationError BRAND_FLAG_ID_REQUIRED =
+            new UnovationError("BRAND_FLAG_ID_REQUIRED","Brand flag id is required.");
+
+    /* contact */
+    public static final UnovationError CONTACT_ID_REQUIRED =
+            new UnovationError("CONTACT_ID_REQUIRED","Contact id is required.");
+    public static final UnovationError CONTACT_NOT_FOUND =
+            new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
 
 }

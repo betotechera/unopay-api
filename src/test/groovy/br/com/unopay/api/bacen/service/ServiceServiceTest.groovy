@@ -51,18 +51,6 @@ class ServiceServiceTest extends SpockApplicationTests {
         result != null
     }
 
-    def 'a known event should be found'(){
-        given:
-        Service provider = Fixture.from(Service.class).gimme("valid")
-        Service created = service.create(provider)
-
-        when:
-        Service result = service.findById(created.id)
-
-        then:
-        result != null
-    }
-
     def 'a unknown event should not be found'(){
         when:
         service.findById('')
@@ -138,7 +126,7 @@ class ServiceServiceTest extends SpockApplicationTests {
         def ex = thrown(ConflictException)
         ex.errors.find().logref == 'SERVICE_WITH_EVENTS'
     }
-    def 'a unknown event should not be deleted'(){
+    def 'a unknown service should not be deleted'(){
         when:
         service.delete('')
 

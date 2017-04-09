@@ -3,9 +3,7 @@ package br.com.unopay.api.bacen.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
-import br.com.unopay.api.bacen.model.AccreditedNetwork
-import br.com.unopay.api.bacen.model.AccreditedNetworkFilter
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest

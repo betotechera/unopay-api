@@ -1,11 +1,12 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.bacen.service.InstitutionService;
+import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -35,7 +36,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -51,13 +51,13 @@ public class UserDetailService implements UserDetailsService {
     private UserDetailRepository userDetailRepository;
 
     @Autowired
-    private IssuerRepository issuerRepository;
+    private IssuerService issuerService;
 
     @Autowired
-    private AccreditedNetworkRepository accreditedNetworkRepository;
+    private AccreditedNetworkService accreditedNetworkService;
 
     @Autowired
-    private InstitutionRepository institutionRepository;
+    private InstitutionService institutionService;
 
     @Autowired
     private UserTypeRepository userTypeRepository;
@@ -138,14 +138,6 @@ public class UserDetailService implements UserDetailsService {
         return user;
     }
 
-    public List<UserDetail> getByAuthority(String authority) {
-        List<UserDetail> users = Collections.emptyList();
-        if (users.isEmpty()) {
-            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
-        }
-        return users;
-    }
-
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
         return userDetailRepository.findAll(userFilter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
@@ -209,10 +201,7 @@ public class UserDetailService implements UserDetailsService {
         if(user.getIssuer() == null || user.getIssuer().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ISSUER);
         } else {
-            Issuer issuer = issuerRepository.findOne(user.getIssuer().getId());
-            if(issuer == null) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ISSUER_NOT_FOUND);
-            }
+           issuerService.findById(user.getIssuer().getId());
         }
     }
 
@@ -220,10 +209,7 @@ public class UserDetailService implements UserDetailsService {
         if(user.getAccreditedNetwork() == null || user.getAccreditedNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
         } else {
-            AccreditedNetwork accreditedNetwork = accreditedNetworkRepository.findOne(user.getAccreditedNetwork().getId());
-            if(accreditedNetwork == null) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND);
-            }
+            accreditedNetworkService.getById(user.getAccreditedNetwork().getId());
         }
     }
 
@@ -231,10 +217,7 @@ public class UserDetailService implements UserDetailsService {
         if(user.getInstitution() == null || user.getInstitution().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
         } else {
-            Institution institution = institutionRepository.findOne(user.getInstitution().getId());
-            if(institution == null) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTITUTION_NOT_FOUND);
-            }
+            institutionService.getById(user.getInstitution().getId());
         }
 
     }

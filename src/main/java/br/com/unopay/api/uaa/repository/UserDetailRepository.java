@@ -1,11 +1,10 @@
 package br.com.unopay.api.uaa.repository;
 
-import br.com.unopay.api.repository.UnovationFilterRepository;
+import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.Set;
 

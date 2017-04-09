@@ -1,4 +1,4 @@
-package br.com.unopay.api.repository;
+package br.com.unopay.api.repository.filter;
 
 
 import java.lang.annotation.ElementType;

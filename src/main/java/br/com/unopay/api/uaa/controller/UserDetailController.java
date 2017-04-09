@@ -111,21 +111,6 @@ public class UserDetailController {
         return userDetailService.getById(id);
     }
 
-    @JsonView(Views.Public.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/users", method = GET, params = "authority")
-    public List<UserDetail> getByAuthority(OAuth2Authentication authentication, HttpServletRequest request) {
-        String authority = request.getParameter("authority");
-
-        if (authority == null || authority.isEmpty()) {
-            throw new BadRequestException("Authority required");
-        }
-
-        LOGGER.info("get uaa user by authority={}", authority);
-        return userDetailService.getByAuthority(authority);
-    }
-
-
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/{id}", method = PUT)
     public void update(@PathVariable  String id,

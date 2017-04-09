@@ -2,21 +2,13 @@ package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.bacen.service.PaymentRuleGroupService
 import br.com.unopay.api.model.DocumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.PersonFilter
 import br.com.unopay.api.repository.PersonRepository
-import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 
 class PersonServiceTest extends SpockApplicationTests {
 

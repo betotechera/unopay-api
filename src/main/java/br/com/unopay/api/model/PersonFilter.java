@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.repository.SearchableField;
+import br.com.unopay.api.repository.filter.SearchableField;
 import lombok.Data;
 import lombok.ToString;
 

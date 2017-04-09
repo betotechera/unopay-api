@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.InstitutionFilter;
+import br.com.unopay.api.bacen.model.filter.InstitutionFilter;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.service.PersonService;
@@ -46,8 +46,8 @@ public class InstitutionService {
 
     public Institution getById(String id) {
         Institution institution = repository.findOne(id);
-        if (institution == null) {
-            throw UnovationExceptions.notFound();
+        if(institution == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTITUTION_NOT_FOUND);
         }
         return institution;
 

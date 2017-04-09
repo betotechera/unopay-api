@@ -7,6 +7,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -135,4 +137,41 @@ public class Establishment {
     @Embedded
     @JsonView({Views.Public.class})
     private Checkout checkout;
+
+    public void validateCreate(){
+        if(getNetwork() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_REQUIRED);
+        }
+        if(getNetwork().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
+        }
+        if(getBrandFlag() == null) {
+            throw  UnovationExceptions.unprocessableEntity().withErrors(BRAND_FLAG_REQUIRED);
+        }
+        if(getBrandFlag().getId() == null){
+            throw  UnovationExceptions.unprocessableEntity().withErrors(BRAND_FLAG_ID_REQUIRED);
+        }
+        if(getAdministrativeContact() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
+        }
+        if(getOperationalContact() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
+        }
+        if(getFinancierContact() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
+        }
+    }
+
+    public void validateUpdate(){
+        validateCreate();
+        if(getAdministrativeContact().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
+        }
+        if(getOperationalContact().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
+        }
+        if(getFinancierContact().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
+        }
+    }
 }

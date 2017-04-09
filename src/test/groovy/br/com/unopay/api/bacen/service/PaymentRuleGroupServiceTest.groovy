@@ -2,27 +2,16 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter
+import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.uaa.model.Authority
-import br.com.unopay.api.uaa.model.Group
-import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.model.UserType
-import br.com.unopay.api.uaa.repository.GroupRepository
 import br.com.unopay.api.uaa.repository.UserDetailRepository
-import br.com.unopay.api.uaa.repository.UserTypeRepository
-import br.com.unopay.api.uaa.service.GroupService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize
-import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentRuleGroupServiceTest extends SpockApplicationTests {
 

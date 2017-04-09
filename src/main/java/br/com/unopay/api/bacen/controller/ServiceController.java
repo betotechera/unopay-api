@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Service;
-import br.com.unopay.api.bacen.model.ServiceFilter;
+import br.com.unopay.api.bacen.model.filter.ServiceFilter;
 import br.com.unopay.api.bacen.service.ServiceService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;

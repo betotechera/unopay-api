@@ -1,11 +1,8 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.InstitutionFilter;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.PaymentRuleGroupFilter;
+import br.com.unopay.api.bacen.model.filter.InstitutionFilter;
 import br.com.unopay.api.bacen.service.InstitutionService;
-import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;

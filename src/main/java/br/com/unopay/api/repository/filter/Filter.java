@@ -1,4 +1,4 @@
-package br.com.unopay.api.repository;
+package br.com.unopay.api.repository.filter;
 
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.google.common.base.Strings;

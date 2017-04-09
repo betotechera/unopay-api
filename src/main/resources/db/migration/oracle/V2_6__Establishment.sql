@@ -34,7 +34,7 @@ create table establishment (
     gathering_channel varchar(256),
     movement_account_id varchar(256) not null,
     movement_period VARCHAR(16),
-    authorize_transfer varchar(1),
+    authorize_transfer char(1),
     closing_payment_days integer,
     minimum_deposit_value decimal(10,2),
     invoice_receipt_period  VARCHAR(16),
@@ -45,9 +45,9 @@ create table establishment (
     constraint fk_est_accredited_network foreign key(accredited_network_id) references accredited_network(id),
     constraint fk_est_movement_account foreign key(movement_account_id) references bank_account(id),
     constraint fk_est_brand_flag foreign key(brand_flag_id) references brand_flag(id),
-    constraint fk_est_operational_contact foreign key(operational_contact_id) references brand_flag(id),
-    constraint fk_est_administrative_contact foreign key(administrative_contact_id) references brand_flag(id),
-    constraint fk_est_financier_contact foreign key(financier_contact_id) references brand_flag(id)
+    constraint fk_est_operational_contact foreign key(operational_contact_id) references contact(id),
+    constraint fk_est_administrative_contact foreign key(administrative_contact_id) references contact(id),
+    constraint fk_est_financier_contact foreign key(financier_contact_id) references contact(id)
 );
 
 create table establishment_service (

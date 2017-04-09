@@ -1,9 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.AccreditedNetworkFilter;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.repository.InstitutionRepository;
+import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -16,12 +14,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -63,8 +55,8 @@ public class AccreditedNetworkService {
 
     public AccreditedNetwork getById(String id) {
         AccreditedNetwork accreditedNetwork = repository.findOne(id);
-        if (accreditedNetwork == null) {
-            throw UnovationExceptions.notFound();
+        if(accreditedNetwork == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND);
         }
         return accreditedNetwork;
     }

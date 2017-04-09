@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.EventFilter;
+import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
