@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -23,6 +24,29 @@ class ServiceServiceTest extends SpockApplicationTests {
         then:
         created != null
     }
+
+    def 'given an event with the same name, it should not be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        when:
+        service.create(provider)
+        service.create(provider.with{it.code = 55;it})
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'SERVICE_NAME_ALREADY_EXISTS'
+    }
+
+    def 'given an event with the same code, it should not be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        when:
+        service.create(provider)
+        service.create(provider.with{it.name = '1223';it})
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'SERVICE_CODE_ALREADY_EXISTS'
+    }
+
 
     def 'a valid provider should be updated'(){
         given:
@@ -104,7 +128,7 @@ class ServiceServiceTest extends SpockApplicationTests {
         result.taxPercent == 1.0d
     }
 
-    def 'given a service without tax should be created'(){
+    def 'given a service without tax should not be created'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
         provider.setTaxVal(null)
@@ -116,6 +140,47 @@ class ServiceServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find().logref == 'LEAST_ONE_TAX_REQUIRED'
+    }
+    def 'given a service with a invalid tax percent it should not be created'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.setTaxPercent(2D)
+
+        when:
+        service.create(provider)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'INVALID_TAX_PERCENT'
+    }
+    def 'given an service with the same name, it should not be updated'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.name = 'same'
+        service.create(provider)
+        def updated = provider.with { id = null; name = 'other'; code = 555 ;it}
+        service.create(updated)
+        when:
+        updated.name = 'same'
+        service.update(updated.id,updated)
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'SERVICE_NAME_ALREADY_EXISTS'
+    }
+
+    def 'given an event with the same code, it should not be updated'(){
+        given:
+        Service provider = Fixture.from(Service.class).gimme("valid")
+        provider.code = 7777
+        service.create(provider)
+        def updated = provider.with { id = null; name = 'other'; code = 5555 ;it}
+        service.create(updated)
+        when:
+        updated.code = 7777
+        service.update(updated.id,updated)
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'SERVICE_CODE_ALREADY_EXISTS'
     }
 
     def 'a known service with event should not be deleted'(){
