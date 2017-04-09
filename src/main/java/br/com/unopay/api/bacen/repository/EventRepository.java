@@ -9,4 +9,7 @@ public interface EventRepository extends UnovationFilterRepository<Event,String,
 
     int countByServiceId(String id);
 
+    int countByName(String name);
+
+    int countByNcmCode(String ncmCode);
 }

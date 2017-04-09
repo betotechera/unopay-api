@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,20 @@ public class EventService {
 
     public Event create(Event event) {
         event.validate();
+        if(alreadyHasName(event.getName()))
+            throw UnovationExceptions.conflict().withErrors(Errors.EVENT_NAME_ALREADY_EXISTS);
+        if(alreadyHasCode(event.getNcmCode()))
+            throw UnovationExceptions.conflict().withErrors(Errors.EVENT_CODE_ALREADY_EXISTS);
         serviceService.findById(event.getProviderId());
         return repository.save(event);
+    }
+
+    private boolean alreadyHasCode(String ncmCode) {
+        return repository.countByNcmCode(ncmCode) > 0;
+    }
+
+    private boolean alreadyHasName(String name) {
+        return repository.countByName(name) > 0;
     }
 
     public void update(String id, Event event) {

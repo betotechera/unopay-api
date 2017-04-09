@@ -11,6 +11,10 @@ public final class Errors {
             EVENT_NOT_FOUND = new UnovationError("EVENT_NOT_FOUND","Event not found");
     public static final UnovationError QUANTITY_UNITY_REQUIRED =
             new UnovationError("QUANTITY_UNITY_REQUIRED","quantityUnity is required");
+    public static final UnovationError EVENT_NAME_ALREADY_EXISTS =
+            new UnovationError("EVENT_NAME_ALREADY_EXISTS","Event name already exists");
+    public static final UnovationError EVENT_CODE_ALREADY_EXISTS =
+            new UnovationError("EVENT_CODE_ALREADY_EXISTS","Event code already exists");
 
     /* service */
     public static final UnovationError
