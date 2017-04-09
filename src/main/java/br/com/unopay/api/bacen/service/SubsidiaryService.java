@@ -3,13 +3,10 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Subsidiary;
 import br.com.unopay.api.bacen.repository.SubsidiaryRepository;
 import br.com.unopay.api.service.PersonService;
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static br.com.unopay.api.uaa.exception.Errors.SUBSIDIARY_NOT_FOUND;
 
 @Service
 public class SubsidiaryService {
