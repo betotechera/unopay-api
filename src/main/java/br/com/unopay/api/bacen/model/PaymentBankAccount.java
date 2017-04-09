@@ -38,9 +38,8 @@ public class PaymentBankAccount implements Serializable{
     private BankAccount bankAccount;
 
     @Column(name = "authorize_transfer")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private Boolean authorizeTransfer;
+    private Boolean authorizeTransfer = Boolean.FALSE;
 
     @Column(name = "deposit_period")
     @Enumerated(EnumType.STRING)
