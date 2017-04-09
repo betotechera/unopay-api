@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.io.Serializable;
+
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_FOUND;
 
 @org.springframework.stereotype.Service
@@ -28,12 +30,39 @@ public class ServiceService {
 
     public Service create(Service service) {
         service.validate();
+        validateFields(service);
         return repository.save(service);
     }
+    private void validateFields(Service service) {
+        validateName(service.getName());
+        validateCode(service.getCode());
+    }
+    private void validateCode(Integer code) {
+        if(alreadyHasCode(code))
+            throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_CODE_ALREADY_EXISTS);
+    }
+
+    private void validateName(String name) {
+        if(alreadyHasName(name))
+            throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_NAME_ALREADY_EXISTS);
+    }
+    private boolean alreadyHasCode(Integer code) {
+        return repository.countByCode(code) > 0;
+    }
+    private boolean alreadyHasName(String name) {
+        return repository.countByName(name) > 0;
+    }
+
+
 
     public void update(String id, Service service) {
         service.validate();
         Service current = findById(id);
+        if(!current.getName().equals(service.getName()))
+            validateName(service.getName());
+        if(!current.getCode().equals(service.getCode()))
+            validateCode(service.getCode());
+
         current.updateModel(service);
         repository.save(current);
 
