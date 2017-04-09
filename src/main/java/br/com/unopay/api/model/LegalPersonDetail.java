@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -54,6 +55,7 @@ public class LegalPersonDetail implements Serializable{
 
     @Column(name="fantasy_name")
     @JsonView({Views.Public.class,Views.List.class})
+    @Size(max = 150, groups = {Create.class, Update.class})
     private String fantasyName;
 
     @Column(name="responsible_name")

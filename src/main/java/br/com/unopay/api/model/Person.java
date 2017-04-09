@@ -40,7 +40,7 @@ public class Person implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
     @JsonView({Views.Public.class,Views.List.class})
-    @Size(min=2, max = 50, groups = {Create.class, Update.class})
+    @Size(min=2, max = 150, groups = {Create.class, Update.class})
     private String name;
 
     @Valid
