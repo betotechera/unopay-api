@@ -19,10 +19,10 @@ create table branch (
     invoice_receipt_period  VARCHAR(16),
     invoice_receipt_type varchar(10),
     version integer,
-    CONSTRAINT sub_pers_id UNIQUE (person_id),
-    constraint fk_sub_person foreign key(person_id) references person(id),
-    constraint fk_sub_head_office foreign key(head_office_id) references establishment(id),
-    constraint fk_sub_movement_account foreign key(movement_account_id) references bank_account(id)
+    CONSTRAINT branch_pers_id UNIQUE (person_id),
+    constraint fk_branch_person foreign key(person_id) references person(id),
+    constraint fk_branch_head_office foreign key(head_office_id) references establishment(id),
+    constraint fk_branch_movement_account foreign key(movement_account_id) references bank_account(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_BRANCH','Permite listar Filiais');
