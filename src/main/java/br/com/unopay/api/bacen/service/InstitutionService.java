@@ -47,7 +47,7 @@ public class InstitutionService {
     public Institution getById(String id) {
         Institution institution = repository.findOne(id);
         if(institution == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTITUTION_NOT_FOUND);
+            throw UnovationExceptions.notFound().withErrors(Errors.INSTITUTION_NOT_FOUND);
         }
         return institution;
 
