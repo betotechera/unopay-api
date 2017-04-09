@@ -1,6 +1,5 @@
 package br.com.unopay.api
 
-import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
 import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
@@ -17,10 +16,8 @@ import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import spock.lang.Specification
 
 import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
 import static org.mockito.Mockito.when
 
 @WebAppConfiguration
@@ -29,7 +26,7 @@ import static org.mockito.Mockito.when
 @FlywayTest
 @ContextConfiguration(classes = [Mocks, UnopayApiApplication])
 @TestExecutionListeners([DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class ])
-class SpockApplicationTests extends Specification{
+class SpockApplicationTests extends FixtureApplicationTest{
 
     @Autowired
     protected WebApplicationContext context
@@ -43,13 +40,10 @@ class SpockApplicationTests extends Specification{
     protected MockMvc mvc
 
     void setup() {
-
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(this.context)
                 .addFilter(filterChainProxy)
                 .build()
-
-        FixtureFactoryLoader.loadTemplates("br.com.unopay.api")
         flyway.clean()
         flyway.migrate()
     }

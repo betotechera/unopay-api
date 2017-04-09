@@ -126,4 +126,21 @@ public class Branch {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         }
     }
+
+    public void updateMe(Branch other) {
+        headOffice = other.getHeadOffice();
+        alternativeMail = other.getAlternativeMail();
+        bankAccount = other.getBankAccount();
+        checkout = other.getCheckout();
+        contactMail = other.getContactMail();
+        contractUri = other.getContractUri();
+        branchPhotoUri = other.getBranchPhotoUri();
+        cancellationTolerance = other.getCancellationTolerance();
+        gatheringChannel = other.getGatheringChannel();
+        invoiceMail = other.getInvoiceMail();
+        person = other.getPerson();
+        tax = other.getTax();
+        technicalContact = other.getTechnicalContact();
+
+    }
 }

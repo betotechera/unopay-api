@@ -180,4 +180,27 @@ public class Establishment {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
     }
+
+    public void updateMe(Establishment other) {
+         administrativeContact =  other.getAdministrativeContact();
+         alternativeMail =  other.getAlternativeMail();
+         bachShipmentMail =  other.getBachShipmentMail();
+         bankAccount =  other.getBankAccount();
+         brandFlag =  other.getBrandFlag();
+         checkout =  other.getCheckout();
+         contactMail =  other.getContactMail();
+         contractUri =  other.getContractUri();
+         establishmentPhotoUri =  other.getEstablishmentPhotoUri();
+         cancellationTolerance =  other.getCancellationTolerance();
+         financierContact =  other.getFinancierContact();
+         gatheringChannel =  other.getGatheringChannel();
+         invoiceMail =  other.getInvoiceMail();
+         logoUri =  other.getLogoUri();
+         person =  other.getPerson();
+         tax =  other.getTax();
+         network =  other.getNetwork();
+         type =  other.getType();
+         operationalContact =  other.getOperationalContact();
+         technicalContact =  other.getTechnicalContact();
+    }
 }

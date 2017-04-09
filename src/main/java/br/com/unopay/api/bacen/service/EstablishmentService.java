@@ -56,7 +56,7 @@ public class EstablishmentService {
         establishment.validateUpdate();
         Establishment current = findById(id);
         validateExistingReferences(establishment);
-        current.setTechnicalContact(establishment.getTechnicalContact());
+        current.updateMe(establishment);
         repository.save(current);
 
     }

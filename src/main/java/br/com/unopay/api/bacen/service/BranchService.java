@@ -37,7 +37,7 @@ public class BranchService {
         Branch current = findById(id);
         branch.validateUpdate(current);
         validateExistingReferences(branch);
-        current.setTechnicalContact(branch.getTechnicalContact());
+        current.updateMe(branch);
         repository.save(current);
     }
 
