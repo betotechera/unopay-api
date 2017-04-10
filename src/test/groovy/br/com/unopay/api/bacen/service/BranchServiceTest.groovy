@@ -233,7 +233,7 @@ class BranchServiceTest extends SpockApplicationTests {
     def 'a branch with changed headOffice should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def newHeadOffice = createHeadOffice()
+        def newHeadOffice = setupCreator.createHeadOffice()
         def created = service.create(branch)
         branch.headOffice = newHeadOffice
 
