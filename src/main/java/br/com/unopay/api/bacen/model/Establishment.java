@@ -11,6 +11,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -18,6 +19,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -127,6 +130,14 @@ public class Establishment {
     @JsonView({Views.Public.class,Views.List.class})
     private GatheringChannel gatheringChannel;
 
+    @ManyToMany
+    @BatchSize(size = 10)
+    @JsonView({Views.Public.class})
+    @JoinTable(name = "establishment_service",
+            joinColumns = { @JoinColumn(name = "establishment_id") },
+            inverseJoinColumns = { @JoinColumn(name = "establishment_service_id") })
+    private Set<Service> services;
+    
     @Valid
     @ManyToOne
     @JoinColumn(name="movement_account_id")
