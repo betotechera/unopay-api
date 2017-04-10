@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model.filter;
 
+import br.com.unopay.api.bacen.model.EstablishmentType;
 import br.com.unopay.api.repository.filter.SearchableField;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class EstablishmentFilter implements Serializable {
     private String personName;
 
     @SearchableField
-    private String type;
+    private EstablishmentType type;
 
     @SearchableField(field = "person.address.city")
     private String city;
