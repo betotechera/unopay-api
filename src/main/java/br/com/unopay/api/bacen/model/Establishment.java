@@ -135,7 +135,7 @@ public class Establishment {
     @JsonView({Views.Public.class})
     @JoinTable(name = "establishment_service",
             joinColumns = { @JoinColumn(name = "establishment_id") },
-            inverseJoinColumns = { @JoinColumn(name = "establishment_service_id") })
+            inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private Set<Service> services;
     
     @Valid
