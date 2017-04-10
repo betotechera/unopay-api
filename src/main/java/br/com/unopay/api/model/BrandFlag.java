@@ -27,11 +27,9 @@ public class BrandFlag {
 
     @Column(name="name")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String name;
 
     @Column(name="description")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String description;
 }
