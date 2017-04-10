@@ -1,9 +1,13 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Branch;
+import br.com.unopay.api.bacen.model.filter.BranchFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.service.PersonService;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,5 +64,9 @@ public class BranchService {
         establishmentService.findById(branch.getHeadOffice().getId());
         bankAccountService.findById(branch.getBankAccount().getId());
         personService.findById(branch.getPerson().getId());
+    }
+
+    public Page<Branch> findByFilter(BranchFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }

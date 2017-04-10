@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Branch
+import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -21,12 +22,16 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     @Autowired
     BranchService branchService
 
+    @Autowired
+    SetupCreator setupCreator
+
     AccreditedNetwork networkUnderTest
 
     void setup(){
-        AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
-        networkUnderTest = networkService.create(accreditedNetwork)
+        networkUnderTest = setupCreator.createNetwork()
     }
+
+
 
     def 'a valid establishment should be created'(){
         given:

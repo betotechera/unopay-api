@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Branch
+import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,10 +20,13 @@ class BranchServiceTest extends SpockApplicationTests {
     @Autowired
     AccreditedNetworkService accreditedNetworkService
 
+    @Autowired
+    SetupCreator setupCreator
+
     Establishment headOfficeUnderTest
 
     void setup(){
-        headOfficeUnderTest = createHeadOffice()
+        headOfficeUnderTest = setupCreator.createHeadOffice()
     }
 
     def 'a valid branch should be created'(){
@@ -297,9 +301,5 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'BRANCH_NOT_FOUND'
     }
 
-    private Establishment createHeadOffice() {
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
-        accreditedNetworkService.create(establishment.network)
-        establishmentService.create(establishment)
-    }
+
 }

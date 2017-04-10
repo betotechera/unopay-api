@@ -2,12 +2,16 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,4 +93,7 @@ public class EstablishmentService {
         bankAccountService.findById(establishment.getBankAccount().getId());
     }
 
+    public Page<Establishment> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
 }

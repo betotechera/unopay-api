@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -67,7 +68,7 @@ public class Establishment {
     private String alternativeMail;
 
     @Column(name="cancellation_tolerance")
-    @Size(max = 60, groups = {Create.class, Update.class})
+    @Max(value = 60, groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer cancellationTolerance;
 
