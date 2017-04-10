@@ -34,8 +34,10 @@ public class PaymentBankAccountService {
         return account;
     }
 
-    public void update(PaymentBankAccount paymentAccount) {
-        bankAccountService.update(paymentAccount.getBankAccount().getId(),paymentAccount.getBankAccount());
+    public void update(String id, PaymentBankAccount paymentAccount) {
+        findById(id);
+        bankAccountService.update(paymentAccount.getBankAccountId(),paymentAccount.getBankAccount());
+
         repository.save(paymentAccount);
     }
 }
