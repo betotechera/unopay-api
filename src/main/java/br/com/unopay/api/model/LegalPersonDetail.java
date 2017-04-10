@@ -91,4 +91,9 @@ public class LegalPersonDetail implements Serializable{
         this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
         this.setResponsibleDocument(legalPersonDetail.getResponsibleDocument());
     }
+
+    void updateForIssuer(LegalPersonDetail legalPersonDetail) {
+        this.responsibleName = legalPersonDetail.getResponsibleName();
+        this.responsibleEmail = legalPersonDetail.getResponsibleEmail();
+    }
 }

@@ -82,7 +82,7 @@ public class Issuer implements Serializable{
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
-        getPerson().update(other.getPerson());
+        this.person.updateForIssuer(other.getPerson());
     }
 
     public void validate(){

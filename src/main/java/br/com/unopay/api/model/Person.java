@@ -109,4 +109,12 @@ public class Person implements Serializable{
         this.legalPersonDetail.updateForAccreditedNetwork(person.getLegalPersonDetail());
         this.setAddress(person.getAddress());
     }
+
+    public void updateForIssuer(Person person) {
+        this.setName(person.getName());
+        this.legalPersonDetail.updateForIssuer(person.getLegalPersonDetail());
+        this.setAddress(person.getAddress());
+        this.setTelephone(person.getTelephone());
+    }
+
 }

@@ -33,4 +33,9 @@ public class PaymentBankAccountService {
         if(account == null) throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_NOT_FOUND);
         return account;
     }
+
+    public void update(PaymentBankAccount paymentAccount) {
+        bankAccountService.update(paymentAccount.getBankAccount().getId(),paymentAccount.getBankAccount());
+        repository.save(paymentAccount);
+    }
 }

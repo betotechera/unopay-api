@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
 @Service
@@ -43,6 +45,7 @@ public class IssuerService {
         this.paymentRuleGroupService = paymentRuleGroupService;
     }
 
+    @Transactional
     public Issuer create(Issuer issuer) {
         issuer.validate();
         createRequiredReferences(issuer);
@@ -56,12 +59,14 @@ public class IssuerService {
         return  issuer;
     }
 
+    @Transactional
     public Issuer update(String id, Issuer issuer) {
         issuer.validate();
         Issuer current = findById(id);
         validateReferences(issuer);
         current.updateMe(issuer);
         personService.save(current.getPerson());
+        paymentBankAccountService.update(issuer.getPaymentAccount());
         return  repository.save(current);
     }
 
@@ -75,7 +80,6 @@ public class IssuerService {
     }
 
     public void delete(String id) {
-        findById(id);
         repository.delete(id);
     }
 
