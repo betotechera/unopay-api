@@ -26,7 +26,7 @@ public class BrandFlag {
     private String id;
 
     @Column(name="name")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private String name;
 

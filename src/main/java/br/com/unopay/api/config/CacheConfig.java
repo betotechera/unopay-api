@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class CacheConfig {
 
     public final static String BANKS =  "banks";
+    public final static String BRAND_FLAGS =  "brand-flags";
 
     @Autowired
     private RedisTemplate redisTemplate;
