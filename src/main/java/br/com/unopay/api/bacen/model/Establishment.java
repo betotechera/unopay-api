@@ -125,7 +125,7 @@ public class Establishment {
     @Enumerated(STRING)
     @Column(name="gathering_channel")
     @JsonView({Views.Public.class,Views.List.class})
-    private EstablishmentType gatheringChannel;
+    private GatheringChannel gatheringChannel;
 
     @Valid
     @ManyToOne
