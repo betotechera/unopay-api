@@ -17,6 +17,7 @@ import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@Ignore
 class BranchControllerTest extends AuthServerApplicationTests {
 
     @Autowired
@@ -78,7 +79,6 @@ class BranchControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
     }
 
-    @Ignore
     void 'known branches should be found'() {
         given:
         String accessToken = getClientAccessToken()
