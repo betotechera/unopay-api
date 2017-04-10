@@ -79,14 +79,12 @@ public class Establishment {
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private AccreditedNetwork network;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="brand_flag_id")
     @NotNull(groups = {Create.class, Update.class})
