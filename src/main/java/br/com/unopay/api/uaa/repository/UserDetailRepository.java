@@ -21,4 +21,6 @@ public interface UserDetailRepository extends UnovationFilterRepository<UserDeta
 
     int countByAccreditedNetworkId(String id);
 
+    int countByEstablishmentId(String id);
+
 }
