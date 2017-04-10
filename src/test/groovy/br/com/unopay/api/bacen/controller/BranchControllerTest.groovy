@@ -17,7 +17,6 @@ import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@Ignore
 class BranchControllerTest extends AuthServerApplicationTests {
 
     @Autowired

@@ -59,7 +59,6 @@ public class Branch {
     private String invoiceMail;
 
     @Column(name="alternative_mail")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String alternativeMail;
 
