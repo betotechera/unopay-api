@@ -24,6 +24,8 @@ class BranchControllerTest extends AuthServerApplicationTests {
     Establishment headOfficeUnderTest
 
     void setup(){
+        flyway.clean()
+        flyway.migrate()
         headOfficeUnderTest = setupCreator.createHeadOffice()
     }
 
