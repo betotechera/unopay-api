@@ -61,6 +61,8 @@ public final class Errors {
             new UnovationError("ISSUER_NOT_FOUND","Issuer not found");
     public static final UnovationError USER_TYPE_MUST_SET_AN_ISSUER =
             new UnovationError("USER_TYPE_MUST_SET_AN_ISSUER","UserType must set an Issuer");
+    public static UnovationError ISSUER_WITH_USERS=
+            new UnovationError("ISSUER_WITH_USERS","Issuer with users.");
 
     /* uaa */
     public static final UnovationError
@@ -186,6 +188,8 @@ public final class Errors {
             new UnovationError("BANK_ACCOUNT_REQUIRED","Bank account is required");
     public static final UnovationError BANK_ACCOUNT_ID_REQUIRED =
             new UnovationError("BANK_ACCOUNT_ID_REQUIRED","Bank account id is required");
+    public static UnovationError ESTABLISHMENT_WITH_USERS=
+            new UnovationError("ESTABLISHMENT_WITH_USERS","Establishment with users");
 
 
 
@@ -208,8 +212,6 @@ public final class Errors {
             new UnovationError("HEAD_OFFICE_REQUIRED","Head office required.");
     public static final UnovationError CANNOT_CHANGE_HEAD_OFFICE =
             new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
-
-
 
 
 }

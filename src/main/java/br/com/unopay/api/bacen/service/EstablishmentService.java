@@ -7,6 +7,8 @@ import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +30,20 @@ public class EstablishmentService {
     private AccreditedNetworkService networkService;
     private BrandFlagService brandFlagService;
     private BankAccountService bankAccountService;
+    private UserDetailRepository userDetailRepository;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository repository,
-                                BranchRepository branchRepository,
-                                ContactService contactService,
-                                PersonService personService,
-                                AccreditedNetworkService networkService,
-                                BrandFlagService brandFlagService,
-                                BankAccountService bankAccountService){
+    public EstablishmentService(EstablishmentRepository repository, BranchRepository branchRepository, ContactService contactService,
+                                PersonService personService, AccreditedNetworkService networkService, BrandFlagService brandFlagService,
+                                BankAccountService bankAccountService, UserDetailRepository userDetailRepository) {
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
         this.personService = personService;
         this.networkService = networkService;
-        this.bankAccountService = bankAccountService;
         this.brandFlagService = brandFlagService;
         this.bankAccountService = bankAccountService;
+        this.userDetailRepository = userDetailRepository;
     }
 
     public Establishment create(Establishment establishment) {
@@ -71,9 +70,17 @@ public class EstablishmentService {
 
     public void delete(String id) {
         findById(id);
-        List<Branch> branches =  branchRepository.findByHeadOfficeId(id);
-        if(!branches.isEmpty()) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
+        if(hasBranches(id)) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
+        if(hasUsers(id)) throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_USERS);
         repository.delete(id);
+    }
+
+    private boolean hasUsers(String id) {
+        return userDetailRepository.countByEstablishmentId(id) > 0;
+    }
+
+    private boolean hasBranches(String id) {
+        return branchRepository.countByHeadOfficeId(id) > 0;
     }
 
     private void saveReferences(Establishment establishment) {
