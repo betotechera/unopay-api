@@ -65,7 +65,8 @@ public class IssuerService {
         validateReferences(issuer);
         current.updateMe(issuer);
         personService.save(current.getPerson());
-        paymentBankAccountService.update(issuer.getPaymentAccount());
+        bankAccountService.update(issuer.getMomentAccountId(),issuer.getMovementAccount());
+        paymentBankAccountService.update(issuer.getPaymentAccountId(),issuer.getPaymentAccount());
         return  repository.save(current);
     }
 

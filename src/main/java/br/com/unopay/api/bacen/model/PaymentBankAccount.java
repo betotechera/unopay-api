@@ -4,6 +4,7 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -57,4 +58,8 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.Public.class})
     private Integer prePaidPaymentDays;
 
+    @JsonIgnore
+    public String getBankAccountId() {
+        return bankAccount.getId();
+    }
 }
