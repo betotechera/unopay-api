@@ -35,7 +35,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
 
         when:
-        def result = this.mvc.perform(post('/branchs?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(branch)))
         then:
@@ -46,14 +46,14 @@ class BranchControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getClientAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branchs?access_token={access_token}', accessToken)
+        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(branch))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(put('/branchs/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(put('/branches/{id}?access_token={access_token}',id, accessToken)
                 .content(toJson(branch.with { id= extractId(location);  tax = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
@@ -64,24 +64,24 @@ class BranchControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getClientAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branchs?access_token={access_token}', accessToken)
+        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(branch))).andReturn()
 
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(delete('/branchs/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(delete('/branches/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
 
-    void 'known branchs should be found'() {
+    void 'known branches should be found'() {
         given:
         String accessToken = getClientAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branchs?access_token={access_token}', accessToken)
+        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(branch)))
                 .andReturn()
@@ -89,23 +89,23 @@ class BranchControllerTest extends AuthServerApplicationTests {
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
-        def result = this.mvc.perform(get('/branchs/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(get('/branches/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.tax', is(notNullValue())))
     }
 
-    void 'all branchs should be found'() {
+    void 'all branches should be found'() {
         given:
         String accessToken = getClientAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        this.mvc.perform(post('/branchs?access_token={access_token}', accessToken)
+        this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(branch)))
 
         when:
-        def result = this.mvc.perform(get('/branchs?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(get('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -115,7 +115,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
 
     private String extractId(String location) {
-        location.replaceAll('/branchs/', "")
+        location.replaceAll('/branches/', "")
     }
 
     private String getLocationHeader(MvcResult mvcResult) {

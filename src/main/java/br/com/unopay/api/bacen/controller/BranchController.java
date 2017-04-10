@@ -40,32 +40,32 @@ public class BranchController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/branchs", method = RequestMethod.POST)
+    @RequestMapping(value = "/branches", method = RequestMethod.POST)
     public ResponseEntity<Branch> create(@Validated(Create.class) @RequestBody Branch branch) {
         log.info("creating branch {}", branch);
         Branch created = service.create(branch);
         return ResponseEntity
-                .created(URI.create("/branchs/"+created.getId()))
+                .created(URI.create("/branches/"+created.getId()))
                 .body(created);
 
     }
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/branchs/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/branches/{id}", method = RequestMethod.GET)
     public Branch get(@PathVariable  String id) {
         log.info("get branch={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/branchs/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/branches/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch institution) {
         institution.setId(id);
-        log.info("updating branchs {}", institution);
+        log.info("updating branches {}", institution);
         service.update(id,institution);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/branchs/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/branches/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing payment rule groups id={}", id);
         service.delete(id);
@@ -73,11 +73,11 @@ public class BranchController {
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/branchs", method = RequestMethod.GET)
+    @RequestMapping(value = "/branches", method = RequestMethod.GET)
     public Results<Branch> getByParams(BranchFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search branch with filter={}", filter);
         Page<Branch> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/branchs", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/branches", api));
     }
 }
