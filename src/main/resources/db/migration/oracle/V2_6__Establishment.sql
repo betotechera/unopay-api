@@ -62,3 +62,6 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_ESTABLISHMENT','Per
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTABLISHMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
+ALTER TABLE oauth_user_details ADD establishment_id VARCHAR(256);
+ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_establishment FOREIGN KEY(establishment_id) REFERENCES establishment(id);

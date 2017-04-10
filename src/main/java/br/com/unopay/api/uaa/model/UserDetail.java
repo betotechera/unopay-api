@@ -1,9 +1,6 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.*;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -65,6 +62,12 @@ public class UserDetail implements Serializable {
     @JoinColumn(name="accredited_network_id")
     @JsonView({Views.Public.class})
     private AccreditedNetwork accreditedNetwork;
+
+    @ManyToOne
+    @JoinColumn(name="establishment_id")
+    @JsonView({Views.Public.class})
+    private Establishment establishment;
+
 
     @ManyToOne
     @JoinColumn(name="issuer_id")

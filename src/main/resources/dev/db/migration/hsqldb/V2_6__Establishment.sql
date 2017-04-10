@@ -65,3 +65,6 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_EST
 
 insert into brand_flag(id, name) values ('1', 'visa');
 insert into contact(id,name, mail, cell_phone, phone) values ('1', 'ze', 'ze@gmail.com', '1199885566', '1141559988')
+
+ALTER TABLE oauth_user_details ADD establishment_id VARCHAR(256);
+ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_establishment FOREIGN KEY(establishment_id) REFERENCES establishment(id);
