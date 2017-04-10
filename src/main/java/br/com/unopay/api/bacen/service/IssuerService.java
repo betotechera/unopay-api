@@ -45,7 +45,6 @@ public class IssuerService {
         this.paymentRuleGroupService = paymentRuleGroupService;
     }
 
-    @Transactional
     public Issuer create(Issuer issuer) {
         issuer.validate();
         createRequiredReferences(issuer);
@@ -80,6 +79,7 @@ public class IssuerService {
     }
 
     public void delete(String id) {
+        findById(id);
         repository.delete(id);
     }
 

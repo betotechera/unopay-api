@@ -39,7 +39,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         when:
         service.create(issuer)
-        service.create(issuer.with { person.id = null; it })
+        service.create(issuer.with { id= null;person.id = null; it })
 
         then:
         def ex = thrown(ConflictException)
