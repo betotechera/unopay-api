@@ -139,6 +139,11 @@ public class Establishment {
     @JsonView({Views.Public.class})
     private Checkout checkout;
 
+    @Valid
+    @Embedded
+    @JsonView({Views.Public.class})
+    private InvoiceReceipt invoiceReceipt;
+
     public void validateCreate(){
         if(getBankAccount() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);

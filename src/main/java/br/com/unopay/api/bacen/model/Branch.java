@@ -98,6 +98,12 @@ public class Branch {
     @JsonView({Views.Public.class})
     private Checkout checkout;
 
+    @Valid
+    @Embedded
+    @JsonView({Views.Public.class})
+    private InvoiceReceipt invoiceReceipt;
+
+
     public void validateCreate(){
         if(getHeadOffice() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(HEAD_OFFICE_REQUIRED);
