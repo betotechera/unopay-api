@@ -60,6 +60,11 @@ public class Person implements Serializable{
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
+    @OneToOne
+    @JsonView({Views.Public.class,Views.List.class})
+    @JoinColumn(name="physical_person_detail_id")
+    private PhysicalPersonDetail physicalPersonDetail;
+
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
@@ -117,4 +122,11 @@ public class Person implements Serializable{
         this.setTelephone(person.getTelephone());
     }
 
+    public void updateForHirer(Person person) {
+        this.setName(person.getName());
+        this.legalPersonDetail.updateForHirer(person.getLegalPersonDetail());
+        this.setAddress(person.getAddress());
+        this.setTelephone(person.getTelephone());
+
+    }
 }
