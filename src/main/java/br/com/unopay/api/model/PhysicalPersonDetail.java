@@ -23,4 +23,9 @@ public class PhysicalPersonDetail implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
+
+    @Column(name="email")
+    @JsonView({Views.Public.class,Views.List.class})
+    private String email;
+
 }
