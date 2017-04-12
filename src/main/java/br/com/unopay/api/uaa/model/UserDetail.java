@@ -68,11 +68,15 @@ public class UserDetail implements Serializable {
     @JsonView({Views.Public.class})
     private Establishment establishment;
 
-
     @ManyToOne
     @JoinColumn(name="issuer_id")
     @JsonView({Views.Public.class})
     private Issuer issuer;
+
+    @ManyToOne
+    @JoinColumn(name="hirer_id")
+    @JsonView({Views.Public.class})
+    private Hirer hirer;
 
     @JsonView(Views.Internal.class)
     @NotNull(groups = PasswordRequired.class)

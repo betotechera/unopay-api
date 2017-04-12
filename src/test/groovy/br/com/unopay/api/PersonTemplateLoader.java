@@ -3,12 +3,7 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.Purpose;
-import br.com.unopay.api.bacen.model.Scope;
-import br.com.unopay.api.bacen.model.UserRelationship;
 import br.com.unopay.api.model.*;
-import br.com.unopay.api.uaa.model.UserType;
 
 import static br.com.unopay.api.model.State.SP;
 

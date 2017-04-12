@@ -54,8 +54,15 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("scope", Scope.DOMESTIC);
             add("userRelationship", UserRelationship.POSTPAID);
         }});
+
         Fixture.of(Institution.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
+        }});
+
+        Fixture.of(Hirer.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+
         }});
 
         Fixture.of(Institution.class).addTemplate("persisted", new Rule(){{
