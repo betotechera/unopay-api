@@ -1,15 +1,22 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
 import br.com.unopay.api.bacen.model.filter.HirerBranchFilter;
+import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerBranchRepository;
 import br.com.unopay.api.service.PersonService;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class HirerBranchService {
 
@@ -30,43 +37,47 @@ public class HirerBranchService {
 
     }
 
-    public HirerBranch create(HirerBranch branch) {
-        branch.validateCreate();
-        saveReferences(branch);
-        validateExistingReferences(branch);
-        return repository.save(branch);
+    public HirerBranch create(HirerBranch hirer) {
+        try {
+            validateHirer(hirer);
+            bankAccountService.create(hirer.getBankAccount());
+            personService.save(hirer.getPerson());
+            return repository.save(hirer);
+        } catch (DataIntegrityViolationException e){
+            log.warn(String.format("Person hirer already exists %s", hirer.getPerson()), e);
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_HIRER_BRANCH_ALREADY_EXISTS);
+
+        }
     }
 
-    public void update(String id, HirerBranch branch) {
-        HirerBranch current = findById(id);
-        branch.validateUpdate(current);
-        validateExistingReferences(branch);
-        saveReferences(branch);
-        current.updateMe(branch);
+    public HirerBranch getById(String id) {
+        HirerBranch hirer = repository.findOne(id);
+        if(hirer == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_BRANCH_NOT_FOUND);
+        }
+        return hirer;
+    }
+
+    public void update(String id, HirerBranch hirer) {
+        HirerBranch current = repository.findOne(id);
+        current.updateMe(hirer);
+        validateHirer(hirer);
+        personService.save(hirer.getPerson());
         repository.save(current);
     }
 
-    public HirerBranch findById(String id) {
-        return  repository.findOne(id);
+    private void validateHirer(HirerBranch hirer) {
+        hirerService.getById(hirer.getHeadOffice().getId());
     }
 
     public void delete(String id) {
-        findById(id);
+        getById(id);
         repository.delete(id);
-    }
-
-    private void saveReferences(HirerBranch branch) {
-        personService.save(branch.getPerson());
-        bankAccountService.create(branch.getBankAccount());
-    }
-
-    private void validateExistingReferences(HirerBranch branch) {
-        hirerService.getById(branch.getHeadOffice().getId());
-        bankAccountService.findById(branch.getBankAccount().getId());
-        personService.findById(branch.getPerson().getId());
     }
 
     public Page<HirerBranch> findByFilter(HirerBranchFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
+
+
 }

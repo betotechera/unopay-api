@@ -68,6 +68,17 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("person", one(Person.class, "legal"));
             add("bankAccount", one(BankAccount.class, "persisted"));
         }});
+        Fixture.of(Hirer.class).addTemplate("persisted", new Rule(){{
+            add("id", "1");
+            add("person", one(Person.class, "legal"));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+        }});
+
+        Fixture.of(HirerBranch.class).addTemplate("valid", new Rule(){{
+            add("headOffice", one(Hirer.class, "persisted"));
+            add("person", one(Person.class, "legal"));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+        }});
 
         Fixture.of(Hired.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));

@@ -42,7 +42,6 @@ public class HirerBranch implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
-
     @ManyToOne
     @JoinColumn(name="head_office_id")
     @NotNull(groups = {Create.class, Update.class})
@@ -64,33 +63,5 @@ public class HirerBranch implements Serializable {
         person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
         this.documentEmail  = hirer.getDocumentEmail();
         this.bankAccount.updateMe(hirer.getBankAccount());
-    }
-
-    public void validateCreate(){
-        if(getHeadOffice() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(HEAD_OFFICE_REQUIRED);
-        }
-        if(getPerson() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
-        }
-        if(getBankAccount() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
-        }
-    }
-
-    public void validateUpdate(HirerBranch current) {
-        validateCreate();
-        if(getBankAccount().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
-        }
-        if(getHeadOffice().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_HEAD_OFFICE);
-        }
-        if(!Objects.equals(getHeadOffice().getId(), current.getHeadOffice().getId())) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_HEAD_OFFICE);
-        }
-        if(getPerson().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
-        }
     }
 }
