@@ -40,7 +40,7 @@ public class Hirer implements Serializable {
     @ManyToOne
     @JoinColumn(name="bank_account_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private BankAccount bankAccount;
 
     @Column(name="document_email")
