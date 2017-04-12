@@ -64,6 +64,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
         }});
 
+        Fixture.of(Partner.class).addTemplate("valid", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+        }});
+
         Fixture.of(Hired.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
             add("rntrc", random("65647988664", "564654698469479688", "SS454SAF564AS8FA6S4DF"));

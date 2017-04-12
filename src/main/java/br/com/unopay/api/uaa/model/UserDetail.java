@@ -83,6 +83,12 @@ public class UserDetail implements Serializable {
     @JsonView({Views.Public.class})
     private Hirer hired;
 
+    @ManyToOne
+    @JoinColumn(name="partner_id")
+    @JsonView({Views.Public.class})
+    private Partner partner;
+
+
     @JsonView(Views.Internal.class)
     @NotNull(groups = PasswordRequired.class)
     @Column(name="password")
@@ -184,7 +190,5 @@ public class UserDetail implements Serializable {
         if(user.getAccreditedNetwork() != null){
             this.setAccreditedNetwork(user.getAccreditedNetwork());
         }
-
-
     }
 }

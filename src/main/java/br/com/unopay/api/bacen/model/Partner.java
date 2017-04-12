@@ -18,8 +18,8 @@ import java.io.Serializable;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "hired")
-public class Hired implements Serializable {
+@Table(name = "partner")
+public class Partner implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
@@ -42,14 +42,8 @@ public class Hired implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 
-    @Column(name="rntrc")
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
-    private String rntrc;
-
-    public void updateModel(Hired hirer) {
+    public void updateModel(Partner hirer) {
         person.update(hirer.getPerson());
-        this.rntrc  = hirer.getRntrc();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 }
