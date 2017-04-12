@@ -3,7 +3,6 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -22,17 +21,20 @@ public class HirerService {
     private HirerRepository repository;
     private PersonService personService;
     private UserDetailRepository userDetailRepository;
+    private BankAccountService bankAccountService;
 
     @Autowired
     public HirerService(HirerRepository repository, PersonService personService,
-                        UserDetailRepository userDetailRepository) {
+                        UserDetailRepository userDetailRepository, BankAccountService bankAccountService) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailRepository = userDetailRepository;
+        this.bankAccountService = bankAccountService;
     }
 
     public Hirer create(Hirer hirer) {
         try {
+            bankAccountService.create(hirer.getBankAccount());
             personService.save(hirer.getPerson());
             return repository.save(hirer);
         } catch (DataIntegrityViolationException e){
