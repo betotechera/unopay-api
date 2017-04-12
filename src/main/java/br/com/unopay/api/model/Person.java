@@ -75,9 +75,13 @@ public class Person implements Serializable{
 
     @Column(name="telephone")
     @JsonView({Views.Public.class})
-
     @Pattern(regexp = "^\\d{10,13}$")
     private String telephone;
+
+    @Column(name="cell_phone")
+    @JsonView({Views.Public.class})
+    @Pattern(regexp = "^\\d{10,13}$")
+    private String cellPhone;
 
     public void validate() {
 
@@ -96,10 +100,15 @@ public class Person implements Serializable{
     }
 
     public void update(Person person, Consumer<LegalPersonDetail> consumer) {
-        this.setName(person.getName());
         consumer.accept(person.getLegalPersonDetail());
+        update(person);
+    }
+
+    public void update(Person person) {
+        this.setName(person.getName());
         this.setAddress(person.getAddress());
         this.setTelephone(person.getTelephone());
+        this.setCellPhone(person.getCellPhone());
     }
 
 }

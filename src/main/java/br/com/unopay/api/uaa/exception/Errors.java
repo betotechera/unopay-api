@@ -161,6 +161,14 @@ public final class Errors {
     public static final UnovationError HIRER_WITH_USERS =
             new UnovationError("HIRER_WITH_USERS"," Hirer has Users");
 
+    /* Hired */
+    public static final UnovationError PERSON_HIRED_ALREADY_EXISTS =
+            new UnovationError("PERSON_HIRED_ALREADY_EXISTS","Person Hired already exists");
+    public static final UnovationError HIRED_NOT_FOUND =
+            new UnovationError("HIRED_NOT_FOUND","Hired not found");
+    public static final UnovationError HIRED_WITH_USERS =
+            new UnovationError("HIRED_WITH_USERS"," Hired has Users");
+
     /* AccreditedNetwork */
     public static final UnovationError ACCREDITED_NETWORK_WITH_USERS =
             new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
