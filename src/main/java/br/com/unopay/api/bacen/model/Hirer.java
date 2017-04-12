@@ -48,7 +48,7 @@ public class Hirer implements Serializable {
     private String documentEmail;
 
     public void updateModel(Hirer hirer) {
-        this.person.updateForHirer(hirer.getPerson());
+        person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
         this.documentEmail  = hirer.getDocumentEmail();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }

@@ -18,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -94,39 +95,11 @@ public class Person implements Serializable{
         return PersonType.LEGAL.equals(this.type);
     }
 
-    public void update(Person person) {
+    public void update(Person person, Consumer<LegalPersonDetail> consumer) {
         this.setName(person.getName());
-        this.legalPersonDetail.update(person.getLegalPersonDetail());
+        consumer.accept(person.getLegalPersonDetail());
         this.setAddress(person.getAddress());
         this.setTelephone(person.getTelephone());
     }
 
-    public void updateForInstitution(Person person) {
-        this.setName(person.getName());
-        this.legalPersonDetail.updateForInstitution(person.getLegalPersonDetail());
-        this.setAddress(person.getAddress());
-        this.setTelephone(person.getTelephone());
-    }
-
-    public void updateForAccreditedNetwork(Person person) {
-        this.setName(person.getName());
-        this.setTelephone(person.getTelephone());
-        this.legalPersonDetail.updateForAccreditedNetwork(person.getLegalPersonDetail());
-        this.setAddress(person.getAddress());
-    }
-
-    public void updateForIssuer(Person person) {
-        this.setName(person.getName());
-        this.legalPersonDetail.updateForIssuer(person.getLegalPersonDetail());
-        this.setAddress(person.getAddress());
-        this.setTelephone(person.getTelephone());
-    }
-
-    public void updateForHirer(Person person) {
-        this.setName(person.getName());
-        this.legalPersonDetail.updateForHirer(person.getLegalPersonDetail());
-        this.setAddress(person.getAddress());
-        this.setTelephone(person.getTelephone());
-
-    }
 }

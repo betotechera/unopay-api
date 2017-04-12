@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 
+import br.com.unopay.api.model.LegalPersonDetail;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -82,7 +83,7 @@ public class Issuer implements Serializable{
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
-        this.person.updateForIssuer(other.getPerson());
+        person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
     }
 
     public void validate(){

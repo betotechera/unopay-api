@@ -75,28 +75,28 @@ public class LegalPersonDetail implements Serializable{
     @JsonView({Views.Public.class})
     private Document responsibleDocument;
 
-    void update(LegalPersonDetail legalPersonDetail) {
+    public void update(LegalPersonDetail legalPersonDetail) {
         this.setResponsibleName(legalPersonDetail.getResponsibleName());
         this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
         this.setResponsibleDocument(legalPersonDetail.getResponsibleDocument());
     }
 
-    void updateForAccreditedNetwork(LegalPersonDetail legalPersonDetail) {
+    public void updateForAccreditedNetwork(LegalPersonDetail legalPersonDetail) {
         this.setResponsibleName(legalPersonDetail.getResponsibleName());
         this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
     }
 
-    void updateForInstitution(LegalPersonDetail legalPersonDetail) {
+    public void updateForInstitution(LegalPersonDetail legalPersonDetail) {
         this.setResponsibleName(legalPersonDetail.getResponsibleName());
         this.setResponsibleEmail(legalPersonDetail.getResponsibleEmail());
         this.setResponsibleDocument(legalPersonDetail.getResponsibleDocument());
     }
 
-    void updateForIssuer(LegalPersonDetail legalPersonDetail) {
+    public void updateForIssuer(LegalPersonDetail legalPersonDetail) {
         this.responsibleName = legalPersonDetail.getResponsibleName();
         this.responsibleEmail = legalPersonDetail.getResponsibleEmail();
     }
-    void updateForHirer(LegalPersonDetail legalPersonDetail) {
+    public void updateForHirer(LegalPersonDetail legalPersonDetail) {
         this.responsibleEmail = legalPersonDetail.getResponsibleEmail();
     }
 }

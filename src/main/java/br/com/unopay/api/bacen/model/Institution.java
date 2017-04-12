@@ -39,6 +39,6 @@ public class Institution implements Serializable {
 
 
     public void updateModel(Institution institution) {
-        this.person.updateForInstitution(institution.getPerson());
+        person.update(institution.getPerson(), (o) -> o.updateForInstitution(o));
     }
 }
