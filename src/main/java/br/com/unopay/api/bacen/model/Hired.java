@@ -39,11 +39,11 @@ public class Hired implements Serializable {
     @Valid
     @ManyToOne
     @JoinColumn(name="bank_account_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 
     @Column(name="rntrc")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String rntrc;
 
