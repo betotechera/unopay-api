@@ -71,7 +71,7 @@ class UserDetailTest extends Specification {
 
     def 'should be equals'(){
         given:
-        UserDetail a = Fixture.from(UserDetail.class).gimme("valid")
+        UserDetail a = Fixture.from(UserDetail.class).gimme("without-group")
 
         when:
         def shouldBeEquals = a == a
@@ -81,8 +81,8 @@ class UserDetailTest extends Specification {
     }
 
     def 'should not be equals'(){
-        UserDetail a = Fixture.from(UserDetail.class).gimme("valid")
-        UserDetail b = Fixture.from(UserDetail.class).gimme("valid")
+        UserDetail a = Fixture.from(UserDetail.class).gimme("without-group")
+        UserDetail b = Fixture.from(UserDetail.class).gimme("without-group")
 
         when:
         def shouldBeEquals = a == b

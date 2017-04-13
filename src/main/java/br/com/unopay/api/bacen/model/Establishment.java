@@ -18,6 +18,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
@@ -27,7 +28,9 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @EqualsAndHashCode
 @Table(name = "establishment")
-public class Establishment {
+public class Establishment implements Serializable {
+
+    public static final Long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

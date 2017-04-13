@@ -190,5 +190,17 @@ public class UserDetail implements Serializable {
         if(user.getAccreditedNetwork() != null){
             this.setAccreditedNetwork(user.getAccreditedNetwork());
         }
+        if(user.getEstablishment() != null){
+            this.setEstablishment(user.getEstablishment());
+        }
+        if(user.getPartner() != null){
+            this.setPartner(user.getPartner());
+        }
+        if(user.getHired() != null){
+            this.setHired(user.getHired());
+        }
+        if(user.getHirer() != null){
+            this.setHirer(user.getHirer());
+        }
     }
 }

@@ -35,7 +35,7 @@ class PersonTest extends SpockApplicationTests {
 
     def 'should be equals'(){
         given:
-        Person a = Fixture.from(Person.class).gimme("valid")
+        Person a = Fixture.from(Person.class).gimme("legal")
 
         when:
         def shouldBeEquals = a == a
@@ -45,8 +45,8 @@ class PersonTest extends SpockApplicationTests {
     }
 
     def 'should not be equals'(){
-        Person a = Fixture.from(Person.class).gimme("valid")
-        Person b = Fixture.from(Person.class).gimme("valid")
+        Person a = Fixture.from(Person.class).gimme("legal")
+        Person b = Fixture.from(Person.class).gimme("legal")
 
         when:
         def shouldBeEquals = a == b
