@@ -61,4 +61,28 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
          ex.errors.first().logref == 'SHORT_PAYMENT_RULE_GROUP_NAME'
      }
 
+     def 'should be equals'(){
+         given:
+         PaymentRuleGroup a = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+
+         when:
+         def shouldBeEquals = a == a
+
+         then:
+         shouldBeEquals
+
+     }
+
+     def 'should not be equals'(){
+         PaymentRuleGroup a = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+         PaymentRuleGroup b = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+
+         when:
+         def shouldBeEquals = a == b
+
+         then:
+         !shouldBeEquals
+
+     }
+
  }

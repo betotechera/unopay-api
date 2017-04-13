@@ -1,6 +1,6 @@
 package br.com.unopay.api.uaa.model
 
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
+import br.com.six2six.fixturefactory.Fixture
 import org.apache.commons.lang3.RandomStringUtils
 import spock.lang.Specification
 
@@ -67,5 +67,27 @@ class UserDetailTest extends Specification {
         then:
             assert userDetail.groups.size() == 1
             assert userDetail.groups.find().id == groupId
+    }
+
+    def 'should be equals'(){
+        given:
+        UserDetail a = Fixture.from(UserDetail.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == a
+
+        then:
+        shouldBeEquals
+    }
+
+    def 'should not be equals'(){
+        UserDetail a = Fixture.from(UserDetail.class).gimme("valid")
+        UserDetail b = Fixture.from(UserDetail.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == b
+
+        then:
+        !shouldBeEquals
     }
 }

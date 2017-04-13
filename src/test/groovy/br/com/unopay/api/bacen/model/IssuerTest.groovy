@@ -19,4 +19,28 @@ class IssuerTest extends FixtureApplicationTest{
         issuerA.movementAccount == issuerB.movementAccount
         issuerA.paymentRuleGroupIds == issuerB.paymentRuleGroupIds
     }
+
+    def 'should be equals'(){
+        given:
+        Issuer a = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == a
+
+        then:
+        shouldBeEquals
+
+    }
+
+    def 'should not be equals'(){
+        Issuer a = Fixture.from(Issuer.class).gimme("valid")
+        Issuer b = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == b
+
+        then:
+        !shouldBeEquals
+
+    }
 }

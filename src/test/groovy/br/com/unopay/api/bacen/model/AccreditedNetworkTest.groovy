@@ -9,10 +9,12 @@ class AccreditedNetworkTest extends SpockApplicationTests {
 
     def "should return error if merchantDiscountRate is not in range"() {
         given:
-            AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
-            accreditedNetwork.merchantDiscountRate = 1.1D
+        AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
+        accreditedNetwork.merchantDiscountRate = 1.1D
+
         when:
-            accreditedNetwork.validate()
+        accreditedNetwork.validate()
+
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'INVALID_MERCHANT_DISCOUNT_RATE_RANGE'
@@ -22,11 +24,34 @@ class AccreditedNetworkTest extends SpockApplicationTests {
         given:
         AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
         accreditedNetwork.checkout.minimumDepositValue = -1000D
+
         when:
         accreditedNetwork.validate()
+
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'INVALID_MINIMUM_DEPOSIT_VALUE'
     }
 
+    def 'should be equals'(){
+        given:
+        AccreditedNetwork a = Fixture.from(AccreditedNetwork.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == a
+
+        then:
+        shouldBeEquals
+    }
+
+    def 'should not be equals'(){
+        AccreditedNetwork a = Fixture.from(AccreditedNetwork.class).gimme("valid")
+        AccreditedNetwork b = Fixture.from(AccreditedNetwork.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == b
+
+        then:
+        !shouldBeEquals
+    }
 }

@@ -36,4 +36,28 @@ class EstablishmentTest extends FixtureApplicationTest {
         establishmentA.operationalContact == establishmentB.operationalContact
         establishmentA.technicalContact == establishmentB.technicalContact
     }
+
+    def 'should be equals'(){
+        given:
+        Establishment establishmentA = Fixture.from(Establishment.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = establishmentA == establishmentA
+
+        then:
+        shouldBeEquals
+
+    }
+
+    def 'should not be equals'(){
+        Establishment establishmentA = Fixture.from(Establishment.class).gimme("valid")
+        Establishment establishmentB = Fixture.from(Establishment.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = establishmentA == establishmentB
+
+        then:
+        !shouldBeEquals
+
+    }
 }

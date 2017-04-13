@@ -28,4 +28,28 @@ class BranchTest extends FixtureApplicationTest{
         branchA.tax == branchB.tax
         branchA.technicalContact == branchB.technicalContact
     }
+
+    def 'should be equals'(){
+        given:
+        Branch a = Fixture.from(Branch.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == a
+
+        then:
+        shouldBeEquals
+
+    }
+
+    def 'should not be equals'(){
+        Branch a = Fixture.from(Branch.class).gimme("valid")
+        Branch b = Fixture.from(Branch.class).gimme("valid")
+
+        when:
+        def shouldBeEquals = a == b
+
+        then:
+        !shouldBeEquals
+
+    }
 }
