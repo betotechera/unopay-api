@@ -344,6 +344,45 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'BRAND_FLAG_REQUIRED'
     }
 
+    def 'a valid establishment without administrative contact should not be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        establishment.administrativeContact = null
+        when:
+        service.create(establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
+    }
+
+    def 'a valid establishment without operational contact should not be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        establishment.operationalContact = null
+        when:
+        service.create(establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
+    }
+
+    def 'a valid establishment without financier contact should not be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        establishment.financierContact = null
+        when:
+        service.create(establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
+    }
+
     def 'a valid establishment without network should not be created'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
@@ -396,6 +435,48 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find().logref == 'ACCREDITED_NETWORK_REQUIRED'
+    }
+
+    def 'a valid establishment without administrative contatct should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.administrativeContact = null
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
+    }
+
+    def 'a valid establishment without financier contact should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.financierContact = null
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
+    }
+
+    def 'a valid establishment without operational contact should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                .gimme("valid").with { network = networkUnderTest; it }
+        def created = service.create(establishment)
+        establishment.operationalContact = null
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'CONTACT_REQUIRED'
     }
 
 
