@@ -12,7 +12,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 public class UnopayApiApplication {
 
 	public UnopayApiApplication() {}
-	
+
+	/**
+	 *  Main starting method application for Spring Boot
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(UnopayApiApplication.class, args);
 	}
