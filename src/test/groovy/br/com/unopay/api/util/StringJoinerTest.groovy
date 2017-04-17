@@ -3,17 +3,12 @@ package br.com.unopay.api.util
 import spock.lang.Specification
 
 class StringJoinerTest extends Specification {
-    StringJoiner stringJoiner
-
-    void setup() {
-        stringJoiner = Spy(StringJoiner)
-    }
 
     def "given a collection of strings then should join it properly with default delimiter"() {
         given:
             Collection<String> strings = ['a', 'b', 'c']
         when:
-            String result = stringJoiner.join(strings)
+            String result = StringJoiner.join(strings)
         then:
             assert result == 'a,b,c'
     }
@@ -23,7 +18,7 @@ class StringJoinerTest extends Specification {
             Collection<String> strings = ['a', 'b', 'c']
             String delimiter = ';'
         when:
-            String result = stringJoiner.join(strings, delimiter)
+            String result = StringJoiner.join(strings, delimiter)
         then:
             assert result == 'a;b;c'
     }
@@ -32,7 +27,7 @@ class StringJoinerTest extends Specification {
         given:
             Collection<String> strings = []
         when:
-            String result = stringJoiner.join(strings)
+            String result = StringJoiner.join(strings)
         then:
             assert result == ''
     }
@@ -41,7 +36,7 @@ class StringJoinerTest extends Specification {
         given:
             Collection<String> strings = null
         when:
-            String result = stringJoiner.join(strings)
+            String result = StringJoiner.join(strings)
         then:
             assert result == ''
     }
