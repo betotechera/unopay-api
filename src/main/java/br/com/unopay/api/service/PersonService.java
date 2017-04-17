@@ -5,6 +5,7 @@ import br.com.unopay.api.model.PersonFilter;
 import br.com.unopay.api.repository.AddressRepository;
 import br.com.unopay.api.repository.LegalPersonDetailRepository;
 import br.com.unopay.api.repository.PersonRepository;
+import br.com.unopay.api.repository.PhysicalPersonDetailRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +14,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.validation.ConstraintViolationException;
 
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
@@ -29,12 +28,15 @@ public class PersonService {
 
     private LegalPersonDetailRepository legalPersonDetailRepository;
 
+    private PhysicalPersonDetailRepository physicalPersonDetailRepository;
+
     @Autowired
-    public PersonService(PersonRepository repository,AddressRepository addressRepository,
-                         LegalPersonDetailRepository legalPersonDetailRepository) {
+    public PersonService(PersonRepository repository, AddressRepository addressRepository,
+                         LegalPersonDetailRepository legalPersonDetailRepository, PhysicalPersonDetailRepository physicalPersonDetailRepository) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.legalPersonDetailRepository = legalPersonDetailRepository;
+        this.physicalPersonDetailRepository = physicalPersonDetailRepository;
     }
 
     public Person save(Person person){
@@ -43,6 +45,8 @@ public class PersonService {
             addressRepository.save(person.getAddress());
             if(person.isLegal())
                 legalPersonDetailRepository.save(person.getLegalPersonDetail());
+            else
+                physicalPersonDetailRepository.save(person.getPhysicalPersonDetail());
             return repository.save(person);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("Person document already exists %s", person.toString()), e);
