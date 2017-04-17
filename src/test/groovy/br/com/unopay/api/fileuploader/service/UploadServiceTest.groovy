@@ -8,7 +8,7 @@ class UploadServiceTest extends Specification {
     @Unroll
     void 'given a #filename expect #slugfiedName'() {
         given:
-        UploadService uploadService = new UploadService() {
+        AbstractUploadService uploadService = new AbstractUploadService() {
             @Override
             String getRelativePath(String service) {
                 return null
