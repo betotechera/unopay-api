@@ -83,13 +83,14 @@ public class UserDetailService implements UserDetailsService {
             return created;
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("user already exists %s", user.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
+            throw UnovationExceptions.conflict()
+                    .withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
                     .withArguments(user.getEmail());
         }
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UsernameNotFoundException("bad credentials");
         }

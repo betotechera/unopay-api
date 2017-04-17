@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.io.Serializable;
-
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_FOUND;
 
 @org.springframework.stereotype.Service
@@ -38,7 +36,7 @@ public class ServiceService {
         validateCode(service.getCode());
     }
     private void validateCode(Integer code) {
-        if(alreadyHasCode(code)) {
+        if(alreadyHasCode(code)){
             throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_CODE_ALREADY_EXISTS);
         }
     }
