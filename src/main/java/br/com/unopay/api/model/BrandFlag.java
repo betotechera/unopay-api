@@ -17,6 +17,9 @@ import java.io.Serializable;
 public class BrandFlag  implements Serializable {
 
     public static final long serialVersionUID = 1L;
+
+    public BrandFlag(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

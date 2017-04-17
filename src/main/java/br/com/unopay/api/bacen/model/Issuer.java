@@ -30,6 +30,8 @@ public class Issuer implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public Issuer(){}
+
     @Id
     @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})

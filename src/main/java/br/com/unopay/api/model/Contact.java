@@ -21,6 +21,8 @@ public class Contact  implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Contact(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

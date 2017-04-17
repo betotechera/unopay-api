@@ -24,6 +24,8 @@ public class Address implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Address(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

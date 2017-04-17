@@ -25,6 +25,8 @@ public class Event implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Event(){}
+
     @Id
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")

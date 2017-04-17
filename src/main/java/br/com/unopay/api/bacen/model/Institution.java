@@ -23,6 +23,8 @@ public class Institution implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Institution(){}
+
     @Id
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})

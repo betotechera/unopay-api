@@ -21,6 +21,8 @@ public class InvoiceReceipt implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public InvoiceReceipt(){}
+
     @Enumerated(STRING)
     @Column(name="invoice_receipt_type")
     @JsonView({Views.Public.class})

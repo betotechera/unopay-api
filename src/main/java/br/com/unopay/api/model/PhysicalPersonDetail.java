@@ -17,6 +17,8 @@ public class PhysicalPersonDetail implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public PhysicalPersonDetail(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

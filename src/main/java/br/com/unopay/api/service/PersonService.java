@@ -31,8 +31,10 @@ public class PersonService {
     private PhysicalPersonDetailRepository physicalPersonDetailRepository;
 
     @Autowired
-    public PersonService(PersonRepository repository, AddressRepository addressRepository,
-                         LegalPersonDetailRepository legalPersonDetailRepository, PhysicalPersonDetailRepository physicalPersonDetailRepository) {
+    public PersonService(PersonRepository repository,
+                         AddressRepository addressRepository,
+                         LegalPersonDetailRepository legalPersonDetailRepository,
+                         PhysicalPersonDetailRepository physicalPersonDetailRepository) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.legalPersonDetailRepository = legalPersonDetailRepository;
@@ -43,28 +45,36 @@ public class PersonService {
         try {
             person.validate();
             addressRepository.save(person.getAddress());
-            if(person.isLegal())
+            if(person.isLegal()) {
                 legalPersonDetailRepository.save(person.getLegalPersonDetail());
-            else
+            }
+            else {
                 physicalPersonDetailRepository.save(person.getPhysicalPersonDetail());
+            }
             return repository.save(person);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("Person document already exists %s", person.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_DOCUMENT_ALREADY_EXISTS).withArguments(person.getDocument());
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_DOCUMENT_ALREADY_EXISTS)
+                    .withArguments(person.getDocument());
         }
     }
 
     public Person findByDocument(PersonFilter personFilter){
         Page<Person> person = repository.findAll(personFilter, singlePageRequest());
-        if(person.hasContent())
-          return  person.getContent().get(0);
+        if(person.hasContent()) {
+            return person.getContent().get(0);
+        }
         throw UnovationExceptions.notFound().withErrors(Errors.PERSON_WITH_DOCUMENT_NOT_FOUND);
     }
 
     public Person findById(String id){
-        if(id == null) throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
+        if(id == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
+        }
         Person person = repository.findOne(id);
-        if(person == null) throw UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id));
+        if(person == null) {
+            throw UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id));
+        }
         return  person;
     }
 

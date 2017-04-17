@@ -28,6 +28,8 @@ public class AccreditedNetwork implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public AccreditedNetwork(){}
+
     @Id
     @GeneratedValue(generator="system-uuid")
     @Column(name="id")

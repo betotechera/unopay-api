@@ -32,6 +32,8 @@ public class Establishment implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Establishment(){}
+
     @Id
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})

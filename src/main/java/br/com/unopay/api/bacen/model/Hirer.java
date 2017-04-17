@@ -23,6 +23,8 @@ public class Hirer implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Hirer(){}
+
     @JsonView({Views.Public.class,Views.List.class})
     @Id
     @Column(name="id")
@@ -48,10 +50,12 @@ public class Hirer implements Serializable {
     private String documentEmail;
 
     public void updateModel(Hirer hirer) {
-        if(person.isLegal())
+        if(person.isLegal()) {
             person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
-        else
+        }
+        else {
             person.updatePhysical(hirer.getPerson(), (o) -> o.updateForHirer(o));
+        }
 
         this.documentEmail  = hirer.getDocumentEmail();
         this.bankAccount.updateMe(hirer.getBankAccount());

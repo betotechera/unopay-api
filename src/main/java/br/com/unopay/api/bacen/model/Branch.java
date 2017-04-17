@@ -29,6 +29,8 @@ public class Branch implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Branch(){}
+
     @Id
     @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
