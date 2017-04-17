@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.model;
 
-
 import br.com.unopay.api.bacen.util.rest.ScopeDeserializer;
 import br.com.unopay.api.bacen.util.rest.ScopeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

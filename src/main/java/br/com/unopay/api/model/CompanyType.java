@@ -1,6 +1,5 @@
 package br.com.unopay.api.model;
 
-
 import br.com.unopay.api.util.rest.CompanyTypeDeserializer;
 import br.com.unopay.api.util.rest.CompanyTypeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

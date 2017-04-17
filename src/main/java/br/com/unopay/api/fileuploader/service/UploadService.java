@@ -1,8 +1,6 @@
 package br.com.unopay.api.fileuploader.service;
 
-
 import br.com.unopay.api.fileuploader.util.Slug;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.controller;
 
-
 import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.filter.BranchFilter;
 import br.com.unopay.api.bacen.service.BranchService;
@@ -20,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*; // NOSONAR
-
 import java.net.URI;
 
 @Slf4j

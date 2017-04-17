@@ -1,6 +1,5 @@
 package br.com.unopay.api.uaa.controller;
 
-
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*; // NOSONAR
-
 import java.util.List;
 
 @Timed(prefix = "api")
