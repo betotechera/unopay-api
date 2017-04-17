@@ -17,6 +17,9 @@ public class HiredFilter implements Serializable {
     @SearchableField(field = "person.name")
     private String personName;
 
+    @SearchableField(field = "person.address.city")
+    private String city;
+
     @SearchableField(field = "person.address.state")
     private State state;
 
