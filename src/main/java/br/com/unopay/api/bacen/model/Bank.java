@@ -20,6 +20,8 @@ public class Bank implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Bank(){}
+
     @Id
     @Column(name = "bacen_code")
     @JsonView({Views.Public.class, Views.List.class})

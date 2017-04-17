@@ -30,6 +30,8 @@ public class Person implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public Person(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
@@ -86,14 +88,17 @@ public class Person implements Serializable{
     public void validate() {
 
         if(!this.document.getType().isValidDocumentFor(this.type)) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_DOCUMENT_TYPE_FOR_USER);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.INVALID_DOCUMENT_TYPE_FOR_USER);
         }
 
         if(PersonType.LEGAL.equals(this.type) && this.legalPersonDetail == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON);
         }
         if(PersonType.PHYSICAL.equals(this.type) && this.physicalPersonDetail == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON);
         }
     }
 

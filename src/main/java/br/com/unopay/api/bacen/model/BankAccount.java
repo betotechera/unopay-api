@@ -25,6 +25,8 @@ public class BankAccount implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public BankAccount(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

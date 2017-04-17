@@ -12,6 +12,8 @@ public class PersonFilter implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public PersonFilter(){}
+
     @SearchableField(field = "document.number")
     private String documentNumber;
 

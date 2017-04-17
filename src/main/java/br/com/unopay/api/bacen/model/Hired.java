@@ -23,6 +23,8 @@ public class Hired implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Hired(){}
+
     @Id
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})

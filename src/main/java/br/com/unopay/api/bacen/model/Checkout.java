@@ -24,6 +24,8 @@ public class Checkout implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Checkout(){}
+
     @Enumerated(STRING)
     @Column(name="movement_period")
     @JsonView({Views.Public.class})

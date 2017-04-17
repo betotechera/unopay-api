@@ -21,6 +21,8 @@ public class UserType implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public UserType(){}
+
     @Id
     @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")

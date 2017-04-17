@@ -26,6 +26,8 @@ public class LegalPersonDetail implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
+    public LegalPersonDetail(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

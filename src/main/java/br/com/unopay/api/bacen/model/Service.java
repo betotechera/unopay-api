@@ -23,6 +23,8 @@ public class Service implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Service(){}
+
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "system-uuid")
@@ -53,8 +55,6 @@ public class Service implements Serializable {
     @Column(name = "tax_percent")
     @JsonView({Views.Public.class, Views.List.class})
     private Double taxPercent;
-
-    public Service() {}
 
     public void validate() {
         if(taxPercent == null && taxVal == null){

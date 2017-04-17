@@ -21,6 +21,8 @@ public class Document implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Document(){}
+
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="document_type")

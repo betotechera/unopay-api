@@ -32,6 +32,8 @@ public class Group implements Serializable {
     public static final int MAX_GROUP_DESCRIPTION = 250;
     public static final int MIN_GROUP_NAME = 3;
 
+    public Group(){}
+
     @Id
     @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @GeneratedValue(generator="system-uuid")

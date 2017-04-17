@@ -139,7 +139,7 @@ public final class Errors {
             PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
     public static final UnovationError
             PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
-    public static UnovationError PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON =
+    public static final UnovationError PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON =
             new UnovationError("PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON",
                     "physicalPersonDetail is required for PersonType.PHYSICAL");
 

@@ -87,10 +87,12 @@ public class PaymentRuleGroupService {
 
     public void delete(String id) {
         getById(id);
-        if(hasIssuer(id))
-            throw  UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ISSUER);
-        if(hasAccreditedNetwork(id))
-            throw  UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ACCREDITED_NETWORK);
+        if(hasIssuer(id)) {
+            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ISSUER);
+        }
+        if(hasAccreditedNetwork(id)) {
+            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ACCREDITED_NETWORK);
+        }
         repository.delete(id);
     }
 

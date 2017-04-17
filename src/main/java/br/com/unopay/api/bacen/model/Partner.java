@@ -23,6 +23,8 @@ public class Partner implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public Partner(){}
+
     @Id
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})
@@ -44,7 +46,8 @@ public class Partner implements Serializable {
 
     public void updateModel(Partner hirer) {
         person.update(hirer.getPerson());
-        if(this.bankAccount != null && hirer.getBankAccount() != null)
-        this.bankAccount.updateMe(hirer.getBankAccount());
+        if(this.bankAccount != null && hirer.getBankAccount() != null) {
+            this.bankAccount.updateMe(hirer.getBankAccount());
+        }
     }
 }
