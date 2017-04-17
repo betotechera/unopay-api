@@ -9,11 +9,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
-import com.google.common.base.Throwables;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -84,22 +81,22 @@ public class AmazonS3Service {
         setHeader(objectMetadata, Headers.CACHE_CONTROL, String.format("max-age=%d", MAX_AGE_IN_SECONDS));
     }
 
-    private void setHeader(ObjectMetadata objectMetadata, String header, Object value) {
+    private static void setHeader(ObjectMetadata objectMetadata, String header, Object value) {
         objectMetadata.setHeader(header, value);
     }
 
-    private void setContentTypeAndContentLength(ObjectMetadata metadata, String fileName, long size) {
+    private static void setContentTypeAndContentLength(ObjectMetadata metadata, String fileName, long size) {
         metadata.setContentType(Mimetypes.getInstance().getMimetype(fileName));
         metadata.setContentLength(size);
     }
 
-    private PutObjectRequest createPutObjectRequest(String bucketName, String objectKey,
+    private static PutObjectRequest createPutObjectRequest(String bucketName, String objectKey,
                                                     InputStream inputStream, ObjectMetadata metadata) {
         return new PutObjectRequest(bucketName, objectKey, inputStream, metadata);
     }
 
     private Upload transferPutObjectRequest(PutObjectRequest request)
-            throws AmazonClientException, InterruptedException {
+            throws InterruptedException {
         return transferManager.upload(request);
     }
 }

@@ -20,7 +20,7 @@ import java.util.concurrent.ForkJoinPool;
 
 @Slf4j
 @Component
-public class FileUploaderService extends UploadService {
+public class FileUploaderService extends AbstractUploadService {
 
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(15);
 
