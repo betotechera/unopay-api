@@ -17,6 +17,8 @@ public class BrandFlagService {
 
     private BrandFlagRepository repository;
 
+    public BrandFlagService(){}
+
     @Autowired
     public BrandFlagService(BrandFlagRepository repository) {
         this.repository = repository;

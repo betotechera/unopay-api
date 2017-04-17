@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 import java.util.Map;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
+
+    public Notification(){}
 
     private Email email;
     private String content;

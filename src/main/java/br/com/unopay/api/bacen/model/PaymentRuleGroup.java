@@ -28,6 +28,8 @@ public class PaymentRuleGroup implements Serializable {
     private static final int MAX = 50;
     private static final int MIN = 3;
 
+    public PaymentRuleGroup(){}
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

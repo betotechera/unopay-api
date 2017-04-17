@@ -70,6 +70,8 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     private PasswordTokenService passwordTokenService;
 
+    public UserDetailService(){}
+
     public UserDetail create(UserDetail user) {
         try {
             if(user.getPassword() != null) {

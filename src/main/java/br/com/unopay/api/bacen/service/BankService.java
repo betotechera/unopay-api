@@ -17,6 +17,8 @@ public class BankService {
 
     private BankRepository repository;
 
+    public BankService(){}
+
     @Autowired
     public BankService(BankRepository repository) {
         this.repository = repository;

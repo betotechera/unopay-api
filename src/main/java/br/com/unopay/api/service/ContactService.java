@@ -14,6 +14,8 @@ public class ContactService {
     @Autowired
     private ContactRepository repository;
 
+    public ContactService(){}
+
     public Contact save(Contact contact){
         return repository.save(contact);
     }
