@@ -7,6 +7,10 @@ public class AuthUserContextHolder {
 
     private static final String AUTH_USER_ID = "AUTH_USER_ID";
 
+    private AuthUserContextHolder() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static void setAuthUserId(String userId) {
         currentRequestAttributes().setAttribute(AUTH_USER_ID, userId, SCOPE_REQUEST);
     }

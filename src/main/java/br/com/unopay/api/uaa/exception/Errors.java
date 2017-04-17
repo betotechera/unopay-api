@@ -4,6 +4,10 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 
 public final class Errors {
 
+    private Errors() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     /* event */
     public static final UnovationError
             TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
