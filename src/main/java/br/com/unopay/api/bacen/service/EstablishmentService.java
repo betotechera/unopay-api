@@ -1,10 +1,9 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
-import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.repository.BranchRepository;
+import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -16,9 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
 
 @Service
 public class EstablishmentService {
@@ -33,9 +31,14 @@ public class EstablishmentService {
     private UserDetailRepository userDetailRepository;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository repository, BranchRepository branchRepository, ContactService contactService,
-                                PersonService personService, AccreditedNetworkService networkService, BrandFlagService brandFlagService,
-                                BankAccountService bankAccountService, UserDetailRepository userDetailRepository) {
+    public EstablishmentService(EstablishmentRepository repository,
+                                BranchRepository branchRepository,
+                                ContactService contactService,
+                                PersonService personService,
+                                AccreditedNetworkService networkService,
+                                BrandFlagService brandFlagService,
+                                BankAccountService bankAccountService,
+                                UserDetailRepository userDetailRepository) {
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
@@ -64,15 +67,25 @@ public class EstablishmentService {
 
     public Establishment findById(String id) {
         Establishment establishment = repository.findOne(id);
-        if(establishment == null) throw UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND);
+        if(establishment == null){
+            throw UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND);
+        }
         return establishment;
     }
 
     public void delete(String id) {
         findById(id);
-        if(hasBranches(id)) throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
-        if(hasUsers(id)) throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_USERS);
+        validateDelete(id);
         repository.delete(id);
+    }
+
+    private void validateDelete(String id) {
+        if(hasBranches(id)){
+            throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
+        }
+        if(hasUsers(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_USERS);
+        }
     }
 
     private boolean hasUsers(String id) {

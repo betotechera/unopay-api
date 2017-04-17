@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import java.io.Serializable;
 import java.util.Set;
 
@@ -12,7 +12,9 @@ import java.util.Set;
 @Data
 @Table(name = "authority")
 @EqualsAndHashCode(exclude = { "groups" })
-public class Authority implements Serializable {
+public class Authority  implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     @Id
     private String name;

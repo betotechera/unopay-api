@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 @Table(name = "service")
 public class Service implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "id")

@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; //NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -23,13 +23,13 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
 @Table(name = "event")
 public class Event implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
+    @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
-    @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Valid

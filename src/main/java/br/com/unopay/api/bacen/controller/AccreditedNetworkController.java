@@ -18,7 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*; // NOSONAR
 
 import java.net.URI;
 
@@ -40,7 +40,8 @@ public class AccreditedNetworkController {
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.POST)
-    public ResponseEntity<AccreditedNetwork> create(@Validated(Create.class) @RequestBody AccreditedNetwork accreditedNetwork) {
+    public ResponseEntity<AccreditedNetwork> create(@Validated(Create.class)
+                                                        @RequestBody AccreditedNetwork accreditedNetwork) {
         log.info("creating accreditedNetwork {}", accreditedNetwork);
         AccreditedNetwork created = service.create(accreditedNetwork);
         return ResponseEntity
@@ -57,7 +58,8 @@ public class AccreditedNetworkController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody AccreditedNetwork accreditedNetwork) {
+    public void update(@PathVariable  String id, @Validated(Update.class)
+    @RequestBody AccreditedNetwork accreditedNetwork) {
         accreditedNetwork.setId(id);
         log.info("updating accreditedNetwork {}", accreditedNetwork);
         service.update(id,accreditedNetwork);
@@ -73,7 +75,8 @@ public class AccreditedNetworkController {
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET)
-    public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter,
+                                                  @Validated UnovationPageRequest pageable) {
         log.info("search AccreditedNetwork with filter={}", filter);
         Page<AccreditedNetwork> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());

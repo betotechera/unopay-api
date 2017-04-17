@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ import java.io.Serializable;
 @Table(name = "payment_bank_account")
 public class PaymentBankAccount implements Serializable{
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")
@@ -31,6 +31,7 @@ public class PaymentBankAccount implements Serializable{
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @SuppressWarnings("squid:S1192")
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne

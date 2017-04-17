@@ -32,7 +32,9 @@ public class PaymentRuleGroupService {
     private AccreditedNetworkRepository accreditedNetworkRepository;
 
     @Autowired
-    public PaymentRuleGroupService(PaymentRuleGroupRepository repository, IssuerRepository issuerRepository, AccreditedNetworkRepository accreditedNetworkRepository) {
+    public PaymentRuleGroupService(PaymentRuleGroupRepository repository,
+                                   IssuerRepository issuerRepository,
+                                   AccreditedNetworkRepository accreditedNetworkRepository) {
         this.repository = repository;
         this.issuerRepository = issuerRepository;
         this.accreditedNetworkRepository = accreditedNetworkRepository;
@@ -44,7 +46,8 @@ public class PaymentRuleGroupService {
           return repository.save(paymentRuleGroup);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("PaymentRuleGroup code already exists %s", paymentRuleGroup.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS).withArguments(paymentRuleGroup.getCode());
+            throw UnovationExceptions.conflict().withErrors(PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS)
+                    .withArguments(paymentRuleGroup.getCode());
         }
     }
 
@@ -64,7 +67,8 @@ public class PaymentRuleGroupService {
         List<PaymentRuleGroup> paymentRuleGroups = repository.findByIdIn(ids);
         List<String> founds = paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
         List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
-        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND.withArguments(notFounds));
+        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND
+                .withArguments(notFounds));
         return  paymentRuleGroups;
     }
 
@@ -76,7 +80,8 @@ public class PaymentRuleGroupService {
             repository.save(current);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("PaymentRuleGroup code already exists %s", current.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS).withArguments(current.getCode());
+            throw UnovationExceptions.conflict().withErrors(PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS)
+                    .withArguments(current.getCode());
         }
     }
 

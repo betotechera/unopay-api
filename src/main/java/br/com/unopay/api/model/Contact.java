@@ -9,14 +9,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*;// NOSONAR
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "contact")
-public class Contact {
+public class Contact  implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

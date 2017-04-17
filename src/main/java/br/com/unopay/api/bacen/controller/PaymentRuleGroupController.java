@@ -18,7 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*; // NOSONAR
 
 import java.net.URI;
 
@@ -40,7 +40,8 @@ public class PaymentRuleGroupController {
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/payment-rule-groups", method = RequestMethod.POST)
-    public ResponseEntity<PaymentRuleGroup> create(@Validated(Create.class) @RequestBody PaymentRuleGroup paymentRuleGroup) {
+    public ResponseEntity<PaymentRuleGroup> create(@Validated(Create.class)
+                                                       @RequestBody PaymentRuleGroup paymentRuleGroup) {
         log.info("creating PaymentRuleGroup {}", paymentRuleGroup);
         PaymentRuleGroup created = paymentRuleGroupService.create(paymentRuleGroup);
         return ResponseEntity
@@ -74,7 +75,8 @@ public class PaymentRuleGroupController {
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-rule-groups", method = RequestMethod.GET)
-    public Results<PaymentRuleGroup> getByParams(PaymentRuleGroupFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<PaymentRuleGroup> getByParams(PaymentRuleGroupFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
         log.info("search PaymentRuleGroup by filter with filter={}", filter);
         Page<PaymentRuleGroup> page =  paymentRuleGroupService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());

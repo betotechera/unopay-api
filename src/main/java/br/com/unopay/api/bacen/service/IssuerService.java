@@ -34,7 +34,9 @@ public class IssuerService {
     private PaymentRuleGroupService paymentRuleGroupService;
 
     @Autowired
-    public IssuerService(IssuerRepository repository, UserDetailRepository userDetailRepository, PersonService personService,
+    public IssuerService(IssuerRepository repository,
+                         UserDetailRepository userDetailRepository,
+                         PersonService personService,
                          BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
                          PaymentRuleGroupService paymentRuleGroupService) {
@@ -55,7 +57,9 @@ public class IssuerService {
 
     public Issuer findById(String id) {
         Issuer issuer = repository.findOne(id);
-        if(issuer == null) throw UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND);
+        if(issuer == null){
+            throw UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND);
+        }
         return  issuer;
     }
 
@@ -82,7 +86,9 @@ public class IssuerService {
 
     public void delete(String id) {
         findById(id);
-        if(hasUsers(id)) throw UnovationExceptions.conflict().withErrors(Errors.ISSUER_WITH_USERS);
+        if(hasUsers(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.ISSUER_WITH_USERS);
+        }
         repository.delete(id);
     }
 

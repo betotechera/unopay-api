@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
 
-import br.com.unopay.api.model.LegalPersonDetail;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -14,15 +13,14 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.*;  // NOSONAR
 
 @Data
 @Entity
@@ -30,20 +28,20 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Table(name = "issuer")
 public class Issuer implements Serializable{
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name="id")
     @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @Column(name="id")
     private String id;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
-    @JoinColumn(name="person_id")
     @JsonView({Views.Public.class,Views.List.class})
+    @JoinColumn(name="person_id")
     private Person person;
 
 
@@ -62,9 +60,9 @@ public class Issuer implements Serializable{
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
-    @OneToOne
     @JoinColumn(name="payment_account_id")
     @JsonView({Views.Public.class,Views.List.class})
+    @OneToOne
     private PaymentBankAccount paymentAccount;
 
     @Valid

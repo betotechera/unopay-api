@@ -11,7 +11,6 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.StringJoiner;
-import br.com.unopay.bootcommons.exception.BadRequestException;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -29,7 +28,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*; // NOSONAR
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;

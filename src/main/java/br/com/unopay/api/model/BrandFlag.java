@@ -1,23 +1,22 @@
 package br.com.unopay.api.model;
 
 
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;// NOSONAR
+import java.io.Serializable;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "brand_flag")
-public class BrandFlag {
+public class BrandFlag  implements Serializable {
 
+    public static final long serialVersionUID = 1L;
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

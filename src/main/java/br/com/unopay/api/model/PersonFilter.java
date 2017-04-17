@@ -10,7 +10,7 @@ import java.io.Serializable;
 @ToString
 public class PersonFilter implements Serializable{
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @SearchableField(field = "document.number")
     private String documentNumber;

@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.*;  // NOSONAR
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 

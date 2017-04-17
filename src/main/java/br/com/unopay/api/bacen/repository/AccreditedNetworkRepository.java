@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AccreditedNetworkRepository extends UnovationFilterRepository<AccreditedNetwork,String, AccreditedNetworkFilter> {
+public interface AccreditedNetworkRepository extends
+        UnovationFilterRepository<AccreditedNetwork,String, AccreditedNetworkFilter> {
     AccreditedNetwork findById(String id);
 
     List<AccreditedNetwork> findByIdIn(List<String> ids);

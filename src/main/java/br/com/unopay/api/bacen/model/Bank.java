@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Table(name = "bank")
 public class Bank implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "bacen_code")

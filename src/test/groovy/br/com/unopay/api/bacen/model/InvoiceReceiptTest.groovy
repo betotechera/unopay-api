@@ -18,11 +18,10 @@ class InvoiceReceiptTest extends SpockApplicationTests {
     }
 
     def 'should not be equals'(){
-        InvoiceReceipt a = Fixture.from(InvoiceReceipt.class).gimme("valid")
-        InvoiceReceipt b = Fixture.from(InvoiceReceipt.class).gimme("valid")
+        List list = Fixture.from(InvoiceReceipt.class).gimme(2, "valid")
 
         when:
-        def shouldBeEquals = a == b
+        def shouldBeEquals = list.head() == list.tail()
 
         then:
         !shouldBeEquals

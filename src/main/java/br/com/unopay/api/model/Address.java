@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*;// NOSONAR
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -22,7 +22,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "address")
 public class Address implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

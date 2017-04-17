@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,6 +25,8 @@ import static br.com.unopay.api.uaa.exception.Errors.*;
 @Table(name = "oauth_groups")
 @EqualsAndHashCode(exclude = {"members", "authorities", "userType"})
 public class Group implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     public static final int MAX_GROUP_NAME = 50;
     public static final int MAX_GROUP_DESCRIPTION = 250;

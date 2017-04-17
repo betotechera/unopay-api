@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.util.rest;
 
 import br.com.unopay.api.bacen.model.Purpose;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -20,3 +19,4 @@ public class PurposeSerializer extends JsonSerializer<Purpose> {
 
     }
 }
+

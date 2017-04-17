@@ -28,16 +28,19 @@ public class PaymentBankAccountService {
     }
 
     public PaymentBankAccount findById(String id) {
-        if(id == null) throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_ID_REQUIRED);
+        if(id == null){
+            throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_ID_REQUIRED);
+        }
         PaymentBankAccount account = repository.findOne(id);
-        if(account == null) throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_NOT_FOUND);
+        if(account == null){
+            throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_NOT_FOUND);
+        }
         return account;
     }
 
     public void update(String id, PaymentBankAccount paymentAccount) {
         findById(id);
         bankAccountService.update(paymentAccount.getBankAccountId(),paymentAccount.getBankAccount());
-
         repository.save(paymentAccount);
     }
 }

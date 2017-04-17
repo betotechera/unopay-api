@@ -14,14 +14,14 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.*;  // NOSONAR
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -30,19 +30,19 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "establishment")
 public class Establishment implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")
-    @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @GeneratedValue(generator="system-uuid")
     private String id;
 
     @Valid
-    @ManyToOne
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
+    @ManyToOne
     @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
@@ -72,10 +72,11 @@ public class Establishment implements Serializable {
     private String alternativeMail;
 
     @Column(name="cancellation_tolerance")
-    @Max(value = 60, groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
+    @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
+    @SuppressWarnings("squid:S1192")
     @Column(name = "tax")
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;

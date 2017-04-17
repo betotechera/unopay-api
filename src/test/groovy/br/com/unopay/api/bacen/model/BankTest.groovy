@@ -18,11 +18,10 @@ class BankTest extends SpockApplicationTests {
     }
 
     def 'should not be equals'(){
-        Bank a = Fixture.from(Bank.class).gimme("valid")
-        Bank b = Fixture.from(Bank.class).gimme("valid")
+        List list = Fixture.from(Bank.class).gimme(2, "valid")
 
         when:
-        def shouldBeEquals = a == b
+        def shouldBeEquals = list.head() == list.tail()
 
         then:
         !shouldBeEquals

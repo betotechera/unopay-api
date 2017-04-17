@@ -9,13 +9,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import javax.validation.Valid;
+import javax.persistence.*; // NOSONAR
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.*;  // NOSONAR
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -24,7 +23,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "payment_rule_group")
 public class PaymentRuleGroup implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     private static final int MAX = 50;
     private static final int MIN = 3;
@@ -70,14 +69,18 @@ public class PaymentRuleGroup implements Serializable {
     private Institution institution;
 
     public void updateModel(PaymentRuleGroup ruleGroup) {
-        if(ruleGroup.getCode() !=null)
+        if(ruleGroup.getCode() !=null) {
             this.code = ruleGroup.getCode();
-        if(ruleGroup.getName() !=null)
+        }
+        if(ruleGroup.getName() !=null) {
             this.name = ruleGroup.getName();
-        if(ruleGroup.getPurpose() !=null)
+        }
+        if(ruleGroup.getPurpose() !=null) {
             this.purpose = ruleGroup.getPurpose();
-        if(ruleGroup.getUserRelationship() !=null)
+        }
+        if(ruleGroup.getUserRelationship() !=null) {
             this.userRelationship = ruleGroup.getUserRelationship();
+        }
     }
 
     public void validate(){

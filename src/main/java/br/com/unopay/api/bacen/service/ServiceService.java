@@ -43,8 +43,9 @@ public class ServiceService {
     }
 
     private void validateName(String name) {
-        if(alreadyHasName(name))
+        if(alreadyHasName(name)) {
             throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_NAME_ALREADY_EXISTS);
+        }
     }
     private boolean alreadyHasCode(Integer code) {
         return repository.countByCode(code) > 0;
@@ -58,11 +59,12 @@ public class ServiceService {
     public void update(String id, Service service) {
         service.validate();
         Service current = findById(id);
-        if(!current.getName().equals(service.getName()))
+        if(!current.getName().equals(service.getName())) {
             validateName(service.getName());
-        if(!current.getCode().equals(service.getCode()))
+        }
+        if(!current.getCode().equals(service.getCode())) {
             validateCode(service.getCode());
-
+        }
         current.updateModel(service);
         repository.save(current);
 

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import java.io.Serializable;
 
 @Data
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Table(name = "physical_person_detail")
 public class PhysicalPersonDetail implements Serializable{
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")

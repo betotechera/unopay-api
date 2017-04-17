@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -18,6 +18,8 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode
 public class UserType implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     @Id
     @JsonView({Views.Public.class,Views.List.class})

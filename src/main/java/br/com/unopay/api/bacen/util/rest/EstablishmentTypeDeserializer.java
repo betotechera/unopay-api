@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.util.rest;
 
 import br.com.unopay.api.bacen.model.EstablishmentType;
-import br.com.unopay.api.bacen.model.Scope;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;

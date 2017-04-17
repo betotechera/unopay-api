@@ -45,10 +45,12 @@ public class EventService {
     public void update(String id, Event event) {
         Event current = findById(id);
         event.validate();
-        if(!current.getName().equals(event.getName()))
+        if(!current.getName().equals(event.getName())) {
             validateName(event.getName());
-        if(!current.getNcmCode().equals(event.getNcmCode()))
+        }
+        if(!current.getNcmCode().equals(event.getNcmCode())) {
             validateCode(event.getNcmCode());
+        }
         serviceService.findById(event.getProviderId());
         current.updateMe(event);
          repository.save(current);
@@ -60,18 +62,22 @@ public class EventService {
     }
 
     private void validateCode(String code) {
-        if(alreadyHasCode(code))
+        if(alreadyHasCode(code)) {
             throw UnovationExceptions.conflict().withErrors(Errors.EVENT_CODE_ALREADY_EXISTS);
+        }
     }
 
     private void validateName(String name) {
-        if(alreadyHasName(name))
+        if(alreadyHasName(name)) {
             throw UnovationExceptions.conflict().withErrors(Errors.EVENT_NAME_ALREADY_EXISTS);
+        }
     }
 
     public Event findById(String id) {
         Event event = repository.findOne(id);
-        if(event == null) throw UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND);
+        if(event == null){
+            throw UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND);
+        }
         return event;
     }
 

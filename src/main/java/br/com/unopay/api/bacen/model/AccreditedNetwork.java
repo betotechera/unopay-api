@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -26,11 +26,11 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "accredited_network")
 public class AccreditedNetwork implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name="id")
     @GeneratedValue(generator="system-uuid")
+    @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
@@ -46,8 +46,8 @@ public class AccreditedNetwork implements Serializable {
     @Valid
     @ManyToOne
     @JoinColumn(name="person_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
+    @NotNull(groups = {Create.class, Update.class})
     private Person person;
 
     @Column(name = "merchant_discount_rate")
@@ -73,8 +73,8 @@ public class AccreditedNetwork implements Serializable {
 
     @Valid
     @ManyToOne
-    @JoinColumn(name="bank_account_id")
     @NotNull(groups = {Create.class, Update.class})
+    @JoinColumn(name="bank_account_id")
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 

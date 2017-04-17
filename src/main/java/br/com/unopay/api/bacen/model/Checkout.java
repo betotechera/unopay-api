@@ -22,7 +22,7 @@ import static javax.persistence.EnumType.STRING;
 @Embeddable
 public class Checkout implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Enumerated(STRING)
     @Column(name="movement_period")

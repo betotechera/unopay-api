@@ -1,7 +1,5 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.bacen.model.Bank;
-import br.com.unopay.api.bacen.service.BankService;
 import br.com.unopay.api.bacen.service.BrandFlagService;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;

@@ -9,10 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import java.io.Serializable;
 
 import static javax.persistence.EnumType.STRING;
@@ -21,7 +19,7 @@ import static javax.persistence.EnumType.STRING;
 @Embeddable
 public class Document implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)

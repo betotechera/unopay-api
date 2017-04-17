@@ -26,7 +26,8 @@ public class InstitutionService {
 
     @Autowired
     public InstitutionService(InstitutionRepository repository, PersonService personService,
-                              UserDetailRepository userDetailRepository, PaymentRuleGroupRepository paymentRuleGroupRepository) {
+                              UserDetailRepository userDetailRepository,
+                              PaymentRuleGroupRepository paymentRuleGroupRepository) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailRepository = userDetailRepository;

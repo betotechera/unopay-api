@@ -1,6 +1,6 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.*;
+import br.com.unopay.api.bacen.model.*; // NOSONAR
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -13,11 +13,11 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.*;// NOSONAR
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.*;
+import java.util.*;// NOSONAR
 import java.util.stream.Collectors;
 
 @Entity
@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @Data
 @EqualsAndHashCode(exclude = { "groups" })
 public class UserDetail implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     @Id
     @NotNull(groups = Update.class)

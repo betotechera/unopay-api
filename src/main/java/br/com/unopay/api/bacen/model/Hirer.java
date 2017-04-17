@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -21,26 +21,26 @@ import java.io.Serializable;
 @Table(name = "hirer")
 public class Hirer implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
+    @JsonView({Views.Public.class,Views.List.class})
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
-    @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
+    @JoinColumn(name="person_id")
     private Person person;
 
     @Valid
     @ManyToOne
-    @JoinColumn(name="bank_account_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class})
+    @JoinColumn(name="bank_account_id")
     private BankAccount bankAccount;
 
     @Column(name="document_email")

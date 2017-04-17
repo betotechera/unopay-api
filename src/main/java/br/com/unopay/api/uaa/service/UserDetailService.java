@@ -1,9 +1,5 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.repository.InstitutionRepository;
-import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.InstitutionService;
 import br.com.unopay.api.bacen.service.IssuerService;
@@ -11,7 +7,7 @@ import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
-import br.com.unopay.api.uaa.model.*;
+import br.com.unopay.api.uaa.model.*;  // NOSONAR
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -39,7 +35,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.*;  // NOSONAR
 
 @Service
 @Timed

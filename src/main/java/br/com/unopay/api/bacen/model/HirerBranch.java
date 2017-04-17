@@ -4,21 +4,15 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.*; // NOSONAR
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Objects;
-
-import static br.com.unopay.api.uaa.exception.Errors.*;
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_CHANGE_HEAD_OFFICE;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 
 
 @Data
@@ -27,18 +21,18 @@ import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 @Table(name = "hirer_branch")
 public class HirerBranch implements Serializable {
 
-    public static final Long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @JsonView({Views.Public.class,Views.List.class})
     private String id;
 
     @ManyToOne
-    @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
+    @JoinColumn(name="person_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
@@ -49,10 +43,10 @@ public class HirerBranch implements Serializable {
     private Hirer headOffice;
 
     @Valid
-    @ManyToOne
     @JoinColumn(name="bank_account_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class})
+    @ManyToOne
     private BankAccount bankAccount;
 
     @Column(name="document_email")

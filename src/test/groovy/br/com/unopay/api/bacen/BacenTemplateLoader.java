@@ -122,8 +122,8 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(InvoiceReceipt.class).addTemplate("valid", new Rule(){{
-            add("period", random(RecurrencePeriod.class));
-            add("type", random( InvoiceReceiptType.class));
+            add("period", uniqueRandom(RecurrencePeriod.class));
+            add("type", uniqueRandom(InvoiceReceiptType.class));
         }});
 
 
@@ -180,8 +180,8 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
-            add("bacenCode", random(341, 1, 33));
-            add("name", random("Itau", "Bradesco", "BB"));
+            add("bacenCode", uniqueRandom(341, 1, 33));
+            add("name", uniqueRandom("Itau", "Bradesco", "BB"));
         }});
 
         Fixture.of(BrandFlag.class).addTemplate("persisted", new Rule(){{
