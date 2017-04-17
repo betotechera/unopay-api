@@ -29,7 +29,9 @@ public class AccreditedNetworkService {
 
 
     @Autowired
-    public AccreditedNetworkService(AccreditedNetworkRepository repository, UserDetailRepository userDetailRepository, PersonService personService,
+    public AccreditedNetworkService(AccreditedNetworkRepository repository,
+                                    UserDetailRepository userDetailRepository,
+                                    PersonService personService,
                                     BankAccountService bankAccountService) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
@@ -71,8 +73,9 @@ public class AccreditedNetworkService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)) {
-            throw UnovationExceptions.conflict().withErrors(Errors.ACCREDITED_NETWORK_WITH_USERS);
+        if(hasUser(id)){
+            throw UnovationExceptions.conflict()
+                    .withErrors(Errors.ACCREDITED_NETWORK_WITH_USERS);
         }
 
         repository.delete(id);

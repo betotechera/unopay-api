@@ -15,9 +15,12 @@ import static br.com.unopay.api.uaa.exception.Errors.BANK_NOT_FOUND;
 @Service
 public class BankService {
 
-    @Autowired
     private BankRepository repository;
 
+    @Autowired
+    public BankService(BankRepository repository) {
+        this.repository = repository;
+    }
 
     public Bank findBacenCode(Integer bacenCode){
         Bank bank = repository.findOne(bacenCode);
@@ -27,7 +30,7 @@ public class BankService {
         return bank;
     }
 
-    @Cacheable(key="#key",value = BANKS)
+    @Cacheable(value = BANKS,key="#key")
     public List<Bank> findAll(String key){
         return repository.findAll();
     }

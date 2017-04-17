@@ -1,9 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
 import br.com.unopay.api.bacen.model.filter.HirerBranchFilter;
-import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerBranchRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;

@@ -15,8 +15,12 @@ import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_NOT_FOUND;
 @Service
 public class BrandFlagService {
 
-    @Autowired
     private BrandFlagRepository repository;
+
+    @Autowired
+    public BrandFlagService(BrandFlagRepository repository) {
+        this.repository = repository;
+    }
 
     public BrandFlag findById(String id){
         BrandFlag brandFlag = repository.findOne(id);
@@ -25,7 +29,7 @@ public class BrandFlagService {
         }
         return brandFlag;
     }
-    @Cacheable(key="#key",value = BRAND_FLAGS)
+    @Cacheable(value = BRAND_FLAGS,key="#key")
     public List<BrandFlag> findAll(String key){
         return repository.findAll();
     }
