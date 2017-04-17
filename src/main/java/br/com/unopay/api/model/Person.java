@@ -106,6 +106,10 @@ public class Person implements Serializable{
         consumer.accept(person.getLegalPersonDetail());
         update(person);
     }
+    public void updatePhysical(Person person, Consumer<PhysicalPersonDetail> consumer) {
+        consumer.accept(person.getPhysicalPersonDetail());
+        update(person);
+    }
 
     public void update(Person person) {
         this.setName(person.getName());
