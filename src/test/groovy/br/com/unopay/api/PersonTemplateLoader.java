@@ -19,6 +19,13 @@ public class PersonTemplateLoader implements TemplateLoader {
             add("document", one(Document.class, "valid-cpf"));
             add("address", one(Address.class, "address"));
             add("telephone", "11999999999");
+            add("physicalPersonDetail", one(PhysicalPersonDetail.class, "physical-person"));
+
+        }});
+
+
+        Fixture.of(PhysicalPersonDetail.class).addTemplate("physical-person", new Rule(){{
+            add("email", "user@company.com");
         }});
 
 
