@@ -47,7 +47,8 @@ public class UserTypeController {
     public Results<Group> findUserTypeGroups(@PathVariable String id) {
         LOGGER.info("find user type groups. userTypeId={}",id);
         List<Group> groups = service.findUserTypeGroups(id);
-        return new ListResults<>(groups, String.format("%s/user-types/%s/groups", api, id), String.format("%s/user-types/%s", api,id));
+        return new ListResults<>(groups, String.format("%s/user-types/%s/groups", api, id),
+                                                        String.format("%s/user-types/%s", api,id));
     }
 
 }

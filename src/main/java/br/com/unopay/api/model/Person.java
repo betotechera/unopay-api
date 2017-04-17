@@ -107,10 +107,6 @@ public class Person implements Serializable{
         return PersonType.LEGAL.equals(this.type);
     }
 
-    public void update(Person person, Consumer<LegalPersonDetail> consumer) {
-        consumer.accept(person.getLegalPersonDetail());
-        update(person);
-    }
     public void updatePhysical(Person person, Consumer<PhysicalPersonDetail> consumer) {
         consumer.accept(person.getPhysicalPersonDetail());
         update(person);
@@ -121,6 +117,11 @@ public class Person implements Serializable{
         this.setAddress(person.getAddress());
         this.setTelephone(person.getTelephone());
         this.setCellPhone(person.getCellPhone());
+    }
+
+    public void update(Person person, Consumer<LegalPersonDetail> consumer) {
+        consumer.accept(person.getLegalPersonDetail());
+        update(person);
     }
 
 }

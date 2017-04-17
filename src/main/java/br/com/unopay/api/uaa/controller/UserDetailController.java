@@ -182,7 +182,7 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/users/me/password", method = PUT)
-    public void updatePassword(OAuth2Authentication authentication, @RequestBody @Validated NewPassword passwordChange) {
+    public void updatePassword(OAuth2Authentication authentication,@RequestBody @Validated NewPassword passwordChange){
         LOGGER.info("password change request. to user={}", authentication.getName());
         userDetailService.updatePasswordByEmail(authentication.getName(), passwordChange);
     }
