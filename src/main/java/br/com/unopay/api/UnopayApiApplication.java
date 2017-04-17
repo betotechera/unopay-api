@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true, prePostEnabled = true)
 public class UnopayApiApplication {
 
+	public UnopayApiApplication() {}
+	
 	public static void main(String[] args) {
 		SpringApplication.run(UnopayApiApplication.class, args);
 	}

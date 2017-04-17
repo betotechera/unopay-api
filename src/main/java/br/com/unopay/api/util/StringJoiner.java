@@ -6,6 +6,11 @@ import java.util.stream.Collectors;
 public class StringJoiner {
     private static final String DEFAULT_DELIMITER = ",";
 
+    private StringJoiner() {
+        throw new IllegalAccessError("Utility class");
+    }
+
+
     public static String join(Collection<String> strings) {
         return join(strings, DEFAULT_DELIMITER);
     }

@@ -10,6 +10,10 @@ public class Slug {
     private static final Pattern DASH_REPLACE_PATTERN = Pattern.compile("(^-+|-+$)");
     private static final Pattern MULTIPLE_DASHES_PATTERN = Pattern.compile("-+");
 
+    private Slug() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static String makeSlug(String value) {
 
         if(value == null || "".equals(value.trim())) {
