@@ -51,7 +51,8 @@ public class Checkout implements Serializable {
     }
 
     public void validate() {
-        if(minimumDepositValue != null && minimumDepositValue < 0)
+        if(minimumDepositValue != null && minimumDepositValue < 0) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_MINIMUM_DEPOSIT_VALUE);
+        }
     }
 }

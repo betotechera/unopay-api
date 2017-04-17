@@ -38,8 +38,9 @@ public class ServiceService {
         validateCode(service.getCode());
     }
     private void validateCode(Integer code) {
-        if(alreadyHasCode(code))
+        if(alreadyHasCode(code)) {
             throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_CODE_ALREADY_EXISTS);
+        }
     }
 
     private void validateName(String name) {
@@ -72,7 +73,9 @@ public class ServiceService {
 
     public Service findById(String id) {
         Service service = repository.findOne(id);
-        if(service == null) throw UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND);
+        if(service == null) {
+            throw UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND);
+        }
         return service;
     }
 

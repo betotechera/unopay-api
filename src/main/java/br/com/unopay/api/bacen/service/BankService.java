@@ -21,7 +21,9 @@ public class BankService {
 
     public Bank findBacenCode(Integer bacenCode){
         Bank bank = repository.findOne(bacenCode);
-        if(bank == null) throw UnovationExceptions.notFound().withErrors(BANK_NOT_FOUND);
+        if(bank == null) {
+            throw UnovationExceptions.notFound().withErrors(BANK_NOT_FOUND);
+        }
         return bank;
     }
 

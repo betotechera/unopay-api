@@ -24,10 +24,12 @@ public class TemplateLoader {
     }
 
     public String getTemplate(String template){
-        if("PASSWORD_RESET".equals(template))
+        if("PASSWORD_RESET".equals(template)) {
             return PASSWORD_RESET;
-        if("CREATE_PASSWORD".equals(template))
+        }
+        if("CREATE_PASSWORD".equals(template)) {
             return CREATE_PASSWORD;
+        }
         return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} para gerar sua nova senha clicando nesse link: </h3>";
     }
 }

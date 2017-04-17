@@ -20,7 +20,9 @@ public class BrandFlagService {
 
     public BrandFlag findById(String id){
         BrandFlag brandFlag = repository.findOne(id);
-        if(brandFlag == null) throw UnovationExceptions.notFound().withErrors(BRAND_FLAG_NOT_FOUND);
+        if(brandFlag == null){
+            throw UnovationExceptions.notFound().withErrors(BRAND_FLAG_NOT_FOUND);
+        }
         return brandFlag;
     }
     @Cacheable(key="#key",value = BRAND_FLAGS)

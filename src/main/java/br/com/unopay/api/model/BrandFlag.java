@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

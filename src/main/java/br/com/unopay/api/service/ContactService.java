@@ -20,7 +20,9 @@ public class ContactService {
 
     public Contact findById(String id){
         Contact contact = repository.findOne(id);
-        if(contact == null) throw UnovationExceptions.notFound().withErrors(CONTACT_NOT_FOUND);
+        if(contact == null) {
+            throw UnovationExceptions.notFound().withErrors(CONTACT_NOT_FOUND);
+        }
         return contact;
     }
 }

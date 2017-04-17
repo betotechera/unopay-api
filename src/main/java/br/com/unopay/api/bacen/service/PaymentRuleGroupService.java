@@ -67,8 +67,10 @@ public class PaymentRuleGroupService {
         List<PaymentRuleGroup> paymentRuleGroups = repository.findByIdIn(ids);
         List<String> founds = paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
         List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
-        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND
-                .withArguments(notFounds));
+        if(!notFounds.isEmpty()) {
+            throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND
+                    .withArguments(notFounds));
+        }
         return  paymentRuleGroups;
     }
 

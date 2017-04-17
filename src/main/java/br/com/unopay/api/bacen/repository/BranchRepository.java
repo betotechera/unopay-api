@@ -11,12 +11,13 @@ import static br.com.unopay.api.uaa.exception.Errors.BRANCH_NOT_FOUND;
 
 public interface BranchRepository extends UnovationFilterRepository <Branch, String, BranchFilter>{
 
-    List<Branch> findByHeadOfficeId(String headOfficeId);
     int countByHeadOfficeId(String headOfficeId);
 
     default Branch findById(String id) {
         Branch branch = findOne(id);
-        if(branch == null) throw UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND);
+        if(branch == null) {
+            throw UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND);
+        }
         return branch;
     }
 

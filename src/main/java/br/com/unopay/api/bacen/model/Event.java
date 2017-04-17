@@ -72,8 +72,9 @@ public class Event implements Serializable {
         if(getService() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_REQUIRED);
         }
-        if(requestQuantity && quantityUnity == null)
+        if(requestQuantity && quantityUnity == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.QUANTITY_UNITY_REQUIRED);
+        }
     }
 
     public String getProviderId(){

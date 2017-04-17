@@ -29,8 +29,10 @@ public class BankAccountService {
         List<BankAccount> bankAccounts = repository.findByIdIn(ids);
         List<String> founds = bankAccounts.stream().map(BankAccount::getId).collect(Collectors.toList());
         List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
-        if(!notFounds.isEmpty()) throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND
-                .withArguments(notFounds));
+        if(!notFounds.isEmpty()) {
+            throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND
+                    .withArguments(notFounds));
+        }
         return  bankAccounts;
     }
 
@@ -50,7 +52,9 @@ public class BankAccountService {
 
     public BankAccount findById(String id) {
         BankAccount account = repository.findOne(id);
-        if(account == null) throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND);
+        if(account == null) {
+            throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND);
+        }
         return account;
     }
 
