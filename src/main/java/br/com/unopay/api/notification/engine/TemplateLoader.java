@@ -30,6 +30,7 @@ public class TemplateLoader {
         if("CREATE_PASSWORD".equals(template)) {
             return CREATE_PASSWORD;
         }
-        return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} para gerar sua nova senha clicando nesse link: </h3>";
+        return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} " +
+                "para gerar sua nova senha clicando nesse link: </h3>";
     }
 }

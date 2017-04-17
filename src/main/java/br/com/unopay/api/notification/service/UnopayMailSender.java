@@ -44,31 +44,37 @@ public class UnopayMailSender {
         if(valid(notification)) {
             try {
                 String content = templateProcessor.renderHtml(notification);
-                MimeMessage mailMessage = messageFactory.create(notification.getEmail(), content,notification.getEventType());
+                MimeMessage mailMessage = messageFactory
+                                                .create(notification.getEmail(), content,notification.getEventType());
                 Object dateSent = repository.getDateWhenSent(notification, content);
                 if(dateSent != null) {
                     mailAlreadySent(notification, dateSent);
                     return;
                 }
                 sendMail(mailMessage, notification, content);
-            } catch (MessagingException | UnsupportedEncodingException  | IllegalArgumentException e) {
-                log.error("Error when try send mail of type={}, error message={}", notification.getEventType(), e.getMessage(), e);
+            } catch (IllegalArgumentException e) {
+                log.error("Error when try send mail of type={}, error message={}",
+                                                                    notification.getEventType(), e.getMessage(), e);
             }
         }
     }
 
     private void mailAlreadySent(Notification notification, Object dateSent) {
-        log.info("Mail already sent type={} to={} sentDate={}", notification.getEventType(), notification.getEmail().getTo(), dateSent);
+        log.info("Mail already sent type={} to={} sentDate={}",
+                                            notification.getEventType(), notification.getEmail().getTo(), dateSent);
     }
 
     private void sendMail(MimeMessage mailMessage, Notification notification, String content) {
         mailSender.send(mailMessage);
         repository.record(notification, content);
-        log.info("Sending mail message type={} to={}", notification.getEventType().toString(), notification.getEmail().getTo());
+        log.info("Sending mail message type={} to={}",
+                                            notification.getEventType().toString(), notification.getEmail().getTo());
     }
 
     private boolean valid(Notification notification){
-        boolean valid = notification.getEmail() != null && notification.getEmail().getTo() != null && mailValidator.isValid(notification.getEmail().getTo());
+        boolean valid = notification.getEmail() != null
+                && notification.getEmail().getTo() != null
+                && mailValidator.isValid(notification.getEmail().getTo());
         if(!valid){
             log.warn("Invalid notification mail. Type={}", notification.getEventType());
         }

@@ -53,7 +53,9 @@ public class UserDetailController {
     private String api;
 
     @Autowired
-    public UserDetailController(UserDetailService userDetailService, TokenStore tokenStore, GroupService groupService) {
+    public UserDetailController(UserDetailService userDetailService,
+                                TokenStore tokenStore,
+                                GroupService groupService) {
         this.userDetailService = userDetailService;
         this.tokenStore = tokenStore;
         this.groupService = groupService;
@@ -98,7 +100,9 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/users/me/tokens", method = RequestMethod.DELETE)
     public void revoke(OAuth2Authentication authentication) {
-        Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(authentication.getOAuth2Request().getClientId(), authentication.getName());
+        String clientId = authentication.getOAuth2Request().getClientId();
+        Collection<OAuth2AccessToken> accessTokens = tokenStore
+                .findTokensByClientIdAndUserName(clientId, authentication.getName());
         accessTokens.forEach(tokenStore::removeAccessToken);
     }
 

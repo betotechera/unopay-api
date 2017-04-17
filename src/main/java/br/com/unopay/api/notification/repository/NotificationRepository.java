@@ -44,7 +44,8 @@ public class NotificationRepository {
     }
 
     String getKey(Notification notification, String content) {
-        return String.format("%s:%s:%s", formatEventTypeString(notification.getEventType()),notification.getEmail().getTo(),hashContent(content) );
+        return String.format("%s:%s:%s", formatEventTypeString(notification.getEventType()),
+                                                                notification.getEmail().getTo(),hashContent(content));
     }
 
     private ValueOperations opsForValue() {

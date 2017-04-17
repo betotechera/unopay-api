@@ -83,7 +83,8 @@ public class UserDetailService implements UserDetailsService {
             return created;
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("user already exists %s", user.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
+            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
+                    .withArguments(user.getEmail());
         }
     }
 
@@ -122,7 +123,8 @@ public class UserDetailService implements UserDetailsService {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("user email already exists %s", user.toString()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS).withArguments(user.getEmail());
+            throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
+                    .withArguments(user.getEmail());
         }
     }
 
@@ -135,7 +137,8 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {
-        return userDetailRepository.findAll(userFilter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+        PageRequest page = new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize());
+        return userDetailRepository.findAll(userFilter, page);
     }
 
     public void delete(String id) {
@@ -203,7 +206,8 @@ public class UserDetailService implements UserDetailsService {
 
     private void validateAccreditedNetwork(UserDetail user) {
         if(user.getAccreditedNetwork() == null || user.getAccreditedNetwork().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
         } else {
             accreditedNetworkService.getById(user.getAccreditedNetwork().getId());
         }
@@ -211,7 +215,8 @@ public class UserDetailService implements UserDetailsService {
 
     private void validateInstitution(UserDetail user) {
         if(user.getInstitution() == null || user.getInstitution().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
         } else {
             institutionService.getById(user.getInstitution().getId());
         }

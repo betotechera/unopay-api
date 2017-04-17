@@ -6,7 +6,8 @@ import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 
 import java.util.List;
 
-public interface PaymentRuleGroupRepository extends UnovationFilterRepository<PaymentRuleGroup,String, PaymentRuleGroupFilter> {
+public interface PaymentRuleGroupRepository extends
+        UnovationFilterRepository<PaymentRuleGroup,String, PaymentRuleGroupFilter> {
     PaymentRuleGroup findById(String id);
 
     List<PaymentRuleGroup> findByIdIn(List<String> ids);

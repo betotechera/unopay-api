@@ -29,7 +29,9 @@ public class AccreditedNetworkService {
 
 
     @Autowired
-    public AccreditedNetworkService(AccreditedNetworkRepository repository, UserDetailRepository userDetailRepository, PersonService personService,
+    public AccreditedNetworkService(AccreditedNetworkRepository repository,
+                                    UserDetailRepository userDetailRepository,
+                                    PersonService personService,
                                     BankAccountService bankAccountService) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
