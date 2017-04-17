@@ -44,6 +44,7 @@ public class Partner implements Serializable {
 
     public void updateModel(Partner hirer) {
         person.update(hirer.getPerson());
+        if(this.bankAccount != null && hirer.getBankAccount() != null)
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 }

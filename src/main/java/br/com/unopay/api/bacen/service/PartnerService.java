@@ -34,7 +34,8 @@ public class PartnerService {
 
     public Partner create(Partner hirer) {
         try {
-            bankAccountService.create(hirer.getBankAccount());
+            if(hirer.getBankAccount() != null)
+                bankAccountService.create(hirer.getBankAccount());
             personService.save(hirer.getPerson());
             return repository.save(hirer);
         } catch (DataIntegrityViolationException e){

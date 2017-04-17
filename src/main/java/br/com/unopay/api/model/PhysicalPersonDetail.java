@@ -28,4 +28,7 @@ public class PhysicalPersonDetail implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private String email;
 
+    public void updateForHirer(PhysicalPersonDetail detail) {
+        this.email = detail.getEmail();
+    }
 }
