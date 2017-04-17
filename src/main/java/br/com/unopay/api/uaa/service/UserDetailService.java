@@ -15,7 +15,6 @@ import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +39,9 @@ import static br.com.unopay.api.uaa.exception.Errors.*;  // NOSONAR
 
 @Service
 @Timed
+@Getter
+@Setter
 @Slf4j
-@Data
 public class UserDetailService implements UserDetailsService {
 
     @Autowired
