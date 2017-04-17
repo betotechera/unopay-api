@@ -25,7 +25,7 @@ public class PersonTemplateLoader implements TemplateLoader {
 
 
         Fixture.of(PhysicalPersonDetail.class).addTemplate("physical-person", new Rule(){{
-            add("email", "user@company.com");
+            add("email", uniqueRandom("user@company.com", "user2@uol.com.br"));
         }});
 
 
