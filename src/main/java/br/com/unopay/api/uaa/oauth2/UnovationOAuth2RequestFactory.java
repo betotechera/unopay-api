@@ -47,7 +47,7 @@ public class UnovationOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
         Set<String> scopes = OAuth2Utils.parseParameterList(requestParameters.get(OAuth2Utils.SCOPE));
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
 
-        if ((scopes == null || scopes.isEmpty())) {
+        if (scopes == null || scopes.isEmpty()) {
             // If no scopes are specified in the incoming data, use the default values registered with the client
             // (the spec allows us to choose between this option and rejecting the request completely, so we'll take the
             // least obnoxious choice as a default).
