@@ -24,8 +24,6 @@ public class Checkout implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    public Checkout(){}
-
     @Enumerated(STRING)
     @Column(name="movement_period")
     @JsonView({Views.Public.class})
@@ -44,6 +42,8 @@ public class Checkout implements Serializable {
     @JsonView({Views.Public.class})
     @Column(name="closing_payment_days")
     private Integer closingPaymentDays;
+
+    public Checkout(){}
 
     public void updateModel(Checkout checkout) {
         this.period = this.getPeriod();

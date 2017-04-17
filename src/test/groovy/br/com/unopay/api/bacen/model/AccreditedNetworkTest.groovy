@@ -20,6 +20,19 @@ class AccreditedNetworkTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'INVALID_MERCHANT_DISCOUNT_RATE_RANGE'
     }
 
+    def "should return error if merchantDiscountRate is not positve"() {
+        given:
+        AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")
+        accreditedNetwork.merchantDiscountRate = -0.1D
+
+        when:
+        accreditedNetwork.validate()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVALID_MERCHANT_DISCOUNT_RATE_RANGE'
+    }
+
     def "should return error if minimumDepositValue is negative"() {
         given:
         AccreditedNetwork accreditedNetwork = Fixture.from(AccreditedNetwork.class).gimme("valid")

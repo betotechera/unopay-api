@@ -28,8 +28,6 @@ public class AccreditedNetwork implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    public AccreditedNetwork(){}
-
     @Id
     @GeneratedValue(generator="system-uuid")
     @Column(name="id")
@@ -79,6 +77,8 @@ public class AccreditedNetwork implements Serializable {
     @JoinColumn(name="bank_account_id")
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
+
+    public AccreditedNetwork(){}
 
     public void validate() {
         if(merchantDiscountRate < 0 || merchantDiscountRate > 1D) {
