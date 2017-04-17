@@ -8,6 +8,7 @@ import br.com.unopay.api.model.PersonFilter
 import br.com.unopay.api.repository.PersonRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class PersonServiceTest extends SpockApplicationTests {
@@ -43,6 +44,30 @@ class PersonServiceTest extends SpockApplicationTests {
         assert result.id != null
         assert result.address.id != null
         assert result.legalPersonDetail.id != null
+    }
+
+    void 'should not save PHYSICAL Person if physicalPersonDetail is null'(){
+        given:
+        Person person = Fixture.from(Person.class).gimme("physical")
+        person.physicalPersonDetail = null
+        when:
+        service.save(person)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON'
+    }
+
+    void 'should not save LEGAL Person if legalPersonDetail is null'(){
+        given:
+        Person person = Fixture.from(Person.class).gimme("legal")
+        person.legalPersonDetail = null
+        when:
+        service.save(person)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON'
     }
 
 

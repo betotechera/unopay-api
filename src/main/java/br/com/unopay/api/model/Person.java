@@ -92,6 +92,9 @@ public class Person implements Serializable{
         if(PersonType.LEGAL.equals(this.type) && this.legalPersonDetail == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON);
         }
+        if(PersonType.PHYSICAL.equals(this.type) && this.physicalPersonDetail == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON);
+        }
     }
 
     @JsonIgnore
