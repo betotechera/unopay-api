@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model.filter;
 
+import br.com.unopay.api.model.State;
 import br.com.unopay.api.repository.filter.SearchableField;
 
 import java.io.Serializable;
@@ -21,5 +22,5 @@ public class BranchFilter implements Serializable {
     private String city;
 
     @SearchableField(field = "person.address.state")
-    private String state;
+    private State state;
 }
