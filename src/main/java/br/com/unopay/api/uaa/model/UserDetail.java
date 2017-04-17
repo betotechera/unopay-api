@@ -173,36 +173,13 @@ public class UserDetail implements Serializable {
     }
 
     public void updateModel(UserDetail user) {
-
-        if (user.getEmail() != null) {
+        if(user.getEmail() !=null)
             this.setEmail(user.getEmail());
-        }
-        if (user.getName() != null) {
+        if(user.getName() !=null)
             this.setName(user.getName());
-        }
-        if (user.getType() != null) {
+        if(user.getType() !=null)
             this.setType(user.getType());
-        }
-        if(user.getIssuer() != null){
-            this.setIssuer(user.getIssuer());
-        }
-        if(user.getInstitution() != null){
-            this.setInstitution(user.getInstitution());
-        }
-        if(user.getAccreditedNetwork() != null){
-            this.setAccreditedNetwork(user.getAccreditedNetwork());
-        }
-        if(user.getEstablishment() != null){
-            this.setEstablishment(user.getEstablishment());
-        }
-        if(user.getPartner() != null){
-            this.setPartner(user.getPartner());
-        }
-        if(user.getHired() != null){
-            this.setHired(user.getHired());
-        }
-        if(user.getHirer() != null){
-            this.setHirer(user.getHirer());
-        }
+        if(user.getGroups() !=null)
+            this.setGroups(user.getGroups());
     }
 }
