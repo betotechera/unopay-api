@@ -179,7 +179,5 @@ public class UserDetail implements Serializable {
             this.setName(user.getName());
         if(user.getType() !=null)
             this.setType(user.getType());
-        if(user.getGroups() !=null)
-            this.setGroups(user.getGroups());
     }
 }
