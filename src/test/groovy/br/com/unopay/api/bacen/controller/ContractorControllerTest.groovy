@@ -29,7 +29,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         given:
             String accessToken = getClientAccessToken()
         when:
-            def result = this.mvc.perform(postHired(accessToken, getHired()))
+            def result = this.mvc.perform(postHired(accessToken, getContractor()))
         then:
             result.andExpect(status().isCreated()).andExpect(header().string("Location", is(notNullValue())))
     }
@@ -41,7 +41,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        def mvcResult = this.mvc.perform(postHired(accessToken, getHired())).andReturn()
+        def mvcResult = this.mvc.perform(postHired(accessToken, getContractor())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
@@ -53,7 +53,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        def mvcResult = this.mvc.perform(postHired(accessToken, getHired())).andReturn()
+        def mvcResult = this.mvc.perform(postHired(accessToken, getContractor())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
         when:
@@ -75,7 +75,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor should be found'() {
         given:
             String accessToken = getClientAccessToken()
-            Contractor contractor = getHired()
+            Contractor contractor = getContractor()
             def mvcResult = this.mvc.perform(postHired(accessToken, contractor)).andReturn()
             def location = getLocationHeader(mvcResult)
             def id = extractId(location)
@@ -90,7 +90,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor should be found when find all'() {
         given:
             String accessToken = getClientAccessToken()
-            this.mvc.perform(postHired(accessToken, getHired()))
+            this.mvc.perform(postHired(accessToken, getContractor()))
 
             this.mvc.perform(post(CONTRACTOR_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(contractor.with { person.id = null; person.name = 'temp';person.document.number = '1234576777';it })))
@@ -103,7 +103,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
     }
 
-    Contractor getHired() {
+    Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
     }
 }
