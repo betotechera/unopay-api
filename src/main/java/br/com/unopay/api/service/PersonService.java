@@ -1,7 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.PersonFilter;
+import br.com.unopay.api.model.filter.PersonFilter;
 import br.com.unopay.api.repository.AddressRepository;
 import br.com.unopay.api.repository.LegalPersonDetailRepository;
 import br.com.unopay.api.repository.PersonRepository;

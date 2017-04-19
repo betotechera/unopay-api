@@ -16,7 +16,7 @@ create table product (
     credit_insertion_fee decimal(*,2) not null,
     pay_inst_emission_fee decimal(*,2) not null,
     pay_inst_second_copy_fee decimal(*,2) not null,
-    adm_credit_insert_fee decimal(2,4) not null,
+    adm_credit_insert_fee decimal(5,4) not null,
     version integer,
     constraint fk_prd_issuer foreign key(issuer_id) references issuer(id),
     constraint fk_prd_accredited_net foreign key(accredited_network_id) references accredited_network(id),

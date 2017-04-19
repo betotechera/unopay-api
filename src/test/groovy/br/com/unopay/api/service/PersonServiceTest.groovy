@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.DocumentType
 import br.com.unopay.api.model.Person
-import br.com.unopay.api.model.PersonFilter
+import br.com.unopay.api.model.filter.PersonFilter
 import br.com.unopay.api.repository.PersonRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException

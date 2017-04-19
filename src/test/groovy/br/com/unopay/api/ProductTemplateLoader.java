@@ -32,7 +32,7 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("creditInsertionFee", random(BigDecimal.class));
             add("paymentInstrumentEmissionFee", random(BigDecimal.class));
             add("paymentInstrumentSecondCopyFee", random(BigDecimal.class));
-            add("administrationCreditInsertionFee", random(BigDecimal.class));
+            add("administrationCreditInsertionFee", random(BigDecimal.class, range(0.00, 1)));
         }});
 
     }
