@@ -24,7 +24,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "person")
 public class Person implements Serializable{
 
@@ -39,7 +38,6 @@ public class Person implements Serializable{
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
     @JsonView({Views.Public.class,Views.List.class})
