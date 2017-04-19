@@ -7,28 +7,35 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class TemplateLoader {
 
-    private String passwordReset;
-    private String createPassword;
+    private String resetTemplate;
+    private String newUserTemplate;
 
     @SneakyThrows
     @Autowired
     public TemplateLoader(ResourceLoader resourceLoader){
-        Resource passwordReset = resourceLoader.getResource("classpath:/password-reset.html");
-        Resource createPassword  = resourceLoader.getResource("classpath:/create-password.html");
-        this.passwordReset =  IOUtils.toString(passwordReset.getInputStream());
-        this.createPassword =  IOUtils.toString(createPassword.getInputStream());
+        this.resetTemplate = getTemplate(resourceLoader,"classpath:/password-reset.html");
+        this.newUserTemplate =  getTemplate(resourceLoader,"classpath:/create-password.html");
+    }
 
+    private String getTemplate(ResourceLoader resourceLoader,String location) throws IOException {
+        return IOUtils.toString(getTemplateResource(resourceLoader, location).getInputStream());
+    }
+
+    private Resource getTemplateResource(ResourceLoader resourceLoader, String location) {
+        return resourceLoader.getResource(location);
     }
 
     public String getTemplate(String template){
         if("passwordReset".equals(template)) {
-            return passwordReset;
+            return resetTemplate;
         }
         if("createPassword".equals(template)) {
-            return createPassword;
+            return newUserTemplate;
         }
         return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} " +
                 "para gerar sua nova senha clicando nesse link: </h3>";

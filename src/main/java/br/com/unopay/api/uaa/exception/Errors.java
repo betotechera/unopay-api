@@ -174,13 +174,22 @@ public final class Errors {
     public static final UnovationError HIRER_BRANCH_NOT_FOUND =
             new UnovationError("HIRER_NOT_FOUND","Hirer not found");
 
-    /* Hired */
-    public static final UnovationError PERSON_HIRED_ALREADY_EXISTS =
-            new UnovationError("PERSON_HIRED_ALREADY_EXISTS","Person Hired already exists");
-    public static final UnovationError HIRED_NOT_FOUND =
-            new UnovationError("HIRED_NOT_FOUND","Hired not found");
-    public static final UnovationError HIRED_WITH_USERS =
-            new UnovationError("HIRED_WITH_USERS"," Hired has Users");
+    /* Contractor */
+    public static final UnovationError PERSON_CONTRACTOR_ALREADY_EXISTS =
+            new UnovationError("PERSON_CONTRACTOR_ALREADY_EXISTS","Person Contractor already exists");
+    public static final UnovationError CONTRACTOR_NOT_FOUND =
+            new UnovationError("CONTRACTOR_NOT_FOUND","Contractor not found");
+    public static final UnovationError CONTRACTOR_WITH_USERS =
+            new UnovationError("CONTRACTOR_WITH_USERS"," Contractor has Users");
+
+    /* Partner */
+    public static final UnovationError PERSON_PARTNER_ALREADY_EXISTS =
+            new UnovationError("PERSON_PARTNER_ALREADY_EXISTS","Person Partner already exists");
+    public static final UnovationError PARTNER_NOT_FOUND =
+            new UnovationError("PARTNER_NOT_FOUND","Partner not found");
+    public static final UnovationError PARTNER_WITH_USERS =
+            new UnovationError("PARTNER_WITH_USERS"," Partner has Users");
+
 
     /* AccreditedNetwork */
     public static final UnovationError ACCREDITED_NETWORK_WITH_USERS =
