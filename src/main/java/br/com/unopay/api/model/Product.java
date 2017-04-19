@@ -31,15 +31,15 @@ public class Product implements Serializable {
 
     @Id
     @Column(name="id")
-    @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @GeneratedValue(generator="system-uuid")
     private String id;
 
     @Column(name="code")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     @Size(min=1, max = 4, groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class, Update.class})
     private String code;
 
     @Column(name="name")
