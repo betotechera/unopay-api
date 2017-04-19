@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.bacen.model.Hired;
-import br.com.unopay.api.bacen.model.filter.HiredFilter;
-import br.com.unopay.api.bacen.service.HiredService;
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -25,46 +25,46 @@ import java.net.URI;
 @Slf4j
 @RestController
 @Timed(prefix = "api")
-public class HiredController {
+public class ContractorController {
 
-    private HiredService service;
+    private ContractorService service;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    public HiredController(HiredService service) {
+    public ContractorController(ContractorService service) {
         this.service = service;
      }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/hireds", method = RequestMethod.POST)
-    public ResponseEntity<Hired> create(@Validated(Create.class) @RequestBody Hired hired) {
-        log.info("creating hired {}", hired);
-        Hired created = service.create(hired);
+    @RequestMapping(value = "/contractors", method = RequestMethod.POST)
+    public ResponseEntity<Contractor> create(@Validated(Create.class) @RequestBody Contractor contractor) {
+        log.info("creating contractor {}", contractor);
+        Contractor created = service.create(contractor);
         return ResponseEntity
-                .created(URI.create("/hireds/"+created.getId()))
+                .created(URI.create("/contractors/"+created.getId()))
                 .body(created);
 
     }
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hireds/{id}", method = RequestMethod.GET)
-    public Hired get(@PathVariable  String id) {
-        log.info("get Hired={}", id);
+    @RequestMapping(value = "/contractors/{id}", method = RequestMethod.GET)
+    public Contractor get(@PathVariable  String id) {
+        log.info("get Contractor={}", id);
         return service.getById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/hireds/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Hired hired) {
-        hired.setId(id);
-        log.info("updating hired {}", hired);
-        service.update(id,hired);
+    @RequestMapping(value = "/contractors/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contractor contractor) {
+        contractor.setId(id);
+        log.info("updating contractor {}", contractor);
+        service.update(id, contractor);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/hireds/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/contractors/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing hired id={}", id);
         service.delete(id);
@@ -72,12 +72,12 @@ public class HiredController {
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hireds", method = RequestMethod.GET)
-    public Results<Hired> getByParams(HiredFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search Hired with filter={}", filter);
-        Page<Hired> page =  service.findByFilter(filter, pageable);
+    @RequestMapping(value = "/contractors", method = RequestMethod.GET)
+    public Results<Contractor> getByParams(ContractorFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search Contractor with filter={}", filter);
+        Page<Contractor> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hireds", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
 
 }

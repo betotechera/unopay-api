@@ -81,9 +81,9 @@ public class UserDetail implements Serializable {
     private Hirer hirer;
 
     @ManyToOne
-    @JoinColumn(name="hired_id")
+    @JoinColumn(name="contractor_id")
     @JsonView({Views.Public.class})
-    private Hirer hired;
+    private Contractor contractor;
 
     @ManyToOne
     @JoinColumn(name="partner_id")

@@ -18,12 +18,12 @@ import java.io.Serializable;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "hired")
-public class Hired implements Serializable {
+@Table(name = "contractor")
+public class Contractor implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    public Hired(){}
+    public Contractor(){}
 
     @Id
     @Column(name="id")
@@ -49,7 +49,7 @@ public class Hired implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String rntrc;
 
-    public void updateModel(Hired hirer) {
+    public void updateModel(Contractor hirer) {
         person.update(hirer.getPerson());
         this.rntrc  = hirer.getRntrc();
         this.bankAccount.updateMe(hirer.getBankAccount());

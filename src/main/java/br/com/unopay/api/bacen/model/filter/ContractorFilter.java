@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class HiredFilter implements Serializable {
+public class ContractorFilter implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 

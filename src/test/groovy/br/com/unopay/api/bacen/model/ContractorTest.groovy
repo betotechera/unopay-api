@@ -3,11 +3,11 @@ package br.com.unopay.api.bacen.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 
-class HiredTest extends SpockApplicationTests {
+class ContractorTest extends SpockApplicationTests {
 
     def 'should be equals'(){
         given:
-        Hired a = Fixture.from(Hired.class).gimme("valid")
+        Contractor a = Fixture.from(Contractor.class).gimme("valid")
 
         when:
         def shouldBeEquals = a == a
@@ -18,8 +18,8 @@ class HiredTest extends SpockApplicationTests {
     }
 
     def 'should not be equals'(){
-        Hired a = Fixture.from(Hired.class).gimme("valid")
-        Hired b = Fixture.from(Hired.class).gimme("valid")
+        Contractor a = Fixture.from(Contractor.class).gimme("valid")
+        Contractor b = Fixture.from(Contractor.class).gimme("valid")
 
         when:
         def shouldBeEquals = a == b
