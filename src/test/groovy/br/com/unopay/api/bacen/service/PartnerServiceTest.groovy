@@ -41,7 +41,7 @@ class PartnerServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(ConflictException)
-        ex.errors.first().logref == 'PERSON_HIRED_ALREADY_EXISTS'
+        ex.errors.first().logref == 'PERSON_PARTNER_ALREADY_EXISTS'
     }
 
     void 'known partner should be deleted'(){

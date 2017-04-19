@@ -25,7 +25,7 @@ public interface UserDetailRepository extends UnovationFilterRepository<UserDeta
 
     int countByHirerId(String id);
 
-    int countByHiredId(String id);
+    int countByContractorId(String id);
 
     int countByPartnerId(String id);
 
