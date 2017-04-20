@@ -4,6 +4,7 @@ import br.com.unopay.api.model.Product;
 import br.com.unopay.api.repository.ProductRepository;
 import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_NOT_FOUND;
 
 @Service
+@Slf4j
 public class ProductService {
 
     @Autowired
@@ -23,6 +25,7 @@ public class ProductService {
             verifyProductExists(product, "");
             return repository.save(product);
         }catch (ConflictException e){
+            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode());
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }
