@@ -251,5 +251,11 @@ public final class Errors {
     public static final UnovationError CANNOT_CHANGE_HEAD_OFFICE =
             new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
 
+    /* product */
+    public static final UnovationError PRODUCT_NOT_FOUND =
+            new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
+    public static final UnovationError PRODUCT_ALREADY_EXISTS =
+            new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
+
 
 }
