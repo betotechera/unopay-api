@@ -55,7 +55,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
-    void 'given product with existing name should not be created'(){
+    void 'given product with same name should not be created'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
                 .with { accreditedNetwork = networkUnderTest
@@ -72,7 +72,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_ALREADY_EXISTS'
     }
 
-    void 'given product with existing code should not be created'(){
+    void 'given product with same code should not be created'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
                 .with { accreditedNetwork = networkUnderTest
@@ -124,7 +124,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
 
-    void 'given product with existing name should not be updated'(){
+    void 'given product with same name should not be updated'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
                 .with { accreditedNetwork = networkUnderTest
@@ -143,7 +143,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_ALREADY_EXISTS'
     }
 
-    void 'given product with existing code should not be updated'(){
+    void 'given product with same code should not be updated'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
                 .with { accreditedNetwork = networkUnderTest
