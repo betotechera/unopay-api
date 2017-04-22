@@ -10,9 +10,13 @@ class ProductTest  extends FixtureApplicationTest {
         given:
         Product a = Fixture.from(Product.class).gimme("valid")
         Product b = Fixture.from(Product.class).gimme("valid")
+        b.getIssuer().setId('65545')
+        b.getPaymentRuleGroup().setId('65545')
+        b.getAccreditedNetwork().setId('65545')
 
         when:
          a.updateMe(b)
+
 
         then:
         a.code == b.code
