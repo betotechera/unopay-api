@@ -29,15 +29,13 @@ public class ProductService {
 
     public void update(String id, Product product) {
         Product current = findById(id);
-        current.setName(product.getName());
-        current.setCode(product.getCode());
+        current.updateMe(product);
         try {
             repository.save(current);
         }catch (DataIntegrityViolationException e){
             log.info("Product with name={} or code={} already exists", product.getName(), product.getCode());
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
-        
     }
 
     public Product findById(String id) {

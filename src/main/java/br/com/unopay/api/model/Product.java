@@ -128,4 +128,25 @@ public class Product implements Serializable {
     @JsonIgnore
     private Integer version;
 
+    public void updateMe(Product product) {
+        code = product.getCode();
+        name = product.getName();
+        type = product.getType();
+        issuer = product.getIssuer();
+        paymentRuleGroup = product.getPaymentRuleGroup();
+        accreditedNetwork = product.getAccreditedNetwork();
+        paymentInstrumentType = product.getPaymentInstrumentType();
+        serviceType = product.getServiceType();
+        creditInsertionType = product.getCreditInsertionType();
+        minimumCreditInsertion = product.getMinimumCreditInsertion();
+        maximumCreditInsertion = product.getMaximumCreditInsertion();
+        paymentInstrumentValidDays = product.getPaymentInstrumentValidDays();
+        situation = product.getSituation();
+        membershipFee = product.getMembershipFee();
+        creditInsertionFee = product.getCreditInsertionFee();
+        paymentInstrumentEmissionFee = product.getPaymentInstrumentEmissionFee();
+        paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
+        administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
+
+    }
 }
