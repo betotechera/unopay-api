@@ -18,6 +18,8 @@ create table product (
     pay_inst_second_copy_fee decimal(*,2) not null,
     adm_credit_insert_fee decimal(5,4) not null,
     version integer,
+    CONSTRAINT product_name UNIQUE (name),
+    CONSTRAINT product_code UNIQUE (code),
     constraint fk_prd_issuer foreign key(issuer_id) references issuer(id),
     constraint fk_prd_accredited_net foreign key(accredited_network_id) references accredited_network(id),
     constraint fk_prod_pay_rule_group foreign key(payment_rule_group_id) references payment_rule_group(id)
