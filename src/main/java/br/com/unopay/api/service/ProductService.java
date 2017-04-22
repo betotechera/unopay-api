@@ -2,7 +2,6 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.repository.ProductRepository;
-import br.com.unopay.bootcommons.exception.ConflictException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ public class ProductService {
     public void update(String id, Product product) {
         Product current = findById(id);
         current.setName(product.getName());
+        current.setCode(product.getCode());
         try {
             repository.save(current);
         }catch (DataIntegrityViolationException e){

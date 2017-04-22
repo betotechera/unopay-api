@@ -138,7 +138,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def created = service.save(product.with { code = 'AAA'; name='AAA'; id = null; it })
 
         when:
-        service.update(created.id, product.with { code = 'AAA'; name = knownName; id = null; it })
+        service.update(created.id, product.with { code = 'BBB'; name = knownName; id = null; it })
 
         then:
         def ex = thrown(ConflictException)
@@ -147,7 +147,7 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'given product with same code should not be updated'(){
         given:
-        def knownCode = 'myCode'
+        def knownCode = 'MYCD'
         Product product = Fixture.from(Product.class).gimme("valid")
                 .with { accreditedNetwork = networkUnderTest
             issuer = issuerUnderTest
@@ -156,10 +156,10 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         service.save(product)
-        def created = service.save(product.with { code = 'AAA'; name='AAA'; id = null; it })
+        def created = service.save(product.with { code = 'BBB'; name='AAA'; id = null; it })
 
         when:
-        service.update(created.id, product.with { name = 'BBB'; code = knownCode; id = null; it })
+        service.update(created.id, product.with { name = 'BBB'; code = knownCode; it })
 
         then:
         def ex = thrown(ConflictException)
