@@ -89,6 +89,54 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_ALREADY_EXISTS'
     }
 
+    void 'given product with unknown network should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest.with { id = ''; it }
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
+    }
+
+    void 'given product with unknown issuer should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest.with { id = ''; it }
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ISSUER_NOT_FOUND'
+    }
+
+    void 'given product with unknown payment rule group should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest.with { id = ''; it }
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
+    }
+
     void 'known product should be updated'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
@@ -164,6 +212,68 @@ class ProductServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(ConflictException)
         assert ex.errors.first().logref == 'PRODUCT_ALREADY_EXISTS'
+    }
+
+    void 'given product with unknown network should not be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with { name = knownName; accreditedNetwork = networkUnderTest.with { id = ''; it }; it })
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
+    }
+
+    void 'given product with unknown issuer should not be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with { name = knownName; issuer = issuerUnderTest.with { id = ''; it }; it })
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ISSUER_NOT_FOUND'
+    }
+
+    void 'given product with unknown payment rule group should not be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with {
+                                                    name = knownName
+                                                    paymentRuleGroup = paymentRuleGroupUnderTest.with { id = ''; it }
+                                                it })
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
     }
 
     void 'known product should be found'(){
