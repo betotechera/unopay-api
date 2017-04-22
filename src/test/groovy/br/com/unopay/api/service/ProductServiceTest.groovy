@@ -8,9 +8,11 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.service.AccreditedNetworkService
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService
+import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class ProductServiceTest extends SpockApplicationTests {
@@ -19,25 +21,16 @@ class ProductServiceTest extends SpockApplicationTests {
     ProductService service
 
     @Autowired
-    AccreditedNetworkService networkService
-
-    @Autowired
-    IssuerService issuerService
-
-    @Autowired
-    PaymentRuleGroupService paymentRuleGroupService
+    SetupCreator setupCreator
 
     Issuer issuerUnderTest
     AccreditedNetwork networkUnderTest
     PaymentRuleGroup paymentRuleGroupUnderTest
 
     void setup(){
-        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
-        AccreditedNetwork network = Fixture.from(AccreditedNetwork.class).gimme("valid")
-        PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("valid")
-        issuerUnderTest = issuerService.create(issuer)
-        paymentRuleGroupUnderTest = paymentRuleGroupService.create(paymentRuleGroup)
-        networkUnderTest = networkService.create(network)
+        issuerUnderTest = setupCreator.createIssuer()
+        paymentRuleGroupUnderTest = setupCreator.createPaymentRuleGroup()
+        networkUnderTest = setupCreator.createNetwork()
     }
 
     void 'new product should be created'(){
@@ -137,6 +130,54 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
     }
 
+    void 'given product without network id should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest.with { id = null; it }
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ACCREDITED_NETWORK_ID_REQUIRED'
+    }
+
+    void 'given product without issuer id should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest.with { id = null; it }
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ISSUER_ID_REQUIRED'
+    }
+
+    void 'given product without payment rule group id should not be created'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest.with { id = null; it }
+            it }
+
+        when:
+        service.save(product)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_ID_REQUIRED'
+    }
+
     void 'known product should be updated'(){
         given:
         Product product = Fixture.from(Product.class).gimme("valid")
@@ -227,8 +268,9 @@ class ProductServiceTest extends SpockApplicationTests {
         def created = service.save(product)
 
         when:
-        service.update(created.id, product.with { name = knownName; accreditedNetwork = networkUnderTest.with { id = ''; it }; it })
-
+        service.update(created.id, product.with { name = knownName
+                                                  accreditedNetwork = networkUnderTest.with { id = ''; it }
+                                                it })
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
@@ -274,6 +316,72 @@ class ProductServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
+    }
+
+    void 'given product without network id should be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with { name = knownName
+                                                  accreditedNetwork = networkUnderTest.with { id = null; it }
+                                                it })
+        def result = service.findById(created.id)
+        then:
+        result.name == knownName
+    }
+
+    void 'given product without issuer id should be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with { name = knownName
+                                                  issuer = issuerUnderTest.with { id = null; it }
+                                                it })
+        def result = service.findById(created.id)
+
+        then:
+        result.name == knownName
+    }
+
+    void 'given product without payment rule group id should be updated'(){
+        given:
+        def knownName = 'myName'
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = knownName
+            it }
+
+        def created = service.save(product)
+
+        when:
+        service.update(created.id, product.with {
+            name = knownName
+            paymentRuleGroup = paymentRuleGroupUnderTest.with { id = null; it }
+            it })
+        def result = service.findById(created.id)
+
+        then:
+        result.name == knownName
     }
 
     void 'known product should be found'(){

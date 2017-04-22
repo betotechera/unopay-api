@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -19,6 +20,10 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+
+import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
 
 @Data
 @Entity
@@ -128,13 +133,31 @@ public class Product implements Serializable {
     @JsonIgnore
     private Integer version;
 
+    public void validate(){
+        if(getIssuer() != null && getIssuer().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ISSUER_ID_REQUIRED);
+        }
+        if(getAccreditedNetwork() != null && getAccreditedNetwork().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
+        }
+        if(getPaymentRuleGroup() != null && getPaymentRuleGroup().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_ID_REQUIRED);
+        }
+    }
+
     public void updateMe(Product product) {
         code = product.getCode();
         name = product.getName();
         type = product.getType();
-        issuer = product.getIssuer();
-        paymentRuleGroup = product.getPaymentRuleGroup();
-        accreditedNetwork = product.getAccreditedNetwork();
+        if(product.getIssuer() != null && product.getIssuer().getId() != null) {
+            issuer = product.getIssuer();
+        }
+        if(product.getPaymentRuleGroup() != null && product.getPaymentRuleGroup().getId() !=null) {
+            paymentRuleGroup = product.getPaymentRuleGroup();
+        }
+        if(product.getAccreditedNetwork() != null && product.getAccreditedNetwork().getId() != null) {
+            accreditedNetwork = product.getAccreditedNetwork();
+        }
         paymentInstrumentType = product.getPaymentInstrumentType();
         serviceType = product.getServiceType();
         creditInsertionType = product.getCreditInsertionType();
@@ -147,6 +170,5 @@ public class Product implements Serializable {
         paymentInstrumentEmissionFee = product.getPaymentInstrumentEmissionFee();
         paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
         administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
-
     }
 }

@@ -67,6 +67,8 @@ public final class Errors {
             new UnovationError("USER_TYPE_MUST_SET_AN_ISSUER","UserType must set an Issuer");
     public static final UnovationError ISSUER_WITH_USERS=
             new UnovationError("ISSUER_WITH_USERS","Issuer with users.");
+    public static final UnovationError ISSUER_ID_REQUIRED=
+            new UnovationError("ISSUER_ID_REQUIRED","Issuer id required");
 
     /* uaa */
     public static final UnovationError
@@ -126,6 +128,10 @@ public final class Errors {
             new UnovationError("LARGE_PAYMENT_RULE_GROUP_NAME","Name is too large");
     public static final UnovationError SHORT_PAYMENT_RULE_GROUP_NAME =
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
+    public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
+
+
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =

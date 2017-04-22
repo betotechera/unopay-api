@@ -75,7 +75,7 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/events", method = RequestMethod.GET)
     public Results<Event> getByParams(EventFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search issuer with filter={}", filter);
+        log.info("search event with filter={}", filter);
         Page<Event> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/events", api));
