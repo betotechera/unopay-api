@@ -32,13 +32,13 @@ public class ContractorService {
         this.bankAccountService = bankAccountService;
     }
 
-    public Contractor create(Contractor hirer) {
+    public Contractor create(Contractor contractor) {
         try {
-            bankAccountService.create(hirer.getBankAccount());
-            personService.save(hirer.getPerson());
-            return repository.save(hirer);
+            bankAccountService.create(contractor.getBankAccount());
+            personService.save(contractor.getPerson());
+            return repository.save(contractor);
         } catch (DataIntegrityViolationException e){
-            log.warn(String.format("Person contractor already exists %s", hirer.getPerson()), e);
+            log.warn(String.format("Person contractor already exists %s", contractor.getPerson()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.PERSON_CONTRACTOR_ALREADY_EXISTS);
 
         }
@@ -53,10 +53,10 @@ public class ContractorService {
 
     }
 
-    public void update(String id, Contractor hirer) {
+    public void update(String id, Contractor contractor) {
         Contractor current = repository.findOne(id);
-        current.updateModel(hirer);
-        personService.save(hirer.getPerson());
+        current.updateModel(contractor);
+        personService.save(contractor.getPerson());
         repository.save(current);
     }
 
