@@ -9,7 +9,7 @@ create table contract (
     credit_insertion_type varchar(50),
     issue_invoice char(1) not null,
     document_number_invoice varchar(50) not null,
-    situation char(1) not null,
+    situation varchar(20) not null,
     rntrc varchar(20) not null,
     origin varchar(20) not null,
     product_id varchar(256) not null,
