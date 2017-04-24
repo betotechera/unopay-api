@@ -1,7 +1,7 @@
 create table payment_instrument (
     id VARCHAR(256) PRIMARY KEY,
-    type varchar(9) not null,
-    number varchar(20) not null,
+    type varchar(50) not null,
+    payment_number varchar(20) not null,
     product_id varchar(256) not null,
     contractor_id varchar(256) not null,
     created_date DATE not null,
@@ -11,8 +11,8 @@ create table payment_instrument (
     external_number_id varchar(256),
     version integer,
     CONSTRAINT product_external_id UNIQUE (external_number_id),
-    constraint fk_instrument_product foreign key(product_id) references product(id),
-    constraint fk_instrument_contractor foreign key(contractor_id) references contractor(id)
+    constraint fk_inst_product foreign key(product_id) references product(id),
+    constraint fk_inst_contractor foreign key(contractor_id) references contractor(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_PAYMENT_INSTRUMENT','Permite listar Instrumentos de Pagamento');

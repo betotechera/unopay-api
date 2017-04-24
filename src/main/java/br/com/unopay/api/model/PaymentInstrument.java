@@ -33,9 +33,10 @@ public class PaymentInstrument implements Serializable {
 
     @Column(name = "type")
     @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(value = EnumType.STRING)
     private PaymentInstrumentType type;
 
-    @Column(name = "number")
+    @Column(name = "payment_number")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String number;
@@ -70,6 +71,7 @@ public class PaymentInstrument implements Serializable {
     @Column(name = "situation")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
+    @Enumerated(value = EnumType.STRING)
     private PaymentInstrumentSituation situation;
 
     @Column(name = "external_number_id")
