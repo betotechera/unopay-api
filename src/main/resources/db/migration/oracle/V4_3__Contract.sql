@@ -18,7 +18,7 @@ create table contract (
     version integer,
     constraint fk_contract_product foreign key(product_id) references product(id),
     constraint fk_contract_hirer foreign key(hirer_id) references hirer(id),
-    constraint fk_contract_contractor foreign key(contractor_id) references contractor(id),
+    constraint fk_contract_contractor foreign key(contractor_id) references contractor(id)
 );
 
 create table contract_service (
