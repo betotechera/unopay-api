@@ -16,7 +16,7 @@ public class InstrumentTemplateLoader  implements TemplateLoader {
     public void load() {
         Fixture.of(PaymentInstrument.class).addTemplate("valid", new Rule(){{
             add("type", random(PaymentInstrumentType.class));
-            add("number", random("5646416546564654", "ADSFADSF57546646", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+            add("number", random("5646416546564654", "ADSFADSF57546646", "AAAAAAAAAAAAAAAAAAAA"));
             add("product", one(Product.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("createdDate", beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));

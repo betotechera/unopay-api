@@ -11,7 +11,9 @@ import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.service.EstablishmentService
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService
+import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -36,6 +38,9 @@ class SetupCreator {
 
     @Autowired
     private ContractorService contractorService
+
+    @Autowired
+    private PaymentInstrumentService paymentInstrumentService
 
     Establishment createHeadOffice() {
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
@@ -69,5 +74,13 @@ class SetupCreator {
                         paymentRuleGroup = createPaymentRuleGroup()
                   it }
         productService.save(product)
+    }
+
+    PaymentInstrument createPaymentInstrument(String label){
+        PaymentInstrument instrument = Fixture.from(PaymentInstrument.class).gimme(label)
+                .with { product = createProduct()
+                        contractor = createContractor()
+                    it }
+        paymentInstrumentService.save(instrument)
     }
 }

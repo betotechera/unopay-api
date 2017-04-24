@@ -56,6 +56,7 @@ public class PaymentInstrument implements Serializable {
     private Contractor contractor;
 
     @Column(name = "created_date")
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date createdDate;
 

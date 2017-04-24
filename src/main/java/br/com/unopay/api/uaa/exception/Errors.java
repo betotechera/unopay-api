@@ -263,5 +263,10 @@ public final class Errors {
     public static final UnovationError PRODUCT_ALREADY_EXISTS =
             new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
 
+    /* payment instrument */
+    public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
+            new UnovationError("PAYMENT_INSTRUMENT_NOT_FOUND","Payment instrument not found.");
+
+
 
 }
