@@ -171,4 +171,9 @@ public class Product implements Serializable {
         paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
         administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
     }
+
+    @JsonIgnore
+    public boolean containsServiceType(ServiceType serviceType) {
+        return this.serviceType != null && this.serviceType.contains(serviceType);
+    }
 }

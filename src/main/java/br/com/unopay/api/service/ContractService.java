@@ -38,6 +38,7 @@ public class ContractService {
         try {
             validateReferences(contract);
             contract.validate();
+            contract.checkDocumentNumberInvoice();
             return repository.save(contract);
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode());

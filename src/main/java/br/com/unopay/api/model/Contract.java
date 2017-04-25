@@ -129,10 +129,18 @@ public class Contract implements Serializable {
         if(begin != null && end != null && begin.after(end)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_END_IS_BEFORE_BEGIN);
         }
-        if(documentNumberInvoice == null){
-            documentNumberInvoice = hirer.getDocumentNumber();
+        if(product != null &&!allServicesContainsInProduct()){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.CONTRACT_SERVICES_NOT_IN_PRODUCT_SERVICES);
         }
+    }
 
+    private boolean allServicesContainsInProduct() {
+        return this.serviceType.stream().allMatch(s -> product.containsServiceType(s));
+    }
+
+    public void checkDocumentNumberInvoice() {
+        documentNumberInvoice = (documentNumberInvoice == null) ? hirer.getDocumentNumber(): documentNumberInvoice;
     }
 
     public void updateMe(Contract contract) {
