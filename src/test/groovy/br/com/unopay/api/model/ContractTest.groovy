@@ -16,8 +16,10 @@ class ContractTest extends FixtureApplicationTest {
          a.updateMe(b)
 
         then:
-        a.code == b.code
         a.name == b.name
+        a.rntrc == b.rntrc
+        a.situation == b.situation
+        a.issueInvoice == b.issueInvoice
     }
 
     def 'should be equals'(){
