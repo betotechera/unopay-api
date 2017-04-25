@@ -68,25 +68,6 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.documentNumberInvoice == hirerUnderTest.documentNumber
     }
 
-    void 'given contract with begin date after end date it should not be created'(){
-        given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            begin = end + 1
-            it }
-
-        when:
-        service.save(contract)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CONTRACT_END_IS_BEFORE_BEGIN'
-    }
-
     void 'given contract with same code should not be created'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
