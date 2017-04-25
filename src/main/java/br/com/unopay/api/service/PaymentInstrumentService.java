@@ -38,7 +38,7 @@ public class PaymentInstrumentService {
             validateReference(instrument);
             return repository.save(instrument);
         }catch (DataIntegrityViolationException e){
-            log.info("Payment instrument external id={} already exists.", instrument.getExternalNumberId());
+            log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId());
             throw UnovationExceptions.conflict().withErrors(EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS);
         }
     }
@@ -58,7 +58,7 @@ public class PaymentInstrumentService {
             validateReference(instrument);
             repository.save(current);
         }catch (DataIntegrityViolationException e){
-            log.info("Payment instrument external id={} already exists.", instrument.getExternalNumberId());
+            log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId());
             throw UnovationExceptions.conflict().withErrors(EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS);
         }
     }
