@@ -85,7 +85,7 @@ public class Product implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(targetClass = ServiceType.class)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private List<ServiceType> serviceType;
 
