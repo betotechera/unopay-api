@@ -129,14 +129,13 @@ public class Contract implements Serializable {
         if(begin != null && end != null && begin.after(end)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_END_IS_BEFORE_BEGIN);
         }
-        if(documentNumberInvoice == null){
-            documentNumberInvoice = hirer.getDocumentNumber();
-        }
+    }
 
+    public void checkDocumentNumberInvoice() {
+        documentNumberInvoice = (documentNumberInvoice == null) ? hirer.getDocumentNumber(): documentNumberInvoice;
     }
 
     public void updateMe(Contract contract) {
-        code = contract.getCode();
         name = contract.getName();
         rntrc = contract.getRntrc();
         situation = contract.getSituation();

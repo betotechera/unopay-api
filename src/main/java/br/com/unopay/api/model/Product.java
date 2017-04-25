@@ -85,7 +85,7 @@ public class Product implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(targetClass = ServiceType.class)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private List<ServiceType> serviceType;
 
@@ -170,5 +170,10 @@ public class Product implements Serializable {
         paymentInstrumentEmissionFee = product.getPaymentInstrumentEmissionFee();
         paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
         administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
+    }
+
+    @JsonIgnore
+    public boolean containsServiceType(ServiceType serviceType) {
+        return this.serviceType != null && this.serviceType.contains(serviceType);
     }
 }
