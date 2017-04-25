@@ -90,19 +90,11 @@ public class Person implements Serializable{
                     .withErrors(Errors.INVALID_DOCUMENT_TYPE_FOR_USER);
         }
 
-        if(PersonType.LEGAL.equals(this.type) && this.legalPersonDetail == null) {
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(Errors.LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON);
-        }
-        if(PersonType.PHYSICAL.equals(this.type) && this.physicalPersonDetail == null) {
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(Errors.PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON);
-        }
     }
 
     @JsonIgnore
     public boolean isLegal() {
-        return PersonType.LEGAL.equals(this.type);
+        return PersonType.LEGAL.equals(this.type) && this.legalPersonDetail != null;
     }
 
     public void updatePhysical(Person person, Consumer<PhysicalPersonDetail> consumer) {
@@ -122,4 +114,8 @@ public class Person implements Serializable{
         update(person);
     }
 
+    @JsonIgnore
+    public boolean isPhysical() {
+        return PersonType.PHYSICAL.equals(this.type) && physicalPersonDetail != null;
+    }
 }

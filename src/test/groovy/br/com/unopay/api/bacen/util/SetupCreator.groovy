@@ -1,16 +1,8 @@
 package br.com.unopay.api.bacen.util
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.bacen.model.AccreditedNetwork
-import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.service.AccreditedNetworkService
-import br.com.unopay.api.bacen.service.ContractorService
-import br.com.unopay.api.bacen.service.EstablishmentService
-import br.com.unopay.api.bacen.service.IssuerService
-import br.com.unopay.api.bacen.service.PaymentRuleGroupService
+import br.com.unopay.api.bacen.model.*
+import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.service.PaymentInstrumentService
@@ -42,6 +34,15 @@ class SetupCreator {
     @Autowired
     private PaymentInstrumentService paymentInstrumentService
 
+    @Autowired
+    HirerService hirerService
+
+    @Autowired
+    ContractorService contractorService
+
+    @Autowired
+    ProductService productService
+
     Establishment createHeadOffice() {
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
         accreditedNetworkService.create(establishment.network)
@@ -62,24 +63,40 @@ class SetupCreator {
         paymentRuleGroupService.create(paymentRuleGroup)
     }
 
-    Contractor createContractor(){
+
+    PaymentInstrument createPaymentInstrument(String label) {
+        return Fixture.from(PaymentInstrument.class).gimme(label)
+                .with {
+            product = createProduct()
+            contractor = createContractor()
+            it
+        }
+    }
+
+    Hirer createHirer() {
+        Hirer hirer = Fixture.from(Hirer.class).gimme("valid")
+        hirerService.create(hirer)
+    }
+    Contractor createContractor() {
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractorService.create(contractor)
     }
-
-    Product createProduct(){
+    Product createProduct() {
         Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = createNetwork()
-                        issuer = createIssuer()
-                        paymentRuleGroup = createPaymentRuleGroup()
-                  it }
+        product = product.with {
+            issuer = createIssuer()
+            accreditedNetwork = createNetwork()
+            paymentRuleGroup = createPaymentRuleGroup()
+            it
+        }
         productService.save(product)
     }
-
-    PaymentInstrument createPaymentInstrument(String label){
-      return  Fixture.from(PaymentInstrument.class).gimme(label)
-                .with { product = createProduct()
-                        contractor = createContractor()
-                    it }
+    Product createSimpleProduct(){
+        createProduct().with {
+            accreditedNetwork = null
+            issuer = null
+            paymentRuleGroup = null
+            it
+        }
     }
 }
