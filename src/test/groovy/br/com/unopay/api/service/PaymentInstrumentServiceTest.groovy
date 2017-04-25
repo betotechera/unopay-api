@@ -5,7 +5,6 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import org.aspectj.weaver.ast.Not
 import org.springframework.beans.factory.annotation.Autowired
 
 class PaymentInstrumentServiceTest extends SpockApplicationTests {
