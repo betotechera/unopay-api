@@ -266,6 +266,8 @@ public final class Errors {
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
             new UnovationError("PAYMENT_INSTRUMENT_NOT_FOUND","Payment instrument not found.");
+    public static final UnovationError EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS =
+            new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS","External number id already exists.");
 
 
 

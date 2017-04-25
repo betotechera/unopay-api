@@ -26,5 +26,13 @@ public class InstrumentTemplateLoader  implements TemplateLoader {
             add("externalNumberId", random("AAAAAAAAAA22222222222444444", "24d995e3-be96-40e8-870d-bba297375a70", "012346"));
         }});
 
+        Fixture.of(PaymentInstrument.class).addTemplate("without-product").inherits("valid", new Rule(){{
+            add("product", null);
+        }});
+
+        Fixture.of(PaymentInstrument.class).addTemplate("without-contractor").inherits("valid", new Rule(){{
+            add("contractor", null);
+        }});
+
     }
 }
