@@ -46,31 +46,6 @@ class PersonServiceTest extends SpockApplicationTests {
         assert result.legalPersonDetail.id != null
     }
 
-    void 'should not save PHYSICAL Person if physicalPersonDetail is null'(){
-        given:
-        Person person = Fixture.from(Person.class).gimme("physical")
-        person.physicalPersonDetail = null
-        when:
-        service.save(person)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON'
-    }
-
-    void 'should not save LEGAL Person if legalPersonDetail is null'(){
-        given:
-        Person person = Fixture.from(Person.class).gimme("legal")
-        person.legalPersonDetail = null
-        when:
-        service.save(person)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON'
-    }
-
-
     void 'should not allow create Person with same document'(){
         given:
         Person person = Fixture.from(Person.class).gimme("legal")

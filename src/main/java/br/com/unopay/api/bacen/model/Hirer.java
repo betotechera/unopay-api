@@ -4,6 +4,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -59,5 +60,10 @@ public class Hirer implements Serializable {
 
         this.documentEmail  = hirer.getDocumentEmail();
         this.bankAccount.updateMe(hirer.getBankAccount());
+    }
+
+    @JsonIgnore
+    public String getDocumentNumber() {
+        return person.getDocument().getNumber();
     }
 }

@@ -8,9 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*; // NOSONAR
+import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -41,14 +40,12 @@ public class LegalPersonDetail implements Serializable{
     private Date creation;
 
     @Valid
-    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="activity")
     @JsonView({Views.Public.class,Views.List.class})
     private CompanyActivity activity;
 
     @Valid
-    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})

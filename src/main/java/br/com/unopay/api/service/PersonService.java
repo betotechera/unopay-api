@@ -48,7 +48,7 @@ public class PersonService {
             if(person.isLegal()) {
                 legalPersonDetailRepository.save(person.getLegalPersonDetail());
             }
-            else {
+            if(person.isPhysical()) {
                 physicalPersonDetailRepository.save(person.getPhysicalPersonDetail());
             }
             return repository.save(person);

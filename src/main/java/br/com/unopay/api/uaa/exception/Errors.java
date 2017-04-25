@@ -4,6 +4,7 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 
 public final class Errors {
 
+
     private Errors() {
         throw new IllegalAccessError("Utility class");
     }
@@ -262,6 +263,13 @@ public final class Errors {
             new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
     public static final UnovationError PRODUCT_ALREADY_EXISTS =
             new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
+    /* Contract */
+    public static final UnovationError CONTRACT_NOT_FOUND =
+            new UnovationError("CONTRACT_NOT_FOUND","Contract not found.");
+    public static final UnovationError CONTRACT_ALREADY_EXISTS =
+            new UnovationError("CONTRACT_ALREADY_EXISTS","Contract already exists.");
+    public static  final UnovationError CONTRACT_END_IS_BEFORE_BEGIN =
+            new UnovationError("CONTRACT_END_IS_BEFORE_BEGIN","Contract end date is before begin date.");
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
