@@ -162,4 +162,13 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
     }
+
+    def 'a unknown Instrument should not be deleted'(){
+        when:
+        service.delete('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
+    }
 }
