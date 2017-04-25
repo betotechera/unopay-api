@@ -58,7 +58,7 @@ public class PaymentRuleGroupService {
     public PaymentRuleGroup getById(String id) {
         PaymentRuleGroup paymentRuleGroup = repository.findOne(id);
         if (paymentRuleGroup == null) {
-            throw UnovationExceptions.notFound();
+            throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND);
         }
         return paymentRuleGroup;
     }

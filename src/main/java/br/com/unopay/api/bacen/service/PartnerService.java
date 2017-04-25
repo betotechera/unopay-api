@@ -41,7 +41,7 @@ public class PartnerService {
             return repository.save(hirer);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person partner already exists %s", hirer.getPerson()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_HIRED_ALREADY_EXISTS);
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_PARTNER_ALREADY_EXISTS);
 
         }
     }
@@ -49,7 +49,7 @@ public class PartnerService {
     public Partner getById(String id) {
         Partner hirer = repository.findOne(id);
         if(hirer == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.HIRED_NOT_FOUND);
+            throw UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND);
         }
         return hirer;
 
@@ -65,7 +65,7 @@ public class PartnerService {
     public void delete(String id) {
         getById(id);
         if(hasUser(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.HIRED_WITH_USERS);
+            throw UnovationExceptions.conflict().withErrors(Errors.PARTNER_WITH_USERS);
         }
         repository.delete(id);
     }

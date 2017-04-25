@@ -67,6 +67,8 @@ public final class Errors {
             new UnovationError("USER_TYPE_MUST_SET_AN_ISSUER","UserType must set an Issuer");
     public static final UnovationError ISSUER_WITH_USERS=
             new UnovationError("ISSUER_WITH_USERS","Issuer with users.");
+    public static final UnovationError ISSUER_ID_REQUIRED=
+            new UnovationError("ISSUER_ID_REQUIRED","Issuer id required");
 
     /* uaa */
     public static final UnovationError
@@ -126,6 +128,10 @@ public final class Errors {
             new UnovationError("LARGE_PAYMENT_RULE_GROUP_NAME","Name is too large");
     public static final UnovationError SHORT_PAYMENT_RULE_GROUP_NAME =
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
+    public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
+
+
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =
@@ -174,13 +180,22 @@ public final class Errors {
     public static final UnovationError HIRER_BRANCH_NOT_FOUND =
             new UnovationError("HIRER_NOT_FOUND","Hirer not found");
 
-    /* Hired */
-    public static final UnovationError PERSON_HIRED_ALREADY_EXISTS =
-            new UnovationError("PERSON_HIRED_ALREADY_EXISTS","Person Hired already exists");
-    public static final UnovationError HIRED_NOT_FOUND =
-            new UnovationError("HIRED_NOT_FOUND","Hired not found");
-    public static final UnovationError HIRED_WITH_USERS =
-            new UnovationError("HIRED_WITH_USERS"," Hired has Users");
+    /* Contractor */
+    public static final UnovationError PERSON_CONTRACTOR_ALREADY_EXISTS =
+            new UnovationError("PERSON_CONTRACTOR_ALREADY_EXISTS","Person Contractor already exists");
+    public static final UnovationError CONTRACTOR_NOT_FOUND =
+            new UnovationError("CONTRACTOR_NOT_FOUND","Contractor not found");
+    public static final UnovationError CONTRACTOR_WITH_USERS =
+            new UnovationError("CONTRACTOR_WITH_USERS"," Contractor has Users");
+
+    /* Partner */
+    public static final UnovationError PERSON_PARTNER_ALREADY_EXISTS =
+            new UnovationError("PERSON_PARTNER_ALREADY_EXISTS","Person Partner already exists");
+    public static final UnovationError PARTNER_NOT_FOUND =
+            new UnovationError("PARTNER_NOT_FOUND","Partner not found");
+    public static final UnovationError PARTNER_WITH_USERS =
+            new UnovationError("PARTNER_WITH_USERS"," Partner has Users");
+
 
     /* AccreditedNetwork */
     public static final UnovationError ACCREDITED_NETWORK_WITH_USERS =
@@ -241,6 +256,19 @@ public final class Errors {
             new UnovationError("HEAD_OFFICE_REQUIRED","Head office required.");
     public static final UnovationError CANNOT_CHANGE_HEAD_OFFICE =
             new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
+
+    /* product */
+    public static final UnovationError PRODUCT_NOT_FOUND =
+            new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
+    public static final UnovationError PRODUCT_ALREADY_EXISTS =
+            new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
+
+    /* payment instrument */
+    public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
+            new UnovationError("PAYMENT_INSTRUMENT_NOT_FOUND","Payment instrument not found.");
+    public static final UnovationError EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS =
+            new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS","External number id already exists.");
+
 
 
 }

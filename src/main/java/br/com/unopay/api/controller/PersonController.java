@@ -1,7 +1,7 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.PersonFilter;
+import br.com.unopay.api.model.filter.PersonFilter;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonView;
