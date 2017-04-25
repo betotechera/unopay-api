@@ -77,10 +77,9 @@ class SetupCreator {
     }
 
     PaymentInstrument createPaymentInstrument(String label){
-        PaymentInstrument instrument = Fixture.from(PaymentInstrument.class).gimme(label)
+      return  Fixture.from(PaymentInstrument.class).gimme(label)
                 .with { product = createProduct()
                         contractor = createContractor()
                     it }
-        paymentInstrumentService.save(instrument)
     }
 }

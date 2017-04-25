@@ -53,9 +53,9 @@ public class PaymentInstrumentService {
 
     public void update(String id, PaymentInstrument instrument) {
         PaymentInstrument current = findById(id);
+        validateReference(instrument);
         current.updateMe(instrument);
         try{
-            validateReference(instrument);
             repository.save(current);
         }catch (DataIntegrityViolationException e){
             log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId());
@@ -73,7 +73,7 @@ public class PaymentInstrumentService {
     }
 
     private void validateReference(PaymentInstrument instrument) {
-        contractorService.getById(instrument.getContractor().getId());
-        productService.findById(instrument.getProduct().getId());
+        instrument.setContractor(contractorService.getById(instrument.getContractor().getId()));
+        instrument.setProduct(productService.findById(instrument.getProduct().getId()));
     }
 }
