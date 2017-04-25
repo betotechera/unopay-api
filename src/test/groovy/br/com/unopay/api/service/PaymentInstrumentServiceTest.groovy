@@ -71,8 +71,8 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
         def externalId = 'sameExternalId'
-        PaymentInstrument created = service.save(instrument)
-        service.save(instrument.with { id = null; externalNumberId = externalId; it })
+        service.save(instrument.with { externalNumberId = externalId; it })
+        PaymentInstrument created = service.save(instrument.with { id = null; externalNumberId = 'id'; it })
 
         when:
         service.update(created.id, instrument.with { externalNumberId = externalId; it })
