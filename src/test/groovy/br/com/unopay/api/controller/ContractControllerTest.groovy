@@ -41,6 +41,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
             product = productUnderTest
+            serviceType = productUnderTest.serviceType
             it }
 
         when:
@@ -58,6 +59,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
             product = productUnderTest
+            serviceType = productUnderTest.serviceType
             it }
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
@@ -81,6 +83,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
             product = productUnderTest
+            serviceType = productUnderTest.serviceType
             it }
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
@@ -103,6 +106,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
             product = productUnderTest
+            serviceType = productUnderTest.serviceType
             it }
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
