@@ -1,5 +1,9 @@
 package br.com.unopay.api.controller
 
+import br.com.six2six.fixturefactory.Fixture
+import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.bacen.model.Issuer
+import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -18,10 +22,24 @@ class ProductControllerTest extends AuthServerApplicationTests {
     @Autowired
     SetupCreator setupCreator
 
+    Issuer issuerUnderTest
+    AccreditedNetwork networkUnderTest
+    PaymentRuleGroup paymentRuleGroupUnderTest
+
+    void setup(){
+        issuerUnderTest = setupCreator.createIssuer()
+        paymentRuleGroupUnderTest = setupCreator.createPaymentRuleGroup()
+        networkUnderTest = setupCreator.createNetwork()
+    }
+
     void 'valid product should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        Product product = setupCreator.createProduct()
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
 
         when:
         def result = this.mvc.perform(post('/products?access_token={access_token}', accessToken)
@@ -34,7 +52,11 @@ class ProductControllerTest extends AuthServerApplicationTests {
     void 'known product should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        Product product = setupCreator.createProduct()
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
 
         def mvcResult = this.mvc.perform(post('/products?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +75,11 @@ class ProductControllerTest extends AuthServerApplicationTests {
     void 'known product should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        Product product = setupCreator.createProduct()
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
 
         def mvcResult = this.mvc.perform(post('/products?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +97,11 @@ class ProductControllerTest extends AuthServerApplicationTests {
     void 'known products should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        Product product = setupCreator.createProduct()
+        Product product = Fixture.from(Product.class).gimme("valid")
+                .with { accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            it }
 
         def mvcResult = this.mvc.perform(post('/products?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
