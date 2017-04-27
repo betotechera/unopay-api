@@ -21,6 +21,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Set;
+
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.ResponseEntity.*;
 
 
 @Slf4j
@@ -39,24 +43,24 @@ public class ContractController {
     }
 
     @JsonView(Views.Public.class)
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @RequestMapping(value = "/contracts", method = RequestMethod.POST)
     public ResponseEntity<Contract> create(@Validated(Create.class) @RequestBody Contract contract) {
         log.info("creating contract {}", contract);
         Contract created = service.save(contract);
-        return ResponseEntity
-                .created(URI.create("/contracts/"+created.getId()))
+        return
+                created(URI.create("/contracts/"+created.getId()))
                 .body(created);
 
     }
     @JsonView(Views.Public.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.GET)
     public Contract get(@PathVariable String id) {
         log.info("get contract={}", id);
         return service.findById(id);
     }
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contract contract) {
         contract.setId(id);
@@ -64,7 +68,7 @@ public class ContractController {
         service.update(id,contract);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing contract id={}", id);
@@ -72,7 +76,7 @@ public class ContractController {
     }
 
     @JsonView(Views.List.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @RequestMapping(value = "/contracts", method = RequestMethod.GET)
     public Results<Contract> getByParams(ContractFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search contract with filter={}", filter);
@@ -80,5 +84,14 @@ public class ContractController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contracts", api));
     }
+    @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.PUT)
+    public ResponseEntity addEstablishmentsToContract(@PathVariable  String id,  @RequestBody Set<String> establishmentsDocumentNumber) {
+        log.info("Add establishments {} to contract {}", id,establishmentsDocumentNumber);
+        int inserted = service.addEstablishments(id,establishmentsDocumentNumber);
+       return  (inserted < establishmentsDocumentNumber.size()) ?
+               status(PARTIAL_CONTENT).build() :
+               noContent().build();
+    }
+
 
 }

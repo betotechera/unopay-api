@@ -1,8 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.bacen.model.*;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -11,6 +9,8 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
@@ -26,6 +27,7 @@ import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 @Data
 @Entity
 @Table(name = "contract")
+@EqualsAndHashCode(exclude = {"establishments"})
 public class Contract implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -38,6 +40,14 @@ public class Contract implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
+
+    @ManyToMany
+    @BatchSize(size = 10)
+    @JsonView({Views.Public.class})
+    @JoinTable(name = "contract_establishment",
+            joinColumns = { @JoinColumn(name = "contract_id") },
+            inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
+    private Set<Establishment> establishments;
 
     @Column(name="code")
     @NotNull(groups = {Create.class, Update.class})
