@@ -50,7 +50,7 @@ public class TemplateProcessor {
 
     private String getCachedTemplate(Notification notification) {
         if (!cache.containsKey(cacheKey(notification))) {
-            String template = templateLoader.getTemplate(notification.getEventType().toString());
+            String template = templateLoader.getTemplate(notification.getEventType());
             cache.put(cacheKey(notification), template);
         }
         return cache.get(cacheKey(notification));

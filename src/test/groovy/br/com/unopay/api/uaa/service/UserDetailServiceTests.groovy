@@ -377,7 +377,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         service.resetPasswordById(created.getId())
 
         then:
-        1 * notificationService.sendNewPassword(_)
+        1 * notificationService.sendNewPassword(_,EventType.PASSWORD_RESET)
     }
 
     void 'given a unknown user when set reset password by id should return error'() {
