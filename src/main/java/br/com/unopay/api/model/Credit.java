@@ -5,11 +5,11 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,10 +17,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED;
+
 @Data
 @Entity
 @Table(name = "credit")
-public class Credit implements Serializable {
+public class Credit implements Serializable, Updatable {
 
     public Credit(){}
 
@@ -106,19 +108,14 @@ public class Credit implements Serializable {
     @JsonIgnore
     private Integer version;
 
-    public void updateMe(Credit other){
-        product = other.getProduct();
-        paymentRuleGroup = other.getPaymentRuleGroup();
-        hirerDocument = other.getHirerDocument();
-        serviceType = other.getServiceType();
-        creditInsertionType = other.getCreditInsertionType();
-        creditNumber = other.getCreditNumber();
-        createdDateTime = other.getCreatedDateTime();
-        value = other.getValue();
-        situation = other.getSituation();
-        creditSource = other.getCreditSource();
-        cnabId = other.getCnabId();
-        availableBalance = other.getAvailableBalance();
-        blockedBalance = other.getBlockedBalance();
+    public void validate(){
+        if(product == null && paymentRuleGroup == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
+        }
+    }
+    public void setupMyCreate(){
+        if(product != null){
+            paymentRuleGroup = product.getPaymentRuleGroup();
+        }
     }
 }

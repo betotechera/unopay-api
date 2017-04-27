@@ -22,7 +22,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "payment_account")
-public class PaymentAccount implements Serializable {
+public class PaymentAccount implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -126,22 +126,4 @@ public class PaymentAccount implements Serializable {
     @JsonIgnore
     private Integer version;
 
-    public void updateMe(PaymentAccount other){
-        transactionCreatedDateTime = other.getTransactionCreatedDateTime();
-        issuer = other.getIssuer();
-        product = other.getProduct();
-        paymentRuleGroup = other.getPaymentRuleGroup();
-        hirerDocument = other.getHirerDocument();
-        serviceType = other.getServiceType();
-        creditInsertionType = other.getCreditInsertionType();
-        solicitationDateTime = other.getSolicitationDateTime();
-        creditNumber = other.getCreditNumber();
-        insertionCreatedDateTime = other.getInsertionCreatedDateTime();
-        value = other.getValue();
-        situation = other.getSituation();
-        creditSource = other.getCreditSource();
-        cnabId = other.getCnabId();
-        availableBalance = other.getAvailableBalance();
-        paymentBankAccount = other.getPaymentBankAccount();
-    }
 }

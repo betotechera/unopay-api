@@ -131,6 +131,8 @@ public final class Errors {
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
     public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
+    public static final UnovationError PAYMENT_RULE_GROUP_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_REQUIRED","Payment rule group is required");
 
 
 
@@ -279,6 +281,10 @@ public final class Errors {
     public static final UnovationError EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS =
             new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS",
                     "External number id already exists.");
+
+    /* credit */
+    public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED","Payment rule group or product is required");
 
 
 

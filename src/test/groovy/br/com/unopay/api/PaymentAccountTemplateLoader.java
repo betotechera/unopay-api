@@ -33,7 +33,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("contractor", null);
         }});
 
-        Fixture.of(Credit.class).addTemplate("valid", new Rule(){{
+        Fixture.of(Credit.class).addTemplate("allFields", new Rule(){{
             add("product", one(Product.class, "valid"));
             add("paymentRuleGroup",one(PaymentRuleGroup.class, "valid"));
             add("hirerDocument",cnpj());
@@ -48,6 +48,21 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("availableBalance", random(BigDecimal.class));
             add("blockedBalance",random(BigDecimal.class));
         }});
+
+        Fixture.of(Credit.class).addTemplate("withoutProduct").inherits("allFields", new Rule(){{
+            add("product", null);
+        }});
+
+        Fixture.of(Credit.class).addTemplate("withoutPaymentRuleGroup").inherits("allFields", new Rule(){{
+            add("paymentRuleGroup", null);
+        }});
+
+        Fixture.of(Credit.class).addTemplate("withoutProductAndPaymentRuleGroup").inherits("allFields", new Rule(){{
+            add("paymentRuleGroup", null);
+            add("product", null);
+        }});
+
+
 
         Fixture.of(PaymentAccount.class).addTemplate("valid", new Rule(){{
             add("transactionCreatedDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));

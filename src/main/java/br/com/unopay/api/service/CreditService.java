@@ -16,6 +16,8 @@ public class CreditService {
     }
 
     public Credit save(Credit credit) {
+        credit.validate();
+        credit.setupMyCreate();
         return repository.save(credit);
     }
 

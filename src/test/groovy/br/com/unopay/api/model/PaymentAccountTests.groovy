@@ -36,6 +36,34 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         a.paymentBankAccount == b.paymentBankAccount
     }
 
+
+    def 'only fields with value should be updated'(){
+        given:
+        PaymentAccount a = Fixture.from(PaymentAccount.class).gimme("valid")
+        PaymentAccount b = new PaymentAccount()
+
+        when:
+        a.updateMe(b)
+
+        then:
+        a.transactionCreatedDateTime != b.transactionCreatedDateTime
+        a.issuer != b.issuer
+        a.product != b.product
+        a.paymentRuleGroup != b.paymentRuleGroup
+        a.hirerDocument != b.hirerDocument
+        a.serviceType != b.serviceType
+        a.creditInsertionType != b.creditInsertionType
+        a.solicitationDateTime != b.solicitationDateTime
+        a.creditNumber != b.creditNumber
+        a.insertionCreatedDateTime != b.insertionCreatedDateTime
+        a.value != b.value
+        a.situation != b.situation
+        a.creditSource != b.creditSource
+        a.cnabId != b.cnabId
+        a.availableBalance != b.availableBalance
+        a.paymentBankAccount != b.paymentBankAccount
+    }
+
     def 'should be equals'(){
         given:
         PaymentAccount a = Fixture.from(PaymentAccount.class).gimme("valid")
