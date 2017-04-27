@@ -60,6 +60,8 @@ public class ContractService {
         validateReferences(contract);
         current.updateMe(contract);
         current.validate();
+        contract.checkDocumentNumberInvoice();
+
         try {
             repository.save(current);
         }catch (DataIntegrityViolationException e){

@@ -1,5 +1,6 @@
 package br.com.unopay.api.notification.engine;
 
+import br.com.unopay.api.notification.model.EventType;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,11 @@ public class TemplateLoader {
         return resourceLoader.getResource(location);
     }
 
-    public String getTemplate(String template){
-        if("passwordReset".equals(template)) {
+    public String getTemplate(EventType eventType){
+        if(EventType.PASSWORD_RESET.equals(eventType)) {
             return resetTemplate;
         }
-        if("createPassword".equals(template)) {
+        if(EventType.CREATE_PASSWORD.equals(eventType)) {
             return newUserTemplate;
         }
         return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} " +
