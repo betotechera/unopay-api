@@ -85,48 +85,58 @@ public class Product implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(targetClass = ServiceType.class)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private List<ServiceType> serviceType;
 
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private CreditInsertionType creditInsertionType;
 
     @Column(name = "minimum_credit_insertion")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal minimumCreditInsertion;
 
     @Column(name = "maximum_credit_insertion")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal maximumCreditInsertion;
 
     @Column(name = "payment_instrument_valid_days")
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Integer paymentInstrumentValidDays;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private ProductSituation situation;
 
     @Column(name = "membership_fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal membershipFee;
 
     @Column(name = "credit_insertion_fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal creditInsertionFee;
 
     @Column(name = "pay_inst_emission_fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal paymentInstrumentEmissionFee;
 
     @Column(name = "pay_inst_second_copy_fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal paymentInstrumentSecondCopyFee;
 
     @Column(name = "adm_credit_insert_fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal administrationCreditInsertionFee;
 
     @Version
@@ -170,5 +180,10 @@ public class Product implements Serializable {
         paymentInstrumentEmissionFee = product.getPaymentInstrumentEmissionFee();
         paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
         administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
+    }
+
+    @JsonIgnore
+    public boolean containsServiceType(ServiceType serviceType) {
+        return this.serviceType != null && this.serviceType.contains(serviceType);
     }
 }

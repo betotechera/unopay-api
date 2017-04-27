@@ -24,35 +24,20 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("userRelationship", UserRelationship.POSTPAID);
         }});
 
-        Fixture.of(PaymentRuleGroup.class).addTemplate("without-institution", new Rule(){{
-            add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
-            add("name", "Arranjo");
-            add("purpose", Purpose.BUY);
-            add("scope", Scope.DOMESTIC);
-            add("userRelationship", UserRelationship.POSTPAID);
+        Fixture.of(PaymentRuleGroup.class).addTemplate("without-institution").inherits("valid", new Rule(){{
+            add("institution", null);
         }});
 
-        Fixture.of(PaymentRuleGroup.class).addTemplate("without-name", new Rule(){{
-            add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
-            add("institution", one(Institution.class, "persisted"));
-            add("purpose", Purpose.BUY);
-            add("scope", Scope.DOMESTIC);
-            add("userRelationship", UserRelationship.POSTPAID);
+        Fixture.of(PaymentRuleGroup.class).addTemplate("without-name").inherits("valid", new Rule(){{
+            add("name", null);
         }});
-        Fixture.of(PaymentRuleGroup.class).addTemplate("without-code", new Rule(){{
-            add("name", "Arranjo");
-            add("purpose", Purpose.BUY);
-            add("institution", one(Institution.class, "persisted"));
-            add("scope", Scope.DOMESTIC);
-            add("userRelationship", UserRelationship.POSTPAID);
+
+        Fixture.of(PaymentRuleGroup.class).addTemplate("without-code").inherits("valid", new Rule(){{
+            add("code", null);
         }});
-        Fixture.of(PaymentRuleGroup.class).addTemplate("persisted", new Rule(){{
+
+        Fixture.of(PaymentRuleGroup.class).addTemplate("persisted").inherits("valid", new Rule(){{
             add("id", "1");
-            add("code", "1234");
-            add("name", "Arranjo");
-            add("purpose", Purpose.BUY);
-            add("scope", Scope.DOMESTIC);
-            add("userRelationship", UserRelationship.POSTPAID);
         }});
 
         Fixture.of(Institution.class).addTemplate("valid", new Rule(){{
@@ -68,10 +53,9 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("person", one(Person.class, "legal"));
             add("bankAccount", one(BankAccount.class, "persisted"));
         }});
-        Fixture.of(Hirer.class).addTemplate("persisted", new Rule(){{
+
+        Fixture.of(Hirer.class).addTemplate("persisted").inherits("valid", new Rule(){{
             add("id", "1");
-            add("person", one(Person.class, "legal"));
-            add("bankAccount", one(BankAccount.class, "persisted"));
         }});
 
         Fixture.of(HirerBranch.class).addTemplate("valid", new Rule(){{
@@ -104,6 +88,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
         }});
+
         Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
@@ -126,9 +111,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("type", uniqueRandom(InvoiceReceiptType.class));
         }});
 
-
-        Fixture.of(BankAccount.class).addTemplate("persisted", new Rule(){{
-            add("id", random("1", "2"));
+        Fixture.of(BankAccount.class).addTemplate("valid", new Rule(){{
             add("bank", one(Bank.class, "valid"));
             add("agency", random("6465", "55794", "004456"));
             add("agencyDigit", random("a2", "1", "A"));
@@ -137,13 +120,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("type", random(BankAccountType.class));
         }});
 
-        Fixture.of(BankAccount.class).addTemplate("valid", new Rule(){{
-            add("bank", one(Bank.class, "valid"));
-            add("agency", random("6465", "55794", "004456"));
-            add("agencyDigit", random("a2", "1", "A"));
-            add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
-            add("accountNumberDigit", random("a2", "1", "A"));
-            add("type", random(BankAccountType.class));
+        Fixture.of(BankAccount.class).addTemplate("persisted").inherits("valid", new Rule(){{
+            add("id", random("1", "2"));
         }});
 
         Fixture.of(PaymentBankAccount.class).addTemplate("valid", new Rule(){{
@@ -162,13 +140,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("taxPercent", random(Double.class));
         }});
 
-        Fixture.of(Service.class).addTemplate("persisted", new Rule(){{
+        Fixture.of(Service.class).addTemplate("persisted").inherits("valid", new Rule(){{
             add("id", "1");
-            add("name", firstName());
-            add("type", random(ServiceType.class));
-            add("code", random(Integer.class));
-            add("taxVal", random(BigDecimal.class));
-            add("taxPercent", random(Double.class));
         }});
 
         Fixture.of(Event.class).addTemplate("valid", new Rule(){{
@@ -197,12 +170,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("phone", random("1199557788", "(11) 99556-8866"));
         }});
 
-        Fixture.of(Contact.class).addTemplate("persisted", new Rule(){{
-            add("id","1");
-            add("name",firstName());
-            add("mail", random("${name}@gmail.com", "${name}@uol.com.br", "${name}@new.me"));
-            add("cellPhone", random("1199557788", "(11) 99556-8866"));
-            add("phone", random("1199557788", "(11) 99556-8866"));
+        Fixture.of(Contact.class).addTemplate("persisted").inherits("valid", new Rule(){{
+            add("id", "1");
         }});
 
         Fixture.of(Establishment.class).addTemplate("valid", new Rule(){{

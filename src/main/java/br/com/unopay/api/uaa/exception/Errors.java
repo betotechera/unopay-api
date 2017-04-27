@@ -4,6 +4,7 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 
 public final class Errors {
 
+
     private Errors() {
         throw new IllegalAccessError("Utility class");
     }
@@ -130,15 +131,14 @@ public final class Errors {
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
     public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
+    public static final UnovationError PAYMENT_RULE_GROUP_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_REQUIRED","Payment rule group is required");
 
 
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =
             new UnovationError("INVALID_DOCUMENT_TYPE_FOR_USER","Invalid document type for user");
-    public static final UnovationError LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON =
-            new UnovationError("LEGAL_PERSON_DETAIL_IS_REQUIRED_FOR_LEGAL_PERSON",
-                    "LegalPersonDetail is required for PersonType.LEGAL");
     public static final UnovationError PERSON_DOCUMENT_ALREADY_EXISTS  =
             new UnovationError("PERSON_DOCUMENT_ALREADY_EXISTS","Person with document already exists");
     public static final UnovationError PERSON_WITH_DOCUMENT_NOT_FOUND =
@@ -149,9 +149,6 @@ public final class Errors {
             PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
     public static final UnovationError
             PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
-    public static final UnovationError PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON =
-            new UnovationError("PHYSICAL_PERSON_DETAIL_IS_REQUIRED_FOR_PHYSICAL_PERSON",
-                    "physicalPersonDetail is required for PersonType.PHYSICAL");
 
 
     /* Institution */
@@ -164,7 +161,8 @@ public final class Errors {
     public static final UnovationError INSTITUTION_WITH_USERS =
             new UnovationError("INSTITUTION_WITH_USERS"," Institution has Users");
     public static final UnovationError INSTITUTION_WITH_PAYMENT_RULE_GROUPS =
-            new UnovationError("INSTITUTION_WITH_PAYMENT_RULE_GROUPS","Institution has PaymentRuleGroups");
+            new UnovationError("INSTITUTION_WITH_PAYMENT_RULE_GROUPS",
+                    "Institution has PaymentRuleGroups");
 
     /* Hirer */
     public static final UnovationError PERSON_HIRER_ALREADY_EXISTS =
@@ -201,13 +199,17 @@ public final class Errors {
     public static final UnovationError ACCREDITED_NETWORK_WITH_USERS =
             new UnovationError("ACCREDITED_NETWORK_WITH_USERS","AccreditedNetwork has users");
     public static final UnovationError PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS =
-            new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS","Person AccreditedNetwork already exists");
+            new UnovationError("PERSON_ACCREDITED_NETWORK_ALREADY_EXISTS",
+                    "Person AccreditedNetwork already exists");
     public static final UnovationError INVALID_MERCHANT_DISCOUNT_RATE_RANGE =
-            new UnovationError("INVALID_MERCHANT_DISCOUNT_RATE_RANGE","merchantDiscountRate must be between 0 and 1");
+            new UnovationError("INVALID_MERCHANT_DISCOUNT_RATE_RANGE",
+                    "merchantDiscountRate must be between 0 and 1");
     public static final UnovationError INVALID_MINIMUM_DEPOSIT_VALUE =
-            new UnovationError("INVALID_MINIMUM_DEPOSIT_VALUE","minimumDepositValue must be a positive value");
+            new UnovationError("INVALID_MINIMUM_DEPOSIT_VALUE",
+                    "minimumDepositValue must be a positive value");
     public static final UnovationError USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK =
-            new UnovationError("USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK","UserType must set an AccreditedNetwork");
+            new UnovationError("USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK",
+                    "UserType must set an AccreditedNetwork");
     public static final UnovationError ACCREDITED_NETWORK_NOT_FOUND =
             new UnovationError("ACCREDITED_NETWORK_NOT_FOUND","AccreditedNetwork not found");
 
@@ -262,12 +264,27 @@ public final class Errors {
             new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
     public static final UnovationError PRODUCT_ALREADY_EXISTS =
             new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
+    /* Contract */
+    public static final UnovationError CONTRACT_NOT_FOUND =
+            new UnovationError("CONTRACT_NOT_FOUND","Contract not found.");
+    public static final UnovationError CONTRACT_ALREADY_EXISTS =
+            new UnovationError("CONTRACT_ALREADY_EXISTS","Contract already exists.");
+    public static  final UnovationError CONTRACT_END_IS_BEFORE_BEGIN =
+            new UnovationError("CONTRACT_END_IS_BEFORE_BEGIN","Contract end date is before begin date.");
+    public static final UnovationError ESTABLISHMENTS_NOT_FOUND =
+            new UnovationError("ESTABLISHMENTS_NOT_FOUND",
+                    "The informed Contract ServiceTypes are not in the informed Product ServiceTypes.");
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
             new UnovationError("PAYMENT_INSTRUMENT_NOT_FOUND","Payment instrument not found.");
     public static final UnovationError EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS =
-            new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS","External number id already exists.");
+            new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS",
+                    "External number id already exists.");
+
+    /* credit */
+    public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED","Payment rule group or product is required");
 
 
 
