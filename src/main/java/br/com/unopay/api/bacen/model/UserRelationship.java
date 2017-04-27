@@ -1,14 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.bacen.util.rest.UserRelationshipDeserializer;
-import br.com.unopay.api.bacen.util.rest.UserRelationshipSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = UserRelationshipDeserializer.class)
-@JsonSerialize(using = UserRelationshipSerializer.class)
-
-public enum UserRelationship {
+public enum UserRelationship implements DescriptibleEnum {
 
     PREPAID("Conta de pagamento Pre-paga"),
     POSTPAID("Conta de pagamento Pos-paga"),

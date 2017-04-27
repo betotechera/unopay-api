@@ -1,13 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.bacen.util.rest.PurposeDeserializer;
-import br.com.unopay.api.bacen.util.rest.PurposeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = PurposeDeserializer.class)
-@JsonSerialize(using = PurposeSerializer.class)
-public enum Purpose{
+public enum Purpose implements DescriptibleEnum{
 
     BUY("Compra"), TRANSFER("Tranferencia");
 
