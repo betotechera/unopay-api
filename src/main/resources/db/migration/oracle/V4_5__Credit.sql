@@ -23,6 +23,7 @@ create table payment_account (
     transaction_created_date_time TIMESTAMP not null,
     issuer_id varchar(256) not null,
     product_id varchar(256),
+    payment_rule_group_id varchar(256) not null,
     hirer_document varchar(20) not null,
     service_type varchar(100),
     credit_insertion_type varchar(100) not null,

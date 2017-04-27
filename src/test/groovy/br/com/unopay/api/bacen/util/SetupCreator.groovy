@@ -32,16 +32,10 @@ class SetupCreator {
     private ContractorService contractorService
 
     @Autowired
-    private PaymentInstrumentService paymentInstrumentService
+    private HirerService hirerService
 
     @Autowired
-    HirerService hirerService
-
-    @Autowired
-    ContractorService contractorService
-
-    @Autowired
-    ProductService productService
+    private PaymentBankAccountService paymentBankAccountService
 
     Establishment createHeadOffice() {
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
@@ -61,6 +55,11 @@ class SetupCreator {
     PaymentRuleGroup createPaymentRuleGroup() {
         PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("valid")
         paymentRuleGroupService.create(paymentRuleGroup)
+    }
+
+    PaymentBankAccount createPaymentBankAccount() {
+        PaymentBankAccount paymentRuleGroup = Fixture.from(PaymentBankAccount.class).gimme("valid")
+        paymentBankAccountService.create(paymentRuleGroup)
     }
 
 

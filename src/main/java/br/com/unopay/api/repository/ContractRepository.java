@@ -5,6 +5,6 @@ import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 
 
-public interface ContractRepository   extends UnovationFilterRepository<Contract,String, ContractFilter> {
+public interface ContractRepository  extends UnovationFilterRepository<Contract,String, ContractFilter> {
 
 }
