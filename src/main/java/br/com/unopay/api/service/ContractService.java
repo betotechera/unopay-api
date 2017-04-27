@@ -1,10 +1,14 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractRepository;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -25,13 +32,15 @@ public class ContractService {
     private HirerService hirerService;
     private ContractorService contractorService;
     private ProductService productService;
+    private EstablishmentRepository establishmentRepository;
 
     @Autowired
-    public ContractService(ContractRepository repository, HirerService hirerService, ContractorService contractorService, ProductService productService) {
+    public ContractService(ContractRepository repository, HirerService hirerService, ContractorService contractorService, ProductService productService, EstablishmentRepository establishmentRepository) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
         this.productService = productService;
+        this.establishmentRepository = establishmentRepository;
     }
 
     public Contract save(Contract contract) {
@@ -88,4 +97,13 @@ public class ContractService {
         }
     }
 
+    public int addEstablishments(String id, Set<String> establishmentsDocumentNumber) {
+        Set<Establishment> establishments = establishmentRepository.findByPersonDocumentNumberIn(establishmentsDocumentNumber);
+        if(establishments == null || establishments.size() < 0)
+            throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENTS_NOT_FOUND);
+        Contract contract = findById(id);
+        contract.setEstablishments(establishments);
+        repository.save(contract);
+        return establishments.size();
+    }
 }

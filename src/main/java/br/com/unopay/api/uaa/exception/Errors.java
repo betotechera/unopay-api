@@ -5,7 +5,6 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 public final class Errors {
 
 
-
     private Errors() {
         throw new IllegalAccessError("Utility class");
     }
@@ -270,8 +269,8 @@ public final class Errors {
             new UnovationError("CONTRACT_ALREADY_EXISTS","Contract already exists.");
     public static  final UnovationError CONTRACT_END_IS_BEFORE_BEGIN =
             new UnovationError("CONTRACT_END_IS_BEFORE_BEGIN","Contract end date is before begin date.");
-    public static UnovationError CONTRACT_SERVICES_NOT_IN_PRODUCT_SERVICES =
-            new UnovationError("CONTRACT_SERVICES_NOT_IN_PRODUCT_SERVICES",
+    public static final UnovationError ESTABLISHMENTS_NOT_FOUND =
+            new UnovationError("ESTABLISHMENTS_NOT_FOUND",
                     "The informed Contract ServiceTypes are not in the informed Product ServiceTypes.");
 
     /* payment instrument */
