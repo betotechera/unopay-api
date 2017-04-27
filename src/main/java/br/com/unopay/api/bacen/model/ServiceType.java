@@ -1,13 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.bacen.util.rest.ServiceTypeDeserializer;
-import br.com.unopay.api.bacen.util.rest.ServiceTypeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = ServiceTypeDeserializer.class)
-@JsonSerialize(using = ServiceTypeSerializer.class)
-public enum ServiceType {
+public enum ServiceType implements DescriptibleEnum {
 
     FUEL_ALLOWANCE("Vale Abastecimento"), 
     FREIGHT("Frete"), 

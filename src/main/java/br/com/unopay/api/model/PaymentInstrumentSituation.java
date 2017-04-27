@@ -1,5 +1,17 @@
 package br.com.unopay.api.model;
 
-public enum PaymentInstrumentSituation {
-    ISSUED, ENABLED, ACTIVE, SUSPENDED, CANCELED
+import br.com.unopay.api.filter.DescriptibleEnum;
+
+public enum PaymentInstrumentSituation implements DescriptibleEnum{
+    ISSUED("Emitido"), ENABLED("Habilitado"), ACTIVE("Ativo"), SUSPENDED("Supspenso."), CANCELED("Cancelado");
+
+    private String description;
+
+    PaymentInstrumentSituation(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

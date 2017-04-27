@@ -1,13 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.util.rest.PersonTypeDeserializer;
-import br.com.unopay.api.util.rest.PersonTypeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = PersonTypeDeserializer.class)
-@JsonSerialize(using = PersonTypeSerializer.class)
-public enum PersonType{
+public enum PersonType implements DescriptibleEnum {
 
     PHYSICAL("Pessoa Fisica"), LEGAL("Pessoa Juridica");
 

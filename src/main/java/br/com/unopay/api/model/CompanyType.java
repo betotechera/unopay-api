@@ -1,13 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.util.rest.CompanyTypeDeserializer;
-import br.com.unopay.api.util.rest.CompanyTypeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = CompanyTypeDeserializer.class)
-@JsonSerialize(using = CompanyTypeSerializer.class)
-public enum CompanyType {
+public enum CompanyType implements DescriptibleEnum {
 
     LIMITED_PARTNERSHIP("Sociedade por quotas de responsabilidade limitada"),
     STOCK_COMPANY("Sociedade por ações - S.A"),

@@ -1,13 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.bacen.util.rest.AccreditedNetworkTypeDeserializer;
-import br.com.unopay.api.bacen.util.rest.AccreditedNetworkTypeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptibleEnum;
 
-@JsonDeserialize(using = AccreditedNetworkTypeDeserializer.class)
-@JsonSerialize(using = AccreditedNetworkTypeSerializer.class)
-public enum AccreditedNetworkType {
+public enum AccreditedNetworkType implements DescriptibleEnum {
 
     SUPPLY("Rede de Abastecimento/Quitação de Frete"), TOLL("Rede de Pedágio Eletrônico");
 
