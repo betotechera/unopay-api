@@ -150,6 +150,7 @@ public class Contract implements Serializable {
         rntrc = contract.getRntrc();
         situation = contract.getSituation();
         issueInvoice = contract.isIssueInvoice();
-        documentNumberInvoice = contract.getDocumentNumberInvoice();
+        if(contract.getDocumentNumberInvoice() != null)
+            documentNumberInvoice = contract.getDocumentNumberInvoice();
     }
 }
