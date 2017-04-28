@@ -68,7 +68,7 @@ class CreditServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
-    void 'given a credit with unknown hirer document should be created'(){
+    void 'given a credit with unknown hirer document should not be created'(){
         given:
         Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
                 .with { product = setupCreator.createProduct()
