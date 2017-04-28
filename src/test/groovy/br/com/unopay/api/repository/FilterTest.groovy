@@ -79,7 +79,48 @@ class FilterTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(0)
+    }
 
+    def 'should return contracts like name'() {
+        given:
+        Contract contractA = createContract().with { name = 'amanda'; it }
+        Contract contractB = createContract().with { name = 'fernanda'; it}
+        Contract contractC = createContract().with { name = 'teste'; it}
+
+        def filter = new ContractFilter()
+
+        filter.with { name = 'anda' }
+
+        repository.save(contractA)
+        repository.save(contractB)
+        repository.save(contractC)
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(2)
+    }
+
+    def 'should return contracts like exact name'() {
+        given:
+        Contract contractA = createContract().with { name = 'jose'; it }
+        Contract contractB = createContract().with { name = 'fernanda'; it}
+        Contract contractC = createContract().with { name = 'teste'; it}
+
+        def filter = new ContractFilter()
+
+        filter.with { name = 'jose' }
+
+        repository.save(contractA)
+        repository.save(contractB)
+        repository.save(contractC)
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
     }
 
     private Contract createContract() {

@@ -13,6 +13,9 @@ public class ContractFilter  implements Serializable {
     @SearchableField
     private String code;
 
+    @SearchableField
+    private String name;
+
     @SearchableField(field = "product.id")
     private String product;
 
