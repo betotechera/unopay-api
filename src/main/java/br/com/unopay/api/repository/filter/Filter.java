@@ -81,6 +81,9 @@ public class Filter<T> implements Specification<T> {
         if(value instanceof Period){
             return createPeriodBetween(key, value);
         }
+        if(value instanceof Enum){
+            return cb.equal(key, value);
+        }
         return cb.like(key, "%" + value + "%");
     }
 
