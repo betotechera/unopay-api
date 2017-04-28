@@ -37,7 +37,35 @@ class ProductTest  extends FixtureApplicationTest {
         a.creditInsertionFee == b.creditInsertionFee
         a.paymentInstrumentEmissionFee == b.paymentInstrumentEmissionFee
         a.paymentInstrumentSecondCopyFee == b.paymentInstrumentSecondCopyFee
-        a.administrationCreditInsertionFee == a.administrationCreditInsertionFee
+        a.administrationCreditInsertionFee == b.administrationCreditInsertionFee
+    }
+
+    def 'fields without value should not be updated'(){
+        given:
+        Product a = Fixture.from(Product.class).gimme("valid")
+        Product b = new Product()
+
+        when:
+        a.updateMe(b)
+
+        then:
+        a.code != b.code
+        a.name != b.name
+        a.type != b.type
+        a.issuer != b.issuer
+        a.paymentRuleGroup != b.paymentRuleGroup
+        a.accreditedNetwork != b.accreditedNetwork
+        a.paymentInstrumentType != b.paymentInstrumentType
+        a.creditInsertionType != b.creditInsertionType
+        a.minimumCreditInsertion != b.minimumCreditInsertion
+        a.maximumCreditInsertion != b.maximumCreditInsertion
+        a.paymentInstrumentValidDays != b.paymentInstrumentValidDays
+        a.situation != b.situation
+        a.membershipFee != b.membershipFee
+        a.creditInsertionFee != b.creditInsertionFee
+        a.paymentInstrumentEmissionFee != b.paymentInstrumentEmissionFee
+        a.paymentInstrumentSecondCopyFee != b.paymentInstrumentSecondCopyFee
+        a.administrationCreditInsertionFee != b.administrationCreditInsertionFee
     }
 
     def 'should be equals'(){

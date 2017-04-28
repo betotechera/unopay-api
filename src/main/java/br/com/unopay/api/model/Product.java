@@ -28,7 +28,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUI
 @Data
 @Entity
 @Table(name = "product")
-public class Product implements Serializable {
+public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -153,33 +153,6 @@ public class Product implements Serializable {
         if(getPaymentRuleGroup() != null && getPaymentRuleGroup().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_ID_REQUIRED);
         }
-    }
-
-    public void updateMe(Product product) {
-        code = product.getCode();
-        name = product.getName();
-        type = product.getType();
-        if(product.getIssuer() != null && product.getIssuer().getId() != null) {
-            issuer = product.getIssuer();
-        }
-        if(product.getPaymentRuleGroup() != null && product.getPaymentRuleGroup().getId() !=null) {
-            paymentRuleGroup = product.getPaymentRuleGroup();
-        }
-        if(product.getAccreditedNetwork() != null && product.getAccreditedNetwork().getId() != null) {
-            accreditedNetwork = product.getAccreditedNetwork();
-        }
-        paymentInstrumentType = product.getPaymentInstrumentType();
-        serviceType = product.getServiceType();
-        creditInsertionType = product.getCreditInsertionType();
-        minimumCreditInsertion = product.getMinimumCreditInsertion();
-        maximumCreditInsertion = product.getMaximumCreditInsertion();
-        paymentInstrumentValidDays = product.getPaymentInstrumentValidDays();
-        situation = product.getSituation();
-        membershipFee = product.getMembershipFee();
-        creditInsertionFee = product.getCreditInsertionFee();
-        paymentInstrumentEmissionFee = product.getPaymentInstrumentEmissionFee();
-        paymentInstrumentSecondCopyFee = product.getPaymentInstrumentSecondCopyFee();
-        administrationCreditInsertionFee = product.getAdministrationCreditInsertionFee();
     }
 
     @JsonIgnore
