@@ -36,10 +36,4 @@ public enum DocumentType{
       return personTypes.contains(personType);
     }
 
-    public String getDescription(){
-        return personTypes.stream().map(PersonType::getDescription).collect(Collectors.joining());
-    }
-
-
-
 }
