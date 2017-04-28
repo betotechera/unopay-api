@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-public enum ContractSituation implements DescriptibleEnum {
+public enum ContractSituation implements DescriptionEnum {
     ACTIVE("Ativo"), SUSPENDED("Suspenso"),CANCELLED("Canclado"),FINALIZED("Finalizado"),EXPIRED("Expirado");
 
     private String description;

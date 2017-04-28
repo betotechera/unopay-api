@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-public enum InvoiceReceiptType implements DescriptibleEnum {
+public enum InvoiceReceiptType implements DescriptionEnum {
     XML("xml"), MANUAL("manual");
 
     private String description;

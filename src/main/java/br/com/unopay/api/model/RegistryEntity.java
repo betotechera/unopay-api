@@ -1,13 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.util.rest.RegistryEntityDeserializer;
-import br.com.unopay.api.util.rest.RegistryEntitySerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-@JsonDeserialize(using = RegistryEntityDeserializer.class)
-@JsonSerialize(using = RegistryEntitySerializer.class)
-public enum RegistryEntity {
+public enum RegistryEntity implements DescriptionEnum{
 
     SSP("Secretaria de Segurança Pública"),
     MMA("Ministério da Marinha"),

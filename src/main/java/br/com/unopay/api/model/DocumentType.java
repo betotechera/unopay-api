@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static br.com.unopay.api.model.PersonType.LEGAL;
 import static br.com.unopay.api.model.PersonType.PHYSICAL;
 
-public enum DocumentType implements DescriptibleEnum{
+public enum DocumentType implements DescriptionEnum {
 
     CNPJ(LEGAL),
     STATE_REGISTRATION(LEGAL),
