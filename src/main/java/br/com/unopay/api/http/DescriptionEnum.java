@@ -1,4 +1,4 @@
-package br.com.unopay.api.filter;
+package br.com.unopay.api.http;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

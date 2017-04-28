@@ -1,4 +1,4 @@
-package br.com.unopay.api.filter
+package br.com.unopay.api.http
 
 import br.com.unopay.api.bacen.model.BankAccountType
 import com.fasterxml.jackson.core.JsonFactory

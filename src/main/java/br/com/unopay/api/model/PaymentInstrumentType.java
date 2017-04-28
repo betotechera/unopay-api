@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptionEnum;
+import br.com.unopay.api.http.DescriptionEnum;
 
 public enum PaymentInstrumentType implements DescriptionEnum {
     DIGITAL_WALLET("Carteira digital"), ACCOUNT_DEPOSIT("Conta deposito."), PREPAID_CARD("Cartao prepago"), VIRTUAL_CARD("Cartao virtual"), TAG("Tag");

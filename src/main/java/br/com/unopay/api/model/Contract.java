@@ -109,6 +109,7 @@ public class Contract implements Serializable {
     private boolean issueInvoice;
 
     @Column(name = "document_number_invoice")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private String documentNumberInvoice;
 

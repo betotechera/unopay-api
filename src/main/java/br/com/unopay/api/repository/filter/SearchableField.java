@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface SearchableField {
 
     String field() default "";
+
+    Class dataType() default String.class;
 }

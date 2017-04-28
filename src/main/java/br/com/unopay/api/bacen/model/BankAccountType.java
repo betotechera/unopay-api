@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.filter.DescriptionEnum;
+import br.com.unopay.api.http.DescriptionEnum;
 
 public enum BankAccountType implements DescriptionEnum {
     CURRENT("Corrente"), SAVINGS("Poupança");

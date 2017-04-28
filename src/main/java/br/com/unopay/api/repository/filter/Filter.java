@@ -1,7 +1,9 @@
 package br.com.unopay.api.repository.filter;
 
+import br.com.unopay.api.model.Period;
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,7 +54,14 @@ public class Filter<T> implements Specification<T> {
         if(split.length > 1){
             return createJoinPredicate(pair, cb, root,split);
         }
-        return cb.equal(root.get(pair.getKey()), pair.getValue());
+        return addOperator(pair.getKey(), pair.getValue(), cb, root);
+    }
+
+    private <T> Predicate addOperator(String key, Object value, CriteriaBuilder cb, Root<T> root) {
+        if(value instanceof Period){
+            return createPeriodBetween(key, value,cb,root);
+        }
+        return cb.equal(root.get(key), value);
     }
 
     private <T> Predicate createJoinPredicate(Map.Entry<String, Object> pair, CriteriaBuilder cb, Root<T> root, String... fields) {
@@ -67,6 +76,12 @@ public class Filter<T> implements Specification<T> {
         }
         throw new UnprocessableEntityException("Invalid filter join length: "+fields.length);
 
+    }
+
+    @SneakyThrows
+    private <T> Predicate createPeriodBetween(String key, Object value, CriteriaBuilder cb, Root<T> root){
+        Period period = (Period) value;
+        return cb.between(root.get(key),period.getBegin(),period.getEnd());
     }
 
     private String getFieldName(Field field){

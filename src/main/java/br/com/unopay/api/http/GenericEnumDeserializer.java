@@ -1,4 +1,4 @@
-package br.com.unopay.api.filter;
+package br.com.unopay.api.http;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;

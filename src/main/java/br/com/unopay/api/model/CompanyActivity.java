@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptionEnum;
+import br.com.unopay.api.http.DescriptionEnum;
 
 public enum CompanyActivity implements DescriptionEnum {
 

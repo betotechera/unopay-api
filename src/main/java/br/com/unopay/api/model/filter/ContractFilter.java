@@ -1,10 +1,10 @@
 package br.com.unopay.api.model.filter;
 
 import br.com.unopay.api.model.ContractSituation;
+import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class ContractFilter  implements Serializable {
 
@@ -24,6 +24,12 @@ public class ContractFilter  implements Serializable {
 
     @SearchableField
     private ContractSituation situation;
+
+    @SearchableField(field = "begin")
+    private Period beginPeriod;
+
+    @SearchableField(field = "end")
+    private Period endPeriod;
     
 
 }

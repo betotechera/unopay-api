@@ -5,6 +5,7 @@ import br.com.unopay.api.repository.filter.SearchableField;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class ContractorFilter implements Serializable {
