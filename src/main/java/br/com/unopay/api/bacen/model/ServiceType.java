@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-public enum ServiceType implements DescriptibleEnum {
+public enum ServiceType implements DescriptionEnum {
 
     FUEL_ALLOWANCE("Vale Abastecimento"), 
     FREIGHT("Frete"), 

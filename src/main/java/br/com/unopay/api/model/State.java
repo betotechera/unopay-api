@@ -1,13 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.util.rest.StateDeserializer;
-import br.com.unopay.api.util.rest.StateSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-@JsonDeserialize(using = StateDeserializer.class)
-@JsonSerialize(using = StateSerializer.class)
-public enum State {
+public enum State implements DescriptionEnum{
 
     AM("AMAZONAS"),
     BA("BAHIA"),

@@ -1,7 +1,5 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +8,7 @@ import java.util.stream.Collectors;
 import static br.com.unopay.api.model.PersonType.LEGAL;
 import static br.com.unopay.api.model.PersonType.PHYSICAL;
 
-public enum DocumentType implements DescriptibleEnum{
+public enum DocumentType{
 
     CNPJ(LEGAL),
     STATE_REGISTRATION(LEGAL),
@@ -37,11 +35,5 @@ public enum DocumentType implements DescriptibleEnum{
     public boolean isValidDocumentFor(PersonType personType){
       return personTypes.contains(personType);
     }
-
-    public String getDescription(){
-        return personTypes.stream().map(PersonType::getDescription).collect(Collectors.joining());
-    }
-
-
 
 }

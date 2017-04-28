@@ -1,13 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.util.rest.CompanyActivityDeserializer;
-import br.com.unopay.api.util.rest.CompanyActivitySerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-@JsonDeserialize(using = CompanyActivityDeserializer.class)
-@JsonSerialize(using = CompanyActivitySerializer.class)
-public enum CompanyActivity {
+public enum CompanyActivity implements DescriptionEnum {
 
     AGRICULTURE("Agricultura, pecuária, produção florestal, pesca e aqüicultura"),
     EXTRACTIVE_INDUSTRY("Indústrias extrativas"),

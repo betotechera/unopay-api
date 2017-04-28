@@ -1,9 +1,9 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
 
-public enum EstablishmentType implements DescriptibleEnum {
+public enum EstablishmentType implements DescriptionEnum {
     SUPPORT_POINT("Ponto de apoio"), SUPPLY_STATION("Posto de abastecimento"),TOLL_STATION("Posto de Pedágio");
 
     private String description;

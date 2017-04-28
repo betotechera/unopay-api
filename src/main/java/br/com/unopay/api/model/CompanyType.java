@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-public enum CompanyType implements DescriptibleEnum {
+public enum CompanyType implements DescriptionEnum {
 
     LIMITED_PARTNERSHIP("Sociedade por quotas de responsabilidade limitada"),
     STOCK_COMPANY("Sociedade por ações - S.A"),

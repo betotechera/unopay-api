@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.filter.DescriptibleEnum;
+import br.com.unopay.api.filter.DescriptionEnum;
 
-public enum Scope implements DescriptibleEnum {
+public enum Scope implements DescriptionEnum {
     DOMESTIC("Domestico"), INTERNATIONAL("Internacional");
 
     private String description;
