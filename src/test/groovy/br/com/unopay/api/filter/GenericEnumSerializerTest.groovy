@@ -1,6 +1,6 @@
 package br.com.unopay.api.filter
 
-import br.com.unopay.api.bacen.model.BankAccountType
+import br.com.unopay.api.bacen.model.Scope
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -13,14 +13,14 @@ class GenericEnumSerializerTest extends Specification {
         Writer jsonWriter = new StringWriter()
         JsonGenerator jsonGenerator = new JsonFactory().createGenerator(jsonWriter)
         SerializerProvider serializerProvider = new ObjectMapper().getSerializerProvider()
-        def serializer = new GenericEnumSerializer<BankAccountType>(){}
+        def serializer = new GenericEnumSerializer<Scope>(){}
 
         when:
-        serializer.serialize(BankAccountType.CURRENT, jsonGenerator, serializerProvider)
+        serializer.serialize(Scope.DOMESTIC, jsonGenerator, serializerProvider)
         jsonGenerator.flush()
 
         then:
-        jsonWriter.toString() == '{"code":"CURRENT","description":"Corrente"}'
+        jsonWriter.toString() == '{"code":"DOMESTIC","description":"Domestico"}'
 
     }
 
