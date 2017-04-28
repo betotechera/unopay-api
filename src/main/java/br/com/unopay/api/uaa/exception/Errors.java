@@ -290,6 +290,10 @@ public final class Errors {
     public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED","Payment rule group or product is required");
 
+    public static final UnovationError CREDIT_INSERT_TYPE_REQUIRED =
+            new UnovationError("CREDIT_INSERT_TYPE_REQUIRED","Credit insert type is required");
+
+
 
 
 }

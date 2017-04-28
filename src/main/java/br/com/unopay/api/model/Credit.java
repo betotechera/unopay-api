@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED;
 
 @Data
@@ -112,10 +113,14 @@ public class Credit implements Serializable, Updatable {
         if(product == null && paymentRuleGroup == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
         }
+        if(product == null && creditInsertionType == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
+        }
     }
     public void setupMyCreate(){
         if(product != null){
             paymentRuleGroup = product.getPaymentRuleGroup();
+            creditInsertionType = product.getCreditInsertionType();
         }
     }
 }

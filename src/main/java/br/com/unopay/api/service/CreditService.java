@@ -19,7 +19,7 @@ public class CreditService {
         this.hirerService = hirerService;
     }
 
-    public Credit save(Credit credit) {
+    public Credit insert(Credit credit) {
         credit.validate();
         credit.setupMyCreate();
         hirerService.findByDocumentNumber(credit.getHirerDocument());

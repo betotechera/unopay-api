@@ -16,7 +16,7 @@ class CreditServiceTest extends SpockApplicationTests {
     @Autowired
     SetupCreator setupCreator
 
-    void 'credit with product should be created with product payment rule group'(){
+    void 'credit with product should be inserted with product payment rule group'(){
         given:
         def knownProduct = setupCreator.createProduct()
         def hirer = setupCreator.createHirer()
@@ -28,15 +28,50 @@ class CreditServiceTest extends SpockApplicationTests {
                     it }
 
         when:
-        def created  = service.save(credit)
-        def result = service.findById(created.id)
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
 
         then:
         assert result.id != null
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
 
-    void 'given a credit without product should be created'(){
+    void 'credit with product should be inserted with product credit insertion type'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+
+            it }
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.id != null
+        result.getCreditInsertionType() == knownProduct.getCreditInsertionType()
+    }
+
+    void 'credit without product and credit insert type should not be inserted'(){
+        given:
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType")
+                .with {
+                        hirerDocument = hirer.getDocumentNumber()
+                      it }
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_INSERT_TYPE_REQUIRED'
+    }
+
+    void 'given a credit without product should be inserted'(){
         given:
         def hirer = setupCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
@@ -45,14 +80,14 @@ class CreditServiceTest extends SpockApplicationTests {
                     it }
 
         when:
-        def created  = service.save(credit)
-        def result = service.findById(created.id)
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
 
         then:
         assert result.id != null
     }
 
-    void 'given a credit with known hirer document should be created'(){
+    void 'given a credit with known hirer document should be inserted'(){
         given:
         def hirer = setupCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
@@ -61,40 +96,37 @@ class CreditServiceTest extends SpockApplicationTests {
                     it }
 
         when:
-        def created  = service.save(credit)
-        def result = service.findById(created.id)
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
 
         then:
         assert result.id != null
     }
 
-    void 'given a credit with unknown hirer document should not be created'(){
+    void 'given a credit with unknown hirer document should not be inserted'(){
         given:
         Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
                 .with { product = setupCreator.createProduct()
             it }
 
         when:
-        service.save(credit)
+        service.insert(credit)
 
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'HIRER_DOCUMENT_NOT_FOUND'
     }
 
-    void 'given a credit without payment rule group and product should not be created'(){
+    void 'given a credit without payment rule group and product should not be inserted'(){
         given:
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup")
 
         when:
-        service.save(credit)
+        service.insert(credit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED'
     }
-
-
-
 
 }

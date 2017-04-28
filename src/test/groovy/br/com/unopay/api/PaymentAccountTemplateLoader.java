@@ -62,6 +62,11 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("product", null);
         }});
 
+        Fixture.of(Credit.class).addTemplate("withoutProductAndCreditInsertionType").inherits("allFields", new Rule(){{
+            add("creditInsertionType", null);
+            add("product", null);
+        }});
+
 
 
         Fixture.of(PaymentAccount.class).addTemplate("valid", new Rule(){{
