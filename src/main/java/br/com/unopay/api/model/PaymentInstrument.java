@@ -41,14 +41,12 @@ public class PaymentInstrument implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String number;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Product product;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="contractor_id")
     @NotNull(groups = {Create.class, Update.class})

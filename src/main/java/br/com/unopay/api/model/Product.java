@@ -13,17 +13,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*; // NOSONAR
-import javax.validation.Valid;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
@@ -57,21 +54,18 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="issuer_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Issuer issuer;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private PaymentRuleGroup paymentRuleGroup;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
