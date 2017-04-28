@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.HIRER_DOCUMENT_NOT_FOUND;
+
 @Slf4j
 @Service
 public class HirerService {
@@ -66,6 +68,14 @@ public class HirerService {
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS);
         }
         repository.delete(id);
+    }
+
+    public Hirer findByDocumentNumber(String documentNumber){
+        Hirer hirer = repository.findByPersonDocumentNumber(documentNumber);
+        if(hirer == null){
+            throw UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND);
+        }
+        return repository.findByPersonDocumentNumber(documentNumber);
     }
 
     private Boolean hasUser(String id) {

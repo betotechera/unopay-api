@@ -6,4 +6,7 @@ import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HirerRepository extends UnovationFilterRepository<Hirer,String, HirerFilter> {}
+public interface HirerRepository extends UnovationFilterRepository<Hirer,String, HirerFilter> {
+
+    Hirer findByPersonDocumentNumber(String documentNumber);
+}

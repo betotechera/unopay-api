@@ -171,6 +171,10 @@ public final class Errors {
             new UnovationError("HIRER_NOT_FOUND","Hirer not found");
     public static final UnovationError HIRER_WITH_USERS =
             new UnovationError("HIRER_WITH_USERS"," Hirer has Users");
+    public static final UnovationError HIRER_DOCUMENT_NOT_FOUND =
+            new UnovationError("HIRER_DOCUMENT_NOT_FOUND","Hirer document not found");
+
+
 
     /* HirerBranch */
     public static final UnovationError PERSON_HIRER_BRANCH_ALREADY_EXISTS =
