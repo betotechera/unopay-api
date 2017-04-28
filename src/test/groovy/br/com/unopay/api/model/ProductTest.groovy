@@ -68,6 +68,39 @@ class ProductTest  extends FixtureApplicationTest {
         a.administrationCreditInsertionFee != b.administrationCreditInsertionFee
     }
 
+    def 'references fields without id value should not be updated'(){
+        given:
+        Product a = Fixture.from(Product.class).gimme("valid")
+        Product b = Fixture.from(Product.class).gimme("valid")
+        b.getPaymentRuleGroup().setId(null)
+        b.getAccreditedNetwork().setId(null)
+        b.getIssuer().setId(null)
+
+        when:
+        a.updateMe(b)
+
+        then:
+        a.code == b.code
+        a.name == b.name
+        a.type == b.type
+        a.issuer != b.issuer
+        a.paymentRuleGroup != b.paymentRuleGroup
+        a.accreditedNetwork != b.accreditedNetwork
+        a.paymentInstrumentType == b.paymentInstrumentType
+        a.serviceType.findAll { it in b.serviceType}
+        a.serviceType.size() == b.serviceType.size()
+        a.creditInsertionType == b.creditInsertionType
+        a.minimumCreditInsertion == b.minimumCreditInsertion
+        a.maximumCreditInsertion == b.maximumCreditInsertion
+        a.paymentInstrumentValidDays == b.paymentInstrumentValidDays
+        a.situation == b.situation
+        a.membershipFee == b.membershipFee
+        a.creditInsertionFee == b.creditInsertionFee
+        a.paymentInstrumentEmissionFee == b.paymentInstrumentEmissionFee
+        a.paymentInstrumentSecondCopyFee == b.paymentInstrumentSecondCopyFee
+        a.administrationCreditInsertionFee == b.administrationCreditInsertionFee
+    }
+
     def 'should be equals'(){
         given:
         Product a = Fixture.from(Product.class).gimme("valid")
