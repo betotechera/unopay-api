@@ -8,14 +8,14 @@ import org.springframework.data.repository.CrudRepository;
 import java.io.Serializable;
 import java.util.List;
 
-public interface UnovationFilterRepository<MODEL,ID extends Serializable, FILTER> extends JpaSpecificationExecutor, CrudRepository<MODEL, ID> {
+public interface UnovationFilterRepository<MODEL,ID extends Serializable, FILTER> extends JpaSpecificationExecutor<MODEL>, CrudRepository<MODEL, ID> {
 
     default Page<MODEL> findAll(FILTER filter, Pageable pageable){
-        return findAll(new Filter<MODEL>(filter), pageable);
+        return findAll(new Filter<>(filter), pageable);
     }
 
     default List<MODEL> findAll(FILTER filter){
-        return findAll(new Filter<MODEL>(filter));
+        return findAll(new Filter<>(filter));
     }
 
 }
