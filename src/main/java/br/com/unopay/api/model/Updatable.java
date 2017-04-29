@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public interface Updatable<T extends Updatable> {
 
-    String[] IGNORED_FIELDS = { "version" };
+    String IGNORED_FIELD = "version";
     String FIELD_ID = "id";
 
     @JsonIgnore
@@ -48,6 +48,6 @@ public interface Updatable<T extends Updatable> {
     }
 
     default void updateMe(T source){
-        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELDS));
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
     }
 }
