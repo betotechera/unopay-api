@@ -8,7 +8,6 @@ import br.com.unopay.api.model.filter.PersonFilter
 import br.com.unopay.api.repository.PersonRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class PersonServiceTest extends SpockApplicationTests {

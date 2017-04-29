@@ -6,9 +6,9 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
-import br.com.unopay.api.model.Period
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 

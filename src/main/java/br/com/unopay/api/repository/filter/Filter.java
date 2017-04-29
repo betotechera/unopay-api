@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*; // NOSONAR
+import javax.persistence.criteria.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -24,6 +24,13 @@ public class Filter<T> implements Specification<T> {
     private Object fields;
     private CriteriaBuilder cb;
     private Root<T> root;
+
+    private static final int JOIN_LEVEL_ONE_SIZE = 2;
+    private static final int JOIN_LEVEL_TWO_SIZE = 3;
+    private static final int SOURCE_FIELD_INDEX = 0;
+    private static final int FIRST_JOIN_FIELD_INDEX = 1;
+    private static final int SECOND_JOIN_FIELD_INDEX = 3;
+    private static final int MINIMUM_JOIN_SIZE = 2;
 
     public Filter(Object fields){
         this.searchableType = fields.getClass();
@@ -57,24 +64,23 @@ public class Filter<T> implements Specification<T> {
 
     private Predicate createPredicate(Map.Entry<String, Object> pair){
         String[] split = pair.getKey().split("\\.");
-        if(split.length > 1){
+        if(split.length >= MINIMUM_JOIN_SIZE){
             return createJoinPredicate(pair,split);
         }
         return addOperator(root.get(pair.getKey()), pair.getValue());
     }
 
     private <T> Predicate createJoinPredicate(Map.Entry<String, Object> pair, String... fields) {
-        if(fields.length == 2){
-            Join<T, Object> groups = root.join(fields[0]);
-            return addOperator(groups.get(fields[1]), pair.getValue());
+        if(fields.length == JOIN_LEVEL_ONE_SIZE){
+            Join<T, Object> join = root.join(fields[SOURCE_FIELD_INDEX]);
+            return addOperator(join.get(fields[FIRST_JOIN_FIELD_INDEX]), pair.getValue());
         }
-        if(fields.length == 3){
-            Join<T, Object> first = root.join(fields[0]);
-            Join<T, Object> second = first.join(fields[1]);
-            return addOperator(second.get(fields[2]), pair.getValue());
+        if(fields.length == JOIN_LEVEL_TWO_SIZE){
+            Join<T, Object> firstJoin = root.join(fields[SOURCE_FIELD_INDEX]);
+            Join<T, Object> secondJoin = firstJoin.join(fields[FIRST_JOIN_FIELD_INDEX]);
+            return addOperator(secondJoin.get(fields[SECOND_JOIN_FIELD_INDEX]), pair.getValue());
         }
-        throw new UnprocessableEntityException("Invalid filter join length: "+fields.length);
-
+        throw new UnprocessableEntityException(String.format("Invalid filter join length: %s",fields.length));
     }
 
     private Predicate addOperator(Path key, Object value) {

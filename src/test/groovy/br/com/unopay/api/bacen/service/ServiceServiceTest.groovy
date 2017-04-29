@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException

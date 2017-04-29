@@ -5,7 +5,6 @@ import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
-import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

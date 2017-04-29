@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import spock.lang.Ignore
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue

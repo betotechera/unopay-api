@@ -7,7 +7,6 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import org.hamcrest.core.Is
 import org.springframework.beans.factory.annotation.Autowired
 
 import static org.hamcrest.Matchers.hasSize

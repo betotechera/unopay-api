@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Institution
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired

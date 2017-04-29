@@ -5,9 +5,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.service.AccreditedNetworkService
-import br.com.unopay.api.bacen.service.IssuerService
-import br.com.unopay.api.bacen.service.PaymentRuleGroupService
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException

@@ -1,9 +1,7 @@
-package br.com.unopay.api.model;
+package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.AccreditedNetwork
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class PersonTest extends SpockApplicationTests {

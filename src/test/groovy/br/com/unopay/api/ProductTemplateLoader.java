@@ -7,7 +7,8 @@ import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.model.*; // NOSONAR
+import br.com.unopay.api.model.*;
+
 import java.math.BigDecimal;
 
 public class ProductTemplateLoader implements TemplateLoader {
