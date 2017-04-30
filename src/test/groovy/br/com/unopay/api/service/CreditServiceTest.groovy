@@ -7,6 +7,7 @@ import br.com.unopay.api.model.Credit
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
 class CreditServiceTest extends SpockApplicationTests {
 
@@ -36,6 +37,87 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
 
+    void 'when insert credits available balance should be updated'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+                    hirerDocument = hirer.getDocumentNumber()
+                    product = knownProduct
+                    it }
+
+        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+                    hirerDocument = hirer.getDocumentNumber()
+                    product = knownProduct
+                it }
+
+        when:
+        service.insert(creditA)
+        def inserted = service.insert(creditB)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.availableBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
+
+    @Ignore
+    void 'given more one credit when insert credits available balance should be updated'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+        Credit creditC = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        when:
+        service.insert(creditA)
+        service.insert(creditB)
+        def inserted = service.insert(creditC)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.availableBalance == (creditA.value + creditB.value + creditC.value).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
+
+    void 'when insert credits block balance should be updated'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        when:
+        service.insert(creditA)
+        def inserted = service.insert(creditB)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.blockedBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
+
     void 'credit with product should be inserted with product credit insertion type'(){
         given:
         def knownProduct = setupCreator.createProduct()
@@ -54,6 +136,62 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
         result.getCreditInsertionType() == knownProduct.getCreditInsertionType()
+    }
+
+    void 'credit with product should not be inserted when do not match product minimum value restriction'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            value = knownProduct.minimumCreditInsertion - 1
+
+            it }
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'MINIMUM_PRODUCT_VALUE_NOT_MET'
+    }
+
+    void 'credit with product should not be inserted when do not match product maximum value restriction'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            value = knownProduct.maximumCreditInsertion + 1
+
+            it }
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'MAXIMUM_PRODUCT_VALUE_NOT_MET'
+    }
+
+    void 'credit without product should not be inserted when value is not greater than zero'(){
+        given:
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = null
+            value = 0
+
+            it }
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'MINIMUM_CREDIT_VALUE_NOT_MET'
     }
 
     void 'credit without product and credit insert type should not be inserted'(){

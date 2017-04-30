@@ -41,7 +41,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("creditInsertionType",random(CreditInsertionType.class));
             add("creditNumber", random(Long.class));
             add("createdDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
-            add("value",random(BigDecimal.class));
+            add("value",random(BigDecimal.class, range(1, 200)));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
             add("cnabId",random("56465456", "78979879897"));
@@ -83,7 +83,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
-            add("cnabId",random("56465456", "78979879897"));
+            add("cnabId", uniqueRandom("56465456", "78979879897", "888877775555"));
             add("availableBalance", random(BigDecimal.class));
             add("paymentBankAccount", one(PaymentBankAccount.class, "valid"));
         }});

@@ -25,8 +25,8 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentInstrumentType", random(PaymentInstrumentType.class));
             add("serviceType", has(2).of(ServiceType.class));
             add("creditInsertionType", random(CreditInsertionType.class));
-            add("minimumCreditInsertion", random(BigDecimal.class));
-            add("maximumCreditInsertion", random(BigDecimal.class));
+            add("minimumCreditInsertion", random(BigDecimal.class, range(0.01, 0.1)));
+            add("maximumCreditInsertion", random(BigDecimal.class, range(900, 9000000.00)));
             add("paymentInstrumentValidDays", random(Integer.class));
             add("situation", random(ProductSituation.class));
             add("membershipFee", random(BigDecimal.class));

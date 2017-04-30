@@ -293,6 +293,17 @@ public final class Errors {
     public static final UnovationError CREDIT_INSERT_TYPE_REQUIRED =
             new UnovationError("CREDIT_INSERT_TYPE_REQUIRED","Credit insert type is required");
 
+    public static final UnovationError MINIMUM_PRODUCT_VALUE_NOT_MET =
+            new UnovationError("MINIMUM_PRODUCT_VALUE_NOT_MET","Minimum product value not met.");
+    public static final UnovationError MAXIMUM_PRODUCT_VALUE_NOT_MET =
+            new UnovationError("MAXIMUM_PRODUCT_VALUE_NOT_MET","Maximum product value not met.");
+    public static final UnovationError MINIMUM_CREDIT_VALUE_NOT_MET =
+            new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
+
+
+
+
+
 
 
 

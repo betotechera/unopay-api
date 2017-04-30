@@ -16,9 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
@@ -116,11 +116,57 @@ public class Credit implements Serializable, Updatable {
         if(product == null && creditInsertionType == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
         }
+        if(product == null && value.compareTo(new BigDecimal(0)) == 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
+        }
+        if(product != null && value.compareTo(product.getMinimumCreditInsertion()) == -1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PRODUCT_VALUE_NOT_MET);
+        }
+        if(product != null && value.compareTo(product.getMaximumCreditInsertion()) == 1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
+        }
     }
     public void setupMyCreate(){
         if(product != null){
             paymentRuleGroup = product.getPaymentRuleGroup();
             creditInsertionType = product.getCreditInsertionType();
         }
+    }
+
+    public void incrementAvailableBalance(Optional<Credit> credit){
+        if(!credit.isPresent()){
+            availableBalance = this.value;
+            return;
+        }
+        if(this.value != null) {
+            availableBalance = this.value.add(credit.get().getAvailableBalance());
+            return;
+        }
+
+    }
+
+    public void incrementBlockedBalance(Optional<Credit> credit){
+        if(!credit.isPresent()){
+            blockedBalance = this.value;
+            return;
+        }
+        if(this.value != null) {
+            blockedBalance = this.value.add(credit.get().getBlockedBalance());
+            return;
+        }
+    }
+
+    public BigDecimal getAvailableBalance(){
+        if(availableBalance != null) {
+            return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return  new BigDecimal(0);
+    }
+
+    public BigDecimal getBlockedBalance(){
+        if(blockedBalance != null) {
+            return blockedBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return  new BigDecimal(0);
     }
 }
