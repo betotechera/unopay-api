@@ -28,9 +28,7 @@ class FilterTest extends SpockApplicationTests {
     Product productUnderTest
 
     void setup(){
-        String.mixin(TimeCategory)
         Integer.mixin(TimeCategory)
-        Date.mixin(TimeCategory)
         hirerUnderTest = setupCreator.createHirer()
         contractorUnderTest = setupCreator.createContractor()
         productUnderTest = setupCreator.createSimpleProduct()
