@@ -16,13 +16,13 @@ public class ContractFilter  implements Serializable {
     @SearchableField
     private String name;
 
-    @SearchableField(field = "product.id")
+    @SearchableField(field = "product.code")
     private String product;
 
-    @SearchableField(field = "hirer.id")
+    @SearchableField(field = "hirer.person.id")
     private String hirer;
 
-    @SearchableField(field = "contractor.id")
+    @SearchableField(field = "contractor.person.id")
     private String contractor;
 
     @SearchableField
