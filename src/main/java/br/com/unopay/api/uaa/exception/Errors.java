@@ -285,6 +285,10 @@ public final class Errors {
     public static final UnovationError EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS =
             new UnovationError("EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS",
                     "External number id already exists.");
+    public static final UnovationError EXPIRATION_IS_BEFORE_CREATION =
+            new UnovationError("EXPIRATION_IS_BEFORE_CREATION",
+                    "Contract ExpirationDate is before CreationDate.");
+
 
     /* credit */
     public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =

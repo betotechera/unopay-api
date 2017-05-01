@@ -8,6 +8,7 @@ import br.com.unopay.api.model.*;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PaymentAccountTemplateLoader implements TemplateLoader {
 
@@ -18,8 +19,8 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("number", random("5646416546564654", "ADSFADSF57546646", "AAAAAAAAAAAAAAAAAAAA"));
             add("product", one(Product.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
-            add("createdDate", beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
-            add("expirationDate", afterDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
+            add("createdDate", instant("now"));
+            add("expirationDate", afterDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
             add("password", random("AABCD555", "!@#$$%#$#KMKK", "@##$$$$$"));
             add("situation", random(PaymentInstrumentSituation.class));
             add("externalNumberId", random("AAAAAAAAAA22222222222444444", "24d995e3-be96-40e8-870d-bba297375a70", "012346"));

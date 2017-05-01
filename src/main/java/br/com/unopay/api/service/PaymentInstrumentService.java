@@ -36,6 +36,7 @@ public class PaymentInstrumentService {
     public PaymentInstrument save(PaymentInstrument instrument) {
         try {
             validateReference(instrument);
+            instrument.validate();
             return repository.save(instrument);
         }catch (DataIntegrityViolationException e){
             log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId());
@@ -55,6 +56,7 @@ public class PaymentInstrumentService {
         PaymentInstrument current = findById(id);
         validateReference(instrument);
         current.updateMe(instrument);
+        instrument.validate();
         try{
             repository.save(current);
         }catch (DataIntegrityViolationException e){

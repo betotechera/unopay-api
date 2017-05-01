@@ -1,16 +1,17 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -81,6 +82,11 @@ public class PaymentInstrument implements Serializable {
     @JsonIgnore
     private Integer version;
 
+    public void validate(){
+        if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
+        }
+    }
 
     public void updateMe(PaymentInstrument instrument) {
         type = instrument.getType();

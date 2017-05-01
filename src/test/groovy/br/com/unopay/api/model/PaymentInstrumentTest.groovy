@@ -2,6 +2,7 @@ package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class PaymentInstrumentTest  extends FixtureApplicationTest {
 
@@ -47,4 +48,20 @@ class PaymentInstrumentTest  extends FixtureApplicationTest {
         then:
         !shouldBeEquals
     }
+
+    void 'given paymentInstrument with creation date after expiration date it should throw error'(){
+        given:
+        PaymentInstrument a = Fixture.from(PaymentInstrument.class).gimme("valid")
+        a = a.with {
+            createdDate = expirationDate + 1
+            it }
+
+        when:
+        a.validate()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EXPIRATION_IS_BEFORE_CREATION'
+    }
+
 }
