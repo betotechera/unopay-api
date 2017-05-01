@@ -96,6 +96,10 @@ public class Filter<T> implements Specification<T> {
     @SneakyThrows
     private <T> Predicate createPeriodBetween(Path key, Object value){
         Period period = (Period) value;
+        if(period.getBegin() !=null && period.getEnd() == null)
+           return cb.greaterThanOrEqualTo(key,period.getBegin());
+        if(period.getEnd() !=null && period.getBegin() == null)
+            return cb.lessThanOrEqualTo(key,period.getEnd());
         return cb.between(key,period.getBegin(),period.getEnd());
     }
 
