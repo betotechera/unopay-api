@@ -17,6 +17,7 @@ public class Period implements Serializable{
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     private Date begin;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     private Date end;
 }
