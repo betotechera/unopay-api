@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,6 +38,27 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
 
+    void 'credit should be inserted with processing situation'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            situation = CreditSituation.CONFIRMED
+
+            it }
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.id != null
+        result.getSituation() == CreditSituation.PROCESSING
+    }
+
     void 'when insert credits available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct()
@@ -62,7 +84,6 @@ class CreditServiceTest extends SpockApplicationTests {
         result.availableBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
-    @Ignore
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct()

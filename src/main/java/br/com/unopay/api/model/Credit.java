@@ -132,6 +132,8 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void setupMyCreate(){
+        situation = CreditSituation.PROCESSING;
+        createdDateTime = new Date();
         if(product != null){
             paymentRuleGroup = product.getPaymentRuleGroup();
             creditInsertionType = product.getCreditInsertionType();
