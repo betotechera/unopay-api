@@ -121,10 +121,8 @@ public class Contract implements Serializable {
 
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private ContractOrigin origin = UNOPAY;
-
 
     @Column(name="rntrc")
     @NotNull(groups = {Create.class,Update.class})
