@@ -139,8 +139,10 @@ public class Contract implements Serializable {
         }
     }
 
-    public void checkDocumentNumberInvoice() {
+    public void checkFields() {
         documentNumberInvoice = (documentNumberInvoice == null) ? hirer.getDocumentNumber(): documentNumberInvoice;
+        origin = (origin == null) ? UNOPAY : origin;
+        situation = (situation == null) ? ACTIVE : situation;
     }
 
     public void updateMe(Contract contract) {

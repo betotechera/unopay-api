@@ -8,7 +8,6 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import java.util.Set;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -47,7 +45,7 @@ public class ContractService {
         try {
             validateReferences(contract);
             contract.validate();
-            contract.checkDocumentNumberInvoice();
+            contract.checkFields();
             return repository.save(contract);
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode());
@@ -60,7 +58,7 @@ public class ContractService {
         validateReferences(contract);
         current.updateMe(contract);
         current.validate();
-        contract.checkDocumentNumberInvoice();
+        contract.checkFields();
 
         try {
             repository.save(current);
