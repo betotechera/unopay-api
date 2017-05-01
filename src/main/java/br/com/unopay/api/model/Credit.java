@@ -116,6 +116,10 @@ public class Credit implements Serializable, Updatable {
         if(product == null && creditInsertionType == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
         }
+        validateCreditValue();
+    }
+
+    private void validateCreditValue() {
         if(product == null && value.compareTo(new BigDecimal(0)) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
@@ -126,6 +130,7 @@ public class Credit implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
         }
     }
+
     public void setupMyCreate(){
         if(product != null){
             paymentRuleGroup = product.getPaymentRuleGroup();
@@ -142,7 +147,6 @@ public class Credit implements Serializable, Updatable {
             availableBalance = this.value.add(credit.get().getAvailableBalance());
             return;
         }
-
     }
 
     public void incrementBlockedBalance(Optional<Credit> credit){
@@ -160,13 +164,13 @@ public class Credit implements Serializable, Updatable {
         if(availableBalance != null) {
             return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return  new BigDecimal(0);
+        return  new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getBlockedBalance(){
         if(blockedBalance != null) {
             return blockedBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return  new BigDecimal(0);
+        return  new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }
