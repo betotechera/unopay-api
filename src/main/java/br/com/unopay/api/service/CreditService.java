@@ -37,7 +37,6 @@ public class CreditService {
         Optional<Credit> lastCredit = repository.findFirstByOrderByCreatedDateTimeDesc();
         credit.incrementAvailableBalance(lastCredit);
         credit.incrementBlockedBalance(lastCredit);
-        log.info("Inserted balance value: {}, Last credit id={}", credit.getAvailableBalance(),lastCredit.orElse(null));
     }
 
     public Credit findById(String id) {
