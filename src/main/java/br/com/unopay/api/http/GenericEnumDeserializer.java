@@ -29,7 +29,7 @@ public class GenericEnumDeserializer<T extends Enum<T>> extends JsonDeserializer
             String code = node.get("code").asText();
             return T.valueOf(targetClass, code);
         }
-        return T.valueOf(targetClass, node.asText());
+        return node != null ? T.valueOf(targetClass, node.asText()) : null ;
     }
 
     @Override
