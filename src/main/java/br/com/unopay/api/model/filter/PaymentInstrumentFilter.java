@@ -17,8 +17,8 @@ public class PaymentInstrumentFilter implements Serializable{
     @SearchableField(field = "product.code")
     private String productCode;
 
-    @SearchableField(field = "hirer.id")
-    private String hirer;
+    @SearchableField(field = "contractor.id")
+    private String contractor;
 
     @SearchableField
     private PaymentInstrumentSituation situation;
