@@ -6,6 +6,8 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractOrigin
+import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -48,7 +50,7 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
-    void 'given contract without documentInvoiceNumber it should be created with then hirer documentNumber'(){
+    void 'given contract with null and default values should create with default values'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract = contract.with {
@@ -57,6 +59,8 @@ class ContractServiceTest extends SpockApplicationTests {
             product = productUnderTest
             serviceType = productUnderTest.serviceType
             documentNumberInvoice = null
+            origin = null
+            situation = null
             it }
 
         when:
@@ -65,6 +69,8 @@ class ContractServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
         assert result.documentNumberInvoice == hirerUnderTest.documentNumber
+        assert result.situation == ContractSituation.ACTIVE
+        assert result.origin == ContractOrigin.UNOPAY
     }
 
     void 'given contract with same code should not be created'(){
