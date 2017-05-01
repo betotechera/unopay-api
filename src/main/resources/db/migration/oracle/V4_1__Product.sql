@@ -16,7 +16,7 @@ create table product (
     credit_insertion_fee decimal(*,2) not null,
     pay_inst_emission_fee decimal(*,2) not null,
     pay_inst_second_copy_fee decimal(*,2) not null,
-    adm_credit_insert_fee decimal(5,4) not null,
+    adm_credit_insert_fee decimal(*,4) not null,
     version integer,
     CONSTRAINT product_name UNIQUE (name),
     CONSTRAINT product_code UNIQUE (code),
