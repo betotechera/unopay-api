@@ -5,6 +5,7 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 public final class Errors {
 
 
+
     private Errors() {
         throw new IllegalAccessError("Utility class");
     }
@@ -70,6 +71,8 @@ public final class Errors {
             new UnovationError("ISSUER_WITH_USERS","Issuer with users.");
     public static final UnovationError ISSUER_ID_REQUIRED=
             new UnovationError("ISSUER_ID_REQUIRED","Issuer id required");
+    public static final UnovationError PERSON_ISSUER_ALREADY_EXISTS =
+            new UnovationError("PERSON_ISSUER_ALREADY_EXISTS","Person issuer already exists");
 
     /* uaa */
     public static final UnovationError

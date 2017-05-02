@@ -31,6 +31,18 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
     }
+    def 'a valid issuer with the same document number should not be created'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        Issuer created = service.create(issuer)
+        service.create(created.with { id= null; it })
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'PERSON_ISSUER_ALREADY_EXISTS'
+    }
 
     def 'should not create issuer with existing document'(){
         given:
