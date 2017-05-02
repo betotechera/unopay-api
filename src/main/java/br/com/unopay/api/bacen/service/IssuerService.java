@@ -10,7 +10,9 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import javax.transaction.Transactional;
 
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
+@Slf4j
 @Service
 public class IssuerService {
 
@@ -49,10 +52,16 @@ public class IssuerService {
     }
 
     public Issuer create(Issuer issuer) {
+        try {
         issuer.validate();
         createRequiredReferences(issuer);
         validateReferences(issuer);
         return repository.save(issuer);
+        } catch (DataIntegrityViolationException e){
+            log.warn(String.format("Person issuer already exists %s", issuer.getPerson()), e);
+            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_ISSUER_ALREADY_EXISTS);
+
+        }
     }
 
     public Issuer findById(String id) {
