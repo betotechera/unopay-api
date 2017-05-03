@@ -29,7 +29,7 @@ public class Filter<T> implements Specification<T> {
     private static final int JOIN_LEVEL_TWO_SIZE = 3;
     private static final int SOURCE_FIELD_INDEX = 0;
     private static final int FIRST_JOIN_FIELD_INDEX = 1;
-    private static final int SECOND_JOIN_FIELD_INDEX = 3;
+    private static final int SECOND_JOIN_FIELD_INDEX = 2;
     private static final int MINIMUM_JOIN_SIZE = 2;
 
     public Filter(Object fields){
