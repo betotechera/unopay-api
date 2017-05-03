@@ -3,6 +3,7 @@ package br.com.unopay.api.notification.service;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
+import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -17,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 
 @Service
 @Slf4j

@@ -3,14 +3,13 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.repository.BankAccountRepository;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_NOT_FOUND;
 
 @Service
 public class BankAccountService {

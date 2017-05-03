@@ -1,6 +1,12 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.*; // NOSONAR
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.PasswordRequired;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -13,11 +19,26 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.persistence.*;// NOSONAR
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.*;// NOSONAR
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity

@@ -7,6 +7,8 @@ import br.com.unopay.api.repository.LegalPersonDetailRepository;
 import br.com.unopay.api.repository.PersonRepository;
 import br.com.unopay.api.repository.PhysicalPersonDetailRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_NOT_FOUND;
 
 @Slf4j
 @Service

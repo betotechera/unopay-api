@@ -1,7 +1,6 @@
 package br.com.unopay.api.fileuploader.service;
 
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;

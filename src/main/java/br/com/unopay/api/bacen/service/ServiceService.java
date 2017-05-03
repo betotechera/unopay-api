@@ -5,13 +5,12 @@ import br.com.unopay.api.bacen.model.filter.ServiceFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.api.bacen.repository.ServiceRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_FOUND;
 
 @org.springframework.stereotype.Service
 public class ServiceService {

@@ -1,6 +1,15 @@
 package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_WITH_MEMBERS;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_AUTHORITIES_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_GROUP_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_MEMBERS_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.UNKNOWN_GROUP_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.USER_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -25,8 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Service
 public class GroupService {

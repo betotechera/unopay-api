@@ -1,5 +1,10 @@
 package br.com.unopay.api.bacen.model;
 
+import static br.com.unopay.api.uaa.exception.Errors.ACCOUNT_NUMBER_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.AGENCY_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.TYPE_REQUIRED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -8,12 +13,19 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
-import javax.persistence.*; // NOSONAR
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-
-import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
