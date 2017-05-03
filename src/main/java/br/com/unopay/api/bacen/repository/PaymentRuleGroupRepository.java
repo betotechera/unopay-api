@@ -9,6 +9,7 @@ import java.util.List;
 public interface PaymentRuleGroupRepository extends
         UnovationFilterRepository<PaymentRuleGroup,String, PaymentRuleGroupFilter> {
     PaymentRuleGroup findById(String id);
+    PaymentRuleGroup findByCode(String code);
 
     List<PaymentRuleGroup> findByIdIn(List<String> ids);
 

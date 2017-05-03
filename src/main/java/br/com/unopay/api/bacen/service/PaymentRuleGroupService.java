@@ -62,6 +62,14 @@ public class PaymentRuleGroupService {
         return paymentRuleGroup;
     }
 
+    public PaymentRuleGroup getByCode(String code) {
+        PaymentRuleGroup paymentRuleGroup = repository.findByCode(code);
+        if (paymentRuleGroup == null) {
+            throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND);
+        }
+        return paymentRuleGroup;
+    }
+
     public List<PaymentRuleGroup> findAll(List<String> ids){
         List<PaymentRuleGroup> paymentRuleGroups = repository.findByIdIn(ids);
         List<String> founds = paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());

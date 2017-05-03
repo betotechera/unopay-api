@@ -306,6 +306,8 @@ public final class Errors {
             new UnovationError("MAXIMUM_PRODUCT_VALUE_NOT_MET","Maximum product value not met.");
     public static final UnovationError MINIMUM_CREDIT_VALUE_NOT_MET =
             new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
+    public static final UnovationError DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED =
+            new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
 
 
 

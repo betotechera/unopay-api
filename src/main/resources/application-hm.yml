@@ -3,6 +3,8 @@ logging:
 server:
   port: 7070
 unopay:
+  credit:
+    defaultPaymentRuleGroup: '01'
   api: 10.10.0.193:7070
   resetPassword:
         url: 'http://qualidade.roadcard.com.br/plataformaprepaga/#/password/'

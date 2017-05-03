@@ -262,11 +262,12 @@ class CreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_INSERT_TYPE_REQUIRED'
     }
 
-    void 'given a credit without product should be inserted'(){
+    void 'given a credit without product should be inserted with default payment rule group'(){
         given:
+        def paymentRuleGroup = setupCreator.createPaymentRuleGroupDefault()
         def hirer = setupCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
-                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup()
+                .with {
                         hirerDocument = hirer.getDocumentNumber()
                     it }
 
@@ -276,6 +277,28 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
+        result.getPaymentRuleGroup().code == paymentRuleGroup.code
+        result.getPaymentRuleGroup().id == paymentRuleGroup.id
+        result.getPaymentRuleGroup().name == paymentRuleGroup.name
+        result.getPaymentRuleGroup().purpose == paymentRuleGroup.purpose
+        result.getPaymentRuleGroup().scope == paymentRuleGroup.scope
+    }
+
+    void 'given a credit without product and default payment rule group should not be inserted'(){
+        given:
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
+                .with {
+                    hirerDocument = hirer.getDocumentNumber()
+                    it }
+        service.setDefaultPaymentRuleGroup("")
+
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED'
     }
 
     void 'given a credit with known hirer document should be inserted'(){

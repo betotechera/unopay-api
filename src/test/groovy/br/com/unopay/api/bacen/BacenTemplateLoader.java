@@ -24,6 +24,10 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("userRelationship", UserRelationship.POSTPAID);
         }});
 
+        Fixture.of(PaymentRuleGroup.class).addTemplate("default").inherits("valid", new Rule(){{
+            add("code", "01");
+        }});
+
         Fixture.of(PaymentRuleGroup.class).addTemplate("without-institution").inherits("valid", new Rule(){{
             add("institution", null);
         }});

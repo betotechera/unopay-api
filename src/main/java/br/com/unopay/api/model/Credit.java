@@ -128,23 +128,27 @@ public class Credit implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(product == null && paymentRuleGroup == null){
+        if(withoutProduct() && paymentRuleGroup == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
         }
-        if(product == null && creditInsertionType == null){
+        if(withoutProduct() && creditInsertionType == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
         }
         validateCreditValue();
     }
 
+    public boolean withoutProduct(){
+        return product == null;
+    }
+
     private void validateCreditValue() {
-        if(product == null && value.compareTo(new BigDecimal(0)) == 0){
+        if(withoutProduct() && value.compareTo(new BigDecimal(0)) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
-        if(product != null && value.compareTo(product.getMinimumCreditInsertion()) == -1){
+        if(!withoutProduct() && value.compareTo(product.getMinimumCreditInsertion()) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PRODUCT_VALUE_NOT_MET);
         }
-        if(product != null && value.compareTo(product.getMaximumCreditInsertion()) == 1){
+        if(!withoutProduct() && value.compareTo(product.getMaximumCreditInsertion()) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
         }
     }

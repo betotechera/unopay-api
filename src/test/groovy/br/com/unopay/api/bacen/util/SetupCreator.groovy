@@ -56,6 +56,11 @@ class SetupCreator {
         paymentRuleGroupService.create(paymentRuleGroup)
     }
 
+    PaymentRuleGroup createPaymentRuleGroupDefault() {
+        PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("default")
+        paymentRuleGroupService.create(paymentRuleGroup)
+    }
+
     PaymentBankAccount createPaymentBankAccount() {
         PaymentBankAccount paymentRuleGroup = Fixture.from(PaymentBankAccount.class).gimme("valid")
         paymentBankAccountService.create(paymentRuleGroup)

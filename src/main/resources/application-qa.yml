@@ -1,4 +1,6 @@
 unopay:
+  credit:
+    defaultPaymentRuleGroup: '01'
   api: api.qa.unvlocal.com.br:8080
   resetPassword:
         url: 'http://unopay.qa.unovation.com.br/#/password/'
