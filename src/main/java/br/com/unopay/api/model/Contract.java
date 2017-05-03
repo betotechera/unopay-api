@@ -1,6 +1,11 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.*; // NOSONAR
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
+import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -13,16 +18,28 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*; // NOSONAR
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
-import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 
 @Data
 @Entity

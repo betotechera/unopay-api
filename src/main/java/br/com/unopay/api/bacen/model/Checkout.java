@@ -6,6 +6,8 @@ import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
+import static java.lang.Boolean.FALSE;
+import static javax.persistence.EnumType.STRING;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -14,9 +16,6 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-
-import static java.lang.Boolean.FALSE;
-import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable

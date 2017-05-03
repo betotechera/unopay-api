@@ -4,14 +4,13 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 
 @Service
 public class EventService {

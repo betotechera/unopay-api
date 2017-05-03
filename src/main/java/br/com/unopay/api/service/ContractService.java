@@ -8,6 +8,8 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 
 @Slf4j
 @Service

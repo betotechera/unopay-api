@@ -1,12 +1,13 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
+import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -18,8 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
-import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
 @Slf4j
 @Service

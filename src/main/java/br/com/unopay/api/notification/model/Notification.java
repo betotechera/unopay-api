@@ -2,6 +2,7 @@ package br.com.unopay.api.notification.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 import java.util.Map;
 
 @Data
