@@ -4,6 +4,8 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.filter.HirerFilter
+import br.com.unopay.api.bacen.repository.HirerRepository
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Period
@@ -19,6 +21,9 @@ class FilterTest extends SpockApplicationTests {
 
     @Autowired
     ContractRepository repository
+
+    @Autowired
+    HirerRepository hirerRepository
 
     @Autowired
     SetupCreator setupCreator
@@ -98,6 +103,21 @@ class FilterTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(2)
+    }
+
+    def 'should return hirer when find document in more one join'() {
+        given:
+        Hirer hirerA = setupCreator.createHirer()
+
+        def filter = new HirerFilter()
+
+        filter.with { documentNumber = hirerA.person.document.number }
+
+        when:
+        def result = hirerRepository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
     }
 
     def 'should return contracts like exact name'() {
