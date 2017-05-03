@@ -63,7 +63,7 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     @Unroll
-    "given a credit with #insertionTYpe insertion type should be inserted with processing situation"(){
+    "given a credit with #insertionType insertion type should be inserted with processing situation"(){
         given:
         def knownProduct = setupCreator.createProduct()
         def hirer = setupCreator.createHirer()
@@ -72,7 +72,7 @@ class CreditServiceTest extends SpockApplicationTests {
             hirerDocument = hirer.getDocumentNumber()
             product = knownProduct
             situation = CreditSituation.CONFIRMED
-            creditInsertionType = insertionTYpe
+            creditInsertionType = insertionType
 
             it }
 
@@ -85,15 +85,16 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getSituation() == situation
 
         where:
-        insertionTYpe|situation
+        insertionType|situation
         CreditInsertionType.BOLETO|CreditSituation.CONFIRMED
         CreditInsertionType.CREDIT_CARD|CreditSituation.CONFIRMED
         CreditInsertionType.PAMCARD_SYSTEM|CreditSituation.CONFIRMED
     }
 
-    void 'when insert credits available balance should be updated'(){
+    @Unroll
+    void 'when insert credits with #insertionType available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct()
+        def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
         def hirer = setupCreator.createHirer()
         Credit creditA = Fixture.from(Credit.class).gimme("allFields")
                 .with {
@@ -114,11 +115,43 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         result.availableBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
+
+        where:
+        insertionType|_
+        CreditInsertionType.BOLETO|_
+        CreditInsertionType.CREDIT_CARD|_
+        CreditInsertionType.PAMCARD_SYSTEM|_
+    }
+
+    void 'when insert credits with direct debit, available balance should be zero'(){
+        given:
+        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
+        def hirer = setupCreator.createHirer()
+        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        when:
+        service.insert(creditA)
+        def inserted = service.insert(creditB)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.availableBalance == 0.0
+
     }
 
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct()
+        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it }
         def hirer = setupCreator.createHirer()
         Credit creditA = Fixture.from(Credit.class).gimme("allFields")
                 .with {
@@ -147,9 +180,9 @@ class CreditServiceTest extends SpockApplicationTests {
         result.availableBalance == (creditA.value + creditB.value + creditC.value).setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
-    void 'when insert credits block balance should be updated'(){
+    void 'when insert credits with direct debit, block balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct()
+        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
         def hirer = setupCreator.createHirer()
         Credit creditA = Fixture.from(Credit.class).gimme("allFields")
                 .with {
@@ -170,6 +203,40 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         result.blockedBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
     }
+
+    @Unroll
+    void 'when insert credits with #insertionType, block balance should be zero'(){
+        given:
+        def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
+        def hirer = setupCreator.createHirer()
+        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            it }
+
+        when:
+        service.insert(creditA)
+        def inserted = service.insert(creditB)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.blockedBalance == 0.0
+
+        where:
+        insertionType|_
+        CreditInsertionType.BOLETO|_
+        CreditInsertionType.CREDIT_CARD|_
+        CreditInsertionType.PAMCARD_SYSTEM|_
+    }
+
+
+
 
     void 'credit with product should be inserted with product credit insertion type'(){
         given:

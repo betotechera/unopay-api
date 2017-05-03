@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.model.CreditInsertionType.*;
 import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
@@ -172,6 +173,10 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void incrementAvailableBalance(Credit credit){
+        if(DIRECT_DEBIT.equals(creditInsertionType)){
+            availableBalance = BigDecimal.ZERO;
+            return;
+        }
         if(credit == null){
             availableBalance = this.value;
             return;
@@ -183,6 +188,10 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void incrementBlockedBalance(Credit credit){
+        if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
+            blockedBalance = BigDecimal.ZERO;
+            return;
+        }
         if(credit == null){
             blockedBalance = this.value;
             return;
@@ -197,13 +206,13 @@ public class Credit implements Serializable, Updatable {
         if(availableBalance != null) {
             return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return  new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_UP);
+        return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getBlockedBalance(){
         if(blockedBalance != null) {
             return blockedBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return  new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_UP);
+        return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }
