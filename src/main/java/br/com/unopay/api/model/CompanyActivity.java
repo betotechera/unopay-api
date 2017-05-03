@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum CompanyActivity implements DescriptionEnum {
+public enum CompanyActivity implements DescriptableEnum {
 
     AGRICULTURE("Agricultura, pecuária, produção florestal, pesca e aqüicultura"),
     EXTRACTIVE_INDUSTRY("Indústrias extrativas"),

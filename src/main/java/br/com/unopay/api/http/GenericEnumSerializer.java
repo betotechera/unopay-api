@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.SneakyThrows;
 
-public class GenericEnumSerializer <T extends DescriptionEnum> extends JsonSerializer<T>{
+public class GenericEnumSerializer <T extends DescriptableEnum> extends JsonSerializer<T>{
 
     @Override
     @SneakyThrows

@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum AccreditedNetworkType implements DescriptionEnum {
+public enum AccreditedNetworkType implements DescriptableEnum {
 
     SUPPLY("Rede de Abastecimento/Quitação de Frete"), TOLL("Rede de Pedágio Eletrônico");
 

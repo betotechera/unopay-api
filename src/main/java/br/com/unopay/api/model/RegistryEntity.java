@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum RegistryEntity implements DescriptionEnum{
+public enum RegistryEntity implements DescriptableEnum {
 
     SSP("Secretaria de Segurança Pública"),
     MMA("Ministério da Marinha"),

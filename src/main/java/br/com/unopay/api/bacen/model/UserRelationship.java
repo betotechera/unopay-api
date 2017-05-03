@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum UserRelationship implements DescriptionEnum {
+public enum UserRelationship implements DescriptableEnum {
 
     PREPAID("Conta de pagamento Pre-paga"),
     POSTPAID("Conta de pagamento Pos-paga"),

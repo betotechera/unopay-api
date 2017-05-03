@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum ProductType implements DescriptionEnum {
+public enum ProductType implements DescriptableEnum {
     FREIGHT("Frete"), OTHERS("Outros");
 
     private String description;

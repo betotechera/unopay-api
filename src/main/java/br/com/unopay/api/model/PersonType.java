@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum PersonType implements DescriptionEnum {
+public enum PersonType implements DescriptableEnum {
 
     PHYSICAL("Pessoa Fisica"), LEGAL("Pessoa Juridica");
 

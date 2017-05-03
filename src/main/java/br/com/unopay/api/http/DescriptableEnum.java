@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonDeserialize(using = GenericEnumDeserializer.class)
 @JsonSerialize(using = GenericEnumSerializer.class)
-public interface DescriptionEnum {
+public interface DescriptableEnum {
 
     String getDescription();
 

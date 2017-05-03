@@ -1,8 +1,8 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.http.DescriptionEnum;
+import br.com.unopay.api.http.DescriptableEnum;
 
-public enum Purpose implements DescriptionEnum {
+public enum Purpose implements DescriptableEnum {
 
     BUY("Compra"), TRANSFER("Tranferencia");
 
