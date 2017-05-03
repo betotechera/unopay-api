@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -64,11 +65,8 @@ public class IssuerService {
     }
 
     public Issuer findById(String id) {
-        Issuer issuer = repository.findOne(id);
-        if(issuer == null){
-            throw UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND);
-        }
-        return  issuer;
+        Optional<Issuer> issuer = repository.findById(id);
+        return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
     }
 
     @Transactional

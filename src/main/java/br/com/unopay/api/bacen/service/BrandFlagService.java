@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BrandFlagService {
@@ -24,11 +25,8 @@ public class BrandFlagService {
     }
 
     public BrandFlag findById(String id){
-        BrandFlag brandFlag = repository.findOne(id);
-        if(brandFlag == null){
-            throw UnovationExceptions.notFound().withErrors(BRAND_FLAG_NOT_FOUND);
-        }
-        return brandFlag;
+        Optional<BrandFlag> brandFlag = repository.findById(id);
+        return brandFlag.orElseThrow(()->UnovationExceptions.notFound().withErrors(BRAND_FLAG_NOT_FOUND));
     }
     @Cacheable(value = BRAND_FLAGS,key="#key")
     public List<BrandFlag> findAll(String key){

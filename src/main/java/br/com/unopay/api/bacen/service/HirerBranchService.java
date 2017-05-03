@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class HirerBranchService {
@@ -49,11 +51,8 @@ public class HirerBranchService {
     }
 
     public HirerBranch getById(String id) {
-        HirerBranch hirer = repository.findOne(id);
-        if(hirer == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_BRANCH_NOT_FOUND);
-        }
-        return hirer;
+        Optional<HirerBranch> hirer = repository.findById(id);
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_BRANCH_NOT_FOUND));
     }
 
     public void update(String id, HirerBranch hirer) {

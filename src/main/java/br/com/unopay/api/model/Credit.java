@@ -172,7 +172,7 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void incrementAvailableBalance(Credit credit){
-        if(credit != null){
+        if(credit == null){
             availableBalance = this.value;
             return;
         }
@@ -183,7 +183,7 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void incrementBlockedBalance(Credit credit){
-        if(credit != null){
+        if(credit == null){
             blockedBalance = this.value;
             return;
         }

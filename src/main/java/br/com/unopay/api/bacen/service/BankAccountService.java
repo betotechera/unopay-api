@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,11 +51,8 @@ public class BankAccountService {
     }
 
     public BankAccount findById(String id) {
-        BankAccount account = repository.findOne(id);
-        if(account == null) {
-            throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND);
-        }
-        return account;
+        Optional<BankAccount> account = repository.findById(id);
+        return account.orElseThrow(()->UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND));
     }
 
     public void delete(String id) {

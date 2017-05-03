@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,19 +56,15 @@ public class PaymentRuleGroupService {
     }
 
     public PaymentRuleGroup getById(String id) {
-        PaymentRuleGroup paymentRuleGroup = repository.findOne(id);
-        if (paymentRuleGroup == null) {
-            throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND);
-        }
-        return paymentRuleGroup;
+        Optional<PaymentRuleGroup> paymentRuleGroup = repository.findById(id);
+        return paymentRuleGroup
+                .orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND));
     }
 
     public PaymentRuleGroup getByCode(String code) {
-        PaymentRuleGroup paymentRuleGroup = repository.findByCode(code);
-        if (paymentRuleGroup == null) {
-            throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND);
-        }
-        return paymentRuleGroup;
+        Optional<PaymentRuleGroup> paymentRuleGroup = repository.findByCode(code);
+        return paymentRuleGroup
+                .orElseThrow(() -> UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND));
     }
 
     public List<PaymentRuleGroup> findAll(List<String> ids){
@@ -84,7 +81,6 @@ public class PaymentRuleGroupService {
     public void update(String id, PaymentRuleGroup paymentRuleGroup) {
         PaymentRuleGroup current = repository.findOne(id);
         current.updateModel(paymentRuleGroup);
-
         try {
             repository.save(current);
         } catch (DataIntegrityViolationException e) {

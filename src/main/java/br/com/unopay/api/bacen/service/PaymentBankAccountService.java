@@ -8,6 +8,8 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PaymentBankAccountService {
 
@@ -30,11 +32,8 @@ public class PaymentBankAccountService {
         if(id == null){
             throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_ID_REQUIRED);
         }
-        PaymentBankAccount account = repository.findOne(id);
-        if(account == null){
-            throw UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_NOT_FOUND);
-        }
-        return account;
+        Optional<PaymentBankAccount> account = repository.findById(id);
+        return account.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PAYMENT_ACCOUNT_NOT_FOUND));
     }
 
     public void update(String id, PaymentBankAccount paymentAccount) {

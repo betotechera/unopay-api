@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Optional;
+
 @org.springframework.stereotype.Service
 public class ServiceService {
 
@@ -69,11 +71,8 @@ public class ServiceService {
     }
 
     public Service findById(String id) {
-        Service service = repository.findOne(id);
-        if(service == null) {
-            throw UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND);
-        }
-        return service;
+        Optional<Service> service = repository.findById(id);
+        return service.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND));
     }
 
     public void delete(String id) {

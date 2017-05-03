@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class ContractorService {
@@ -45,12 +47,8 @@ public class ContractorService {
     }
 
     public Contractor getById(String id) {
-        Contractor hirer = repository.findOne(id);
-        if(hirer == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND);
-        }
-        return hirer;
-
+        Optional<Contractor> hirer = repository.findById(id);
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
     }
 
     public void update(String id, Contractor contractor) {

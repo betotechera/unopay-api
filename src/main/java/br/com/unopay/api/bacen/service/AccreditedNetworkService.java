@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class AccreditedNetworkService {
@@ -56,11 +58,9 @@ public class AccreditedNetworkService {
     }
 
     public AccreditedNetwork getById(String id) {
-        AccreditedNetwork accreditedNetwork = repository.findOne(id);
-        if(accreditedNetwork == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND);
-        }
-        return accreditedNetwork;
+        Optional<AccreditedNetwork> accreditedNetwork = repository.findById(id);
+        return accreditedNetwork
+                .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND));
     }
 
     public void update(String id, AccreditedNetwork accreditedNetwork) {

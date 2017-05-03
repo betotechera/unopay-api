@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class InstitutionService {
@@ -46,12 +48,8 @@ public class InstitutionService {
     }
 
     public Institution getById(String id) {
-        Institution institution = repository.findOne(id);
-        if(institution == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.INSTITUTION_NOT_FOUND);
-        }
-        return institution;
-
+        Optional<Institution> institution = repository.findById(id);
+        return institution.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.INSTITUTION_NOT_FOUND));
     }
 
     public void update(String id, Institution institution) {

@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class HirerService {
@@ -46,12 +48,8 @@ public class HirerService {
     }
 
     public Hirer getById(String id) {
-        Hirer hirer = repository.findOne(id);
-        if(hirer == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND);
-        }
-        return hirer;
-
+        Optional<Hirer> hirer = repository.findById(id);
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
     }
 
     public void update(String id, Hirer hirer) {
@@ -70,11 +68,8 @@ public class HirerService {
     }
 
     public Hirer findByDocumentNumber(String documentNumber){
-        Hirer hirer = repository.findByPersonDocumentNumber(documentNumber);
-        if(hirer == null){
-            throw UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND);
-        }
-        return repository.findByPersonDocumentNumber(documentNumber);
+        Optional<Hirer> hirer = repository.findByPersonDocumentNumber(documentNumber);
+        return hirer.orElseThrow(()-> UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND));
     }
 
     private Boolean hasUser(String id) {

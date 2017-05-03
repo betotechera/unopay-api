@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class EventService {
 
@@ -72,11 +74,8 @@ public class EventService {
     }
 
     public Event findById(String id) {
-        Event event = repository.findOne(id);
-        if(event == null){
-            throw UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND);
-        }
-        return event;
+        Optional<Event> event = repository.findById(id);
+        return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
     }
 
     public void delete(String id) {

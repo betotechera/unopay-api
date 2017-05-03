@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BankService {
@@ -24,11 +25,8 @@ public class BankService {
     }
 
     public Bank findBacenCode(Integer bacenCode){
-        Bank bank = repository.findOne(bacenCode);
-        if(bank == null) {
-            throw UnovationExceptions.notFound().withErrors(BANK_NOT_FOUND);
-        }
-        return bank;
+        Optional<Bank> bank = repository.findByBacenCode(bacenCode);
+        return bank.orElseThrow(()->UnovationExceptions.notFound().withErrors(BANK_NOT_FOUND));
     }
 
     @Cacheable(value = BANKS,key="#key")

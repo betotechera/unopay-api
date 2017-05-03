@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class PartnerService {
@@ -47,12 +49,8 @@ public class PartnerService {
     }
 
     public Partner getById(String id) {
-        Partner hirer = repository.findOne(id);
-        if(hirer == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND);
-        }
-        return hirer;
-
+        Optional<Partner> hirer = repository.findById(id);
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND));
     }
 
     public void update(String id, Partner hirer) {

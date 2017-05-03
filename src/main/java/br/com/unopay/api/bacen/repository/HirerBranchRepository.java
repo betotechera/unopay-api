@@ -5,5 +5,10 @@ import br.com.unopay.api.bacen.model.filter.HirerBranchFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface HirerBranchRepository extends UnovationFilterRepository<HirerBranch,String, HirerBranchFilter> {}
+public interface HirerBranchRepository extends UnovationFilterRepository<HirerBranch,String, HirerBranchFilter> {
+
+    Optional<HirerBranch> findById(String id);
+}

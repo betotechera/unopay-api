@@ -5,5 +5,10 @@ import br.com.unopay.api.bacen.model.filter.PartnerFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface PartnerRepository extends UnovationFilterRepository<Partner,String, PartnerFilter> {}
+public interface PartnerRepository extends UnovationFilterRepository<Partner,String, PartnerFilter> {
+
+    Optional<Partner> findById(String id);
+}

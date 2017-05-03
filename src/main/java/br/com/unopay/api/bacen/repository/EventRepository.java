@@ -4,8 +4,12 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 
+import java.util.Optional;
+
 
 public interface EventRepository extends UnovationFilterRepository<Event,String, EventFilter> {
+
+    Optional<Event> findById(String id);
 
     int countByServiceId(String id);
 
