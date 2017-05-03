@@ -9,7 +9,6 @@ import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 import spock.lang.Unroll
 
 class CreditServiceTest extends SpockApplicationTests {
@@ -114,7 +113,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableBalance == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
 
         where:
         insertionType|_
@@ -177,7 +176,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableBalance == (creditA.value + creditB.value + creditC.value).setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableBalance == creditC.value.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     void 'when insert credits with direct debit, block balance should be updated'(){
@@ -201,7 +200,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.blockedBalance == (creditA.value + creditB.value ).setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.blockedBalance == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     @Unroll
@@ -314,19 +313,20 @@ class CreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'MINIMUM_CREDIT_VALUE_NOT_MET'
     }
 
-    void 'credit without product and credit insert type should not be inserted'(){
+    void 'credit without product should be inserted with default credit insert type'(){
         given:
         def hirer = setupCreator.createHirer()
+        setupCreator.createPaymentRuleGroupDefault()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType")
                 .with {
                         hirerDocument = hirer.getDocumentNumber()
                       it }
         when:
-        service.insert(credit)
+        def inserted = service.insert(credit)
+        def result = service.findById(inserted.id)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CREDIT_INSERT_TYPE_REQUIRED'
+        result.creditInsertionType == CreditInsertionType.PAMCARD_SYSTEM
     }
 
     void 'given a credit without product should be inserted with default payment rule group'(){
@@ -358,10 +358,12 @@ class CreditServiceTest extends SpockApplicationTests {
                 .with {
                     hirerDocument = hirer.getDocumentNumber()
                     it }
+        def paymentRule = service.defaultPaymentRuleGroup
         service.setDefaultPaymentRuleGroup("")
 
         when:
         service.insert(credit)
+        service.setDefaultPaymentRuleGroup(paymentRule)
 
         then:
         def ex = thrown(UnprocessableEntityException)

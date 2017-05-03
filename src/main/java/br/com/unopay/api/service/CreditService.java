@@ -5,16 +5,16 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.repository.CreditRepository;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,8 +25,14 @@ public class CreditService {
     private PaymentRuleGroupService paymentRuleGroupService;
 
     @Setter
+    @Getter
     @Value("${unopay.credit.defaultPaymentRuleGroup:}")
     private String defaultPaymentRuleGroup;
+
+    @Setter
+    @Getter
+    @Value("${unopay.credit.defaultCreditInsertionType:}")
+    private String defaultCreditInsertionType;
 
     @Autowired
     public CreditService(CreditRepository repository,
@@ -40,8 +46,8 @@ public class CreditService {
     public Credit insert(Credit credit) {
         credit.validate();
         credit.setupMyCreate();
-        updateBalances(credit);
         if(!credit.withProduct()){
+            defineDefaultCreditInsertionType(credit);
             defineDefaultPaymentRuleGroup(credit);
         }
         hirerService.findByDocumentNumber(credit.getHirerDocument());
@@ -50,21 +56,22 @@ public class CreditService {
         return repository.save(credit);
     }
 
+    public Credit  findById(String id) {
+        return repository.findOne(id);
+    }
+
+    private void defineDefaultCreditInsertionType(Credit credit) {
+        if(StringUtils.isEmpty(defaultCreditInsertionType)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_NOT_CONFIGURED);
+        }
+        credit.defineCreditInsertionType(defaultCreditInsertionType);
+    }
+
     private void defineDefaultPaymentRuleGroup(Credit credit) {
         if(StringUtils.isEmpty(defaultPaymentRuleGroup)){
             throw UnovationExceptions.unprocessableEntity().withErrors(DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED);
         }
         PaymentRuleGroup defaultPaymentRuleGroupResult = paymentRuleGroupService.getByCode(defaultPaymentRuleGroup);
         credit.setPaymentRuleGroup(defaultPaymentRuleGroupResult);
-    }
-
-    private void updateBalances(Credit credit) {
-        Optional<Credit> lastCredit = repository.findFirstByOrderByCreatedDateTimeDesc();
-        credit.incrementAvailableBalance(lastCredit.orElse(null));
-        credit.incrementBlockedBalance(lastCredit.orElse(null));
-    }
-
-    public Credit findById(String id) {
-        return repository.findOne(id);
     }
 }

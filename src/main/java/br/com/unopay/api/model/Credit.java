@@ -2,12 +2,10 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
-import static br.com.unopay.api.model.CreditInsertionType.*;
 import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
 import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PRODUCT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_CREDIT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PRODUCT_VALUE_NOT_MET;
@@ -37,7 +35,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 
 @Data
 @Entity
@@ -132,9 +129,6 @@ public class Credit implements Serializable, Updatable {
         if(!withProduct() && paymentRuleGroup == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
         }
-        if(!withProduct() && creditInsertionType == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
-        }
         validateCreditValue();
     }
 
@@ -161,6 +155,8 @@ public class Credit implements Serializable, Updatable {
             paymentRuleGroup = product.getPaymentRuleGroup();
             creditInsertionType = product.getCreditInsertionType();
         }
+        updateAvailableBalance();
+        updateBlockedBalance();
     }
 
     private void defineSituation() {
@@ -172,34 +168,24 @@ public class Credit implements Serializable, Updatable {
         }
     }
 
-    public void incrementAvailableBalance(Credit credit){
+    public void defineCreditInsertionType(String creditInsertionType){
+        this.creditInsertionType = CreditInsertionType.valueOf(creditInsertionType);
+    }
+
+    public void updateAvailableBalance(){
         if(DIRECT_DEBIT.equals(creditInsertionType)){
             availableBalance = BigDecimal.ZERO;
             return;
         }
-        if(credit == null){
-            availableBalance = this.value;
-            return;
-        }
-        if(this.value != null) {
-            availableBalance = this.value.add(credit.getAvailableBalance());
-            return;
-        }
+        availableBalance = this.value;
     }
 
-    public void incrementBlockedBalance(Credit credit){
+    public void updateBlockedBalance(){
         if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
             blockedBalance = BigDecimal.ZERO;
             return;
         }
-        if(credit == null){
-            blockedBalance = this.value;
-            return;
-        }
-        if(this.value != null) {
-            blockedBalance = this.value.add(credit.getBlockedBalance());
-            return;
-        }
+        blockedBalance = this.value;
     }
 
     public BigDecimal getAvailableBalance(){

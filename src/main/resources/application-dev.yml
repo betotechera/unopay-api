@@ -1,6 +1,7 @@
 unopay:
   credit:
     defaultPaymentRuleGroup: '01'
+    defaultCreditInsertionType: 'PAMCARD_SYSTEM'
   api: localhost:8080
   resetPassword:
     url: 'http://unopay.qa.unvlocal.com.br/#/password/'
