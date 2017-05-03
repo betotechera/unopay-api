@@ -4,11 +4,13 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Ignore
+import spock.lang.Unroll
 
 class CreditServiceTest extends SpockApplicationTests {
 
@@ -38,7 +40,7 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
 
-    void 'credit should be inserted with processing situation'(){
+    void 'given a credit with direct debit insertion type should be inserted with processing situation'(){
         given:
         def knownProduct = setupCreator.createProduct()
         def hirer = setupCreator.createHirer()
@@ -47,6 +49,7 @@ class CreditServiceTest extends SpockApplicationTests {
             hirerDocument = hirer.getDocumentNumber()
             product = knownProduct
             situation = CreditSituation.CONFIRMED
+            creditInsertionType = CreditInsertionType.DIRECT_DEBIT
 
             it }
 
@@ -57,6 +60,35 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
         result.getSituation() == CreditSituation.PROCESSING
+    }
+
+    @Unroll
+    void "given a credit with #insertionType insertion type should be inserted with processing situation"(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+            situation = CreditSituation.CONFIRMED
+            creditInsertionType = insertionTYpe
+
+            it }
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.id != null
+        result.getSituation() == situation
+
+        where:
+        insertionTYpe|situation
+        CreditInsertionType.BOLETO|CreditSituation.CONFIRMED
+        CreditInsertionType.CREDIT_CARD|CreditSituation.CONFIRMED
+        CreditInsertionType.PAMCARD_SYSTEM|CreditSituation.CONFIRMED
     }
 
     void 'when insert credits available balance should be updated'(){

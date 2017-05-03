@@ -15,9 +15,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import static br.com.unopay.api.model.CreditInsertionType.*;
 import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
@@ -132,7 +134,12 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void setupMyCreate(){
-        situation = CreditSituation.PROCESSING;
+        if(DIRECT_DEBIT.equals(creditInsertionType)) {
+            situation = CreditSituation.PROCESSING;
+        }
+        if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
+            situation = CreditSituation.CONFIRMED;
+        }
         createdDateTime = new Date();
         if(product != null){
             paymentRuleGroup = product.getPaymentRuleGroup();
