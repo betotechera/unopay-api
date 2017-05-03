@@ -134,16 +134,20 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void setupMyCreate(){
+        defineSituation();
+        createdDateTime = new Date();
+        if(product != null){
+            paymentRuleGroup = product.getPaymentRuleGroup();
+            creditInsertionType = product.getCreditInsertionType();
+        }
+    }
+
+    private void defineSituation() {
         if(DIRECT_DEBIT.equals(creditInsertionType)) {
             situation = CreditSituation.PROCESSING;
         }
         if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
             situation = CreditSituation.CONFIRMED;
-        }
-        createdDateTime = new Date();
-        if(product != null){
-            paymentRuleGroup = product.getPaymentRuleGroup();
-            creditInsertionType = product.getCreditInsertionType();
         }
     }
 

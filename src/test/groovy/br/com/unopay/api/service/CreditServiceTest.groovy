@@ -63,7 +63,7 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     @Unroll
-    void "given a credit with #insertionType insertion type should be inserted with processing situation"(){
+    "given a credit with #insertionTYpe insertion type should be inserted with processing situation"(){
         given:
         def knownProduct = setupCreator.createProduct()
         def hirer = setupCreator.createHirer()
