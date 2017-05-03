@@ -297,9 +297,8 @@ public final class Errors {
     public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED","Payment rule group or product is required");
 
-    public static final UnovationError CREDIT_INSERT_TYPE_REQUIRED =
-            new UnovationError("CREDIT_INSERT_TYPE_REQUIRED","Credit insert type is required");
-
+    public static final UnovationError CREDIT_INSERT_TYPE_NOT_CONFIGURED =
+            new UnovationError("CREDIT_INSERT_TYPE_NOT_CONFIGURED","Credit insert type not configured");
     public static final UnovationError MINIMUM_PRODUCT_VALUE_NOT_MET =
             new UnovationError("MINIMUM_PRODUCT_VALUE_NOT_MET","Minimum product value not met.");
     public static final UnovationError MAXIMUM_PRODUCT_VALUE_NOT_MET =
