@@ -41,7 +41,7 @@ public class CreditService {
         credit.validate();
         credit.setupMyCreate();
         updateBalances(credit);
-        if(credit.withoutProduct()){
+        if(!credit.withProduct()){
             defineDefaultPaymentRuleGroup(credit);
         }
         hirerService.findByDocumentNumber(credit.getHirerDocument());
@@ -60,8 +60,8 @@ public class CreditService {
 
     private void updateBalances(Credit credit) {
         Optional<Credit> lastCredit = repository.findFirstByOrderByCreatedDateTimeDesc();
-        credit.incrementAvailableBalance(lastCredit);
-        credit.incrementBlockedBalance(lastCredit);
+        credit.incrementAvailableBalance(lastCredit.orElse(null));
+        credit.incrementBlockedBalance(lastCredit.orElse(null));
     }
 
     public Credit findById(String id) {

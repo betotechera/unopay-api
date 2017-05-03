@@ -50,7 +50,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("blockedBalance",random(BigDecimal.class));
         }});
 
-        Fixture.of(Credit.class).addTemplate("withoutProduct").inherits("allFields", new Rule(){{
+        Fixture.of(Credit.class).addTemplate("withProduct").inherits("allFields", new Rule(){{
             add("product", null);
         }});
 

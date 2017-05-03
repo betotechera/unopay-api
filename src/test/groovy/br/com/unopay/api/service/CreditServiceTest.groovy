@@ -266,7 +266,7 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def paymentRuleGroup = setupCreator.createPaymentRuleGroupDefault()
         def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with {
                         hirerDocument = hirer.getDocumentNumber()
                     it }
@@ -287,7 +287,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'given a credit without product and default payment rule group should not be inserted'(){
         given:
         def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with {
                     hirerDocument = hirer.getDocumentNumber()
                     it }
@@ -304,7 +304,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'given a credit with known hirer document should be inserted'(){
         given:
         def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with { product = setupCreator.createProduct()
                         hirerDocument = hirer.getDocumentNumber()
                     it }
@@ -319,7 +319,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit with unknown hirer document should not be inserted'(){
         given:
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProduct")
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with { product = setupCreator.createProduct()
             it }
 

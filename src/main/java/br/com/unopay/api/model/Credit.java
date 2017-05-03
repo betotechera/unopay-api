@@ -128,27 +128,27 @@ public class Credit implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(withoutProduct() && paymentRuleGroup == null){
+        if(!withProduct() && paymentRuleGroup == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
         }
-        if(withoutProduct() && creditInsertionType == null){
+        if(!withProduct() && creditInsertionType == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_INSERT_TYPE_REQUIRED);
         }
         validateCreditValue();
     }
 
-    public boolean withoutProduct(){
-        return product == null;
+    public boolean withProduct(){
+        return product != null;
     }
 
     private void validateCreditValue() {
-        if(withoutProduct() && value.compareTo(new BigDecimal(0)) == 0){
+        if(!withProduct() && value.compareTo(new BigDecimal(0)) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
-        if(!withoutProduct() && value.compareTo(product.getMinimumCreditInsertion()) == -1){
+        if(withProduct() && value.compareTo(product.getMinimumCreditInsertion()) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PRODUCT_VALUE_NOT_MET);
         }
-        if(!withoutProduct() && value.compareTo(product.getMaximumCreditInsertion()) == 1){
+        if(withProduct() && value.compareTo(product.getMaximumCreditInsertion()) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
         }
     }
@@ -156,7 +156,7 @@ public class Credit implements Serializable, Updatable {
     public void setupMyCreate(){
         defineSituation();
         createdDateTime = new Date();
-        if(product != null){
+        if(this.withProduct()){
             paymentRuleGroup = product.getPaymentRuleGroup();
             creditInsertionType = product.getCreditInsertionType();
         }
@@ -171,24 +171,24 @@ public class Credit implements Serializable, Updatable {
         }
     }
 
-    public void incrementAvailableBalance(Optional<Credit> credit){
-        if(!credit.isPresent()){
+    public void incrementAvailableBalance(Credit credit){
+        if(credit != null){
             availableBalance = this.value;
             return;
         }
         if(this.value != null) {
-            availableBalance = this.value.add(credit.get().getAvailableBalance());
+            availableBalance = this.value.add(credit.getAvailableBalance());
             return;
         }
     }
 
-    public void incrementBlockedBalance(Optional<Credit> credit){
-        if(!credit.isPresent()){
+    public void incrementBlockedBalance(Credit credit){
+        if(credit != null){
             blockedBalance = this.value;
             return;
         }
         if(this.value != null) {
-            blockedBalance = this.value.add(credit.get().getBlockedBalance());
+            blockedBalance = this.value.add(credit.getBlockedBalance());
             return;
         }
     }
