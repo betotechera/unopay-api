@@ -122,7 +122,7 @@ public class GroupService {
             throw  UnovationExceptions.unprocessableEntity().withErrors(KNOWN_GROUP_REQUIRED);
         }
         verifyIfAllGroupsFound(groupsIds, groups);
-        groups.forEach(user::addToMyGroups);
+        user.setGroups(groups);
         userDetailRepository.save(user);
     }
 

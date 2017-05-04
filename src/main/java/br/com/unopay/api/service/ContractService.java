@@ -1,13 +1,12 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
-import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -29,15 +28,17 @@ public class ContractService {
     private HirerService hirerService;
     private ContractorService contractorService;
     private ProductService productService;
-    private EstablishmentRepository establishmentRepository;
+    private ContractEstablishmentRepository contractEstablishmentRepository;
 
     @Autowired
-    public ContractService(ContractRepository repository, HirerService hirerService, ContractorService contractorService, ProductService productService, EstablishmentRepository establishmentRepository) {
+    public ContractService(ContractRepository repository, HirerService hirerService,
+                           ContractorService contractorService, ProductService productService,
+                           ContractEstablishmentRepository contractEstablishmentRepository) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
         this.productService = productService;
-        this.establishmentRepository = establishmentRepository;
+        this.contractEstablishmentRepository = contractEstablishmentRepository;
     }
 
     public Contract save(Contract contract) {
@@ -96,13 +97,11 @@ public class ContractService {
         }
     }
 
-    public int addEstablishments(String id, Set<String> establishmentsDocumentNumber) {
-        Set<Establishment> establishments = establishmentRepository.findByPersonDocumentNumberIn(establishmentsDocumentNumber);
-        if(establishments == null || establishments.size() < 0)
-            throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENTS_NOT_FOUND);
+    public void addEstablishments(String id, ContractEstablishment contractEstablishment) {
         Contract contract = findById(id);
-        contract.setEstablishments(establishments);
+        contractEstablishment.setContract(contract);
+        contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
+        contract.addContractEstablishment(contractEstablishment);
         repository.save(contract);
-        return establishments.size();
     }
 }

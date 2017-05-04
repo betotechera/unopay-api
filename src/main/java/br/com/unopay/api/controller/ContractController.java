@@ -93,12 +93,7 @@ public class ContractController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contracts", api));
     }
     @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.PUT)
-    public ResponseEntity addEstablishmentsToContract(@PathVariable  String id,  @RequestBody Set<String> establishmentsDocumentNumber) {
-        log.info("Add establishments {} to contract {}", id,establishmentsDocumentNumber);
-        int inserted = service.addEstablishments(id,establishmentsDocumentNumber);
-       return  (inserted < establishmentsDocumentNumber.size()) ?
-               status(PARTIAL_CONTENT).build() :
-               noContent().build();
+    public void addEstablishmentsToContract(@PathVariable  String id,  @RequestBody Set<String> establishmentsDocumentNumber) {
     }
 
 
