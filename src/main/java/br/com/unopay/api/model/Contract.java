@@ -1,7 +1,6 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
@@ -15,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
@@ -24,12 +22,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,13 +36,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "contract")
-@EqualsAndHashCode(exclude = {"establishments"})
+@EqualsAndHashCode(exclude = {"contractEstablishments"})
 public class Contract implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -58,13 +57,9 @@ public class Contract implements Serializable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @ManyToMany
-    @BatchSize(size = 10)
     @JsonView({Views.Public.class})
-    @JoinTable(name = "contract_establishment",
-            joinColumns = { @JoinColumn(name = "contract_id") },
-            inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
-    private Set<Establishment> establishments;
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "contract")
+    private Set<ContractEstablishment> contractEstablishments;
 
     @Column(name="code")
     @NotNull(groups = {Create.class, Update.class})
@@ -169,5 +164,11 @@ public class Contract implements Serializable {
         issueInvoice = contract.isIssueInvoice();
         if(contract.getDocumentNumberInvoice() != null)
             documentNumberInvoice = contract.getDocumentNumberInvoice();
+    }
+
+    public void addContractEstablishment(ContractEstablishment contractEstablishment) {
+        if(contractEstablishment == null)
+            contractEstablishments = new HashSet<>();
+        contractEstablishments.add(contractEstablishment);
     }
 }

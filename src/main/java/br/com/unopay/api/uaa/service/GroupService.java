@@ -110,7 +110,7 @@ public class GroupService {
         if(authorities.isEmpty()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(KNOWN_AUTHORITIES_REQUIRED);
         }
-        authorities.forEach(group::addToMyAuthorities);
+        group.setAuthorities(authorities);
         repository.save(group);
     }
 
@@ -122,7 +122,7 @@ public class GroupService {
             throw  UnovationExceptions.unprocessableEntity().withErrors(KNOWN_GROUP_REQUIRED);
         }
         verifyIfAllGroupsFound(groupsIds, groups);
-        groups.forEach(user::addToMyGroups);
+        user.setGroups(groups);
         userDetailRepository.save(user);
     }
 

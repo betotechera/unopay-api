@@ -36,5 +36,9 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("end", instant("now"));
         }});
 
+        Fixture.of(ContractEstablishment.class).addTemplate("valid", new Rule(){{
+            add("creation", instant("now"));
+        }});
+
     }
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 public interface EstablishmentRepository
         extends UnovationFilterRepository<Establishment, String, EstablishmentFilter> {
 
-    Set<Establishment> findByPersonDocumentNumberIn(Set<String> establishmentsDocumentNumber);
     Optional<Establishment> findById(String id);
+    Optional<Establishment> findByPersonDocumentNumber(String documentNumber);
 
 }

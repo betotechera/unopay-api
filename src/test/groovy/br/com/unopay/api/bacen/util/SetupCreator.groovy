@@ -102,4 +102,8 @@ class SetupCreator {
             it
         }
     }
+
+    Establishment createEstablishment() {
+        null
+    }
 }
