@@ -71,6 +71,11 @@ public class EstablishmentService {
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 
+    public Establishment findByDocumentNumber(String documentNumber) {
+        Optional<Establishment> establishment = repository.findByPersonDocumentNumber(documentNumber);
+        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
+    }
+
     public void delete(String id) {
         findById(id);
         validateDelete(id);

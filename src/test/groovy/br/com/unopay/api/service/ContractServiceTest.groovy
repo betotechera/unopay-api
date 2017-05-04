@@ -3,9 +3,11 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Product
@@ -24,13 +26,14 @@ class ContractServiceTest extends SpockApplicationTests {
     Hirer hirerUnderTest
     Contractor contractorUnderTest
     Product productUnderTest
-
+    Establishment establishmentUnderTest
 
 
     void setup(){
         hirerUnderTest = setupCreator.createHirer()
         contractorUnderTest = setupCreator.createContractor()
         productUnderTest = setupCreator.createSimpleProduct()
+        establishmentUnderTest = setupCreator.createHeadOffice()
     }
 
     void 'new contract should be created'(){
@@ -311,4 +314,26 @@ class ContractServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
+
+    void 'add establishment in contract'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        contract = service.findById(contract.id)
+        then:
+        assert contract.contractEstablishments.size() > 0
+    }
+
+
+
 }
