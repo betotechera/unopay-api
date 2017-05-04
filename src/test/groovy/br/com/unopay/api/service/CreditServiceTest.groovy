@@ -8,6 +8,7 @@ import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -18,6 +19,10 @@ class CreditServiceTest extends SpockApplicationTests {
 
     @Autowired
     SetupCreator setupCreator
+
+    void setup(){
+        Integer.mixin(TimeCategory)
+    }
 
     void 'credit with product should be inserted with product payment rule group'(){
         given:
@@ -37,6 +42,25 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
+    }
+
+    void 'a credit should be inserted with now date time'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+
+            it }
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.createdDateTime > 1.second.ago
     }
 
     void 'given a credit with direct debit insertion type should be inserted with processing situation'(){

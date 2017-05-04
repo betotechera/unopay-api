@@ -16,6 +16,7 @@ public class PaymentAccountService {
     }
 
     public PaymentAccount save(PaymentAccount paymentAccount) {
+        paymentAccount.setupMyCreate();
         return repository.save(paymentAccount);
     }
 

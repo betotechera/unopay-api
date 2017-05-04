@@ -135,4 +135,8 @@ public class PaymentAccount implements Serializable, Updatable {
     @JsonIgnore
     private Integer version;
 
+    public void setupMyCreate(){
+        insertionCreatedDateTime = new Date();
+    }
+
 }
