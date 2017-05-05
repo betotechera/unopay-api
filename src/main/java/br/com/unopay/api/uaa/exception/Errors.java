@@ -278,9 +278,10 @@ public final class Errors {
             new UnovationError("CONTRACT_ALREADY_EXISTS","Contract already exists.");
     public static  final UnovationError CONTRACT_END_IS_BEFORE_BEGIN =
             new UnovationError("CONTRACT_END_IS_BEFORE_BEGIN","Contract end date is before begin date.");
-    public static final UnovationError ESTABLISHMENTS_NOT_FOUND =
-            new UnovationError("ESTABLISHMENTS_NOT_FOUND",
-                    "The informed Contract ServiceTypes are not in the informed Product ServiceTypes.");
+    public static final UnovationError CONTRACT_ESTABLISHMENT_NOT_FOUND =
+            new UnovationError("CONTRACT_ESTABLISHMENT_NOT_FOUND",
+                    "Contract Establishment not found.");
+    ;
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =

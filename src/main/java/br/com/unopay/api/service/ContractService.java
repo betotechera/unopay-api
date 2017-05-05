@@ -7,8 +7,10 @@ import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
+import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
+import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +19,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -97,11 +97,29 @@ public class ContractService {
         }
     }
 
-    public void addEstablishments(String id, ContractEstablishment contractEstablishment) {
+    public ContractEstablishment addEstablishments(String id, ContractEstablishment contractEstablishment) {
         Contract contract = findById(id);
         contractEstablishment.setContract(contract);
         contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
         contract.addContractEstablishment(contractEstablishment);
         repository.save(contract);
+        return contractEstablishment;
     }
+
+    public void removeEstablishment(String id, String contractEstablishmentId) {
+        Contract contract = findById(id);
+        contract.removeContractEstablishmentBy(contractEstablishmentId);
+        repository.save(contract);
+        findContractEstablishmentById(contractEstablishmentId);
+        contractEstablishmentRepository.delete(contractEstablishmentId);
+    }
+
+    private ContractEstablishment findContractEstablishmentById(String id) {
+        ContractEstablishment contract = contractEstablishmentRepository.findOne(id);
+        if(contract == null){
+            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND);
+        }
+        return contract;
+    }
+
 }
