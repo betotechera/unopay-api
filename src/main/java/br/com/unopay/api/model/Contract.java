@@ -173,4 +173,9 @@ public class Contract implements Serializable {
         }
         contractEstablishments.add(contractEstablishment);
     }
+
+    public void removeContractEstablishmentBy(String contractEstablishmentId) {
+        if(contractEstablishments != null)
+           contractEstablishments.removeIf(item -> item.getId().equals(contractEstablishmentId));
+    }
 }

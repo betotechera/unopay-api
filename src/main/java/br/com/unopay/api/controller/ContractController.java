@@ -1,11 +1,11 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import static br.com.unopay.api.uaa.model.validationsgroups.Views.*;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -19,10 +19,8 @@ import org.springframework.data.domain.Page;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.PARTIAL_CONTENT;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.Set;
 
 
 @Slf4j
@@ -105,8 +102,18 @@ public class ContractController {
 
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.PUT)
-    public void addEstablishmentsToContract(@PathVariable  String id,  @RequestBody Set<String> establishmentsDocumentNumber) {
+    public ResponseEntity<ContractEstablishment> addEstablishmentsToContract(@PathVariable  String id, @RequestBody ContractEstablishment contractEstablishment) {
+        log.info("Creating ContractEstablishment {} to contractId={}", contractEstablishment,id);
+        ContractEstablishment created = service.addEstablishments(id, contractEstablishment);
+        return created(URI.create("/contracts/"+id+"/establishments/"+created.getId()))
+                        .body(created);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
+    @RequestMapping(value = "/contracts/{id}/establishments/{contractEstablishmentId}", method = RequestMethod.DELETE)
+    public void removeEstablishment(@PathVariable  String id, @RequestBody String contractEstablishmentId) {
+        log.info("Removing ContractEstablishment {} to contractId={}", contractEstablishmentId,id);
+        service.removeEstablishment(id,contractEstablishmentId);
+    }
 
 }

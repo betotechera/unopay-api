@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ import java.util.Date;
 
 @Data
 @Entity
+@ToString
 @Table(name = "contract_establishment")
 public class ContractEstablishment implements Serializable {
 
