@@ -52,6 +52,8 @@ repositories {
 	jcenter()
 	maven { url "${nexusUrl}/content/repositories/thirdparty/" }
 	maven { url "${nexusUrl}/content/repositories/releases/" }
+	maven { url "${nexusUrl}/content/repositories/Unovation_Releases/" }
+	maven { url "${nexusUrl}/content/repositories/Unovation/" }
 }
 
 dependencies {
