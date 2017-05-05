@@ -27,13 +27,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'credit with product should be inserted with product payment rule group'(){
         given:
         def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-                        hirerDocument = hirer.getDocumentNumber()
-                        product = knownProduct
-
-                    it }
+        Credit credit = createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -43,6 +37,8 @@ class CreditServiceTest extends SpockApplicationTests {
         assert result.id != null
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
+
+
 
     void 'a credit should be inserted with now date time'(){
         given:
@@ -118,18 +114,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with #insertionType available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
-        def hirer = setupCreator.createHirer()
-        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-                    hirerDocument = hirer.getDocumentNumber()
-                    product = knownProduct
-                    it }
-
-        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-                    hirerDocument = hirer.getDocumentNumber()
-                    product = knownProduct
-                it }
+        Credit creditA =  createCredit(knownProduct)
+        Credit creditB =  createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -149,18 +135,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with direct debit, available balance should be zero'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
-        def hirer = setupCreator.createHirer()
-        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
-
-        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
+        Credit creditA =  createCredit(knownProduct)
+        Credit creditB =  createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -175,23 +151,9 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it }
-        def hirer = setupCreator.createHirer()
-        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
-
-        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
-        Credit creditC = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
+        Credit creditA =  createCredit(knownProduct)
+        Credit creditB = createCredit(knownProduct)
+        Credit creditC =  createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -206,17 +168,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with direct debit, block balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
-        def hirer = setupCreator.createHirer()
-        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
-        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
+        Credit creditA = createCredit(knownProduct)
+        Credit creditB =  createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -231,17 +184,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with #insertionType, block balance should be zero'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
-        def hirer = setupCreator.createHirer()
-        Credit creditA = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
-        Credit creditB = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            it }
+        Credit creditA =  createCredit(knownProduct)
+        Credit creditB =  createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -264,13 +208,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'credit with product should be inserted with product credit insertion type'(){
         given:
         def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-
-            it }
+        Credit credit =  createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -434,6 +372,18 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED'
+    }
+
+    private Credit createCredit(knownProduct) {
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+
+            it
+        }
+        credit
     }
 
 }

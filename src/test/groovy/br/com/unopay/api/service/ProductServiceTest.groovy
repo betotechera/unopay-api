@@ -177,11 +177,7 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'known product should be updated'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            it }
+        Product product = createProduct('name')
 
         def created  = service.save(product)
         def newName = 'ProductNew'
@@ -213,12 +209,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product with same name should not be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         service.save(product)
         def created = service.save(product.with { code = 'AAA'; name='AAA'; id = null; it })
@@ -255,12 +246,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product with unknown network should not be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -273,15 +259,12 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
     }
 
+
+
     void 'given product with unknown issuer should not be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -296,12 +279,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product with unknown payment rule group should not be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -318,12 +296,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product without network id should be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -339,12 +312,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product without issuer id should be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -361,12 +329,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product without payment rule group id should be updated'(){
         given:
         def knownName = 'myName'
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            name = knownName
-            it }
+        Product product = createProduct(knownName)
 
         def created = service.save(product)
 
@@ -383,11 +346,7 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'known product should be found'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            it }
+        Product product = createProduct('name')
 
         def created  = service.save(product)
         when:
@@ -408,11 +367,7 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'known product should be deleted'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            it }
+        Product product = createProduct('name')
 
         def created  = service.save(product)
         when:
@@ -431,5 +386,16 @@ class ProductServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
+    }
+
+    private Object createProduct(newName) {
+        Fixture.from(Product.class).gimme("valid")
+                .with {
+            accreditedNetwork = networkUnderTest
+            issuer = issuerUnderTest
+            paymentRuleGroup = paymentRuleGroupUnderTest
+            name = newName
+            it
+        }
     }
 }

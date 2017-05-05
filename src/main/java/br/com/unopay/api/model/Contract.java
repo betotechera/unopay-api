@@ -162,13 +162,15 @@ public class Contract implements Serializable {
         rntrc = contract.getRntrc();
         situation = contract.getSituation();
         issueInvoice = contract.isIssueInvoice();
-        if(contract.getDocumentNumberInvoice() != null)
+        if(contract.getDocumentNumberInvoice() != null) {
             documentNumberInvoice = contract.getDocumentNumberInvoice();
+        }
     }
 
     public void addContractEstablishment(ContractEstablishment contractEstablishment) {
-        if(contractEstablishment == null)
+        if(contractEstablishment == null){
             contractEstablishments = new HashSet<>();
+        }
         contractEstablishments.add(contractEstablishment);
     }
 }

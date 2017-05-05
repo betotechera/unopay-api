@@ -62,16 +62,16 @@ public class EstablishmentController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Establishment institution) {
-        institution.setId(id);
-        log.info("updating establishments {}", institution);
-        service.update(id,institution);
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Establishment establishment) {
+        establishment.setId(id);
+        log.info("updating establishments {}", establishment);
+        service.update(id,establishment);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
-        log.info("removing payment rule groups id={}", id);
+        log.info("removing establishment id={}", id);
         service.delete(id);
     }
 

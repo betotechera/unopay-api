@@ -126,7 +126,7 @@ public class Credit implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(!withProduct() && paymentRuleGroup == null){
+        if(paymentRuleGroup == null && !withProduct()){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
         }
         validateCreditValue();

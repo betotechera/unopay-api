@@ -62,16 +62,16 @@ public class BranchController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch institution) {
-        institution.setId(id);
-        log.info("updating branches {}", institution);
-        service.update(id,institution);
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch branch) {
+        branch.setId(id);
+        log.info("updating branches {}", branch);
+        service.update(id,branch);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
-        log.info("removing payment rule groups id={}", id);
+        log.info("removing branch id={}", id);
         service.delete(id);
     }
 

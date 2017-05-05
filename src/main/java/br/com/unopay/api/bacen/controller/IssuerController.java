@@ -62,16 +62,16 @@ public class IssuerController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Issuer institution) {
-        institution.setId(id);
-        log.info("updating issuers {}", institution);
-        service.update(id,institution);
+    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Issuer issuer) {
+        issuer.setId(id);
+        log.info("updating issuers {}", issuer);
+        service.update(id,issuer);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
-        log.info("removing payment rule groups id={}", id);
+        log.info("removing issuer id={}", id);
         service.delete(id);
     }
 
