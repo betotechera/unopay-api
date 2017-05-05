@@ -37,7 +37,7 @@ public class Address implements Serializable {
     private String id;
 
     @Column(name="zip_code")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
     private String zipCode;
 
