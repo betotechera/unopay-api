@@ -315,7 +315,7 @@ class ContractServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
-    void 'add establishment in contract'(){
+    void 'should add establishment in contract'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
@@ -334,6 +334,42 @@ class ContractServiceTest extends SpockApplicationTests {
         assert contract.contractEstablishments.size() > 0
     }
 
+    void 'should remove establishment in contract'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        contractEstablishment = service.addEstablishments(contract.id,contractEstablishment)
+        when:
+        service.removeEstablishment(contract.id,contractEstablishment.id)
+        contract =service.findById(contract.id)
+        then:
+        assert contract.contractEstablishments.size() == 0
+    }
+
+    void 'should not remove if ContractEstablishment is not found'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        service.removeEstablishment(contract.id,'1234')
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_ESTABLISHMENT_NOT_FOUND'
+    }
 
 
 }
