@@ -16,7 +16,7 @@ values ('manager','a2ca3855f39f2fa6c0d553927ded0fc95b88e9672c173da32902d4cdb17f3
 
 -- pass test
 insert into oauth_user_details(id, email, name,  password, version)
-values('1', 'test@test.com', 'test','15c6941ad4b520e2549dc5b88f28bd856baac09553872ed56cd60f48935d0e9a43aa7bad9b7e0206', 0);
+values('1', 'test@test.com', 'test','3fa6b36280f3c5977988b700f0e63aefb424b94ea734d43eb45acabb3d026f64ed9883e19329059c', 0);
 
 insert into oauth_user_details(id, email, name, password, version)
 values('2', 'salesman@unovation.com.br', 'sales','25449269c801e35004f0eb163ee00df067ff6e4f95926c686dcab687ca4ae1f3c39cad8627ab19d9',0);
@@ -53,3 +53,4 @@ Insert into AUTHORITY(name, description) values('ROLE_MANAGE_GROUPS','Permite ge
 insert into oauth_group_authorities(authority, group_id) values('ROLE_ADMIN', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_GROUPS', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_GROUPS', '1');
+insert into oauth_group_members(user_id, group_id) values('1', '1');

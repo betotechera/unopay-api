@@ -6,6 +6,7 @@ import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import static br.com.unopay.api.uaa.model.validationsgroups.Views.*;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -23,11 +24,14 @@ import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,9 +54,10 @@ public class ContractController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Public.class)
     @ResponseStatus(CREATED)
-    @RequestMapping(value = "/contracts", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
+    @RequestMapping(value = "/contracts", method = POST)
     public ResponseEntity<Contract> create(@Validated(Create.class) @RequestBody Contract contract) {
         log.info("creating contract {}", contract);
         Contract created = service.save(contract);
@@ -61,14 +66,17 @@ public class ContractController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
     @ResponseStatus(OK)
-    @RequestMapping(value = "/contracts/{id}", method = RequestMethod.GET)
+    @JsonView(Public.class)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT')")
+    @RequestMapping(value = "/contracts/{id}", method = GET)
     public Contract get(@PathVariable String id) {
         log.info("get contract={}", id);
         return service.findById(id);
     }
+
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contract contract) {
         contract.setId(id);
@@ -77,21 +85,25 @@ public class ContractController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing contract id={}", id);
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
     @ResponseStatus(OK)
-    @RequestMapping(value = "/contracts", method = RequestMethod.GET)
+    @JsonView(List.class)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT')")
+    @RequestMapping(value = "/contracts", method = GET)
     public Results<Contract> getByParams(ContractFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search contract with filter={}", filter);
         Page<Contract> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contracts", api));
     }
+
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.PUT)
     public void addEstablishmentsToContract(@PathVariable  String id,  @RequestBody Set<String> establishmentsDocumentNumber) {
     }

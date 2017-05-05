@@ -74,7 +74,7 @@ public class Person implements Serializable{
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @JoinColumn(name="address_id")
     private Address address;
 

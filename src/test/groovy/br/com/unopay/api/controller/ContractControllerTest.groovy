@@ -36,7 +36,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
 
     void 'valid contract should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
@@ -54,7 +54,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
 
     void 'known contract should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
@@ -78,7 +78,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
 
     void 'known contract should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
@@ -101,7 +101,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
 
     void 'known contracts should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract = contract.with { contractor = contractorUnderTest
             hirer = hirerUnderTest
