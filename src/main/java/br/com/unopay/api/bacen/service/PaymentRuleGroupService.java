@@ -80,7 +80,7 @@ public class PaymentRuleGroupService {
 
     public void update(String id, PaymentRuleGroup paymentRuleGroup) {
         PaymentRuleGroup current = repository.findOne(id);
-        current.updateModel(paymentRuleGroup);
+        current.updateMe(paymentRuleGroup);
         try {
             repository.save(current);
         } catch (DataIntegrityViolationException e) {

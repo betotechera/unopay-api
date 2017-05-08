@@ -43,11 +43,8 @@ public class CreditController {
         log.info("inserting credit={}", credit);
         credit.setHirerDocument(document);
         Credit created = service.insert(credit);
-        log.info("Inserted credit value={} from hirer={}, available balance={}, block balance={}", credit.getValue(),
-                credit.getHirerDocument(), credit.getAvailableBalance(), credit.getBlockedBalance());
-        return
-                created(URI.create(String.format("/hirers/%s/credits/%s",document, created.getId())))
-                        .body(created);
+        log.info("Inserted credit={}", created);
+        return created(URI.create(String.format("/hirers/%s/credits/%s",document, created.getId()))).body(created);
 
     }
 

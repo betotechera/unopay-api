@@ -305,11 +305,4 @@ public final class Errors {
     public static final UnovationError DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED =
             new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
 
-
-
-
-
-
-
-
 }

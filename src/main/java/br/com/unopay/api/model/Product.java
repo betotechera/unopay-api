@@ -39,7 +39,7 @@ import java.util.List;
 @Entity
 @Table(name = "product")
 @EqualsAndHashCode(exclude = {"serviceType", "issuer", "paymentRuleGroup", "accreditedNetwork"})
-public class Product implements Serializable, Updatable, Cloneable {
+public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

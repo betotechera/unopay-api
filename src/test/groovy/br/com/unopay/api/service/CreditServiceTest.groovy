@@ -442,6 +442,4 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
     }
-
-
 }

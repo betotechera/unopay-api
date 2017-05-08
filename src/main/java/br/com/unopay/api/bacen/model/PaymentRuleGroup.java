@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.model.Updatable;
 import static br.com.unopay.api.uaa.exception.Errors.LARGE_PAYMENT_RULE_GROUP_NAME;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NAME_REQUIRED;
@@ -31,7 +32,7 @@ import java.io.Serializable;
 @Entity
 @EqualsAndHashCode
 @Table(name = "payment_rule_group")
-public class PaymentRuleGroup implements Serializable, Cloneable {
+public class PaymentRuleGroup implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -79,21 +80,6 @@ public class PaymentRuleGroup implements Serializable, Cloneable {
     @JoinColumn(name="institution_id")
     @JsonView({Views.Public.class})
     private Institution institution;
-
-    public void updateModel(PaymentRuleGroup ruleGroup) {
-        if(ruleGroup.getCode() !=null) {
-            this.code = ruleGroup.getCode();
-        }
-        if(ruleGroup.getName() !=null) {
-            this.name = ruleGroup.getName();
-        }
-        if(ruleGroup.getPurpose() !=null) {
-            this.purpose = ruleGroup.getPurpose();
-        }
-        if(ruleGroup.getUserRelationship() !=null) {
-            this.userRelationship = ruleGroup.getUserRelationship();
-        }
-    }
 
     public void validate(){
         if (getName() == null) {

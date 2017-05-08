@@ -22,7 +22,8 @@ class CreditControllerTest extends AuthServerApplicationTests {
         String document = credit.getHirerDocument()
 
         when:
-        def result = this.mvc.perform(post('/hirers/{document}/credits/?access_token={access_token}', document, accessToken)
+        def result = this.mvc.perform(
+                            post('/hirers/{document}/credits/?access_token={access_token}', document, accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonWithoutNetworkPaymentRuleGroups(credit)))
         then:
