@@ -105,13 +105,13 @@ public class Credit implements Serializable, Updatable, Cloneable {
     @JsonView({Views.Public.class,Views.List.class})
     private String cnabId;
 
-    @Column(name = "available_balance")
+    @Column(name = "available_value")
     @JsonView({Views.Public.class,Views.List.class})
-    private BigDecimal availableBalance;
+    private BigDecimal availableValue;
 
-    @Column(name = "blocked_balance")
+    @Column(name = "blocked_value")
     @JsonView({Views.Public.class,Views.List.class})
-    private BigDecimal blockedBalance;
+    private BigDecimal blockedValue;
 
     @Version
     @JsonIgnore
@@ -163,30 +163,30 @@ public class Credit implements Serializable, Updatable, Cloneable {
 
     public void updateAvailableBalance(){
         if(isDirectDebit()){
-            availableBalance = BigDecimal.ZERO;
+            availableValue = BigDecimal.ZERO;
             return;
         }
-        availableBalance = this.value;
+        availableValue = this.value;
     }
 
     public void updateBlockedBalance(){
         if(creditInsertionType.isPaymentProcessedByClient()){
-            blockedBalance = BigDecimal.ZERO;
+            blockedValue = BigDecimal.ZERO;
             return;
         }
-        blockedBalance = this.value;
+        blockedValue = this.value;
     }
 
-    public BigDecimal getAvailableBalance(){
-        if(availableBalance != null) {
-            return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+    public BigDecimal getAvailableValue(){
+        if(availableValue != null) {
+            return availableValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    public BigDecimal getBlockedBalance(){
-        if(blockedBalance != null) {
-            return blockedBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+    public BigDecimal getBlockedValue(){
+        if(blockedValue != null) {
+            return blockedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
