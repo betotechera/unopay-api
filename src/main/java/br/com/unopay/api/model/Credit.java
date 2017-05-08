@@ -37,7 +37,7 @@ import java.util.Date;
 @EqualsAndHashCode(exclude = {"paymentRuleGroup", "product"})
 @ToString(exclude = {"paymentRuleGroup", "product"})
 @Table(name = "credit")
-public class Credit implements Serializable, Updatable, Cloneable {
+public class Credit implements Serializable, Updatable {
 
     public Credit(){}
 
