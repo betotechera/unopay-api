@@ -2,14 +2,10 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
-import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
-import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
-import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PRODUCT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_CREDIT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PRODUCT_VALUE_NOT_MET;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -17,6 +13,8 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -33,13 +31,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = {"paymentRuleGroup", "product"})
+@ToString(exclude = {"paymentRuleGroup", "product"})
 @Table(name = "credit")
-public class Credit implements Serializable, Updatable {
+public class Credit implements Serializable, Updatable, Cloneable {
 
     public Credit(){}
 
@@ -52,13 +51,11 @@ public class Credit implements Serializable, Updatable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="product_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.List.class})
     private Product product;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
     @NotNull(groups = {Create.class, Update.class})
@@ -83,12 +80,10 @@ public class Credit implements Serializable, Updatable {
 
     @Column(name = "credit_number")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Long creditNumber;
 
     @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Date createdDateTime;
 
     @Column(name = "value")
@@ -113,30 +108,21 @@ public class Credit implements Serializable, Updatable {
 
     @Column(name = "available_balance")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private BigDecimal availableBalance;
 
     @Column(name = "blocked_balance")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private BigDecimal blockedBalance;
 
     @Version
     @JsonIgnore
     private Integer version;
 
-    public void validate(){
-        if(paymentRuleGroup == null && !withProduct()){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED);
-        }
-        validateCreditValue();
-    }
-
     public boolean withProduct(){
         return product != null;
     }
 
-    private void validateCreditValue() {
+    public void validateCreditValue() {
         if(!withProduct() && value.compareTo(new BigDecimal(0)) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
@@ -160,12 +146,16 @@ public class Credit implements Serializable, Updatable {
     }
 
     private void defineSituation() {
-        if(DIRECT_DEBIT.equals(creditInsertionType)) {
+        if(isDirectDebit()) {
             situation = CreditSituation.PROCESSING;
         }
-        if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
+        if(creditInsertionType.isPaymentProcessedByClient()){
             situation = CreditSituation.CONFIRMED;
         }
+    }
+
+    public boolean isDirectDebit() {
+        return DIRECT_DEBIT.equals(creditInsertionType);
     }
 
     public void defineCreditInsertionType(String creditInsertionType){
@@ -173,7 +163,7 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void updateAvailableBalance(){
-        if(DIRECT_DEBIT.equals(creditInsertionType)){
+        if(isDirectDebit()){
             availableBalance = BigDecimal.ZERO;
             return;
         }
@@ -181,7 +171,7 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void updateBlockedBalance(){
-        if(Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(creditInsertionType)){
+        if(creditInsertionType.isPaymentProcessedByClient()){
             blockedBalance = BigDecimal.ZERO;
             return;
         }
@@ -200,5 +190,29 @@ public class Credit implements Serializable, Updatable {
             return blockedBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
+    public void defineCreditNumber(Long lastCreditNumber) {
+        if(lastCreditNumber == null){
+            creditNumber = 1L;
+            return;
+        }
+        creditNumber += lastCreditNumber;
+    }
+
+    @JsonIgnore
+    public String getProductId(){
+        if(product!= null){
+            return product.getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public String getPaymentRuleGroupId(){
+        if(paymentRuleGroup != null){
+            return paymentRuleGroup.getId();
+        }
+        return null;
     }
 }

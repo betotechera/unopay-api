@@ -1,6 +1,7 @@
 package br.com.unopay.api.uaa
 
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.uaa.model.validationsgroups.Views
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Throwables
@@ -83,10 +84,20 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         }
     }
 
-    protected String toJson(Object user) {
+    protected String toJson(Object object) {
         try {
             ObjectMapper objectMapper = new ObjectMapper()
-            return objectMapper.writeValueAsString(user)
+            return objectMapper.writeValueAsString(object)
+        } catch (JsonProcessingException e) {
+            Throwables.propagate(e)
+            return null
+        }
+    }
+
+    protected String toJsonWithoutNetworkPaymentRuleGroups(Object object) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper()
+            return objectMapper.writerWithView(Views.List.class).writeValueAsString(object)
         } catch (JsonProcessingException e) {
             Throwables.propagate(e)
             return null

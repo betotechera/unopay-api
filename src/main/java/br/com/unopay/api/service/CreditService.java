@@ -16,13 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class CreditService {
 
     private CreditRepository repository;
     private HirerService hirerService;
+    private ProductService productService;
     private PaymentRuleGroupService paymentRuleGroupService;
+    @Setter
+    private PaymentAccountService paymentAccountService;
 
     @Setter
     @Getter
@@ -37,23 +42,35 @@ public class CreditService {
     @Autowired
     public CreditService(CreditRepository repository,
                          HirerService hirerService,
-                         PaymentRuleGroupService paymentRuleGroupService) {
+                         ProductService productService, PaymentRuleGroupService paymentRuleGroupService,
+                         PaymentAccountService paymentAccountService) {
         this.repository = repository;
         this.hirerService = hirerService;
+        this.productService = productService;
         this.paymentRuleGroupService = paymentRuleGroupService;
+        this.paymentAccountService = paymentAccountService;
     }
 
     public Credit insert(Credit credit) {
-        credit.validate();
-        credit.setupMyCreate();
+        credit.validateCreditValue();
+        defineDefaultValues(credit);
+        validateReferences(credit);
+        Credit inserted =  repository.save(credit);
+        if(!inserted.isDirectDebit()){
+            paymentAccountService.create(inserted);
+        }
+        return credit;
+    }
+
+    private void defineDefaultValues(Credit credit) {
         if(!credit.withProduct()){
             defineDefaultCreditInsertionType(credit);
             defineDefaultPaymentRuleGroup(credit);
         }
-        hirerService.findByDocumentNumber(credit.getHirerDocument());
-        log.info("Insert credit value={} from hirer={}, available balance={}, block balance={}", credit.getValue(),
-                credit.getHirerDocument(), credit.getAvailableBalance(), credit.getBlockedBalance());
-        return repository.save(credit);
+        credit.setupMyCreate();
+        Optional<Credit> last = repository.findFirstByOrderByCreatedDateTimeDesc();
+        Long lastCreditNumber = last.map(Credit::getCreditNumber).orElse(null);
+        credit.defineCreditNumber(lastCreditNumber);
     }
 
     public Credit  findById(String id) {
@@ -73,5 +90,18 @@ public class CreditService {
         }
         PaymentRuleGroup defaultPaymentRuleGroupResult = paymentRuleGroupService.getByCode(defaultPaymentRuleGroup);
         credit.setPaymentRuleGroup(defaultPaymentRuleGroupResult);
+    }
+
+    private void validateReferences(Credit credit) {
+        hirerService.findByDocumentNumber(credit.getHirerDocument());
+        if(credit.withProduct()) {
+            credit.setProduct(productService.findById(credit.getProductId()));
+        }
+        credit.setPaymentRuleGroup(paymentRuleGroupService.getById(credit.getPaymentRuleGroupId()));
+    }
+
+
+    public void cancel(String id) {
+
     }
 }

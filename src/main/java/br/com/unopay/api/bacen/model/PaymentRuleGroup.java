@@ -31,7 +31,7 @@ import java.io.Serializable;
 @Entity
 @EqualsAndHashCode
 @Table(name = "payment_rule_group")
-public class PaymentRuleGroup implements Serializable {
+public class PaymentRuleGroup implements Serializable, Cloneable {
 
     public static final long serialVersionUID = 1L;
 

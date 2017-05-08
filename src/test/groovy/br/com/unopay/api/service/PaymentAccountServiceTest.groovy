@@ -51,5 +51,6 @@ class PaymentAccountServiceTest extends SpockApplicationTests {
 
         then:
         result.insertionCreatedDateTime > 1.second.ago
+        result.insertionCreatedDateTime < 1.second.from.now
     }
 }

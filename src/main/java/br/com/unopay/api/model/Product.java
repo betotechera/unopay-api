@@ -14,6 +14,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
@@ -37,7 +38,8 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "product")
-public class Product implements Serializable, Updatable {
+@EqualsAndHashCode(exclude = {"serviceType", "issuer", "paymentRuleGroup", "accreditedNetwork"})
+public class Product implements Serializable, Updatable, Cloneable {
 
     public static final long serialVersionUID = 1L;
 
@@ -81,7 +83,7 @@ public class Product implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private AccreditedNetwork accreditedNetwork;
 
     @Column(name = "payment_instrument_type")

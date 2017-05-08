@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class ProductService {
@@ -62,11 +64,8 @@ public class ProductService {
     }
 
     public Product findById(String id) {
-        Product product = repository.findOne(id);
-        if(product == null){
-            throw UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND);
-        }
-        return product;
+        Optional<Product> product = repository.findById(id);
+        return product.orElseThrow(() -> UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND));
     }
 
     public void delete(String id) {

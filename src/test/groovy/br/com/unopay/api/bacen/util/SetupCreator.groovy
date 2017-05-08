@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.util
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
+import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.service.ProductService
@@ -101,6 +102,27 @@ class SetupCreator {
             paymentRuleGroup = null
             it
         }
+    }
+
+    Credit createCredit(Product knownProduct){
+        def hirer = createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+                .with {
+            hirerDocument = hirer.getDocumentNumber()
+            product = knownProduct
+
+            it
+        }
+
+        credit
+    }
+
+    Credit createCredit(){
+        def product = createProduct()
+        product.getPaymentRuleGroup()
+        product.getAccreditedNetwork().getPaymentRuleGroups()
+        product.getIssuer()
+        createCredit(product)
     }
 
     Establishment createEstablishment() {

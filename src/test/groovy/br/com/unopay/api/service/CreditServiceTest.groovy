@@ -2,10 +2,12 @@ package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
+import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
@@ -19,15 +21,17 @@ class CreditServiceTest extends SpockApplicationTests {
 
     @Autowired
     SetupCreator setupCreator
+    PaymentAccountService paymentAccountServiceMock = Mock(PaymentAccountService)
 
     void setup(){
+        service.paymentAccountService = paymentAccountServiceMock
         Integer.mixin(TimeCategory)
     }
 
     void 'credit with product should be inserted with product payment rule group'(){
         given:
         def knownProduct = setupCreator.createProduct()
-        Credit credit = createCredit(knownProduct)
+        Credit credit = setupCreator.createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -38,7 +42,87 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup() == knownProduct.getPaymentRuleGroup()
     }
 
+    void 'credit with unknown product should not be inserted'(){
+        given:
+        Product product = setupCreator.createProduct()
+        Credit credit = setupCreator.createCredit(product.with { id = ''; it })
 
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
+    }
+
+    void 'credit with unknown payment rule groups should not be inserted'(){
+        given:
+        PaymentRuleGroup unknownPaymentRuleGroup = setupCreator.createPaymentRuleGroup().with { id = ''; it }
+        def knownProduct = setupCreator.createProduct().with { paymentRuleGroup = unknownPaymentRuleGroup; it }
+        Credit credit = setupCreator.createCredit(knownProduct)
+
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
+    }
+
+    void 'when insert credit should be generate credit number'() {
+        given:
+        def knownProduct = setupCreator.createProduct()
+        Credit credit = setupCreator.createCredit(knownProduct)
+                .with { creditNumber = null; it }
+
+        when:
+        def inserted = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.creditNumber != null
+    }
+
+    void 'when insert credit then generated credit number should be incremented'() {
+        given:
+        def knownProduct = setupCreator.createProduct()
+        Credit credit = setupCreator.createCredit(knownProduct)
+                .with { creditNumber = null; it }
+
+        when:
+        service.insert(credit)
+        def inserted = service.insert(credit.with { id = null; it })
+
+        then:
+        assert inserted.creditNumber != null
+        assert inserted.creditNumber == 2L
+    }
+
+    void 'when insert credit without direct debit payment type then payment account should be created'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+                .with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it}
+        Credit credit = setupCreator.createCredit(knownProduct)
+
+        when:
+        service.insert(credit)
+
+        then:
+        1 * paymentAccountServiceMock.create(_)
+    }
+
+    void 'when insert credit with direct debit payment type then payment account should not be created'(){
+        given:
+        def knownProduct = setupCreator.createProduct()
+                .with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it}
+        Credit credit = setupCreator.createCredit(knownProduct)
+
+        when:
+        service.insert(credit)
+
+        then:
+        0 * paymentAccountServiceMock.create(_)
+    }
 
     void 'a credit should be inserted with now date time'(){
         given:
@@ -57,6 +141,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         assert result.createdDateTime > 1.second.ago
+        assert result.createdDateTime < 1.second.from.now
     }
 
     void 'given a credit with direct debit insertion type should be inserted with processing situation'(){
@@ -114,8 +199,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with #insertionType available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
-        Credit creditA =  createCredit(knownProduct)
-        Credit creditB =  createCredit(knownProduct)
+        Credit creditA =  setupCreator.createCredit(knownProduct)
+        Credit creditB =  setupCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -135,8 +220,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with direct debit, available balance should be zero'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
-        Credit creditA =  createCredit(knownProduct)
-        Credit creditB =  createCredit(knownProduct)
+        Credit creditA =  setupCreator.createCredit(knownProduct)
+        Credit creditB =  setupCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -151,9 +236,9 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it }
-        Credit creditA =  createCredit(knownProduct)
-        Credit creditB = createCredit(knownProduct)
-        Credit creditC =  createCredit(knownProduct)
+        Credit creditA =  setupCreator.createCredit(knownProduct)
+        Credit creditB = setupCreator.createCredit(knownProduct)
+        Credit creditC =  setupCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -168,8 +253,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with direct debit, block balance should be updated'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
-        Credit creditA = createCredit(knownProduct)
-        Credit creditB =  createCredit(knownProduct)
+        Credit creditA = setupCreator.createCredit(knownProduct)
+        Credit creditB =  setupCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -184,8 +269,8 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with #insertionType, block balance should be zero'(){
         given:
         def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
-        Credit creditA =  createCredit(knownProduct)
-        Credit creditB =  createCredit(knownProduct)
+        Credit creditA =  setupCreator.createCredit(knownProduct)
+        Credit creditB =  setupCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -208,7 +293,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'credit with product should be inserted with product credit insertion type'(){
         given:
         def knownProduct = setupCreator.createProduct()
-        Credit credit =  createCredit(knownProduct)
+        Credit credit =  setupCreator.createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -313,25 +398,6 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup().scope == paymentRuleGroup.scope
     }
 
-    void 'given a credit without product and default payment rule group should not be inserted'(){
-        given:
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with {
-                    hirerDocument = hirer.getDocumentNumber()
-                    it }
-        def paymentRule = service.defaultPaymentRuleGroup
-        service.setDefaultPaymentRuleGroup("")
-
-        when:
-        service.insert(credit)
-        service.setDefaultPaymentRuleGroup(paymentRule)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED'
-    }
-
     void 'given a credit with known hirer document should be inserted'(){
         given:
         def hirer = setupCreator.createHirer()
@@ -362,28 +428,20 @@ class CreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'HIRER_DOCUMENT_NOT_FOUND'
     }
 
-    void 'given a credit without payment rule group and product should not be inserted'(){
+    void 'given a credit without payment rule group and product should be inserted'(){
         given:
+        setupCreator.createPaymentRuleGroupDefault()
+        def hirer = setupCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup")
+                            .with { hirerDocument = hirer.getDocumentNumber(); it }
 
         when:
-        service.insert(credit)
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED'
+        assert result.id != null
     }
 
-    private Credit createCredit(knownProduct) {
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-
-            it
-        }
-        credit
-    }
 
 }

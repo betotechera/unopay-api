@@ -281,7 +281,6 @@ public final class Errors {
     public static final UnovationError CONTRACT_ESTABLISHMENT_NOT_FOUND =
             new UnovationError("CONTRACT_ESTABLISHMENT_NOT_FOUND",
                     "Contract Establishment not found.");
-    ;
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
@@ -295,9 +294,6 @@ public final class Errors {
 
 
     /* credit */
-    public static final UnovationError PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED =
-            new UnovationError("PAYMENT_RULE_GROUP_OR_PRODUCT_REQUIRED","Payment rule group or product is required");
-
     public static final UnovationError CREDIT_INSERT_TYPE_NOT_CONFIGURED =
             new UnovationError("CREDIT_INSERT_TYPE_NOT_CONFIGURED","Credit insert type not configured");
     public static final UnovationError MINIMUM_PRODUCT_VALUE_NOT_MET =
