@@ -11,8 +11,8 @@ create table credit (
     situation varchar(50) not null,
     credit_source varchar(256) not null,
     cnab_id varchar(256),
-    available_balance decimal(20,2) not null,
-    blocked_balance decimal(20,2) not null,
+    available_value decimal(20,2) not null,
+    blocked_value decimal(20,2) not null,
     version integer,
     constraint fk_credit_product foreign key(product_id) references product(id),
     constraint fk_credit_pay_rule_group foreign key(payment_rule_group_id) references payment_rule_group(id)

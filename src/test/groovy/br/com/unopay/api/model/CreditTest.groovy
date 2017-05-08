@@ -27,8 +27,8 @@ class CreditTest  extends FixtureApplicationTest {
         a.situation == b.situation
         a.creditSource == b.creditSource
         a.cnabId == b.cnabId
-        a.availableBalance == b.availableBalance
-        a.blockedBalance == b.blockedBalance
+        a.availableValue == b.availableValue
+        a.blockedValue == b.blockedValue
     }
 
     def 'only fields with value should be updated'(){
@@ -51,8 +51,8 @@ class CreditTest  extends FixtureApplicationTest {
         a.situation != b.situation
         a.creditSource != b.creditSource
         a.cnabId != b.cnabId
-        a.availableBalance != b.availableBalance
-        a.blockedBalance != b.blockedBalance
+        a.availableValue != b.availableValue
+        a.blockedValue != b.blockedValue
     }
 
     def 'should be equals'(){

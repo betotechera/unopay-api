@@ -46,8 +46,8 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
             add("cnabId",random("56465456", "78979879897"));
-            add("availableBalance", random(BigDecimal.class));
-            add("blockedBalance",random(BigDecimal.class));
+            add("availableValue", random(BigDecimal.class));
+            add("blockedValue",random(BigDecimal.class));
         }});
 
         Fixture.of(Credit.class).addTemplate("withProduct").inherits("allFields", new Rule(){{

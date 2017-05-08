@@ -208,7 +208,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableBalance == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableValue == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
 
         where:
         insertionType|_
@@ -229,7 +229,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableBalance == 0.0
+        result.availableValue == 0.0
 
     }
 
@@ -247,7 +247,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableBalance == creditC.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableValue == creditC.value.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     void 'when insert credits with direct debit, block balance should be updated'(){
@@ -262,7 +262,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.blockedBalance == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.blockedValue == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     @Unroll
@@ -278,7 +278,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.blockedBalance == 0.0
+        result.blockedValue == 0.0
 
         where:
         insertionType|_
