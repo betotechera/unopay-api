@@ -31,8 +31,12 @@ import java.net.URI;
 @Timed(prefix = "api")
 public class CreditController {
 
-    @Autowired
     private CreditService service;
+
+    @Autowired
+    public CreditController(CreditService service) {
+        this.service = service;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(CREATED)
