@@ -37,6 +37,20 @@ public class PaymentAccount implements Serializable, Updatable {
 
     public PaymentAccount(){}
 
+    public PaymentAccount(Credit credit){
+        this.issuer = credit.getProduct().getIssuer();
+        this.product = credit.getProduct();
+        this.paymentRuleGroup = credit.getPaymentRuleGroup();
+        this.hirerDocument = credit.getHirerDocument();
+        this.serviceType = credit.getServiceType();
+        this.creditInsertionType = credit.getCreditInsertionType();
+        this.creditNumber = credit.getCreditNumber();
+        this.value = credit.getValue();
+        this.situation = credit.getSituation();
+        this.creditSource = credit.getCreditSource();
+        this.availableBalance = credit.getAvailableValue();
+    }
+
     @Id
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})
@@ -116,10 +130,6 @@ public class PaymentAccount implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     private String creditSource;
 
-    @Column(name = "cnab_id")
-    @JsonView({Views.Public.class,Views.List.class})
-    private String cnabId;
-
     @Column(name = "available_balance")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
@@ -137,6 +147,32 @@ public class PaymentAccount implements Serializable, Updatable {
 
     public void setupMyCreate(){
         insertionCreatedDateTime = new Date();
+        transactionCreatedDateTime = new Date();
+        solicitationDateTime = new Date();
+    }
+
+    @JsonIgnore
+    public String getProductId(){
+        if(product!= null){
+            return product.getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public String getPaymentRuleGroupId(){
+        if(paymentRuleGroup != null){
+            return paymentRuleGroup.getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public String getProductIssuerId(){
+        if(product != null && product.getIssuer() != null){
+            return product.getIssuer().getId();
+        }
+        return null;
     }
 
 }

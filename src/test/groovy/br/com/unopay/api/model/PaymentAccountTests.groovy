@@ -31,7 +31,6 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         a.value == b.value
         a.situation == b.situation
         a.creditSource == b.creditSource
-        a.cnabId == b.cnabId
         a.availableBalance == b.availableBalance
         a.paymentBankAccount == b.paymentBankAccount
     }
@@ -59,9 +58,30 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         a.value != b.value
         a.situation != b.situation
         a.creditSource != b.creditSource
-        a.cnabId != b.cnabId
         a.availableBalance != b.availableBalance
         a.paymentBankAccount != b.paymentBankAccount
+    }
+
+    def 'should create me from credit'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+
+        when:
+        PaymentAccount paymentAccount = new PaymentAccount(credit)
+
+        then:
+        paymentAccount.transactionCreatedDateTime != credit.createdDateTime
+        paymentAccount.issuer == credit.product.issuer
+        paymentAccount.product == credit.product
+        paymentAccount.paymentRuleGroup == credit.paymentRuleGroup
+        paymentAccount.hirerDocument == credit.hirerDocument
+        paymentAccount.serviceType == credit.serviceType
+        paymentAccount.creditInsertionType == credit.creditInsertionType
+        paymentAccount.creditNumber == credit.creditNumber
+        paymentAccount.value == credit.value
+        paymentAccount.situation == credit.situation
+        paymentAccount.creditSource == credit.creditSource
+        paymentAccount.availableBalance == credit.availableValue
     }
 
     def 'should be equals'(){

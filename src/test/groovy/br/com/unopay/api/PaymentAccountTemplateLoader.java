@@ -84,7 +84,6 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
-            add("cnabId", uniqueRandom("56465456", "78979879897", "888877775555"));
             add("availableBalance", random(BigDecimal.class));
             add("paymentBankAccount", one(PaymentBankAccount.class, "valid"));
         }});

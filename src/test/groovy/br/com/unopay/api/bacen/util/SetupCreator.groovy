@@ -119,9 +119,6 @@ class SetupCreator {
 
     Credit createCredit(){
         def product = createProduct()
-        product.getPaymentRuleGroup()
-        product.getAccreditedNetwork().getPaymentRuleGroups()
-        product.getIssuer()
         createCredit(product)
     }
 
