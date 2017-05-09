@@ -12,7 +12,6 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         b.getIssuer().setId('65545')
         b.getProduct().setId('65545')
         b.getPaymentRuleGroup().setId('65545')
-        b.getPaymentAccount().setId('65545')
 
         when:
         a.updateMe(b)

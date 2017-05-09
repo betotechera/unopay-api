@@ -102,7 +102,6 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             product = setupCreator.createProduct()
             issuer = setupCreator.createIssuer()
             paymentRuleGroup = setupCreator.createPaymentRuleGroup()
-            paymentBankAccount = setupCreator.createPaymentBankAccount()
             it
         }
     }
