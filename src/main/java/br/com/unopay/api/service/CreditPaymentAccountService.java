@@ -29,9 +29,7 @@ public class CreditPaymentAccountService {
 
     public CreditPaymentAccount save(CreditPaymentAccount creditPaymentAccount) {
         creditPaymentAccount.setupMyCreate();
-        creditPaymentAccount.setPaymentRuleGroup(paymentRuleGroupService.getById(creditPaymentAccount.getPaymentRuleGroupId()));
-        creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
-        creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
+        validateReferences(creditPaymentAccount);
         return repository.save(creditPaymentAccount);
     }
 
@@ -41,5 +39,11 @@ public class CreditPaymentAccountService {
 
     public CreditPaymentAccount create(Credit credit) {
         return save(new CreditPaymentAccount(credit));
+    }
+
+    private void validateReferences(CreditPaymentAccount creditPaymentAccount) {
+        creditPaymentAccount.setPaymentRuleGroup(paymentRuleGroupService.getById(creditPaymentAccount.getPaymentRuleGroupId()));
+        creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
+        creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
     }
 }
