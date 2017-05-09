@@ -30,14 +30,14 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "payment_account")
-public class PaymentAccount implements Serializable, Updatable {
+@Table(name = "credit_payment_account")
+public class CreditPaymentAccount implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
-    public PaymentAccount(){}
+    public CreditPaymentAccount(){}
 
-    public PaymentAccount(Credit credit){
+    public CreditPaymentAccount(Credit credit){
         this.issuer = credit.getProduct().getIssuer();
         this.product = credit.getProduct();
         this.paymentRuleGroup = credit.getPaymentRuleGroup();
@@ -135,11 +135,8 @@ public class PaymentAccount implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal availableBalance;
 
-    @Valid
-    @ManyToOne
-    @JoinColumn(name="payment_bank_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
-    private PaymentBankAccount paymentBankAccount;
+    @Column(name = "payment_account_id")
+    private String paymentAccount;
 
     @Version
     @JsonIgnore

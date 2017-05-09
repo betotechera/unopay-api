@@ -70,7 +70,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
 
 
 
-        Fixture.of(PaymentAccount.class).addTemplate("valid", new Rule(){{
+        Fixture.of(CreditPaymentAccount.class).addTemplate("valid", new Rule(){{
             add("transactionCreatedDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
             add("issuer", one(Issuer.class, "valid"));
             add("product", one(Product.class, "valid"));
@@ -85,7 +85,7 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
             add("availableBalance", random(BigDecimal.class));
-            add("paymentBankAccount", one(PaymentBankAccount.class, "valid"));
+            add("paymentAccount", "AAA");
         }});
 
 

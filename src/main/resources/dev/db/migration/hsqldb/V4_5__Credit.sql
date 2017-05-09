@@ -18,7 +18,7 @@ create table credit (
     constraint fk_credit_pay_rule_group foreign key(payment_rule_group_id) references payment_rule_group(id)
 );
 
-create table payment_account (
+create table credit_payment_account (
     id VARCHAR(256) PRIMARY KEY,
     transaction_created_date_time TIMESTAMP not null,
     issuer_id varchar(256) not null,
@@ -34,13 +34,12 @@ create table payment_account (
     situation varchar(50) not null,
     credit_source varchar(256) not null,
     cnab_id varchar(256),
-    PAYMENT_BANK_ACCOUNT_ID varchar(256),
+    PAYMENT_ACCOUNT_ID varchar(256),
     available_balance decimal(20,2) not null,
     version integer,
     constraint fk_h_cred_issuer foreign key(issuer_id) references issuer(id),
-    constraint fk_h_cred_product foreign key(product_id) references product(id),
-    constraint fk_h_cred_account foreign key(PAYMENT_BANK_ACCOUNT_ID) references payment_bank_account(id)
-);
+    constraint fk_h_cred_product foreign key(product_id) references product(id)
+    );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_CREDIT','Permite listar Creditos.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_CREDIT','Permite gerenciar Creditos.');
