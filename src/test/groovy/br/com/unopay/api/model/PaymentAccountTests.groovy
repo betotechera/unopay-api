@@ -5,7 +5,7 @@ import br.com.unopay.api.FixtureApplicationTest
 
 class PaymentAccountTests  extends FixtureApplicationTest {
 
-    def 'should update me'(){
+    def 'should update Credit Payment Account'(){
         given:
         CreditPaymentAccount a = Fixture.from(CreditPaymentAccount.class).gimme("valid")
         CreditPaymentAccount b = Fixture.from(CreditPaymentAccount.class).gimme("valid")
@@ -61,7 +61,7 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         a.paymentAccount != b.paymentAccount
     }
 
-    def 'should create me from credit'(){
+    def 'should create Credit Payment Account from credit'(){
         given:
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
 
@@ -81,6 +81,47 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         paymentAccount.situation == credit.situation
         paymentAccount.creditSource == credit.creditSource
         paymentAccount.availableBalance == credit.availableValue
+    }
+
+    def 'should create Credit Payment Account from credit without product'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields").with { product = null; it }
+
+        when:
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(credit)
+
+        then:
+        paymentAccount.transactionCreatedDateTime != credit.createdDateTime
+        paymentAccount.issuer == null
+        paymentAccount.product == null
+        paymentAccount.paymentRuleGroup == credit.paymentRuleGroup
+        paymentAccount.hirerDocument == credit.hirerDocument
+        paymentAccount.serviceType == credit.serviceType
+        paymentAccount.creditInsertionType == credit.creditInsertionType
+        paymentAccount.creditNumber == credit.creditNumber
+        paymentAccount.value == credit.value
+        paymentAccount.situation == credit.situation
+        paymentAccount.creditSource == credit.creditSource
+        paymentAccount.availableBalance == credit.availableValue
+    }
+
+    def 'should not create Credit Payment Account from null credit'(){
+        when:
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(null)
+
+        then:
+        paymentAccount.transactionCreatedDateTime == null
+        paymentAccount.issuer == null
+        paymentAccount.product == null
+        paymentAccount.paymentRuleGroup == null
+        paymentAccount.hirerDocument == null
+        paymentAccount.serviceType == null
+        paymentAccount.creditInsertionType == null
+        paymentAccount.creditNumber == null
+        paymentAccount.value == null
+        paymentAccount.situation == null
+        paymentAccount.creditSource == null
+        paymentAccount.availableBalance == null
     }
 
     def 'should be equals'(){

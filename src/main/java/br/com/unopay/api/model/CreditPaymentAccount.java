@@ -38,17 +38,21 @@ public class CreditPaymentAccount implements Serializable, Updatable {
     public CreditPaymentAccount(){}
 
     public CreditPaymentAccount(Credit credit){
-        this.issuer = credit.getProduct().getIssuer();
-        this.product = credit.getProduct();
-        this.paymentRuleGroup = credit.getPaymentRuleGroup();
-        this.hirerDocument = credit.getHirerDocument();
-        this.serviceType = credit.getServiceType();
-        this.creditInsertionType = credit.getCreditInsertionType();
-        this.creditNumber = credit.getCreditNumber();
-        this.value = credit.getValue();
-        this.situation = credit.getSituation();
-        this.creditSource = credit.getCreditSource();
-        this.availableBalance = credit.getAvailableValue();
+        if(credit != null) {
+            if (credit.getProduct() != null) {
+                this.issuer = credit.getProduct().getIssuer();
+            }
+            this.product = credit.getProduct();
+            this.paymentRuleGroup = credit.getPaymentRuleGroup();
+            this.hirerDocument = credit.getHirerDocument();
+            this.serviceType = credit.getServiceType();
+            this.creditInsertionType = credit.getCreditInsertionType();
+            this.creditNumber = credit.getCreditNumber();
+            this.value = credit.getValue();
+            this.situation = credit.getSituation();
+            this.creditSource = credit.getCreditSource();
+            this.availableBalance = credit.getAvailableValue();
+        }
     }
 
     @Id
