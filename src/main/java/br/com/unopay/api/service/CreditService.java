@@ -27,7 +27,7 @@ public class CreditService {
     private ProductService productService;
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter
-    private PaymentAccountService paymentAccountService;
+    private CreditPaymentAccountService creditPaymentAccountService;
 
     @Setter
     @Getter
@@ -43,12 +43,12 @@ public class CreditService {
     public CreditService(CreditRepository repository,
                          HirerService hirerService,
                          ProductService productService, PaymentRuleGroupService paymentRuleGroupService,
-                         PaymentAccountService paymentAccountService) {
+                         CreditPaymentAccountService creditPaymentAccountService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.productService = productService;
         this.paymentRuleGroupService = paymentRuleGroupService;
-        this.paymentAccountService = paymentAccountService;
+        this.creditPaymentAccountService = creditPaymentAccountService;
     }
 
     public Credit insert(Credit credit) {
@@ -57,7 +57,7 @@ public class CreditService {
         validateReferences(credit);
         Credit inserted =  repository.save(credit);
         if(!inserted.isDirectDebit()){
-            paymentAccountService.create(inserted);
+            creditPaymentAccountService.create(inserted);
         }
         return credit;
     }

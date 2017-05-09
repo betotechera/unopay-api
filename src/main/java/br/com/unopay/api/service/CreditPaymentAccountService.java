@@ -4,23 +4,23 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditPaymentAccount;
-import br.com.unopay.api.repository.PaymentAccountRepository;
+import br.com.unopay.api.repository.CreditPaymentAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PaymentAccountService {
+public class CreditPaymentAccountService {
 
-    private PaymentAccountRepository repository;
+    private CreditPaymentAccountRepository repository;
     private PaymentRuleGroupService paymentRuleGroupService;
     private ProductService productService;
     private IssuerService issuerService;
 
     @Autowired
-    public PaymentAccountService(PaymentAccountRepository repository,
-                                 PaymentRuleGroupService paymentRuleGroupService,
-                                 ProductService productService,
-                                 IssuerService issuerService) {
+    public CreditPaymentAccountService(CreditPaymentAccountRepository repository,
+                                       PaymentRuleGroupService paymentRuleGroupService,
+                                       ProductService productService,
+                                       IssuerService issuerService) {
         this.repository = repository;
         this.paymentRuleGroupService = paymentRuleGroupService;
         this.productService = productService;

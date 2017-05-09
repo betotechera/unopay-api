@@ -9,10 +9,10 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 
-class CreditPaymentAccountServiceTest extends SpockApplicationTests {
+class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     @Autowired
-    PaymentAccountService service
+    CreditPaymentAccountService service
 
     @Autowired
     SetupCreator setupCreator

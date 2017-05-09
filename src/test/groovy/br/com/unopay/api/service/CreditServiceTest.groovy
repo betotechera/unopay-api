@@ -21,10 +21,10 @@ class CreditServiceTest extends SpockApplicationTests {
 
     @Autowired
     SetupCreator setupCreator
-    PaymentAccountService paymentAccountServiceMock = Mock(PaymentAccountService)
+    CreditPaymentAccountService paymentAccountServiceMock = Mock(CreditPaymentAccountService)
 
     void setup(){
-        service.paymentAccountService = paymentAccountServiceMock
+        service.creditPaymentAccountService = paymentAccountServiceMock
         Integer.mixin(TimeCategory)
     }
 
