@@ -117,10 +117,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit with existing service credit should update balance when insert without direct debit'(){
         given:
-        def knownProduct = setupCreator.createProduct().with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
-            it
-        }
+        def knownProduct = setupCreator.createProductWithOutDirectDebit()
         Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
@@ -137,10 +134,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit without same service credit should insert new credit when insert without direct debit'(){
         given:
-        def knownProduct = setupCreator.createProduct().with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
-            it
-        }
+        def knownProduct = setupCreator.createProductWithOutDirectDebit()
         Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
@@ -157,10 +151,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
     void 'should update balance grouped by product and service'(){
         given:
         setupCreator.createPaymentRuleGroupDefault()
-        def knownProduct = setupCreator.createProduct().with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
-            it
-        }
+        def knownProduct = setupCreator.createProductWithOutDirectDebit()
         Credit credit = setupCreator.createCredit(null)
                 .with {
                         creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
@@ -183,10 +174,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
     void 'given a credit without service and product should update balance when insert without direct debit'(){
         given:
         setupCreator.createPaymentRuleGroupDefault()
-        def knownProduct = setupCreator.createProduct().with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
-            it
-        }
+        def knownProduct = setupCreator.createProductWithOutDirectDebit()
         Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM

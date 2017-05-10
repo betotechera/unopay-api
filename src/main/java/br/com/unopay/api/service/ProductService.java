@@ -43,7 +43,6 @@ public class ProductService {
         try {
             product.validate();
             validateReferences(product);
-
             return repository.save(product);
         }catch (DataIntegrityViolationException e){
             log.info("Product with name={} or code={} already exists", product.getName(), product.getCode());
