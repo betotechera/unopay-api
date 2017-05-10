@@ -122,7 +122,7 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         paymentAccount.value == null
         paymentAccount.situation == null
         paymentAccount.creditSource == null
-        paymentAccount.availableBalance == null
+        paymentAccount.availableBalance == BigDecimal.ZERO
     }
 
     def 'should update my balance from credit'(){
