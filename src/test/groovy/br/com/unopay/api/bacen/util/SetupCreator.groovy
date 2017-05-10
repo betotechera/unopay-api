@@ -113,7 +113,6 @@ class SetupCreator {
 
             it
         }
-
         credit
     }
 

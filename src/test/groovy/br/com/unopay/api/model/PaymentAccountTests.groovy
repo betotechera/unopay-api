@@ -2,6 +2,7 @@ package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class PaymentAccountTests  extends FixtureApplicationTest {
 
@@ -122,6 +123,43 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         paymentAccount.situation == null
         paymentAccount.creditSource == null
         paymentAccount.availableBalance == null
+    }
+
+    def 'should update my balance from credit'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+        def creditPaymentAccount = new CreditPaymentAccount()
+
+        when:
+        creditPaymentAccount.updateMyBalance(credit)
+
+        then:
+        creditPaymentAccount.availableBalance == credit.availableValue
+    }
+
+    def 'should return error when try update without credit'(){
+        given:
+        def creditPaymentAccount = new CreditPaymentAccount()
+
+        when:
+        creditPaymentAccount.updateMyBalance(null)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'CREDIT_REQUIRED_WHEN_UPDATE_BALANCE'
+    }
+
+    def 'existing balance should be incremented'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+        def creditPaymentAccount = new CreditPaymentAccount()
+
+        when:
+        creditPaymentAccount.updateMyBalance(credit)
+        creditPaymentAccount.updateMyBalance(credit)
+
+        then:
+        creditPaymentAccount.availableBalance == (credit.availableValue * 2)
     }
 
     def 'should be equals'(){

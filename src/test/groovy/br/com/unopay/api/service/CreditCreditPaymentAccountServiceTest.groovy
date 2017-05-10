@@ -4,10 +4,13 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.bootcommons.exception.NotFoundException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
+
+import static br.com.unopay.api.bacen.model.ServiceType.*
 
 class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
@@ -16,6 +19,9 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     @Autowired
     SetupCreator setupCreator
+
+    @Autowired
+    CreditService creditService
 
     void setup(){
         Integer.mixin(TimeCategory)
@@ -76,7 +82,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
                                     .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
 
         when:
-        def created  = service.create(create)
+        def created  = service.register(create)
         def result = service.findById(created.id)
 
         then:
@@ -94,6 +100,38 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
         then:
         result.insertionCreatedDateTime > 1.second.ago
         result.insertionCreatedDateTime < 1.second.from.now
+    }
+
+    void 'given a credit with existing service credit should update balance when insert credit without direct debit'(){
+        given:
+        Credit credit = setupCreator.createCredit()
+                .with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            serviceType = FREIGHT
+            it }
+        when:
+        creditService.insert(credit)
+        creditService.insert(credit.with { id = null; it })
+        creditService.insert(credit.with { id = null; it })
+
+        then:
+        then:
+        service.findAll().any { it.serviceType == FREIGHT && it.availableBalance == (credit.value * 3)}
+    }
+
+    void 'given a credit without service credit should insert new credit when insert credit without direct debit'(){
+        given:
+        Credit credit = setupCreator.createCredit()
+                .with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            serviceType = FREIGHT
+            it }
+        when:
+        creditService.insert(credit)
+        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; it })
+
+        then:
+        service.findAll().every { it.availableBalance == credit.value}
     }
 
     private CreditPaymentAccount createPaymentAccount() {

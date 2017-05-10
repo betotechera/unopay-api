@@ -305,4 +305,9 @@ public final class Errors {
     public static final UnovationError DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED =
             new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
 
+    /* credit payment account */
+    public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =
+            new UnovationError("CREDIT_REQUIRED_WHEN_UPDATE_BALANCE","Credit required when update balance");
+
+
 }

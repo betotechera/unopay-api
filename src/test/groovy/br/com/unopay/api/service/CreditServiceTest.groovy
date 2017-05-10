@@ -8,6 +8,7 @@ import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.repository.CreditPaymentAccountRepository
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
@@ -22,6 +23,7 @@ class CreditServiceTest extends SpockApplicationTests {
     @Autowired
     SetupCreator setupCreator
     CreditPaymentAccountService paymentAccountServiceMock = Mock(CreditPaymentAccountService)
+    CreditPaymentAccountRepository creditPaymentAccountRepository = Mock(CreditPaymentAccountRepository)
 
     void setup(){
         service.creditPaymentAccountService = paymentAccountServiceMock
@@ -108,7 +110,7 @@ class CreditServiceTest extends SpockApplicationTests {
         service.insert(credit)
 
         then:
-        1 * paymentAccountServiceMock.create(_)
+        1 * paymentAccountServiceMock.register(_)
     }
 
     void 'when insert credit with direct debit payment type then payment account should not be created'(){
@@ -121,7 +123,7 @@ class CreditServiceTest extends SpockApplicationTests {
         service.insert(credit)
 
         then:
-        0 * paymentAccountServiceMock.create(_)
+        0 * paymentAccountServiceMock.register(_)
     }
 
     void 'a credit should be inserted with now date time'(){
@@ -442,4 +444,6 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
     }
+
+
 }

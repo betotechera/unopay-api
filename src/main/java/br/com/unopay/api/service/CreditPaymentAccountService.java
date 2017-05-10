@@ -5,8 +5,12 @@ import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditPaymentAccount;
 import br.com.unopay.api.repository.CreditPaymentAccountRepository;
+import static com.google.common.collect.Lists.newArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CreditPaymentAccountService {
@@ -37,8 +41,17 @@ public class CreditPaymentAccountService {
         return repository.findOne(id);
     }
 
-    public CreditPaymentAccount create(Credit credit) {
+    public CreditPaymentAccount register(Credit credit) {
+        CreditPaymentAccount creditPaymentAccount = repository.findByServiceType(credit.getServiceType());
+        if(creditPaymentAccount != null){
+            creditPaymentAccount.updateMyBalance(credit);
+            return repository.save(creditPaymentAccount);
+        }
         return save(new CreditPaymentAccount(credit));
+    }
+
+    public List<CreditPaymentAccount> findAll(){
+        return newArrayList(repository.findAll());
     }
 
     private void validateReferences(CreditPaymentAccount creditPaymentAccount) {

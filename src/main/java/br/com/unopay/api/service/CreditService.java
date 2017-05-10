@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.repository.CreditPaymentAccountRepository;
 import br.com.unopay.api.repository.CreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED;
@@ -28,6 +29,8 @@ public class CreditService {
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter
     private CreditPaymentAccountService creditPaymentAccountService;
+    @Setter
+    private CreditPaymentAccountRepository creditPaymentAccountRepository;
 
     @Setter
     @Getter
@@ -42,13 +45,16 @@ public class CreditService {
     @Autowired
     public CreditService(CreditRepository repository,
                          HirerService hirerService,
-                         ProductService productService, PaymentRuleGroupService paymentRuleGroupService,
-                         CreditPaymentAccountService creditPaymentAccountService) {
+                         ProductService productService,
+                         PaymentRuleGroupService paymentRuleGroupService,
+                         CreditPaymentAccountService creditPaymentAccountService,
+                         CreditPaymentAccountRepository creditPaymentAccountRepository) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.productService = productService;
         this.paymentRuleGroupService = paymentRuleGroupService;
         this.creditPaymentAccountService = creditPaymentAccountService;
+        this.creditPaymentAccountRepository = creditPaymentAccountRepository;
     }
 
     public Credit insert(Credit credit) {
@@ -57,7 +63,7 @@ public class CreditService {
         validateReferences(credit);
         Credit inserted =  repository.save(credit);
         if(!inserted.isDirectDebit()){
-            creditPaymentAccountService.create(inserted);
+            creditPaymentAccountService.register(inserted);
         }
         return credit;
     }
