@@ -98,12 +98,11 @@ class SetupCreator {
     }
 
     Product createProductWithOutDirectDebit() {
-        Product product = Fixture.from(Product.class).gimme("valid")
+        Product product = Fixture.from(Product.class).gimme("creditWithoutDirectDebit")
         product = product.with {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             paymentRuleGroup = createPaymentRuleGroup()
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             it
         }
         productService.save(product)

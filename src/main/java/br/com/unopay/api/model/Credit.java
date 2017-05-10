@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Data
 @Entity
@@ -143,8 +142,8 @@ public class Credit implements Serializable, Updatable {
             paymentRuleGroup = product.getPaymentRuleGroup();
             creditInsertionType = product.getCreditInsertionType();
         }
-        updateAvailableBalance();
-        updateBlockedBalance();
+        defineAvailableValue();
+        defineBlockedValue();
     }
 
     private void defineSituation() {
@@ -164,7 +163,7 @@ public class Credit implements Serializable, Updatable {
         this.creditInsertionType = CreditInsertionType.valueOf(creditInsertionType);
     }
 
-    public void updateAvailableBalance(){
+    public void defineAvailableValue(){
         if(isDirectDebit()){
             availableValue = BigDecimal.ZERO;
             return;
@@ -172,7 +171,7 @@ public class Credit implements Serializable, Updatable {
         availableValue = this.value;
     }
 
-    public void updateBlockedBalance(){
+    public void defineBlockedValue(){
         if(creditInsertionType.isPaymentProcessedByClient()){
             blockedValue = BigDecimal.ZERO;
             return;

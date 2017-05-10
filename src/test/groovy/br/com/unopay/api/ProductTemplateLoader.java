@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.*;
+import static br.com.unopay.api.model.CreditInsertionType.*;
 
 import java.math.BigDecimal;
 
@@ -36,5 +37,8 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("administrationCreditInsertionFee", random(BigDecimal.class, range(0.00, 1)));
         }});
 
+        Fixture.of(Product.class).addTemplate("creditWithoutDirectDebit").inherits("valid", new Rule(){{
+            add("creditInsertionType", random(BOLETO, CREDIT_CARD,PAMCARD_SYSTEM));
+        }});
     }
 }
