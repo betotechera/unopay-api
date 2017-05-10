@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.service.ProductService
@@ -91,6 +92,18 @@ class SetupCreator {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             paymentRuleGroup = createPaymentRuleGroup()
+            it
+        }
+        productService.save(product)
+    }
+
+    Product createProductWithOutDirectDebit() {
+        Product product = Fixture.from(Product.class).gimme("valid")
+        product = product.with {
+            issuer = createIssuer()
+            accreditedNetwork = createNetwork()
+            paymentRuleGroup = createPaymentRuleGroup()
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             it
         }
         productService.save(product)
