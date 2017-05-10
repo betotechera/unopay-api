@@ -6,12 +6,14 @@ import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditPaymentAccount;
 import br.com.unopay.api.repository.CreditPaymentAccountRepository;
 import static com.google.common.collect.Lists.newArrayList;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CreditPaymentAccountService {
 
@@ -42,12 +44,13 @@ public class CreditPaymentAccountService {
     }
 
     public CreditPaymentAccount register(Credit credit) {
-        CreditPaymentAccount creditPaymentAccount = repository.findByServiceType(credit.getServiceType());
-        if(creditPaymentAccount != null){
-            creditPaymentAccount.updateMyBalance(credit);
-            return repository.save(creditPaymentAccount);
-        }
-        return save(new CreditPaymentAccount(credit));
+        List<CreditPaymentAccount> creditPayments = repository.findByHirerDocument(credit.getHirerDocument());
+        Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
+        creditPaymentAccount.ifPresent(creditPayment -> {
+            creditPayment.updateMyBalance(credit);
+            repository.save(creditPayment);
+        });
+        return creditPaymentAccount.orElseGet(()-> save(new CreditPaymentAccount(credit)));
     }
 
     public List<CreditPaymentAccount> findAll(){
@@ -56,7 +59,9 @@ public class CreditPaymentAccountService {
 
     private void validateReferences(CreditPaymentAccount creditPaymentAccount) {
         creditPaymentAccount.setPaymentRuleGroup(paymentRuleGroupService.getById(creditPaymentAccount.getPaymentRuleGroupId()));
-        creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
-        creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
+        if(creditPaymentAccount.withProduct()) {
+            creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
+            creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
+        }
     }
 }

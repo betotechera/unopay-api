@@ -89,6 +89,19 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'payment account without product should be created'(){
+        given:
+        Credit create = setupCreator.createCredit(null)
+                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+
+        when:
+        def created  = service.register(create)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.id != null
+    }
+
     void 'payment account should be created with date time now'(){
         given:
         CreditPaymentAccount paymentAccount = createPaymentAccount()
@@ -102,7 +115,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
         result.insertionCreatedDateTime < 1.second.from.now
     }
 
-    void 'given a credit with existing service credit should update balance when insert credit without direct debit'(){
+    void 'given a credit with existing service credit should update balance when insert without direct debit'(){
         given:
         Credit credit = setupCreator.createCredit()
                 .with {
@@ -115,11 +128,10 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
         creditService.insert(credit.with { id = null; it })
 
         then:
-        then:
-        service.findAll().any { it.serviceType == FREIGHT && it.availableBalance == (credit.value * 3)}
+        service.findAll().last().availableBalance == (credit.value * 3)
     }
 
-    void 'given a credit without service credit should insert new credit when insert credit without direct debit'(){
+    void 'given a credit without same service credit should insert new credit when insert without direct debit'(){
         given:
         Credit credit = setupCreator.createCredit()
                 .with {
@@ -132,6 +144,54 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
         then:
         service.findAll().every { it.availableBalance == credit.value}
+    }
+
+    void 'should update balance grouped by product and service'(){
+        given:
+        setupCreator.createPaymentRuleGroupDefault()
+        def knownProduct = setupCreator.createProduct().with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            it
+        }
+        Credit credit = setupCreator.createCredit(null)
+                .with {
+                        creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+                        serviceType = ELECTRONIC_TOLL
+                it }
+        when:
+        creditService.insert(credit)
+        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; product = knownProduct; it })
+        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; product = knownProduct; it })
+
+        then:
+        service.findAll().find {
+            it.serviceType == ELECTRONIC_TOLL && it.product == null
+        }?.availableBalance == credit.value
+        service.findAll().find {
+            it.serviceType == ELECTRONIC_TOLL && it.product != null
+        }?.availableBalance == (credit.value * 2)
+    }
+
+    void 'given a credit without service and product should update balance when insert without direct debit'(){
+        given:
+        setupCreator.createPaymentRuleGroupDefault()
+        Credit credit = setupCreator.createCredit()
+                .with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            serviceType = ELECTRONIC_TOLL
+            it }
+        when:
+        creditService.insert(credit)
+        creditService.insert(credit.with { id = null; serviceType = null; product = null; it })
+        creditService.insert(credit.with { id = null; serviceType = null; product = null; it })
+
+        then:
+        service.findAll().find {
+            it.serviceType == null && it.product == null
+        }?.availableBalance == (credit.value * 2)
+        service.findAll().find {
+            it.serviceType == ELECTRONIC_TOLL && it.product != null
+        }?.availableBalance == credit.value
     }
 
     private CreditPaymentAccount createPaymentAccount() {

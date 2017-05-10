@@ -31,6 +31,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Data
 @Entity
@@ -181,14 +184,14 @@ public class Credit implements Serializable, Updatable {
         if(availableValue != null) {
             return availableValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal getBlockedValue(){
         if(blockedValue != null) {
             return blockedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        return   BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public void defineCreditNumber(Long lastCreditNumber) {
@@ -213,5 +216,11 @@ public class Credit implements Serializable, Updatable {
             return paymentRuleGroup.getId();
         }
         return null;
+    }
+
+    public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {
+        return creditPayment.stream()
+                .filter(c -> c.getProductId() == getProductId() && c.getServiceType() == getServiceType())
+                .reduce((first, last) -> last);
     }
 }

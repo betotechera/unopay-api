@@ -195,4 +195,9 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         }
         return  BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
+
+    public boolean withProduct(){
+        return  product != null;
+    }
+
 }

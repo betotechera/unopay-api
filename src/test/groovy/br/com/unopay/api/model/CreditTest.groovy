@@ -51,7 +51,6 @@ class CreditTest  extends FixtureApplicationTest {
         a.situation != b.situation
         a.creditSource != b.creditSource
         a.cnabId != b.cnabId
-        a.availableValue != b.availableValue
         a.blockedValue != b.blockedValue
     }
 

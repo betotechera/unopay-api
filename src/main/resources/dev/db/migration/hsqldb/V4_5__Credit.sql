@@ -21,7 +21,7 @@ create table credit (
 create table credit_payment_account (
     id VARCHAR(256) PRIMARY KEY,
     transaction_created_date_time TIMESTAMP not null,
-    issuer_id varchar(256) not null,
+    issuer_id varchar(256),
     product_id varchar(256),
     payment_rule_group_id varchar(256) not null,
     hirer_document varchar(20) not null,
@@ -33,7 +33,6 @@ create table credit_payment_account (
     value decimal(20,2) not null,
     situation varchar(50) not null,
     credit_source varchar(256) not null,
-    cnab_id varchar(256),
     PAYMENT_ACCOUNT_ID varchar(256),
     available_balance decimal(20,2) not null,
     version integer,
