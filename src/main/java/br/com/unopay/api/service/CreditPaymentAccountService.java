@@ -44,6 +44,7 @@ public class CreditPaymentAccountService {
     }
 
     public CreditPaymentAccount register(Credit credit) {
+    log.info("REGISTER={}", credit);
         List<CreditPaymentAccount> creditPayments = repository.findByHirerDocument(credit.getHirerDocument());
         Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
         creditPaymentAccount.ifPresent(creditPayment -> {

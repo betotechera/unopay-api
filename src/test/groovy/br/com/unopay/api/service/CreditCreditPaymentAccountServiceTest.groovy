@@ -117,7 +117,11 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit with existing service credit should update balance when insert without direct debit'(){
         given:
-        Credit credit = setupCreator.createCredit()
+        def knownProduct = setupCreator.createProduct().with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            it
+        }
+        Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = FREIGHT
@@ -133,7 +137,11 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit without same service credit should insert new credit when insert without direct debit'(){
         given:
-        Credit credit = setupCreator.createCredit()
+        def knownProduct = setupCreator.createProduct().with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            it
+        }
+        Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = FREIGHT
@@ -175,7 +183,11 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
     void 'given a credit without service and product should update balance when insert without direct debit'(){
         given:
         setupCreator.createPaymentRuleGroupDefault()
-        Credit credit = setupCreator.createCredit()
+        def knownProduct = setupCreator.createProduct().with {
+            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            it
+        }
+        Credit credit = setupCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = ELECTRONIC_TOLL
