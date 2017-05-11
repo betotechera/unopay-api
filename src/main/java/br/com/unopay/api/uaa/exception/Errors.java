@@ -281,6 +281,8 @@ public final class Errors {
     public static final UnovationError CONTRACT_ESTABLISHMENT_NOT_FOUND =
             new UnovationError("CONTRACT_ESTABLISHMENT_NOT_FOUND",
                     "Contract Establishment not found.");
+    public static final UnovationError ESTABLISHMENT_ALREADY_IN_CONTRACT =
+            new UnovationError("ESTABLISHMENT_ALREADY_IN_CONTRACT", "The establishment is already in the contract.");
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =

@@ -11,6 +11,7 @@ import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -260,6 +261,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
+
     void 'known contract should be found'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
@@ -334,6 +336,27 @@ class ContractServiceTest extends SpockApplicationTests {
         assert contract.contractEstablishments.size() > 0
     }
 
+
+    void 'should not add establishment in contract if is already in contract'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        service.addEstablishments(contract.id,contractEstablishment.with {id =null;it})
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == Errors.ESTABLISHMENT_ALREADY_IN_CONTRACT.logref
+    }
+
     void 'should remove establishment in contract'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
@@ -372,4 +395,25 @@ class ContractServiceTest extends SpockApplicationTests {
     }
 
 
+    void 'given contractEstablishment with null and default values should create with default values'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest;origin=null; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        contract = service.findById(contract.id)
+        then:
+        def result = contract.contractEstablishments.first()
+        assert result.id != null
+        assert result.contract.id == contract.id
+        assert result.origin == ContractOrigin.UNOPAY
+    }
 }
