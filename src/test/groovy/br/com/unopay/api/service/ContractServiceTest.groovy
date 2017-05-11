@@ -261,6 +261,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
+
     void 'known contract should be found'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
@@ -394,4 +395,25 @@ class ContractServiceTest extends SpockApplicationTests {
     }
 
 
+    void 'given contractEstablishment with null and default values should create with default values'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest;origin=null; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        contract = service.findById(contract.id)
+        then:
+        def result = contract.contractEstablishments.first()
+        assert result.id != null
+        assert result.contract.id == contract.id
+        assert result.origin == ContractOrigin.UNOPAY
+    }
 }

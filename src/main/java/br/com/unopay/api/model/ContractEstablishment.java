@@ -72,4 +72,10 @@ public class ContractEstablishment implements Serializable {
     public String getEstablishmentId() {
         return establishment.getId();
     }
+
+    public void createValues(Contract contract) {
+        this.contract = contract;
+        origin = (origin == null) ? UNOPAY : origin;
+
+    }
 }
