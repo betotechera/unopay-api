@@ -45,9 +45,8 @@ public class ContractEstablishment implements Serializable {
     private String id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="contract_id")
-    @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
     private Contract contract;
 
     @ManyToOne
@@ -69,4 +68,8 @@ public class ContractEstablishment implements Serializable {
     @Version
     @JsonIgnore
     private Integer version;
+
+    public String getEstablishmentId() {
+        return establishment.getId();
+    }
 }

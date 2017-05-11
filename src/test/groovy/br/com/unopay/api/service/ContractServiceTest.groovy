@@ -11,6 +11,7 @@ import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -332,6 +333,27 @@ class ContractServiceTest extends SpockApplicationTests {
         contract = service.findById(contract.id)
         then:
         assert contract.contractEstablishments.size() > 0
+    }
+
+
+    void 'should not add establishment in contract if is already in contract'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        service.addEstablishments(contract.id,contractEstablishment.with {id =null;it})
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == Errors.ESTABLISHMENT_ALREADY_IN_CONTRACT.logref
     }
 
     void 'should remove establishment in contract'(){

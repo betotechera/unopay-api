@@ -99,6 +99,8 @@ public class ContractService {
 
     public ContractEstablishment addEstablishments(String id, ContractEstablishment contractEstablishment) {
         Contract contract = findById(id);
+        if(contract.containsEstablishment(contractEstablishment))
+            throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_ALREADY_IN_CONTRACT);
         contractEstablishment.setContract(contract);
         contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
         contract.addContractEstablishment(contractEstablishment);
