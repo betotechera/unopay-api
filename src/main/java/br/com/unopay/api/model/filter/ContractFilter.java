@@ -14,6 +14,8 @@ public class ContractFilter  implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
+    ContractFilter(){}
+
     @SearchableField
     private String code;
 

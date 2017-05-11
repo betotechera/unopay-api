@@ -95,6 +95,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class, range(1, 200)));
             add("expirationDateTime",instant("1 day from now"));
             add("issuerFee",random(BigDecimal.class, range(1, 200)));
+            add("creditPaymentAccount", one(CreditPaymentAccount.class, "valid"));
             add("situation",random(CreditSituation.class));
             add("availableBalance", random(BigDecimal.class));
             add("blockedBalance",random(BigDecimal.class));

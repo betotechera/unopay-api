@@ -3,10 +3,16 @@ package br.com.unopay.api.bacen.util
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
+import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.CreditPaymentAccountService
+import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -37,6 +43,16 @@ class SetupCreator {
 
     @Autowired
     private PaymentBankAccountService paymentBankAccountService
+
+    @Autowired
+    private ContractService contractService
+
+    @Autowired
+    private PaymentInstrumentService paymentInstrumentService
+
+    @Autowired
+    private CreditPaymentAccountService creditPaymentAccountService
+
 
     Establishment createHeadOffice() {
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
@@ -76,6 +92,16 @@ class SetupCreator {
             contractor = createContractor()
             it
         }
+    }
+
+    PaymentInstrument createPaymentInstrumentWithProduct(Product productUnderTest) {
+        PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme("valid")
+                .with {
+            product = productUnderTest
+            contractor = createContractor()
+            it
+        }
+        paymentInstrumentService.save(paymentInstrument)
     }
 
     Hirer createHirer() {
@@ -132,6 +158,57 @@ class SetupCreator {
         def product = createProduct()
         createCredit(product)
     }
+
+    ContractorInstrumentCredit createContractorInstrumentCredit(){
+        def contractUnderTest = createPersistedContract()
+        ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("allFields")
+        instrumentCredit.with {
+            contract = contractUnderTest
+            paymentInstrument = createPaymentInstrumentWithProduct(contractUnderTest.product)
+            creditPaymentAccount = createCreditPaymentAccountPersisted(contractUnderTest.product)
+
+            it
+        }
+    }
+
+    Contract createContract() {
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        def productUnderTest = createProduct()
+        contract.with {
+            hirer = createHirer()
+            contractor = createContractor()
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it }
+    }
+
+    Contract createPersistedContract(){
+        Contract contract = createContract()
+        contractService.save(contract)
+    }
+
+    CreditPaymentAccount createCreditPaymentAccount() {
+        return Fixture.from(CreditPaymentAccount.class).gimme("valid")
+                .with {
+            product = createProduct()
+            issuer = createIssuer()
+            paymentRuleGroup = createPaymentRuleGroup()
+            it
+        }
+    }
+
+    CreditPaymentAccount createCreditPaymentAccountPersisted(Product productUnderTest) {
+        CreditPaymentAccount creditPaymentAccount =  Fixture.from(CreditPaymentAccount.class).gimme("valid")
+                .with {
+            product = productUnderTest
+            issuer = createIssuer()
+            paymentRuleGroup = productUnderTest.paymentRuleGroup
+            it
+        }
+        creditPaymentAccountService.save(creditPaymentAccount)
+    }
+
+
 
     Establishment createEstablishment() {
         null

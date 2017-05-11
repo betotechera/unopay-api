@@ -56,6 +56,13 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Contract contract;
 
+
+    @ManyToOne
+    @JoinColumn(name="credit_payment_account_id")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private CreditPaymentAccount creditPaymentAccount;
+
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
@@ -106,4 +113,8 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date createdDateTime;
+
+    public void setupMyCreate(){
+        createdDateTime = new Date();
+    }
 }

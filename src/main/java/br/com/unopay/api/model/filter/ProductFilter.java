@@ -17,6 +17,8 @@ public class ProductFilter implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    ProductFilter(){}
+
     @SearchableField
     private String code;
 

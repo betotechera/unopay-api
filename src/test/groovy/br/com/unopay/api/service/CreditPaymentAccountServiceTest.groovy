@@ -1,6 +1,5 @@
 package br.com.unopay.api.service
 
-import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
@@ -10,9 +9,10 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 
-import static br.com.unopay.api.bacen.model.ServiceType.*
+import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 
-class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
+class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     @Autowired
     CreditPaymentAccountService service
@@ -29,7 +29,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a  payment account should be created'(){
         given:
-        CreditPaymentAccount paymentAccount = createPaymentAccount()
+        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
 
         when:
         def created  = service.save(paymentAccount)
@@ -41,7 +41,8 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown payment rule group should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = createPaymentAccount().with { paymentRuleGroup.id = ''; it }
+        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+                                                .with { paymentRuleGroup.id = ''; it }
 
         when:
         service.save(paymentAccount)
@@ -53,7 +54,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown product should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = createPaymentAccount().with { product.id = ''; it }
+        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount().with { product.id = ''; it }
 
         when:
         service.save(paymentAccount)
@@ -66,7 +67,8 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown issuer should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = createPaymentAccount().with { product.issuer.id = ''; it }
+        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+                                                    .with { product.issuer.id = ''; it }
 
         when:
         service.save(paymentAccount)
@@ -104,7 +106,7 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account should be created with date time now'(){
         given:
-        CreditPaymentAccount paymentAccount = createPaymentAccount()
+        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
 
         when:
         def created  = service.save(paymentAccount)
@@ -194,13 +196,5 @@ class CreditCreditPaymentAccountServiceTest extends SpockApplicationTests {
         }?.availableBalance == credit.value
     }
 
-    private CreditPaymentAccount createPaymentAccount() {
-        return Fixture.from(CreditPaymentAccount.class).gimme("valid")
-                .with {
-            product = setupCreator.createProduct()
-            issuer = setupCreator.createIssuer()
-            paymentRuleGroup = setupCreator.createPaymentRuleGroup()
-            it
-        }
-    }
+
 }

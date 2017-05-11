@@ -9,7 +9,11 @@ import java.io.Serializable;
 
 @Data
 @ToString
-public class PaymentInstrumentFilter implements Serializable{
+public class PaymentInstrumentFilter  implements Serializable{
+
+    public static final long serialVersionUID = 1L;
+
+    PaymentInstrumentFilter(){}
 
     @SearchableField
     private String number;
