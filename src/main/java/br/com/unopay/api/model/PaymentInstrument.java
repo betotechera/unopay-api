@@ -28,7 +28,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "payment_instrument")
-public class PaymentInstrument implements Serializable {
+public class PaymentInstrument implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -95,18 +95,6 @@ public class PaymentInstrument implements Serializable {
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
         }
-    }
-
-    public void updateMe(PaymentInstrument instrument) {
-        type = instrument.getType();
-        number = instrument.getNumber();
-        product = instrument.getProduct();
-        contractor = instrument.getContractor();
-        createdDate = instrument.getCreatedDate();
-        expirationDate = instrument.getExpirationDate();
-        password = instrument.getPassword();
-        situation = instrument.getSituation();
-        externalNumberId = instrument.getExternalNumberId();
     }
 
 }

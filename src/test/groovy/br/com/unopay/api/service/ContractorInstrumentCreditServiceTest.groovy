@@ -4,6 +4,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
@@ -24,6 +25,34 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'Given an hirer product code different of payment instrument product code should not be inserted'(){
+        ContractorInstrumentCredit instrumentCredit = setupCreator.createContractorInstrumentCredit()
+        instrumentCredit.with {
+            paymentInstrument.product.code = '5464664'
+        }
+
+        when:
+        service.insert(instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PRODUCT_CODE_NOT_MET'
+    }
+
+    def 'Given an hirer product id different of payment instrument product id should not be inserted'(){
+        ContractorInstrumentCredit instrumentCredit = setupCreator.createContractorInstrumentCredit()
+        instrumentCredit.with {
+            paymentInstrument.product.id = '5464664'
+        }
+
+        when:
+        service.insert(instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PRODUCT_ID_NOT_MET'
     }
 
     def 'instrument with unknown contract credit should not be inserted'(){

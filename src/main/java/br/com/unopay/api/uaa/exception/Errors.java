@@ -315,5 +315,12 @@ public final class Errors {
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =
             new UnovationError("CREDIT_REQUIRED_WHEN_UPDATE_BALANCE","Credit required when update balance");
 
+    /* credit payment instrument */
+    public static final UnovationError PRODUCT_CODE_NOT_MET =
+            new UnovationError("PRODUCT_CODE_NOT_MET", "Payment instrument product different of hirer product.");
+    public static final UnovationError PRODUCT_ID_NOT_MET =
+            new UnovationError("PRODUCT_ID_NOT_MET", "Payment instrument product different of hirer product.");
+
+
 
 }

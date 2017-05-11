@@ -29,6 +29,7 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit insert(ContractorInstrumentCredit instrumentCredit) {
+        instrumentCredit.validateMe();
         validateReferences(instrumentCredit);
         instrumentCredit.setupMyCreate();
         return repository.save(instrumentCredit);

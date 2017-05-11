@@ -69,8 +69,11 @@ class SetupCreator {
         issuerService.create(issuer)
     }
 
-    PaymentRuleGroup createPaymentRuleGroup() {
+    PaymentRuleGroup createPaymentRuleGroup(String code = null) {
         PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        if(code){
+            paymentRuleGroup.code = code
+        }
         paymentRuleGroupService.create(paymentRuleGroup)
     }
 
@@ -78,12 +81,6 @@ class SetupCreator {
         PaymentRuleGroup paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).gimme("default")
         paymentRuleGroupService.create(paymentRuleGroup)
     }
-
-    PaymentBankAccount createPaymentBankAccount() {
-        PaymentBankAccount paymentRuleGroup = Fixture.from(PaymentBankAccount.class).gimme("valid")
-        paymentBankAccountService.create(paymentRuleGroup)
-    }
-
 
     PaymentInstrument createPaymentInstrument(String label) {
         return Fixture.from(PaymentInstrument.class).gimme(label)
@@ -112,13 +109,16 @@ class SetupCreator {
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractorService.create(contractor)
     }
-    Product createProduct() {
+    Product createProduct(code = null, paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
         Product product = Fixture.from(Product.class).gimme("valid")
         product = product.with {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
-            paymentRuleGroup = createPaymentRuleGroup()
+            paymentRuleGroup = paymentRuleGroupUnderTest
             it
+        }
+        if(code){
+            product.code = code
         }
         productService.save(product)
     }

@@ -1,9 +1,12 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -113,6 +116,15 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date createdDateTime;
+
+    public void validateMe(){
+        if(paymentInstrument.getProduct().getCode() != contract.getProduct().getCode()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
+        }
+        if(paymentInstrument.getProduct().getId() != contract.getProduct().getId()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
+        }
+    }
 
     public void setupMyCreate(){
         createdDateTime = new Date();
