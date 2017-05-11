@@ -117,4 +117,25 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public void setupMyCreate(){
         createdDateTime = new Date();
     }
+
+    public String getPaymentInstrumentId() {
+        if(paymentInstrument != null){
+            return  paymentInstrument.getId();
+        }
+        return null;
+    }
+
+    public String getContractId() {
+        if(contract != null){
+            return  contract.getId();
+        }
+        return null;
+    }
+
+    public String getCreditPaymentIdAccount() {
+        if(creditPaymentAccount != null){
+            return creditPaymentAccount.getId();
+        }
+        return null;
+    }
 }

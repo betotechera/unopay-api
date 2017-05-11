@@ -306,6 +306,10 @@ public final class Errors {
             new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
     public static final UnovationError DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED =
             new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
+    public static final UnovationError CREDIT_PAYMENT_ACCOUNT_NOT_FOUND =
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_NOT_FOUND","Credit payment account not found.");
+
+
 
     /* credit payment account */
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =

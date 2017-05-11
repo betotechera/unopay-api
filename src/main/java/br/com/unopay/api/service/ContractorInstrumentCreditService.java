@@ -9,10 +9,19 @@ import org.springframework.stereotype.Service;
 public class ContractorInstrumentCreditService {
 
     private ContractorInstrumentCreditRepository repository;
+    private ContractService contractService;
+    private PaymentInstrumentService paymentInstrumentService;
+    private CreditPaymentAccountService creditPaymentAccountService;
 
     @Autowired
-    public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository) {
+    public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository,
+                                             ContractService contractService,
+                                             PaymentInstrumentService paymentInstrumentService,
+                                             CreditPaymentAccountService creditPaymentAccountService) {
         this.repository = repository;
+        this.contractService = contractService;
+        this.paymentInstrumentService = paymentInstrumentService;
+        this.creditPaymentAccountService = creditPaymentAccountService;
     }
 
     public ContractorInstrumentCredit findById(String id) {
@@ -20,7 +29,14 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit insert(ContractorInstrumentCredit instrumentCredit) {
+        validateReferences(instrumentCredit);
         instrumentCredit.setupMyCreate();
         return repository.save(instrumentCredit);
+    }
+
+    private void validateReferences(ContractorInstrumentCredit instrumentCredit) {
+        contractService.findById(instrumentCredit.getContractId());
+        paymentInstrumentService.findById(instrumentCredit.getPaymentInstrumentId());
+        creditPaymentAccountService.findById(instrumentCredit.getCreditPaymentIdAccount());
     }
 }

@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditPaymentAccount;
 import br.com.unopay.api.repository.CreditPaymentAccountRepository;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_NOT_FOUND;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import static com.google.common.collect.Lists.newArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,9 @@ public class CreditPaymentAccountService {
     }
 
     public CreditPaymentAccount findById(String id) {
-        return repository.findOne(id);
+        Optional<CreditPaymentAccount> creditPaymentAccount = repository.findById(id);
+        return creditPaymentAccount.orElseThrow(()-> UnovationExceptions.notFound()
+                                                            .withErrors(CREDIT_PAYMENT_ACCOUNT_NOT_FOUND));
     }
 
     public CreditPaymentAccount register(Credit credit) {
@@ -58,7 +62,8 @@ public class CreditPaymentAccountService {
     }
 
     private void validateReferences(CreditPaymentAccount creditPaymentAccount) {
-        creditPaymentAccount.setPaymentRuleGroup(paymentRuleGroupService.getById(creditPaymentAccount.getPaymentRuleGroupId()));
+        creditPaymentAccount
+                .setPaymentRuleGroup(paymentRuleGroupService.getById(creditPaymentAccount.getPaymentRuleGroupId()));
         if(creditPaymentAccount.withProduct()) {
             creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
             creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
