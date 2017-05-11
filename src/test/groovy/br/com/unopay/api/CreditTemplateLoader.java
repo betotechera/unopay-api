@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PaymentAccountTemplateLoader implements TemplateLoader {
+public class CreditTemplateLoader implements TemplateLoader {
 
     @Override
     public void load() {
@@ -68,8 +68,6 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("product", null);
         }});
 
-
-
         Fixture.of(CreditPaymentAccount.class).addTemplate("valid", new Rule(){{
             add("transactionCreatedDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
             add("issuer", one(Issuer.class, "valid"));
@@ -88,7 +86,19 @@ public class PaymentAccountTemplateLoader implements TemplateLoader {
             add("paymentAccount", "AAA");
         }});
 
-
+        Fixture.of(ContractorInstrumentCredit.class).addTemplate("allFields", new Rule(){{
+            add("paymentInstrument",one(PaymentInstrument.class, "valid"));
+            add("contract",one(Contract.class, "valid"));
+            add("serviceType", random(ServiceType.class));
+            add("creditInsertionType",random(CreditInsertionType.class));
+            add("installmentNumber",random(Long.class));
+            add("value",random(BigDecimal.class, range(1, 200)));
+            add("expirationDateTime",instant("1 day from now"));
+            add("issuerFee",random(BigDecimal.class, range(1, 200)));
+            add("situation",random(CreditSituation.class));
+            add("availableBalance", random(BigDecimal.class));
+            add("blockedBalance",random(BigDecimal.class));
+        }});
 
     }
 }
