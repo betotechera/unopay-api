@@ -101,7 +101,7 @@ public class ContractController {
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
-    @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.PUT)
+    @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.POST)
     public ResponseEntity<ContractEstablishment> addEstablishmentsToContract(@PathVariable  String id, @RequestBody ContractEstablishment contractEstablishment) {
         log.info("Creating ContractEstablishment {} to contractId={}", contractEstablishment,id);
         ContractEstablishment created = service.addEstablishments(id, contractEstablishment);
