@@ -102,7 +102,8 @@ public class ContractController {
 
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}/establishments", method = RequestMethod.POST)
-    public ResponseEntity<ContractEstablishment> addEstablishmentsToContract(@PathVariable  String id, @RequestBody ContractEstablishment contractEstablishment) {
+    public ResponseEntity<ContractEstablishment> addEstablishmentsToContract(@PathVariable  String id,
+                                                                             @RequestBody ContractEstablishment contractEstablishment) {
         log.info("Creating ContractEstablishment {} to contractId={}", contractEstablishment,id);
         ContractEstablishment created = service.addEstablishments(id, contractEstablishment);
         return created(URI.create("/contracts/"+id+"/establishments/"+created.getId()))
@@ -111,7 +112,7 @@ public class ContractController {
 
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}/establishments/{contractEstablishmentId}", method = RequestMethod.DELETE)
-    public void removeEstablishment(@PathVariable  String id, @RequestBody String contractEstablishmentId) {
+    public void removeEstablishment(@PathVariable  String id, @PathVariable String contractEstablishmentId) {
         log.info("Removing ContractEstablishment {} to contractId={}", contractEstablishmentId,id);
         service.removeEstablishment(id,contractEstablishmentId);
     }

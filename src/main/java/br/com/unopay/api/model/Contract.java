@@ -175,12 +175,16 @@ public class Contract implements Serializable {
     }
 
     public void removeContractEstablishmentBy(String contractEstablishmentId) {
-        if(contractEstablishments != null)
-           contractEstablishments.removeIf(item -> item.getId().equals(contractEstablishmentId));
+        if(contractEstablishments != null){
+            contractEstablishments.removeIf(item -> item.getId().equals(contractEstablishmentId));
+        }
     }
     
     public boolean containsEstablishment(ContractEstablishment contractEstablishment) {
-        return contractEstablishments != null && contractEstablishments.stream().filter(item -> item.getEstablishment().getId().equals(contractEstablishment.getEstablishmentId())).count() > 0;
+        return contractEstablishments != null &&
+                contractEstablishments.stream().filter(item ->
+                        item.getEstablishment().getId().equals(contractEstablishment.getEstablishmentId()))
+                        .count() > 0;
 
     }
 }
