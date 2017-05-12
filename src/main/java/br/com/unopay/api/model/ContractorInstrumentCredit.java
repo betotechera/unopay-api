@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -117,17 +118,21 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     private Date createdDateTime;
 
-    public void validateMe(){
+    public void validateMe(Contract contract){
         if(paymentInstrument.getProduct().getCode() != contract.getProduct().getCode()){
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
         }
         if(paymentInstrument.getProduct().getId() != contract.getProduct().getId()){
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
         }
+        if(!contract.containsService(serviceType)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
+        }
     }
 
-    public void setupMyCreate(){
-        createdDateTime = new Date();
+    public void setupMyCreate(Contract contract){
+        this.createdDateTime = new Date();
+        this.contract = contract;
     }
 
     public String getPaymentInstrumentId() {
@@ -147,6 +152,20 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public String getCreditPaymentIdAccount() {
         if(creditPaymentAccount != null){
             return creditPaymentAccount.getId();
+        }
+        return null;
+    }
+
+    public String getCreditPaymentAccountProductCode(){
+        if(getCreditPaymentAccount() != null){
+            return getCreditPaymentAccount().getProductCode();
+        }
+        return null;
+    }
+
+    public ServiceType getCreditPaymentAccountServiceType(){
+        if(getCreditPaymentAccount() != null){
+            return getCreditPaymentAccount().getServiceType();
         }
         return null;
     }

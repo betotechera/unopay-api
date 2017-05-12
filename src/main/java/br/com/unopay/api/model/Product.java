@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
@@ -23,6 +24,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -34,6 +36,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -42,6 +45,7 @@ import java.util.List;
 public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
+    public static final int MAX_CODE_LENGTH = 4;
 
     public Product(){}
 
@@ -92,10 +96,10 @@ public class Product implements Serializable, Updatable {
     private PaymentInstrumentType paymentInstrumentType;
 
     @Enumerated(EnumType.STRING)
-    @ElementCollection(targetClass = ServiceType.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @JsonView({Views.Public.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
-    private List<ServiceType> serviceType;
+    private Set<ServiceType> serviceType;
 
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
@@ -152,6 +156,9 @@ public class Product implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
+        if(getCode().length() > MAX_CODE_LENGTH){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CODE_LENGTH_NOT_ACCEPTED);
+        }
         if(getIssuer() != null && getIssuer().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ISSUER_ID_REQUIRED);
         }

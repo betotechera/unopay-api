@@ -15,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class PaymentInstrumentService {
@@ -44,11 +47,12 @@ public class PaymentInstrumentService {
     }
 
     public PaymentInstrument findById(String id) {
-        PaymentInstrument instrument = repository.findOne(id);
-        if(instrument == null) {
-            throw UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND);
-        }
-        return instrument;
+        Optional<PaymentInstrument> instrument = repository.findById(id);
+        return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
+    }
+
+    public List<PaymentInstrument> findByContractorId(String contractorId) {
+        return repository.findByContractorId(contractorId);
     }
 
     public void update(String id, PaymentInstrument instrument) {

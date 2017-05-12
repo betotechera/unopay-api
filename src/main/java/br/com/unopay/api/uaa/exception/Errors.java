@@ -283,6 +283,9 @@ public final class Errors {
                     "Contract Establishment not found.");
     public static final UnovationError ESTABLISHMENT_ALREADY_IN_CONTRACT =
             new UnovationError("ESTABLISHMENT_ALREADY_IN_CONTRACT", "The establishment is already in the contract.");
+    public static final UnovationError CODE_LENGTH_NOT_ACCEPTED =
+            new UnovationError("CODE_LENGTH_NOT_ACCEPTED", "Code length not accepted.");
+
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
@@ -320,6 +323,25 @@ public final class Errors {
             new UnovationError("PRODUCT_CODE_NOT_MET", "Payment instrument product different of hirer product.");
     public static final UnovationError PRODUCT_ID_NOT_MET =
             new UnovationError("PRODUCT_ID_NOT_MET", "Payment instrument product different of hirer product.");
+    public static final UnovationError PAYMENT_INSTRUMENT_NOT_VALID =
+            new UnovationError("PAYMENT_INSTRUMENT_NOT_VALID", "Payment instrument does not belong to contractor");
+    public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER =
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER", "Credit Payment account does not belong to hirer");
+    public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT =
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT", "Credit Payment account does not belong to product");
+    public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE =
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE", "Credit Payment account does not belong to service");
+
+    public static final UnovationError SERVICE_NOT_ACCEPTED =
+            new UnovationError("SERVICE_NOT_ACCEPTED", "Service not accepted.");
+
+
+
+
+
+
+
+
 
 
 

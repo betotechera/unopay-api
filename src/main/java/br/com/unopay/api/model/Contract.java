@@ -96,10 +96,10 @@ public class Contract implements Serializable {
     private PaymentInstrumentType paymentInstrumentType;
 
     @Enumerated(EnumType.STRING)
-    @ElementCollection(targetClass = ServiceType.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @JsonView({Views.Public.class})
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
-    private List<ServiceType> serviceType;
+    private Set<ServiceType> serviceType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "credit_insertion_type")
@@ -185,6 +185,23 @@ public class Contract implements Serializable {
                 contractEstablishments.stream().filter(item ->
                         item.getEstablishment().getId().equals(contractEstablishment.getEstablishmentId()))
                         .count() > 0;
+    }
 
+    public String getHirerDocumentNumber(){
+        if(getHirer() != null){
+            return  getHirer().getDocumentNumber();
+        }
+        return null;
+    }
+
+    public String getProductCode(){
+        if(getProduct() != null){
+            return getProduct().getCode();
+        }
+        return null;
+    }
+
+    public boolean containsService(ServiceType serviceType){
+        return getServiceType().stream().anyMatch(t -> t == serviceType);
     }
 }

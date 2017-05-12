@@ -2,6 +2,7 @@ package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ProductTest  extends FixtureApplicationTest {
 
@@ -15,8 +16,6 @@ class ProductTest  extends FixtureApplicationTest {
 
         when:
          a.updateMe(b)
-
-
         then:
         a.code == b.code
         a.name == b.name
@@ -98,6 +97,16 @@ class ProductTest  extends FixtureApplicationTest {
         a.paymentInstrumentEmissionFee == b.paymentInstrumentEmissionFee
         a.paymentInstrumentSecondCopyFee == b.paymentInstrumentSecondCopyFee
         a.administrationCreditInsertionFee == b.administrationCreditInsertionFee
+    }
+
+    def 'should return error when code length is greater then maximum size'(){
+        def product = new Product().with { code = 'AAAAAAAAA'; it }
+        when:
+        product.validate()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'CODE_LENGTH_NOT_ACCEPTED'
     }
 
     def 'should be equals'(){

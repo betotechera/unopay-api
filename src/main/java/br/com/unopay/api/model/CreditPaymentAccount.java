@@ -200,4 +200,11 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         return  product != null;
     }
 
+    public String getProductCode(){
+        if(getProduct() != null){
+            return getProduct().getCode();
+        }
+        return null;
+    }
+
 }

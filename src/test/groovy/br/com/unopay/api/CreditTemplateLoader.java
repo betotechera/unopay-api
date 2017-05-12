@@ -16,21 +16,32 @@ public class CreditTemplateLoader implements TemplateLoader {
     public void load() {
         Fixture.of(PaymentInstrument.class).addTemplate("valid", new Rule(){{
             add("type", random(PaymentInstrumentType.class));
-            add("number", random("5646416546564654", "ADSFADSF57546646", "AAAAAAAAAAAAAAAAAAAA"));
+            add("number", random("9a7f16d6",
+                    "a6f76a78-5b9c", "42bebfbd-02a7",
+                    "20aeb4c8-5d4a", "62f0f5f4-de11",
+                    "d5756a65-cf17", "b39204ad-fc90",
+                    "0d029ab6-e8e4", "06f25495-77ec"));
             add("product", one(Product.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("createdDate", instant("now"));
-            add("expirationDate", afterDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
+            add("expirationDate", afterDate(new SimpleDateFormat("yyyy-MM-dd")
+                    .format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
             add("password", random("AABCD555", "!@#$$%#$#KMKK", "@##$$$$$"));
             add("situation", random(PaymentInstrumentSituation.class));
-            add("externalNumberId", random("AAAAAAAAAA22222222222444444", "24d995e3-be96-40e8-870d-bba297375a70", "012346"));
+            add("externalNumberId", random("9a7f16d6-a974-4730-a929-b167c0ad30f0",
+                    "a6f76a78-5b9c-4083-835f-44ad879a99ea", "42bebfbd-02a7-4094-a123-712d96b1a2d7",
+                    "20aeb4c8-5d4a-4d05-8ac5-dc5474ef6699", "62f0f5f4-de11-44e6-afa9-d834c2b33287",
+                    "d5756a65-cf17-4bec-82ae-1f2fb389f49f", "b39204ad-fc90-46eb-9bba-b1247bc24874",
+                    "0d029ab6-e8e4-4817-ba57-9222c8b9bd01", "06f25495-77ec-4e30-b5aa-aa257d677c4f"));
         }});
 
-        Fixture.of(PaymentInstrument.class).addTemplate("without-product").inherits("valid", new Rule(){{
+        Fixture.of(PaymentInstrument.class).addTemplate("without-product")
+                .inherits("valid", new Rule(){{
             add("product", null);
         }});
 
-        Fixture.of(PaymentInstrument.class).addTemplate("without-contractor").inherits("valid", new Rule(){{
+        Fixture.of(PaymentInstrument.class).addTemplate("without-contractor")
+                .inherits("valid", new Rule(){{
             add("contractor", null);
         }});
 
@@ -54,31 +65,37 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("product", null);
         }});
 
-        Fixture.of(Credit.class).addTemplate("withoutPaymentRuleGroup").inherits("allFields", new Rule(){{
+        Fixture.of(Credit.class).addTemplate("withoutPaymentRuleGroup")
+                .inherits("allFields", new Rule(){{
             add("paymentRuleGroup", null);
         }});
 
-        Fixture.of(Credit.class).addTemplate("withoutProductAndPaymentRuleGroup").inherits("allFields", new Rule(){{
+        Fixture.of(Credit.class).addTemplate("withoutProductAndPaymentRuleGroup")
+                .inherits("allFields", new Rule(){{
             add("paymentRuleGroup", null);
             add("product", null);
         }});
 
-        Fixture.of(Credit.class).addTemplate("withoutProductAndCreditInsertionType").inherits("allFields", new Rule(){{
+        Fixture.of(Credit.class).addTemplate("withoutProductAndCreditInsertionType")
+                .inherits("allFields", new Rule(){{
             add("creditInsertionType", null);
             add("product", null);
         }});
 
         Fixture.of(CreditPaymentAccount.class).addTemplate("valid", new Rule(){{
-            add("transactionCreatedDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
+            add("transactionCreatedDateTime",beforeDate("24/04/2017",
+                    new SimpleDateFormat("dd/MM/yyyy")));
             add("issuer", one(Issuer.class, "valid"));
             add("product", one(Product.class, "valid"));
             add("paymentRuleGroup",one(PaymentRuleGroup.class, "valid"));
             add("hirerDocument",cnpj());
             add("serviceType",random(ServiceType.class));
             add("creditInsertionType",random(CreditInsertionType.class));
-            add("solicitationDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
+            add("solicitationDateTime",beforeDate("24/04/2017",
+                    new SimpleDateFormat("dd/MM/yyyy")));
             add("creditNumber",random(Long.class));
-            add("insertionCreatedDateTime",beforeDate("24/04/2017", new SimpleDateFormat("dd/MM/yyyy")));
+            add("insertionCreatedDateTime",beforeDate("24/04/2017",
+                    new SimpleDateFormat("dd/MM/yyyy")));
             add("value",random(BigDecimal.class));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
@@ -99,6 +116,12 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("situation",random(CreditSituation.class));
             add("availableBalance", random(BigDecimal.class));
             add("blockedBalance",random(BigDecimal.class));
+        }});
+
+        Fixture.of(ContractorInstrumentCredit.class).addTemplate("toPersist")
+                .inherits("allFields", new Rule(){{
+            add("contract", null);
+            add("creditPaymentAccount", null);
         }});
 
     }

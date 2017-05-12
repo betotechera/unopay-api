@@ -70,6 +70,9 @@ public class Hirer implements Serializable {
 
     @JsonIgnore
     public String getDocumentNumber() {
-        return person.getDocument().getNumber();
+        if(getPerson() != null && getPerson().getDocument() != null) {
+            return person.getDocument().getNumber();
+        }
+        return null;
     }
 }

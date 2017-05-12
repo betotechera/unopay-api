@@ -91,11 +91,11 @@ class SetupCreator {
         }
     }
 
-    PaymentInstrument createPaymentInstrumentWithProduct(Product productUnderTest) {
+    PaymentInstrument createPaymentInstrumentWithProduct(Product productUnderTest = createProduct(), contractorUnderTest = createContractor()) {
         PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme("valid")
                 .with {
             product = productUnderTest
-            contractor = createContractor()
+            contractor = contractorUnderTest
             it
         }
         paymentInstrumentService.save(paymentInstrument)
@@ -159,31 +159,18 @@ class SetupCreator {
         createCredit(product)
     }
 
-    ContractorInstrumentCredit createContractorInstrumentCredit(){
-        def contractUnderTest = createPersistedContract()
-        ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("allFields")
-        instrumentCredit.with {
-            contract = contractUnderTest
-            paymentInstrument = createPaymentInstrumentWithProduct(contractUnderTest.product)
-            creditPaymentAccount = createCreditPaymentAccountPersisted(contractUnderTest.product)
-
-            it
-        }
-    }
-
-    Contract createContract() {
+    Contract createContract(contractorUnderTest = createContractor(), productUnderTest = createProduct()) {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
-        def productUnderTest = createProduct()
         contract.with {
             hirer = createHirer()
-            contractor = createContractor()
+            contractor = contractorUnderTest
             product = productUnderTest
             serviceType = productUnderTest.serviceType
             it }
     }
 
-    Contract createPersistedContract(){
-        Contract contract = createContract()
+    Contract createPersistedContract(contractorUnderTest = createContractor()){
+        Contract contract = createContract(contractorUnderTest)
         contractService.save(contract)
     }
 
@@ -197,12 +184,14 @@ class SetupCreator {
         }
     }
 
-    CreditPaymentAccount createCreditPaymentAccountPersisted(Product productUnderTest) {
+    CreditPaymentAccount createCreditPaymentAccountFromContract(Contract contract = createContract()) {
         CreditPaymentAccount creditPaymentAccount =  Fixture.from(CreditPaymentAccount.class).gimme("valid")
                 .with {
-            product = productUnderTest
-            issuer = createIssuer()
-            paymentRuleGroup = productUnderTest.paymentRuleGroup
+            product = contract.product
+            issuer = contract.product.issuer
+            hirerDocument = contract.hirer.documentNumber
+            paymentRuleGroup = contract.product.paymentRuleGroup
+            serviceType = contract.serviceType.find()
             it
         }
         creditPaymentAccountService.save(creditPaymentAccount)

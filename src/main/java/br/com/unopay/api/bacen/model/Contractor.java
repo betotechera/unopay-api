@@ -60,4 +60,12 @@ public class Contractor implements Serializable {
         this.rntrc  = hirer.getRntrc();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
+
+
+    public String getDocumentNumber(){
+        if(getPerson() != null && getPerson().getDocument() != null){
+            return getPerson().getDocument().getNumber();
+        }
+        return null;
+    }
 }

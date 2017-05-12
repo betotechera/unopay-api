@@ -20,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class ContractService {
@@ -69,11 +71,13 @@ public class ContractService {
     }
 
     public Contract findById(String id) {
-        Contract contract = repository.findOne(id);
-        if(contract == null){
-            throw UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND);
-        }
-        return contract;
+        Optional<Contract> contract = repository.findById(id);
+        return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
+    }
+
+    public Contract findByContractorId(String contractorId) {
+        Optional<Contract> contract = repository.findByContractorId(contractorId);
+        return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
     public void delete(String id) {

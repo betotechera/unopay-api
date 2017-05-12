@@ -48,13 +48,17 @@ public class CreditPaymentAccountService {
     }
 
     public CreditPaymentAccount register(Credit credit) {
-        List<CreditPaymentAccount> creditPayments = repository.findByHirerDocument(credit.getHirerDocument());
+        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirerDocument());
         Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
         creditPaymentAccount.ifPresent(creditPayment -> {
             creditPayment.updateMyBalance(credit);
             repository.save(creditPayment);
         });
         return creditPaymentAccount.orElseGet(()-> save(new CreditPaymentAccount(credit)));
+    }
+
+    public List<CreditPaymentAccount> findByHirerDocument(String hirerDocument) {
+        return repository.findByHirerDocument(hirerDocument);
     }
 
     public List<CreditPaymentAccount> findAll(){
