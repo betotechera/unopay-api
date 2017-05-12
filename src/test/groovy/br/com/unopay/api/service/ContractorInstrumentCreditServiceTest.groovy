@@ -89,7 +89,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         def contractor = setupCreator.createContractor()
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
-            paymentInstrument = setupCreator.createPaymentInstrumentWithProduct(contractUnderTest.product, contractor)
+            paymentInstrument = setupCreator
+                    .createPaymentInstrumentWithProduct(contractUnderTest.product, contractor,'newNumber')
         }
         when:
        service.insert(contractorUnderTest.id, instrumentCredit)
@@ -170,9 +171,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'instrument credit with service different of contract service should not be inserted'(){
         given:
-        def myContract = contractService.findByContractorId(contractorUnderTest.id)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                .findByHirerDocument(myContract.hirer.documentNumber)
+                .findByHirerDocument(contractUnderTest.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
             serviceType = ServiceType.values().find { !(it in creditPaymentAccounts.serviceType) }

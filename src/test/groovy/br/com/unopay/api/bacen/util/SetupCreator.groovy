@@ -91,13 +91,19 @@ class SetupCreator {
         }
     }
 
-    PaymentInstrument createPaymentInstrumentWithProduct(Product productUnderTest = createProduct(), contractorUnderTest = createContractor()) {
+    PaymentInstrument createPaymentInstrumentWithProduct(
+            Product productUnderTest = createProduct(),
+            contractorUnderTest = createContractor(), String number = null) {
         PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme("valid")
                 .with {
             product = productUnderTest
             contractor = contractorUnderTest
             it
         }
+        if(number){
+            paymentInstrument.number = number
+        }
+        paymentInstrument
         paymentInstrumentService.save(paymentInstrument)
     }
 
