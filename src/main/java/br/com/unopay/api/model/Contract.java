@@ -194,11 +194,11 @@ public class Contract implements Serializable {
         return null;
     }
 
-    public String getProductCode(){
+    public boolean productCodeIsEquals(String code){
         if(getProduct() != null){
-            return getProduct().getCode();
+            return getProduct().getCode() == code;
         }
-        return null;
+        return false;
     }
 
     public boolean containsService(ServiceType serviceType){

@@ -54,6 +54,34 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.id != null
     }
 
+    def 'given a instrument credit with same product and service then installment number should be incremented'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        when:
+
+        service.insert(contractorUnderTest.id, instrumentCredit)
+        def created = service.insert(contractorUnderTest.id, instrumentCredit.with { id = null; it})
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.installmentNumber == 2L
+    }
+
+    def 'given a instrument credit with different product or service then installment number should not be incremented'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
+        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
+
+        when:
+        service.insert(contractorUnderTest.id, anotherCredit)
+        def created = service.insert(contractorUnderTest.id, instrumentCredit.with { id = null; it})
+
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.installmentNumber == 1L
+    }
+
     def 'should create instrument credit with contractor contract'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -178,6 +206,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             serviceType = ServiceType.values().find { !(it in creditPaymentAccounts.serviceType) }
         }
         when:
+        if(!instrumentCredit.serviceType) throw new IllegalArgumentException()
         service.insert(contractorUnderTest.id, instrumentCredit)
 
         then:
@@ -227,12 +256,12 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
-    private ContractorInstrumentCredit createInstrumentCredit() {
+    private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
         instrumentCredit.with {
             paymentInstrument = paymentInstrumentUnderTest
             creditPaymentAccount = creditPaymentAccountUnderTest
-            serviceType = contractUnderTest.serviceType.find()
+            serviceType = svt
         }
         instrumentCredit
     }

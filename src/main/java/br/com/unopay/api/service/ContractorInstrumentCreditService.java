@@ -43,21 +43,32 @@ public class ContractorInstrumentCreditService {
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateMe(contract);
+        incrementCreditNumber(instrumentCredit);
         return repository.save(instrumentCredit);
     }
 
+    private void incrementCreditNumber(ContractorInstrumentCredit instrumentCredit) {
+        ContractorInstrumentCredit last = repository.findFirstByOrderByCreatedDateTimeDesc();
+        instrumentCredit.defineInstallmentNumber(last);
+    }
+
     private void validateCreditPaymentAccount(ContractorInstrumentCredit instrumentCredit, Contract contract) {
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                                                                .findByHirerDocument(contract.getHirerDocumentNumber());
-        if(creditPaymentAccounts.stream().noneMatch(c -> c.getId() == instrumentCredit.getCreditPaymentIdAccount())){
+        if(isCreditPaymentAccountFromAnotherHirer(contract.getHirerDocumentNumber(), instrumentCredit)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER);
         }
-        if(instrumentCredit.getCreditPaymentAccountProductCode() != contract.getProductCode()){
+        if(!contract.productCodeIsEquals(instrumentCredit.getCreditPaymentAccountProductCode())){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT);
         }
         if(!contract.containsService(instrumentCredit.getCreditPaymentAccountServiceType())){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE);
         }
+    }
+
+    private boolean isCreditPaymentAccountFromAnotherHirer(String hirerDocument,
+                                                           ContractorInstrumentCredit instrumentCredit) {
+        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
+                .findByHirerDocument(hirerDocument);
+        return creditPaymentAccounts.stream().noneMatch(c -> c.getId() == instrumentCredit.getCreditPaymentIdAccount());
     }
 
     private void verifyInstrumentBelongsToContractor(String contractorId, ContractorInstrumentCredit instrumentCredit) {

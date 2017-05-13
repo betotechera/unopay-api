@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 
 
 @Data
@@ -142,13 +143,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         return null;
     }
 
-    public String getContractId() {
-        if(contract != null){
-            return  contract.getId();
-        }
-        return null;
-    }
-
     public String getCreditPaymentIdAccount() {
         if(creditPaymentAccount != null){
             return creditPaymentAccount.getId();
@@ -169,4 +163,15 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
         return null;
     }
+
+    public void defineInstallmentNumber(ContractorInstrumentCredit last) {
+        Long lastCreditNumber = Optional.ofNullable(last)
+                                        .map(ContractorInstrumentCredit::getInstallmentNumber).orElse(null);
+        if(lastCreditNumber == null || (last == null || last.serviceType != serviceType)){
+            installmentNumber = 1L;
+            return;
+        }
+        installmentNumber += lastCreditNumber;
+    }
+
 }

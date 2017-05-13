@@ -69,6 +69,10 @@ public class CreditService {
             defineDefaultPaymentRuleGroup(credit);
         }
         credit.setupMyCreate();
+        incrementCreditNumber(credit);
+    }
+
+    private void incrementCreditNumber(Credit credit) {
         Optional<Credit> last = repository.findFirstByOrderByCreatedDateTimeDesc();
         Long lastCreditNumber = last.map(Credit::getCreditNumber).orElse(null);
         credit.defineCreditNumber(lastCreditNumber);
