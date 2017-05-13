@@ -119,12 +119,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private Date createdDateTime;
 
     public void validateMe(Contract contract){
-        if(!Objects.equals(paymentInstrument.getProduct().getCode(), contract.getProduct().getCode())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
-        }
-        if(!Objects.equals(paymentInstrument.getProduct().getId(), contract.getProduct().getId())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
-        }
+        validateProduct(contract);
         if(!contract.containsService(serviceType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
         }
@@ -134,6 +129,15 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
         if(expirationDateTime.before(new Date())){
             throw UnovationExceptions.unprocessableEntity().withErrors(EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED);
+        }
+    }
+
+    private void validateProduct(Contract contract) {
+        if(!Objects.equals(paymentInstrument.getProduct().getCode(), contract.getProduct().getCode())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
+        }
+        if(!Objects.equals(paymentInstrument.getProduct().getId(), contract.getProduct().getId())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
         }
     }
 
