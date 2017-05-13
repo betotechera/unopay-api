@@ -3,6 +3,7 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
@@ -38,15 +39,21 @@ public class ContractorInstrumentCreditService {
         return  repository.findOne(id);
     }
 
-    public ContractorInstrumentCredit insert(String contractorId, ContractorInstrumentCredit instrumentCredit) {
-        Contract contract = contractService.findByContractorId(contractorId);
-        verifyInstrumentBelongsToContractor(contractorId, instrumentCredit);
+    public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
+        Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateMe(contract);
         incrementCreditNumber(instrumentCredit);
         validateReferences(instrumentCredit);
         return repository.save(instrumentCredit);
+    }
+
+    private Contract getReliableContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
+        PaymentInstrument paymentInstrument = paymentInstrumentService.findById(paymentInstrumentId);
+        Contract contract = contractService.findByContractorId(paymentInstrument.contractorId());
+        verifyInstrumentBelongsToContractor(paymentInstrument.contractorId(), instrumentCredit);
+        return contract;
     }
 
     private void incrementCreditNumber(ContractorInstrumentCredit instrumentCredit) {

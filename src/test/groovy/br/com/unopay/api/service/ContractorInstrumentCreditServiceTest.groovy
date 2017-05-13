@@ -47,7 +47,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
-        ContractorInstrumentCredit created = service.insert(contractorUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
         ContractorInstrumentCredit result = service.findById(created.id)
 
         then:
@@ -59,8 +59,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
 
-        service.insert(contractorUnderTest.id, instrumentCredit)
-        def created = service.insert(contractorUnderTest.id, instrumentCredit.with { id = null; it})
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
         ContractorInstrumentCredit result = service.findById(created.id)
 
         then:
@@ -73,8 +73,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
 
         when:
-        service.insert(contractorUnderTest.id, anotherCredit)
-        def created = service.insert(contractorUnderTest.id, instrumentCredit.with { id = null; it})
+        service.insert(paymentInstrumentUnderTest.id, anotherCredit)
+        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
 
         ContractorInstrumentCredit result = service.findById(created.id)
 
@@ -90,7 +90,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         }
 
         when:
-        ContractorInstrumentCredit created = service.insert(contractorUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
         ContractorInstrumentCredit result = service.findById(created.id)
 
         then:
@@ -104,7 +104,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
 
         when:
-        ContractorInstrumentCredit created = service.insert(contractorUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
         ContractorInstrumentCredit result = service.findById(created.id)
 
         then:
@@ -121,7 +121,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
                     .createPaymentInstrumentWithProduct(contractUnderTest.product, contractor,'newNumber')
         }
         when:
-       service.insert(contractorUnderTest.id, instrumentCredit)
+       service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -134,7 +134,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
                                                             .findByHirerDocument(contractUnderTest.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
-        ContractorInstrumentCredit created = service.insert(contractorUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
         ContractorInstrumentCredit result = service.findById(created.id)
 
         then:
@@ -151,7 +151,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             creditPaymentAccount = setupCreator.createCreditPaymentAccountFromContract(anotherContract)
         }
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -170,7 +170,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             }
         }
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -190,7 +190,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             }
         }
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -204,7 +204,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             serviceType = ServiceType.values().find { !(it in contractUnderTest.serviceType) }
         }
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -219,7 +219,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -234,14 +234,14 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.insert(contractorUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'PRODUCT_ID_NOT_MET'
     }
 
-    def 'given a payment instrument with unknown contract then credit should not be inserted'(){
+    def 'given a payment instrument with unknown payment instrument then credit should not be inserted'(){
         given:
         ContractorInstrumentCredit instrumentCredit =  createInstrumentCredit()
 
@@ -250,7 +250,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+        assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
     }
 
     private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {

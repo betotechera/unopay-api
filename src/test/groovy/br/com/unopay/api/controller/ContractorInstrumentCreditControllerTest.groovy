@@ -21,12 +21,11 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
 
         ContractorInstrumentCredit credit = setupCreator.createContractorInstrumentCredit()
         String instrumentId = credit?.paymentInstrument?.id
-        String contractorId = credit?.paymentInstrument?.contractor?.id
 
         when:
         def result = this.mvc.perform(
-                            post('/contractors/{contractorId}/payment-instruments/{instrumentId}/credits?access_token={access_token}',
-                                    contractorId, instrumentId, accessToken)
+                            post('/payment-instruments/{instrumentId}/credits?access_token={access_token}',
+                                                        instrumentId, accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonWithoutNetworkPaymentRuleGroups(credit)))
         then:

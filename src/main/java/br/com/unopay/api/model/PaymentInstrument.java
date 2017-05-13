@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -95,6 +96,13 @@ public class PaymentInstrument implements Serializable, Updatable {
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
         }
+    }
+
+    public String contractorId(){
+        if(getContractor() != null){
+            return getContractor().getId();
+        }
+        return null;
     }
 
 }

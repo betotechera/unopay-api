@@ -42,16 +42,14 @@ public class ContractorInstrumentCreditController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(CREATED)
-    @RequestMapping(value = "/contractors/{contractorId}/payment-instruments/{instrumentId}/credits", method = POST)
-    public ResponseEntity<ContractorInstrumentCredit> create(@PathVariable String contractorId,
-                                                             @PathVariable String instrumentId,@Validated(Create.class)
+    @RequestMapping(value = "/payment-instruments/{instrumentId}/credits", method = POST)
+    public ResponseEntity<ContractorInstrumentCredit> create(@PathVariable String instrumentId,@Validated(Create.class)
                                                              @RequestBody ContractorInstrumentCredit credit) {
         log.info("inserting payment instrument credit={}", credit);
-        credit.getPaymentInstrument().setId(instrumentId);
-        ContractorInstrumentCredit created = service.insert(contractorId, credit);
+        ContractorInstrumentCredit created = service.insert(instrumentId, credit);
         log.info("Inserted payment instrument credit={}", created);
         return created(URI.create(
-                String.format("/contractors/%s/payment-instruments/%s/credits/%s",contractorId, instrumentId,
+                String.format("/payment-instruments/%s/credits/%s",instrumentId,
                         created.getId()))).body(created);
 
     }
@@ -59,16 +57,16 @@ public class ContractorInstrumentCreditController {
     @ResponseStatus(OK)
     @JsonView(Views.Public.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT')")
-    @RequestMapping(value = "/contractors/{contractorId}/payment-instruments/{instrumentId}/{id}", method = GET)
-    public ContractorInstrumentCredit get(@PathVariable String id) {
+    @RequestMapping(value = "/payment-instruments/{instrumentId}/credits/{id}", method = GET)
+    public ContractorInstrumentCredit get(@PathVariable String instrumentId, @PathVariable String id) {
         log.info("get payment instrument credit={}", id);
         return service.findById(id);
     }
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
-    @RequestMapping(value = "/contractors/{contractorId}/payment-instruments/{instrumentId}/{id}", method = RequestMethod.DELETE)
-    public void cancel(@PathVariable  String id) {
+    @RequestMapping(value = "/payment-instruments/{instrumentId}/credits/{id}", method = RequestMethod.DELETE)
+    public void cancel(@PathVariable String instrumentId, @PathVariable  String id) {
         log.info("canceling payment instrument credit id={}", id);
         service.cancel(id);
     }
