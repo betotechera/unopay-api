@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -160,7 +161,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         return null;
     }
 
-    public void defineInstallmentNumber(ContractorInstrumentCredit last) {
+    public void incrementInstallmentNumber(ContractorInstrumentCredit last) {
         Long lastCreditNumber = Optional.ofNullable(last)
                                         .map(ContractorInstrumentCredit::getInstallmentNumber).orElse(null);
         if(lastCreditNumber == null || (last == null || last.serviceType != serviceType)){
@@ -168,6 +169,11 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             return;
         }
         installmentNumber += lastCreditNumber;
+    }
+
+    public boolean myPaymentInstrumentIn(List<PaymentInstrument> paymentInstruments) {
+        return paymentInstruments.stream()
+                .anyMatch(p-> Objects.equals(p.getId(), getPaymentInstrumentId()));
     }
 
 }

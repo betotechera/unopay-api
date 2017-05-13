@@ -42,9 +42,9 @@ public class ContractorInstrumentCreditService {
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
-        instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateMe(contract);
-        incrementCreditNumber(instrumentCredit);
+        instrumentCredit.setupMyCreate(contract);
+        incrementInstallmentNumber(instrumentCredit);
         validateReferences(instrumentCredit);
         return repository.save(instrumentCredit);
     }
@@ -56,9 +56,9 @@ public class ContractorInstrumentCreditService {
         return contract;
     }
 
-    private void incrementCreditNumber(ContractorInstrumentCredit instrumentCredit) {
+    private void incrementInstallmentNumber(ContractorInstrumentCredit instrumentCredit) {
         ContractorInstrumentCredit last = repository.findFirstByOrderByCreatedDateTimeDesc();
-        instrumentCredit.defineInstallmentNumber(last);
+        instrumentCredit.incrementInstallmentNumber(last);
     }
 
     private void validateCreditPaymentAccount(ContractorInstrumentCredit instrumentCredit, Contract contract) {
@@ -82,9 +82,8 @@ public class ContractorInstrumentCreditService {
     }
 
     private void verifyInstrumentBelongsToContractor(String contractorId, ContractorInstrumentCredit instrumentCredit) {
-        boolean instrumentBelongsToContractor = paymentInstrumentService.findByContractorId(contractorId).stream()
-                .anyMatch(p-> Objects.equals(p.getId(), instrumentCredit.getPaymentInstrumentId()));
-        if(!instrumentBelongsToContractor) {
+        List<PaymentInstrument> contractorPaymentInstruments= paymentInstrumentService.findByContractorId(contractorId);
+        if(!instrumentCredit.myPaymentInstrumentIn(contractorPaymentInstruments)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_NOT_VALID);
         }
     }
