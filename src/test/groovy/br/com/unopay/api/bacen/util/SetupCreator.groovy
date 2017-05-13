@@ -214,6 +214,7 @@ class SetupCreator {
             paymentInstrument = paymentInstrumentUnderTest
             creditPaymentAccount = creditPaymentAccountUnderTest
             serviceType = contractUnderTest.serviceType.find()
+            value = creditPaymentAccountUnderTest.availableBalance
         }
         instrumentCredit
     }
