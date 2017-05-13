@@ -142,7 +142,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.creditPaymentAccount in creditPaymentAccounts
     }
 
-    def 'instrument credit with credit payment account belongs to another hirer should not be inserted'(){
+    def 'payment instrument credit with credit payment account belongs to another hirer should not be inserted'(){
         given:
         def contractor = setupCreator.createContractor()
         def anotherContract = setupCreator.createContract(contractor, contractUnderTest.product)
@@ -158,7 +158,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER'
     }
 
-    def 'instrument credit with credit payment account with product different of contract product should not be inserted'(){
+    def 'payment instrument credit with credit payment account with product different of contract product should not be inserted'(){
         given:
         def myContract = contractService.findByContractorId(contractorUnderTest.id)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
@@ -177,7 +177,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT'
     }
 
-    def 'instrument credit with credit payment account with service different of contract service should not be inserted'(){
+    def 'payment instrument credit with credit payment account with service different of contract service should not be inserted'(){
         given:
         def myContract = contractService.findByContractorId(contractorUnderTest.id)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
@@ -197,7 +197,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE'
     }
 
-    def 'instrument credit with service different of contract service should not be inserted'(){
+    def 'given a payment instrument credit with service different of contract service should not be inserted'(){
         given:
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(contractUnderTest.hirer.documentNumber)
@@ -244,7 +244,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_ID_NOT_MET'
     }
 
-    def 'instrument with unknown contract credit should not be inserted'(){
+    def 'given a payment instrument with unknown contract then credit should not be inserted'(){
         given:
         ContractorInstrumentCredit instrumentCredit =  createInstrumentCredit()
 
