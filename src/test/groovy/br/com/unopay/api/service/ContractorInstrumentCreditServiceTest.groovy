@@ -199,14 +199,11 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a payment instrument credit with service different of contract service should not be inserted'(){
         given:
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                .findByHirerDocument(contractUnderTest.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
-            serviceType = ServiceType.values().find { !(it in creditPaymentAccounts.serviceType) }
+            serviceType = ServiceType.values().find { !(it in contractUnderTest.serviceType) }
         }
         when:
-        if(!instrumentCredit.serviceType) throw new IllegalArgumentException()
         service.insert(contractorUnderTest.id, instrumentCredit)
 
         then:

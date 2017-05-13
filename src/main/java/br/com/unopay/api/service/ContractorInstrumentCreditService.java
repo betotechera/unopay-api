@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ContractorInstrumentCreditService {
@@ -44,6 +45,7 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateMe(contract);
         incrementCreditNumber(instrumentCredit);
+        validateReferences(instrumentCredit);
         return repository.save(instrumentCredit);
     }
 
@@ -56,7 +58,7 @@ public class ContractorInstrumentCreditService {
         if(isCreditPaymentAccountFromAnotherHirer(contract.getHirerDocumentNumber(), instrumentCredit)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER);
         }
-        if(!contract.productCodeIsEquals(instrumentCredit.getCreditPaymentAccountProductCode())){
+        if(!contract.isProductCodeEquals(instrumentCredit.getCreditPaymentAccountProductCode())){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT);
         }
         if(!contract.containsService(instrumentCredit.getCreditPaymentAccountServiceType())){
@@ -68,15 +70,27 @@ public class ContractorInstrumentCreditService {
                                                            ContractorInstrumentCredit instrumentCredit) {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(hirerDocument);
-        return creditPaymentAccounts.stream().noneMatch(c -> c.getId() == instrumentCredit.getCreditPaymentIdAccount());
+        return creditPaymentAccounts.stream()
+                    .noneMatch(c -> Objects.equals(c.getId(), instrumentCredit.getCreditPaymentIdAccount()));
     }
 
     private void verifyInstrumentBelongsToContractor(String contractorId, ContractorInstrumentCredit instrumentCredit) {
         boolean instrumentBelongsToContractor = paymentInstrumentService.findByContractorId(contractorId).stream()
-                .anyMatch(p-> p.getId() == instrumentCredit.getPaymentInstrumentId());
+                .anyMatch(p-> Objects.equals(p.getId(), instrumentCredit.getPaymentInstrumentId()));
         if(!instrumentBelongsToContractor) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_NOT_VALID);
         }
     }
 
+    private void validateReferences(ContractorInstrumentCredit instrumentCredit) {
+        instrumentCredit
+                .setPaymentInstrument(paymentInstrumentService.findById(instrumentCredit.getPaymentInstrumentId()));
+        instrumentCredit
+                .setCreditPaymentAccount(creditPaymentAccountService.
+                                                            findById(instrumentCredit.getCreditPaymentIdAccount()));
+    }
+
+    public void cancel(String id) {
+
+    }
 }

@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -57,10 +58,8 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Contract contract;
-
 
     @ManyToOne
     @JoinColumn(name="credit_payment_account_id")
@@ -70,6 +69,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private ServiceType serviceType;
 
@@ -81,7 +81,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "installment_number")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Long installmentNumber;
 
     @Column(name = "value")
@@ -106,24 +105,21 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "available_balance")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private BigDecimal availableBalance;
 
     @Column(name = "blocked_balance")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private BigDecimal blockedBalance;
 
     @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Date createdDateTime;
 
     public void validateMe(Contract contract){
-        if(paymentInstrument.getProduct().getCode() != contract.getProduct().getCode()){
+        if(!Objects.equals(paymentInstrument.getProduct().getCode(), contract.getProduct().getCode())){
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
         }
-        if(paymentInstrument.getProduct().getId() != contract.getProduct().getId()){
+        if(!Objects.equals(paymentInstrument.getProduct().getId(), contract.getProduct().getId())){
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
         }
         if(!contract.containsService(serviceType)){

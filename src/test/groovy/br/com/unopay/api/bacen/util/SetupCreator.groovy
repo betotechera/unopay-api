@@ -203,7 +203,19 @@ class SetupCreator {
         creditPaymentAccountService.save(creditPaymentAccount)
     }
 
-
+    ContractorInstrumentCredit createContractorInstrumentCredit(){
+        def contractorUnderTest = createContractor()
+        def contractUnderTest = createPersistedContract(contractorUnderTest)
+        def paymentInstrumentUnderTest = createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
+        def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contractUnderTest)
+        ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
+        instrumentCredit.with {
+            paymentInstrument = paymentInstrumentUnderTest
+            creditPaymentAccount = creditPaymentAccountUnderTest
+            serviceType = contractUnderTest.serviceType.find()
+        }
+        instrumentCredit
+    }
 
     Establishment createEstablishment() {
         null

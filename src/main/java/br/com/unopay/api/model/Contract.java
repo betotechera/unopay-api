@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -194,9 +195,9 @@ public class Contract implements Serializable {
         return null;
     }
 
-    public boolean productCodeIsEquals(String code){
+    public boolean isProductCodeEquals(String code){
         if(getProduct() != null){
-            return getProduct().getCode() == code;
+            return Objects.equals(getProduct().getCode(), code);
         }
         return false;
     }
