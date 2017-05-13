@@ -166,7 +166,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
             creditPaymentAccount = creditPaymentAccounts.find()?.with {
-                    product = setupCreator.createProduct('DDBB', myContract.product.paymentRuleGroup); it
+                    product = setupCreator.createProduct('AXZY', myContract.product.paymentRuleGroup); it
             }
         }
         when:

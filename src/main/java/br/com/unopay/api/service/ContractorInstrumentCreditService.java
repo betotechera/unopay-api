@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ContractorInstrumentCreditService {
@@ -75,10 +74,9 @@ public class ContractorInstrumentCreditService {
 
     private boolean isCreditPaymentAccountFromAnotherHirer(String hirerDocument,
                                                            ContractorInstrumentCredit instrumentCredit) {
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                .findByHirerDocument(hirerDocument);
-        return creditPaymentAccounts.stream()
-                    .noneMatch(c -> Objects.equals(c.getId(), instrumentCredit.getCreditPaymentIdAccount()));
+        List<CreditPaymentAccount> hirerCreditPaymentAccounts = creditPaymentAccountService
+                                                                                    .findByHirerDocument(hirerDocument);
+        return !instrumentCredit.myCreditPaymentAccountIn(hirerCreditPaymentAccounts);
     }
 
     private void verifyInstrumentBelongsToContractor(String contractorId, ContractorInstrumentCredit instrumentCredit) {
@@ -89,11 +87,10 @@ public class ContractorInstrumentCreditService {
     }
 
     private void validateReferences(ContractorInstrumentCredit instrumentCredit) {
-        instrumentCredit
-                .setPaymentInstrument(paymentInstrumentService.findById(instrumentCredit.getPaymentInstrumentId()));
-        instrumentCredit
-                .setCreditPaymentAccount(creditPaymentAccountService.
-                                                            findById(instrumentCredit.getCreditPaymentIdAccount()));
+        PaymentInstrument instrument = paymentInstrumentService.findById(instrumentCredit.getPaymentInstrumentId());
+        CreditPaymentAccount account=creditPaymentAccountService.findById(instrumentCredit.getCreditPaymentAccountId());
+        instrumentCredit.setPaymentInstrument(instrument);
+        instrumentCredit.setCreditPaymentAccount(account);
     }
 
     public void cancel(String id) {

@@ -140,7 +140,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         return null;
     }
 
-    public String getCreditPaymentIdAccount() {
+    public String getCreditPaymentAccountId() {
         if(creditPaymentAccount != null){
             return creditPaymentAccount.getId();
         }
@@ -174,6 +174,11 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public boolean myPaymentInstrumentIn(List<PaymentInstrument> paymentInstruments) {
         return paymentInstruments.stream()
                 .anyMatch(p-> Objects.equals(p.getId(), getPaymentInstrumentId()));
+    }
+
+    public boolean myCreditPaymentAccountIn(List<CreditPaymentAccount> creditPaymentAccounts) {
+        return creditPaymentAccounts.stream()
+                .anyMatch(p-> Objects.equals(p.getId(), getCreditPaymentAccountId()));
     }
 
 }
