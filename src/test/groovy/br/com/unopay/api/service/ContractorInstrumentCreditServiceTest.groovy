@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditPaymentAccount
+import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -54,6 +55,42 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'when insert instrument credit then balance should be equals value'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.value == result.availableBalance
+    }
+
+    def 'when insert instrument credit then situation should be available'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.situation == CreditSituation.AVAILABLE
+    }
+
+    def 'given a credit payment account balance with balance less than instrument credit value should not be inserted'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.with { value = creditPaymentAccountUnderTest.availableBalance + 0.01 }
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'VALUE_GREATER_THAN_BALANCE'
     }
 
     def 'given a instrument credit with expiration date less than now should not be inserted'(){
@@ -305,6 +342,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             paymentInstrument = paymentInstrumentUnderTest
             creditPaymentAccount = creditPaymentAccountUnderTest
             serviceType = svt
+            value = creditPaymentAccountUnderTest.availableBalance - (Math.random() * 1)
         }
         instrumentCredit
     }

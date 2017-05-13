@@ -337,6 +337,9 @@ public final class Errors {
             new UnovationError("VALUE_GREATER_THAN_ZERO_REQUIRED", "Value greater than zero required.");
     public static final UnovationError EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED =
             new UnovationError("EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED", "Expiration date greater than now required.");
+    public static final UnovationError VALUE_GREATER_THAN_BALANCE =
+            new UnovationError("VALUE_GREATER_THAN_BALANCE", "Value greater than Credit payment account balance .");
+
 
 
 

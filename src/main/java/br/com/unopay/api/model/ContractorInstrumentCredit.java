@@ -5,6 +5,7 @@ import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THA
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -123,12 +124,17 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         if(!contract.containsService(serviceType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
         }
+        if(expirationDateTime.before(new Date())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED);
+        }
+    }
+
+    public void validateValue() {
         if(BigDecimal.ZERO.compareTo(value) == 0 || BigDecimal.ZERO.compareTo(value) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
-
-        if(expirationDateTime.before(new Date())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED);
+        if(creditPaymentAccount.getAvailableBalance().compareTo(value) == -1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_BALANCE);
         }
     }
 
@@ -144,6 +150,8 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public void setupMyCreate(Contract contract){
         this.createdDateTime = new Date();
         this.contract = contract;
+        this.availableBalance = this.value;
+        this.situation = CreditSituation.AVAILABLE;
     }
 
     public String getPaymentInstrumentId() {

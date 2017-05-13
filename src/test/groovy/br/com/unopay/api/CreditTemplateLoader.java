@@ -57,8 +57,8 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
             add("cnabId",random("56465456", "78979879897"));
-            add("availableValue", random(BigDecimal.class));
-            add("blockedValue",random(BigDecimal.class));
+            add("availableValue", random(BigDecimal.class, range(1, 200)));
+            add("blockedValue",random(BigDecimal.class, range(1, 200)));
         }});
 
         Fixture.of(Credit.class).addTemplate("withProduct").inherits("allFields", new Rule(){{
@@ -99,7 +99,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
-            add("availableBalance", random(BigDecimal.class));
+            add("availableBalance", random(BigDecimal.class, range(1, 200)));
             add("paymentAccount", "AAA");
         }});
 

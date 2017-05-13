@@ -42,9 +42,10 @@ public class ContractorInstrumentCreditService {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.validateMe(contract);
+        setReferences(instrumentCredit);
+        instrumentCredit.validateValue();
         instrumentCredit.setupMyCreate(contract);
         incrementInstallmentNumber(instrumentCredit);
-        validateReferences(instrumentCredit);
         return repository.save(instrumentCredit);
     }
 
@@ -86,7 +87,7 @@ public class ContractorInstrumentCreditService {
         }
     }
 
-    private void validateReferences(ContractorInstrumentCredit instrumentCredit) {
+    private void setReferences(ContractorInstrumentCredit instrumentCredit) {
         PaymentInstrument instrument = paymentInstrumentService.findById(instrumentCredit.getPaymentInstrumentId());
         CreditPaymentAccount account=creditPaymentAccountService.findById(instrumentCredit.getCreditPaymentAccountId());
         instrumentCredit.setPaymentInstrument(instrument);

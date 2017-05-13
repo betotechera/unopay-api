@@ -102,6 +102,7 @@ class SetupCreator {
         }
         if(number){
             paymentInstrument.number = number
+            paymentInstrument.externalNumberId = number
         }
         paymentInstrument
         paymentInstrumentService.save(paymentInstrument)
