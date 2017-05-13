@@ -1,9 +1,7 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.service.ContractorInstrumentCreditService;
-import br.com.unopay.api.service.CreditService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
