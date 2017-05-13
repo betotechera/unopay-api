@@ -11,6 +11,7 @@ import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
@@ -41,9 +42,10 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         paymentInstrumentUnderTest = setupCreator
                                     .createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
         creditPaymentAccountUnderTest = setupCreator.createCreditPaymentAccountFromContract(contractUnderTest)
+        Integer.mixin(TimeCategory)
     }
 
-    def 'instrument credit should be inserted'(){
+    def 'given a valid instrument credit should be inserted'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
@@ -52,6 +54,50 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'given a instrument credit with expiration date less than now should not be inserted'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.with { expirationDateTime = 1.second.ago }
+
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED'
+    }
+
+    def 'given a instrument credit with expiration date equals now should not be inserted'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.with { expirationDateTime = new Date() }
+
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED'
+
+    }
+
+
+    def 'given a instrument credit with value less than or equals zero should not be inserted'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit().with { value = valueUnderTest; it }
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'VALUE_GREATER_THAN_ZERO_REQUIRED'
+
+        where:
+        _ | valueUnderTest
+        _ | 0
+        _ | -1
     }
 
     def 'given a instrument credit with same product and service then installment number should be incremented'(){

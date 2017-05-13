@@ -8,7 +8,6 @@ import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.Product
-import br.com.unopay.api.repository.CreditPaymentAccountRepository
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
@@ -23,7 +22,6 @@ class CreditServiceTest extends SpockApplicationTests {
     @Autowired
     SetupCreator setupCreator
     CreditPaymentAccountService paymentAccountServiceMock = Mock(CreditPaymentAccountService)
-    CreditPaymentAccountRepository creditPaymentAccountRepository = Mock(CreditPaymentAccountRepository)
 
     void setup(){
         service.creditPaymentAccountService = paymentAccountServiceMock

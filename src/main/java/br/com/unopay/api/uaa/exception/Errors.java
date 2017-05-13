@@ -331,9 +331,14 @@ public final class Errors {
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT", "Credit Payment account does not belong to product");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE =
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE", "Credit Payment account does not belong to service");
-
     public static final UnovationError SERVICE_NOT_ACCEPTED =
             new UnovationError("SERVICE_NOT_ACCEPTED", "Service not accepted.");
+    public static final UnovationError VALUE_GREATER_THAN_ZERO_REQUIRED =
+            new UnovationError("VALUE_GREATER_THAN_ZERO_REQUIRED", "Value greater than zero required.");
+    public static final UnovationError EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED =
+            new UnovationError("EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED", "Expiration date greater than now required.");
+
+
 
 
 

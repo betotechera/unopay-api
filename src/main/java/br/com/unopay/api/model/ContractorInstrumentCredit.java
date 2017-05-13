@@ -1,9 +1,11 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -125,6 +127,13 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
         if(!contract.containsService(serviceType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
+        }
+        if(BigDecimal.ZERO.compareTo(value) == 0 || BigDecimal.ZERO.compareTo(value) == 1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_ZERO_REQUIRED);
+        }
+
+        if(expirationDateTime.before(new Date())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED);
         }
     }
 
