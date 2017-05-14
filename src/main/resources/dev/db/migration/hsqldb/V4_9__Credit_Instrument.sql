@@ -22,5 +22,5 @@ create table contractor_instrument_credit (
 insert into AUTHORITY(name, description) values('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT','Permite listar Credito Instrumento de Pagamentos.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT','Permite gerenciar Credito Instrumento de Pagamentos.');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CREDIT', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CREDIT', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT', '1');
