@@ -202,4 +202,11 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
                 .anyMatch(p-> Objects.equals(p.getId(), getCreditPaymentAccountId()));
     }
 
+    public String contractId(){
+        if(getContract() != null){
+            return getContract().getId();
+        }
+        return null;
+    }
+
 }

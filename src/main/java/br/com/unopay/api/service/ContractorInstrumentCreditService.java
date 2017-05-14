@@ -51,7 +51,8 @@ public class ContractorInstrumentCreditService {
 
     private Contract getReliableContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         PaymentInstrument paymentInstrument = paymentInstrumentService.findById(paymentInstrumentId);
-        Contract contract = contractService.findByContractorId(paymentInstrument.contractorId());
+        Contract contract = contractService
+                              .getByIdAndContractorId(instrumentCredit.contractId(), paymentInstrument.contractorId());
         verifyInstrumentBelongsToContractor(paymentInstrument.contractorId(), instrumentCredit);
         return contract;
     }

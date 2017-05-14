@@ -3,6 +3,7 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
@@ -36,10 +37,13 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     Contract contractUnderTest
     PaymentInstrument paymentInstrumentUnderTest
     CreditPaymentAccount creditPaymentAccountUnderTest
+    Hirer hirerUnderTest
 
     void setup(){
         contractorUnderTest = setupCreator.createContractor()
-        contractUnderTest = setupCreator.createPersistedContract(contractorUnderTest)
+        hirerUnderTest = setupCreator.createHirer()
+        contractUnderTest = setupCreator
+                            .createPersistedContract(contractorUnderTest, setupCreator.createProduct(), hirerUnderTest)
         paymentInstrumentUnderTest = setupCreator
                                     .createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
         creditPaymentAccountUnderTest = setupCreator.createCreditPaymentAccountFromContract(contractUnderTest)
@@ -241,9 +245,26 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER'
     }
 
+    def 'given a contractor with two or more contracts when insert credit should be inserted with contract informed'(){
+        given:
+        def anotherContract = setupCreator
+                            .createPersistedContract(contractorUnderTest, contractUnderTest.product, hirerUnderTest)
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.with {
+            contract = anotherContract
+        }
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.contract.id != contractUnderTest.id
+        result.contract.id == anotherContract.id
+    }
+
     def 'payment instrument credit with credit payment account with product different of contract product should not be inserted'(){
         given:
-        def myContract = contractService.findByContractorId(contractorUnderTest.id)
+        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest.id)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                                                                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -262,7 +283,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'payment instrument credit with credit payment account with service different of contract service should not be inserted'(){
         given:
-        def myContract = contractService.findByContractorId(contractorUnderTest.id)
+        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest.id)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -343,6 +364,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             creditPaymentAccount = creditPaymentAccountUnderTest
             serviceType = svt
             value = creditPaymentAccountUnderTest.availableBalance - (Math.random() * 1)
+            contract = contractUnderTest
         }
         instrumentCredit
     }

@@ -20,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -75,9 +77,11 @@ public class ContractService {
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    public Contract findByContractorId(String contractorId) {
-        Optional<Contract> contract = repository.findByContractorId(contractorId);
-        return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
+    public Contract getByIdAndContractorId(String contractId, String contractorId) {
+        List<Contract> contracts = repository.findByContractorId(contractorId);
+        Optional<Contract> contract = contracts.stream()
+                                    .filter(c -> Objects.equals(c.getId(), contractId)).reduce((first, last) -> first);
+        return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
     public void delete(String id) {

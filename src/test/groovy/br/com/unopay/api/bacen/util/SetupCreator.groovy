@@ -166,18 +166,20 @@ class SetupCreator {
         createCredit(product)
     }
 
-    Contract createContract(contractorUnderTest = createContractor(), productUnderTest = createProduct()) {
+    Contract createContract(contractorUnderTest = createContractor(),
+                            productUnderTest = createProduct(), hirerUnderTest = createHirer()) {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract.with {
-            hirer = createHirer()
+            hirer = hirerUnderTest
             contractor = contractorUnderTest
             product = productUnderTest
             serviceType = productUnderTest.serviceType
             it }
     }
 
-    Contract createPersistedContract(contractorUnderTest = createContractor()){
-        Contract contract = createContract(contractorUnderTest)
+    Contract createPersistedContract(contractorUnderTest = createContractor(),
+                                     productUnderTest = createProduct(), hirer = createHirer()){
+        Contract contract = createContract(contractorUnderTest, productUnderTest, hirer)
         contractService.save(contract)
     }
 
