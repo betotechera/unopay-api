@@ -357,6 +357,33 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
     }
 
+
+    def 'given a known instrument credit should be canceled'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        when:
+        service.cancel(paymentInstrumentUnderTest.id, created.id)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.situation == CreditSituation.CANCELED
+    }
+
+    def 'given a unknown instrument credit should not be canceled'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        when:
+        service.cancel(paymentInstrumentUnderTest.id, '')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND'
+    }
+
     private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
         instrumentCredit.with {

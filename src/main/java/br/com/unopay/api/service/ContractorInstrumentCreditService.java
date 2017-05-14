@@ -3,8 +3,10 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContractorInstrumentCreditService {
@@ -35,7 +38,9 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit findById(String id) {
-        return  repository.findOne(id);
+        Optional<ContractorInstrumentCredit> instrumentCredit = repository.findById(id);
+        return instrumentCredit.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -95,7 +100,9 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setCreditPaymentAccount(account);
     }
 
-    public void cancel(String id) {
-
+    public void cancel(String instrumentId, String id) {
+        ContractorInstrumentCredit instrumentCredit = findById(id);
+        instrumentCredit.cancel();
+        repository.save(instrumentCredit);
     }
 }

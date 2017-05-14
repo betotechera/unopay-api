@@ -338,8 +338,9 @@ public final class Errors {
     public static final UnovationError EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED =
             new UnovationError("EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED", "Expiration date greater than now required.");
     public static final UnovationError VALUE_GREATER_THAN_BALANCE =
-            new UnovationError("VALUE_GREATER_THAN_BALANCE", "Value greater than Credit payment account balance .");
-
+            new UnovationError("VALUE_GREATER_THAN_BALANCE", "Value greater than Credit payment account balance.");
+    public static final UnovationError CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND =
+            new UnovationError("CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND", "Contractor instrument credit not found.");
 
 
 

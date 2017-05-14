@@ -12,4 +12,6 @@ public interface ContractorInstrumentCreditRepository
         extends UnovationFilterRepository<ContractorInstrumentCredit,String, ContractorInstrumentCreditFilter> {
 
     ContractorInstrumentCredit findFirstByOrderByCreatedDateTimeDesc();
+
+    Optional<ContractorInstrumentCredit> findById(String id);
 }

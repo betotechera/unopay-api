@@ -215,4 +215,8 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         return null;
     }
 
+    public void cancel(){
+        setSituation(CreditSituation.CANCELED);
+    }
+
 }

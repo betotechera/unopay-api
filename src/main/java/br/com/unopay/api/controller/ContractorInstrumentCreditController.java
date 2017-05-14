@@ -67,6 +67,6 @@ public class ContractorInstrumentCreditController {
     @RequestMapping(value = "/payment-instruments/{instrumentId}/credits/{id}", method = RequestMethod.DELETE)
     public void cancel(@PathVariable String instrumentId, @PathVariable  String id) {
         log.info("canceling payment instrument credit id={}", id);
-        service.cancel(id);
+        service.cancel(instrumentId, id);
     }
 }
