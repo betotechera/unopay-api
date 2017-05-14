@@ -40,6 +40,7 @@ public class ContractorInstrumentCreditController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
     @RequestMapping(value = "/payment-instruments/{instrumentId}/credits", method = POST)
     public ResponseEntity<ContractorInstrumentCredit> create(@PathVariable String instrumentId,@Validated(Create.class)
                                                              @RequestBody ContractorInstrumentCredit credit) {
