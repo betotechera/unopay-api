@@ -122,6 +122,7 @@ class SetupCreator {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             paymentRuleGroup = paymentRuleGroupUnderTest
+            serviceType = [ServiceType.FREIGHT, ServiceType.ELECTRONIC_TOLL]
             it
         }
         if(code){

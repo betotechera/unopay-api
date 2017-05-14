@@ -154,7 +154,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.installmentNumber == 2L
     }
 
-    def 'given a instrument credit with different product or service then installment number should not be incremented'(){
+    def 'given a instrument credit with different service then installment number should not be incremented'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
         ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
