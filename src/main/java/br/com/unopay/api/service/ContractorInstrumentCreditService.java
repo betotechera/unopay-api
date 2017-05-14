@@ -3,7 +3,6 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
-import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
