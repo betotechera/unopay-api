@@ -11,6 +11,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -118,6 +120,10 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
     private Date createdDateTime;
+
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     public void validateMe(Contract contract){
         validateProduct(contract);

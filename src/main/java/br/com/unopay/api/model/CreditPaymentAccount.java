@@ -41,7 +41,7 @@ public class CreditPaymentAccount implements Serializable, Updatable {
 
     public CreditPaymentAccount(Credit credit){
         if(credit != null) {
-            if (credit.getProduct() != null) {
+            if (credit.withProduct()) {
                 this.issuer = credit.getProduct().getIssuer();
             }
             this.product = credit.getProduct();
