@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -218,7 +219,7 @@ public class Credit implements Serializable, Updatable {
 
     public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {
         return creditPayment.stream()
-                .filter(c -> c.getProductId() == getProductId() && c.getServiceType() == getServiceType())
+                .filter(c -> Objects.equals(c.getProductId(), getProductId()) && c.getServiceType() == getServiceType())
                 .reduce((first, last) -> last);
     }
 
