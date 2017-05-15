@@ -6,11 +6,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.SetupCreator
-import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.ContractEstablishment
-import br.com.unopay.api.model.ContractOrigin
-import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.model.Product
+import br.com.unopay.api.model.*
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -39,13 +35,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'new contract should be created'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-                contract = contract.with {
-                    hirer = hirerUnderTest
-                    contractor = contractorUnderTest
-                    product = productUnderTest
-                    serviceType = productUnderTest.serviceType
-                    it }
+        Contract contract = createContract()
 
         when:
         def result  = service.save(contract)
@@ -56,12 +46,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contract with null and default values should create with default values'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
             documentNumberInvoice = null
             origin = null
             situation = null
@@ -79,13 +65,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contract with same code should not be created'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         when:
         service.save(contract)
@@ -98,12 +78,9 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contract with unknown hirer should not be created'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         contract = contract.with {
             hirer = hirerUnderTest.with {id = '112222233' ; it}
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
             it }
 
         when:
@@ -116,12 +93,9 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contract with unknown contractor should not be created'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         contract = contract.with {
-            hirer = hirerUnderTest
             contractor = contractorUnderTest.with {id = '112222233' ; it}
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
             it }
         when:
         service.save(contract)
@@ -133,12 +107,9 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contract with unknown product should not be created'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
             product = productUnderTest.with {id = '112222233' ; it}
-            serviceType = productUnderTest.serviceType
             it }
 
         when:
@@ -154,13 +125,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'known contract should be updated'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def created  = service.save(contract)
         def newName = 'ContractNew'
@@ -176,13 +141,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'unknown contract should not be updated'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def newName = 'ContractNew'
         contract.name = newName
@@ -199,13 +158,7 @@ class ContractServiceTest extends SpockApplicationTests {
     void 'given contract with unknown hirer should not be updated'(){
         given:
         def knownName = 'myName'
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def created = service.save(contract)
 
@@ -221,13 +174,7 @@ class ContractServiceTest extends SpockApplicationTests {
     void 'given contract with unknown contractor should not be updated'(){
         given:
         def knownName = 'myName'
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def created = service.save(contract)
 
@@ -242,13 +189,7 @@ class ContractServiceTest extends SpockApplicationTests {
     void 'given contract with unknown product should not be updated'(){
         given:
         def knownName = 'myName'
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract =createContract()
 
         def created = service.save(contract)
 
@@ -264,13 +205,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'known contract should be found'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def created  = service.save(contract)
         when:
@@ -291,13 +226,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'known contract should be deleted'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
         def created  = service.save(contract)
         when:
         service.delete(created.id)
@@ -319,14 +248,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should add establishment in contract'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
         contract = service.save(contract)
         when:
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
@@ -339,14 +262,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should not add establishment in contract if is already in contract'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
         contract = service.save(contract)
         when:
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
@@ -359,14 +276,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should remove establishment in contract'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
         contract = service.save(contract)
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
         contractEstablishment = service.addEstablishments(contract.id,contractEstablishment)
@@ -379,13 +290,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should not remove if ContractEstablishment is not found'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
         contract = service.save(contract)
         when:
         service.removeEstablishment(contract.id,'1234')
@@ -397,14 +302,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'given contractEstablishment with null and default values should create with default values'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = createContract()
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
-        contract = contract.with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
         contract = service.save(contract)
         when:
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest;origin=null; it}
@@ -415,5 +314,17 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
         assert result.contract.id == contract.id
         assert result.origin == ContractOrigin.UNOPAY
+    }
+
+    private Contract createContract() {
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        contract = contract.with {
+            hirer = hirerUnderTest
+            contractor = contractorUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it
+        }
+        contract
     }
 }

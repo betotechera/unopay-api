@@ -37,12 +37,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
     void 'valid contract should be created'() {
         given:
         String accessToken = getUserAccessToken()
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with { contractor = contractorUnderTest
-            hirer = hirerUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         when:
         def result = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
@@ -55,12 +50,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
     void 'known contract should be updated'() {
         given:
         String accessToken = getUserAccessToken()
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with { contractor = contractorUnderTest
-            hirer = hirerUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,12 +69,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
     void 'known contract should be deleted'() {
         given:
         String accessToken = getUserAccessToken()
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with { contractor = contractorUnderTest
-            hirer = hirerUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -102,12 +87,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
     void 'known contracts should be found'() {
         given:
         String accessToken = getUserAccessToken()
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
-        contract = contract.with { contractor = contractorUnderTest
-            hirer = hirerUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceType
-            it }
+        Contract contract = createContract()
 
         def mvcResult = this.mvc.perform(post('/contracts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -130,5 +110,17 @@ class ContractControllerTest extends AuthServerApplicationTests {
 
     private String getLocationHeader(MvcResult mvcResult) {
         mvcResult.getResponse().getHeader("Location")
+    }
+
+    private Contract createContract() {
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        contract = contract.with {
+            contractor = contractorUnderTest
+            hirer = hirerUnderTest
+            product = productUnderTest
+            serviceType = productUnderTest.serviceType
+            it
+        }
+        contract
     }
 }
