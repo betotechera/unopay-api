@@ -196,5 +196,19 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         }?.availableBalance == credit.value
     }
 
+    void 'given a existing payment account with balance when subtract should be subtract credit'(){
+        given:
+        Credit credit = setupCreator.createCredit()
+                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        service.register(credit)
+        def created  = service.register(credit)
+        when:
+        service.subtract(credit)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.availableBalance == credit.availableValue
+    }
+
 
 }

@@ -323,6 +323,14 @@ public final class Errors {
     /* credit payment account */
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =
             new UnovationError("CREDIT_REQUIRED_WHEN_UPDATE_BALANCE","Credit required when update balance");
+    public static final UnovationError CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE =
+            new UnovationError("CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE","Credit required when subtract balance");
+    public static final UnovationError VALUE_GREATER_THEN_AVAILABLE_BALANCE =
+            new UnovationError("VALUE_GREATER_THEN_AVAILABLE_BALANCE","Value greater then available balance");
+
+
+
+
 
 
     /* credit payment instrument */

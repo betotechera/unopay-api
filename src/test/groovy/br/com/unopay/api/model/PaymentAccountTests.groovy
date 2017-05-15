@@ -162,6 +162,47 @@ class PaymentAccountTests  extends FixtureApplicationTest {
         creditPaymentAccount.availableBalance == (credit.availableValue * 2)
     }
 
+    def 'existing balance should be subtracted'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+        def creditPaymentAccount = new CreditPaymentAccount()
+        creditPaymentAccount.updateMyBalance(credit)
+        creditPaymentAccount.updateMyBalance(credit)
+
+        when:
+        creditPaymentAccount.subtract(credit)
+
+        then:
+        creditPaymentAccount.availableBalance == credit.availableValue
+    }
+
+    def 'should return error when try subtract without credit'(){
+        given:
+        def creditPaymentAccount = new CreditPaymentAccount()
+
+        when:
+        creditPaymentAccount.subtract(null)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE'
+    }
+
+    def 'given existing balance when try subtract value greater than available balance should not be subtracted'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields")
+        def creditPaymentAccount = new CreditPaymentAccount()
+        creditPaymentAccount.updateMyBalance(credit)
+        def balance = credit.availableValue + 0.01
+
+        when:
+        creditPaymentAccount.subtract(credit.with { availableValue = balance; it })
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'VALUE_GREATER_THEN_AVAILABLE_BALANCE'
+    }
+
     def 'should be equals'(){
         given:
         CreditPaymentAccount a = Fixture.from(CreditPaymentAccount.class).gimme("valid")

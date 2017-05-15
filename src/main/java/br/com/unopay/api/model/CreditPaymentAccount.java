@@ -4,7 +4,9 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_UPDATE_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -207,4 +209,13 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         return null;
     }
 
+    public void subtract(Credit credit) {
+        if(credit == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE);
+        }
+        if(this.availableBalance.compareTo(credit.getAvailableValue()) == -1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THEN_AVAILABLE_BALANCE);
+        }
+        this.availableBalance = this.availableBalance.subtract(credit.getAvailableValue());
+    }
 }

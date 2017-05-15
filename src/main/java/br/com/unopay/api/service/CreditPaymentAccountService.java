@@ -76,6 +76,11 @@ public class CreditPaymentAccountService {
     }
 
     public void subtract(Credit credit) {
-
+        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirerDocument());
+        Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
+        creditPaymentAccount.ifPresent(creditPayment -> {
+            creditPayment.subtract(credit);
+            repository.save(creditPayment);
+        });
     }
 }
