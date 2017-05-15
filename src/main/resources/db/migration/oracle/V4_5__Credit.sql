@@ -28,7 +28,7 @@ create table payment_account (
     service_type varchar(100),
     credit_insertion_type varchar(100) not null,
     solicitation_date_time TIMESTAMP not null,
-    credit_number long not null,
+    credit_number integer not null,
     insertion_created_date_time TIMESTAMP not null,
     value decimal(*,2) not null,
     situation varchar(50) not null,
