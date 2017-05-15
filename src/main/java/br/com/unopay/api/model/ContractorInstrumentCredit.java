@@ -195,7 +195,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             installmentNumber = 1L;
             return;
         }
-        installmentNumber += lastCreditNumber;
+        installmentNumber = lastCreditNumber + 1;
     }
 
     public boolean myPaymentInstrumentIn(List<PaymentInstrument> paymentInstruments) {

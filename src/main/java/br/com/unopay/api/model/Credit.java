@@ -197,7 +197,7 @@ public class Credit implements Serializable, Updatable {
             creditNumber = 1L;
             return;
         }
-        creditNumber += lastCreditNumber;
+        creditNumber = lastCreditNumber + 1;
     }
 
     @JsonIgnore
