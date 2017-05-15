@@ -35,6 +35,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -204,5 +205,12 @@ public class Contract implements Serializable {
 
     public boolean containsService(ServiceType serviceType){
         return getServiceType().stream().anyMatch(t -> t == serviceType);
+    }
+
+    public BigDecimal productInstrumentIssuerFee(){
+        if(getProduct() !=null){
+            return getProduct().getPaymentInstrumentEmissionFee();
+        }
+        return null;
     }
 }

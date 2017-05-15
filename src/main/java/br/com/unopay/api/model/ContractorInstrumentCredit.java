@@ -101,7 +101,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "issuer_fee")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private BigDecimal issuerFee;
 
     @Column(name = "situation")
@@ -158,6 +157,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.availableBalance = this.value;
         this.blockedBalance = BigDecimal.ZERO;
         this.situation = CreditSituation.AVAILABLE;
+        this.issuerFee = contract.productInstrumentIssuerFee();
     }
 
     public String getPaymentInstrumentId() {
