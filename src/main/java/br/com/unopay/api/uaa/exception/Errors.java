@@ -313,6 +313,10 @@ public final class Errors {
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_NOT_FOUND","Credit payment account not found.");
     public static final UnovationError HIRER_CREDIT_NOT_FOUND =
             new UnovationError("HIRER_CREDIT_NOT_FOUND","Hirer credit not found.");
+    public static final UnovationError CREDIT_ALREADY_CANCELED =
+            new UnovationError("CREDIT_ALREADY_CANCELED","Credit already canceled.");
+
+
 
 
 

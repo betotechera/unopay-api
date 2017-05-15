@@ -287,9 +287,6 @@ class CreditServiceTest extends SpockApplicationTests {
         CreditInsertionType.PAMCARD_SYSTEM|_
     }
 
-
-
-
     void 'credit with product should be inserted with product credit insertion type'(){
         given:
         def knownProduct = setupCreator.createProduct()
@@ -400,11 +397,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit with known hirer document should be inserted'(){
         given:
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with { product = setupCreator.createProduct()
-                        hirerDocument = hirer.getDocumentNumber()
-                    it }
+        Credit credit = createCredit()
 
         when:
         def inserted  = service.insert(credit)
@@ -445,11 +438,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given known credit should be canceled'(){
         given:
-        def hirer = setupCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with { product = setupCreator.createProduct()
-            hirerDocument = hirer.getDocumentNumber()
-            it }
+        Credit credit = createCredit()
         def inserted  = service.insert(credit)
 
         when:
@@ -460,6 +449,32 @@ class CreditServiceTest extends SpockApplicationTests {
         assert result.situation == CreditSituation.CANCELED
     }
 
+    void 'when cancel credit should subtract value of credit payment account'(){
+        given:
+        Credit credit = createCredit()
+        def inserted  = service.insert(credit)
+
+        when:
+        service.cancel(inserted.id)
+
+        then:
+        1 * paymentAccountServiceMock.subtract(_)
+    }
+
+    void 'when cancel credit already canceled should return error'(){
+        given:
+        Credit credit = createCredit()
+        def inserted  = service.insert(credit)
+        service.cancel(inserted.id)
+
+        when:
+        service.cancel(inserted.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_ALREADY_CANCELED'
+    }
+
     void 'unknown credit should not be canceled'(){
         when:
         service.cancel('')
@@ -467,6 +482,17 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'HIRER_CREDIT_NOT_FOUND'
+    }
+
+    private Credit createCredit() {
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
+                .with {
+            product = setupCreator.createProduct()
+            hirerDocument = hirer.getDocumentNumber()
+            it
+        }
+        credit
     }
 
 

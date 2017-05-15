@@ -395,6 +395,20 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.situation == CreditSituation.CANCELED
     }
 
+    def 'when cancel instrument credit already canceled should return error'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        service.cancel(paymentInstrumentUnderTest.id, created.id)
+
+        when:
+        service.cancel(paymentInstrumentUnderTest.id, created.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_ALREADY_CANCELED'
+    }
+
     def 'given a unknown instrument credit should not be canceled'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Slf4j
@@ -107,9 +108,11 @@ public class CreditService {
     }
 
 
+    @Transactional
     public void cancel(String id) {
         Credit credit = findById(id);
         credit.cancel();
+        creditPaymentAccountService.subtract(credit);
         repository.save(credit);
     }
 

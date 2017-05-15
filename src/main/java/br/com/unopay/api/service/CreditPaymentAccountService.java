@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,5 +73,9 @@ public class CreditPaymentAccountService {
             creditPaymentAccount.setIssuer(issuerService.findById(creditPaymentAccount.getProductIssuerId()));
             creditPaymentAccount.setProduct(productService.findById(creditPaymentAccount.getProductId()));
         }
+    }
+
+    public void subtract(Credit credit) {
+
     }
 }

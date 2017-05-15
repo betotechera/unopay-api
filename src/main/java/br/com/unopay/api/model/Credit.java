@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PRODUCT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_CREDIT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PRODUCT_VALUE_NOT_MET;
@@ -222,6 +223,9 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void cancel(){
+        if(CreditSituation.CANCELED.equals(situation)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_ALREADY_CANCELED);
+        }
         this.situation = CreditSituation.CANCELED;
     }
 }
