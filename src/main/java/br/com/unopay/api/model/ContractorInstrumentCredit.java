@@ -106,7 +106,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "situation")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private CreditSituation situation;
 
     @Column(name = "available_balance")
