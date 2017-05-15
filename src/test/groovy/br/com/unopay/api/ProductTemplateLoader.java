@@ -17,7 +17,7 @@ public class ProductTemplateLoader implements TemplateLoader {
     @Override
     public void load() {
         Fixture.of(Product.class).addTemplate("valid", new Rule(){{
-            add("code", random("AB12", "C124"));
+            add("code", random("AB12", "C124", "ABC1", "CC24", "CD24", "DC24", "AVC4", "AAD1"));
             add("name", firstName());
             add("type", uniqueRandom(ProductType.class));
             add("issuer", one(Issuer.class, "valid"));
