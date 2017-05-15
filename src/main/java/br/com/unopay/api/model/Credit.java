@@ -59,7 +59,6 @@ public class Credit implements Serializable, Updatable {
 
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private PaymentRuleGroup paymentRuleGroup;
 
