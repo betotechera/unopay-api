@@ -8,9 +8,9 @@ import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.repository.CreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED;
+import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,13 +33,9 @@ public class CreditService {
     @Setter
     private CreditPaymentAccountService creditPaymentAccountService;
 
-    @Setter
-    @Getter
     @Value("${unopay.credit.defaultPaymentRuleGroup:}")
     private String defaultPaymentRuleGroup;
 
-    @Setter
-    @Getter
     @Value("${unopay.credit.defaultCreditInsertionType:}")
     private String defaultCreditInsertionType;
 
@@ -83,7 +79,8 @@ public class CreditService {
     }
 
     public Credit  findById(String id) {
-        return repository.findOne(id);
+        Optional<Credit> credit = repository.findById(id);
+        return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
     private void defineDefaultCreditInsertionType(Credit credit) {
@@ -111,7 +108,9 @@ public class CreditService {
 
 
     public void cancel(String id) {
-
+        Credit credit = findById(id);
+        credit.cancel();
+        repository.save(credit);
     }
 
     public Page<Credit> findByFilter(CreditFilter filter, UnovationPageRequest pageable) {

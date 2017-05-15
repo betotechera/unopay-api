@@ -221,4 +221,8 @@ public class Credit implements Serializable, Updatable {
                 .filter(c -> c.getProductId() == getProductId() && c.getServiceType() == getServiceType())
                 .reduce((first, last) -> last);
     }
+
+    public void cancel(){
+        this.situation = CreditSituation.CANCELED;
+    }
 }

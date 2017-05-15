@@ -443,5 +443,31 @@ class CreditServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'given known credit should be canceled'(){
+        given:
+        def hirer = setupCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
+                .with { product = setupCreator.createProduct()
+            hirerDocument = hirer.getDocumentNumber()
+            it }
+        def inserted  = service.insert(credit)
+
+        when:
+        service.cancel(inserted.id)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.situation == CreditSituation.CANCELED
+    }
+
+    void 'unknown credit should not be canceled'(){
+        when:
+        service.cancel('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'HIRER_CREDIT_NOT_FOUND'
+    }
+
 
 }

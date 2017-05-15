@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface CreditRepository extends UnovationFilterRepository<Credit,String, CreditFilter> {
 
     Optional<Credit> findFirstByOrderByCreatedDateTimeDesc();
+
+    Optional<Credit> findById(String id);
 }

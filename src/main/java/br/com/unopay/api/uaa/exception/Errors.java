@@ -311,12 +311,15 @@ public final class Errors {
             new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_NOT_FOUND =
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_NOT_FOUND","Credit payment account not found.");
+    public static final UnovationError HIRER_CREDIT_NOT_FOUND =
+            new UnovationError("HIRER_CREDIT_NOT_FOUND","Hirer credit not found.");
 
 
 
     /* credit payment account */
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =
             new UnovationError("CREDIT_REQUIRED_WHEN_UPDATE_BALANCE","Credit required when update balance");
+
 
     /* credit payment instrument */
     public static final UnovationError PRODUCT_CODE_NOT_MET =
