@@ -95,7 +95,6 @@ public class Credit implements Serializable, Updatable {
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private CreditSituation situation;
 
     @Column(name = "credit_source")
