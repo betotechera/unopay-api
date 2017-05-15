@@ -1,13 +1,21 @@
 package br.com.unopay.api.controller;
 
+import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
+import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.service.CreditService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
+import br.com.unopay.bootcommons.jsoncollections.Results;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -32,6 +40,9 @@ import java.net.URI;
 public class CreditController {
 
     private CreditService service;
+
+    @Value("${unopay.api}")
+    private String api;
 
     @Autowired
     public CreditController(CreditService service) {
@@ -62,10 +73,23 @@ public class CreditController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT')")
     @RequestMapping(value = "/hirers/{document}/credits/{id}", method = RequestMethod.DELETE)
     public void cancel(@PathVariable  String id) {
         log.info("canceling credit id={}", id);
         service.cancel(id);
     }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.List.class)
+    @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
+    @RequestMapping(value = "/hirers/credits", method = GET)
+    public Results<Credit> create(CreditFilter filter,
+                                                      @Validated UnovationPageRequest pageable) {
+        log.info("search Credit with filter={}", filter);
+        Page<Credit> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/credits", api));
+    }
+
 }

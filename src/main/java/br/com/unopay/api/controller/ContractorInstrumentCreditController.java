@@ -1,13 +1,19 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
+import br.com.unopay.bootcommons.jsoncollections.Results;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -31,6 +37,9 @@ import java.net.URI;
 @Timed(prefix = "api")
 public class ContractorInstrumentCreditController {
 
+    @Value("${unopay.api}")
+    private String api;
+
     private ContractorInstrumentCreditService service;
 
     @Autowired
@@ -51,6 +60,18 @@ public class ContractorInstrumentCreditController {
                 String.format("/payment-instruments/%s/credits/%s",instrumentId,
                         created.getId()))).body(created);
 
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.List.class)
+    @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT')")
+    @RequestMapping(value = "/payment-instruments/credits", method = GET)
+    public Results<ContractorInstrumentCredit> create(ContractorInstrumentCreditFilter filter,
+                                                      @Validated UnovationPageRequest pageable) {
+        log.info("search ContractorInstrumentCredit with filter={}", filter);
+        Page<ContractorInstrumentCredit> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-instruments/credits", api));
     }
 
     @ResponseStatus(OK)
