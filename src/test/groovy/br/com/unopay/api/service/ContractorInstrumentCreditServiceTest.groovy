@@ -73,6 +73,18 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.value == result.availableBalance
     }
 
+    def 'when insert instrument credit then block balance should be zero'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.blockedBalance == BigDecimal.ZERO
+    }
+
     def 'when insert instrument credit then situation should be available'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()

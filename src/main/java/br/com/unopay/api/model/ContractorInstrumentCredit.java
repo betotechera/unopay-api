@@ -156,6 +156,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.createdDateTime = new Date();
         this.contract = contract;
         this.availableBalance = this.value;
+        this.blockedBalance = BigDecimal.ZERO;
         this.situation = CreditSituation.AVAILABLE;
     }
 
