@@ -89,7 +89,7 @@ public class Contract implements Serializable {
     @ManyToOne
     @NotNull(groups = {Create.class})
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Contractor contractor;
 
     @Enumerated(EnumType.STRING)
