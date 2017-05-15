@@ -4,16 +4,20 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.repository.CreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -108,5 +112,9 @@ public class CreditService {
 
     public void cancel(String id) {
 
+    }
+
+    public Page<Credit> findByFilter(CreditFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }
