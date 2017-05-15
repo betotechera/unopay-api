@@ -13,4 +13,6 @@ public interface CreditPaymentAccountRepository
     List<CreditPaymentAccount> findByHirerDocument(String hirerDocument);
 
     Optional<CreditPaymentAccount> findById(String id);
+
+    List<CreditPaymentAccount> findAll();
 }

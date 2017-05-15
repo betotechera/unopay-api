@@ -62,7 +62,7 @@ public class CreditPaymentAccountService {
     }
 
     public List<CreditPaymentAccount> findAll(){
-        return newArrayList(repository.findAll());
+        return repository.findAll();
     }
 
     private void validateReferences(CreditPaymentAccount creditPaymentAccount) {
