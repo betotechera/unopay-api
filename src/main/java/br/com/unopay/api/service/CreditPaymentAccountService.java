@@ -83,4 +83,16 @@ public class CreditPaymentAccountService {
             repository.save(creditPayment);
         });
     }
+
+    public void subtract(String id, BigDecimal value) {
+            CreditPaymentAccount paymentAccount = findById(id);
+            paymentAccount.subtract(value);
+            repository.save(paymentAccount);
+    }
+
+    public void giveBack(String id, BigDecimal value) {
+        CreditPaymentAccount paymentAccount = findById(id);
+        paymentAccount.giveBack(value);
+        repository.save(paymentAccount);
+    }
 }

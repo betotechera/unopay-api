@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,7 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
+    @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
@@ -54,6 +56,8 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.validateValue();
         instrumentCredit.setupMyCreate(contract);
         incrementInstallmentNumber(instrumentCredit);
+        creditPaymentAccountService
+                .subtract(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
         return repository.save(instrumentCredit);
     }
 
@@ -103,9 +107,12 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setCreditPaymentAccount(account);
     }
 
+    @Transactional
     public void cancel(String instrumentId, String id) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
         instrumentCredit.cancel();
+        creditPaymentAccountService
+                .giveBack(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
         repository.save(instrumentCredit);
     }
 

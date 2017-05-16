@@ -14,6 +14,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -34,6 +35,7 @@ import java.util.Date;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = {"availableBalance", "value"})
 @Table(name = "credit_payment_account")
 public class CreditPaymentAccount implements Serializable, Updatable {
 
@@ -213,9 +215,17 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         if(credit == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE);
         }
-        if(this.availableBalance.compareTo(credit.getAvailableValue()) == -1){
+        subtract(credit.getAvailableValue());
+    }
+
+    public void subtract(BigDecimal value) {
+        if(this.availableBalance.compareTo(value) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THEN_AVAILABLE_BALANCE);
         }
-        this.availableBalance = this.availableBalance.subtract(credit.getAvailableValue());
+        this.availableBalance = this.availableBalance.subtract(value);
+    }
+
+    public void giveBack(BigDecimal value) {
+        this.availableBalance = this.availableBalance.add(value);
     }
 }

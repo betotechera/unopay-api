@@ -16,6 +16,8 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 
+import java.math.RoundingMode
+
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     @Autowired
@@ -59,6 +61,20 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'given a valid instrument credit when create should be subtract payment account balance'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def paymentAccount = creditPaymentAccountService.findById(instrumentCredit.creditPaymentAccount.id)
+        def expectedPaymentAccountBalance = paymentAccount.availableBalance - instrumentCredit.value
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        creditPaymentAccountService
+                .findById(instrumentCredit.creditPaymentAccount.id)
+                .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
     }
 
     def 'when insert instrument credit then balance should be equals value'(){
@@ -168,9 +184,10 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     def 'given a instrument credit with same product and service then installment number should be incremented'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
-        when:
-
         service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
+
+        when:
         def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
         ContractorInstrumentCredit result = service.findById(created.id)
 
@@ -182,9 +199,10 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
         ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
+        service.insert(paymentInstrumentUnderTest.id, anotherCredit)
+        creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
 
         when:
-        service.insert(paymentInstrumentUnderTest.id, anotherCredit)
         def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
 
         ContractorInstrumentCredit result = service.findById(created.id)
@@ -250,7 +268,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
-        result.creditPaymentAccount in creditPaymentAccounts
+         creditPaymentAccounts.any { it.id == result.creditPaymentAccount.id }
     }
 
     def 'payment instrument credit with credit payment account belongs to another hirer should not be inserted'(){
@@ -393,6 +411,23 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.situation == CreditSituation.CANCELED
+    }
+
+    def 'when cancel credit should given back credit to payment account'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def paymentAccount = creditPaymentAccountService.findById(instrumentCredit.creditPaymentAccount.id)
+        def expectedPaymentAccountBalance = paymentAccount.availableBalance
+
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        when:
+        service.cancel(paymentInstrumentUnderTest.id, created.id)
+
+        then:
+        creditPaymentAccountService
+                           .findById(instrumentCredit.creditPaymentAccount.id)
+                            .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
     }
 
     def 'when cancel instrument credit already canceled should return error'(){

@@ -210,5 +210,52 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         assert result.availableBalance == credit.availableValue
     }
 
+    void 'given a existing payment account when subtracted with id should be subtracted'(){
+        given:
+        Credit credit = setupCreator.createCredit()
+                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        service.register(credit)
+        def created  = service.register(credit)
+        when:
+        service.subtract(created.id, credit.availableValue)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.availableBalance == credit.availableValue
+    }
+
+    void 'when subtract unknown payment account should not ben subtracted'(){
+
+        when:
+        service.subtract('', BigDecimal.ONE)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_NOT_FOUND'
+    }
+
+    void 'given a existing payment account when increment should be incremented'(){
+        given:
+        Credit credit = setupCreator.createCredit()
+                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        def created  = service.register(credit)
+        when:
+        service.giveBack(created.id, credit.availableValue)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.availableBalance == credit.availableValue * 2
+    }
+
+    void 'when increment unknown payment account should not ben incremented'(){
+
+        when:
+        service.giveBack('', BigDecimal.ONE)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CREDIT_PAYMENT_ACCOUNT_NOT_FOUND'
+    }
+
 
 }
