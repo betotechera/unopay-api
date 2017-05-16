@@ -50,9 +50,9 @@ public class ContractorInstrumentCreditService {
     @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
-        validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.validateMe(contract);
         setReferences(instrumentCredit);
+        validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.validateValue();
         instrumentCredit.setupMyCreate(contract);
         incrementInstallmentNumber(instrumentCredit);

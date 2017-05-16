@@ -310,10 +310,14 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                                                                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+
+        def paymentAccount = creditPaymentAccounts.find()?.with {
+            product = setupCreator.createProduct('AXZY', myContract.product.paymentRuleGroup);
+            it
+        }
+        creditPaymentAccountService.save(paymentAccount)
         instrumentCredit.with {
-            creditPaymentAccount = creditPaymentAccounts.find()?.with {
-                    product = setupCreator.createProduct('AXZY', myContract.product.paymentRuleGroup); it
-            }
+            creditPaymentAccount = paymentAccount
         }
         when:
         service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
@@ -329,11 +333,13 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def paymentAccount = creditPaymentAccounts.find()?.with {
+            serviceType = ServiceType.values().find { !(it in myContract.serviceType) }
+            it
+        }
+        creditPaymentAccountService.save(paymentAccount)
         instrumentCredit.with {
-            creditPaymentAccount = creditPaymentAccounts.find()?.with {
-                serviceType = ServiceType.values().find { !(it in myContract.serviceType) }
-                it
-            }
+            creditPaymentAccount = paymentAccount
         }
         when:
         service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
