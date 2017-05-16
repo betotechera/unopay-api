@@ -7,6 +7,7 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ContractorInstrumentCreditService {
@@ -109,10 +111,25 @@ public class ContractorInstrumentCreditService {
     @Transactional
     public void cancel(String instrumentId, String id) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
+        cancelInstrumentCredit(instrumentCredit);
+    }
+
+    @Transactional
+    public void cancel(String contractId) {
+        contractService.findById(contractId);
+        Set<ContractorInstrumentCredit> contractorInstrumentCredits = repository.findByContractId(contractId);
+        if(contractorInstrumentCredits.isEmpty()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_WITHOUT_CREDITS);
+        }
+        contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
+    }
+
+    private void cancelInstrumentCredit(ContractorInstrumentCredit instrumentCredit) {
         instrumentCredit.cancel();
         giveBackPaymentAccountBalance(instrumentCredit);
         repository.save(instrumentCredit);
     }
+
 
     public Page<ContractorInstrumentCredit> findByFilter(ContractorInstrumentCreditFilter filter,
                                                          UnovationPageRequest pageable) {

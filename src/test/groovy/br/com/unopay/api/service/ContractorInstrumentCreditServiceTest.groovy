@@ -463,6 +463,49 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND'
     }
 
+    def 'when cancel credit by contract should given back all credit to payment account'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def paymentAccount = creditPaymentAccountService.findById(instrumentCredit.creditPaymentAccount.id)
+        def expectedPaymentAccountBalance = paymentAccount.availableBalance
+        instrumentCredit = instrumentCredit.with { value = (expectedPaymentAccountBalance / 2); it }
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it })
+
+        when:
+        service.cancel(instrumentCredit.contract.id)
+
+        then:
+        creditPaymentAccountService
+                .findById(instrumentCredit.creditPaymentAccount.id)
+                .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
+    }
+
+    def 'given a unknown contract should not be canceled'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        when:
+        service.cancel('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+    }
+
+    def 'given a contract without instrument credits should not be canceled'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+
+        when:
+        service.cancel(instrumentCredit.contract.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACT_WITHOUT_CREDITS'
+    }
+
     private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
         instrumentCredit.with {

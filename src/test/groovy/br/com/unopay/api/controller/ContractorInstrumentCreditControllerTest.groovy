@@ -51,8 +51,25 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         def result = this.mvc.perform(
                 delete('/payment-instruments/{instrumentId}/credits/{id}?access_token={access_token}',
                         instrumentId, id, accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJsonWithoutNetworkPaymentRuleGroups(credit)))
+                        .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'valid contract with instrument credits then cancel credits should be canceled'() {
+        given:
+        String accessToken = getUserAccessToken()
+
+        ContractorInstrumentCredit credit = setupCreator.createContractorInstrumentCredit()
+
+        String instrumentId = credit?.paymentInstrument?.id
+        def inserted = service.insert(instrumentId, credit)
+        def contractId = inserted.contract.id
+        when:
+        def result = this.mvc.perform(
+                delete('/contracts/{contractId}/payment-instruments/credits?access_token={access_token}',
+                         contractId, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }

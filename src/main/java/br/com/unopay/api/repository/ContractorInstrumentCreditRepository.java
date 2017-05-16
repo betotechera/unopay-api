@@ -5,7 +5,9 @@ import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ContractorInstrumentCreditRepository
@@ -14,4 +16,6 @@ public interface ContractorInstrumentCreditRepository
     ContractorInstrumentCredit findFirstByOrderByCreatedDateTimeDesc();
 
     Optional<ContractorInstrumentCredit> findById(String id);
+
+    Set<ContractorInstrumentCredit> findByContractId(String contractId);
 }

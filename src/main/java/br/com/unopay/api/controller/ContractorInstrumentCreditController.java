@@ -90,4 +90,14 @@ public class ContractorInstrumentCreditController {
         log.info("canceling payment instrument credit id={}", id);
         service.cancel(instrumentId, id);
     }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
+    @RequestMapping(value = "/contracts/{contractId}/payment-instruments/credits", method = RequestMethod.DELETE)
+    public void cancelContractCredits(@PathVariable String contractId) {
+        log.info("canceling payment instrument credit to contract id={}", contractId);
+        service.cancel(contractId);
+    }
+
+
 }

@@ -134,9 +134,6 @@ public final class Errors {
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
     public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
-    public static final UnovationError PAYMENT_RULE_GROUP_REQUIRED =
-            new UnovationError("PAYMENT_RULE_GROUP_REQUIRED","Payment rule group is required");
-
 
 
     /* Person */
@@ -341,21 +338,28 @@ public final class Errors {
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_VALID =
             new UnovationError("PAYMENT_INSTRUMENT_NOT_VALID", "Payment instrument does not belong to contractor");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER =
-            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER", "Credit Payment account does not belong to hirer");
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER",
+                    "Credit Payment account does not belong to hirer");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT =
-            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT", "Credit Payment account does not belong to product");
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT",
+                    "Credit Payment account does not belong to product");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE =
-            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE", "Credit Payment account does not belong to service");
+            new UnovationError("CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE",
+                    "Credit Payment account does not belong to service");
     public static final UnovationError SERVICE_NOT_ACCEPTED =
             new UnovationError("SERVICE_NOT_ACCEPTED", "Service not accepted.");
     public static final UnovationError VALUE_GREATER_THAN_ZERO_REQUIRED =
             new UnovationError("VALUE_GREATER_THAN_ZERO_REQUIRED", "Value greater than zero required.");
     public static final UnovationError EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED =
-            new UnovationError("EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED", "Expiration date greater than now required.");
+            new UnovationError("EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED",
+                    "Expiration date greater than now required.");
     public static final UnovationError VALUE_GREATER_THAN_BALANCE =
             new UnovationError("VALUE_GREATER_THAN_BALANCE", "Value greater than Credit payment account balance.");
     public static final UnovationError CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND =
             new UnovationError("CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND", "Contractor instrument credit not found.");
+
+    public static final UnovationError CONTRACT_WITHOUT_CREDITS =
+            new UnovationError("CONTRACT_WITHOUT_CREDITS","Contact without credits.");
 
 
 
