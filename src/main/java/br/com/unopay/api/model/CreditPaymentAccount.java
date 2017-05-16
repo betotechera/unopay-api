@@ -35,7 +35,6 @@ import java.util.Date;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = {"availableBalance", "value"})
 @Table(name = "credit_payment_account")
 public class CreditPaymentAccount implements Serializable, Updatable {
 
