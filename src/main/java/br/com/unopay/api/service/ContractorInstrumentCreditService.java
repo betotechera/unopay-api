@@ -56,8 +56,7 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.validateValue();
         instrumentCredit.setupMyCreate(contract);
         incrementInstallmentNumber(instrumentCredit);
-        creditPaymentAccountService
-                .subtract(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
+        subtractPaymentAccountBalance(instrumentCredit);
         return repository.save(instrumentCredit);
     }
 
@@ -111,12 +110,21 @@ public class ContractorInstrumentCreditService {
     public void cancel(String instrumentId, String id) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
         instrumentCredit.cancel();
-        creditPaymentAccountService
-                .giveBack(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
+        giveBackPaymentAccountBalance(instrumentCredit);
         repository.save(instrumentCredit);
     }
 
     public Page<ContractorInstrumentCredit> findByFilter(ContractorInstrumentCreditFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private void subtractPaymentAccountBalance(ContractorInstrumentCredit instrumentCredit) {
+        creditPaymentAccountService
+                .subtract(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
+    }
+
+    private void giveBackPaymentAccountBalance(ContractorInstrumentCredit instrumentCredit) {
+        creditPaymentAccountService
+                .giveBack(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
     }
 }
