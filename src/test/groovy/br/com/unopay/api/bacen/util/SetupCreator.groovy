@@ -42,7 +42,7 @@ class SetupCreator {
     private HirerService hirerService
 
     @Autowired
-    private PaymentBankAccountService paymentBankAccountService
+    private EventService eventService
 
     @Autowired
     private ContractService contractService
@@ -52,6 +52,9 @@ class SetupCreator {
 
     @Autowired
     private CreditPaymentAccountService creditPaymentAccountService
+
+    @Autowired
+    private ServiceService serviceService
 
 
     Establishment createHeadOffice() {
@@ -115,6 +118,14 @@ class SetupCreator {
     Contractor createContractor() {
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractorService.create(contractor)
+    }
+
+    Event createEvent(ServiceType serviceType) {
+        Event event = Fixture.from(Event.class).gimme("valid")
+        Service serviceUnderTest = Fixture.from(Service.class).gimme("valid").with { type = serviceType; it }
+        serviceService.create(serviceUnderTest)
+        event.with { service = serviceUnderTest }
+        eventService.create(event)
     }
     Product createProduct(code = null, paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
         Product product = Fixture.from(Product.class).gimme("valid")
@@ -224,6 +235,8 @@ class SetupCreator {
     }
 
     Establishment createEstablishment() {
-        null
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        accreditedNetworkService.create(establishment.network)
+        establishmentService.create(establishment)
     }
 }

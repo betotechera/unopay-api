@@ -103,8 +103,9 @@ public class Contract implements Serializable {
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<ServiceType> serviceType;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "credit_insertion_type")
+    @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
     private CreditInsertionType creditInsertionType;
 
