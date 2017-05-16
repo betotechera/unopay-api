@@ -105,6 +105,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private BigDecimal issuerFee;
 
     @Column(name = "situation")
+    @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
     private CreditSituation situation;
 
