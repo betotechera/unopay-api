@@ -114,7 +114,8 @@ public class ContractorInstrumentCreditService {
         repository.save(instrumentCredit);
     }
 
-    public Page<ContractorInstrumentCredit> findByFilter(ContractorInstrumentCreditFilter filter, UnovationPageRequest pageable) {
+    public Page<ContractorInstrumentCredit> findByFilter(ContractorInstrumentCreditFilter filter,
+                                                         UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
