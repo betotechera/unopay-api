@@ -17,9 +17,6 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     EstablishmentService service
 
     @Autowired
-    AccreditedNetworkService networkService
-
-    @Autowired
     BranchService branchService
 
     @Autowired
