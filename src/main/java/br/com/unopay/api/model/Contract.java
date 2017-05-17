@@ -226,4 +226,8 @@ public class Contract implements Serializable {
         }
         return null;
     }
+
+    public boolean withEstablishmentRestriction(){
+        return getEstablishments() != null && !getEstablishments().isEmpty();
+    }
 }

@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
@@ -48,7 +49,8 @@ public class ServiceAuthorizeService {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         validateEstablishment(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
-        defineContract(serviceAuthorize, currentUser);
+        defineContractToEstablishmentUser(serviceAuthorize, currentUser);
+        defineContractToAnotherUsers(serviceAuthorize, currentUser);
 
         serviceAuthorize.setUser(currentUser);
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
@@ -60,10 +62,31 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
+    private void defineContractToAnotherUsers(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+        if(!currentUser.isEstablishmentType()){
+            Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+            serviceAuthorize.setContract(contract);
+        }
+    }
+
     private void validateEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if(!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()){
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
         }
+        if(!currentUser.isEstablishmentType()){
+            Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+            if(contract.withEstablishmentRestriction()) {
+                findEstablishment(serviceAuthorize.establishmentId(), contract.getEstablishments())
+                        .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
+                                .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
+            }
+        }
+    }
+
+    private Optional<Establishment> findEstablishment(String establishmentId, List<Establishment> establishments) {
+        return establishments.stream()
+                .filter(e -> Objects.equals(e.getId(),establishmentId))
+                .reduce((first, last) -> last);
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
@@ -76,7 +99,7 @@ public class ServiceAuthorizeService {
                         .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
     }
 
-    private void defineContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+    private void defineContractToEstablishmentUser(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if(currentUser.isEstablishmentType()) {
             String contractId=serviceAuthorize.contractId();
             String establishmentId  = currentUser.establishmentId();

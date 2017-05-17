@@ -101,6 +101,38 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.contract.id in contracts*.id
     }
 
+    void 'when user not is establishment type then the contract without establishment should be authorized'(){
+        given:
+        def anotherContract = setupCreator
+                .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with { contract.id = anotherContract.id }
+
+        when:
+        def created = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.contract.id == anotherContract.id
+    }
+
+    void 'when user not is establishment type then the contract with another establishment should not be authorized'(){
+        given:
+        def anotherContracts = addContractsToEstablishment(setupCreator.createEstablishment())
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract.id = anotherContracts.find().id
+            establishment.id = establishmentUnderTest.id
+        }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
+    }
+
     void 'when user is establishment type then the contract belongs to another establishment should not be authorized'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()

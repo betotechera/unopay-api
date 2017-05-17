@@ -149,6 +149,13 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public String establishmentId(){
+        if(getEstablishment() != null){
+            return getEstablishment().getId();
+        }
+        return null;
+    }
+
     public boolean withEstablishmentDocument(){
         return establishmentDocumentNumber() != null;
     }
