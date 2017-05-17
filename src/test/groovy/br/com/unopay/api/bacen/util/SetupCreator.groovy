@@ -16,7 +16,10 @@ import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.service.CreditPaymentAccountService
 import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
+import br.com.unopay.api.uaa.model.Group
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.repository.UserDetailRepository
+import br.com.unopay.api.uaa.service.GroupService
 import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -64,7 +67,26 @@ class SetupCreator {
     private ContractorInstrumentCreditService contractorInstrumentCreditService
 
     @Autowired
-    private UserDetailRepository userDetailRepository
+    private UserDetailService userDetailService
+
+    @Autowired
+    private GroupService groupService
+
+
+    UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()){
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        user.with {
+            establishment = establishmentUnderTest
+        }
+        createUser(user)
+    }
+
+    UserDetail createUser(user = Fixture.from(UserDetail.class).gimme("without-group")){
+        Group group = Fixture.from(Group.class).gimme("valid")
+        groupService.create(group)
+        user.addToMyGroups(group)
+        userDetailService.create(user)
+    }
 
 
     Establishment createHeadOffice() {
@@ -252,7 +274,7 @@ class SetupCreator {
             contract = instrumentCreditUnderTest.contract
             contractor = instrumentCreditUnderTest.contract.contractor
             event = createEvent(instrumentCreditUnderTest.contract.serviceType.find())
-            user = userDetailRepository.findById('1')
+            user = createUser()
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = createEstablishment()
             it

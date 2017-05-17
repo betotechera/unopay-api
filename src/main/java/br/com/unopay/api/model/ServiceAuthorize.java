@@ -133,5 +133,15 @@ public class ServiceAuthorize implements Serializable {
     @JsonIgnore
     private Integer version;
 
+    public String getEstablishmentDocumentNumber(){
+        if(getEstablishment() != null){
+            return getEstablishment().getDocumentNumber();
+        }
+        return null;
+    }
+
+    public boolean withEstablishmentDocument(){
+        return getEstablishmentDocumentNumber() != null;
+    }
 
 }

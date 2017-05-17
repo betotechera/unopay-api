@@ -1,7 +1,9 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
@@ -26,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -62,6 +66,14 @@ public class Contract implements Serializable {
     @JsonView({Views.Public.class})
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "contract")
     private Set<ContractEstablishment> contractEstablishments;
+
+    @BatchSize(size = 10)
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonView({Views.Public.class,Views.List.class})
+    @JoinTable(name = "contract_establishment",
+            joinColumns = { @JoinColumn(name = "contract_id") },
+            inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
+    private List<Establishment> establishments;
 
     @Column(name="code")
     @NotNull(groups = {Create.class, Update.class})

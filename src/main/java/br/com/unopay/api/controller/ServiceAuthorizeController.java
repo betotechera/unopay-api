@@ -13,6 +13,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,12 +40,12 @@ public class ServiceAuthorizeController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(CREATED)
-    @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
+    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/service-authorizations", method = POST)
-    public ResponseEntity<ServiceAuthorize> create(@Validated(Create.class)
+    public ResponseEntity<ServiceAuthorize> create(OAuth2Authentication authentication, @Validated(Create.class)
                                                              @RequestBody ServiceAuthorize serviceAuthorize) {
-        log.info("authorizing service={}", serviceAuthorize);
-        ServiceAuthorize created = service.save(serviceAuthorize);
+        log.info("user={}, authorizing service={}", authentication.getName(), serviceAuthorize);
+        ServiceAuthorize created = service.create(authentication.getName(),serviceAuthorize);
         log.info("authorized service={}", created);
         return created(URI.create(
                 String.format("/service-authorizations/%s", created.getId()))).body(created);

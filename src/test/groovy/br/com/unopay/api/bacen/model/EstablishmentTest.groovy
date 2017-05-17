@@ -29,9 +29,9 @@ class EstablishmentTest extends FixtureApplicationTest {
         establishmentA.gatheringChannel == establishmentB.gatheringChannel
         establishmentA.invoiceMail == establishmentB.invoiceMail
         establishmentA.logoUri == establishmentB.logoUri
-        establishmentA.person == establishmentB.person
+        establishmentA.person.name == establishmentB.person.name
         establishmentA.tax == establishmentB.tax
-        establishmentA.network == establishmentB.network
+        establishmentA.network.id == establishmentB.network.id
         establishmentA.type == establishmentB.type
         establishmentA.operationalContact == establishmentB.operationalContact
         establishmentA.technicalContact == establishmentB.technicalContact
