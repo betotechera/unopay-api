@@ -30,6 +30,23 @@ public class SwaggerConfig {
         return or(
                 regex("/users.*"),
                 regex("/groups.*"),
+                regex("/contracts.*"),
+                regex("/payment-instruments.*"),
+                regex("/hirers.*"),
+                regex("/hirers.*"),
+                regex("/products.*"),
+                regex("/accredited-networks.*"),
+                regex("/banks.*"),
+                regex("/brand-flags.*"),
+                regex("/contractors.*"),
+                regex("/establishments.*"),
+                regex("/events.*"),
+                regex("/hirer-branches.*"),
+                regex("/institutions.*"),
+                regex("/issuers.*"),
+                regex("/partners.*"),
+                regex("/payment-rule-groups.*"),
+                regex("/services.*"),
                 regex("/user-types.*"));
     }
 }
