@@ -48,7 +48,7 @@ public class ServiceAuthorizeService {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         validateEstablishment(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
-
+        defineContract(serviceAuthorize, currentUser);
 
         serviceAuthorize.setUser(currentUser);
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
@@ -69,16 +69,22 @@ public class ServiceAuthorizeService {
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if(currentUser.isEstablishmentType()){
             serviceAuthorize.setEstablishment(currentUser.getEstablishment());
-            Optional<Contract> contractOptional = findEstablishmentContract(serviceAuthorize.contractId(),
-                                                                                        currentUser.establishmentId());
-            Contract contract = contractOptional.orElseThrow(()->
-                    UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
-            serviceAuthorize.setContract(contractService.findById(contract.getId()));
             return;
         }
         serviceAuthorize
                 .setEstablishment(establishmentService
                         .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
+    }
+
+    private void defineContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+        if(currentUser.isEstablishmentType()) {
+            String contractId=serviceAuthorize.contractId();
+            String establishmentId  = currentUser.establishmentId();
+            Optional<Contract> contractOptional = findEstablishmentContract(contractId, establishmentId);
+            Contract contract = contractOptional.orElseThrow(() -> UnovationExceptions.unprocessableEntity()
+                                                            .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
+            serviceAuthorize.setContract(contractService.findById(contract.getId()));
+        }
     }
 
     private Optional<Contract> findEstablishmentContract(String ContractId, String establishmentId) {
