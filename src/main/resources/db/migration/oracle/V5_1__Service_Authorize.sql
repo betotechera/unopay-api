@@ -32,5 +32,5 @@ create table service_authorize (
 insert into AUTHORITY(name, description) values('ROLE_LIST_SERVICE_AUTHORIZE','Permite listar autorizaçoes de serviços.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_SERVICE_AUTHORIZE','Permite gerenciar autorizaçoes de serviços.');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CREDIT_SERVICE_AUTHORIZE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CREDIT_SERVICE_AUTHORIZE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_SERVICE_AUTHORIZE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_SERVICE_AUTHORIZE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');

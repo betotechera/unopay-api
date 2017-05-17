@@ -10,10 +10,14 @@ import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.service.CreditPaymentAccountService
 import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
+import br.com.unopay.api.uaa.repository.UserDetailRepository
+import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -55,6 +59,12 @@ class SetupCreator {
 
     @Autowired
     private ServiceService serviceService
+
+    @Autowired
+    private ContractorInstrumentCreditService contractorInstrumentCreditService
+
+    @Autowired
+    private UserDetailRepository userDetailRepository
 
 
     Establishment createHeadOffice() {
@@ -232,6 +242,21 @@ class SetupCreator {
             contract = contractUnderTest
         }
         instrumentCredit
+    }
+
+    ServiceAuthorize createServiceAuthorize(){
+        def instrumentCreditUnderTest = createContractorInstrumentCredit()
+        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
+        serviceAuthorize.with {
+            contract = instrumentCreditUnderTest.contract
+            contractor = instrumentCreditUnderTest.contract.contractor
+            event = createEvent(instrumentCreditUnderTest.contract.serviceType.find())
+            user = userDetailRepository.findById('1')
+            contractorInstrumentCredit = instrumentCreditUnderTest
+            establishment = createEstablishment()
+            it
+        }
     }
 
     Establishment createEstablishment() {
