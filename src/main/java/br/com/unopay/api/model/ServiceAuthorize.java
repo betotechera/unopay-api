@@ -10,6 +10,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ import java.util.Date;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = {"contract"})
 @Table(name = "service_authorize")
 public class ServiceAuthorize implements Serializable {
 
@@ -133,15 +135,22 @@ public class ServiceAuthorize implements Serializable {
     @JsonIgnore
     private Integer version;
 
-    public String getEstablishmentDocumentNumber(){
+    public String establishmentDocumentNumber(){
         if(getEstablishment() != null){
-            return getEstablishment().getDocumentNumber();
+            return getEstablishment().documentNumber();
+        }
+        return null;
+    }
+
+    public String contractId(){
+        if(getContract() != null){
+            return getContract().getId();
         }
         return null;
     }
 
     public boolean withEstablishmentDocument(){
-        return getEstablishmentDocumentNumber() != null;
+        return establishmentDocumentNumber() != null;
     }
 
 }

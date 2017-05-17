@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.model.UserDetail
@@ -21,6 +22,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     @Autowired
     SetupCreator setupCreator
+
+    @Autowired
+    ContractService contractService
 
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
@@ -70,6 +74,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = addContractsToEstablishment(userEstablishment.establishment).find()
+        }
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -78,6 +85,37 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         then:
         assert result.establishment.id == userEstablishment.establishment.id
     }
+
+    void 'when user is establishment type then the contract should belongs to establishment'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def contracts = addContractsToEstablishment(userEstablishment.establishment)
+        serviceAuthorize.with { contract.id = contracts.find().id }
+
+        when:
+        def created = service.create(userEstablishment.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.contract.id in contracts*.id
+    }
+
+    void 'when user is establishment type then the contract belongs to another establishment should not be authorized'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        addContractsToEstablishment(userEstablishment.establishment)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with { contract.id = '' }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
+    }
+
 
     void 'when user is not establishment type then the establishment document should be required'(){
         given:
@@ -118,6 +156,16 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = establishmentUnderTest
             it
         }
+    }
+
+    private List addContractsToEstablishment(Establishment establishmentUnderTest) {
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contractEstablishment.with { establishment = establishmentUnderTest }
+        def contractA = setupCreator.createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
+        def contractB = setupCreator.createPersistedContract(setupCreator.createContractor(), contractA.product)
+        contractService.addEstablishments(contractA.id, contractEstablishment)
+        contractService.addEstablishments(contractB.id, contractEstablishment.with {id = null; it })
+        [contractB, contractA]
     }
 
 

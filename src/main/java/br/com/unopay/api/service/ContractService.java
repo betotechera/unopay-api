@@ -110,7 +110,7 @@ public class ContractService {
         if(contract.containsEstablishment(contractEstablishment)){
             throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_ALREADY_IN_CONTRACT);
         }
-        contractEstablishment.createValues(contract);
+        contractEstablishment.setMeUpBy(contract);
         contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
         contract.addContractEstablishment(contractEstablishment);
         repository.save(contract);

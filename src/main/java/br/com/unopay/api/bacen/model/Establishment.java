@@ -43,7 +43,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "services")
 @Table(name = "establishment")
 public class Establishment implements Serializable, Updatable {
 
@@ -95,7 +95,6 @@ public class Establishment implements Serializable, Updatable {
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
-    @SuppressWarnings("squid:S1192")
     @Column(name = "tax")
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;
@@ -216,7 +215,7 @@ public class Establishment implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
     }
-    public String getDocumentNumber(){
+    public String documentNumber(){
         if(getPerson() != null && getPerson().getDocument() != null){
             return getPerson().getDocument().getNumber();
         }

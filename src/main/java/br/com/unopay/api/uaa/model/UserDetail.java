@@ -206,4 +206,11 @@ public class UserDetail implements Serializable {
     public boolean isEstablishmentType(){
         return  establishment != null;
     }
+
+    public String establishmentId(){
+        if(isEstablishmentType()){
+            return getEstablishment().getId();
+        }
+        return null;
+    }
 }

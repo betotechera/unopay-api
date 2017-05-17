@@ -49,7 +49,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "contract")
-@EqualsAndHashCode(exclude = {"contractEstablishments"})
+@EqualsAndHashCode(exclude = {"contractEstablishments", "establishments"})
 public class Contract implements Serializable {
 
     public static final long serialVersionUID = 1L;

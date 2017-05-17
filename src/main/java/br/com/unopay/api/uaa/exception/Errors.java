@@ -360,6 +360,13 @@ public final class Errors {
     /* service authorize */
     public static final UnovationError ESTABLISHMENT_DOCUMENT_REQUIRED =
             new UnovationError("ESTABLISHMENT_DOCUMENT_REQUIRED","Establishment document required.");
+    public static final UnovationError SERVICE_AUTHORIZE_NOT_FOUND =
+            new UnovationError("SERVICE_AUTHORIZE_NOT_FOUND","Service authorize not found.");
+    public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
+            new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
+                    "Establishment not qualified for this contract.");
+
+
 
 
 
