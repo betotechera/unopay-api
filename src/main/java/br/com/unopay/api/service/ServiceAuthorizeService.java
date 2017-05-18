@@ -49,8 +49,7 @@ public class ServiceAuthorizeService {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         validateEstablishment(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
-        defineContractToEstablishmentUser(serviceAuthorize, currentUser);
-        defineContractToAnotherUsers(serviceAuthorize, currentUser);
+        defineContract(serviceAuthorize);
 
         serviceAuthorize.setUser(currentUser);
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
@@ -62,24 +61,20 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
-    private void defineContractToAnotherUsers(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        if(!currentUser.isEstablishmentType()){
-            Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
-            serviceAuthorize.setContract(contract);
-        }
-    }
 
     private void validateEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        if(!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()){
+        if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
         }
-        if(!currentUser.isEstablishmentType()){
-            Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
-            if(contract.withEstablishmentRestriction()) {
-                findEstablishment(serviceAuthorize.establishmentId(), contract.getEstablishments())
-                        .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
-                                .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
-            }
+        String establishmentId = serviceAuthorize.establishmentId();
+        if (currentUser.isEstablishmentType()) {
+            establishmentId = currentUser.establishmentId();
+        }
+        Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+        if (contract.withEstablishmentRestriction()) {
+            findEstablishment(establishmentId, contract.getEstablishments())
+                    .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
+                            .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
         }
     }
 
@@ -99,23 +94,11 @@ public class ServiceAuthorizeService {
                         .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
     }
 
-    private void defineContractToEstablishmentUser(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType()) {
-            String contractId=serviceAuthorize.contractId();
-            String establishmentId  = currentUser.establishmentId();
-            Optional<Contract> contractOptional = findEstablishmentContract(contractId, establishmentId);
-            Contract contract = contractOptional.orElseThrow(() -> UnovationExceptions.unprocessableEntity()
-                                                            .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
-            serviceAuthorize.setContract(contractService.findById(contract.getId()));
-        }
+    private void defineContract(ServiceAuthorize serviceAuthorize) {
+        Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+        serviceAuthorize.setContract(contract);
     }
 
-    private Optional<Contract> findEstablishmentContract(String ContractId, String establishmentId) {
-        List<Contract> contracts = contractService.findByEstablishmentId(establishmentId);
-        return contracts.stream()
-                .filter(c -> Objects.equals(c.getId(), ContractId))
-                .reduce((firs, last) -> last);
-    }
 
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);

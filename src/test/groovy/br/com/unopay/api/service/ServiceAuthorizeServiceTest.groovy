@@ -133,12 +133,32 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
+    void 'when user is establishment type then the contract with another establishment should not be authorized'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def anotherContracts = addContractsToEstablishment(setupCreator.createEstablishment())
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract.id = anotherContracts.find().id
+            establishment.id = establishmentUnderTest.id
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
+    }
+
     void 'when user is establishment type then the contract belongs to another establishment should not be authorized'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         addContractsToEstablishment(userEstablishment.establishment)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with { contract.id = '' }
+        serviceAuthorize.with {
+            contract.id = addContractsToEstablishment(setupCreator.createEstablishment()).find().id
+        }
 
         when:
         service.create(userEstablishment.email, serviceAuthorize)
@@ -193,7 +213,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     private List addContractsToEstablishment(Establishment establishmentUnderTest) {
         ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
         contractEstablishment.with { establishment = establishmentUnderTest }
-        def contractA = setupCreator.createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
+        def contractA = setupCreator
+                .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
         def contractB = setupCreator.createPersistedContract(setupCreator.createContractor(), contractA.product)
         contractService.addEstablishments(contractA.id, contractEstablishment)
         contractService.addEstablishments(contractB.id, contractEstablishment.with {id = null; it })
