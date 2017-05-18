@@ -12,9 +12,9 @@ create table service_authorize (
     value_fee decimal(*,2) not null,
     solicitation_date_time TIMESTAMP not null,
     credit_insertion_type varchar(100) not null,
-    contractor_instrument_credit_id varchar(256),
-    last_instrument_credit_balance decimal(*,2) not null,
-    current_instrument_credit_balance decimal(*,2) not null,
+    contractor_inst_credit_id varchar(256),
+    last_inst_credit_balance decimal(*,2) not null,
+    current_inst_credit_balance decimal(*,2) not null,
     cancellation_date_time TIMESTAMP,
     transaction_log_code int not null,
     transaction_log varchar(256) not null,
@@ -25,7 +25,7 @@ create table service_authorize (
     constraint fk_serv_auth_contract foreign key(contract_id) references contract(id),
     constraint fk_serv_auth_contractor foreign key(contractor_id) references contractor(id),
     constraint fk_serv_auth_event foreign key(event_id) references event(id),
-    constraint fk_serv_auth_instr_cred foreign key(contractor_instrument_credit_id) references contractor_instrument_credit(id),
+    constraint fk_serv_auth_instr_cred foreign key(contractor_inst_credit_id) references contractor_instrument_credit(id),
     constraint fk_serv_auth_user foreign key(user_id) references oauth_user_details(id)
 );
 

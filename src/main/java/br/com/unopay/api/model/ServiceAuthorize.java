@@ -101,14 +101,14 @@ public class ServiceAuthorize implements Serializable {
 
     @ManyToOne
     @NotNull(groups = {Create.class})
-    @JoinColumn(name="contractor_instrument_credit_id")
+    @JoinColumn(name="contractor_inst_credit_id")
     @JsonView({Views.Public.class,Views.List.class})
     private ContractorInstrumentCredit contractorInstrumentCredit;
 
-    @Column(name = "last_instrument_credit_balance")
+    @Column(name = "last_inst_credit_balance")
     private BigDecimal lastInstrumentCreditBalance;
 
-    @Column(name = "current_instrument_credit_balance")
+    @Column(name = "current_inst_credit_balance")
     private BigDecimal currentInstrumentCreditBalance;
 
     @Column(name = "cancellation_date_time")
