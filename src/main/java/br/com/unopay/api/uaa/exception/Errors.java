@@ -254,6 +254,10 @@ public final class Errors {
             new UnovationError("CONTACT_ID_REQUIRED","Contact id is required.");
     public static final UnovationError CONTACT_NOT_FOUND =
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
+    public static final UnovationError CONTRACT_NOT_ACTIVATED =
+            new UnovationError("CONTRACT_NOT_ACTIVATED","Contact not activated.");
+
+
 
     /* branch */
     public static final UnovationError BRANCH_NOT_FOUND =

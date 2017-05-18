@@ -47,7 +47,7 @@ public class ServiceAuthorizeService {
 
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        validateEstablishment(serviceAuthorize, currentUser);
+        validateEstablishmentAndContract(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
         defineContract(serviceAuthorize);
 
@@ -62,7 +62,7 @@ public class ServiceAuthorizeService {
     }
 
 
-    private void validateEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+    private void validateEstablishmentAndContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
         }
@@ -71,11 +71,13 @@ public class ServiceAuthorizeService {
             establishmentId = currentUser.establishmentId();
         }
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+        contract.validateActive();
         if (contract.withEstablishmentRestriction()) {
             findEstablishment(establishmentId, contract.getEstablishments())
                     .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
                             .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
         }
+
     }
 
     private Optional<Establishment> findEstablishment(String establishmentId, List<Establishment> establishments) {

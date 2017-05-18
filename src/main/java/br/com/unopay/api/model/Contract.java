@@ -166,6 +166,12 @@ public class Contract implements Serializable {
         }
     }
 
+    public void validateActive(){
+        if(!ContractSituation.ACTIVE.equals(situation)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
+        }
+    }
+
     public void checkFields() {
         documentNumberInvoice = (documentNumberInvoice == null) ? hirer.getDocumentNumber(): documentNumberInvoice;
         origin = (origin == null) ? UNOPAY : origin;

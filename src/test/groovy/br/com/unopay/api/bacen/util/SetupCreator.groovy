@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
@@ -222,8 +223,12 @@ class SetupCreator {
     }
 
     Contract createPersistedContract(contractorUnderTest = createContractor(),
-                                     productUnderTest = createProduct(), hirer = createHirer()){
+                                     productUnderTest = createProduct(),
+                                     hirer = createHirer(), situationUnderTest = ContractSituation.ACTIVE){
         Contract contract = createContract(contractorUnderTest, productUnderTest, hirer)
+        contract.with {
+            situation = situationUnderTest
+        }
         contractService.save(contract)
     }
 

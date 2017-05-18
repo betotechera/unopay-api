@@ -8,12 +8,14 @@ import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
+import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 
 class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
@@ -116,6 +118,30 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.contract.id == anotherContract.id
     }
 
+    @Unroll
+    void 'given a contract is #situation should not be authorized'(){
+        given:
+        def anotherContract = setupCreator
+                .createPersistedContract(setupCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, setupCreator.createHirer(), situation)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with { contract.id = anotherContract.id }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_ACTIVATED'
+
+        where:
+        _|situation
+        _|ContractSituation.CANCELLED
+        _|ContractSituation.EXPIRED
+        _|ContractSituation.FINALIZED
+        _|ContractSituation.SUSPENDED
+    }
+
     void 'when user not is establishment type then the contract with another establishment should not be authorized'(){
         given:
         def anotherContracts = addContractsToEstablishment(setupCreator.createEstablishment())
@@ -169,7 +195,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
 
-    void 'when user is not establishment type then the establishment document should be required'(){
+    void'when user is not establishment type then the establishment document should be required'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
