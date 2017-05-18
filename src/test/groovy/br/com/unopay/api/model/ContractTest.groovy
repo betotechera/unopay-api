@@ -2,6 +2,7 @@ package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ContractTest extends FixtureApplicationTest {
@@ -21,6 +22,48 @@ class ContractTest extends FixtureApplicationTest {
         a.rntrc == b.rntrc
         a.situation == b.situation
         a.issueInvoice == b.issueInvoice
+    }
+
+    def 'given a contractor with another contract when validate contractor should return error'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+        contractor.with {
+            person.document.number = '55566677788'
+        }
+
+        when:
+        contract.validContractor(contractor)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors?.first()?.logref == 'INVALID_CONTRACTOR'
+    }
+
+    def 'given a contractor with another contract when verify contractor belongs to contract should not be'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+        contractor.with {
+            person.document.number = '55566677788'
+        }
+
+        when:
+        def contains = contract.containsContractor(contractor)
+
+        then:
+        !contains
+    }
+
+    def 'contractor belongs to contract should be'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+
+        when:
+        def contains = contract.containsContractor(contract.contractor)
+
+        then:
+        contains
     }
 
     def 'should be equals'(){

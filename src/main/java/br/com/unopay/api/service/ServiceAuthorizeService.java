@@ -7,9 +7,6 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_DOCUMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -19,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Service
 public class ServiceAuthorizeService {
@@ -50,12 +49,13 @@ public class ServiceAuthorizeService {
         validateEstablishmentAndContract(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
         defineContract(serviceAuthorize);
-
         serviceAuthorize.setUser(currentUser);
+
+
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
                                                     .findById(serviceAuthorize.getContractorInstrumentCredit().getId());
-        serviceAuthorize.setContractorInstrumentCredit(instrumentCredit);
         serviceAuthorize.setContractor(instrumentCredit.getContract().getContractor());
+        serviceAuthorize.setContractorInstrumentCredit(instrumentCredit);
         serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
 
         return repository.save(serviceAuthorize);
@@ -72,6 +72,7 @@ public class ServiceAuthorizeService {
         }
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
         contract.validateActive();
+        contract.validContractor(serviceAuthorize.getContractor());
         if (contract.withEstablishmentRestriction()) {
             findEstablishment(establishmentId, contract.getEstablishments())
                     .orElseThrow(() -> UnovationExceptions.unprocessableEntity()

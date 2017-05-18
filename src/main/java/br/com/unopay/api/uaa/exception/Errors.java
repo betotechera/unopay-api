@@ -259,6 +259,8 @@ public final class Errors {
     public static final UnovationError CONTRACT_NOT_IN_PROGRESS =
             new UnovationError("CONTRACT_NOT_IN_PROGRESS","Contact not in progress.");
 
+    public static final UnovationError INVALID_CONTRACTOR =
+            new UnovationError("INVALID_CONTRACTOR","Contractor does not belong to contract.");
 
 
 

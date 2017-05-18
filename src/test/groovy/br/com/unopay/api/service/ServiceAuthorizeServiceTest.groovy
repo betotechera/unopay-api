@@ -74,13 +74,38 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.user.id == userUnderTest.id
     }
 
+    void 'service authorize contractor should be contract contractor when authorize'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.contractor.id == result.contract.contractor.id
+    }
+
+
+    void 'given unknown contractor service should not be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contractor.person.document.number = '55555'
+        }
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVALID_CONTRACTOR'
+    }
+
     void 'when user is establishment type then the establishment should be the user establishment'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with {
-            contract = addContractsToEstablishment(userEstablishment.establishment).find()
-        }
+        addContractsToEstablishment(userEstablishment.establishment).find()
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -95,7 +120,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def userEstablishment = setupCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         def contracts = addContractsToEstablishment(userEstablishment.establishment)
-        serviceAuthorize.with { contract.id = contracts.find().id }
+        serviceAuthorize.with {
+            contract.id = contracts.find().id
+            contractor = contracts.find().contractor
+        }
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -110,7 +138,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def anotherContract = setupCreator
                 .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with { contract.id = anotherContract.id }
+        serviceAuthorize.with {
+            contract.id = anotherContract.id
+            contractor = anotherContract.contractor
+        }
 
         when:
         def created = service.create(userUnderTest.email, serviceAuthorize)
@@ -195,6 +226,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         serviceAuthorize.with {
             contract.id = anotherContracts.find().id
             establishment.id = establishmentUnderTest.id
+            contractor = anotherContracts.find().contractor
         }
 
         when:
@@ -213,6 +245,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         serviceAuthorize.with {
             contract.id = anotherContracts.find().id
             establishment.id = establishmentUnderTest.id
+            contractor = anotherContracts.find().contractor
         }
 
         when:
@@ -228,8 +261,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def userEstablishment = setupCreator.createEstablishmentUser()
         addContractsToEstablishment(userEstablishment.establishment)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def contracts = addContractsToEstablishment(setupCreator.createEstablishment())
         serviceAuthorize.with {
-            contract.id = addContractsToEstablishment(setupCreator.createEstablishment()).find().id
+            contract.id = contracts.find().id
+            contractor = contracts.find().contractor
         }
 
         when:

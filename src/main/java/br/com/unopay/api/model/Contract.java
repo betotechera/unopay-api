@@ -7,6 +7,8 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
+
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
@@ -238,5 +240,16 @@ public class Contract implements Serializable {
 
     public boolean withEstablishmentRestriction(){
         return getEstablishments() != null && !getEstablishments().isEmpty();
+    }
+
+
+    public boolean containsContractor(Contractor contractor) {
+        return Objects.equals(this.contractor.getDocumentNumber(), contractor.getDocumentNumber());
+    }
+
+    public void validContractor(Contractor contractor){
+        if(!containsContractor(contractor)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
+        }
     }
 }
