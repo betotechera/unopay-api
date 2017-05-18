@@ -170,6 +170,9 @@ public class Contract implements Serializable {
         if(!ContractSituation.ACTIVE.equals(situation)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
         }
+         if(end.before(new Date()) || begin.after(new Date())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_IN_PROGRESS);
+        }
     }
 
     public void checkFields() {

@@ -14,6 +14,7 @@ import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -46,6 +47,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         eventUnderTest = setupCreator.createEvent(contractUnderTest.serviceType.find())
         userUnderTest = setupCreator.createUser()
         establishmentUnderTest = setupCreator.createEstablishment()
+        Integer.mixin(TimeCategory)
     }
 
     void 'new service authorize should be created'(){
@@ -119,7 +121,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'given a contract is #situation should not be authorized'(){
+    void 'given a #situation contract should not be authorized'(){
         given:
         def anotherContract = setupCreator
                 .createPersistedContract(setupCreator.createContractor(),
@@ -140,6 +142,50 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         _|ContractSituation.EXPIRED
         _|ContractSituation.FINALIZED
         _|ContractSituation.SUSPENDED
+    }
+
+    void 'given a contract finalized should not be authorized'(){
+        given:
+        def anotherContract = setupCreator
+                .createContract(setupCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, setupCreator.createHirer())
+        anotherContract.with {
+            situation = ContractSituation.ACTIVE
+            begin = 2.day.ago
+            end = 1.day.ago
+        }
+        contractService.save(anotherContract)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with { contract.id = anotherContract.id }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_IN_PROGRESS'
+    }
+
+    void 'given a contract does not begin should not be authorized'(){
+        given:
+        def anotherContract = setupCreator
+                .createContract(setupCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, setupCreator.createHirer())
+        anotherContract.with {
+            situation = ContractSituation.ACTIVE
+            begin = 1.day.from.now
+            end = 2.day.from.now
+        }
+        contractService.save(anotherContract)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with { contract.id = anotherContract.id }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_IN_PROGRESS'
     }
 
     void 'when user not is establishment type then the contract with another establishment should not be authorized'(){
