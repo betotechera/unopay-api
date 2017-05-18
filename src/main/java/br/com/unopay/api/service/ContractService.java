@@ -9,8 +9,8 @@ import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
-import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +110,7 @@ public class ContractService {
         if(contract.containsEstablishment(contractEstablishment)){
             throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_ALREADY_IN_CONTRACT);
         }
-        contractEstablishment.createValues(contract);
+        contractEstablishment.setMeUpBy(contract);
         contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
         contract.addContractEstablishment(contractEstablishment);
         repository.save(contract);
@@ -128,9 +128,16 @@ public class ContractService {
     private ContractEstablishment findContractEstablishmentById(String id) {
         ContractEstablishment contract = contractEstablishmentRepository.findOne(id);
         if(contract == null){
-            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND);
+            throw UnovationExceptions.notFound().withErrors(CONTRACT_ESTABLISHMENT_NOT_FOUND);
         }
         return contract;
     }
 
+    public List<Contract> findByEstablishmentId(String establishmentId) {
+        List<Contract> contracts = repository.findByEstablishmentsId(establishmentId);
+        if(contracts.isEmpty()){
+            throw UnovationExceptions.notFound().withErrors(CONTRACT_ESTABLISHMENT_NOT_FOUND);
+        }
+        return contracts;
+    }
 }

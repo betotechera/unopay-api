@@ -12,6 +12,9 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
+import static org.hamcrest.Matchers.hasSize
+import static spock.util.matcher.HamcrestSupport.that
+
 class ContractServiceTest extends SpockApplicationTests {
 
     @Autowired
@@ -256,7 +259,7 @@ class ContractServiceTest extends SpockApplicationTests {
         service.addEstablishments(contract.id,contractEstablishment)
         contract = service.findById(contract.id)
         then:
-        assert contract.contractEstablishments.size() > 0
+        that contract.contractEstablishments, hasSize(1)
     }
 
 
@@ -314,6 +317,29 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
         assert result.contract.id == contract.id
         assert result.origin == ContractOrigin.UNOPAY
+    }
+
+    void 'should return contracts by establishment'(){
+        given:
+        Contract contract = createContract()
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        List<Contract> contracts = service.findByEstablishmentId(contractEstablishment.establishment.id)
+
+        then:
+        that contracts, hasSize(1)
+    }
+
+    void 'establishment without contracts should not be founded'(){
+        when:
+        service.findByEstablishmentId(establishmentUnderTest.id)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_ESTABLISHMENT_NOT_FOUND'
     }
 
     private Contract createContract() {

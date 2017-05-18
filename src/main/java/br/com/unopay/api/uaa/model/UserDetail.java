@@ -201,4 +201,16 @@ public class UserDetail implements Serializable {
         if(user.getType() !=null)
             this.setType(user.getType());
     }
+
+    @JsonIgnore
+    public boolean isEstablishmentType(){
+        return  establishment != null;
+    }
+
+    public String establishmentId(){
+        if(isEstablishmentType()){
+            return getEstablishment().getId();
+        }
+        return null;
+    }
 }

@@ -30,6 +30,7 @@ import java.util.Date;
 @Data
 @Entity
 @ToString
+@EqualsAndHashCode(exclude = "contract")
 @Table(name = "contract_establishment")
 public class ContractEstablishment implements Serializable {
 
@@ -73,7 +74,7 @@ public class ContractEstablishment implements Serializable {
         return establishment.getId();
     }
 
-    public void createValues(Contract contract) {
+    public void setMeUpBy(Contract contract) {
         this.contract = contract;
         origin = (origin == null) ? UNOPAY : origin;
 

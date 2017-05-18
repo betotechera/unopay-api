@@ -254,6 +254,14 @@ public final class Errors {
             new UnovationError("CONTACT_ID_REQUIRED","Contact id is required.");
     public static final UnovationError CONTACT_NOT_FOUND =
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
+    public static final UnovationError CONTRACT_NOT_ACTIVATED =
+            new UnovationError("CONTRACT_NOT_ACTIVATED","Contact not activated.");
+    public static final UnovationError CONTRACT_NOT_IN_PROGRESS =
+            new UnovationError("CONTRACT_NOT_IN_PROGRESS","Contact not in progress.");
+
+
+
+
 
     /* branch */
     public static final UnovationError BRANCH_NOT_FOUND =
@@ -315,8 +323,6 @@ public final class Errors {
 
 
 
-
-
     /* credit payment account */
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =
             new UnovationError("CREDIT_REQUIRED_WHEN_UPDATE_BALANCE","Credit required when update balance");
@@ -324,9 +330,6 @@ public final class Errors {
             new UnovationError("CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE","Credit required when subtract balance");
     public static final UnovationError VALUE_GREATER_THEN_AVAILABLE_BALANCE =
             new UnovationError("VALUE_GREATER_THEN_AVAILABLE_BALANCE","Value greater then available balance");
-
-
-
 
 
 
@@ -362,11 +365,14 @@ public final class Errors {
             new UnovationError("CONTRACT_WITHOUT_CREDITS","Contact without credits.");
 
 
-
-
-
-
-
+    /* service authorize */
+    public static final UnovationError ESTABLISHMENT_DOCUMENT_REQUIRED =
+            new UnovationError("ESTABLISHMENT_DOCUMENT_REQUIRED","Establishment document required.");
+    public static final UnovationError SERVICE_AUTHORIZE_NOT_FOUND =
+            new UnovationError("SERVICE_AUTHORIZE_NOT_FOUND","Service authorize not found.");
+    public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
+            new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
+                    "Establishment not qualified for this contract.");
 
 
 

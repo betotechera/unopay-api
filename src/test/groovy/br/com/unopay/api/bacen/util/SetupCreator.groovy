@@ -4,16 +4,24 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.service.CreditPaymentAccountService
 import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
+import br.com.unopay.api.uaa.model.Group
+import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.repository.UserDetailRepository
+import br.com.unopay.api.uaa.service.GroupService
+import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -42,7 +50,7 @@ class SetupCreator {
     private HirerService hirerService
 
     @Autowired
-    private PaymentBankAccountService paymentBankAccountService
+    private EventService eventService
 
     @Autowired
     private ContractService contractService
@@ -52,6 +60,34 @@ class SetupCreator {
 
     @Autowired
     private CreditPaymentAccountService creditPaymentAccountService
+
+    @Autowired
+    private ServiceService serviceService
+
+    @Autowired
+    private ContractorInstrumentCreditService contractorInstrumentCreditService
+
+    @Autowired
+    private UserDetailService userDetailService
+
+    @Autowired
+    private GroupService groupService
+
+
+    UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()){
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        user.with {
+            establishment = establishmentUnderTest
+        }
+        createUser(user)
+    }
+
+    UserDetail createUser(user = Fixture.from(UserDetail.class).gimme("without-group")){
+        Group group = Fixture.from(Group.class).gimme("valid")
+        groupService.create(group)
+        user.addToMyGroups(group)
+        userDetailService.create(user)
+    }
 
 
     Establishment createHeadOffice() {
@@ -116,6 +152,14 @@ class SetupCreator {
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractorService.create(contractor)
     }
+
+    Event createEvent(ServiceType serviceType) {
+        Event event = Fixture.from(Event.class).gimme("valid")
+        Service serviceUnderTest = Fixture.from(Service.class).gimme("valid").with { type = serviceType; it }
+        serviceService.create(serviceUnderTest)
+        event.with { service = serviceUnderTest }
+        eventService.create(event)
+    }
     Product createProduct(code = null, paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
         Product product = Fixture.from(Product.class).gimme("valid")
         product = product.with {
@@ -179,8 +223,12 @@ class SetupCreator {
     }
 
     Contract createPersistedContract(contractorUnderTest = createContractor(),
-                                     productUnderTest = createProduct(), hirer = createHirer()){
+                                     productUnderTest = createProduct(),
+                                     hirer = createHirer(), situationUnderTest = ContractSituation.ACTIVE){
         Contract contract = createContract(contractorUnderTest, productUnderTest, hirer)
+        contract.with {
+            situation = situationUnderTest
+        }
         contractService.save(contract)
     }
 
@@ -223,7 +271,24 @@ class SetupCreator {
         instrumentCredit
     }
 
+    ServiceAuthorize createServiceAuthorize(){
+        def instrumentCreditUnderTest = createContractorInstrumentCredit()
+        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
+        serviceAuthorize.with {
+            contract = instrumentCreditUnderTest.contract
+            contractor = instrumentCreditUnderTest.contract.contractor
+            event = createEvent(instrumentCreditUnderTest.contract.serviceType.find())
+            user = createUser()
+            contractorInstrumentCredit = instrumentCreditUnderTest
+            establishment = createEstablishment()
+            it
+        }
+    }
+
     Establishment createEstablishment() {
-        null
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        accreditedNetworkService.create(establishment.network)
+        establishmentService.create(establishment)
     }
 }

@@ -12,6 +12,8 @@ public interface ContractRepository  extends UnovationFilterRepository<Contract,
 
     List<Contract> findByContractorId(String contractorId);
 
+    List<Contract> findByEstablishmentsId(String establishmentId);
+
     Optional<Contract> findById(String id);
 
 }

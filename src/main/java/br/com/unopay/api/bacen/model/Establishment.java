@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Updatable;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
@@ -42,9 +43,9 @@ import java.util.Set;
 
 @Data
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "services")
 @Table(name = "establishment")
-public class Establishment implements Serializable {
+public class Establishment implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -94,7 +95,6 @@ public class Establishment implements Serializable {
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
-    @SuppressWarnings("squid:S1192")
     @Column(name = "tax")
     @NotNull(groups = {Create.class, Update.class})
     private Double tax;
@@ -215,27 +215,10 @@ public class Establishment implements Serializable {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
     }
-
-    public void updateMe(Establishment other) {
-         administrativeContact =  other.getAdministrativeContact();
-         alternativeMail =  other.getAlternativeMail();
-         bachShipmentMail =  other.getBachShipmentMail();
-         bankAccount =  other.getBankAccount();
-         brandFlag =  other.getBrandFlag();
-         checkout =  other.getCheckout();
-         contactMail =  other.getContactMail();
-         contractUri =  other.getContractUri();
-         establishmentPhotoUri =  other.getEstablishmentPhotoUri();
-         cancellationTolerance =  other.getCancellationTolerance();
-         financierContact =  other.getFinancierContact();
-         gatheringChannel =  other.getGatheringChannel();
-         invoiceMail =  other.getInvoiceMail();
-         logoUri =  other.getLogoUri();
-         person =  other.getPerson();
-         tax =  other.getTax();
-         network =  other.getNetwork();
-         type =  other.getType();
-         operationalContact =  other.getOperationalContact();
-         technicalContact =  other.getTechnicalContact();
+    public String documentNumber(){
+        if(getPerson() != null && getPerson().getDocument() != null){
+            return getPerson().getDocument().getNumber();
+        }
+        return null;
     }
 }

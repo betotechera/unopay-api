@@ -16,7 +16,7 @@ public class ContractTemplateLoader implements TemplateLoader {
     @Override
     public void load() {
         Fixture.of(Contract.class).addTemplate("valid", new Rule(){{
-            add("code", uniqueRandom(1,200,400,5000,3000,201001));
+            add("code", uniqueRandom(1,200,400,5000,3000,201001,  88888, 556666));
             add("name", firstName());
             add("product", one(Product.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));
