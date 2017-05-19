@@ -15,6 +15,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
+import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -41,7 +42,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     def setup(){
         instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
+        def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
+        instrumentCreditUnderTest.with { contract.product.serviceType = cloned.product.serviceType }
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
         eventUnderTest = setupCreator.createEvent(contractUnderTest.serviceType.find())
@@ -120,9 +123,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def userEstablishment = setupCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         def contracts = addContractsToEstablishment(userEstablishment.establishment)
+        def instrumentCredit = createCreditInstrumentWithContract(contracts.find())
         serviceAuthorize.with {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
         }
 
         when:
@@ -138,9 +143,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def anotherContract = setupCreator
                 .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def instrumentCredit = createCreditInstrumentWithContract(anotherContract)
         serviceAuthorize.with {
             contract.id = anotherContract.id
             contractor = anotherContract.contractor
+            contractorInstrumentCredit = instrumentCredit
         }
 
         when:
@@ -306,6 +313,56 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_FOUND'
     }
 
+    void 'when user is establishment type then the contractor payment instrument credit should belongs to contract'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
+        }
+
+        when:
+        def created = service.create(userEstablishment.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.contractorInstrumentCredit.id == instrumentCredit.id
+    }
+
+    void 'when user is establishment type then the contractor payment instrument credit with another contract should not be authorized'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def instrumentCredit = createCreditInstrumentWithContract(contractUnderTest)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
+    }
+
+    private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {
+        def instrumentCredit = setupCreator
+                .createContractorInstrumentCredit(contract.contractor, contract)
+        contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
+    }
+
     private ServiceAuthorize createServiceAuthorize() {
         return Fixture.from(ServiceAuthorize.class).gimme("valid").with {
             contract = contractUnderTest
@@ -322,7 +379,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         contractEstablishment.with { establishment = establishmentUnderTest }
         def contractA = setupCreator
                 .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
-        def contractB = setupCreator.createPersistedContract(setupCreator.createContractor(), contractA.product)
+        def contractB = setupCreator.createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
         contractService.addEstablishments(contractA.id, contractEstablishment)
         contractService.addEstablishments(contractB.id, contractEstablishment.with {id = null; it })
         [contractB, contractA]

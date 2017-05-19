@@ -41,7 +41,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "product")
-@EqualsAndHashCode(exclude = {"serviceType", "issuer", "paymentRuleGroup", "accreditedNetwork"})
+@EqualsAndHashCode(exclude = {"issuer", "paymentRuleGroup", "accreditedNetwork"})
 public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
@@ -170,8 +170,4 @@ public class Product implements Serializable, Updatable {
         }
     }
 
-    @JsonIgnore
-    public boolean containsServiceType(ServiceType serviceType) {
-        return this.serviceType != null && this.serviceType.contains(serviceType);
-    }
 }

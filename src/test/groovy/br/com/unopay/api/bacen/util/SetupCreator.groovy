@@ -129,7 +129,7 @@ class SetupCreator {
 
     PaymentInstrument createPaymentInstrumentWithProduct(
             Product productUnderTest = createProduct(),
-            contractorUnderTest = createContractor(), String number = null) {
+            contractorUnderTest = createContractor(), String number = UUID.randomUUID()) {
         PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme("valid")
                 .with {
             product = productUnderTest
@@ -212,7 +212,7 @@ class SetupCreator {
     }
 
     Contract createContract(contractorUnderTest = createContractor(),
-                            productUnderTest = createProduct(), hirerUnderTest = createHirer()) {
+                            Product productUnderTest = createProduct(), hirerUnderTest = createHirer()) {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         contract.with {
             hirer = hirerUnderTest
@@ -223,7 +223,7 @@ class SetupCreator {
     }
 
     Contract createPersistedContract(contractorUnderTest = createContractor(),
-                                     productUnderTest = createProduct(),
+                                     Product productUnderTest = createProduct(),
                                      hirer = createHirer(), situationUnderTest = ContractSituation.ACTIVE){
         Contract contract = createContract(contractorUnderTest, productUnderTest, hirer)
         contract.with {
@@ -255,9 +255,11 @@ class SetupCreator {
         creditPaymentAccountService.save(creditPaymentAccount)
     }
 
-    ContractorInstrumentCredit createContractorInstrumentCredit(){
-        def contractorUnderTest = createContractor()
-        def contractUnderTest = createPersistedContract(contractorUnderTest)
+    ContractorInstrumentCredit createContractorInstrumentCredit(Contractor contractorUnderTest = createContractor(),
+                                                                Contract contractUnderTest = null){
+        if(!contractUnderTest) {
+            contractUnderTest = createPersistedContract(contractorUnderTest)
+        }
         def paymentInstrumentUnderTest = createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contractUnderTest)
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")

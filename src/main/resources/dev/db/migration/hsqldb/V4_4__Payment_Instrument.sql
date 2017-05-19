@@ -1,7 +1,7 @@
 create table payment_instrument (
     id VARCHAR(256) PRIMARY KEY,
     type varchar(50) not null,
-    payment_number varchar(20) not null,
+    payment_number varchar(256) not null,
     product_id varchar(256) not null,
     contractor_id varchar(256) not null,
     created_date DATE not null,

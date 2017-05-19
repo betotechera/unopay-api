@@ -376,6 +376,11 @@ public final class Errors {
             new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Establishment not qualified for this contract.");
 
+    public static final UnovationError CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
+            new UnovationError("CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
+                    "Credit not qualified for this contract.");
+
+
 
 
 

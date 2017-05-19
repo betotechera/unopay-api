@@ -54,6 +54,7 @@ public class ServiceAuthorizeService {
 
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
                                                     .findById(serviceAuthorize.getContractorInstrumentCredit().getId());
+        validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
         serviceAuthorize.setContractor(instrumentCredit.getContract().getContractor());
         serviceAuthorize.setContractorInstrumentCredit(instrumentCredit);
         serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
@@ -61,6 +62,11 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
+    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize, ContractorInstrumentCredit instrumentCredit) {
+        if(!Objects.equals(instrumentCredit.getContract().getId(), serviceAuthorize.getContract().getId())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
+        }
+    }
 
     private void validateEstablishmentAndContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {
