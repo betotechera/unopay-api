@@ -189,6 +189,16 @@ public final class Errors {
             new UnovationError("CONTRACTOR_NOT_FOUND","Contractor not found");
     public static final UnovationError CONTRACTOR_WITH_USERS =
             new UnovationError("CONTRACTOR_WITH_USERS"," Contractor has Users");
+    public static final UnovationError INCORRECT_CONTRACTOR_BIRTH_DATE =
+            new UnovationError("INCORRECT_CONTRACTOR_BIRTH_DATE","Incorrect contractor birth date");
+    public static final UnovationError CONTRACTOR_BIRTH_DATE_REQUIRED =
+            new UnovationError("CONTRACTOR_BIRTH_DATE_REQUIRED","Contractor birth date required.");
+    public static final UnovationError CONTRACTOR_PASSWORD_REQUIRED =
+            new UnovationError("CONTRACTOR_PASSWORD_REQUIRED","Contractor password required.");
+
+
+
+
 
     /* Partner */
     public static final UnovationError PERSON_PARTNER_ALREADY_EXISTS =

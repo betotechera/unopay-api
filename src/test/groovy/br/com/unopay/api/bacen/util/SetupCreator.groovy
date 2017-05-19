@@ -148,8 +148,8 @@ class SetupCreator {
         Hirer hirer = Fixture.from(Hirer.class).gimme("valid")
         hirerService.create(hirer)
     }
-    Contractor createContractor() {
-        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+    Contractor createContractor(String label = "valid") {
+        Contractor contractor = Fixture.from(Contractor.class).gimme(label)
         contractorService.create(contractor)
     }
 

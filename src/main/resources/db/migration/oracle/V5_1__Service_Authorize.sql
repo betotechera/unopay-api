@@ -29,6 +29,8 @@ create table service_authorize (
     constraint fk_serv_auth_user foreign key(user_id) references oauth_user_details(id)
 );
 
+ALTER TABLE physical_person_detail ADD BIRTH_DATE TIMESTAMP;
+
 insert into AUTHORITY(name, description) values('ROLE_LIST_SERVICE_AUTHORIZE','Permite listar autorizaçoes de serviços.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_SERVICE_AUTHORIZE','Permite gerenciar autorizaçoes de serviços.');
 

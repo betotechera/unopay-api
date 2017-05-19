@@ -9,16 +9,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Data
@@ -55,6 +50,10 @@ public class Contractor implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String rntrc;
 
+    @Transient
+    @JsonView({Views.Internal.class})
+    private String password;
+
     public void updateModel(Contractor hirer) {
         person.update(hirer.getPerson());
         this.rntrc  = hirer.getRntrc();
@@ -68,4 +67,18 @@ public class Contractor implements Serializable {
         }
         return null;
     }
+
+    public void setBirthDate(Date birthDate){
+        if(getPerson() != null && getPerson().getPhysicalPersonDetail() != null){
+            getPerson().getPhysicalPersonDetail().setBirthDate(birthDate);
+        }
+    }
+
+    public Date getBirthDate(){
+        if(getPerson() != null && getPerson().getPhysicalPersonDetail() != null){
+            return getPerson().getPhysicalPersonDetail().getBirthDate();
+        }
+        return null;
+    }
+
 }

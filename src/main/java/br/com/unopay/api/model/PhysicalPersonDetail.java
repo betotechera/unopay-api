@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Entity
@@ -20,6 +21,7 @@ import java.io.Serializable;
 public class PhysicalPersonDetail implements Serializable{
 
     public static final long serialVersionUID = 1L;
+
 
     public PhysicalPersonDetail(){}
 
@@ -33,6 +35,10 @@ public class PhysicalPersonDetail implements Serializable{
     @Column(name="email")
     @JsonView({Views.Public.class,Views.List.class})
     private String email;
+
+    @Column(name="birth_date")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Date birthDate;
 
     public void updateForHirer(PhysicalPersonDetail detail) {
         this.email = detail.getEmail();

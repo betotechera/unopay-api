@@ -74,6 +74,10 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
         }});
 
+        Fixture.of(Contractor.class).addTemplate("physical").inherits("valid", new Rule(){{
+            add("person", one(Person.class, "physical"));
+        }});
+
 
         Fixture.of(Institution.class).addTemplate("persisted", new Rule(){{
             add("id", "1");

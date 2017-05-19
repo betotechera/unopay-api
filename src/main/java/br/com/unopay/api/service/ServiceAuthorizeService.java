@@ -10,6 +10,7 @@ import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +63,22 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
-    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize, ContractorInstrumentCredit instrumentCredit) {
-        if(!Objects.equals(instrumentCredit.getContract().getId(), serviceAuthorize.getContract().getId())){
+    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize,
+                                                 ContractorInstrumentCredit instrumentCredit) {
+        if (!Objects.equals(instrumentCredit.getContract().getId(), serviceAuthorize.getContract().getId())) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
+        }
+        if (StringUtils.isEmpty(instrumentCredit.getPaymentInstrument().getPassword())) {
+            if (serviceAuthorize.getContractor().getBirthDate() == null) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_BIRTH_DATE_REQUIRED);
+            }
+            if (!serviceAuthorize.getContractor().getBirthDate()
+                    .equals(instrumentCredit.getContract().getContractor().getBirthDate())) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(INCORRECT_CONTRACTOR_BIRTH_DATE);
+            }
+            if (StringUtils.isEmpty(serviceAuthorize.getContractor().getPassword())) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_PASSWORD_REQUIRED);
+            }
         }
     }
 
@@ -84,7 +98,6 @@ public class ServiceAuthorizeService {
                     .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
                             .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
         }
-
     }
 
     private Optional<Establishment> findEstablishment(String establishmentId, List<Establishment> establishments) {
@@ -108,9 +121,8 @@ public class ServiceAuthorizeService {
         serviceAuthorize.setContract(contract);
     }
 
-
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
-        return serviceAuthorize.orElseThrow(()-> UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
+        return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
     }
 }

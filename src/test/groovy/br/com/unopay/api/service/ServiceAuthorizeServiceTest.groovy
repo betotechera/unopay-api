@@ -33,6 +33,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
 
+    @Autowired
+    PaymentInstrumentService paymentInstrumentService
+
     Contractor contractorUnderTest
     Contract contractUnderTest
     UserDetail userUnderTest
@@ -51,6 +54,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         userUnderTest = setupCreator.createUser()
         establishmentUnderTest = setupCreator.createEstablishment()
         Integer.mixin(TimeCategory)
+        Date.mixin(TimeCategory)
     }
 
     void 'new service authorize should be created'(){
@@ -357,6 +361,62 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
+    void 'given a payment instrument without password then birth date of the contractor should be informed'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
+        serviceAuthorize.with {
+            contractor.person.physicalPersonDetail.birthDate = null
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BIRTH_DATE_REQUIRED'
+    }
+
+    void 'given a payment instrument without password then birth date of the contractor should be right'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
+        serviceAuthorize.with {
+            contractor.birthDate += 1.year
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INCORRECT_CONTRACTOR_BIRTH_DATE'
+    }
+
+
+
+    void 'given a payment instrument without password then the new password should be required'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
+        serviceAuthorize.with {
+            contractor.password = null
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACTOR_PASSWORD_REQUIRED'
+    }
+
     private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {
         def instrumentCredit = setupCreator
                 .createContractorInstrumentCredit(contract.contractor, contract)
@@ -383,6 +443,26 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         contractService.addEstablishments(contractA.id, contractEstablishment)
         contractService.addEstablishments(contractB.id, contractEstablishment.with {id = null; it })
         [contractB, contractA]
+    }
+
+    private Contract addPhysicalContractorToContract(Contract contract) {
+        Contractor contractor = setupCreator.createContractor("physical")
+        contract.contractor = contractor
+        contractService.save(contract)
+    }
+
+    private ServiceAuthorize physicalContractorWithoutPassword(Contract contractParam, userEstablishment) {
+        def contractResult = addPhysicalContractorToContract(contractParam)
+        def instrumentCredit = createCreditInstrumentWithContract(contractResult)
+        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = contractResult
+            establishment = userEstablishment.establishment
+            contractor = contractResult.contractor
+            contractorInstrumentCredit = instrumentCredit
+        }
+        serviceAuthorize
     }
 
 
