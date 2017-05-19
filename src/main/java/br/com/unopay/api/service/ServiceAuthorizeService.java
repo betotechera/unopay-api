@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.model.PersonType;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -13,6 +13,7 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,8 @@ public class ServiceAuthorizeService {
     private UserDetailService userDetailService;
     private EstablishmentService establishmentService;
     private ContractService contractService;
+    private PaymentInstrumentService paymentInstrumentService;
+
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -37,13 +40,15 @@ public class ServiceAuthorizeService {
                                    EventService eventService,
                                    UserDetailService userDetailService,
                                    EstablishmentService establishmentService,
-                                   ContractService contractService) {
+                                   ContractService contractService,
+                                   PaymentInstrumentService paymentInstrumentService) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
         this.eventService = eventService;
         this.userDetailService = userDetailService;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
+        this.paymentInstrumentService = paymentInstrumentService;
     }
 
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
@@ -82,8 +87,11 @@ public class ServiceAuthorizeService {
             if (StringUtils.isEmpty(serviceAuthorize.getContractor().getPassword())) {
                 throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_PASSWORD_REQUIRED);
             }
+            paymentInstrumentService.changePassword(instrumentCredit
+                    .getPaymentInstrumentId(), serviceAuthorize.getContractor().getPassword());
         }
     }
+
 
     private void validateEstablishmentAndContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {

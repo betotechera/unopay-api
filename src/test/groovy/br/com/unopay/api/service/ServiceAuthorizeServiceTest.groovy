@@ -17,6 +17,7 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
 
 class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
@@ -35,6 +36,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     @Autowired
     PaymentInstrumentService paymentInstrumentService
+
+    @Autowired
+    PasswordEncoder passwordEncoder
 
     Contractor contractorUnderTest
     Contract contractUnderTest
@@ -421,9 +425,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         result.id != null
     }
 
-
-
-    void 'given a payment instrument without password then the new password should be required'(){
+    void 'given a payment instrument without password then the password should be required'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
@@ -463,6 +465,48 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'CONTRACTOR_PASSWORD_REQUIRED'
+    }
+
+    void 'given a payment instrument without password when password of the legal contractor should update instrument password'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+        def expectedPassword = '1235555AAAA'
+        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
+            contractor.password = expectedPassword
+        }
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+        def result = paymentInstrumentService.findById(instrumentCredit.paymentInstrument.id)
+
+        then:
+        passwordEncoder.matches(expectedPassword, result.password)
+    }
+
+    void 'given a payment instrument without password when password of the physical contractor should update instrument password'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+        def expectedPassword = '1235555AAAA'
+        def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
+        serviceAuthorize.with {
+            contractor.password = expectedPassword
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def result = paymentInstrumentService.findById(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId)
+        passwordEncoder.matches(expectedPassword, result.password)
     }
 
     private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {

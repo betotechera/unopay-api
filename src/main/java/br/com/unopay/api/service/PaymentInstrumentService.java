@@ -1,7 +1,9 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.PaymentInstrumentRepository;
 import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,14 +28,17 @@ public class PaymentInstrumentService {
     private PaymentInstrumentRepository repository;
     private ProductService productService;
     private ContractorService contractorService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public PaymentInstrumentService(PaymentInstrumentRepository repository,
                                     ProductService productService,
-                                    ContractorService contractorService) {
+                                    ContractorService contractorService,
+                                    PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.productService = productService;
         this.contractorService = contractorService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PaymentInstrument save(PaymentInstrument instrument) {
@@ -66,6 +72,13 @@ public class PaymentInstrumentService {
             log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId());
             throw UnovationExceptions.conflict().withErrors(EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS);
         }
+    }
+
+    public void changePassword(String id, String password){
+        String encodedPassword = passwordEncoder.encode(password);
+        PaymentInstrument current = findById(id);
+        current.setPassword(encodedPassword);
+        repository.save(current);
     }
 
     public void delete(String id) {
