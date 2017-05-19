@@ -379,7 +379,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACTOR_BIRTH_DATE_REQUIRED'
     }
 
-    void 'given a payment instrument without password then birth date of the contractor should be right'(){
+    void 'given a payment instrument without password then birth date of the physical contractor should be right'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
@@ -397,6 +397,30 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'INCORRECT_CONTRACTOR_BIRTH_DATE'
     }
 
+    void 'given a payment instrument without password then birth date of the legal contractor should not be required'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
+            contractor.password = "123456"
+        }
+
+        when:
+        def created = service.create(userEstablishment.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.id != null
+    }
+
 
 
     void 'given a payment instrument without password then the new password should be required'(){
@@ -406,6 +430,30 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
+            contractor.password = null
+        }
+
+        when:
+        service.create(userEstablishment.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CONTRACTOR_PASSWORD_REQUIRED'
+    }
+
+    void 'given a payment instrument without password then password of the legal contractor should be required'(){
+        given:
+        def userEstablishment = setupCreator.createEstablishmentUser()
+        def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
+
+        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
             contractor.password = null
         }
 

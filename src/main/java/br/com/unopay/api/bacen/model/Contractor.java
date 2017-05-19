@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.PersonType;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -79,6 +80,10 @@ public class Contractor implements Serializable {
             return getPerson().getPhysicalPersonDetail().getBirthDate();
         }
         return null;
+    }
+
+    public boolean physicalPerson(){
+        return PersonType.PHYSICAL.equals(getPerson().getType());
     }
 
 }

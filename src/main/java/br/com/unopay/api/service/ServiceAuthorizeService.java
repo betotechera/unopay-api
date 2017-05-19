@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.PersonType;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -69,11 +70,13 @@ public class ServiceAuthorizeService {
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
         }
         if (StringUtils.isEmpty(instrumentCredit.getPaymentInstrument().getPassword())) {
-            if (serviceAuthorize.getContractor().getBirthDate() == null) {
+            Contract contract = instrumentCredit.getContract();
+
+            if (contract.getContractor().physicalPerson() && serviceAuthorize.getContractor().getBirthDate() == null) {
                 throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_BIRTH_DATE_REQUIRED);
             }
-            if (!serviceAuthorize.getContractor().getBirthDate()
-                    .equals(instrumentCredit.getContract().getContractor().getBirthDate())) {
+            if (contract.getContractor().physicalPerson() && !serviceAuthorize.getContractor().getBirthDate()
+                    .equals(contract.getContractor().getBirthDate())) {
                 throw UnovationExceptions.unprocessableEntity().withErrors(INCORRECT_CONTRACTOR_BIRTH_DATE);
             }
             if (StringUtils.isEmpty(serviceAuthorize.getContractor().getPassword())) {
