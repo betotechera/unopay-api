@@ -23,6 +23,7 @@ import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.api.uaa.service.GroupService
 import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
@@ -119,8 +120,8 @@ class SetupCreator {
     }
 
     PaymentInstrument createPaymentInstrument(String label) {
-        return Fixture.from(PaymentInstrument.class).gimme(label)
-                .with {
+        PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme(label)
+        paymentInstrument.with {
             product = createProduct()
             contractor = createContractor()
             it
@@ -131,7 +132,7 @@ class SetupCreator {
             Product productUnderTest = createProduct(),
             contractorUnderTest = createContractor(), String number = UUID.randomUUID()) {
         PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme("valid")
-                .with {
+        paymentInstrument.with {
             product = productUnderTest
             contractor = contractorUnderTest
             it

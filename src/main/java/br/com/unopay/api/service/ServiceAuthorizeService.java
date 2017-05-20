@@ -90,6 +90,10 @@ public class ServiceAuthorizeService {
             paymentInstrumentService.changePassword(instrumentCredit
                     .getPaymentInstrumentId(), serviceAuthorize.getContractor().getPassword());
         }
+        if(!paymentInstrumentService.passwordMatches(instrumentCredit
+                .getPaymentInstrumentId(), serviceAuthorize.getContractor().getPassword())){
+            throw UnovationExceptions.unauthorized();
+        }
     }
 
 

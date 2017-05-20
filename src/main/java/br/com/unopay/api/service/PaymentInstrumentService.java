@@ -81,6 +81,11 @@ public class PaymentInstrumentService {
         repository.save(current);
     }
 
+    public boolean passwordMatches(String id, String password){
+        PaymentInstrument current = findById(id);
+        return passwordEncoder.matches(password == null ? "" : password, current.getPassword());
+    }
+
     public void delete(String id) {
         findById(id);
         repository.delete(id);
