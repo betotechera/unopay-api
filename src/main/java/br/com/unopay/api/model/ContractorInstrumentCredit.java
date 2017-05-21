@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -222,6 +223,20 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_ALREADY_CANCELED);
         }
         setSituation(CreditSituation.CANCELED);
+    }
+
+    public boolean paymentInstrumentWithPassword(){
+        if(getPaymentInstrument() != null){
+            return !StringUtils.isEmpty(getPaymentInstrument().getPassword());
+        }
+        return false;
+    }
+
+    public boolean contractIs(String contractId){
+        if(getContract() != null) {
+         return  Objects.equals(getContract().getId(), contractId);
+        }
+        return false;
     }
 
 }

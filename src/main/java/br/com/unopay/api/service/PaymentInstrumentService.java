@@ -81,6 +81,12 @@ public class PaymentInstrumentService {
         repository.save(current);
     }
 
+    public void checkPassword(String paymentInstrumentId, String password) {
+        if(!passwordMatches(paymentInstrumentId,password)){
+            throw UnovationExceptions.unauthorized();
+        }
+    }
+
     public boolean passwordMatches(String id, String password){
         PaymentInstrument current = findById(id);
         return passwordEncoder.matches(password == null ? "" : password, current.getPassword());

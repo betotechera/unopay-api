@@ -5,7 +5,6 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -13,7 +12,6 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,15 +51,19 @@ public class ServiceAuthorizeService {
 
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        validateEstablishmentAndContract(serviceAuthorize, currentUser);
+        Contract contract = getValidContract(serviceAuthorize);
+        checkEstablishmentDocumentWhenRequired(serviceAuthorize, currentUser);
+        String establishmentId = getCurrentEstablishmentId(serviceAuthorize, currentUser);
+        checkEstablishmentRestriction(contract, establishmentId);
         defineEstablishment(serviceAuthorize, currentUser);
-        defineContract(serviceAuthorize);
+        serviceAuthorize.setContract(contract);
         serviceAuthorize.setUser(currentUser);
-
-
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
-                                                    .findById(serviceAuthorize.getContractorInstrumentCredit().getId());
+                                                            .findById(serviceAuthorize.contractorInstrumentCreditId());
         validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
+        updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
+        paymentInstrumentService
+                .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
         serviceAuthorize.setContractor(instrumentCredit.getContract().getContractor());
         serviceAuthorize.setContractorInstrumentCredit(instrumentCredit);
         serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
@@ -69,50 +71,66 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
-    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize,
-                                                 ContractorInstrumentCredit instrumentCredit) {
-        if (!Objects.equals(instrumentCredit.getContract().getId(), serviceAuthorize.getContract().getId())) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
-        }
-        if (StringUtils.isEmpty(instrumentCredit.getPaymentInstrument().getPassword())) {
-            Contract contract = instrumentCredit.getContract();
-
-            if (contract.getContractor().physicalPerson() && serviceAuthorize.getContractor().getBirthDate() == null) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_BIRTH_DATE_REQUIRED);
-            }
-            if (contract.getContractor().physicalPerson() && !serviceAuthorize.getContractor().getBirthDate()
-                    .equals(contract.getContractor().getBirthDate())) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(INCORRECT_CONTRACTOR_BIRTH_DATE);
-            }
-            if (StringUtils.isEmpty(serviceAuthorize.getContractor().getPassword())) {
-                throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_PASSWORD_REQUIRED);
-            }
-            paymentInstrumentService.changePassword(instrumentCredit
-                    .getPaymentInstrumentId(), serviceAuthorize.getContractor().getPassword());
-        }
-        if(!paymentInstrumentService.passwordMatches(instrumentCredit
-                .getPaymentInstrumentId(), serviceAuthorize.getContractor().getPassword())){
-            throw UnovationExceptions.unauthorized();
-        }
-    }
-
-
-    private void validateEstablishmentAndContract(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+    private void checkEstablishmentDocumentWhenRequired(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
         }
+    }
+
+    private void checkEstablishmentRestriction(Contract contract, String establishmentId) {
+        if (contract.withEstablishmentRestriction()) {
+            checkEstablishmentIn(establishmentId, contract.getEstablishments());
+        }
+    }
+
+    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize,
+                                                 ContractorInstrumentCredit instrumentCredit) {
+        if (!instrumentCredit.contractIs(serviceAuthorize.contractId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
+        }
+    }
+
+    private void updateValidPasswordWhenRequired(ServiceAuthorize serviceAuthorize,
+                                                 ContractorInstrumentCredit instrumentCredit) {
+        if (!instrumentCredit.paymentInstrumentWithPassword()) {
+            validateRequiredPasswordInformation(serviceAuthorize, instrumentCredit.getContract());
+            paymentInstrumentService.changePassword(instrumentCredit
+                    .getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
+        }
+    }
+
+    private void validateRequiredPasswordInformation(ServiceAuthorize serviceAuthorize, Contract contract) {
+        if (contract.getContractor().physicalPerson() && serviceAuthorize.getContractor().getBirthDate() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_BIRTH_DATE_REQUIRED);
+        }
+        if (contract.getContractor().physicalPerson() && !serviceAuthorize.getContractor().getBirthDate()
+                .equals(contract.getContractor().getBirthDate())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(INCORRECT_CONTRACTOR_BIRTH_DATE);
+        }
+        if (StringUtils.isEmpty(serviceAuthorize.instrumentPassword())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_PASSWORD_REQUIRED);
+        }
+    }
+
+    private Contract getValidContract(ServiceAuthorize serviceAuthorize) {
+        Contract contract = contractService.findById(serviceAuthorize.contractId());
+        contract.validateActive();
+        contract.validateContractor(serviceAuthorize.getContractor());
+        return contract;
+    }
+
+    private String getCurrentEstablishmentId(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         String establishmentId = serviceAuthorize.establishmentId();
         if (currentUser.isEstablishmentType()) {
             establishmentId = currentUser.establishmentId();
         }
-        Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
-        contract.validateActive();
-        contract.validContractor(serviceAuthorize.getContractor());
-        if (contract.withEstablishmentRestriction()) {
-            findEstablishment(establishmentId, contract.getEstablishments())
-                    .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
-                            .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
-        }
+        return establishmentId;
+    }
+
+    private void checkEstablishmentIn(String establishmentId, List<Establishment> establishments) {
+        findEstablishment(establishmentId, establishments)
+                .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
+                        .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
     }
 
     private Optional<Establishment> findEstablishment(String establishmentId, List<Establishment> establishments) {
@@ -129,11 +147,6 @@ public class ServiceAuthorizeService {
         serviceAuthorize
                 .setEstablishment(establishmentService
                         .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
-    }
-
-    private void defineContract(ServiceAuthorize serviceAuthorize) {
-        Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
-        serviceAuthorize.setContract(contract);
     }
 
     public ServiceAuthorize findById(String id) {

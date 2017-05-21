@@ -47,7 +47,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     Event eventUnderTest
     ContractorInstrumentCredit instrumentCreditUnderTest
     Establishment establishmentUnderTest
-    String instrumentPasswordUnderTest
 
     def setup(){
         instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
@@ -139,7 +138,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = instrumentPasswordUnderTest
+            contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
 
         when:
@@ -160,7 +159,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             contract.id = anotherContract.id
             contractor = anotherContract.contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = instrumentPasswordUnderTest
+            contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
 
         when:
@@ -338,7 +337,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = instrumentPasswordUnderTest
+            contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
 
         when:
@@ -420,7 +419,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = "123456"
+            contractorInstrumentCredit.paymentInstrument.password = "123456"
         }
 
         when:
@@ -443,7 +442,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = instrumentPasswordUnderTest
+            contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
 
         when:
@@ -466,7 +465,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = 'otherPassword'
+            contractorInstrumentCredit.paymentInstrument.password = 'otherPassword'
         }
 
         when:
@@ -483,7 +482,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
-            contractor.password = null
+            contractorInstrumentCredit.paymentInstrument.password = null
         }
 
         when:
@@ -491,7 +490,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CONTRACTOR_PASSWORD_REQUIRED'
+        assert ex.errors.first().logref == 'INSTRUMENT_PASSWORD_REQUIRED'
     }
 
     void 'given a payment instrument without password then password of the legal contractor should be required'(){
@@ -507,7 +506,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = null
+            contractorInstrumentCredit.paymentInstrument.password = null
         }
 
         when:
@@ -515,7 +514,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CONTRACTOR_PASSWORD_REQUIRED'
+        assert ex.errors.first().logref == 'INSTRUMENT_PASSWORD_REQUIRED'
     }
 
     void 'given a payment instrument without password when password of the legal contractor should update instrument password'(){
@@ -532,7 +531,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
             contractorInstrumentCredit = instrumentCredit
-            contractor.password = expectedPassword
+            contractorInstrumentCredit.paymentInstrument.password = expectedPassword
         }
         when:
         service.create(userEstablishment.email, serviceAuthorize)
@@ -542,14 +541,14 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         passwordEncoder.matches(expectedPassword, result.password)
     }
 
-    void 'given a payment instrument without password when password of the physical contractor should update instrument password'(){
+    void 'given a payment instrument without password when password of the physical contractor present should update instrument password'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def establishmentContracts = addContractsToEstablishment(userEstablishment.establishment)
         def expectedPassword = '1235555AAAA'
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
-            contractor.password = expectedPassword
+            contractorInstrumentCredit.paymentInstrument.password = expectedPassword
         }
 
         when:
@@ -563,28 +562,22 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {
         def instrumentCredit = setupCreator
                 .createContractorInstrumentCredit(contract.contractor, contract)
-        encodeInstrumentPassword(instrumentCredit)
+        setupCreator.encodeInstrumentPassword(instrumentCredit)
+        def password = instrumentCredit.paymentInstrument.password
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
+        instrumentCredit.with { paymentInstrument.password = password; it }
     }
 
-    private void encodeInstrumentPassword(ContractorInstrumentCredit instrumentCredit) {
-        instrumentPasswordUnderTest = instrumentCredit.paymentInstrument.password
-        instrumentCredit.paymentInstrument.with {
-            password = passwordEncoder.encode(instrumentPasswordUnderTest)
-        }
-        paymentInstrumentService.update(instrumentCredit.paymentInstrumentId,
-                instrumentCredit.paymentInstrument)
-    }
+
 
     private ServiceAuthorize createServiceAuthorize() {
-        encodeInstrumentPassword(instrumentCreditUnderTest)
+        setupCreator.encodeInstrumentPassword(instrumentCreditUnderTest)
         return Fixture.from(ServiceAuthorize.class).gimme("valid").with {
             contract = contractUnderTest
             contractor = contractorUnderTest
             event = eventUnderTest
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = establishmentUnderTest
-            contractor.password = instrumentPasswordUnderTest
             it
         }
     }

@@ -247,7 +247,7 @@ public class Contract implements Serializable {
         return Objects.equals(this.contractor.getDocumentNumber(), contractor.getDocumentNumber());
     }
 
-    public void validContractor(Contractor contractor){
+    public void validateContractor(Contractor contractor){
         if(!containsContractor(contractor)){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }

@@ -149,9 +149,23 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public String instrumentPassword(){
+        if(getContractorInstrumentCredit() != null && getContractorInstrumentCredit().getPaymentInstrument() != null){
+            return getContractorInstrumentCredit().getPaymentInstrument().getPassword();
+        }
+        return null;
+    }
+
     public String establishmentId(){
         if(getEstablishment() != null){
             return getEstablishment().getId();
+        }
+        return null;
+    }
+
+    public String contractorInstrumentCreditId(){
+        if(getContractorInstrumentCredit() != null){
+            return getContractorInstrumentCredit().getId();
         }
         return null;
     }

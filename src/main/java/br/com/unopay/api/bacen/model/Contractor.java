@@ -58,10 +58,6 @@ public class Contractor implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String rntrc;
 
-    @Transient
-    @JsonView({Views.Internal.class})
-    private String password;
-
     public void updateModel(Contractor hirer) {
         person.update(hirer.getPerson());
         this.rntrc  = hirer.getRntrc();

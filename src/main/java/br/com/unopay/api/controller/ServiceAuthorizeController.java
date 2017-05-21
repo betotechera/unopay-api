@@ -38,7 +38,7 @@ public class ServiceAuthorizeController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Public.class})
     @ResponseStatus(CREATED)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/service-authorizations", method = POST)

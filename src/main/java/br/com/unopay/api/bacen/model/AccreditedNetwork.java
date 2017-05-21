@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import static javax.persistence.EnumType.STRING;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -32,6 +33,7 @@ import java.util.Set;
 @Data
 @Entity
 @EqualsAndHashCode(exclude = {"paymentRuleGroups"})
+@ToString(exclude = "paymentRuleGroups")
 @Table(name = "accredited_network")
 public class AccreditedNetwork implements Serializable {
 

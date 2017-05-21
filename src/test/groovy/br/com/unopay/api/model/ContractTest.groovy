@@ -33,7 +33,7 @@ class ContractTest extends FixtureApplicationTest {
         }
 
         when:
-        contract.validContractor(contractor)
+        contract.validateContractor(contractor)
 
         then:
         def ex = thrown(UnprocessableEntityException)

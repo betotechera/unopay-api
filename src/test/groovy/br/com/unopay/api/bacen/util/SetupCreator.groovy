@@ -74,6 +74,9 @@ class SetupCreator {
     @Autowired
     private GroupService groupService
 
+    @Autowired
+    private PasswordEncoder passwordEncoder
+
 
     UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()){
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
@@ -276,6 +279,8 @@ class SetupCreator {
 
     ServiceAuthorize createServiceAuthorize(){
         def instrumentCreditUnderTest = createContractorInstrumentCredit()
+        encodeInstrumentPassword(instrumentCreditUnderTest)
+        def password = instrumentCreditUnderTest.paymentInstrument.password
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
         serviceAuthorize.with {
@@ -285,7 +290,20 @@ class SetupCreator {
             user = createUser()
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = createEstablishment()
+            contractorInstrumentCredit.paymentInstrument.password = password
             it
+        }
+    }
+
+    void encodeInstrumentPassword(ContractorInstrumentCredit instrumentCredit) {
+        def instrumentPasswordUnderTest = instrumentCredit.paymentInstrument.password
+        instrumentCredit.paymentInstrument.with {
+            password = passwordEncoder.encode(instrumentPasswordUnderTest)
+        }
+        paymentInstrumentService.update(instrumentCredit.paymentInstrumentId,
+                instrumentCredit.paymentInstrument)
+        instrumentCredit.paymentInstrument.with {
+            password = instrumentPasswordUnderTest
         }
     }
 

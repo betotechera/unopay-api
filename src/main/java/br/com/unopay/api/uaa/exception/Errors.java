@@ -193,8 +193,8 @@ public final class Errors {
             new UnovationError("INCORRECT_CONTRACTOR_BIRTH_DATE","Incorrect contractor birth date");
     public static final UnovationError CONTRACTOR_BIRTH_DATE_REQUIRED =
             new UnovationError("CONTRACTOR_BIRTH_DATE_REQUIRED","Contractor birth date required.");
-    public static final UnovationError CONTRACTOR_PASSWORD_REQUIRED =
-            new UnovationError("CONTRACTOR_PASSWORD_REQUIRED","Contractor password required.");
+    public static final UnovationError INSTRUMENT_PASSWORD_REQUIRED =
+            new UnovationError("INSTRUMENT_PASSWORD_REQUIRED","Contractor password required.");
 
 
 
