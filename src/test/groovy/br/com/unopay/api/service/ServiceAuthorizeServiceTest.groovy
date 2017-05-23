@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
@@ -73,6 +74,48 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    @Unroll
+    void 'service #serviceType should be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            serviceType = serviceTypeUnderTest
+        }
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.id != null
+
+        where:
+        _|serviceTypeUnderTest
+        _|ServiceType.FUEL_ALLOWANCE
+        _|ServiceType.FREIGHT_RECEIPT
+    }
+
+    @Unroll
+    void 'service #serviceType should not be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            serviceType = serviceTypeUnderTest
+        }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'SERVICE_NOT_ACCEPTABLE'
+
+        where:
+        _|serviceTypeUnderTest
+        _|ServiceType.FREIGHT
+        _|ServiceType.ELECTRONIC_TOLL
     }
 
     void 'service authorize should be create with current user'(){
@@ -578,6 +621,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             event = eventUnderTest
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = establishmentUnderTest
+            serviceType = ServiceType.FUEL_ALLOWANCE
             it
         }
     }

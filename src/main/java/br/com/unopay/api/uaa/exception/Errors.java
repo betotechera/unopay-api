@@ -390,6 +390,12 @@ public final class Errors {
             new UnovationError("CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Credit not qualified for this contract.");
 
+    public static final UnovationError SERVICE_NOT_ACCEPTABLE =
+            new UnovationError("SERVICE_NOT_ACCEPTABLE",
+                    "Service not acceptable.");
+
+
+
 
 
 

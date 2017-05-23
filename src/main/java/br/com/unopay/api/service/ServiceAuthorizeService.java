@@ -51,8 +51,9 @@ public class ServiceAuthorizeService {
 
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        Contract contract = getValidContract(serviceAuthorize);
+        serviceAuthorize.validateServiceType();
         serviceAuthorize.checkEstablishmentDocumentWhenRequired(currentUser);
+        Contract contract = getValidContract(serviceAuthorize);
         String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
         checkEstablishmentRestriction(contract, establishmentId);
         defineEstablishment(serviceAuthorize, currentUser);
