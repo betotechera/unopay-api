@@ -68,6 +68,7 @@ public class ServiceAuthorizeService {
                                                             .findById(serviceAuthorize.contractorInstrumentCreditId());
         validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
         updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
+
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
         return instrumentCredit;

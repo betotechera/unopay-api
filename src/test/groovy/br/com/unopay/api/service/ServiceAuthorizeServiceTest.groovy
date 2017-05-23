@@ -51,7 +51,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     def setup(){
         instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
-
         def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
         instrumentCreditUnderTest.with { contract.product.serviceType = cloned.product.serviceType }
