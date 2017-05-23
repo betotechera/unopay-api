@@ -11,7 +11,9 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
@@ -39,6 +41,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     @Autowired
     PaymentInstrumentService paymentInstrumentService
 
+
+    @Autowired
+    ContractorInstrumentCreditRepository contractorInstrumentCreditRepository
+
     @Autowired
     PasswordEncoder passwordEncoder
 
@@ -50,10 +56,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     Establishment establishmentUnderTest
 
     def setup(){
-        instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
-        def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
-        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
-        instrumentCreditUnderTest.with { contract.product.serviceType = cloned.product.serviceType }
+        instrumentCreditUnderTest = createInstrumentCredit()
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
         eventUnderTest = setupCreator.createEvent(contractUnderTest.serviceType.find())
@@ -62,6 +65,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         Integer.mixin(TimeCategory)
         Date.mixin(TimeCategory)
     }
+
+
 
     void 'new service authorize should be created'(){
         given:
@@ -73,6 +78,41 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'given a expired credit should not be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest.with { expirationDateTime = 1.day.ago; it })
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_EXPIRED'
+    }
+
+    @Unroll
+    void 'given a credit #situationUnderTest should not be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest.with { situation = situationUnderTest; it })
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_UNAVAILABLE'
+
+        where:
+        _|situationUnderTest
+        _|CreditSituation.CANCELED
+        _|CreditSituation.EXPIRED
+        _|CreditSituation.PROCESSING
+        _|CreditSituation.TO_COLLECT
+        _|CreditSituation.CONFIRMED
     }
 
     @Unroll
@@ -657,5 +697,12 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         serviceAuthorize
     }
 
+    private ContractorInstrumentCredit createInstrumentCredit() {
+        def instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
+        def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
+        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
+        instrumentCreditUnderTest.with { contract.product.serviceType = cloned.product.serviceType }
+        instrumentCreditUnderTest
+    }
 
 }

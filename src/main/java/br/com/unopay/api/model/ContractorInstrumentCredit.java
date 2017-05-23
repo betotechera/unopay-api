@@ -2,6 +2,8 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_EXPIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
 import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
@@ -239,4 +241,12 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         return false;
     }
 
+    public void validate() {
+        if(new Date().after(expirationDateTime)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_EXPIRED);
+        }
+        if(!CreditSituation.AVAILABLE.equals(situation)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_UNAVAILABLE);
+        }
+    }
 }
