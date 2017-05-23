@@ -52,29 +52,24 @@ public class ServiceAuthorizeService {
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         Contract contract = getValidContract(serviceAuthorize);
-        checkEstablishmentDocumentWhenRequired(serviceAuthorize, currentUser);
-        String establishmentId = getCurrentEstablishmentId(serviceAuthorize, currentUser);
+        serviceAuthorize.checkEstablishmentDocumentWhenRequired(currentUser);
+        String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
         checkEstablishmentRestriction(contract, establishmentId);
         defineEstablishment(serviceAuthorize, currentUser);
-        serviceAuthorize.setContract(contract);
-        serviceAuthorize.setUser(currentUser);
+        ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
+        serviceAuthorize.setReferences(currentUser, instrumentCredit);
+        serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
+        return repository.save(serviceAuthorize);
+    }
+
+    private ContractorInstrumentCredit getValidContractorInstrumentCredit(ServiceAuthorize serviceAuthorize) {
         ContractorInstrumentCredit instrumentCredit = instrumentCreditService
                                                             .findById(serviceAuthorize.contractorInstrumentCreditId());
         validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
         updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
-        serviceAuthorize.setContractor(instrumentCredit.getContract().getContractor());
-        serviceAuthorize.setContractorInstrumentCredit(instrumentCredit);
-        serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
-
-        return repository.save(serviceAuthorize);
-    }
-
-    private void checkEstablishmentDocumentWhenRequired(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        if (!currentUser.isEstablishmentType() && !serviceAuthorize.withEstablishmentDocument()) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
-        }
+        return instrumentCredit;
     }
 
     private void checkEstablishmentRestriction(Contract contract, String establishmentId) {
@@ -117,14 +112,6 @@ public class ServiceAuthorizeService {
         contract.validateActive();
         contract.validateContractor(serviceAuthorize.getContractor());
         return contract;
-    }
-
-    private String getCurrentEstablishmentId(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        String establishmentId = serviceAuthorize.establishmentId();
-        if (currentUser.isEstablishmentType()) {
-            establishmentId = currentUser.establishmentId();
-        }
-        return establishmentId;
     }
 
     private void checkEstablishmentIn(String establishmentId, List<Establishment> establishments) {

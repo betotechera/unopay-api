@@ -4,9 +4,11 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_DOCUMENT_REQUIRED;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -172,6 +174,27 @@ public class ServiceAuthorize implements Serializable {
 
     public boolean withEstablishmentDocument(){
         return establishmentDocumentNumber() != null;
+    }
+
+    public void setReferences(UserDetail currentUser, ContractorInstrumentCredit instrumentCredit) {
+        setContractorInstrumentCredit(instrumentCredit);
+        setContractor(instrumentCredit.getContract().getContractor());
+        setContract(instrumentCredit.getContract());
+        setUser(currentUser);
+    }
+
+    public void checkEstablishmentDocumentWhenRequired(UserDetail currentUser) {
+        if (!currentUser.isEstablishmentType() && !withEstablishmentDocument()) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
+        }
+    }
+
+    public String getCurrentEstablishmentId(UserDetail currentUser) {
+        String establishmentId = establishmentId();
+        if (currentUser.isEstablishmentType()) {
+            establishmentId = currentUser.establishmentId();
+        }
+        return establishmentId;
     }
 
 }
