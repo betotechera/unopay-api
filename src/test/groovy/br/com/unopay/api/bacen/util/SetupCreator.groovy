@@ -276,7 +276,8 @@ class SetupCreator {
         serviceAuthorize.with {
             contract = instrumentCreditUnderTest.contract
             contractor = instrumentCreditUnderTest.contract.contractor
-            event = createEvent(instrumentCreditUnderTest.contract.serviceType.find())
+            event = createEvent(ServiceType.FUEL_ALLOWANCE)
+            serviceType = ServiceType.FUEL_ALLOWANCE
             user = createUser()
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = createEstablishment()

@@ -140,7 +140,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         }
 
         when:
-
         def created  = service.create(userUnderTest.email, serviceAuthorize)
         def result = service.findById(created.id)
 

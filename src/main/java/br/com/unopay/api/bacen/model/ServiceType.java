@@ -4,7 +4,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum ServiceType implements DescriptableEnum {
 
-    FUEL_ALLOWANCE("Vale Abastecimento"), 
+    FUEL_ALLOWANCE("Vale Abastecimento"),
     FREIGHT("Frete"), 
     FREIGHT_RECEIPT("Quitaçao de Frete"), 
     ELECTRONIC_TOLL("Pedágio eletrônico");
