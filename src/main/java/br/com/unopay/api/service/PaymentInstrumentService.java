@@ -44,6 +44,7 @@ public class PaymentInstrumentService {
     public PaymentInstrument save(PaymentInstrument instrument) {
         try {
             validateReference(instrument);
+            instrument.setMeUp();
             instrument.validate();
             return repository.save(instrument);
         }catch (DataIntegrityViolationException e){

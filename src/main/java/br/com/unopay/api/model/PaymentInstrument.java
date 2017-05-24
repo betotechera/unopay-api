@@ -92,6 +92,10 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonIgnore
     private Integer version;
 
+    public void setMeUp(){
+        createdDate = new Date();
+    }
+
     public void validate(){
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);

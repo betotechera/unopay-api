@@ -37,6 +37,9 @@ class SpockApplicationTests extends FixtureApplicationTest{
     @Autowired
     protected Flyway flyway
 
+    @Autowired
+    protected JpaProcessor jpaProcessor
+
     protected MockMvc mvc
 
     void setup() {

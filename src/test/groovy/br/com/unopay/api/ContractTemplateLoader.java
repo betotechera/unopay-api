@@ -15,8 +15,8 @@ public class ContractTemplateLoader implements TemplateLoader {
 
     @Override
     public void load() {
-        Fixture.of(Contract.class).addTemplate("valid", new Rule(){{
-            add("code", uniqueRandom(1,200,400,5000,3000,201001,  88888, 556666));
+        Fixture.of(Contract.class).addTemplate("valid", new Rule() {{
+            add("code", uniqueRandom(1, 200, 400, 5000, 3000, 201001, 88888, 556666));
             add("name", firstName());
             add("product", one(Product.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));
@@ -31,12 +31,12 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("documentNumberInvoice", random("SDFDSF65464SDF646SDF", "AAAAAADBBBBBBBBBB654D87498D9S7F97SDF"));
         }});
 
-        Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule(){{
+        Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule() {{
             add("begin", instant("5 day ago"));
             add("end", instant("now"));
         }});
 
-        Fixture.of(ContractEstablishment.class).addTemplate("valid", new Rule(){{
+        Fixture.of(ContractEstablishment.class).addTemplate("valid", new Rule() {{
             add("creation", instant("now"));
         }});
 
