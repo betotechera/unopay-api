@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -87,5 +88,12 @@ public class Event implements Serializable {
             return getService().getId();
         }
         return null;
+    }
+
+    public boolean toServiceType(ServiceType serviceType){
+        if(getService() != null) {
+            return Objects.equals(getService().getType(), serviceType);
+        }
+        return false;
     }
 }

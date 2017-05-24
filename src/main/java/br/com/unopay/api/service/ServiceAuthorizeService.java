@@ -1,6 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
@@ -59,8 +60,17 @@ public class ServiceAuthorizeService {
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
-        serviceAuthorize.setEvent(eventService.findById(serviceAuthorize.getEvent().getId()));
+        Event event = getValidEvent(serviceAuthorize);
+        serviceAuthorize.setEvent(event);
         return repository.save(serviceAuthorize);
+    }
+
+    private Event getValidEvent(ServiceAuthorize serviceAuthorize) {
+        Event event = eventService.findById(serviceAuthorize.getEvent().getId());
+        if(!event.toServiceType(serviceAuthorize.getServiceType())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_NOT_ACCEPTED);
+        }
+        return event;
     }
 
     private ContractorInstrumentCredit getValidContractorInstrumentCredit(ServiceAuthorize serviceAuthorize) {

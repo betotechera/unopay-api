@@ -3,23 +3,10 @@ package br.com.unopay.api.bacen.util
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
-import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.Credit
-import br.com.unopay.api.model.CreditInsertionType
-import br.com.unopay.api.model.CreditPaymentAccount
-import br.com.unopay.api.model.PaymentInstrument
-import br.com.unopay.api.model.Product
-import br.com.unopay.api.model.ServiceAuthorize
-import br.com.unopay.api.service.ContractService
-import br.com.unopay.api.service.ContractorInstrumentCreditService
-import br.com.unopay.api.service.CreditPaymentAccountService
-import br.com.unopay.api.service.PaymentInstrumentService
-import br.com.unopay.api.service.ProductService
+import br.com.unopay.api.model.*
+import br.com.unopay.api.service.*
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.api.uaa.service.GroupService
 import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
@@ -161,7 +148,10 @@ class SetupCreator {
         Event event = Fixture.from(Event.class).gimme("valid")
         Service serviceUnderTest = Fixture.from(Service.class).gimme("valid").with { type = serviceType; it }
         serviceService.create(serviceUnderTest)
-        event.with { service = serviceUnderTest }
+        event.with {
+            service = serviceUnderTest
+            ncmCode = UUID.randomUUID()
+        }
         eventService.create(event)
     }
     Product createProduct(code = null, paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
@@ -170,7 +160,7 @@ class SetupCreator {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             paymentRuleGroup = paymentRuleGroupUnderTest
-            serviceType = [ServiceType.FREIGHT, ServiceType.ELECTRONIC_TOLL]
+            serviceType = [ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT]
             it
         }
         if(code){

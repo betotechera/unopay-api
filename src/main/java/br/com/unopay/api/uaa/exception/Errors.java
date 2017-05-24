@@ -401,6 +401,12 @@ public final class Errors {
             new UnovationError("SERVICE_NOT_ACCEPTABLE",
                     "Service not acceptable.");
 
+    public static final UnovationError EVENT_NOT_ACCEPTED =
+            new UnovationError("EVENT_NOT_ACCEPTED",
+                    "Event not accepted.");
+
+
+
 
 
 

@@ -59,7 +59,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         instrumentCreditUnderTest = createInstrumentCredit()
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
-        eventUnderTest = setupCreator.createEvent(contractUnderTest.serviceType.find())
+        eventUnderTest = setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
         userUnderTest = setupCreator.createUser()
         establishmentUnderTest = setupCreator.createEstablishment()
         Integer.mixin(TimeCategory)
@@ -78,6 +78,21 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'when try authorize service without event should not be authorized'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            serviceType = ServiceType.FREIGHT_RECEIPT
+        }
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_NOT_ACCEPTED'
     }
 
     void 'given a expired credit should not be authorized'(){
@@ -116,14 +131,16 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'service #serviceType should be authorized'(){
+    void 'service #serviceTypeUnderTest should be authorized'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             serviceType = serviceTypeUnderTest
+            event = setupCreator.createEvent(serviceTypeUnderTest)
         }
 
         when:
+
         def created  = service.create(userUnderTest.email, serviceAuthorize)
         def result = service.findById(created.id)
 
@@ -137,7 +154,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'service #serviceType should not be authorized'(){
+    void 'service #serviceTypeUnderTest should not be authorized'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
