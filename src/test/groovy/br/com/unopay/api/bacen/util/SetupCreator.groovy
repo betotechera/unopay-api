@@ -5,6 +5,19 @@ import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.service.*
 import br.com.unopay.api.model.*
 import br.com.unopay.api.service.*
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditPaymentAccount
+import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Product
+import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.ContractorInstrumentCreditService
+import br.com.unopay.api.service.CreditPaymentAccountService
+import br.com.unopay.api.service.PaymentInstrumentService
+import br.com.unopay.api.service.ProductService
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.GroupService
@@ -154,17 +167,32 @@ class SetupCreator {
         }
         eventService.create(event)
     }
-    Product createProduct(code = null, paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
+    Product createProduct(code = null, PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),
+                          Set<CreditInsertionType> creditInsertionTypes = Arrays.asList(CreditInsertionType.values())) {
         Product product = Fixture.from(Product.class).gimme("valid")
         product = product.with {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            serviceType = [ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT]
+            setPaymentRuleGroup (paymentRuleGroupUnderTest)
+            serviceTypes = Arrays.asList(ServiceType.values())
+            creditInsertionTypes = creditInsertionTypes
             it
         }
         if(code){
             product.code = code
+        }
+        productService.save(product)
+    }
+
+    Product createProductWithCreditInsertionType(creditTypes ) {
+        Product product = Fixture.from(Product.class).gimme("valid")
+        product = product.with {
+            issuer = createIssuer()
+            accreditedNetwork = createNetwork()
+            paymentRuleGroup =  createPaymentRuleGroup()
+            serviceTypes = Arrays.asList(ServiceType.values())
+            creditInsertionTypes = creditTypes
+            it
         }
         productService.save(product)
     }
@@ -194,9 +222,10 @@ class SetupCreator {
                 .with {
             hirerDocument = hirer.getDocumentNumber()
             product = knownProduct
-
             it
         }
+        if(knownProduct?.creditInsertionTypes)
+            credit.creditInsertionType = knownProduct?.creditInsertionTypes?.first()
         credit
     }
 
@@ -212,7 +241,7 @@ class SetupCreator {
             hirer = hirerUnderTest
             contractor = contractorUnderTest
             product = productUnderTest
-            serviceType = productUnderTest.serviceType
+            serviceType = productUnderTest.serviceTypes
             it }
     }
 

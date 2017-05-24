@@ -57,6 +57,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     def setup(){
         instrumentCreditUnderTest = createInstrumentCredit()
+        def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
+        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
+        instrumentCreditUnderTest.with { contract.product.serviceTypes = cloned.product.serviceTypes }
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
         eventUnderTest = setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
@@ -676,7 +679,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             event = eventUnderTest
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = establishmentUnderTest
-            serviceType = ServiceType.FUEL_ALLOWANCE
+            serviceType = ServiceType.FUEL_ALLOWANC
             it
         }
     }
@@ -717,7 +720,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
         def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
-        instrumentCreditUnderTest.with { contract.product.serviceType = cloned.product.serviceType }
+        instrumentCreditUnderTest.with { contract.product.serviceTypes = cloned.product.serviceTypes }
         instrumentCreditUnderTest
     }
 

@@ -23,10 +23,10 @@ class ProductTest  extends FixtureApplicationTest {
         a.issuer == b.issuer
         a.paymentRuleGroup == b.paymentRuleGroup
         a.accreditedNetwork == b.accreditedNetwork
-        a.paymentInstrumentType == b.paymentInstrumentType
-        a.serviceType.findAll { it in b.serviceType}
-        a.serviceType.size() == b.serviceType.size()
-        a.creditInsertionType == b.creditInsertionType
+        a.paymentInstrumentTypes == b.paymentInstrumentTypes
+        a.serviceTypes.findAll { it in b.serviceTypes}
+        a.serviceTypes.size() == b.serviceTypes.size()
+        a.creditInsertionTypes == b.creditInsertionTypes
         a.minimumCreditInsertion == b.minimumCreditInsertion
         a.maximumCreditInsertion == b.maximumCreditInsertion
         a.paymentInstrumentValidDays == b.paymentInstrumentValidDays
@@ -53,8 +53,8 @@ class ProductTest  extends FixtureApplicationTest {
         a.issuer != b.issuer
         a.paymentRuleGroup != b.paymentRuleGroup
         a.accreditedNetwork != b.accreditedNetwork
-        a.paymentInstrumentType != b.paymentInstrumentType
-        a.creditInsertionType != b.creditInsertionType
+        a.paymentInstrumentTypes != b.paymentInstrumentTypes
+        a.creditInsertionTypes != b.creditInsertionTypes
         a.minimumCreditInsertion != b.minimumCreditInsertion
         a.maximumCreditInsertion != b.maximumCreditInsertion
         a.paymentInstrumentValidDays != b.paymentInstrumentValidDays
@@ -84,10 +84,10 @@ class ProductTest  extends FixtureApplicationTest {
         a.issuer != b.issuer
         a.paymentRuleGroup != b.paymentRuleGroup
         a.accreditedNetwork != b.accreditedNetwork
-        a.paymentInstrumentType == b.paymentInstrumentType
-        a.serviceType.findAll { it in b.serviceType}
-        a.serviceType.size() == b.serviceType.size()
-        a.creditInsertionType == b.creditInsertionType
+        a.paymentInstrumentTypes == b.paymentInstrumentTypes
+        a.serviceTypes.findAll { it in b.serviceTypes}
+        a.serviceTypes.size() == b.serviceTypes.size()
+        a.creditInsertionTypes == b.creditInsertionTypes
         a.minimumCreditInsertion == b.minimumCreditInsertion
         a.maximumCreditInsertion == b.maximumCreditInsertion
         a.paymentInstrumentValidDays == b.paymentInstrumentValidDays
@@ -129,4 +129,18 @@ class ProductTest  extends FixtureApplicationTest {
         then:
         !shouldBeEquals
     }
+
+    def 'should give error on creditInsertionType validation'(){
+        given:
+        Product a = Fixture.from(Product.class).gimme("valid")
+        a.creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT,CreditInsertionType.BOLETO]
+
+        when:
+            a.validateCreditInsertionType(CreditInsertionType.CREDIT_CARD)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT'
+    }
+
 }

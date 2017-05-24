@@ -9,20 +9,26 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.*;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ContractTemplateLoader implements TemplateLoader {
 
     @Override
     public void load() {
-        Fixture.of(Contract.class).addTemplate("valid", new Rule() {{
-            add("code", uniqueRandom(1, 200, 400, 5000, 3000, 201001, 88888, 556666));
+        Fixture.of(Contract.class).addTemplate("valid", new Rule(){{
+            add("code", uniqueRandom(1,200,400,5000,3000,201001,  88888, 556666));
+            Set<ServiceType> serviceTypes = new HashSet<ServiceType>(){{{
+                addAll(Arrays.asList(ServiceType.values()));
+            }}};
             add("name", firstName());
             add("product", one(Product.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("paymentInstrumentType", random(PaymentInstrumentType.class));
-            add("serviceType", has(2).of(ServiceType.class));
+            add("serviceType",serviceTypes);
             add("creditInsertionType", random(CreditInsertionType.class));
             add("begin", instant("now"));
             add("end", afterDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));

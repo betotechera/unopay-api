@@ -146,7 +146,7 @@ class FilterTest extends SpockApplicationTests {
             hirer = hirerUnderTest
             contractor = contractorUnderTest
             product = productUnderTest
-            serviceType = productUnderTest.serviceType
+            serviceType = productUnderTest.serviceTypes
             it
         }
     }

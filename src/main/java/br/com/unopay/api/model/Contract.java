@@ -3,7 +3,6 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
@@ -117,7 +116,6 @@ public class Contract implements Serializable {
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<ServiceType> serviceType;
 
-
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
@@ -166,6 +164,8 @@ public class Contract implements Serializable {
         if(begin != null && end != null && begin.after(end)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_END_IS_BEFORE_BEGIN);
         }
+        this.product.validateCreditInsertionType(this.creditInsertionType);
+
     }
 
     public void validateActive(){

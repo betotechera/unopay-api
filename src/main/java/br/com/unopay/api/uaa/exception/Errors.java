@@ -196,8 +196,7 @@ public final class Errors {
             new UnovationError("CONTRACTOR_BIRTH_DATE_REQUIRED","Contractor birth date required.");
     public static final UnovationError INSTRUMENT_PASSWORD_REQUIRED =
             new UnovationError("INSTRUMENT_PASSWORD_REQUIRED","Contractor password required.");
-
-
+    public static final UnovationError RNTRC_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("RNTRC_REQUIRED_FOR_LEGAL_PERSON", "RNTRC is Required for legal person");;
 
 
 
@@ -304,6 +303,14 @@ public final class Errors {
     public static final UnovationError CODE_LENGTH_NOT_ACCEPTED =
             new UnovationError("CODE_LENGTH_NOT_ACCEPTED", "Code length not accepted.");
 
+    public static final UnovationError CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT =
+            new UnovationError("CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT",
+                    "THe informed creditInsertionTypes has values that is not in the informed Product.");
+
+    public static final UnovationError SERVICE_TYPE_NOT_IN_PRODUCT =
+            new UnovationError("SERVICE_TYPE_NOT_IN_PRODUCT", "The informed ServiceType" +
+                    "has values that is not in the informed Product.");
+
 
     /* payment instrument */
     public static final UnovationError PAYMENT_INSTRUMENT_NOT_FOUND =
@@ -333,7 +340,6 @@ public final class Errors {
             new UnovationError("HIRER_CREDIT_NOT_FOUND","Hirer credit not found.");
     public static final UnovationError CREDIT_ALREADY_CANCELED =
             new UnovationError("CREDIT_ALREADY_CANCELED","Credit already canceled.");
-
 
 
     /* credit payment account */

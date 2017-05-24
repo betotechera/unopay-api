@@ -74,4 +74,16 @@ class CreditTest  extends FixtureApplicationTest {
         then:
         !shouldBeEquals
     }
+
+    def 'if the credit has a credit'(){
+        given:
+        Credit a = Fixture.from(Credit.class).gimme("allFields")
+
+        when:
+        def shouldBeEquals = a == a
+
+        then:
+        shouldBeEquals
+    }
+
 }

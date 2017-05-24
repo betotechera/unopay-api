@@ -100,8 +100,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit without direct debit payment type then payment account should be created'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-                .with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it}
+        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
         Credit credit = setupCreator.createCredit(knownProduct)
 
         when:
@@ -113,8 +112,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit with direct debit payment type then payment account should not be created'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-                .with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it}
+        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
         Credit credit = setupCreator.createCredit(knownProduct)
 
         when:
@@ -198,7 +196,7 @@ class CreditServiceTest extends SpockApplicationTests {
     @Unroll
     void 'when insert credits with #insertionType available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
+        def knownProduct = setupCreator.createProduct().with { creditInsertionTypes = [insertionType]; it }
         Credit creditA =  setupCreator.createCredit(knownProduct)
         Credit creditB =  setupCreator.createCredit(knownProduct)
 
@@ -219,7 +217,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credits with direct debit, available balance should be zero'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
+        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
         Credit creditA =  setupCreator.createCredit(knownProduct)
         Credit creditB =  setupCreator.createCredit(knownProduct)
 
@@ -235,7 +233,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM; it }
+        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
         Credit creditA =  setupCreator.createCredit(knownProduct)
         Credit creditB = setupCreator.createCredit(knownProduct)
         Credit creditC =  setupCreator.createCredit(knownProduct)
@@ -252,7 +250,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credits with direct debit, block balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionType = CreditInsertionType.DIRECT_DEBIT; it }
+        def knownProduct = setupCreator.createProduct().with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
         Credit creditA = setupCreator.createCredit(knownProduct)
         Credit creditB =  setupCreator.createCredit(knownProduct)
 
@@ -268,7 +266,7 @@ class CreditServiceTest extends SpockApplicationTests {
     @Unroll
     void 'when insert credits with #insertionType, block balance should be zero'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionType = insertionType; it }
+        def knownProduct = setupCreator.createProductWithCreditInsertionType([insertionType])
         Credit creditA =  setupCreator.createCredit(knownProduct)
         Credit creditB =  setupCreator.createCredit(knownProduct)
 
@@ -298,7 +296,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
-        result.getCreditInsertionType() == knownProduct.getCreditInsertionType()
+        knownProduct.creditInsertionTypes.contains(result.creditInsertionType)
     }
 
     void 'credit with product should not be inserted when do not match product minimum value restriction'(){

@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
+import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PRODUCT_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_CREDIT_VALUE_NOT_MET;
@@ -124,15 +125,24 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void validateCreditValue() {
-        if(!withProduct() && value.compareTo(new BigDecimal(0)) == 0){
+        if(withProduct()){
+            getProduct().validateCreditInsertionType(this.creditInsertionType);
+            if(value.compareTo(product.getMinimumCreditInsertion()) == -1){
+                throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PRODUCT_VALUE_NOT_MET);
+            }
+            if(value.compareTo(product.getMaximumCreditInsertion()) == 1){
+                throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
+            }
+            if(value.compareTo(product.getMaximumCreditInsertion()) == 1){
+                throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
+            }
+            if(!getProduct().getCreditInsertionTypes().contains(this.creditInsertionType)) {
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
+            }
+        }else if(value.compareTo(new BigDecimal(0)) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
-        if(withProduct() && value.compareTo(product.getMinimumCreditInsertion()) == -1){
-            throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PRODUCT_VALUE_NOT_MET);
-        }
-        if(withProduct() && value.compareTo(product.getMaximumCreditInsertion()) == 1){
-            throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PRODUCT_VALUE_NOT_MET);
-        }
+
     }
 
     public void setupMyCreate(){
@@ -140,7 +150,6 @@ public class Credit implements Serializable, Updatable {
         createdDateTime = new Date();
         if(this.withProduct()){
             paymentRuleGroup = product.getPaymentRuleGroup();
-            creditInsertionType = product.getCreditInsertionType();
         }
         defineAvailableValue();
         defineBlockedValue();

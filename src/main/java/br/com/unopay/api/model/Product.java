@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
@@ -90,27 +91,36 @@ public class Product implements Serializable, Updatable {
     @JsonView({Views.Public.class})
     private AccreditedNetwork accreditedNetwork;
 
-    @Column(name = "payment_instrument_type")
+    @Size(min = 1)
     @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = PaymentInstrumentType.class)
+    @Column(name = "payment_instrument_type", nullable = false)
+    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
-    private PaymentInstrumentType paymentInstrumentType;
+    @CollectionTable(name = "product_payment_instrument_tp", joinColumns = @JoinColumn(name = "product_id"))
+    private Set<PaymentInstrumentType> paymentInstrumentTypes;
 
+    @Size(min = 1)
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
-    @JsonView({Views.Public.class})
-    @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
-    private Set<ServiceType> serviceType;
-
-    @Column(name = "credit_insertion_type")
-    @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "service_type", nullable = false)
     @JsonView({Views.Public.class,Views.List.class})
-    private CreditInsertionType creditInsertionType;
+    @NotNull(groups = {Create.class, Update.class})
+    @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
+    private Set<ServiceType> serviceTypes;
+
+    @Size(min = 1)
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER,targetClass = CreditInsertionType.class)
+    @Column(name = "credit_insertion_type", nullable = false)
+    @JsonView({Views.Public.class,Views.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    @CollectionTable(name = "product_credit_insertion_type", joinColumns = @JoinColumn(name = "product_id"))
+    private Set<CreditInsertionType> creditInsertionTypes;
 
     @Column(name = "minimum_credit_insertion")
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal minimumCreditInsertion;
-
     @Column(name = "maximum_credit_insertion")
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal maximumCreditInsertion;
@@ -167,6 +177,12 @@ public class Product implements Serializable, Updatable {
         }
         if(getPaymentRuleGroup() != null && getPaymentRuleGroup().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_ID_REQUIRED);
+        }
+    }
+
+    public void validateCreditInsertionType(CreditInsertionType creditInsertionType){
+        if(!this.creditInsertionTypes.contains(creditInsertionType)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
         }
     }
 
