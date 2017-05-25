@@ -212,7 +212,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("establishmentPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");
-            add("gatheringChannel", random(GatheringChannel.class));
+            add("gatheringChannels", has(2).of(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
         }});
