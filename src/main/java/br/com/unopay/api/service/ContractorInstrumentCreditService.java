@@ -126,7 +126,6 @@ public class ContractorInstrumentCreditService {
         contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
     }
 
-    @Transactional
     public void subtract(String id, BigDecimal value) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
         instrumentCredit.subtract(value);
