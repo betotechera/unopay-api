@@ -74,7 +74,7 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
 
     }
 
-    void 'given a event without request quantity when validate event value less than or equals zero should not return error'(){
+    void 'given a event without request quantity when validate event value less than or equals zero should return error'(){
         given:
         def quantity = quantityUnderTest
         def value = valueUnderTest
@@ -87,7 +87,8 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
         serviceAuthorize.validateEvent()
 
         then:
-        notThrown(UnprocessableEntityException)
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED'
 
         where:
         quantityUnderTest | valueUnderTest

@@ -82,12 +82,12 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'given a event with request quantity when validate event value equals #quantityUnderTest should return error'(){
+    void 'when validate event value equals #quantityUnderTest should return error'(){
         given:
         def serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid",new Rule(){{
             add("type", ServiceType.FUEL_ALLOWANCE)
         }})
-        Event eventUnderTest = Fixture.from(Event.class).uses(jpaProcessor).gimme("withRequestQuantity", new Rule(){{
+        Event eventUnderTest = Fixture.from(Event.class).uses(jpaProcessor).gimme("withoutRequestQuantity", new Rule(){{
             add("service", serviceUnderTest)
         }})
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -97,7 +97,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             eventValue = valueUnderTest
         }
         when:
-        serviceAuthorize.validateEvent()
+        service.create(userUnderTest.email, serviceAuthorize)
 
         then:
         def ex = thrown(UnprocessableEntityException)

@@ -215,8 +215,7 @@ public class ServiceAuthorize implements Serializable {
         if(getEvent() != null && getEvent().isRequestQuantity() && eventQuantity <= 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(getEvent()!= null && getEvent().isRequestQuantity()
-                && (eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0)){
+        if(eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
     }
