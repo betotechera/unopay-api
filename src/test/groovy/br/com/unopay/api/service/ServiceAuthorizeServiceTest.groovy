@@ -90,7 +90,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             eventValue = contractorInstrumentCredit.availableBalance + 0.1
         }
         when:
-        serviceAuthorize.validateEvent()
+        service.create(userUnderTest.email, serviceAuthorize)
 
         then:
         def ex = thrown(UnprocessableEntityException)
