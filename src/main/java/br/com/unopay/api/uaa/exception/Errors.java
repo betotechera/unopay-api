@@ -196,7 +196,9 @@ public final class Errors {
             new UnovationError("CONTRACTOR_BIRTH_DATE_REQUIRED","Contractor birth date required.");
     public static final UnovationError INSTRUMENT_PASSWORD_REQUIRED =
             new UnovationError("INSTRUMENT_PASSWORD_REQUIRED","Contractor password required.");
-    public static final UnovationError RNTRC_REQUIRED_FOR_LEGAL_PERSON = new UnovationError("RNTRC_REQUIRED_FOR_LEGAL_PERSON", "RNTRC is Required for legal person");;
+
+    public static final UnovationError RNTRC_REQUIRED_FOR_LEGAL_PERSON =
+            new UnovationError("RNTRC_REQUIRED_FOR_LEGAL_PERSON", "RNTRC is Required for legal person");
 
 
 
