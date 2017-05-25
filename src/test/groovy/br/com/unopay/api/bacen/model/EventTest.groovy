@@ -1,12 +1,9 @@
 package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.FixtureApplicationTest
 
-class EventTest  extends SpockApplicationTests {
-
-
-
+class EventTest  extends FixtureApplicationTest {
 
     def 'should be equals'(){
         given:
@@ -21,7 +18,7 @@ class EventTest  extends SpockApplicationTests {
     }
 
     def 'should not be equals'(){
-        List list = Fixture.from(Event.class).gimme(2,"allFields")
+        List list = Fixture.from(Event.class).gimme(2,"valid")
 
         when:
         def shouldBeEquals = list.head() == list.tail()
