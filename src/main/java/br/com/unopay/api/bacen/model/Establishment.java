@@ -23,10 +23,14 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -38,6 +42,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -142,11 +147,13 @@ public class Establishment implements Serializable, Updatable {
     @Column(name = "contract_uri")
     private String contractUri;
 
-    @Valid
-    @Enumerated(STRING)
-    @Column(name="gathering_channel")
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = GatheringChannel.class)
+    @Column(name = "gathering_channel", nullable = false)
     @JsonView({Views.Public.class,Views.List.class})
-    private GatheringChannel gatheringChannel;
+    @NotNull(groups = {Create.class, Update.class})
+    @CollectionTable(name = "establishment_gathering", joinColumns = @JoinColumn(name = "establishment_id"))
+    private Set<GatheringChannel> gatheringChannels;
 
     @ManyToMany
     @BatchSize(size = 10)

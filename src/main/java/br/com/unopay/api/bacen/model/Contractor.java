@@ -60,9 +60,11 @@ public class Contractor implements Serializable {
     private String rntrc;
 
     public void validate(){
-        if(person.isLegal() && this.rntrc ==null)
+        if(person.isLegal() && this.rntrc ==null){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.RNTRC_REQUIRED_FOR_LEGAL_PERSON);
+
+        }
 
     }
 
