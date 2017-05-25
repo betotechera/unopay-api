@@ -97,6 +97,43 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
 
     }
 
+    void 'given a event value greater than credit balance when validate event should return error'(){
+        given:
+        ContractorInstrumentCredit creditUnderTest = Fixture.from(ContractorInstrumentCredit.class)
+                                                                        .gimme("allFields", new Rule() {{
+            add("availableBalance", 99.9)
+        }})
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
+            add("event", one(Event.class, "withoutRequestQuantity"))
+            add("eventValue", 100.0)
+            add("contractorInstrumentCredit", creditUnderTest)
+        }})
+        when:
+        serviceAuthorize.validateEvent()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
+    }
+
+    void 'given a event value less than credit balance when validate event should not return error'(){
+        given:
+        ContractorInstrumentCredit creditUnderTest = Fixture.from(ContractorInstrumentCredit.class)
+                .gimme("allFields", new Rule() {{
+            add("availableBalance", 100.0)
+        }})
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
+            add("event", one(Event.class, "withoutRequestQuantity"))
+            add("eventValue", 99.9)
+            add("contractorInstrumentCredit", creditUnderTest)
+        }})
+        when:
+        serviceAuthorize.validateEvent()
+
+        then:
+        notThrown(UnprocessableEntityException)
+    }
+
     def 'should be equals'(){
         given:
         ServiceAuthorize a = Fixture.from(ServiceAuthorize.class).gimme("valid")

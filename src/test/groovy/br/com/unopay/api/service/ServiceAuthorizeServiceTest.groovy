@@ -81,6 +81,22 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'given a event value greater than credit balance when validate event should return error'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event = eventUnderTest
+            eventValue = contractorInstrumentCredit.availableBalance + 0.1
+        }
+        when:
+        serviceAuthorize.validateEvent()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
+    }
+
     @Unroll
     void 'when validate event value equals #quantityUnderTest should return error'(){
         given:

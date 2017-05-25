@@ -419,6 +419,9 @@ public final class Errors {
     public static final UnovationError EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED =
             new UnovationError("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED",
                     "Event value greater than zero required");
+    public static final UnovationError EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE =
+            new UnovationError("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE",
+                    "Event value greater than credit balance");
 
 
 
