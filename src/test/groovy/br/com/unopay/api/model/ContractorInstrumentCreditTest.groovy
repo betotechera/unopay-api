@@ -117,6 +117,29 @@ class ContractorInstrumentCreditTest  extends FixtureApplicationTest {
         notThrown(UnprocessableEntityException)
     }
 
+    def 'existing balance should be subtracted'(){
+        given:
+        ContractorInstrumentCredit credit = Fixture.from(ContractorInstrumentCredit.class).gimme("allFields")
+        def expected = credit.availableBalance / 2
+        when:
+        credit.subtract(expected)
+
+        then:
+        credit.availableBalance == expected
+    }
+
+    def 'value greater than balance should not be subtracted'(){
+        given:
+        ContractorInstrumentCredit credit = Fixture.from(ContractorInstrumentCredit.class).gimme("allFields")
+
+        when:
+        credit.subtract(credit.availableBalance +1)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'VALUE_GREATER_THEN_AVAILABLE_BALANCE'
+    }
+
     def 'should be equals'(){
         given:
         ContractorInstrumentCredit a = Fixture.from(ContractorInstrumentCredit.class).gimme("allFields")

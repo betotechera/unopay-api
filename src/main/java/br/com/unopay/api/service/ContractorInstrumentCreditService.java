@@ -3,6 +3,7 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -122,6 +124,14 @@ public class ContractorInstrumentCreditService {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_WITHOUT_CREDITS);
         }
         contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
+    }
+
+    @Transactional
+    public void subtract(String id, BigDecimal value) {
+        ContractorInstrumentCredit instrumentCredit = findById(id);
+        instrumentCredit.subtract(value);
+        instrumentCredit.setSituation(CreditSituation.PROCESSING);
+        repository.save(instrumentCredit);
     }
 
     private void cancelInstrumentCredit(ContractorInstrumentCredit instrumentCredit) {

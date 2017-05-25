@@ -81,6 +81,38 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'given a event value less than credit balance should subtract credit balance'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event = eventUnderTest
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def result = contractorInstrumentCreditRepository.findById(instrumentCreditUnderTest.id)
+        result.get().availableBalance == 0.0
+    }
+
+    void 'given a event value less than credit balance should change credit status to processing'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event = eventUnderTest
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def result = contractorInstrumentCreditRepository.findById(instrumentCreditUnderTest.id)
+        result.get().situation == CreditSituation.PROCESSING
+    }
+
     void 'given a event value greater than credit balance when validate event should return error'(){
         given:
 

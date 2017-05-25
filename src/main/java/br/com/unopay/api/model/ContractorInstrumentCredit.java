@@ -10,6 +10,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -239,6 +240,13 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
          return  Objects.equals(getContract().getId(), contractId);
         }
         return false;
+    }
+
+    public void subtract(BigDecimal value) {
+        if(this.availableBalance.compareTo(value) == -1){
+            throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THEN_AVAILABLE_BALANCE);
+        }
+        this.availableBalance = this.availableBalance.subtract(value);
     }
 
     public void validate() {

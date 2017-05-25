@@ -21,6 +21,8 @@ import java.util.Optional;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 
+import javax.transaction.Transactional;
+
 @Service
 public class ServiceAuthorizeService {
 
@@ -50,6 +52,7 @@ public class ServiceAuthorizeService {
         this.paymentInstrumentService = paymentInstrumentService;
     }
 
+    @Transactional
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         serviceAuthorize.validateServiceType();
@@ -61,6 +64,7 @@ public class ServiceAuthorizeService {
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
         defineValidEvent(serviceAuthorize);
+        instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
         return repository.save(serviceAuthorize);
     }
 
