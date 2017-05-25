@@ -211,7 +211,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("bachShipmentMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
+            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
             add("tax", random(Double.class, range(0.00, 1)));
             add("network", one(AccreditedNetwork.class, "valid"));
@@ -223,7 +223,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("establishmentPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");
-            add("gatheringChannel", random(GatheringChannel.class));
+            add("gatheringChannels", has(2).of(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
         }});
