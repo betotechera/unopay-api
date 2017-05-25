@@ -22,6 +22,7 @@ public final class Errors {
     public static final UnovationError EVENT_CODE_ALREADY_EXISTS =
             new UnovationError("EVENT_CODE_ALREADY_EXISTS","Event code already exists");
 
+
     /* service */
     public static final UnovationError
             SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
@@ -404,6 +405,12 @@ public final class Errors {
     public static final UnovationError EVENT_NOT_ACCEPTED =
             new UnovationError("EVENT_NOT_ACCEPTED",
                     "Event not accepted.");
+    public static final UnovationError EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED =
+            new UnovationError("EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED",
+                    "Event quantity greater than zero required");
+    public static final UnovationError EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED =
+            new UnovationError("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED",
+                    "Event value greater than zero required");
 
 
 

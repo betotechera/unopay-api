@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_DOCUMENT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
@@ -87,7 +89,7 @@ public class ServiceAuthorize implements Serializable {
     private Event event;
 
     @Column(name = "event_quantity")
-    private Integer eventQuantity;
+    private Double eventQuantity;
 
     @Column(name = "event_value")
     private BigDecimal eventValue;
@@ -209,4 +211,13 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
+    public void validateEvent() {
+        if(getEvent() != null && getEvent().isRequestQuantity() && eventQuantity <= 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
+        }
+        if(getEvent()!= null && getEvent().isRequestQuantity()
+                && (eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
+        }
+    }
 }

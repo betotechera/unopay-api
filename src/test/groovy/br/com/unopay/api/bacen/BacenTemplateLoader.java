@@ -6,7 +6,11 @@ import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.*;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
+import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
+import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
+import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
 
 import java.math.BigDecimal;
 
@@ -158,6 +162,14 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("name", firstName());
             add("requestQuantity",random(Boolean.class));
             add("quantityUnity",random("litros", "arroba"));
+        }});
+
+        Fixture.of(Event.class).addTemplate("withRequestQuantity").inherits("valid", new Rule(){{
+            add("requestQuantity",true);
+        }});
+
+        Fixture.of(Event.class).addTemplate("withoutRequestQuantity").inherits("valid", new Rule(){{
+            add("requestQuantity",false);
         }});
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{

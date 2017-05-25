@@ -28,7 +28,7 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("contractor",one(Contractor.class, "valid"));
             add("serviceType",uniqueRandom(ServiceType.class));
             add("event",one(Event.class, "valid"));
-            add("eventQuantity",random(Integer.class, range(1, 200)));
+            add("eventQuantity",random(Double.class, range(1, 200)));
             add("eventValue",random(BigDecimal.class, range(1, 200)));
             add("valueFee",random(BigDecimal.class, range(1, 5500)));
             add("solicitationDateTime",instant("now"));

@@ -7,7 +7,7 @@ create table service_authorize (
     contractor_id varchar(256) not null,
     service_type varchar(100) not null,
     event_id varchar(256) not null,
-    event_quantity integer,
+    event_quantity decimal(20,2),
     event_value decimal(20,2),
     value_fee decimal(20,2) not null,
     solicitation_date_time TIMESTAMP not null,
