@@ -10,11 +10,17 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditInsertionType;
+import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
+import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
+import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.uaa.model.UserDetail;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
 
@@ -41,6 +47,14 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("transactionLog",firstName());
             add("user",one(UserDetail.class, "without-group"));
             add("situation",random(TransactionSituation.class));
+        }});
+
+        Fixture.of(ServiceAuthorize.class).addTemplate("withoutReferences").inherits("valid", new Rule(){{
+            add("establishment",null);
+            add("contract",null);
+            add("contractor", null);
+            add("event",null);
+            add("user", null);
         }});
     }
 }

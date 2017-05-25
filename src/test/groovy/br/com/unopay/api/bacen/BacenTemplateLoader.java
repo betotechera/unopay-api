@@ -13,6 +13,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 public class BacenTemplateLoader implements TemplateLoader {
@@ -20,7 +21,17 @@ public class BacenTemplateLoader implements TemplateLoader {
     public void load() {
 
         Fixture.of(PaymentRuleGroup.class).addTemplate("valid", new Rule(){{
-            add("code", uniqueRandom("1111","2222","3333","4444","5555","6666","7777","8888","9999"));
+            add("code", uniqueRandom("48e57f50","54a2","4870","b9a9","9e9fde29cc9e", "2323d2c1",
+                    "7093","45cf","92de","bf27eb84ffeb", "42b0f8d8","d78a","4930","9b8c","68d67b767d1a", "f9d78e11",
+                    "2818","4e1e","a3d5","c782fe30c6d1", "9e2d5d0c","7a2c","47e5","97af","0d110b67a0bc", "6a15b32c",
+                    "b987","4d94","a89d","61f5a7ee9d54", "0f6cb79c","8041","4f27","bd3b","466200472c53", "0dbd37b9",
+                    "1194","43c6","a189","e6dd0aaf4fa4", "15d640fd","3e82","4202","82c8","7f1b376238a7", "d218f535",
+                    "6bb3","4531","a019","41fd38e85035", "e0e0c385","d4d9","4a16","aeeb","460a2d48f5cb", "8b42853b",
+                    "3306","4ac6","a625","4c6c4d076e4a", "6aab6237","bb60","4f82","8ea7","ef60f0f98d7d", "e2f3a995",
+                    "3414","4245","9fac","90456f114620", "1e47e9d2","d79f","4155","8ecc","fe2fdc1ce035", "171f4ba7",
+                    "58e6","4918","9bbb","ae7899f8211a", "18fbf9b3","528e","4085","b317","f911cba5ef0c", "8892f90b",
+                    "24dc","45d8","800a","8c6d64b14767", "fa3f6eed","accf","4f0a","9256","b2dd3ac7aacc", "6fab43e6",
+                    "f201","4692","8d7c","5f6e4359a9ee"));
             add("name", "Arranjo");
             add("institution", one(Institution.class, "persisted"));
             add("purpose", Purpose.BUY);

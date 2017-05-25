@@ -60,9 +60,14 @@ public class ServiceAuthorizeService {
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
-        Event event = getValidEvent(serviceAuthorize);
-        serviceAuthorize.setEvent(event);
+        defineValidEvent(serviceAuthorize);
         return repository.save(serviceAuthorize);
+    }
+
+    private void defineValidEvent(ServiceAuthorize serviceAuthorize) {
+        Event event = getValidEvent(serviceAuthorize);
+        serviceAuthorize.validateEvent();
+        serviceAuthorize.setEvent(event);
     }
 
     private Event getValidEvent(ServiceAuthorize serviceAuthorize) {

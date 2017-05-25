@@ -1,7 +1,7 @@
 create table payment_rule_group (
   id VARCHAR(256) PRIMARY KEY,
       name VARCHAR(50),
-     code VARCHAR(50),
+     code VARCHAR(256),
      purpose VARCHAR(50),
      scope VARCHAR(50),
      user_relationship VARCHAR(50),

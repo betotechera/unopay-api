@@ -96,10 +96,10 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("creditNumber",random(Long.class));
             add("insertionCreatedDateTime",beforeDate("24/04/2017",
                     new SimpleDateFormat("dd/MM/yyyy")));
-            add("value",random(BigDecimal.class));
+            add("value",random(BigDecimal.class, range(1, 200)));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
-            add("availableBalance", random(BigDecimal.class, range(1, 200)));
+            add("availableBalance", random(BigDecimal.class, range(201, 400)));
             add("paymentAccount", "AAA");
         }});
 
@@ -114,8 +114,9 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("issuerFee",random(BigDecimal.class, range(1, 200)));
             add("creditPaymentAccount", one(CreditPaymentAccount.class, "valid"));
             add("situation",CreditSituation.AVAILABLE);
-            add("availableBalance", random(BigDecimal.class));
+            add("availableBalance", random(BigDecimal.class, range(201, 400)));
             add("blockedBalance",random(BigDecimal.class));
+            add("createdDateTime", instant("1 second from now"));
         }});
 
         Fixture.of(ContractorInstrumentCredit.class).addTemplate("toPersist")

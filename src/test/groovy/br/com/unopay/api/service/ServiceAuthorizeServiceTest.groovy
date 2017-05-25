@@ -1,10 +1,13 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.api.bacen.model.PaymentRuleGroup
+import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
@@ -57,9 +60,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     def setup(){
         instrumentCreditUnderTest = createInstrumentCredit()
-        def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
-        contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
-        instrumentCreditUnderTest.with { contract.product.serviceTypes = cloned.product.serviceTypes }
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
         eventUnderTest = setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
@@ -68,8 +68,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         Integer.mixin(TimeCategory)
         Date.mixin(TimeCategory)
     }
-
-
 
     void 'new service authorize should be created'(){
         given:
@@ -81,6 +79,64 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    @Unroll
+    void 'given a event with request quantity when validate event value equals #quantityUnderTest should return error'(){
+        given:
+        def serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid",new Rule(){{
+            add("type", ServiceType.FUEL_ALLOWANCE)
+        }})
+        Event eventUnderTest = Fixture.from(Event.class).uses(jpaProcessor).gimme("withRequestQuantity", new Rule(){{
+            add("service", serviceUnderTest)
+        }})
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event = eventUnderTest
+            eventQuantity = quantityUnderTest
+            eventValue = valueUnderTest
+        }
+        when:
+        serviceAuthorize.validateEvent()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED'
+
+        where:
+        quantityUnderTest | valueUnderTest
+        1D                | 0.0
+        2D                | -0.1
+
+    }
+
+    @Unroll
+    void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'(){
+        given:
+        def serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid",new Rule(){{
+            add("type", ServiceType.FUEL_ALLOWANCE)
+        }})
+        Event eventUnderTest = Fixture.from(Event.class).uses(jpaProcessor).gimme("withRequestQuantity", new Rule(){{
+            add("service", serviceUnderTest)
+        }})
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event = eventUnderTest
+            eventQuantity = quantityUnderTest
+        }
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED'
+
+        where:
+        _ | quantityUnderTest
+        _ | 0D
+        _ | -1D
+
     }
 
     void 'when try authorize service without event should not be authorized'(){
@@ -679,7 +735,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             event = eventUnderTest
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = establishmentUnderTest
-            serviceType = ServiceType.FUEL_ALLOWANC
+            serviceType = ServiceType.FUEL_ALLOWANCE
             it
         }
     }

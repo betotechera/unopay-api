@@ -168,14 +168,14 @@ class SetupCreator {
         eventService.create(event)
     }
     Product createProduct(code = null, PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),
-                          Set<CreditInsertionType> creditInsertionTypes = Arrays.asList(CreditInsertionType.values())) {
+                          Set<CreditInsertionType> insertionTypes = Arrays.asList(CreditInsertionType.values())) {
         Product product = Fixture.from(Product.class).gimme("valid")
         product = product.with {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             setPaymentRuleGroup (paymentRuleGroupUnderTest)
-            serviceTypes = Arrays.asList(ServiceType.values())
-            creditInsertionTypes = creditInsertionTypes
+            serviceTypes =  [ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT]
+            creditInsertionTypes = insertionTypes
             it
         }
         if(code){
@@ -190,7 +190,7 @@ class SetupCreator {
             issuer = createIssuer()
             accreditedNetwork = createNetwork()
             paymentRuleGroup =  createPaymentRuleGroup()
-            serviceTypes = Arrays.asList(ServiceType.values())
+            serviceTypes = [ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT]
             creditInsertionTypes = creditTypes
             it
         }

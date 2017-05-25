@@ -15,6 +15,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.context.WebApplicationContext
 
 import static org.mockito.Mockito.mock
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when
 
 @WebAppConfiguration
 @SpringBootTest
+@EnableTransactionManagement
 @ActiveProfiles("test")
 @FlywayTest
 @ContextConfiguration(classes = [Mocks, UnopayApiApplication])
