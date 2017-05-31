@@ -555,12 +555,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
-
-    void'when user is not establishment type then the establishment document should be required'(){
+    void'when user is not establishment type then the establishment should be required'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishment.person.document = null
+            establishment.id = null
         }
 
         when:
@@ -568,7 +567,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'ESTABLISHMENT_DOCUMENT_REQUIRED'
+        assert ex.errors.first().logref == 'ESTABLISHMENT_REQUIRED'
     }
 
     void 'given a unknown establishment when user is not establishment type should be authorized'(){

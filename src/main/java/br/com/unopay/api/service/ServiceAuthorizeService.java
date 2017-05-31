@@ -1,7 +1,6 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
@@ -16,8 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
@@ -68,7 +65,7 @@ public class ServiceAuthorizeService {
 
     private void checkContractIntegrity(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         serviceAuthorize.validateServiceType();
-        serviceAuthorize.checkEstablishmentDocumentWhenRequired(currentUser);
+        serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
         Contract contract = getValidContract(serviceAuthorize.contractId(), serviceAuthorize.getContractor());
         String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
         checkEstablishmentRestriction(contract, establishmentId);
