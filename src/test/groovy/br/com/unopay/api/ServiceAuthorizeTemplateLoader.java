@@ -1,26 +1,11 @@
 package br.com.unopay.api;
 
-import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.Rule;
-import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.model.CreditInsertionType;
-import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
-import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
-import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
-import br.com.unopay.api.model.Product;
-import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.model.TransactionSituation;
-import br.com.unopay.api.uaa.model.UserDetail;
-
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import br.com.six2six.fixturefactory.*;
+import br.com.six2six.fixturefactory.loader.*;
+import br.com.unopay.api.bacen.model.*;
+import br.com.unopay.api.model.*;
+import br.com.unopay.api.uaa.model.*;
+import java.math.*;
 
 public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
 

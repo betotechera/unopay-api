@@ -62,9 +62,10 @@ public class ServiceAuthorizeService {
         checkEstablishmentRestriction(contract, establishmentId);
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
-        serviceAuthorize.setReferences(currentUser, instrumentCredit);
         validateEvent(serviceAuthorize);
+        serviceAuthorize.setReferences(currentUser, instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
+        serviceAuthorize.setMeUp();
         return repository.save(serviceAuthorize);
     }
 

@@ -4,17 +4,21 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.repository.GroupRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class GroupControllerTest extends AuthServerApplicationTests {
     private static final String AUTHORITIES_ENDPOINT = '/groups/{groupId}/authorities?access_token={access_token}'

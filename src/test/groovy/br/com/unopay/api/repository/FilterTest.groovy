@@ -12,9 +12,8 @@ import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import groovy.time.TimeCategory
-import org.springframework.beans.factory.annotation.Autowired
-
 import static org.hamcrest.Matchers.hasSize
+import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
 class FilterTest extends SpockApplicationTests {

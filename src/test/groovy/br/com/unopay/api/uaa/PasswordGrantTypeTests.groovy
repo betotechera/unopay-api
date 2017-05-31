@@ -1,10 +1,9 @@
 package br.com.unopay.api.uaa
 
-import org.springframework.http.MediaType
-
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsEqual.equalTo
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.http.MediaType
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

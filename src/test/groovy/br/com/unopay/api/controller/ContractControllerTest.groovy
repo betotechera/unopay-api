@@ -7,14 +7,16 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.core.Is.is
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
-import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.core.Is.is
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContractControllerTest extends AuthServerApplicationTests {

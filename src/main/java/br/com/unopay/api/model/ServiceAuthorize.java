@@ -185,6 +185,8 @@ public class ServiceAuthorize implements Serializable {
         setContractorInstrumentCredit(instrumentCredit);
         setContractor(instrumentCredit.getContract().getContractor());
         setContract(instrumentCredit.getContract());
+        setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
+        setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
         setUser(currentUser);
     }
 
@@ -222,5 +224,10 @@ public class ServiceAuthorize implements Serializable {
         if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) == -1){
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
+    }
+
+    public void setMeUp() {
+        authorizationDateTime = new Date();
+        solicitationDateTime = new Date();
     }
 }

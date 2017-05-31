@@ -3,6 +3,8 @@ package br.com.unopay.api
 import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.core.context.SecurityContextHolder
@@ -17,9 +19,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.context.WebApplicationContext
-
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
 
 @WebAppConfiguration
 @SpringBootTest

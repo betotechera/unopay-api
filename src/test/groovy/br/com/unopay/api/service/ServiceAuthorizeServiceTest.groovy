@@ -6,8 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
@@ -79,6 +77,64 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'new service authorize should be created with current authorization date'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.authorizationDateTime > 1.second.ago
+        result.authorizationDateTime < 1.second.from.now
+    }
+
+    void 'new service authorize should be created with current solicitation date'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.solicitationDateTime > 1.second.ago
+        result.solicitationDateTime < 1.second.from.now
+    }
+
+    void 'given a event value less than credit balance should archive last credit balance'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event.id = eventUnderTest.id
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        def created = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.lastInstrumentCreditBalance == instrumentCreditUnderTest.availableBalance
+    }
+
+    void 'given a event value less than credit balance should archive current credit balance'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event.id = eventUnderTest.id
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        def created = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.currentInstrumentCreditBalance == 0.0
     }
 
     void 'given a event value less than credit balance should subtract credit balance'(){

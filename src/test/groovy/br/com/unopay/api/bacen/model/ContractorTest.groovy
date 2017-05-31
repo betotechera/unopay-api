@@ -3,7 +3,6 @@ package br.com.unopay.api.bacen.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.PersonType
-import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ContractorTest extends SpockApplicationTests {

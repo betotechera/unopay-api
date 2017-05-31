@@ -3,17 +3,21 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     private static final String ACCREDITED_NETWORK_ENDPOINT = '/accredited-networks?access_token={access_token}'

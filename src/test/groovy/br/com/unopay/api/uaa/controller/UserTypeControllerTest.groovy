@@ -1,11 +1,10 @@
 package br.com.unopay.api.uaa.controller
 
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.http.MediaType
-
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.http.MediaType
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
