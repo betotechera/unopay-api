@@ -19,6 +19,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.api.bacen.model.Service
 import groovy.time.TimeCategory
 import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
