@@ -13,12 +13,12 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
     void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'(){
         given:
         def quantity = quantityUnderTest
+        Event event = Fixture.from(Event.class).gimme("withRequestQuantity")
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
-            add("event", one(Event.class, "withRequestQuantity"))
             add("eventQuantity", quantity)
         }})
         when:
-        serviceAuthorize.validateEvent()
+        serviceAuthorize.validateEvent(event)
 
         then:
         def ex = thrown(UnprocessableEntityException)
