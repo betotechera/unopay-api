@@ -3,6 +3,8 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -22,10 +24,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,13 +38,16 @@ public class ContractorController {
 
     private ContractorService service;
 
+    private ContractService contractService;
+
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    public ContractorController(ContractorService service) {
+    public ContractorController(ContractorService service, ContractService contractService) {
         this.service = service;
-     }
+        this.contractService = contractService;
+    }
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
@@ -84,5 +91,15 @@ public class ContractorController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
+
+    @JsonView(Views.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
+    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam String establishmentId) {
+        log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
+        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId);
+        return new Results<>(contracts);
+    }
+
 
 }
