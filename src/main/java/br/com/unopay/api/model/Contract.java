@@ -252,4 +252,12 @@ public class Contract implements Serializable {
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }
     }
+
+
+    public boolean containsEstablishment(String establishmentId) {
+        return contractEstablishments != null &&
+                contractEstablishments.stream().filter(item ->
+                        item.getEstablishment().getId().equals(establishmentId))
+                        .count() > 0;
+    }
 }

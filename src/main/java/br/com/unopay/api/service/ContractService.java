@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
+import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -140,4 +142,16 @@ public class ContractService {
         }
         return contracts;
     }
+    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId) {
+        contractorService.getById(contractorId);
+        ContractFilter contractFilter = new ContractFilter();
+        contractFilter.setSituation(ContractSituation.ACTIVE);
+        contractFilter.setContractor(contractorId);
+        Page<Contract> byFilter = findByFilter(contractFilter, new UnovationPageRequest());
+        List<Contract> contracts = byFilter.getContent();
+        return contracts.stream()
+                .filter(contract -> !contract.withEstablishmentRestriction() || contract.containsEstablishment(establishmentId))
+                .collect(Collectors.toList());
+    }
+
 }
