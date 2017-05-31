@@ -1,3 +1,13 @@
+ssl:
+    key-store: keystore.p12
+    key-store-password: mypassword
+    keyStoreType: PKCS12
+    keyAlias: tomcat
+http:
+  client:
+    ssl:
+      trust-store: classpath:wsdl/pamcary.p12
+      trust-store-password: Ro@dcard
 unopay:
   credit:
     defaultPaymentRuleGroup: '01'
