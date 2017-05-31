@@ -212,7 +212,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         quantityUnderTest | valueUnderTest
         1D                | 0.0
         2D                | -0.1
-
     }
 
     @Unroll

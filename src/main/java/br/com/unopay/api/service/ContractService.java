@@ -144,14 +144,23 @@ public class ContractService {
     }
     public List<Contract> getContractorValidContracts(String contractorId, String establishmentId) {
         contractorService.getById(contractorId);
+        Page<Contract> contractPage = getActiveContracts(contractorId);
+        List<Contract> contracts = contractPage.getContent();
+        return contracts.stream()
+                .filter(contract -> contract.validToEstablishment(establishmentId) )
+                .collect(Collectors.toList());
+    }
+
+    private Page<Contract> getActiveContracts(String contractorId) {
+        ContractFilter contractFilter = createContractActiveFilter(contractorId);
+        return findByFilter(contractFilter, new UnovationPageRequest());
+    }
+
+    private ContractFilter createContractActiveFilter(String contractorId) {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
         contractFilter.setContractor(contractorId);
-        Page<Contract> byFilter = findByFilter(contractFilter, new UnovationPageRequest());
-        List<Contract> contracts = byFilter.getContent();
-        return contracts.stream()
-                .filter(contract -> !contract.withEstablishmentRestriction() || contract.containsEstablishment(establishmentId))
-                .collect(Collectors.toList());
+        return contractFilter;
     }
 
 }

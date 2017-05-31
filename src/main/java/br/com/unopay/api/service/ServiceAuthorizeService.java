@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.service.EstablishmentService;
@@ -55,18 +56,22 @@ public class ServiceAuthorizeService {
     @Transactional
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        serviceAuthorize.validateServiceType();
-        serviceAuthorize.checkEstablishmentDocumentWhenRequired(currentUser);
-        Contract contract = getValidContract(serviceAuthorize);
-        String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
-        checkEstablishmentRestriction(contract, establishmentId);
+        checkContractIntegrity(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
         validateEvent(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
+        serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
-        serviceAuthorize.setMeUp();
         return repository.save(serviceAuthorize);
+    }
+
+    private void checkContractIntegrity(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+        serviceAuthorize.validateServiceType();
+        serviceAuthorize.checkEstablishmentDocumentWhenRequired(currentUser);
+        Contract contract = getValidContract(serviceAuthorize.contractId(), serviceAuthorize.getContractor());
+        String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
+        checkEstablishmentRestriction(contract, establishmentId);
     }
 
     private void validateEvent(ServiceAuthorize serviceAuthorize) {
@@ -88,15 +93,15 @@ public class ServiceAuthorizeService {
         validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
         instrumentCredit.validate();
         updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
-
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
         return instrumentCredit;
     }
 
     private void checkEstablishmentRestriction(Contract contract, String establishmentId) {
-        if (contract.withEstablishmentRestriction()) {
-            checkEstablishmentIn(establishmentId, contract.getEstablishments());
+        if(!contract.meetsRestrictions(establishmentId)){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
         }
     }
 
@@ -129,23 +134,11 @@ public class ServiceAuthorizeService {
         }
     }
 
-    private Contract getValidContract(ServiceAuthorize serviceAuthorize) {
-        Contract contract = contractService.findById(serviceAuthorize.contractId());
+    private Contract getValidContract(String contractId, Contractor contractor) {
+        Contract contract = contractService.findById(contractId);
         contract.validateActive();
-        contract.validateContractor(serviceAuthorize.getContractor());
+        contract.validateContractor(contractor);
         return contract;
-    }
-
-    private void checkEstablishmentIn(String establishmentId, List<Establishment> establishments) {
-        findEstablishment(establishmentId, establishments)
-                .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
-                        .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT));
-    }
-
-    private Optional<Establishment> findEstablishment(String establishmentId, List<Establishment> establishments) {
-        return establishments.stream()
-                .filter(e -> Objects.equals(e.getId(),establishmentId))
-                .reduce((first, last) -> last);
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {

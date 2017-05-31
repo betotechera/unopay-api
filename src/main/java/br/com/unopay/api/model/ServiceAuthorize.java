@@ -185,8 +185,6 @@ public class ServiceAuthorize implements Serializable {
         setContractorInstrumentCredit(instrumentCredit);
         setContractor(instrumentCredit.getContract().getContractor());
         setContract(instrumentCredit.getContract());
-        setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
-        setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
         setUser(currentUser);
     }
 
@@ -226,8 +224,10 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
-    public void setMeUp() {
+    public void setMeUp(ContractorInstrumentCredit instrumentCredit) {
         authorizationDateTime = new Date();
         solicitationDateTime = new Date();
+        setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
+        setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
     }
 }

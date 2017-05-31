@@ -169,12 +169,20 @@ public class Contract implements Serializable {
     }
 
     public void validateActive(){
-        if(!ContractSituation.ACTIVE.equals(situation)){
+        if(!isActive()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
         }
-         if(end.before(new Date()) || begin.after(new Date())){
+         if(!inProgress()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_IN_PROGRESS);
         }
+    }
+
+    private boolean isActive() {
+        return ContractSituation.ACTIVE.equals(situation);
+    }
+
+    public boolean inProgress(){
+        return end.after(new Date()) && begin.before(new Date());
     }
 
     public void checkFields() {
@@ -253,11 +261,17 @@ public class Contract implements Serializable {
         }
     }
 
+    public boolean validToEstablishment(String establishmentId){
+        return meetsRestrictions(establishmentId) && inProgress() && isActive();
+    }
+
+    public boolean meetsRestrictions(String establishmentId) {
+        return !withEstablishmentRestriction() || containsEstablishment(establishmentId);
+    }
 
     public boolean containsEstablishment(String establishmentId) {
-        return contractEstablishments != null &&
-                contractEstablishments.stream().filter(item ->
-                        item.getEstablishment().getId().equals(establishmentId))
-                        .count() > 0;
+       return establishments.stream()
+                .filter(e -> Objects.equals(e.getId(),establishmentId))
+                .reduce((first, last) -> last).isPresent();
     }
 }
