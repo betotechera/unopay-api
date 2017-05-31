@@ -262,10 +262,10 @@ public class Contract implements Serializable {
     }
 
     public boolean validToEstablishment(String establishmentId){
-        return meetsRestrictions(establishmentId) && inProgress() && isActive();
+        return meetsEstablishmentRestrictions(establishmentId) && inProgress() && isActive();
     }
 
-    public boolean meetsRestrictions(String establishmentId) {
+    public boolean meetsEstablishmentRestrictions(String establishmentId) {
         return !withEstablishmentRestriction() || containsEstablishment(establishmentId);
     }
 

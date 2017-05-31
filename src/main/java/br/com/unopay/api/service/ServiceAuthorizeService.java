@@ -96,7 +96,7 @@ public class ServiceAuthorizeService {
     }
 
     private void checkEstablishmentRestriction(Contract contract, String establishmentId) {
-        if(!contract.meetsRestrictions(establishmentId)){
+        if(!contract.meetsEstablishmentRestrictions(establishmentId)){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
         }
