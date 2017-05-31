@@ -63,18 +63,17 @@ public class ServiceAuthorizeService {
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
-        defineValidEvent(serviceAuthorize);
+        validateEvent(serviceAuthorize);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
         return repository.save(serviceAuthorize);
     }
 
-    private void defineValidEvent(ServiceAuthorize serviceAuthorize) {
-        Event event = getValidEvent(serviceAuthorize);
-        serviceAuthorize.validateEvent();
-        serviceAuthorize.setEvent(event);
+    private void validateEvent(ServiceAuthorize serviceAuthorize) {
+        Event event = getAcceptableEvent(serviceAuthorize);
+        serviceAuthorize.validateEvent(event);
     }
 
-    private Event getValidEvent(ServiceAuthorize serviceAuthorize) {
+    private Event getAcceptableEvent(ServiceAuthorize serviceAuthorize) {
         Event event = eventService.findById(serviceAuthorize.getEvent().getId());
         if(!event.toServiceType(serviceAuthorize.getServiceType())){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_NOT_ACCEPTED);

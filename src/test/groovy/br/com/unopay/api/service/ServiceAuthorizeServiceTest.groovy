@@ -86,7 +86,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = instrumentCreditUnderTest.availableBalance
         }
         when:
@@ -102,7 +102,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = instrumentCreditUnderTest.availableBalance
         }
         when:
@@ -118,7 +118,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = contractorInstrumentCredit.availableBalance + 0.1
         }
         when:
@@ -140,7 +140,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         }})
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventQuantity = quantityUnderTest
             eventValue = valueUnderTest
         }
@@ -170,7 +170,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventQuantity = quantityUnderTest
         }
         when:
