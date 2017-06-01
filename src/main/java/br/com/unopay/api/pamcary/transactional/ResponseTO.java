@@ -39,7 +39,7 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "responseTO", propOrder = {
     "fields"
-})
+}, namespace = "responseTO")
 public class ResponseTO implements Equals2, HashCode2
 {
 

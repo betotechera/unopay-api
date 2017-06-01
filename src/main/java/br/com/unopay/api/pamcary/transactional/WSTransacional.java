@@ -19,8 +19,8 @@ import javax.xml.ws.ResponseWrapper;
 public interface WSTransacional {
 
     @WebMethod
-    @RequestWrapper(localName = "execute", targetNamespace = "http://webservice.pamcard.jee.pamcary.com.br", className = "br.com.pamcary.jee.pamcard.webservice.Execute")
-    @ResponseWrapper(localName = "executeResponse", targetNamespace = "http://webservice.pamcard.jee.pamcary.com.br", className = "br.com.pamcary.jee.pamcard.webservice.ExecuteResponse")
+    @RequestWrapper(localName = "execute", targetNamespace = "http://webservice.pamcard.jee.pamcary.com.br", className = "br.com.unopay.api.pamcary.transactional.Execute")
+    @ResponseWrapper(localName = "executeResponse", targetNamespace = "http://webservice.pamcard.jee.pamcary.com.br", className = "br.com.unopay.api.pamcary.transactional.ExecuteResponse")
     @WebResult(name = "return", targetNamespace = "")
     public ResponseTO execute(
         @WebParam(name = "arg0", targetNamespace = "")

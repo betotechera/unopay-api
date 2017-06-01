@@ -41,7 +41,7 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 @XmlType(name = "requestTO", propOrder = {
     "context",
     "fields"
-})
+}, namespace = "requestTO")
 public class RequestTO implements Equals2, HashCode2
 {
 

@@ -38,7 +38,7 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 @XmlType(name = "fieldTO", propOrder = {
     "key",
     "value"
-})
+}, namespace = "fieldTO")
 public class FieldTO implements Equals2, HashCode2
 {
 

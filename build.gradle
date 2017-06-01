@@ -68,10 +68,10 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.springframework.hateoas:spring-hateoas'
 
-    compile 'org.springframework.spring-jms'
-    compile 'org.springframework.spring-oxm'
-    compile 'org.springframework.spring-ws-core'
-    compile 'org.springframework.spring-ws-support'
+    compile 'org.springframework:spring-jms'
+    compile 'org.springframework:spring-oxm'
+    compile 'org.springframework.ws:spring-ws-core'
+    compile 'org.springframework.ws:spring-ws-support'
 
 	compile 'com.google.guava:guava:21.0'
 
