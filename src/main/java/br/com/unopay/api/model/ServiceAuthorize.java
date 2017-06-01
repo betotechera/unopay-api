@@ -15,6 +15,8 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -34,6 +36,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import org.hibernate.annotations.Type;
 
 
 @Data
@@ -57,6 +60,7 @@ public class ServiceAuthorize implements Serializable {
     private Long authorizationNumber;
 
     @Column(name = "authorization_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date authorizationDateTime;
 
     @ManyToOne
@@ -99,6 +103,7 @@ public class ServiceAuthorize implements Serializable {
     private BigDecimal valueFee;
 
     @Column(name = "solicitation_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date solicitationDateTime;
 
     @Column(name = "credit_insertion_type")
@@ -119,6 +124,7 @@ public class ServiceAuthorize implements Serializable {
     private BigDecimal currentInstrumentCreditBalance;
 
     @Column(name = "cancellation_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date cancellationDateTime;
 
     @Column(name = "transaction_log_code")
