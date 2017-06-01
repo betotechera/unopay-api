@@ -39,8 +39,9 @@ create table cargo_contract (
     cargo_profile varchar(100) not null,
     receipt_observation varchar(256),
     cargo_weight decimal(20,2),
-    damaged_itens varchar(256),
+    damaged_items varchar(256),
     receipt_step varchar(100),
+    payment_source varchar(100),
     create_date_time timestamp not null,
     version integer,
     constraint fk_cargo_contract foreign key(contract_id) references contract(id)
