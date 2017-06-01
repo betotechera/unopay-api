@@ -11,9 +11,9 @@ class TransactionalTest extends SpockApplicationTests{
 
     def 'soap'(){
         System.setProperty("javax.net.ssl.keyStore", "/usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts")
-        System.setProperty("javax.net.ssl.keyStorePassword", "Ro@dcard")
+        System.setProperty("javax.net.ssl.keyStorePassword", "changeit")
         System.setProperty("javax.net.ssl.trustStore", "/usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts")
-        System.setProperty("javax.net.ssl.trustStorePassword", "Ro@dcard")
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeit")
         when:
         print("teste")
         then:
