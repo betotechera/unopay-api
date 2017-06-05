@@ -8,7 +8,7 @@ unopay:
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'
   api: 10.10.0.193:7070
   resetPassword:
-        url: 'http://qualidade.roadcard.com.br/plataformaprepaga/#/password/'
+        url: 'http://qualidade.roadcard.com.br/plataformaprepaga/#/page/password/'
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:

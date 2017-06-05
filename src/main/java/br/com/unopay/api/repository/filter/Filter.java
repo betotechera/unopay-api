@@ -16,6 +16,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,6 +96,10 @@ public class Filter<T> implements Specification<T> {
         if(value instanceof Enum){
             return cb.equal(key, value);
         }
+        if(value instanceof Collection){
+            return cb.isMember(value,key);
+        }
+
         return cb.like(key, "%" + value + "%");
     }
 

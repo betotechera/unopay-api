@@ -4,7 +4,7 @@ unopay:
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'
   api: api.qa.unvlocal.com.br:8080
   resetPassword:
-        url: 'http://unopay.qa.unovation.com.br/#/password/'
+        url: 'http://unopay.qa.unovation.com.br/#/page/password/'
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:
