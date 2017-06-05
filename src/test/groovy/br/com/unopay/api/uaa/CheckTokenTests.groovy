@@ -1,11 +1,10 @@
 package br.com.unopay.api.uaa
 
 import com.jayway.jsonpath.JsonPath
-import org.springframework.test.web.servlet.MvcResult
-
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsEqual.equalTo
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.test.web.servlet.MvcResult
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

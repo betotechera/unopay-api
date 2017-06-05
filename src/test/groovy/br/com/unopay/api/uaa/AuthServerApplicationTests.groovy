@@ -6,13 +6,12 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Throwables
 import com.jayway.jsonpath.JsonPath
+import static org.hamcrest.core.Is.is
+import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.codec.Base64
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
-
-import static org.hamcrest.core.Is.is
-import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

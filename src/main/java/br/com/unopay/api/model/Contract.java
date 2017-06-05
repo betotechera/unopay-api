@@ -90,7 +90,7 @@ public class Contract implements Serializable {
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Product product;
 
     @ManyToOne
@@ -112,7 +112,7 @@ public class Contract implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<ServiceType> serviceType;
 
@@ -132,11 +132,11 @@ public class Contract implements Serializable {
     private Date end;
 
     @Column(name = "issue_invoice")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private boolean issueInvoice;
 
     @Column(name = "document_number_invoice")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private String documentNumberInvoice;
 
     @Column(name = "situation")
@@ -147,12 +147,12 @@ public class Contract implements Serializable {
 
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private ContractOrigin origin = UNOPAY;
 
     @Column(name="rntrc")
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     @Size(max = 20, groups = {Create.class, Update.class})
     private String rntrc;
 
@@ -169,12 +169,20 @@ public class Contract implements Serializable {
     }
 
     public void validateActive(){
-        if(!ContractSituation.ACTIVE.equals(situation)){
+        if(!isActive()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
         }
-         if(end.before(new Date()) || begin.after(new Date())){
+         if(!inProgress()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_IN_PROGRESS);
         }
+    }
+
+    private boolean isActive() {
+        return ContractSituation.ACTIVE.equals(situation);
+    }
+
+    public boolean inProgress(){
+        return end.after(new Date()) && begin.before(new Date());
     }
 
     public void checkFields() {
@@ -251,5 +259,19 @@ public class Contract implements Serializable {
         if(!containsContractor(contractor)){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }
+    }
+
+    public boolean validToEstablishment(String establishmentId){
+        return meetsEstablishmentRestrictions(establishmentId) && inProgress() && isActive();
+    }
+
+    public boolean meetsEstablishmentRestrictions(String establishmentId) {
+        return !withEstablishmentRestriction() || containsEstablishment(establishmentId);
+    }
+
+    public boolean containsEstablishment(String establishmentId) {
+       return establishments.stream()
+                .filter(e -> Objects.equals(e.getId(),establishmentId))
+                .reduce((first, last) -> last).isPresent();
     }
 }

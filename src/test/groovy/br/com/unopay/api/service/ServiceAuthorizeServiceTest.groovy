@@ -6,8 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
@@ -21,6 +19,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.api.bacen.model.Service
 import groovy.time.TimeCategory
 import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -81,12 +80,70 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'new service authorize should be created with current authorization date'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.authorizationDateTime > 1.second.ago
+        result.authorizationDateTime < 1.second.from.now
+    }
+
+    void 'new service authorize should be created with current solicitation date'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.solicitationDateTime > 1.second.ago
+        result.solicitationDateTime < 1.second.from.now
+    }
+
+    void 'given a event value less than credit balance should archive last credit balance'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event.id = eventUnderTest.id
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        def created = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.lastInstrumentCreditBalance == instrumentCreditUnderTest.availableBalance
+    }
+
+    void 'given a event value less than credit balance should archive current credit balance'(){
+        given:
+
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            event.id = eventUnderTest.id
+            eventValue = instrumentCreditUnderTest.availableBalance
+        }
+        when:
+        def created = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.currentInstrumentCreditBalance == 0.0
+    }
+
     void 'given a event value less than credit balance should subtract credit balance'(){
         given:
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = instrumentCreditUnderTest.availableBalance
         }
         when:
@@ -102,7 +159,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = instrumentCreditUnderTest.availableBalance
         }
         when:
@@ -118,7 +175,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventValue = contractorInstrumentCredit.availableBalance + 0.1
         }
         when:
@@ -140,7 +197,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         }})
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventQuantity = quantityUnderTest
             eventValue = valueUnderTest
         }
@@ -155,7 +212,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         quantityUnderTest | valueUnderTest
         1D                | 0.0
         2D                | -0.1
-
     }
 
     @Unroll
@@ -170,7 +226,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            event = eventUnderTest
+            event.id = eventUnderTest.id
             eventQuantity = quantityUnderTest
         }
         when:
@@ -499,12 +555,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
-
-    void'when user is not establishment type then the establishment document should be required'(){
+    void'when user is not establishment type then the establishment should be required'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishment.person.document = null
+            establishment.id = null
         }
 
         when:
@@ -512,7 +567,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'ESTABLISHMENT_DOCUMENT_REQUIRED'
+        assert ex.errors.first().logref == 'ESTABLISHMENT_REQUIRED'
     }
 
     void 'given a unknown establishment when user is not establishment type should be authorized'(){

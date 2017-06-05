@@ -4,7 +4,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_DOCUMENT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
@@ -15,6 +15,8 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -34,6 +36,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import org.hibernate.annotations.Type;
 
 
 @Data
@@ -57,6 +60,7 @@ public class ServiceAuthorize implements Serializable {
     private Long authorizationNumber;
 
     @Column(name = "authorization_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date authorizationDateTime;
 
     @ManyToOne
@@ -99,6 +103,7 @@ public class ServiceAuthorize implements Serializable {
     private BigDecimal valueFee;
 
     @Column(name = "solicitation_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date solicitationDateTime;
 
     @Column(name = "credit_insertion_type")
@@ -119,6 +124,7 @@ public class ServiceAuthorize implements Serializable {
     private BigDecimal currentInstrumentCreditBalance;
 
     @Column(name = "cancellation_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date cancellationDateTime;
 
     @Column(name = "transaction_log_code")
@@ -177,8 +183,8 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
-    public boolean withEstablishmentDocument(){
-        return establishmentDocumentNumber() != null;
+    public boolean withEstablishmentId(){
+        return establishmentId() != null;
     }
 
     public void setReferences(UserDetail currentUser, ContractorInstrumentCredit instrumentCredit) {
@@ -188,9 +194,9 @@ public class ServiceAuthorize implements Serializable {
         setUser(currentUser);
     }
 
-    public void checkEstablishmentDocumentWhenRequired(UserDetail currentUser) {
-        if (!currentUser.isEstablishmentType() && !withEstablishmentDocument()) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_DOCUMENT_REQUIRED);
+    public void checkEstablishmentIdWhenRequired(UserDetail currentUser) {
+        if (!currentUser.isEstablishmentType() && !withEstablishmentId()) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_REQUIRED);
         }
     }
 
@@ -212,8 +218,8 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
-    public void validateEvent() {
-        if(getEvent() != null && getEvent().isRequestQuantity() && eventQuantity <= 0){
+    public void validateEvent(Event event) {
+        if(event != null && event.isRequestQuantity() && eventQuantity <= 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
         if(eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0){
@@ -222,5 +228,12 @@ public class ServiceAuthorize implements Serializable {
         if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) == -1){
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
+    }
+
+    public void setMeUp(ContractorInstrumentCredit instrumentCredit) {
+        authorizationDateTime = new Date();
+        solicitationDateTime = new Date();
+        setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
+        setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
     }
 }

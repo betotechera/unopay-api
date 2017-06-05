@@ -1,11 +1,47 @@
 package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import groovy.time.TimeCategory
 
 class ContractTest extends FixtureApplicationTest {
+
+
+    void setup(){
+        Integer.mixin(TimeCategory)
+    }
+
+
+    void 'should be in progress'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
+            add("begin", instant("1 day ago"))
+            add("end", instant("1 day from now"))
+        }})
+
+        when:
+        def inProgress = contract.inProgress()
+
+        then:
+        inProgress
+    }
+
+    void 'should not be in progress'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
+            add("begin", instant("2 days from now"))
+            add("end", instant("3 days from now"))
+        }})
+
+        when:
+        def inProgress = contract.inProgress()
+
+        then:
+        !inProgress
+    }
 
     def 'should update me'(){
         given:

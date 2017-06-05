@@ -6,13 +6,16 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.SetupCreator
-import br.com.unopay.api.model.*
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractEstablishment
+import br.com.unopay.api.model.ContractOrigin
+import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import org.springframework.beans.factory.annotation.Autowired
-
 import static org.hamcrest.Matchers.hasSize
+import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractServiceTest extends SpockApplicationTests {

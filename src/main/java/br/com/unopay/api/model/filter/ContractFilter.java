@@ -1,5 +1,6 @@
 package br.com.unopay.api.model.filter;
 
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Data
 @ToString
@@ -14,7 +16,7 @@ public class ContractFilter  implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
-    ContractFilter(){}
+    public ContractFilter(){}
 
     @SearchableField
     private String code;
@@ -30,6 +32,9 @@ public class ContractFilter  implements Serializable {
 
     @SearchableField(field = "contractor.id")
     private String contractor;
+
+    @SearchableField
+    private Set<ServiceType> serviceType;
 
     @SearchableField
     private ContractSituation situation;

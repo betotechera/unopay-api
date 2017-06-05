@@ -1,7 +1,6 @@
 package br.com.unopay.api.uaa.controller
 
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get

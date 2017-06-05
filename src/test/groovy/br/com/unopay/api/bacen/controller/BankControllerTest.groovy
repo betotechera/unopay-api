@@ -1,12 +1,11 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
+import org.springframework.http.MediaType
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class BankControllerTest extends AuthServerApplicationTests {

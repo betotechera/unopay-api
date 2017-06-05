@@ -1,15 +1,10 @@
 package br.com.unopay.api.uaa;
 
-import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.Rule;
-import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.uaa.model.Authority;
-import br.com.unopay.api.uaa.model.Group;
-import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.UserType;
-
-import java.util.Arrays;
+import br.com.six2six.fixturefactory.*;
+import br.com.six2six.fixturefactory.loader.*;
+import br.com.unopay.api.bacen.model.*;
+import br.com.unopay.api.uaa.model.*;
+import java.util.*;
 
 public class UaaTemplateLoader implements TemplateLoader {
 

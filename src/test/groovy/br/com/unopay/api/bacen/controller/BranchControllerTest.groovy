@@ -5,15 +5,17 @@ import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MvcResult
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class BranchControllerTest extends AuthServerApplicationTests {

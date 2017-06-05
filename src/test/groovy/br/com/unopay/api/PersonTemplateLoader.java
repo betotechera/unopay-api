@@ -1,11 +1,9 @@
 package br.com.unopay.api;
 
-import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.Rule;
-import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.six2six.fixturefactory.*;
+import br.com.six2six.fixturefactory.loader.*;
 import br.com.unopay.api.model.*;
-
-import static br.com.unopay.api.model.State.SP;
+import static br.com.unopay.api.model.State.*;
 
 
 public class PersonTemplateLoader implements TemplateLoader {

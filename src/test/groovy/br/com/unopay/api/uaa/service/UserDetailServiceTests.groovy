@@ -14,11 +14,12 @@ import br.com.unopay.api.uaa.repository.UserTypeRepository
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.hasSize
+import static org.hamcrest.Matchers.not
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.security.crypto.password.PasswordEncoder
-
-import static org.hamcrest.Matchers.*
 import static spock.util.matcher.HamcrestSupport.that
 
 class UserDetailServiceTests extends SpockApplicationTests {

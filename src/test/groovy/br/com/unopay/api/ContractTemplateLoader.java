@@ -1,18 +1,11 @@
 package br.com.unopay.api;
 
-import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.Rule;
-import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.six2six.fixturefactory.*;
+import br.com.six2six.fixturefactory.loader.*;
+import br.com.unopay.api.bacen.model.*;
 import br.com.unopay.api.model.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.text.*;
+import java.util.*;
 
 public class ContractTemplateLoader implements TemplateLoader {
 

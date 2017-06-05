@@ -13,10 +13,9 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
 class GroupServiceTest extends SpockApplicationTests {

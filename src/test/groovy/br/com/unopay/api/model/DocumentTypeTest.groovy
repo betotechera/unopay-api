@@ -1,7 +1,6 @@
 package br.com.unopay.api.model
 
 import br.com.unopay.api.SpockApplicationTests
-
 import static br.com.unopay.api.model.PersonType.LEGAL
 import static br.com.unopay.api.model.PersonType.PHYSICAL
 

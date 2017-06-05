@@ -1,6 +1,8 @@
 package br.com.unopay.api.service
 
 import br.com.unopay.api.SpockApplicationTests
+import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
@@ -8,9 +10,6 @@ import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.bootcommons.exception.NotFoundException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
-
-import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 
 class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 

@@ -5,20 +5,22 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import groovy.time.TimeCategory
 import spock.lang.Unroll
 
 class ServiceAuthorizeTest   extends FixtureApplicationTest {
+
 
     @Unroll
     void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'(){
         given:
         def quantity = quantityUnderTest
+        Event event = Fixture.from(Event.class).gimme("withRequestQuantity")
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
-            add("event", one(Event.class, "withRequestQuantity"))
             add("eventQuantity", quantity)
         }})
         when:
-        serviceAuthorize.validateEvent()
+        serviceAuthorize.validateEvent(event)
 
         then:
         def ex = thrown(UnprocessableEntityException)
