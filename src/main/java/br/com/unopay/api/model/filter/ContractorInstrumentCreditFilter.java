@@ -20,7 +20,13 @@ public class ContractorInstrumentCreditFilter  implements Serializable {
     @SearchableField
     private CreditSituation situation;
 
+    @SearchableField(field = "contract.id")
+    private String contract;
+
     @SearchableField(field = "paymentInstrument.id")
     private String paymentInstrument;
+
+    @SearchableField(field = "expirationDateTime")
+    private Period expirationDateTimePeriod;
 
 }
