@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -142,24 +144,25 @@ public class ContractService {
         }
         return contracts;
     }
-    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId) {
+    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId, Set<ServiceType> serviceType) {
         contractorService.getById(contractorId);
-        Page<Contract> contractPage = getActiveContracts(contractorId);
+        Page<Contract> contractPage = getActiveContracts(contractorId,serviceType);
         List<Contract> contracts = contractPage.getContent();
         return contracts.stream()
                 .filter(contract -> contract.validToEstablishment(establishmentId) )
                 .collect(Collectors.toList());
     }
 
-    private Page<Contract> getActiveContracts(String contractorId) {
-        ContractFilter contractFilter = createContractActiveFilter(contractorId);
+    private Page<Contract> getActiveContracts(String contractorId, Set<ServiceType> serviceType) {
+        ContractFilter contractFilter = createContractActiveFilter(contractorId,serviceType);
         return findByFilter(contractFilter, new UnovationPageRequest());
     }
 
-    private ContractFilter createContractActiveFilter(String contractorId) {
+    private ContractFilter createContractActiveFilter(String contractorId, Set<ServiceType> serviceType) {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
         contractFilter.setContractor(contractorId);
+        contractFilter.setServiceType(serviceType);
         return contractFilter;
     }
 

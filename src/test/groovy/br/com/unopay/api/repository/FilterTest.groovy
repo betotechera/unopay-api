@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
 import br.com.unopay.api.bacen.util.SetupCreator
@@ -12,6 +13,10 @@ import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import groovy.time.TimeCategory
+
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
+import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
@@ -103,6 +108,28 @@ class FilterTest extends SpockApplicationTests {
         then:
         that result, hasSize(2)
     }
+
+    def 'should return contracts in list'() {
+        given:
+        Contract contractA = createContract().with { serviceType = [FUEL_ALLOWANCE,FREIGHT]; it }
+        Contract contractB = createContract().with { serviceType = [FREIGHT_RECEIPT,FREIGHT]; it}
+        Contract contractC = createContract().with { serviceType = [FUEL_ALLOWANCE,FREIGHT_RECEIPT]; it}
+
+        def filter = new ContractFilter()
+
+        filter.with { serviceType = [FUEL_ALLOWANCE] }
+
+        repository.save(contractA)
+        repository.save(contractB)
+        repository.save(contractC)
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(2)
+    }
+
 
     def 'should return hirer when find document in more one join'() {
         given:
