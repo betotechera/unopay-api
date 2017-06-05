@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.Contract;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -95,9 +97,9 @@ public class ContractorController {
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
-    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam String establishmentId) {
+    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam String establishmentId,@RequestParam Set<ServiceType> serviceType) {
         log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
-        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId);
+        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType);
         return new Results<>(contracts);
     }
 
