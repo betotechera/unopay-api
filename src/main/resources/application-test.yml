@@ -1,13 +1,10 @@
-ssl:
-    key-store: keystore.p12
-    key-store-password: mypassword
-    keyStoreType: PKCS12
-    keyAlias: tomcat
-http:
+soap:
   client:
     ssl:
-      trust-store: classpath:wsdl/pamcary.p12
-      trust-store-password: Ro@dcard
+      key-store: classpath:wsdl/pamcary.p12
+      key-store-password: 'Ro@dcard'
+      trust-store: /usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts
+      trust-store-password: 'changeit'
 unopay:
   credit:
     defaultPaymentRuleGroup: '01'
