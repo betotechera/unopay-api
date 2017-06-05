@@ -51,10 +51,12 @@ public class CargoContract implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String caveat;
 
+    @Valid
+    @Enumerated(STRING)
     @Column(name = "cargo_profile")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private String cargoProfile;
+    private CargoProfile cargoProfile;
 
     @Column(name = "receipt_observation")
     @JsonView({Views.Public.class,Views.List.class})
@@ -66,7 +68,7 @@ public class CargoContract implements Serializable {
 
     @Column(name = "damaged_items")
     @JsonView({Views.Public.class,Views.List.class})
-    private String damagedItems;
+    private Double damagedItems;
 
     @Valid
     @Enumerated(STRING)
@@ -84,7 +86,7 @@ public class CargoContract implements Serializable {
 
     @Valid
     @Enumerated(STRING)
-    @Column(name="payment_source")
+    @Column(name="travel_situation")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private TravelSituation travelSituation;
