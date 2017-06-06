@@ -64,9 +64,9 @@ public class ContractorInstrumentCreditController {
 
     @ResponseStatus(OK)
     @JsonView(Views.List.class)
-    @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT')")
+    @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/payment-instruments/credits", method = GET)
-    public Results<ContractorInstrumentCredit> create(ContractorInstrumentCreditFilter filter,
+    public Results<ContractorInstrumentCredit> findAll(ContractorInstrumentCreditFilter filter,
                                                       @Validated UnovationPageRequest pageable) {
         log.info("search ContractorInstrumentCredit with filter={}", filter);
         Page<ContractorInstrumentCredit> page =  service.findByFilter(filter, pageable);
