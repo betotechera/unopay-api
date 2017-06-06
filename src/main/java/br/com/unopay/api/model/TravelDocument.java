@@ -57,7 +57,7 @@ public class TravelDocument  implements Serializable {
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private DocumentTravelType type;
+    private TravelDocumentType type;
 
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})

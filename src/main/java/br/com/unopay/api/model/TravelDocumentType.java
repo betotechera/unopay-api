@@ -2,7 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
-public enum DocumentTravelType implements DescriptableEnum{
+public enum TravelDocumentType implements DescriptableEnum{
 
     MAN("MANIFESTO"), ROM("ROMANEIO"), PVIA("PLANO DE VIAGEM"), AWB("AWB"), CON("CONHECIMENTO"), NFIS("NOTA FISCAL"),
     DCLI("DOCUMENTO PROPRIO DO CLIENTE"), NPED("NUMERO PEDIDO"), OVEN("ORDEM DE VENDA"),
@@ -10,7 +10,7 @@ public enum DocumentTravelType implements DescriptableEnum{
 
     private String description;
 
-    DocumentTravelType(String description) {
+    TravelDocumentType(String description) {
         this.description = description;
     }
 
