@@ -46,10 +46,12 @@ public class CargoContract implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;
 
+    @Valid
+    @Enumerated(STRING)
     @Column(name = "caveat")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private String caveat;
+    @NotNull(groups = {Create.class, Update.class})
+    private DocumentCaveat caveat;
 
     @Valid
     @Enumerated(STRING)

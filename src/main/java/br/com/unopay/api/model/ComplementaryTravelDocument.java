@@ -46,11 +46,7 @@ public class ComplementaryTravelDocument  implements Serializable {
     @Enumerated(STRING)
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
-    private DocumentTravelType type;
-
-    @Column(name="abbreviation")
-    @JsonView({Views.Public.class,Views.List.class})
-    private String abbreviation;
+    private ComplementaryTravelDocumentType type;
 
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})
@@ -60,11 +56,13 @@ public class ComplementaryTravelDocument  implements Serializable {
     @Enumerated(STRING)
     @Column(name="situation")
     @JsonView({Views.Public.class,Views.List.class})
-    private DocumentTravelType situation;
+    private DocumentTravelSituation situation;
 
+    @Valid
+    @Enumerated(STRING)
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
-    private String caveat;
+    private DocumentCaveat caveat;
 
     @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
