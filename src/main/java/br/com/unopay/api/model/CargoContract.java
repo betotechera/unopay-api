@@ -7,6 +7,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -26,7 +27,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "cargo_contact")
+@Table(name = "cargo_contract")
 public class CargoContract implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -46,10 +47,12 @@ public class CargoContract implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;
 
+    @Valid
+    @Enumerated(STRING)
     @Column(name = "caveat")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private String caveat;
+    @NotNull(groups = {Create.class, Update.class})
+    private DocumentCaveat caveat;
 
     @Valid
     @Enumerated(STRING)
@@ -92,9 +95,9 @@ public class CargoContract implements Serializable {
     private TravelSituation travelSituation;
 
 
-    @Column(name = "create_date_time")
+    @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
-    private String createDateTime;
+    private Date createdDateTime;
 
     @Version
     @JsonIgnore
