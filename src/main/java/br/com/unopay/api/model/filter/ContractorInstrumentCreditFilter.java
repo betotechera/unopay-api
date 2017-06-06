@@ -1,5 +1,6 @@
 package br.com.unopay.api.model.filter;
 
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
@@ -22,6 +23,9 @@ public class ContractorInstrumentCreditFilter  implements Serializable {
 
     @SearchableField(field = "contract.id")
     private String contract;
+
+    @SearchableField(field = "serviceType")
+    private ServiceType serviceType;
 
     @SearchableField(field = "paymentInstrument.id")
     private String paymentInstrument;
