@@ -24,7 +24,7 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("serviceType",serviceTypes);
             add("creditInsertionType", random(CreditInsertionType.class));
             add("begin", instant("now"));
-            add("end", afterDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
+            add("end", instant("2 days from now"));
             add("situation", random(ContractSituation.class));
             add("rntrc", random("65647988664", "564654698469479688", "SS454SAF564AS86S4DF"));
             add("documentNumberInvoice", random("SDFDSF65464SDF646SDF", "AAAAAADBBBBBBBBBB654D87498D9S7F97SDF"));

@@ -36,8 +36,8 @@ create table cargo_contract (
     caveat varchar(100) not null,
     cargo_profile varchar(100) not null,
     receipt_observation varchar(256),
-    cargo_weight decimal(20,2),
-    damaged_items decimal(20,2),
+    cargo_weight decimal(*,2),
+    damaged_items decimal(*,2),
     receipt_step varchar(100),
     payment_source varchar(100),
     travel_situation varchar(100),
@@ -53,8 +53,8 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_CARGO_CONTRACT','Pe
 insert into AUTHORITY(name, description) values('ROLE_LIST_TRAVEL_DOCUMENT','Permite listar documentos da viagem.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_TRAVEL_DOCUMENT','Permite gerenciar documentos da viagem.');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_TRAVEL_DOCUMENT', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_TRAVEL_DOCUMENT', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_TRAVEL_DOCUMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_TRAVEL_DOCUMENT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CARGO_CONTRACT', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CARGO_CONTRACT', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CARGO_CONTRACT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CARGO_CONTRACT', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
