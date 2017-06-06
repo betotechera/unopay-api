@@ -1,7 +1,7 @@
 create table contractor (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
-    rntrc varchar(256) not null,
+    rntrc varchar(256),
     bank_account_id varchar(256),
     version integer,
     CONSTRAINT contractor_person_id UNIQUE (person_id),
