@@ -13,6 +13,7 @@ import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.Optional;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
@@ -212,5 +213,13 @@ public class UserDetail implements Serializable {
             return getEstablishment().getId();
         }
         return null;
+    }
+
+
+    public Optional<Establishment> myEstablishment() {
+        if (isEstablishmentType()) {
+            return Optional.ofNullable(getEstablishment());
+        }
+        return Optional.empty();
     }
 }

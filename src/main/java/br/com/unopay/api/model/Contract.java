@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
 
 import br.com.unopay.api.uaa.exception.Errors;
@@ -177,7 +178,7 @@ public class Contract implements Serializable {
         }
     }
 
-    private boolean isActive() {
+    public boolean isActive() {
         return ContractSituation.ACTIVE.equals(situation);
     }
 
@@ -255,12 +256,6 @@ public class Contract implements Serializable {
         return Objects.equals(this.contractor.getDocumentNumber(), contractor.getDocumentNumber());
     }
 
-    public void validateContractor(Contractor contractor){
-        if(!containsContractor(contractor)){
-            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
-        }
-    }
-
     public boolean validToEstablishment(String establishmentId){
         return meetsEstablishmentRestrictions(establishmentId) && inProgress() && isActive();
     }
@@ -273,5 +268,24 @@ public class Contract implements Serializable {
        return establishments.stream()
                 .filter(e -> Objects.equals(e.getId(),establishmentId))
                 .reduce((first, last) -> last).isPresent();
+    }
+
+    public void checkValidFor(Contractor contractor, Establishment establishment){
+        validateActive();
+        validateContractor(contractor);
+        checkEstablishmentRestriction(establishment.getId());
+    }
+
+    private void checkEstablishmentRestriction(String establishmentId) {
+        if(!meetsEstablishmentRestrictions(establishmentId)){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
+        }
+    }
+
+    private void validateContractor(Contractor contractor){
+        if(!containsContractor(contractor)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
+        }
     }
 }

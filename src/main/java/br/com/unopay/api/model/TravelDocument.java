@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -16,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
@@ -95,7 +97,7 @@ public class TravelDocument  implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private ReasonReceiptSituation reasonReceiptSituation;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="complementary_document_id")
     @JsonView({Views.Public.class,Views.List.class})
     private ComplementaryTravelDocument complementaryTravelDocument;

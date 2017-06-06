@@ -3,6 +3,7 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.repository.TravelDocumentRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +23,9 @@ public class TravelDocumentService {
 
     public TravelDocument findById(String id) {
         return repository.findOne(id);
+    }
+
+    public List<TravelDocument> findAll(){
+        return repository.findAll();
     }
 }

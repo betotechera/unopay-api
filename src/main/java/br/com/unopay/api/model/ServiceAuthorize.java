@@ -200,14 +200,6 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
-    public String getCurrentEstablishmentId(UserDetail currentUser) {
-        String establishmentId = establishmentId();
-        if (currentUser.isEstablishmentType()) {
-            establishmentId = currentUser.establishmentId();
-        }
-        return establishmentId;
-    }
-
     public boolean unAuthorizeService(){
         return Arrays.asList(ServiceType.ELECTRONIC_TOLL, ServiceType.FREIGHT).contains(serviceType);
     }

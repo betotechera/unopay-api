@@ -2,6 +2,7 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.repository.CargoContractRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,9 @@ public class CargoContractService {
 
     public CargoContract findById(String id) {
         return repository.findOne(id);
+    }
+
+    public List<CargoContract> findAll(){
+        return repository.findAll();
     }
 }
