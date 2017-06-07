@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
@@ -17,7 +18,9 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +61,12 @@ public class ServiceAuthorizeService {
         checkContract(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
-        validateEvent(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
+        validateEvent(serviceAuthorize);
         serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
+        serviceAuthorize.setAuthorizationNumber(UUID.randomUUID().toString());
+        serviceAuthorize.setSituation(TransactionSituation.AUTHORIZED);
         return repository.save(serviceAuthorize);
     }
 
@@ -77,6 +82,7 @@ public class ServiceAuthorizeService {
     private void validateEvent(ServiceAuthorize serviceAuthorize) {
         Event event = getAcceptableEvent(serviceAuthorize);
         serviceAuthorize.validateEvent(event);
+        serviceAuthorize.setValueFee(event.getService().getTaxVal());
     }
 
     private Event getAcceptableEvent(ServiceAuthorize serviceAuthorize) {
@@ -140,5 +146,9 @@ public class ServiceAuthorizeService {
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
+    }
+
+    public List<ServiceAuthorize> findAll(){
+        return repository.findAll();
     }
 }

@@ -80,6 +80,30 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'new service authorize should be created with product fee value'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.valueFee == eventUnderTest.service.taxVal.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
+    void 'when new service authorize created should generate authorization number'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.authorizationNumber = null
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.authorizationNumber != null
+    }
+
     void 'new service authorize should be created with current authorization date'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -411,7 +435,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.contract.id in contracts*.id
     }
 
-    void 'when user not is establishment type then the contract without establishment should be authorized'(){
+    void 'when user not is establishment type when the contract without establishment should be authorized'(){
         given:
         def anotherContract = setupCreator
                 .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
@@ -500,7 +524,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACT_NOT_IN_PROGRESS'
     }
 
-    void 'when user not is establishment type then the contract with another establishment should not be authorized'(){
+    void 'when user not is establishment type when the contract with another establishment should not be authorized'(){
         given:
         def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -518,7 +542,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
-    void 'when user is establishment type then the contract with another establishment should not be authorized'(){
+    void 'when user is establishment type when the contract with another establishment should not be authorized'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
@@ -537,7 +561,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
-    void 'when user is establishment type then the contract belongs to another establishment should not be authorized'(){
+    void 'when user is establishment type when the contract belongs to another establishment should not be authorized'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
@@ -609,7 +633,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         result.contractorInstrumentCredit.id == instrumentCredit.id
     }
 
-    void 'when user is establishment type then the contractor payment instrument credit with another contract should not be authorized'(){
+    void 'when user is establishment type when the contractor payment instrument credit with another contract should not be authorized'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)

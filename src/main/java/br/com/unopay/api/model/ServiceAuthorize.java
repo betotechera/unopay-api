@@ -57,7 +57,7 @@ public class ServiceAuthorize implements Serializable {
     private String id;
 
     @Column(name = "authorization_number")
-    private Long authorizationNumber;
+    private String authorizationNumber;
 
     @Column(name = "authorization_date_time")
     @Temporal(TemporalType.TIMESTAMP)
@@ -169,6 +169,16 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public void instrumentPassword(String password){
+        if(getContractorInstrumentCredit() == null){
+            setContractorInstrumentCredit(new ContractorInstrumentCredit());
+        }
+        if(getContractorInstrumentCredit().getPaymentInstrument() == null){
+            getContractorInstrumentCredit().setPaymentInstrument(new PaymentInstrument());
+        }
+        getContractorInstrumentCredit().getPaymentInstrument().setPassword(password);
+    }
+
     public String establishmentId(){
         if(getEstablishment() != null){
             return getEstablishment().getId();
@@ -211,10 +221,10 @@ public class ServiceAuthorize implements Serializable {
     }
 
     public void validateEvent(Event event) {
-        if(event != null && event.isRequestQuantity() && eventQuantity <= 0){
+        if(event != null && event.isRequestQuantity() && (eventQuantity == null || eventQuantity <= 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0){
+        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
         if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) == -1){
@@ -227,5 +237,19 @@ public class ServiceAuthorize implements Serializable {
         solicitationDateTime = new Date();
         setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
         setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
+    }
+
+    public ServiceAuthorize toFuelSupply(FreightReceipt freightReceipt) {
+        setContract(freightReceipt.getContract());
+        setContractor(freightReceipt.getContractor());
+        setEstablishment(freightReceipt.getEstablishment());
+        setEventQuantity(freightReceipt.getFuelSupplyQuantity());
+        setEventValue(freightReceipt.getFuelSupplyValue());
+        setCreditInsertionType(freightReceipt.getCreditInsertionType());
+        setContractorInstrumentCredit(freightReceipt.getInstrumentCredit());
+        instrumentPassword(freightReceipt.getInstrumentPassword());
+        setEvent(freightReceipt.getFuelEvent());
+        serviceType = ServiceType.FUEL_ALLOWANCE;
+        return this;
     }
 }

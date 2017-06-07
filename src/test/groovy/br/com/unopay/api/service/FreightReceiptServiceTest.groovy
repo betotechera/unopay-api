@@ -9,9 +9,12 @@ import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import static org.hamcrest.Matchers.hasSize
@@ -36,14 +39,68 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     @Autowired
     ContractService contractService
 
+    @Autowired
+    ContractorInstrumentCreditRepository contractorInstrumentCreditRepository
+
+    @Autowired
+    PaymentInstrumentService paymentInstrumentService
+
+    @Autowired
+    ServiceAuthorizeService serviceAuthorizeService
+
     UserDetail currentUser
+    String currentPassword = '5544&SD%%DF'
 
     ContractorInstrumentCredit instrumentCreditUnderTest
 
     void setup(){
         instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
+        instrumentCreditUnderTest.serviceType = ServiceType.FUEL_ALLOWANCE
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
         currentUser = setupCreator.createUser()
+        paymentInstrumentService.changePassword(instrumentCreditUnderTest.getPaymentInstrumentId(), currentPassword)
         Integer.mixin(TimeCategory)
+    }
+
+    def 'given a valid freight receipt then should be authorize fuel supply'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        that serviceAuthorizeService.findAll(), hasSize(1)
+        serviceAuthorizeService.findAll()
+                .find { it.contract.id == freightReceipt.contract.id && it.serviceType == ServiceType.FUEL_ALLOWANCE}
+    }
+
+
+    def 'given a valid freight receipt with invalid event should not be authorize fuel supply'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.setFuelEvent(setupCreator.createEvent(ServiceType.FREIGHT))
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'FUEL_EVENT_NOT_FOUND'
+    }
+
+    def 'given a valid freight receipt without fuel credit should not be authorize fuel supply'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        instrumentCreditUnderTest.serviceType = ServiceType.FREIGHT
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CREDIT_FOR_SERVICE_TYPE_NOT_FOUND'
     }
 
     void 'given unknown contractor service should not be receipted'(){
@@ -125,7 +182,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT'
     }
 
-    void 'when user is establishment type then the contract with another establishment should not be receipted'(){
+    void 'when user is establishment type when the contract with another establishment should not be receipted'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
@@ -145,7 +202,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'when user is establishment type then the contract belongs to another establishment should not be receipted'(){
+    void 'when user is establishment type when the contract belongs to another establishment should not be receipted'(){
         given:
         def userEstablishment = setupCreator.createEstablishmentUser()
         setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
@@ -230,6 +287,11 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
             setServiceType(ServiceType.FREIGHT_RECEIPT)
             setTravelDocuments(documents)
             setCargoContract(cargo)
+            setCreditInsertionType(CreditInsertionType.CREDIT_CARD)
+            setInstrumentPassword(currentPassword)
+            setFuelEvent(setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE))
+            setFuelSupplyQuantity(3D)
+            setFuelSupplyValue(10.0)
         }}
     }
 }
