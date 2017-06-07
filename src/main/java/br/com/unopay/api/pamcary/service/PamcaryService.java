@@ -26,7 +26,7 @@ public class PamcaryService {
                 .put(JAXWSProperties.SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
     }
 
-    private void execute() {
+    public void execute() {
         binding.execute(new RequestTO());
     }
 }

@@ -1,5 +1,6 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.pamcary.translate.PamcaryField;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -40,16 +41,19 @@ public class ComplementaryTravelDocument  implements Serializable {
 
     @Column(name = "quantity")
     @JsonView({Views.Public.class,Views.List.class})
+    @PamcaryField(key = "viagem.documento.complementar.qtde")
     private Integer quantity;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
+    @PamcaryField(key = "viagem.documento.complementar.sigla")
     private ComplementaryTravelDocumentType type;
 
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})
+    @PamcaryField(key = "viagem.documento.complementar.numero")
     private String documentNumber;
 
     @Valid

@@ -1,6 +1,7 @@
 package br.com.unopay.api.model;
 
 
+import br.com.unopay.api.pamcary.translate.PamcaryField;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -50,18 +50,21 @@ public class TravelDocument  implements Serializable {
     private Contract contract;
 
     @Column(name = "quantity")
+    @PamcaryField(key = "viagem.documento.qtde")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer quantity;
 
     @Valid
     @Enumerated(STRING)
+    @PamcaryField(key = "viagem.documento.sigla")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
+    @PamcaryField(key = "viagem.documento.numero")
     @JsonView({Views.Public.class,Views.List.class})
     private String documentNumber;
 
@@ -73,6 +76,7 @@ public class TravelDocument  implements Serializable {
 
     @Valid
     @Enumerated(STRING)
+    @PamcaryField(key = "viagem.indicador.ressalva")
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;

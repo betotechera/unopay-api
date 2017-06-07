@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
+import br.com.unopay.api.pamcary.translate.PamcaryField;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
 
@@ -59,6 +60,7 @@ public class Contract implements Serializable {
     public Contract(){}
 
     @Id
+    @PamcaryField(key = "viagem.id")
     @Column(name="id")
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
