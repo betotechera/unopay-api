@@ -52,10 +52,13 @@ public class PamcarySoapTranslator {
         List<FieldTO> fieldTOS = new ArrayList<>();
         Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
         if(!referencedFieldAnnotated.isPresent()) {
-            FieldTO fieldTO = new FieldTO();
-            fieldTO.setKey(getKeys(field));
-            fieldTO.setValue(getFieldValue(field, object));
-            fieldTOS.add(fieldTO);
+            String fieldValue = getFieldValue(field, object);
+            if(fieldValue != null) {
+                FieldTO fieldTO = new FieldTO();
+                fieldTO.setKey(getKeys(field));
+                fieldTO.setValue(fieldValue);
+                fieldTOS.add(fieldTO);
+            }
         }
         referencedFieldAnnotated.ifPresent(pair -> pair.getValue().forEach(f ->
             fieldTOS.addAll(getFieldTO(pair.getKey(), f))
@@ -72,10 +75,11 @@ public class PamcarySoapTranslator {
         try {
             field.setAccessible(true);
 
-            if(field.getType().isEnum()){
-                return ((Enum)field.get(object)).name();
+            Object objectValue = field.get(object);
+            if(objectValue != null && field.getType().isEnum()){
+                return ((Enum) objectValue).name();
             }
-            return String.valueOf(field.get(object));
+            return objectValue == null? null : String.valueOf(objectValue);
         } catch (IllegalAccessException e) {
             log.warn("could not get field value", e);
             return  null;

@@ -16,7 +16,7 @@ class PamcarySoapTranslatorTest extends FixtureApplicationTest {
         then:
         fieldTOS.find { it.key == 'viagem.documento.sigla' }?.value == travelDocuments.find().type.name()
         fieldTOS.find { it.key == 'viagem.indicador.ressalva' }?.value == travelDocuments.find().caveat.name()
-        fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == travelDocuments.find().quantity.toString()
+        fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == String.valueOf(travelDocuments.find().quantity)
         fieldTOS.find { it.key == 'viagem.documento.numero' }?.value == travelDocuments.find().documentNumber
     }
 
@@ -33,7 +33,7 @@ class PamcarySoapTranslatorTest extends FixtureApplicationTest {
 
         fieldTOS.find {
             it.key == 'viagem.documento.complementar.qtde'
-        }?.value == travelDocuments.find().complementaryTravelDocument.quantity.toString()
+        }?.value == String.valueOf(travelDocuments.find().complementaryTravelDocument.quantity)
 
         fieldTOS.find {
             it.key == 'viagem.documento.complementar.numero'
@@ -50,6 +50,39 @@ class PamcarySoapTranslatorTest extends FixtureApplicationTest {
         then:
         fieldTOS.find { it.key == 'viagem.id' }?.value != null
         fieldTOS.find { it.key == 'viagem.id' }.value == travelDocuments.find().contract.id
+    }
+
+    def 'given a null reference field value should not be translated'(){
+        given:
+        List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
+        travelDocuments.find().contract.id = null
+        when:
+        List<FieldTO> fieldTOS =  new PamcarySoapTranslator().translate(travelDocuments.find())
+
+        then:
+        !fieldTOS.find { it.key == 'viagem.id' }
+    }
+
+    def 'given a enum null field value should not be translated'(){
+        given:
+        List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
+        travelDocuments.find().caveat = null
+        when:
+        List<FieldTO> fieldTOS =  new PamcarySoapTranslator().translate(travelDocuments.find())
+
+        then:
+        !fieldTOS.find { it.key == 'viagem.indicador.ressalva' }
+    }
+
+    def 'given a null field value should not be translated'(){
+        given:
+        List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
+        travelDocuments.find().quantity = null
+        when:
+        List<FieldTO> fieldTOS =  new PamcarySoapTranslator().translate(travelDocuments.find())
+
+        then:
+        !fieldTOS.find { it.key == 'viagem.documento.qtde' }
     }
 
 }
