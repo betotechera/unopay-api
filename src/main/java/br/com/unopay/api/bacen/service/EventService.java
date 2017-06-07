@@ -1,10 +1,12 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.filter.EventFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.FUEL_EVENT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,4 +88,11 @@ public class EventService {
     public Page<Event> findByFilter(EventFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
+
+    public Event findByIdAndServiceType(String id, ServiceType serviceType) {
+        Optional<Event> event = repository.findByIdAndServiceType(id, serviceType);
+        return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(FUEL_EVENT_NOT_FOUND));
+    }
+
+
 }

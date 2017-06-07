@@ -65,7 +65,7 @@ public class ContractController {
     }
     @ResponseStatus(OK)
     @JsonView(Public.class)
-    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT')")
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/contracts/{id}", method = GET)
     public Contract get(@PathVariable String id) {
         log.info("get contract={}", id);
@@ -91,7 +91,7 @@ public class ContractController {
 
     @ResponseStatus(OK)
     @JsonView(List.class)
-    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT')")
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/contracts", method = GET)
     public Results<Contract> getByParams(ContractFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search contract with filter={}", filter);

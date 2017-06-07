@@ -10,11 +10,11 @@ class ComplementaryTravelDocumentServiceTest extends SpockApplicationTests {
     @Autowired
     ComplementaryTravelDocumentService service
 
-    def 'should create cargo contract'(){
+    def 'should create complementary document'(){
         given:
-        ComplementaryTravelDocument cargoContract = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
+        ComplementaryTravelDocument document = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
         when:
-        def created = service.create(cargoContract)
+        def created = service.create(document)
         def result = service.findById(created.id)
 
         then:

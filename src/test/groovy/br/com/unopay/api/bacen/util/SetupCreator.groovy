@@ -19,6 +19,7 @@ import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService
 import br.com.unopay.api.bacen.service.ServiceService
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.Credit
@@ -277,6 +278,16 @@ class SetupCreator {
             paymentRuleGroup = createPaymentRuleGroup()
             it
         }
+    }
+
+    public List addContractsToEstablishment(Establishment establishmentUnderTest, ContractorInstrumentCredit instrumentCreditUnderTest) {
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contractEstablishment.with { establishment = establishmentUnderTest }
+        def contractA = createPersistedContract(createContractor(), instrumentCreditUnderTest.contract.product)
+        def contractB = createPersistedContract(createContractor(), instrumentCreditUnderTest.contract.product)
+        contractService.addEstablishments(contractA.id, contractEstablishment)
+        contractService.addEstablishments(contractB.id, contractEstablishment.with {id = null; it })
+        [contractB, contractA]
     }
 
     CreditPaymentAccount createCreditPaymentAccountFromContract(Contract contract = createContract()) {

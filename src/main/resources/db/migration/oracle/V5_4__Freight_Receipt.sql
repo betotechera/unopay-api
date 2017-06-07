@@ -46,6 +46,9 @@ create table cargo_contract (
     constraint fk_cargo_contract foreign key(contract_id) references contract(id)
 );
 
+alter table service_authorize MODIFY authorization_number varchar(256);
+alter table service_authorize MODIFY transaction_log_code int null;
+alter table service_authorize MODIFY transaction_log varchar(256) null;
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_CARGO_CONTRACT','Permite listar contrato de carga.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_CARGO_CONTRACT','Permite gerenciar contrato de carga.');

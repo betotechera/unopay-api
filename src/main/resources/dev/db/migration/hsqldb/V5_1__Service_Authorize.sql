@@ -1,6 +1,6 @@
 create table service_authorize (
     id VARCHAR(256) PRIMARY KEY,
-    authorization_number bigint not null,
+    authorization_number varchar(256) not null,
     authorization_date_time TIMESTAMP not null,
     establishment_id varchar(256) not null,
     contract_id varchar(256) not null,
@@ -16,8 +16,8 @@ create table service_authorize (
     last_inst_credit_balance decimal(20,2) not null,
     current_inst_credit_balance decimal(20,2) not null,
     cancellation_date_time TIMESTAMP,
-    transaction_log_code int not null,
-    transaction_log varchar(256) not null,
+    transaction_log_code int,
+    transaction_log varchar(256),
     user_id varchar(256) not null,
     situation varchar(50) not null,
     version integer,

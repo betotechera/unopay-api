@@ -1,25 +1,30 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
+import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
-import static br.com.unopay.api.uaa.exception.Errors.*;
-
-import javax.transaction.Transactional;
 
 @Service
 public class ServiceAuthorizeService {
@@ -53,27 +58,31 @@ public class ServiceAuthorizeService {
     @Transactional
     public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        checkContractIntegrity(serviceAuthorize, currentUser);
+        checkContract(serviceAuthorize, currentUser);
         defineEstablishment(serviceAuthorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
-        validateEvent(serviceAuthorize);
         serviceAuthorize.setReferences(currentUser, instrumentCredit);
+        validateEvent(serviceAuthorize);
         serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
+        serviceAuthorize.setAuthorizationNumber(UUID.randomUUID().toString());
+        serviceAuthorize.setSituation(TransactionSituation.AUTHORIZED);
         return repository.save(serviceAuthorize);
     }
 
-    private void checkContractIntegrity(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
+    private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
         serviceAuthorize.validateServiceType();
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
-        Contract contract = getValidContract(serviceAuthorize.contractId(), serviceAuthorize.getContractor());
-        String establishmentId = serviceAuthorize.getCurrentEstablishmentId(currentUser);
-        checkEstablishmentRestriction(contract, establishmentId);
+        Establishment establishment = currentUser.myEstablishment().orElse(serviceAuthorize.getEstablishment());
+        Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
+        contract.checkValidFor(serviceAuthorize.getContractor(), establishment);
+
     }
 
     private void validateEvent(ServiceAuthorize serviceAuthorize) {
         Event event = getAcceptableEvent(serviceAuthorize);
         serviceAuthorize.validateEvent(event);
+        serviceAuthorize.setValueFee(event.getService().getTaxVal());
     }
 
     private Event getAcceptableEvent(ServiceAuthorize serviceAuthorize) {
@@ -93,13 +102,6 @@ public class ServiceAuthorizeService {
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
         return instrumentCredit;
-    }
-
-    private void checkEstablishmentRestriction(Contract contract, String establishmentId) {
-        if(!contract.meetsEstablishmentRestrictions(establishmentId)){
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
-        }
     }
 
     private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize,
@@ -131,13 +133,6 @@ public class ServiceAuthorizeService {
         }
     }
 
-    private Contract getValidContract(String contractId, Contractor contractor) {
-        Contract contract = contractService.findById(contractId);
-        contract.validateActive();
-        contract.validateContractor(contractor);
-        return contract;
-    }
-
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
         if(currentUser.isEstablishmentType()){
             serviceAuthorize.setEstablishment(currentUser.getEstablishment());
@@ -151,5 +146,9 @@ public class ServiceAuthorizeService {
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
+    }
+
+    public List<ServiceAuthorize> findAll(){
+        return repository.findAll();
     }
 }
