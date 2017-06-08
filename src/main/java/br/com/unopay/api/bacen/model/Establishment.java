@@ -4,6 +4,7 @@ import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Updatable;
+import br.com.unopay.api.model.validation.group.Reference;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
@@ -12,9 +13,9 @@ import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_REQUIRED;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import static javax.persistence.EnumType.STRING;
@@ -42,7 +43,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -58,6 +58,7 @@ public class Establishment implements Serializable, Updatable {
 
     @Id
     @Column(name="id")
+    @NotNull(groups = {Reference.class})
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
