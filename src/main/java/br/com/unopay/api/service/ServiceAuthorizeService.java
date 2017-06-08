@@ -18,6 +18,8 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,9 +68,13 @@ public class ServiceAuthorizeService {
         validateEvent(serviceAuthorize);
         serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
-        serviceAuthorize.setAuthorizationNumber(UUID.randomUUID().toString());
+        serviceAuthorize.setAuthorizationNumber(generateAuthorizationNumber(serviceAuthorize));
         serviceAuthorize.setSituation(TransactionSituation.AUTHORIZED);
         return repository.save(serviceAuthorize);
+    }
+
+    private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
+       return String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
     }
 
     private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
