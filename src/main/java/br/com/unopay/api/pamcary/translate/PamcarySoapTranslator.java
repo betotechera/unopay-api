@@ -4,8 +4,10 @@ import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,12 +21,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class PamcarySoapTranslator {
 
-    public List<FieldTO> translate(TravelDocument travelDocument)  {
-        return Stream.of(travelDocument.getClass().getDeclaredFields())
-                .filter(field -> isAnnotationPresent(field, travelDocument))
-                .map(field -> getFieldTO(travelDocument, field))
+    public List<FieldTO> translate(Object objectWithPamcaryAnnotation)  {
+        return Stream.of(objectWithPamcaryAnnotation.getClass().getDeclaredFields())
+                .filter(field -> isAnnotationPresent(field, objectWithPamcaryAnnotation))
+                .map(field -> getFieldTO(objectWithPamcaryAnnotation, field))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    public TravelDocument translate(List<FieldTO> fieldTOS){
+        TravelDocument travelDocument = new TravelDocument();
+            fieldTOS.forEach(fieldTO -> populateAnnotatedFields(travelDocument, fieldTO)
+        );
+        return travelDocument;
+    }
+
+    private void populateAnnotatedFields(TravelDocument travelDocument, FieldTO fieldTO) {
+        Stream.of(travelDocument.getClass().getDeclaredFields())
+                .filter(field -> isAnnotationPresent(field, travelDocument))
+                .forEach(field -> populateField(travelDocument, fieldTO, field));
+    }
+
+    @SneakyThrows
+    private void populateField(TravelDocument travelDocument, FieldTO fieldTO, Field field) {
+        field.setAccessible(true);
+        if (Objects.equals(getKeys(field), fieldTO.getKey())) {
+            Method parseMethod = field.getType().getMethod("valueOf", String.class);
+            field.set(travelDocument,parseMethod.invoke(field, fieldTO.getValue()));
+        }
     }
 
     private boolean isAnnotationPresent(Field field, Object object) {

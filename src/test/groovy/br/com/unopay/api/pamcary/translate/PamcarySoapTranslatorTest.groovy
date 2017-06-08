@@ -85,4 +85,16 @@ class PamcarySoapTranslatorTest extends FixtureApplicationTest {
         !fieldTOS.find { it.key == 'viagem.documento.qtde' }
     }
 
+    def 'should translate fields to travel document'(){
+        given:
+        def quantity = 10
+        def fieldsTO = [new FieldTO() {{ setKey("viagem.documento.qtde"); setValue(quantity.toString()) }}]
+
+        when:
+        TravelDocument travelDocument = new PamcarySoapTranslator().translate(fieldsTO)
+
+        then:
+        travelDocument?.quantity == quantity
+    }
+
 }
