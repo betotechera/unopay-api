@@ -75,8 +75,8 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date expirationDate;
 
-    @JsonIgnore
     @Column(name = "password")
+    @JsonView({Views.Public.class,Views.List.class})
     private String password;
 
     @Column(name = "situation")
@@ -97,13 +97,17 @@ public class PaymentInstrument implements Serializable, Updatable {
         createdDate = new Date();
     }
 
+    @JsonIgnore
+    public String getPassword(){
+        return this.password;
+    }
+
     public void validate(){
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
         }
     }
 
-    @JsonProperty
     public boolean hasPassword(){
         return !StringUtils.isEmpty(password);
     }
