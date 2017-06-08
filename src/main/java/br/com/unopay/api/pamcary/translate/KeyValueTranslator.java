@@ -5,9 +5,10 @@ import br.com.unopay.api.pamcary.transactional.FieldTO;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,13 +22,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class KeyValueSoapTranslator {
+public class KeyValueTranslator {
 
-    public List<FieldTO> translate(Object objectWithKeyAnnotation)  {
-        return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
-                .filter(field -> isAnnotationPresent(field, objectWithKeyAnnotation))
-                .map(field -> getFieldTO(objectWithKeyAnnotation, field))
-                .flatMap(List::stream)
+    public List<FieldTO> translateToFieldTO(Object object){
+        Map<String, Object> translate = translate(object);
+        return translate.entrySet().stream()
+                .map( entry -> new FieldTO() {{ setKey(entry.getKey()); setValue(String.valueOf(entry.getValue()));}})
                 .collect(Collectors.toList());
     }
 
@@ -36,21 +36,29 @@ public class KeyValueSoapTranslator {
         return translate(new TravelDocument(), map);
     }
 
+    public Map<String, Object> translate(Object objectWithKeyAnnotation)  {
+        return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
+                .filter(field -> isAnnotationPresent(field, objectWithKeyAnnotation))
+                .map(field -> getFieldTO(objectWithKeyAnnotation, field))
+                .flatMap(m -> m.entrySet().stream())
+                .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
+    }
+
     public <T> T translate(T object, Map<String, String> map){
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
         return object;
     }
 
-    private void populateAnnotatedFields(Object object, Map.Entry entry) {
+    private void populateAnnotatedFields(Object object, Entry entry) {
         Stream.of(object.getClass().getDeclaredFields())
                 .filter(field -> isAnnotationPresent(field, object))
                 .forEach(field -> populateField(object, entry, field));
     }
 
     @SneakyThrows
-    private void populateField(Object object, Map.Entry entry, Field field) {
+    private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (!field.isAnnotationPresent(keyReference.class) && Objects.equals(getKeys(field), entry.getKey())) {
+        if (!field.isAnnotationPresent(WithKeyFields.class) && Objects.equals(getKeys(field), entry.getKey())) {
             if(field.getType() != String.class) {
                 Method parseMethod = field.getType().getMethod("valueOf", String.class);
                 field.set(object, parseMethod.invoke(field, entry.getValue()));
@@ -58,10 +66,11 @@ public class KeyValueSoapTranslator {
             }
             field.set(object, entry.getValue());
         }
-        if(field.isAnnotationPresent(keyReference.class)){
+        if(field.isAnnotationPresent(WithKeyFields.class)){
             Object reference = field.getType().newInstance();
             populateAnnotatedFields(reference, entry);
-            Method setMethod = object.getClass().getMethod("set" + StringUtils.capitalize(field.getName()), field.getType());
+            String methodName = "set" + StringUtils.capitalize(field.getName());
+            Method setMethod = object.getClass().getMethod(methodName, field.getType());
             setMethod.invoke(object, reference);
         }
     }
@@ -69,7 +78,7 @@ public class KeyValueSoapTranslator {
     private boolean isAnnotationPresent(Field field, Object object) {
         boolean annotationFieldPresent = field.isAnnotationPresent(KeyField.class);
         Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
-        boolean annotationReferencePresent = field.isAnnotationPresent(keyReference.class);
+        boolean annotationReferencePresent = field.isAnnotationPresent(WithKeyFields.class);
         return annotationFieldPresent || annotationReferencePresent || referencedFieldAnnotated.isPresent();
     }
 
@@ -88,22 +97,19 @@ public class KeyValueSoapTranslator {
         return Optional.empty();
     }
 
-    private List<FieldTO> getFieldTO(final Object object, final Field field) {
-        List<FieldTO> fieldTOS = new ArrayList<>();
+    private Map<String, Object> getFieldTO(final Object object, final Field field) {
+        Map<String, Object> map = new HashMap<>();
         Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
         if(!referencedFieldAnnotated.isPresent()) {
             String fieldValue = getFieldValue(field, object);
             if(fieldValue != null) {
-                FieldTO fieldTO = new FieldTO();
-                fieldTO.setKey(getKeys(field));
-                fieldTO.setValue(fieldValue);
-                fieldTOS.add(fieldTO);
+                map.put(getKeys(field), fieldValue);
             }
         }
         referencedFieldAnnotated.ifPresent(pair -> pair.getValue().forEach(f ->
-            fieldTOS.addAll(getFieldTO(pair.getKey(), f))
+            map.putAll(getFieldTO(pair.getKey(), f))
         ));
-        return fieldTOS;
+        return map;
     }
 
     private String getKeys(Field field){

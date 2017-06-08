@@ -4,7 +4,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.pamcary.translate.KeyField;
-import br.com.unopay.api.pamcary.translate.keyReference;
+import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -45,7 +45,7 @@ public class TravelDocument  implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @keyReference
+    @WithKeyFields
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;
