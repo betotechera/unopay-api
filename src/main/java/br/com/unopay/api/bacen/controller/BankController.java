@@ -2,7 +2,7 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.service.BankService;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;

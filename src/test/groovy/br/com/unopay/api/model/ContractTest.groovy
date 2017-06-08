@@ -65,7 +65,7 @@ class ContractTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractor.with {
-            person.document.number = '55566677788'
+            id = '55566677788'
         }
 
         when:
@@ -81,7 +81,7 @@ class ContractTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
         contractor.with {
-            person.document.number = '55566677788'
+            id = '55566677788'
         }
 
         when:

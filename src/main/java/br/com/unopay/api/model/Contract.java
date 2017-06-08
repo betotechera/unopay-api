@@ -7,13 +7,14 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 import br.com.unopay.api.pamcary.translate.PamcaryField;
+import br.com.unopay.api.model.validation.group.Reference;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
 
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -62,6 +63,7 @@ public class Contract implements Serializable {
     @Id
     @PamcaryField(key = "viagem.id")
     @Column(name="id")
+    @NotNull(groups = {Reference.class})
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
@@ -255,7 +257,7 @@ public class Contract implements Serializable {
 
 
     public boolean containsContractor(Contractor contractor) {
-        return Objects.equals(this.contractor.getDocumentNumber(), contractor.getDocumentNumber());
+        return Objects.equals(this.contractor.getId(), contractor.getId());
     }
 
     public boolean validToEstablishment(String establishmentId){

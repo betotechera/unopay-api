@@ -389,8 +389,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            contractor.person.document.number = '55555'
-            contractor.id = null
+            contractor.id = '1144'
         }
         when:
         service.create(userUnderTest.email, serviceAuthorize)
@@ -599,7 +598,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishment.person.document.number = ''
+            establishment.id = '1155'
         }
 
         when:

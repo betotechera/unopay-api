@@ -18,11 +18,14 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +68,13 @@ public class ServiceAuthorizeService {
         validateEvent(serviceAuthorize);
         serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
-        serviceAuthorize.setAuthorizationNumber(UUID.randomUUID().toString());
+        serviceAuthorize.setAuthorizationNumber(generateAuthorizationNumber(serviceAuthorize));
         serviceAuthorize.setSituation(TransactionSituation.AUTHORIZED);
         return repository.save(serviceAuthorize);
+    }
+
+    private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
+       return String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
     }
 
     private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
@@ -124,13 +131,17 @@ public class ServiceAuthorizeService {
         if (contract.getContractor().physicalPerson() && serviceAuthorize.getContractor().getBirthDate() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACTOR_BIRTH_DATE_REQUIRED);
         }
-        if (contract.getContractor().physicalPerson() && !serviceAuthorize.getContractor().getBirthDate()
-                .equals(contract.getContractor().getBirthDate())) {
+        if (contract.getContractor().physicalPerson() && !hasEqualsBirthDate(serviceAuthorize, contract)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INCORRECT_CONTRACTOR_BIRTH_DATE);
         }
         if (StringUtils.isEmpty(serviceAuthorize.instrumentPassword())) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_PASSWORD_REQUIRED);
         }
+    }
+
+    private boolean hasEqualsBirthDate(ServiceAuthorize serviceAuthorize, Contract contract) {
+        return DateTimeComparator.getDateOnlyInstance()
+                .compare(serviceAuthorize.getContractor().getBirthDate(), contract.getContractor().getBirthDate()) == 0;
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
@@ -140,7 +151,7 @@ public class ServiceAuthorizeService {
         }
         serviceAuthorize
                 .setEstablishment(establishmentService
-                        .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
+                        .findById(serviceAuthorize.establishmentId()));
     }
 
     public ServiceAuthorize findById(String id) {

@@ -1,6 +1,7 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.model.validation.group.Reference;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_EXPIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
@@ -11,9 +12,9 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -59,6 +60,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
+    @NotNull(groups = {Reference.class})
     private String id;
 
     @ManyToOne
@@ -230,7 +232,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     public boolean paymentInstrumentWithPassword(){
         if(getPaymentInstrument() != null){
-            return !StringUtils.isEmpty(getPaymentInstrument().getPassword());
+            return paymentInstrument.hasPassword();
         }
         return false;
     }

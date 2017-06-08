@@ -4,19 +4,18 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.model.validation.group.Reference;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -30,13 +29,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import org.hibernate.annotations.Type;
 
 
 @Data
@@ -64,19 +64,19 @@ public class ServiceAuthorize implements Serializable {
     private Date authorizationDateTime;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Establishment establishment;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="contract_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Contract contract;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="contractor_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Contractor contractor;
@@ -88,7 +88,7 @@ public class ServiceAuthorize implements Serializable {
     private ServiceType serviceType;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="event_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Event event;
@@ -112,7 +112,7 @@ public class ServiceAuthorize implements Serializable {
     private CreditInsertionType creditInsertionType;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="contractor_inst_credit_id")
     @JsonView({Views.Public.class,Views.List.class})
     private ContractorInstrumentCredit contractorInstrumentCredit;
@@ -134,7 +134,6 @@ public class ServiceAuthorize implements Serializable {
     private String transactionLog;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
     @JoinColumn(name="user_id")
     @JsonView({Views.Public.class,Views.List.class})
     private UserDetail user;

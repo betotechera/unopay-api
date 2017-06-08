@@ -2,14 +2,16 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -96,10 +97,19 @@ public class PaymentInstrument implements Serializable, Updatable {
         createdDate = new Date();
     }
 
+    @JsonIgnore
+    public String getPassword(){
+        return this.password;
+    }
+
     public void validate(){
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
         }
+    }
+
+    public boolean hasPassword(){
+        return !StringUtils.isEmpty(password);
     }
 
     public String contractorId(){
