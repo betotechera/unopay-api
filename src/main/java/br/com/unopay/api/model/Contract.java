@@ -255,7 +255,7 @@ public class Contract implements Serializable {
 
 
     public boolean containsContractor(Contractor contractor) {
-        return Objects.equals(this.contractor.getDocumentNumber(), contractor.getDocumentNumber());
+        return Objects.equals(this.contractor.getId(), contractor.getId());
     }
 
     public boolean validToEstablishment(String establishmentId){

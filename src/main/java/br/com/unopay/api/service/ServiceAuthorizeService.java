@@ -140,7 +140,7 @@ public class ServiceAuthorizeService {
         }
         serviceAuthorize
                 .setEstablishment(establishmentService
-                        .findByDocumentNumber(serviceAuthorize.establishmentDocumentNumber()));
+                        .findById(serviceAuthorize.establishmentId()));
     }
 
     public ServiceAuthorize findById(String id) {
