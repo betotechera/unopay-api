@@ -1,8 +1,8 @@
 soap:
   client:
     ssl:
-      key-store: classpath:wsdl/pamcary.p12
-      key-store-password: 'Ro@dcard'
+      key-store: classpath:wsdl/unovation.p12
+      key-store-password: 'UFK#@01a'
       trust-store: /usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts
       trust-store-password: 'changeit'
 unopay:
