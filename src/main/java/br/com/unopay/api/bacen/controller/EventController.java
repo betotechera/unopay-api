@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,7 @@ public class EventController {
 
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_EVENT')")
     @RequestMapping(value = "/events", method = RequestMethod.POST)
     public ResponseEntity<Event> create(@Validated(Create.class) @RequestBody Event event) {
         log.info("creating event {}", event);
@@ -56,12 +58,14 @@ public class EventController {
     }
     @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_EVENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/events/{id}", method = RequestMethod.GET)
     public Event get(@PathVariable String id) {
         log.info("get event={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_EVENT')")
     @RequestMapping(value = "/events/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Event event) {
         event.setId(id);
@@ -70,6 +74,7 @@ public class EventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_EVENT')")
     @RequestMapping(value = "/events/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing event id={}", id);
@@ -78,6 +83,7 @@ public class EventController {
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_EVENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/events", method = RequestMethod.GET)
     public Results<Event> getByParams(EventFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search event with filter={}", filter);

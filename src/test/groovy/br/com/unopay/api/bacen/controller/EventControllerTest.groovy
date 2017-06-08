@@ -18,7 +18,7 @@ class EventControllerTest extends AuthServerApplicationTests {
 
     void 'valid event should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Event event = Fixture.from(Event.class).gimme("valid")
 
         when:
@@ -31,7 +31,7 @@ class EventControllerTest extends AuthServerApplicationTests {
 
     void 'known event should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Event event = Fixture.from(Event.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +49,7 @@ class EventControllerTest extends AuthServerApplicationTests {
 
     void 'known event should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Event event = Fixture.from(Event.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ class EventControllerTest extends AuthServerApplicationTests {
 
     void 'known events should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Event event = Fixture.from(Event.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/events?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
