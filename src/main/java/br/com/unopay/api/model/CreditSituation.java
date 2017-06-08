@@ -4,7 +4,8 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum CreditSituation implements DescriptableEnum {
     PROCESSING("Processando"),TO_COLLECT("A cobrar"),
-    CONFIRMED("Confirmado"), CANCELED("Cancelado"), EXPIRED("Expirado"), AVAILABLE("Disponivel");
+    CONFIRMED("Confirmado"), CANCELED("Cancelado"),
+    EXPIRED("Expirado"), AVAILABLE("Disponivel");
 
     private String description;
 
