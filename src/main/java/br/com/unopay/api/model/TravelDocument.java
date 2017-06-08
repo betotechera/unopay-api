@@ -3,8 +3,8 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.pamcary.translate.PamcaryField;
-import br.com.unopay.api.pamcary.translate.PamcaryReference;
+import br.com.unopay.api.pamcary.translate.KeyField;
+import br.com.unopay.api.pamcary.translate.keyReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -45,27 +45,27 @@ public class TravelDocument  implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @PamcaryReference
+    @keyReference
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;
 
     @Column(name = "quantity")
-    @PamcaryField(key = "viagem.documento.qtde")
+    @KeyField(key = "viagem.documento.qtde")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer quantity;
 
     @Valid
     @Enumerated(STRING)
-    @PamcaryField(key = "viagem.documento.sigla")
+    @KeyField(key = "viagem.documento.sigla")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
-    @PamcaryField(key = "viagem.documento.numero")
+    @KeyField(key = "viagem.documento.numero")
     @JsonView({Views.Public.class,Views.List.class})
     private String documentNumber;
 
@@ -77,7 +77,7 @@ public class TravelDocument  implements Serializable {
 
     @Valid
     @Enumerated(STRING)
-    @PamcaryField(key = "viagem.indicador.ressalva")
+    @KeyField(key = "viagem.indicador.ressalva")
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;
