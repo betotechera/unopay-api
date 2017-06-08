@@ -11,7 +11,7 @@ create table service_authorize (
     event_value decimal(*,2),
     value_fee decimal(*,2) not null,
     solicitation_date_time TIMESTAMP not null,
-    credit_insertion_type varchar(100) not null,
+    credit_insertion_type varchar(100),
     contractor_inst_credit_id varchar(256),
     last_inst_credit_balance decimal(*,2) not null,
     current_inst_credit_balance decimal(*,2) not null,
