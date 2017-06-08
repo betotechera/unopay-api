@@ -39,7 +39,7 @@ public class KeyValueTranslator {
     public Map<String, Object> translate(Object objectWithKeyAnnotation)  {
         return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
                 .filter(field -> isAnnotationPresent(field, objectWithKeyAnnotation))
-                .map(field -> getFieldTO(objectWithKeyAnnotation, field))
+                .map(field -> getMap(objectWithKeyAnnotation, field))
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
@@ -97,7 +97,7 @@ public class KeyValueTranslator {
         return Optional.empty();
     }
 
-    private Map<String, Object> getFieldTO(final Object object, final Field field) {
+    private Map<String, Object> getMap(final Object object, final Field field) {
         Map<String, Object> map = new HashMap<>();
         Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
         if(!referencedFieldAnnotated.isPresent()) {
@@ -107,7 +107,7 @@ public class KeyValueTranslator {
             }
         }
         referencedFieldAnnotated.ifPresent(pair -> pair.getValue().forEach(f ->
-            map.putAll(getFieldTO(pair.getKey(), f))
+            map.putAll(getMap(pair.getKey(), f))
         ));
         return map;
     }
