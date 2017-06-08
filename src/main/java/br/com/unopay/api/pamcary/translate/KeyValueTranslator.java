@@ -58,7 +58,7 @@ public class KeyValueTranslator {
     @SneakyThrows
     private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (!field.isAnnotationPresent(WithKeyFields.class) && Objects.equals(getKeys(field), entry.getKey())) {
+        if (!field.isAnnotationPresent(WithKeyFields.class) && Objects.equals(getKey(field), entry.getKey())) {
             if(field.getType() != String.class) {
                 Method parseMethod = field.getType().getMethod("valueOf", String.class);
                 field.set(object, parseMethod.invoke(field, entry.getValue()));
@@ -103,7 +103,7 @@ public class KeyValueTranslator {
         if(!referencedFieldAnnotated.isPresent()) {
             String fieldValue = getFieldValue(field, object);
             if(fieldValue != null) {
-                map.put(getKeys(field), fieldValue);
+                map.put(getKey(field), fieldValue);
             }
         }
         referencedFieldAnnotated.ifPresent(pair -> pair.getValue().forEach(f ->
@@ -112,7 +112,7 @@ public class KeyValueTranslator {
         return map;
     }
 
-    private String getKeys(Field field){
+    private String getKey(Field field){
         Annotation annotation = field.getAnnotation(KeyField.class);
         return  ((KeyField) annotation).key();
     }
