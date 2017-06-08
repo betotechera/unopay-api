@@ -7,9 +7,11 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,8 +75,8 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date expirationDate;
 
+    @JsonIgnore
     @Column(name = "password")
-    @JsonView({Views.Public.class,Views.List.class})
     private String password;
 
     @Column(name = "situation")
@@ -99,6 +101,11 @@ public class PaymentInstrument implements Serializable, Updatable {
         if(createdDate != null && expirationDate != null && createdDate.after(expirationDate)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EXPIRATION_IS_BEFORE_CREATION);
         }
+    }
+
+    @JsonProperty
+    public boolean hasPassword(){
+        return !StringUtils.isEmpty(password);
     }
 
     public String contractorId(){
