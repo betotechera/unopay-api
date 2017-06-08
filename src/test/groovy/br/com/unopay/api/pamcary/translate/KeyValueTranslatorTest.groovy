@@ -11,7 +11,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         given:
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         fieldTOS.find { it.key == 'viagem.documento.sigla' }?.value == travelDocuments.find().type.name()
@@ -24,7 +24,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         given:
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         fieldTOS.find {
@@ -45,7 +45,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         travelDocuments.find().contract.id = '546546'
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         fieldTOS.find { it.key == 'viagem.id' }?.value != null
@@ -57,7 +57,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         travelDocuments.find().contract.id = null
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         !fieldTOS.find { it.key == 'viagem.id' }
@@ -68,7 +68,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         travelDocuments.find().caveat = null
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         !fieldTOS.find { it.key == 'viagem.indicador.ressalva' }
@@ -79,7 +79,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
         travelDocuments.find().quantity = null
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().translateToFieldTO(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
         then:
         !fieldTOS.find { it.key == 'viagem.documento.qtde' }
@@ -91,7 +91,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         def fieldsTO = [new FieldTO() {{ setKey("viagem.documento.qtde"); setValue(quantity) }}]
 
         when:
-        TravelDocument travelDocument = new KeyValueTranslator().translateTravelDocument(fieldsTO)
+        TravelDocument travelDocument = new KeyValueTranslator().populateTravelDocument(fieldsTO)
 
         then:
         travelDocument?.quantity == quantity.toInteger()
@@ -103,7 +103,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         def fieldsTO = [new FieldTO() {{ setKey("viagem.id"); setValue(id) }}]
 
         when:
-        TravelDocument travelDocument = new KeyValueTranslator().translateTravelDocument(fieldsTO)
+        TravelDocument travelDocument = new KeyValueTranslator().populateTravelDocument(fieldsTO)
 
         then:
         travelDocument?.contract?.id == id

@@ -24,19 +24,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyValueTranslator {
 
-    public List<FieldTO> translateToFieldTO(Object object){
-        Map<String, Object> translate = translate(object);
+    public List<FieldTO> extractFieldTOList(Object object){
+        Map<String, Object> translate = extract(object);
         return translate.entrySet().stream()
                 .map( entry -> new FieldTO() {{ setKey(entry.getKey()); setValue(String.valueOf(entry.getValue()));}})
                 .collect(Collectors.toList());
     }
 
-    public TravelDocument translateTravelDocument(List<FieldTO> fieldTOS){
+    public TravelDocument populateTravelDocument(List<FieldTO> fieldTOS){
         Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return translate(new TravelDocument(), map);
+        return populate(new TravelDocument(), map);
     }
 
-    public Map<String, Object> translate(Object objectWithKeyAnnotation)  {
+    public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
         return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
                 .filter(field -> isAnnotationPresent(field, objectWithKeyAnnotation))
                 .map(field -> getMap(objectWithKeyAnnotation, field))
@@ -44,7 +44,7 @@ public class KeyValueTranslator {
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
 
-    public <T> T translate(T object, Map<String, String> map){
+    public <T> T populate(T object, Map<String, String> map){
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
         return object;
     }

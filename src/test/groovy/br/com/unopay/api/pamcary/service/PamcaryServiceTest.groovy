@@ -1,6 +1,7 @@
 package br.com.unopay.api.pamcary.service
 
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -11,6 +12,9 @@ class PamcaryServiceTest extends SpockApplicationTests{
 
     def 'soap integration test'(){
         given:
+        new TravelDocument(){{
+            
+        }}
         def fieldTOS = [
                 new FieldTO() {{ setKey("parceiro.documento.numero"); setValue('24122925000173') }},
                 new FieldTO() {{ setKey("pontoapoio.documento.numero"); setValue('27064195503000') }},
