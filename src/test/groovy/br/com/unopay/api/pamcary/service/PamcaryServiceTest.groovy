@@ -13,10 +13,9 @@ class PamcaryServiceTest extends SpockApplicationTests{
     def 'soap integration test'(){
         given:
         new TravelDocument(){{
-            
+
         }}
         def fieldTOS = [
-                new FieldTO() {{ setKey("parceiro.documento.numero"); setValue('24122925000173') }},
                 new FieldTO() {{ setKey("pontoapoio.documento.numero"); setValue('27064195503000') }},
                 new FieldTO() {{ setKey("viagem.id"); setValue('1125447') }},
                 new FieldTO() {{ setKey("viagem.favorecido.documento.tipo"); setValue('2') }},

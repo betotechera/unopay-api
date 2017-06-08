@@ -9,6 +9,7 @@ import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,11 @@ public class PamcaryService {
     private WSTransacional_Service service;
     private SSLSocketFactory sslConnectionSocketFactory;
     private WSTransacional binding;
+
+    @Value("${soap.pamcary.partner-number:}")
+    private String partnerNumber;
+
+    private final String partnerKey = "parceiro.documento.numero";
 
     @Autowired
     public PamcaryService(WSTransacional_Service service,
@@ -33,6 +39,7 @@ public class PamcaryService {
     }
 
     private List<FieldTO> execute(final String contextParam, final List<FieldTO> fieldsParam) {
+        fieldsParam.add(new FieldTO(){{ setKey(partnerKey); setValue(partnerNumber);}});
         RequestTO requestTO = new RequestTO() {{
             setContext(contextParam);
             fieldsParam.forEach(fieldTO ->

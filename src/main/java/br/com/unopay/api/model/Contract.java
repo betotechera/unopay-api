@@ -61,7 +61,6 @@ public class Contract implements Serializable {
     public Contract(){}
 
     @Id
-    @KeyField(key = "viagem.id")
     @Column(name="id")
     @NotNull(groups = {Reference.class})
     @JsonView({Views.Public.class,Views.List.class})
@@ -82,6 +81,7 @@ public class Contract implements Serializable {
     private List<Establishment> establishments;
 
     @Column(name="code")
+    @KeyField(key = "viagem.id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer code;

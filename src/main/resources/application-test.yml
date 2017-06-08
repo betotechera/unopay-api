@@ -1,4 +1,6 @@
 soap:
+  pamcary:
+    partner-number: '24122925000173'
   client:
     ssl:
       key-store: classpath:wsdl/unovation.p12
