@@ -232,7 +232,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     public boolean paymentInstrumentWithPassword(){
         if(getPaymentInstrument() != null){
-            return !StringUtils.isEmpty(getPaymentInstrument().getPassword());
+            return paymentInstrument.hasPassword();
         }
         return false;
     }
