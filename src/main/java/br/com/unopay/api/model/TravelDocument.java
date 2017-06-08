@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 
 import br.com.unopay.api.pamcary.translate.PamcaryField;
+import br.com.unopay.api.pamcary.translate.PamcaryReference;
 import br.com.unopay.api.uaa.model.validationsgroups.Create;
 import br.com.unopay.api.uaa.model.validationsgroups.Update;
 import br.com.unopay.api.uaa.model.validationsgroups.Views;
@@ -45,6 +46,7 @@ public class TravelDocument  implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="contract_id")
+    @PamcaryReference
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;

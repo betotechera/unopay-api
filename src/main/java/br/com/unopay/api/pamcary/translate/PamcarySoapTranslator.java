@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
@@ -36,25 +37,36 @@ public class PamcarySoapTranslator {
         return travelDocument;
     }
 
-    private void populateAnnotatedFields(TravelDocument travelDocument, FieldTO fieldTO) {
-        Stream.of(travelDocument.getClass().getDeclaredFields())
-                .filter(field -> isAnnotationPresent(field, travelDocument))
-                .forEach(field -> populateField(travelDocument, fieldTO, field));
+    private void populateAnnotatedFields(Object object, FieldTO fieldTO) {
+        Stream.of(object.getClass().getDeclaredFields())
+                .filter(field -> isAnnotationPresent(field, object))
+                .forEach(field -> populateField(object, fieldTO, field));
     }
 
     @SneakyThrows
-    private void populateField(TravelDocument travelDocument, FieldTO fieldTO, Field field) {
+    private void populateField(Object object, FieldTO fieldTO, Field field) {
         field.setAccessible(true);
-        if (Objects.equals(getKeys(field), fieldTO.getKey())) {
-            Method parseMethod = field.getType().getMethod("valueOf", String.class);
-            field.set(travelDocument,parseMethod.invoke(field, fieldTO.getValue()));
+        if (!field.isAnnotationPresent(PamcaryReference.class) && Objects.equals(getKeys(field), fieldTO.getKey())) {
+            if(field.getType() != String.class) {
+                Method parseMethod = field.getType().getMethod("valueOf", String.class);
+                field.set(object, parseMethod.invoke(field, fieldTO.getValue()));
+                return;
+            }
+            field.set(object, fieldTO.getValue());
+        }
+        if(field.isAnnotationPresent(PamcaryReference.class)){
+            Object reference = field.getType().newInstance();
+            populateAnnotatedFields(reference, fieldTO);
+            Method setMethod = object.getClass().getMethod("set" + StringUtils.capitalize(field.getName()), field.getType());
+            setMethod.invoke(object, reference);
         }
     }
 
     private boolean isAnnotationPresent(Field field, Object object) {
-        boolean annotationPresent = field.isAnnotationPresent(PamcaryField.class);
+        boolean annotationFieldPresent = field.isAnnotationPresent(PamcaryField.class);
         Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
-        return annotationPresent || referencedFieldAnnotated.isPresent();
+        boolean annotationReferencePresent = field.isAnnotationPresent(PamcaryReference.class);
+        return annotationFieldPresent || annotationReferencePresent || referencedFieldAnnotated.isPresent();
     }
 
     @SneakyThrows

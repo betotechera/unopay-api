@@ -97,4 +97,17 @@ class PamcarySoapTranslatorTest extends FixtureApplicationTest {
         travelDocument?.quantity == quantity
     }
 
+    def 'should translate referenced fields in travel document'(){
+        given:
+        def id = '122'
+        def fieldsTO = [new FieldTO() {{ setKey("viagem.id"); setValue(id) }}]
+
+        when:
+        TravelDocument travelDocument = new PamcarySoapTranslator().translate(fieldsTO)
+
+        then:
+        travelDocument?.contract?.id == id
+    }
+
+
 }
