@@ -49,13 +49,13 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         then:
         fieldTOS.find { it.key == 'viagem.id' }?.value != null
-        fieldTOS.find { it.key == 'viagem.id' }.value == travelDocuments.find().contract.id
+        fieldTOS.find { it.key == 'viagem.id' }.value == travelDocuments.find().contract.code.toString()
     }
 
     def 'given a null reference field value should not be translated'(){
         given:
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
-        travelDocuments.find().contract.id = null
+        travelDocuments.find().contract.code = null
         when:
         List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFieldTOList(travelDocuments.find())
 
@@ -106,7 +106,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         TravelDocument travelDocument = new KeyValueTranslator().populateTravelDocument(fieldsTO)
 
         then:
-        travelDocument?.contract?.id == id
+        travelDocument?.contract?.code == id.toInteger()
     }
 
 

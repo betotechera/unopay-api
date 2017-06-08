@@ -5,6 +5,7 @@ import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Reference;
+import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;

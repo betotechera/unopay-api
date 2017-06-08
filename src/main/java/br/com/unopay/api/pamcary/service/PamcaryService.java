@@ -1,9 +1,11 @@
 package br.com.unopay.api.pamcary.service;
 
+import br.com.unopay.api.model.filter.TravelDocumentFilter;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
 import br.com.unopay.api.pamcary.transactional.WSTransacional_Service;
+import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
 import com.sun.xml.internal.ws.developer.JAXWSProperties;
 import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
@@ -18,23 +20,28 @@ public class PamcaryService {
     private WSTransacional_Service service;
     private SSLSocketFactory sslConnectionSocketFactory;
     private WSTransacional binding;
+    private KeyValueTranslator translator;
 
     @Value("${soap.pamcary.partner-number:}")
     private String partnerNumber;
 
     private final String partnerKey = "parceiro.documento.numero";
 
+
     @Autowired
     public PamcaryService(WSTransacional_Service service,
-                          SSLSocketFactory sslConnectionSocketFactory) {
+                          SSLSocketFactory sslConnectionSocketFactory, KeyValueTranslator translator) {
         this.service = service;
+        this.translator = translator;
         this.sslConnectionSocketFactory = sslConnectionSocketFactory;
         binding = service.getWSTransacional();
         ((BindingProvider) binding).getRequestContext()
                 .put(JAXWSProperties.SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
     }
 
-    public List<FieldTO> searchDoc(List<FieldTO> fieldTOS){
+    public List<FieldTO> searchDoc(TravelDocumentFilter travelDocumentFilter){
+        travelDocumentFilter.defineTransaction();
+        List<FieldTO> fieldTOS = translator.extractFieldTOList(travelDocumentFilter);
         return execute("SearchDoc", fieldTOS);
     }
 

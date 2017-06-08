@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -71,6 +72,8 @@ public class FreightReceipt implements Serializable {
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
     private Event fuelEvent;
+
+
 
     @JsonIgnore
     private ContractorInstrumentCredit instrumentCredit;
