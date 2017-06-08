@@ -1,10 +1,11 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -34,10 +35,11 @@ public class Event implements Serializable {
     public Event(){}
 
     @Id
-    @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
+    @NotNull(groups = {Reference.class})
     @GeneratedValue(generator="system-uuid")
     @JsonView({Views.Public.class,Views.List.class})
+    @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Valid

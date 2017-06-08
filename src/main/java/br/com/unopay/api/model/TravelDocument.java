@@ -1,14 +1,13 @@
 package br.com.unopay.api.model;
 
 
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;

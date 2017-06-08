@@ -2,9 +2,9 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.service.BankAccountService;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Update;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;

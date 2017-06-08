@@ -2,8 +2,8 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Establishment;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
-import br.com.unopay.api.uaa.model.validationsgroups.Create;
-import br.com.unopay.api.uaa.model.validationsgroups.Views;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;

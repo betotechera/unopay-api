@@ -1,7 +1,7 @@
 package br.com.unopay.api.uaa
 
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.uaa.model.validationsgroups.Views
+import br.com.unopay.api.model.validation.group.Views
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Throwables
