@@ -110,7 +110,6 @@ public class PamcarySoapTranslator {
     private String getFieldValue(Field field, Object object){
         try {
             field.setAccessible(true);
-
             Object objectValue = field.get(object);
             if(objectValue != null && field.getType().isEnum()){
                 return ((Enum) objectValue).name();
