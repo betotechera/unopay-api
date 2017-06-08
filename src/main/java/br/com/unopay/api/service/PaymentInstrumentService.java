@@ -45,6 +45,10 @@ public class PaymentInstrumentService {
         try {
             validateReference(instrument);
             instrument.setMeUp();
+            if(instrument.hasPassword()){
+                String encodedPassword = passwordEncoder.encode(instrument.getPassword());
+                instrument.setPassword(encodedPassword);
+            }
             instrument.validate();
             return repository.save(instrument);
         }catch (DataIntegrityViolationException e){
@@ -66,6 +70,11 @@ public class PaymentInstrumentService {
         PaymentInstrument current = findById(id);
         validateReference(instrument);
         current.updateMe(instrument);
+        if(instrument.hasPassword()){
+            String encodedPassword = passwordEncoder.encode(instrument.getPassword());
+            instrument.setPassword(encodedPassword);
+        }
+
         instrument.validate();
         try{
             repository.save(current);
