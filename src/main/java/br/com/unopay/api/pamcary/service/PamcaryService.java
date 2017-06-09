@@ -1,6 +1,5 @@
 package br.com.unopay.api.pamcary.service;
 
-import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
 import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
@@ -8,7 +7,6 @@ import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
 import br.com.unopay.api.pamcary.transactional.WSTransacional_Service;
 import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
-import com.sun.xml.internal.ws.developer.JAXWSProperties;
 import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PamcaryService {
 
+    public static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
     private WSTransacional_Service service;
     private SSLSocketFactory sslConnectionSocketFactory;
     private WSTransacional binding;
@@ -38,7 +37,7 @@ public class PamcaryService {
         this.sslConnectionSocketFactory = sslConnectionSocketFactory;
         binding = service.getWSTransacional();
         ((BindingProvider) binding).getRequestContext()
-                .put(JAXWSProperties.SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
+                .put(SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
     }
 
     public TravelDocumentsWrapper searchDoc(TravelDocumentFilter travelDocumentFilter){

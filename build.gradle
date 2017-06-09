@@ -103,8 +103,6 @@ dependencies {
 	testCompile 'br.com.six2six:fixture-factory:3.1.0'
 	testRuntime 'com.athaydes:spock-reports:1.2.7'
 
-
-
     compile 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.11.0'
 
     // enable extension support for wsdl2java
@@ -180,9 +178,9 @@ sonarqube {
     }
 }
 
-wsdl2java{
+/*wsdl2java{
     wsdlsToGenerate = [
             ['-xjc-Xequals', '-xjc-XhashCode', 'src/main/resources/wsdl/WSTransacional-wsdl.xml?wsdl']
     ]
     generatedWsdlDir = file("$projectDir/generated")
-}
+}*/
