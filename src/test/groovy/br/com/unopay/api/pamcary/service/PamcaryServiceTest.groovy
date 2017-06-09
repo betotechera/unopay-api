@@ -6,12 +6,14 @@ import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
 class PamcaryServiceTest extends SpockApplicationTests{
 
     @Autowired
     PamcaryService service
 
+    @Ignore
     def 'soap integration test'(){
         given:
         TravelDocumentFilter filter = new TravelDocumentFilter().with
