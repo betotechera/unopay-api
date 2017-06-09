@@ -23,7 +23,6 @@ class PamcaryServiceTest extends SpockApplicationTests{
                 it
             }
 
-
         when:
         TravelDocumentsWrapper searchDoc = service.searchDoc(filter)
 

@@ -432,6 +432,15 @@ public final class Errors {
             new UnovationError("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE",
                     "Event value greater than credit balance");
 
+    /* freight receipt */
+    public static final UnovationError CARGO_CONTRACT_NOT_FOUND =
+            new UnovationError("CARGO_CONTRACT_NOT_FOUND",
+                    "Cargo contract not found.");
+    public static final UnovationError TRAVEL_DOCUMENT_NOT_FOUND =
+            new UnovationError("TRAVEL_DOCUMENT_NOT_FOUND",
+                    "Travel document not found.");
+
+
 
 
 
