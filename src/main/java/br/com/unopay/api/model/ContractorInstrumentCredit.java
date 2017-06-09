@@ -1,7 +1,10 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_EXPIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
@@ -12,16 +15,13 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
-import br.com.unopay.api.model.validation.group.Create;
-import br.com.unopay.api.model.validation.group.Update;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import static java.math.BigDecimal.ZERO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -142,7 +142,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     }
 
     public void validateValue() {
-        if(BigDecimal.ZERO.compareTo(value) == 0 || BigDecimal.ZERO.compareTo(value) == 1){
+        if(ZERO.compareTo(value) == 0 || ZERO.compareTo(value) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
         if(creditPaymentAccount.getAvailableBalance().compareTo(value) == -1){
@@ -163,7 +163,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.createdDateTime = new Date();
         this.contract = contract;
         this.availableBalance = this.value;
-        this.blockedBalance = BigDecimal.ZERO;
+        this.blockedBalance = ZERO;
         this.situation = CreditSituation.AVAILABLE;
         this.issuerFee = contract.productInstrumentIssuerFee();
     }
@@ -258,5 +258,32 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         if(!CreditSituation.AVAILABLE.equals(situation)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_UNAVAILABLE);
         }
+    }
+
+    public ContractorInstrumentCredit createProcessingCredit(BigDecimal value) {
+        ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
+        instrumentCredit.setAvailableBalance(BigDecimal.ZERO);
+        instrumentCredit.setBlockedBalance(BigDecimal.ZERO);
+        instrumentCredit.setSituation(CreditSituation.PROCESSING);
+        instrumentCredit.setCreditPaymentAccount(this.creditPaymentAccount);
+        instrumentCredit.setContract(this.contract);
+        instrumentCredit.setCreatedDateTime(new Date());
+        instrumentCredit.setExpirationDateTime(this.expirationDateTime);
+        instrumentCredit.setCreditInsertionType(this.creditInsertionType);
+        instrumentCredit.setInstallmentNumber(this.installmentNumber);
+        instrumentCredit.setIssuerFee(this.issuerFee);
+        instrumentCredit.setPaymentInstrument(this.paymentInstrument);
+        instrumentCredit.setServiceType(this.serviceType);
+        instrumentCredit.setValue(value);
+        return instrumentCredit;
+    }
+
+    @JsonIgnore
+    public boolean isDepleted() {
+        return ZERO.equals(this.availableBalance);
+    }
+
+    public void subtractValue(BigDecimal value) {
+        this.value = this.value.subtract(value);
     }
 }

@@ -178,7 +178,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         result.get().availableBalance == 0.0
     }
 
-    void 'given a event value less than credit balance should change credit status to processing'(){
+    void 'given a event value less than credit balance should create another credit with Processing'(){
         given:
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -190,8 +190,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         service.create(userUnderTest.email, serviceAuthorize)
 
         then:
-        def result = contractorInstrumentCreditRepository.findById(instrumentCreditUnderTest.id)
-        result.get().situation == CreditSituation.PROCESSING
+        def result = contractorInstrumentCreditRepository.findByContractId(instrumentCreditUnderTest.contract.id)
+        result.size() == 2
+        result.find{it.situation == CreditSituation.AVAILABLE}
+        result.find{it.situation == CreditSituation.PROCESSING}
+
     }
 
     void 'given a event value greater than credit balance when validate event should return error'(){

@@ -4,7 +4,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
-import br.com.unopay.api.model.CreditSituation;
+import static br.com.unopay.api.model.CreditSituation.PROCESSING;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
@@ -131,8 +131,18 @@ public class ContractorInstrumentCreditService {
     public void subtract(String id, BigDecimal value) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
         instrumentCredit.subtract(value);
-        instrumentCredit.setSituation(CreditSituation.PROCESSING);
+        if(instrumentCredit.isDepleted()){
+            instrumentCredit.setSituation(PROCESSING);
+        }
+        else {
+            instrumentCredit.subtractValue(value);
+            createProcessingCredit(value, instrumentCredit);
+        }
         repository.save(instrumentCredit);
+    }
+
+    private void createProcessingCredit(BigDecimal value, ContractorInstrumentCredit instrumentCredit) {
+        repository.save(instrumentCredit.createProcessingCredit(value));
     }
 
     private void cancelInstrumentCredit(ContractorInstrumentCredit instrumentCredit) {
