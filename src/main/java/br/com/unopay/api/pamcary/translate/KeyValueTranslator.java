@@ -69,8 +69,13 @@ public class KeyValueTranslator {
     @SneakyThrows
     private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (!field.isAnnotationPresent(WithKeyFields.class) && containsKeyValue(entry, field)) {
+        if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, field)) {
             if(field.getType() != String.class) {
+                if(field.getType().isEnum() && field.isAnnotationPresent(KeyEnumField.class)){
+                    Object enumObj = getEnum(entry, field);
+                    field.set(object, enumObj);
+                    return;
+                }
                 Method parseMethod = field.getType().getMethod("valueOf", String.class);
                 field.set(object, parseMethod.invoke(field, entry.getValue()));
                 return;
@@ -88,6 +93,14 @@ public class KeyValueTranslator {
         }
     }
 
+    @SneakyThrows
+    private Object getEnum(Entry entry, Field field) {
+        String methodName = field.getAnnotation(KeyEnumField.class).valueOfMethodName();
+        Class methodParamType = field.getAnnotation(KeyEnumField.class).methodParamType();
+        Method parseMethod = field.getType().getMethod(methodName, methodParamType);
+        return parseMethod.invoke(null, entry.getValue());
+    }
+
     private boolean containsKeyValue(Entry entry, Field field) {
         String key = entry.getKey().toString().replaceAll("\\d", "");
         return Objects.equals(getKey(field), key);
@@ -96,7 +109,7 @@ public class KeyValueTranslator {
     @SneakyThrows
     private void populateList(Object object,Entry entry, Field field) throws IllegalAccessException {
         Object fieldValue = field.get(object);
-        if(teste(entry.getKey().toString())) {
+        if(containsNumber(entry.getKey().toString())) {
             if (fieldValue == null) {
                 invokeSetter(object, field, new ArrayList<>());
                 fieldValue = field.get(object);
@@ -108,7 +121,7 @@ public class KeyValueTranslator {
         }
     }
 
-    private boolean teste(String value){
+    private boolean containsNumber(String value){
         Pattern pattern = Pattern.compile(".+\\d.+");
         Matcher matcher = pattern.matcher(value);
         return matcher.matches();

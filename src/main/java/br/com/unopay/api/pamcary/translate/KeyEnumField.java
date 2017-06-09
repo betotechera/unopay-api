@@ -1,14 +1,18 @@
 package br.com.unopay.api.pamcary.translate;
 
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-public @interface KeyField {
+@Target(ElementType.FIELD)
+public @interface KeyEnumField {
 
-    String key();
+    String valueOfMethodName();
+
+    Class methodParamType() default String.class;
+
 
 }

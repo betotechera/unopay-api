@@ -1,6 +1,7 @@
 package br.com.unopay.api.pamcary.service;
 
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
+import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
@@ -39,10 +40,11 @@ public class PamcaryService {
                 .put(JAXWSProperties.SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
     }
 
-    public List<FieldTO> searchDoc(TravelDocumentFilter travelDocumentFilter){
+    public TravelDocumentsWrapper searchDoc(TravelDocumentFilter travelDocumentFilter){
         travelDocumentFilter.defineTransaction();
         List<FieldTO> fieldTOS = translator.extractFieldTOList(travelDocumentFilter);
-        return execute("SearchDoc", fieldTOS);
+        List<FieldTO> result = execute("SearchDoc", fieldTOS);
+        return translator.populateTravelDocumentWrapper(result);
     }
 
     private List<FieldTO> execute(final String contextParam, final List<FieldTO> fieldsParam) {

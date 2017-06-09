@@ -2,6 +2,7 @@ package br.com.unopay.api.pamcary.translate
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
 import br.com.unopay.api.pamcary.transactional.FieldTO
@@ -123,6 +124,18 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         then:
         that travelDocument?.travelDocuments, hasSize(1)
         travelDocument.travelDocuments.find().documentNumber == id
+    }
+
+    def 'should translate referenced enum fields in travel document'(){
+        given:
+        def id = '1'
+        def fieldsTO = [ new FieldTO() {{ setKey("viagem.carga.perfil.id"); setValue(id) }} ]
+
+        when:
+        TravelDocumentsWrapper travelDocument = new KeyValueTranslator().populateTravelDocumentWrapper(fieldsTO)
+
+        then:
+        travelDocument.cargoContract.cargoProfile == CargoProfile.DRY_CARGO
     }
 
 
