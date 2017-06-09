@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface KeyEnumField {
 
-    String valueOfMethodName();
+    String valueOfMethodName() default "valueOf";
 
     Class methodParamType() default String.class;
 

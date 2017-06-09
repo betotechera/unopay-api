@@ -20,8 +20,6 @@ public enum CargoProfile implements DescriptableEnum {
         return description;
     }
 
-
-
     public static CargoProfile from(String compareCode){
         return Stream.of(CargoProfile.values())
                 .filter(c-> Objects.equals(c.code, compareCode))

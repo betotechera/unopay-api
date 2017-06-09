@@ -1,7 +1,5 @@
 package br.com.unopay.api.pamcary.translate;
 
-import br.com.unopay.api.model.TravelDocument;
-import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -28,21 +26,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyValueTranslator {
 
-    public List<FieldTO> extractFieldTOList(Object object){
+    public List<FieldTO> extractFields(Object object){
         Map<String, Object> translate = extract(object);
         return translate.entrySet().stream()
                 .map( entry -> new FieldTO() {{ setKey(entry.getKey()); setValue(String.valueOf(entry.getValue()));}})
                 .collect(Collectors.toList());
     }
 
-    public TravelDocument populateTravelDocument(List<FieldTO> fieldTOS){
+    public <T> T populate(Class<T> klass, List<FieldTO> fieldTOS){
         Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return populate(TravelDocument.class, map);
-    }
-
-    public TravelDocumentsWrapper populateTravelDocumentWrapper(List<FieldTO> fieldTOS){
-        Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return populate(TravelDocumentsWrapper.class, map);
+        return populate(klass, map);
     }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
@@ -71,26 +64,37 @@ public class KeyValueTranslator {
         field.setAccessible(true);
         if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, field)) {
             if(field.getType() != String.class) {
-                if(field.getType().isEnum() && field.isAnnotationPresent(KeyEnumField.class)){
-                    Object enumObj = getEnum(entry, field);
-                    field.set(object, enumObj);
-                    return;
-                }
-                Method parseMethod = field.getType().getMethod("valueOf", String.class);
-                field.set(object, parseMethod.invoke(field, entry.getValue()));
+                populateComplexField(object, entry, field);
                 return;
             }
             field.set(object, entry.getValue());
         }
         if(field.isAnnotationPresent(WithKeyFields.class)){
-            if(field.getType() == List.class){
-                populateList(object, entry, field);
-                return;
-            }
-            Object reference = field.getType().newInstance();
-            populateAnnotatedFields(reference, entry);
-            invokeSetter(object, field, reference);
+            populateReferencedField(object, entry, field);
         }
+    }
+
+    @SneakyThrows
+    private void populateReferencedField(Object object, Entry entry, Field field) {
+        if(field.getType() == List.class){
+            populateList(object, entry, field);
+            return;
+        }
+        Object reference = field.getType().newInstance();
+        populateAnnotatedFields(reference, entry);
+        invokeSetter(object, field, reference);
+    }
+
+    @SneakyThrows
+    private void populateComplexField(Object object, Entry entry, Field field) {
+        if(field.getType().isEnum() && field.isAnnotationPresent(KeyEnumField.class)){
+            Object enumObj = getEnum(entry, field);
+            field.set(object, enumObj);
+            return;
+        }
+        Method parseMethod = field.getType().getMethod("valueOf", String.class);
+        field.set(object, parseMethod.invoke(field, entry.getValue()));
+        return;
     }
 
     @SneakyThrows
