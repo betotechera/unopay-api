@@ -1,16 +1,20 @@
 package br.com.unopay.api.pamcary.translate;
 
 import br.com.unopay.api.model.TravelDocument;
+import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -33,7 +37,12 @@ public class KeyValueTranslator {
 
     public TravelDocument populateTravelDocument(List<FieldTO> fieldTOS){
         Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return populate(new TravelDocument(), map);
+        return populate(TravelDocument.class, map);
+    }
+
+    public TravelDocumentsWrapper populateTravelDocumentWrapper(List<FieldTO> fieldTOS){
+        Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
+        return populate(TravelDocumentsWrapper.class, map);
     }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
@@ -44,7 +53,9 @@ public class KeyValueTranslator {
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
 
-    public <T> T populate(T object, Map<String, String> map){
+    @SneakyThrows
+    public <T> T populate(Class<T> klass, Map<String, String> map){
+        T object = klass.newInstance();
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
         return object;
     }
@@ -58,7 +69,7 @@ public class KeyValueTranslator {
     @SneakyThrows
     private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (!field.isAnnotationPresent(WithKeyFields.class) && Objects.equals(getKey(field), entry.getKey())) {
+        if (!field.isAnnotationPresent(WithKeyFields.class) && containsKeyValue(entry, field)) {
             if(field.getType() != String.class) {
                 Method parseMethod = field.getType().getMethod("valueOf", String.class);
                 field.set(object, parseMethod.invoke(field, entry.getValue()));
@@ -67,12 +78,47 @@ public class KeyValueTranslator {
             field.set(object, entry.getValue());
         }
         if(field.isAnnotationPresent(WithKeyFields.class)){
+            if(field.getType() == List.class){
+                populateList(object, entry, field);
+                return;
+            }
             Object reference = field.getType().newInstance();
             populateAnnotatedFields(reference, entry);
-            String methodName = "set" + StringUtils.capitalize(field.getName());
-            Method setMethod = object.getClass().getMethod(methodName, field.getType());
-            setMethod.invoke(object, reference);
+            invokeSetter(object, field, reference);
         }
+    }
+
+    private boolean containsKeyValue(Entry entry, Field field) {
+        String key = entry.getKey().toString().replaceAll("\\d", "");
+        return Objects.equals(getKey(field), key);
+    }
+
+    @SneakyThrows
+    private void populateList(Object object,Entry entry, Field field) throws IllegalAccessException {
+        Object fieldValue = field.get(object);
+        if(teste(entry.getKey().toString())) {
+            if (fieldValue == null) {
+                invokeSetter(object, field, new ArrayList<>());
+                fieldValue = field.get(object);
+            }
+            Class aClass = field.getAnnotation(WithKeyFields.class).listType();
+            Object newInstance = aClass.newInstance();
+            populateAnnotatedFields(newInstance, entry);
+            ((List) fieldValue).add(newInstance);
+        }
+    }
+
+    private boolean teste(String value){
+        Pattern pattern = Pattern.compile(".+\\d.+");
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
+    }
+
+    @SneakyThrows
+    private void invokeSetter(Object object, Field field, Object reference)  {
+        String methodName = "set" + StringUtils.capitalize(field.getName());
+        Method setMethod = object.getClass().getMethod(methodName, field.getType());
+        setMethod.invoke(object, reference);
     }
 
     private boolean isAnnotationPresent(Field field, Object object) {

@@ -3,7 +3,10 @@ package br.com.unopay.api.pamcary.translate
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
 import br.com.unopay.api.pamcary.transactional.FieldTO
+import static org.hamcrest.Matchers.hasSize
+import static spock.util.matcher.HamcrestSupport.that
 
 class KeyValueTranslatorTest extends FixtureApplicationTest {
 
@@ -107,6 +110,19 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         then:
         travelDocument?.contract?.code == id.toInteger()
+    }
+
+    def 'should translate referenced list fields in travel document'(){
+        given:
+        def id = '122'
+        def fieldsTO = [ new FieldTO() {{ setKey("viagem.documento1.numero"); setValue(id) }} ]
+
+        when:
+        TravelDocumentsWrapper travelDocument = new KeyValueTranslator().populateTravelDocumentWrapper(fieldsTO)
+
+        then:
+        that travelDocument?.travelDocuments, hasSize(1)
+        travelDocument.travelDocuments.find().documentNumber == id
     }
 
 

@@ -3,6 +3,7 @@ package br.com.unopay.api.pamcary.service
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.model.filter.TravelDocumentFilter
+import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -24,9 +25,10 @@ class PamcaryServiceTest extends SpockApplicationTests{
 
 
         when:
-        def searchDoc = service.searchDoc(filter)
+        TravelDocumentsWrapper searchDoc = service.searchDoc(filter)
 
         then:
-        searchDoc.find { it.key == 'mensagem.codigo'}?.value == '0'
+        !searchDoc.travelDocuments.isEmpty()
+        searchDoc.cargoContract.cargoProfile != null
     }
 }
