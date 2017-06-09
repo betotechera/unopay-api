@@ -53,7 +53,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         then:
         fieldTOS.find { it.key == 'viagem.id' }?.value != null
-        fieldTOS.find { it.key == 'viagem.id' }.value == travelDocuments.find().contract.code.toString()
+        fieldTOS.find { it.key == 'viagem.id' }.value.toInteger() == travelDocuments.find().contract.code
     }
 
     def 'given a null reference field value should not be translated'(){
