@@ -282,4 +282,8 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public boolean isDepleted() {
         return ZERO.equals(this.availableBalance);
     }
+
+    public void subtractValue(BigDecimal value) {
+        this.value = this.value.subtract(value);
+    }
 }

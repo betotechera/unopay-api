@@ -135,6 +135,7 @@ public class ContractorInstrumentCreditService {
             instrumentCredit.setSituation(PROCESSING);
         }
         else {
+            instrumentCredit.subtractValue(value);
             createProcessingCredit(value, instrumentCredit);
         }
         repository.save(instrumentCredit);
