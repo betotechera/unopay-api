@@ -18,23 +18,19 @@ import org.springframework.stereotype.Service;
 public class PamcaryService {
 
     public static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
-    private WSTransacional_Service service;
-    private SSLSocketFactory sslConnectionSocketFactory;
     private WSTransacional binding;
     private KeyValueTranslator translator;
 
     @Value("${soap.pamcary.partner-number:}")
     private String partnerNumber;
 
-    private final String partnerKey = "parceiro.documento.numero";
+    private static final String partnerKey = "parceiro.documento.numero";
 
 
     @Autowired
     public PamcaryService(WSTransacional_Service service,
                           SSLSocketFactory sslConnectionSocketFactory, KeyValueTranslator translator) {
-        this.service = service;
         this.translator = translator;
-        this.sslConnectionSocketFactory = sslConnectionSocketFactory;
         binding = service.getWSTransacional();
         ((BindingProvider) binding).getRequestContext()
                 .put(SSL_SOCKET_FACTORY, sslConnectionSocketFactory);

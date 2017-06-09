@@ -16,26 +16,6 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
-
-/**
- * <p>Java class for responseTO complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="responseTO"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="fields" type="{http://webservice.pamcard.jee.pamcary.com.br}fieldTO" maxOccurs="unbounded" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "responseTO", propOrder = {
     "fields"
@@ -46,28 +26,6 @@ public class ResponseTO implements Equals2, HashCode2
     @XmlElement(nillable = true)
     protected List<FieldTO> fields;
 
-    /**
-     * Gets the value of the fields property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the fields property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFields().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FieldTO }
-     * 
-     * 
-     */
     public List<FieldTO> getFields() {
         if (fields == null) {
             fields = new ArrayList<FieldTO>();
@@ -75,7 +33,8 @@ public class ResponseTO implements Equals2, HashCode2
         return this.fields;
     }
 
-    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy2 strategy) {
+    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object,
+                          EqualsStrategy2 strategy) {
         if ((object == null)||(this.getClass()!= object.getClass())) {
             return false;
         }
@@ -88,7 +47,10 @@ public class ResponseTO implements Equals2, HashCode2
             lhsFields = (((this.fields!= null)&&(!this.fields.isEmpty()))?this.getFields():null);
             List<FieldTO> rhsFields;
             rhsFields = (((that.fields!= null)&&(!that.fields.isEmpty()))?that.getFields():null);
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "fields", lhsFields), LocatorUtils.property(thatLocator, "fields", rhsFields), lhsFields, rhsFields, ((this.fields!= null)&&(!this.fields.isEmpty())), ((that.fields!= null)&&(!that.fields.isEmpty())))) {
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "fields", lhsFields),
+                    LocatorUtils.property(thatLocator, "fields", rhsFields), lhsFields, rhsFields,
+                    ((this.fields!= null)&&(!this.fields.isEmpty())),
+                    ((that.fields!= null)&&(!that.fields.isEmpty())))) {
                 return false;
             }
         }
@@ -105,7 +67,8 @@ public class ResponseTO implements Equals2, HashCode2
         {
             List<FieldTO> theFields;
             theFields = (((this.fields!= null)&&(!this.fields.isEmpty()))?this.getFields():null);
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fields", theFields), currentHashCode, theFields, ((this.fields!= null)&&(!this.fields.isEmpty())));
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fields", theFields),
+                    currentHashCode, theFields, ((this.fields!= null)&&(!this.fields.isEmpty())));
         }
         return currentHashCode;
     }
