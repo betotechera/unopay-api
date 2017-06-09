@@ -138,5 +138,4 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         travelDocument.cargoContract.cargoProfile == CargoProfile.DRY_CARGO
     }
 
-
 }

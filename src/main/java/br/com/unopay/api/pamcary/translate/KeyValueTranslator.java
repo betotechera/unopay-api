@@ -80,7 +80,10 @@ public class KeyValueTranslator {
             populateList(object, entry, field);
             return;
         }
-        Object reference = field.getType().newInstance();
+        Object reference = field.get(object);
+        if(reference == null) {
+            reference = field.getType().newInstance();
+        }
         populateAnnotatedFields(reference, entry);
         invokeSetter(object, field, reference);
     }
