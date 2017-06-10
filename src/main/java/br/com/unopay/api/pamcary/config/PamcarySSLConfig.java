@@ -41,21 +41,18 @@ public class PamcarySSLConfig {
     @Value("${soap.client.ssl.trust-store-password:}")
     private char[] trustStorePassword;
 
-    @Autowired
-    private TempFileCreator tempFileCreator;
-
     @Bean
     @SneakyThrows
     public SSLSocketFactory pamcarySSLSocketFactory (){
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
-        clientStore.load(new FileInputStream(tempFileCreator.createTempFile(keyStore)), keyStorePassword);
+        clientStore.load(keyStore.getInputStream(), keyStorePassword);
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         kmf.init(clientStore, keyStorePassword);
         KeyManager[] kms = kmf.getKeyManagers();
 
         KeyStore trustStore2 = KeyStore.getInstance("JKS");
-        trustStore2.load(new FileInputStream(tempFileCreator.createTempFile(trustStore)), trustStorePassword);
+        trustStore2.load(trustStore.getInputStream(), trustStorePassword);
 
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(trustStore2);
