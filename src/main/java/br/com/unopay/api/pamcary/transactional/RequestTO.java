@@ -38,7 +38,7 @@ public class RequestTO implements Equals2, HashCode2
 
     public List<FieldTO> getFields() {
         if (fields == null) {
-            fields = new ArrayList<FieldTO>();
+            fields = new ArrayList<>();
         }
         return this.fields;
     }

@@ -9,7 +9,6 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 @WebService(targetNamespace = "http://webservice.pamcard.jee.pamcary.com.br", name = "WSTransacional")
-@XmlSeeAlso({ObjectFactory.class})
 public interface WSTransacional {
 
     @WebMethod
