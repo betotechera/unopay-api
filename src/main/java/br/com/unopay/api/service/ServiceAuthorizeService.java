@@ -18,16 +18,14 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ServiceAuthorizeService {
@@ -74,7 +72,11 @@ public class ServiceAuthorizeService {
     }
 
     private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
-       return String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
+        long count = repository.count();
+        String authorizationNumber =
+                String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(count) +
+                        String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
+        return authorizationNumber.substring(0, Math.min(authorizationNumber.length(), 12));
     }
 
     private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
