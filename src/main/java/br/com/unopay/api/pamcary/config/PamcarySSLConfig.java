@@ -32,7 +32,7 @@ public class PamcarySSLConfig {
     @Value("${soap.client.ssl.trust-store-password:}")
     private char[] trustStorePassword;
 
-    @Value("#{environment.JAVA_HOME}")
+    @Value("${unopay.java-home:#{environment.JAVA_HOME}}")
     private String javaHome;
 
     @Bean

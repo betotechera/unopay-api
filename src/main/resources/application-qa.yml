@@ -9,6 +9,7 @@ soap:
       key-store-password: 'UFK#@01a'
       trust-store-password: 'changeit'
 unopay:
+  java-home: /usr/java/latest
   credit:
     defaultPaymentRuleGroup: '01'
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'
