@@ -5,7 +5,7 @@ import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
-import br.com.unopay.api.pamcary.transactional.WSTransacional_Service;
+import br.com.unopay.api.pamcary.transactional.WSTransacionalService;
 import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
 import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
@@ -28,7 +28,7 @@ public class PamcaryService {
 
 
     @Autowired
-    public PamcaryService(WSTransacional_Service service,
+    public PamcaryService(WSTransacionalService service,
                           SSLSocketFactory sslConnectionSocketFactory, KeyValueTranslator translator) {
         this.translator = translator;
         binding = service.getWSTransacional();

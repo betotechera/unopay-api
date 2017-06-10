@@ -2,11 +2,14 @@ soap:
   pamcary:
     partner-number: '24122925000173'
   client:
+    wsdl-location: classpath:wsdl/WSTransacional-wsdl.xml
+    transacional-service: "http://webservice.pamcard.jee.pamcary.com.br"
     ssl:
       key-store: classpath:wsdl/unovation.p12
       key-store-password: 'UFK#@01a'
       trust-store: /usr/lib/jvm/java-8-oracle/jre/lib/security/cacerts
       trust-store-password: 'changeit'
+
 unopay:
   credit:
     defaultPaymentRuleGroup: '01'
