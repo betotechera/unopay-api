@@ -26,7 +26,7 @@ public class PamcarySSLConfig {
     @Value("${soap.client.ssl.key-store-password:}")
     private char[] keyStorePassword;
 
-    @Value("${soap.client.ssl.trust-store:'/jre/lib/security/cacerts'}")
+    @Value("${soap.client.ssl.trust-store:/jre/lib/security/cacerts}")
     private String trustStore;
 
     @Value("${soap.client.ssl.trust-store-password:}")
