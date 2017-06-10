@@ -1,6 +1,11 @@
 package br.com.unopay.api.pamcary.config;
 
+import br.com.unopay.api.infra.TempFileCreator;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import javax.net.ssl.KeyManager;
@@ -10,6 +15,10 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.flywaydb.core.internal.util.FileCopyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,18 +41,21 @@ public class PamcarySSLConfig {
     @Value("${soap.client.ssl.trust-store-password:}")
     private char[] trustStorePassword;
 
+    @Autowired
+    private TempFileCreator tempFileCreator;
+
     @Bean
     @SneakyThrows
     public SSLSocketFactory pamcarySSLSocketFactory (){
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
-        clientStore.load(new FileInputStream(keyStore.getFile()), keyStorePassword);
+        clientStore.load(new FileInputStream(tempFileCreator.createTempFile(keyStore)), keyStorePassword);
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         kmf.init(clientStore, keyStorePassword);
         KeyManager[] kms = kmf.getKeyManagers();
 
         KeyStore trustStore2 = KeyStore.getInstance("JKS");
-        trustStore2.load(new FileInputStream(trustStore.getFile()), trustStorePassword);
+        trustStore2.load(new FileInputStream(tempFileCreator.createTempFile(trustStore)), trustStorePassword);
 
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(trustStore2);
@@ -55,4 +67,6 @@ public class PamcarySSLConfig {
         return sslContext.getSocketFactory();
 
     }
+
+
 }

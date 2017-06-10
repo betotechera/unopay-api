@@ -10,7 +10,6 @@ soap:
       trust-store: classpath:wsdl/cacerts
       trust-store-password: 'changeit'
 unopay:
-  java-home: /usr/java/latest
   credit:
     defaultPaymentRuleGroup: '01'
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'

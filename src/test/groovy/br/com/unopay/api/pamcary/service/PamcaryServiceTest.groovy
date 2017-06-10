@@ -13,7 +13,6 @@ class PamcaryServiceTest extends SpockApplicationTests{
     @Autowired
     PamcaryService service
 
-    @Ignore
     def 'soap integration test'(){
         given:
         TravelDocumentFilter filter = new TravelDocumentFilter().with
