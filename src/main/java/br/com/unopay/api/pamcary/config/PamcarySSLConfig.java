@@ -26,11 +26,14 @@ public class PamcarySSLConfig {
     @Value("${soap.client.ssl.key-store-password:}")
     private char[] keyStorePassword;
 
-    @Value("${soap.client.ssl.trust-store:}")
+    @Value("${soap.client.ssl.trust-store:'/jre/lib/security/cacerts'}")
     private String trustStore;
 
     @Value("${soap.client.ssl.trust-store-password:}")
     private char[] trustStorePassword;
+
+    @Value("#{environment.JAVA_HOME}")
+    private String javaHome;
 
     @Bean
     @SneakyThrows
@@ -43,7 +46,7 @@ public class PamcarySSLConfig {
         KeyManager[] kms = kmf.getKeyManagers();
 
         KeyStore trustStore2 = KeyStore.getInstance("JKS");
-        trustStore2.load(new FileInputStream(trustStore), trustStorePassword);
+        trustStore2.load(new FileInputStream(javaHome + trustStore), trustStorePassword);
 
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(trustStore2);
