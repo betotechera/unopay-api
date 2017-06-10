@@ -7,6 +7,7 @@ soap:
     ssl:
       key-store: classpath:wsdl/unovation.p12
       key-store-password: 'UFK#@01a'
+      trust-store: classpath:wsdl/cacerts
       trust-store-password: 'changeit'
 unopay:
   java-home: /usr/java/latest
