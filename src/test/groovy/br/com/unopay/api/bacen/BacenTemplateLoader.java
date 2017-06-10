@@ -1,10 +1,39 @@
 package br.com.unopay.api.bacen;
 
-import br.com.six2six.fixturefactory.*;
-import br.com.six2six.fixturefactory.loader.*;
-import br.com.unopay.api.bacen.model.*;
-import br.com.unopay.api.model.*;
-import java.math.*;
+import br.com.six2six.fixturefactory.Fixture;
+import br.com.six2six.fixturefactory.Rule;
+import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.AccreditedNetworkType;
+import br.com.unopay.api.bacen.model.Bank;
+import br.com.unopay.api.bacen.model.BankAccount;
+import br.com.unopay.api.bacen.model.BankAccountType;
+import br.com.unopay.api.bacen.model.Branch;
+import br.com.unopay.api.bacen.model.Checkout;
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.EstablishmentType;
+import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.model.GatheringChannel;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.HirerBranch;
+import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.InvoiceReceipt;
+import br.com.unopay.api.bacen.model.InvoiceReceiptType;
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.Partner;
+import br.com.unopay.api.bacen.model.PaymentBankAccount;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.Purpose;
+import br.com.unopay.api.bacen.model.RecurrencePeriod;
+import br.com.unopay.api.bacen.model.Scope;
+import br.com.unopay.api.bacen.model.Service;
+import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.bacen.model.UserRelationship;
+import br.com.unopay.api.model.BrandFlag;
+import br.com.unopay.api.model.Contact;
+import br.com.unopay.api.model.Person;
+import java.math.BigDecimal;
 
 
 public class BacenTemplateLoader implements TemplateLoader {

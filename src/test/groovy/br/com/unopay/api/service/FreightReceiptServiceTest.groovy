@@ -12,6 +12,9 @@ import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.model.filter.TravelDocumentFilter
+import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
+import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -51,6 +54,8 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     UserDetail currentUser
     String currentPassword = '5544&SD%%DF'
 
+    PamcaryService pamcaryServiceMock = Mock(PamcaryService)
+
     ContractorInstrumentCredit instrumentCreditUnderTest
 
     void setup(){
@@ -58,6 +63,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         instrumentCreditUnderTest.serviceType = ServiceType.FUEL_ALLOWANCE
         contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
         currentUser = setupCreator.createUser()
+        service.pamcaryService = pamcaryServiceMock
         paymentInstrumentService.changePassword(instrumentCreditUnderTest.getPaymentInstrumentId(), currentPassword)
         Integer.mixin(TimeCategory)
     }
@@ -258,6 +264,36 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         that travelDocumentService.findAll(), hasSize(2)
     }
 
+    def 'given unknown travel document when freight receipt should not be receipted'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.with {
+            travelDocuments.find().id = ''
+        }
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'TRAVEL_DOCUMENT_NOT_FOUND'
+    }
+
+    def 'given unknown cargo contract when freight receipt should not be receipted'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.with {
+            cargoContract.id = ''
+        }
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CARGO_CONTRACT_NOT_FOUND'
+    }
+
     def 'given a valid freight receipt then the cargo contract should be saved'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
@@ -269,14 +305,56 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         that cargoContractService.findAll(), hasSize(1)
     }
 
+    def 'when list documents should list from pamcary service'(){
+        given:
+        def receipt = createFreightReceipt()
+        def wrapper = new TravelDocumentsWrapper().with {
+            cargoContract = receipt.cargoContract
+            travelDocuments = receipt.travelDocuments
+            it
+        }
+        def filter = new TravelDocumentFilter()
 
-    private FreightReceipt createFreightReceipt() {
-        def credit = instrumentCreditUnderTest
+        when:
+        service.listDocuments(filter)
+
+        then:
+        1 * pamcaryServiceMock.searchDoc(filter) >> wrapper
+    }
+
+    def 'when list documents should save returned documents'(){
+        given:
         CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
-            add("contract", credit.contract)
+            add("contract", instrumentCreditUnderTest.contract)
         }})
         ComplementaryTravelDocument complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(2, "valid", new Rule(){{
+            add("contract", instrumentCreditUnderTest.contract)
+            add("complementaryTravelDocument", complementaryDocument)
+        }})
+        def wrapper = new TravelDocumentsWrapper().with {
+            cargoContract = cargo
+            travelDocuments = documents
+            it
+        }
+        def filter = new TravelDocumentFilter()
+        when:
+        service.listDocuments(filter)
+
+        then:
+        1 * pamcaryServiceMock.searchDoc(filter) >> wrapper
+        that cargoContractService.findAll(), hasSize(1)
+        that travelDocumentService.findAll(), hasSize(2)
+    }
+
+
+    private FreightReceipt createFreightReceipt() {
+        def credit = instrumentCreditUnderTest
+        CargoContract cargo = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", credit.contract)
+        }})
+        ComplementaryTravelDocument complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme("valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
             add("contract", credit.contract)
             add("complementaryTravelDocument", complementaryDocument)
         }})

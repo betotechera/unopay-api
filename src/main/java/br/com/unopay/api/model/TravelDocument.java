@@ -1,9 +1,10 @@
 package br.com.unopay.api.model;
 
-
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyField;
+import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -44,23 +45,27 @@ public class TravelDocument  implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="contract_id")
+    @WithKeyFields
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Contract contract;
 
     @Column(name = "quantity")
+    @KeyField(key = "viagem.documento.qtde")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer quantity;
 
     @Valid
     @Enumerated(STRING)
+    @KeyField(key = "viagem.documento.sigla")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
+    @KeyField(key = "viagem.documento.numero")
     @JsonView({Views.Public.class,Views.List.class})
     private String documentNumber;
 
@@ -72,6 +77,7 @@ public class TravelDocument  implements Serializable {
 
     @Valid
     @Enumerated(STRING)
+    @KeyField(key = "viagem.indicador.ressalva")
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;

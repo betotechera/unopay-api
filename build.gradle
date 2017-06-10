@@ -14,6 +14,7 @@ buildscript {
 		classpath 'net.researchgate:gradle-release:2.4.0'
 		classpath 'org.ajoberstar:gradle-git:1.5.1'
 		classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1'
+		classpath 'no.nils:wsdl2java:0.10'
 	}
 
 }
@@ -29,6 +30,7 @@ apply plugin: 'groovy'
 apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
+apply plugin: 'no.nils.wsdl2java'
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '3.4.1'
@@ -65,6 +67,12 @@ dependencies {
 	compile 'org.springframework.security.oauth:spring-security-oauth2'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.springframework.hateoas:spring-hateoas'
+
+    compile 'org.springframework:spring-jms'
+    compile 'org.springframework:spring-oxm'
+    compile 'org.springframework.ws:spring-ws-core'
+    compile 'org.springframework.ws:spring-ws-support'
+
 	compile 'com.google.guava:guava:21.0'
 
 	compile 'com.oracle.jdbc:ojdbc8:12.2.0.1'
@@ -94,6 +102,12 @@ dependencies {
     testRuntime "org.objenesis:objenesis:2.5.1"
 	testCompile 'br.com.six2six:fixture-factory:3.1.0'
 	testRuntime 'com.athaydes:spock-reports:1.2.7'
+
+    compile 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.11.0'
+
+    // enable extension support for wsdl2java
+    wsdl2java 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.11.0'
+    wsdl2java 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.0'
 }
 
 
@@ -163,3 +177,10 @@ sonarqube {
 		property 'sonar.exclusions', '**/*.html'
     }
 }
+
+/*wsdl2java{
+    wsdlsToGenerate = [
+            ['-xjc-Xequals', '-xjc-XhashCode', 'src/main/resources/wsdl/WSTransacional-wsdl.xml?wsdl']
+    ]
+    generatedWsdlDir = file("$projectDir/generated")
+}*/

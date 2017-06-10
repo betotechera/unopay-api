@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
+import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.model.validation.group.Reference;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
@@ -80,6 +81,7 @@ public class Contract implements Serializable {
     private List<Establishment> establishments;
 
     @Column(name="code")
+    @KeyField(key = "viagem.id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer code;
