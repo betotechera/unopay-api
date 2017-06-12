@@ -73,18 +73,22 @@ public class FreightReceiptService {
 
     private void saveOrUpdate(CargoContract cargoContract) {
         cargoContractService.create(cargoContract);
-        cargoContract.getTravelDocuments().forEach(doc ->
-            travelDocumentService.create(doc)
-        );
-        cargoContract.getComplementaryTravelDocuments().forEach( complementary ->
-                complementaryTravelDocumentService.create(complementary)
-        );
+        if(cargoContract.getTravelDocuments() != null) {
+            cargoContract.getTravelDocuments().forEach(doc ->
+                    travelDocumentService.create(doc)
+            );
+        }
+        if(cargoContract.getComplementaryTravelDocuments() != null) {
+            cargoContract.getComplementaryTravelDocuments().forEach(complementary ->
+                    complementaryTravelDocumentService.create(complementary)
+            );
+        }
     }
 
     @Transactional
     public CargoContract listDocuments(TravelDocumentFilter filter){
         CargoContract cargoContract = pamcaryService.searchDoc(filter);
-        if(cargoContract.getPartnerId() == null) {
+        if(cargoContract == null || cargoContract.getPartnerId() == null) {
             throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
         }
         cargoContract.setMeUp();
