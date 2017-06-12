@@ -26,12 +26,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
 @EqualsAndHashCode
 @Table(name = "travel_document")
+@ToString(exclude = "cargoContract")
 public class TravelDocument  implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -104,6 +106,7 @@ public class TravelDocument  implements Serializable {
     private ReasonReceiptSituation reasonReceiptSituation;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="cargo_contract_id")
     private CargoContract cargoContract;
 

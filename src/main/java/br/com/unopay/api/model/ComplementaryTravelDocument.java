@@ -22,11 +22,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
 @EqualsAndHashCode
+@ToString(exclude = "cargoContract")
 @Table(name = "complementary_travel_document")
 public class ComplementaryTravelDocument  implements Serializable {
 
@@ -94,6 +96,7 @@ public class ComplementaryTravelDocument  implements Serializable {
     private ReasonReceiptSituation reasonReceiptSituation;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="cargo_contract_id")
     private CargoContract cargoContract;
 

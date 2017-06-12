@@ -70,8 +70,6 @@ dependencies {
 
     compile 'org.springframework:spring-jms'
     compile 'org.springframework:spring-oxm'
-    compile 'org.springframework.ws:spring-ws-core'
-    compile 'org.springframework.ws:spring-ws-support'
 
 	compile 'com.google.guava:guava:21.0'
 

@@ -10,9 +10,14 @@ import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
 import br.com.unopay.api.pamcary.service.PamcaryService;
+import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import javax.transaction.Transactional;
+
+import br.com.unopay.bootcommons.exception.UnovationErrors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +84,9 @@ public class FreightReceiptService {
     @Transactional
     public CargoContract listDocuments(TravelDocumentFilter filter){
         CargoContract cargoContract = pamcaryService.searchDoc(filter);
+        if(cargoContract.getPartnerId() == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
+        }
         cargoContract.setMeUp();
         saveOrUpdate(cargoContract);
         return cargoContract;

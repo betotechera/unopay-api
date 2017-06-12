@@ -345,6 +345,17 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         that complementaryTravelDocumentService.findAll(), hasSize(1)
     }
 
+    def 'Must return not found if TravelDocumentFilter does not exists'(){
+        given:
+
+        when:
+        service.listDocuments(new TravelDocumentFilter())
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CARGO_CONTRACT_NOT_FOUND'
+    }
+
 
     private FreightReceipt createFreightReceipt() {
         def credit = instrumentCreditUnderTest

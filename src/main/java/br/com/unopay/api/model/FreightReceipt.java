@@ -86,4 +86,11 @@ public class FreightReceipt implements Serializable {
         }
         return null;
     }
+
+    public String cargoContractId() {
+        if(getCargoContract() != null){
+            return getCargoContract().getId();
+        }
+        return null;
+    }
 }
