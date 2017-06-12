@@ -208,11 +208,17 @@ public class KeyValueTranslator {
         if(field.isAnnotationPresent(KeyFieldReference.class)) {
             return extractReference(object, field, map);
         }
-        String fieldValue = getFieldValue(field, object);
-        if(fieldValue != null) {
-            map.put(getKey(field, object), fieldValue);
+        if(field.isAnnotationPresent(KeyField.class)) {
+            extractKey(object, field, map);
         }
         return map;
+    }
+
+    private void extractKey(Object object, Field field, Map<String, Object> map) {
+        String fieldValue = getFieldValue(field, object);
+        if (fieldValue != null) {
+            map.put(getKey(field, object), fieldValue);
+        }
     }
 
     @SneakyThrows

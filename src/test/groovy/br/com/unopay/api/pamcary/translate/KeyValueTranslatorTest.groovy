@@ -8,6 +8,8 @@ import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
+import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
@@ -192,5 +194,4 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         then:
         travelDocument.cargoProfile == CargoProfile.DRY_CARGO
     }
-
 }
