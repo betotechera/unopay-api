@@ -1,9 +1,11 @@
 package br.com.unopay.api.pamcary.translate
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.CargoProfile
+import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import static org.hamcrest.Matchers.hasSize
@@ -15,22 +17,33 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
     @Ignore
     def 'should translate basic level'(){
         given:
-        CargoContract cargoContract = Fixture.from(CargoContract.class).gimme(2, "valid")
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
+        CargoContract cargoContract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("travelDocuments", documents)
+            add("complementaryTravelDocuments", complementaryDocuments)
+        }})
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(CargoContract)
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
 
         then:
-        fieldTOS.find { it.key == 'viagem.documento.sigla' }?.value == cargoContract.travelDocuments.find().type.name()
-        fieldTOS.find { it.key == 'viagem.indicador.ressalva' }?.value == cargoContract.caveat.name()
-        fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == String.valueOf(cargoContract.travelDocuments.find().quantity)
-        fieldTOS.find { it.key == 'viagem.documento.numero' }?.value == cargoContract.travelDocuments.find().documentNumber
+        fieldTOS.find { it.key == 'viagem.documento1.sigla' }?.value == cargoContract.travelDocuments.find().type.name()
+        fieldTOS.find { it.key == 'viagem.indicador1.ressalva' }?.value == cargoContract.caveat.name()
+        fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == String.valueOf(cargoContract.travelDocuments.size())
+        fieldTOS.find { it.key == 'viagem.documento1.numero' }?.value == cargoContract.travelDocuments.find().documentNumber
     }
+
     @Ignore
     def 'should translate complementary level'(){
         given:
-        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid")
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
+        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("travelDocuments", documents)
+            add("complementaryTravelDocuments", complementaryDocuments)
+        }})
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(contract.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(contract)
 
         then:
         fieldTOS.find {
@@ -39,36 +52,36 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         fieldTOS.find {
             it.key == 'viagem.documento.complementar1.qtde'
-        }?.value == String.valueOf(contract.complementaryTravelDocuments.find().quantity)
+        }?.value == String.valueOf(contract.complementaryTravelDocuments.size())
 
         fieldTOS.find {
             it.key == 'viagem.documento.complementar1.numero'
         }?.value == contract.complementaryTravelDocuments.find().documentNumber
     }
-    @Ignore
+
     def 'should translate reference level'(){
         given:
-        List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
-        travelDocuments.find().contract.id = '546546'
+        CargoContract cargoContract = Fixture.from(CargoContract.class).gimme("valid")
+        cargoContract.partnerId = '546546'
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
 
         then:
         fieldTOS.find { it.key == 'viagem.id' }?.value != null
-        fieldTOS.find { it.key == 'viagem.id' }.value.toInteger() == travelDocuments.find().contract.code
+        fieldTOS.find { it.key == 'viagem.id' }.value == cargoContract.partnerId
     }
-    @Ignore
+
     def 'given a null reference field value should not be translated'(){
         given:
-        List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
-        travelDocuments.find().contract.code = null
+        CargoContract cargoContract = Fixture.from(CargoContract.class).gimme("valid")
+        cargoContract.partnerId = null
         when:
-        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(travelDocuments.find())
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
 
         then:
         !fieldTOS.find { it.key == 'viagem.id' }
     }
-    @Ignore
+
     def 'given a enum null field value should not be translated'(){
         given:
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
@@ -79,7 +92,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         then:
         !fieldTOS.find { it.key == 'viagem.indicador.ressalva' }
     }
-    @Ignore
+
     def 'given a null field value should not be translated'(){
         given:
         List<TravelDocument> travelDocuments = Fixture.from(TravelDocument.class).gimme(2, "valid")
