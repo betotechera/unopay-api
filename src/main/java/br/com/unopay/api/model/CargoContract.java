@@ -117,11 +117,11 @@ public class CargoContract implements Serializable, Updatable {
 
     @KeyFieldListReference(listType = TravelDocument.class)
     @OneToMany(mappedBy="cargoContract")
-    List<TravelDocument> travelDocuments;
+    private List<TravelDocument> travelDocuments;
 
     @KeyFieldListReference(listType = ComplementaryTravelDocument.class)
     @OneToMany(mappedBy="cargoContract")
-    List<ComplementaryTravelDocument> complementaryTravelDocuments;
+    private List<ComplementaryTravelDocument> complementaryTravelDocuments;
 
     @Version
     @JsonIgnore

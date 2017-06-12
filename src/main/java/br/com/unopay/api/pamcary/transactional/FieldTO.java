@@ -1,4 +1,3 @@
-
 package br.com.unopay.api.pamcary.transactional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,27 +48,23 @@ public class FieldTO implements Equals2, HashCode2
             return true;
         }
         final FieldTO that = ((FieldTO) object);
-        {
-            String lhsKey;
-            lhsKey = this.getKey();
-            String rhsKey;
-            rhsKey = that.getKey();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "key", lhsKey),
-                    LocatorUtils.property(thatLocator, "key", rhsKey), lhsKey, rhsKey,
-                    (this.key!= null), (that.key!= null))) {
-                return false;
-            }
+        String lhsKey;
+        lhsKey = this.getKey();
+        String rhsKey;
+        rhsKey = that.getKey();
+        if (!strategy.equals(LocatorUtils.property(thisLocator, "key", lhsKey),
+                LocatorUtils.property(thatLocator, "key", rhsKey), lhsKey, rhsKey,
+                this.key!= null, that.key!= null)) {
+            return false;
         }
-        {
-            String lhsValue;
-            lhsValue = this.getValue();
-            String rhsValue;
-            rhsValue = that.getValue();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "value", lhsValue),
-                    LocatorUtils.property(thatLocator, "value", rhsValue), lhsValue, rhsValue,
-                    (this.value!= null), (that.value!= null))) {
-                return false;
-            }
+        String lhsValue;
+        lhsValue = this.getValue();
+        String rhsValue;
+        rhsValue = that.getValue();
+        if (!strategy.equals(LocatorUtils.property(thisLocator, "value", lhsValue),
+                LocatorUtils.property(thatLocator, "value", rhsValue), lhsValue, rhsValue,
+                this.value!= null, that.value!= null)) {
+            return false;
         }
         return true;
     }

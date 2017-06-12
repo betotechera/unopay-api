@@ -24,7 +24,7 @@ public class PamcaryService {
     @Value("${soap.pamcary.partner-number:}")
     private String partnerNumber;
 
-    private static final String partnerKey = "parceiro.documento.numero";
+    private static final String PARTNER_KEY = "parceiro.documento.numero";
 
 
     @Autowired
@@ -44,7 +44,7 @@ public class PamcaryService {
     }
 
     private List<FieldTO> execute(final String contextParam, final List<FieldTO> fieldsParam) {
-        fieldsParam.add(new FieldTO(){{ setKey(partnerKey); setValue(partnerNumber);}});
+        fieldsParam.add(new FieldTO(){{ setKey(PARTNER_KEY); setValue(partnerNumber);}});
         RequestTO requestTO = new RequestTO() {{
             setContext(contextParam);
             fieldsParam.forEach(fieldTO ->

@@ -26,6 +26,8 @@ public class KeyValueTranslator {
 
     private ConcurrentMap<String,Object> listObjectsCache;
 
+    public KeyValueTranslator(){}
+
     public List<FieldTO> extractFields(Object object){
         Map<String, Object> translate = extract(object);
         return translate.entrySet().stream()

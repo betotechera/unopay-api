@@ -95,7 +95,8 @@ public class FreightReceiptService {
             throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
         }
         newCargoContract.setMeUp();
-        Optional<CargoContract> currentByPartnerId = cargoContractService.findByPartnerId(newCargoContract.getPartnerId());
+        Optional<CargoContract> currentByPartnerId = cargoContractService
+                                                                    .findByPartnerId(newCargoContract.getPartnerId());
         currentByPartnerId.ifPresent(current -> {
             current.updateMe(newCargoContract);
             saveOrUpdate(current);
