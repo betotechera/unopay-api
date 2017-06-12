@@ -17,7 +17,7 @@ public class ComplementaryTravelDocumentService {
         this.repository = repository;
     }
 
-    public ComplementaryTravelDocument create(ComplementaryTravelDocument travelDocument) {
+    public ComplementaryTravelDocument save(ComplementaryTravelDocument travelDocument) {
         return repository.save(travelDocument);
     }
 

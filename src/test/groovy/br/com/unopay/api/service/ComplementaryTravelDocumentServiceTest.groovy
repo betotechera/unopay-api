@@ -19,7 +19,7 @@ class ComplementaryTravelDocumentServiceTest extends SpockApplicationTests {
             add("cargoContract", cargoContract)
         }})
         when:
-        def created = service.create(document)
+        def created = service.save(document)
         def result = service.findById(created.id)
 
         then:

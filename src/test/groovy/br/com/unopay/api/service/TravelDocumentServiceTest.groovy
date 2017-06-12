@@ -4,7 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.CargoContract
-import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.TravelDocument
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +25,7 @@ class TravelDocumentServiceTest extends SpockApplicationTests {
             add("contract", contract)
         }})
         when:
-        def created = service.create(document)
+        def created = service.save(document)
         def result = service.findById(created.id)
 
         then:

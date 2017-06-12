@@ -11,13 +11,11 @@ import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import br.com.unopay.api.uaa.exception.Errors;
-import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
-import br.com.unopay.bootcommons.exception.UnovationErrors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,21 +72,18 @@ public class FreightReceiptService {
     }
 
     private CargoContract saveOrUpdate(CargoContract cargoContract) {
-        cargoContractService.create(cargoContract);
+        cargoContractService.save(cargoContract);
         if(cargoContract.getTravelDocuments() != null) {
             cargoContract.getTravelDocuments().forEach(doc ->{
                 doc.setCargoContract(cargoContract);
-                travelDocumentService.create(doc);
-            }
-            );
+                travelDocumentService.save(doc);
+            });
         }
         if(cargoContract.getComplementaryTravelDocuments() != null) {
             cargoContract.getComplementaryTravelDocuments().forEach(complementary ->{
                 complementary.setCargoContract(cargoContract);
-                complementaryTravelDocumentService.create(complementary);
-                    }
-
-            );
+                complementaryTravelDocumentService.save(complementary);
+            });
         }
         return cargoContract;
     }

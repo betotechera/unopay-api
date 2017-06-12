@@ -20,7 +20,7 @@ class CargoContractServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        def created = service.create(cargoContract)
+        def created = service.save(cargoContract)
         def result = service.findById(created.id)
 
         then:

@@ -19,7 +19,7 @@ public class CargoContractService {
         this.repository = repository;
     }
 
-    public CargoContract create(CargoContract cargoContract) {
+    public CargoContract save(CargoContract cargoContract) {
         return repository.save(cargoContract);
     }
 

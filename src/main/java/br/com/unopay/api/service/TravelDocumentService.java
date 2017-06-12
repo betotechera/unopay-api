@@ -20,7 +20,7 @@ public class TravelDocumentService {
         this.repository = repository;
     }
 
-    public TravelDocument create(TravelDocument travelDocument) {
+    public TravelDocument save(TravelDocument travelDocument) {
         return repository.save(travelDocument);
     }
 
