@@ -74,13 +74,18 @@ public class FreightReceiptService {
     private void saveOrUpdate(CargoContract cargoContract) {
         cargoContractService.create(cargoContract);
         if(cargoContract.getTravelDocuments() != null) {
-            cargoContract.getTravelDocuments().forEach(doc ->
-                    travelDocumentService.create(doc)
+            cargoContract.getTravelDocuments().forEach(doc ->{
+                doc.setCargoContract(cargoContract);
+                travelDocumentService.create(doc);
+            }
             );
         }
         if(cargoContract.getComplementaryTravelDocuments() != null) {
-            cargoContract.getComplementaryTravelDocuments().forEach(complementary ->
-                    complementaryTravelDocumentService.create(complementary)
+            cargoContract.getComplementaryTravelDocuments().forEach(complementary ->{
+                complementary.setCargoContract(cargoContract);
+                complementaryTravelDocumentService.create(complementary);
+                    }
+
             );
         }
     }
