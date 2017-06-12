@@ -1,7 +1,6 @@
 package br.com.unopay.api.pamcary.translate;
 
 import br.com.unopay.api.pamcary.transactional.FieldTO;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyValueTranslator {
 
-    private ConcurrentMap<String,Object> populateMap;
+    private ConcurrentMap<String,Object> listObjectsCache;
 
     public List<FieldTO> extractFields(Object object){
         Map<String, Object> translate = extract(object);
@@ -40,9 +39,9 @@ public class KeyValueTranslator {
     }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
-        return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
+        return getDeclaredFields(objectWithKeyAnnotation)
                 .filter(this::isAnnotationPresent)
-                .map(field -> getMap(objectWithKeyAnnotation, field))
+                .map(field -> extractMap(objectWithKeyAnnotation, field))
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
@@ -50,14 +49,14 @@ public class KeyValueTranslator {
     @SneakyThrows
     public <T> T populate(Class<T> klass, Map<String, String> map){
         T object = klass.newInstance();
-        populateMap = new ConcurrentHashMap<>();
+        listObjectsCache = new ConcurrentHashMap<>();
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
-        populateMap = null;
+        listObjectsCache = null;
         return object;
     }
 
     private void populateAnnotatedFields(Object object, Entry entry) {
-        Stream.of(object.getClass().getDeclaredFields())
+        getDeclaredFields(object)
                 .filter(this::isAnnotationPresent)
                 .forEach(field -> populateField(object, entry, field));
     }
@@ -65,7 +64,7 @@ public class KeyValueTranslator {
     @SneakyThrows
     private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, field, object)) {
+        if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry.getKey(), field, object)) {
             if(field.getType() != String.class) {
                 populateComplexField(object, entry, field);
                 return;
@@ -119,39 +118,57 @@ public class KeyValueTranslator {
     }
 
     @SneakyThrows
-    private boolean containsKeyValue(Entry entry, Field field, Object object) {
-        String key = entry.getKey().toString().replaceAll("\\d", "");
+    private boolean containsKeyValue(Object entryKey, Field field, Object object) {
+        String key = entryKey.toString().replaceAll("\\d", "");
         return Objects.equals(getKey(field, object), key);
     }
 
     @SneakyThrows
     private void populateList(Object object,Entry entry, Field field) throws IllegalAccessException {
-        Object fieldValue = field.get(object);
-        if(containsNumber(entry.getKey().toString())) {
-            if (fieldValue == null) {
-                invokeSetter(object, field, new ArrayList<>());
-                fieldValue = field.get(object);
-            }
+        if(containsNumber(entry.getKey())) {
+            List list = getList(object, field);
             Class aClass = getListType(field);
-            Object cachedObject = populateMap.get(getPopulateKey(entry, aClass));
-            if (cachedObject == null) {
-                cachedObject = aClass.newInstance();
-            }
-            Object finalCachedObject = cachedObject;
-            Boolean containsThisKey = Stream.of(aClass.getDeclaredFields())
-                    .anyMatch( f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, f, finalCachedObject));
-            if(containsThisKey) {
-               if(populateMap.get(getPopulateKey(entry, aClass)) == null ) {
-                   populateMap.put(getPopulateKey(entry, aClass), cachedObject);
-                   ((List) fieldValue).add(cachedObject);
+            Object listObject = getListObject(entry, aClass);
+            if(objectContainsKey(listObject, entry.getKey())) {
+               if(notCached(entry.getKey(), listObject)) {
+                   listObjectsCache.put(getListObjectKey(entry, aClass), listObject);
+                   list.add(listObject);
                }
-                populateAnnotatedFields(cachedObject, entry);
+               populateAnnotatedFields(listObject, entry);
             }
         }
     }
 
-    private String getPopulateKey(Entry entry, Class klass) {
-        Matcher matcher = getMatcher(entry.getKey().toString());
+    private List getList(Object object, Field field) throws IllegalAccessException {
+        Object fieldValue = field.get(object);
+        if (fieldValue == null) {
+            invokeSetter(object, field, new ArrayList<>());
+            fieldValue = field.get(object);
+        }
+        return ((List) fieldValue);
+    }
+
+    @SneakyThrows
+    private Object getListObject(Entry entry, Class aClass) {
+        Object cachedObject = listObjectsCache.get(getListObjectKey(entry, aClass));
+        if (cachedObject == null) {
+            cachedObject = aClass.newInstance();
+        }
+        return cachedObject;
+    }
+
+    private boolean objectContainsKey(final Object object, Object entryKey) {
+        return getDeclaredFields(object)
+                .anyMatch(f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entryKey, f, object));
+    }
+
+    private boolean notCached(Object entryKey, Object object) {
+        Class aClass = object.getClass();
+        return listObjectsCache.get(getListObjectKey(entryKey, aClass)) == null;
+    }
+
+    private String getListObjectKey(Object entryKey, Class klass) {
+        Matcher matcher = getMatcher(entryKey.toString());
         matcher.find();
         String group =  matcher.group(0);
         return getMapKey(klass, group);
@@ -161,8 +178,8 @@ public class KeyValueTranslator {
         return group + aClass.getSimpleName();
     }
 
-    private boolean containsNumber(String value){
-        Matcher matcher = getMatcher(value);
+    private boolean containsNumber(Object entryKey){
+        Matcher matcher = getMatcher(entryKey.toString());
         return matcher.find();
     }
 
@@ -183,18 +200,13 @@ public class KeyValueTranslator {
     }
 
     @SneakyThrows
-    private Map<String, Object> getMap(final Object object, final Field field) {
+    private Map<String, Object> extractMap(final Object object, final Field field) {
         Map<String, Object> map = new HashMap<>();
         if(field.isAnnotationPresent(KeyFieldListReference.class)) {
             return extractList(object, field, map);
         }
         if(field.isAnnotationPresent(KeyFieldReference.class)) {
-            field.setAccessible(true);
-            Object o = field.get(object);
-            Stream.of(o.getClass().getDeclaredFields()).forEach(f->
-                    map.putAll(getMap(o,f))
-            );
-            return map;
+            return extractReference(object, field, map);
         }
         String fieldValue = getFieldValue(field, object);
         if(fieldValue != null) {
@@ -203,24 +215,42 @@ public class KeyValueTranslator {
         return map;
     }
 
-    private Map<String, Object> extractList(Object object, Field field, Map<String, Object> map) throws IllegalAccessException {
+    @SneakyThrows
+    private Map<String, Object> extractReference(Object object, Field field, Map<String, Object> map)  {
+        field.setAccessible(true);
+        Object reference = field.get(object);
+        getDeclaredFields(reference).forEach(referField-> map.putAll(extractMap(reference,referField)));
+        return map;
+    }
+
+    @SneakyThrows
+    private Map<String, Object> extractList(Object object, Field field, Map<String, Object> map)  {
         if(field.getType() == List.class){
             field.setAccessible(true);
             List<Object> list = (List<Object>) field.get(object);
             if(list == null){
                 return map;
             }
-            final int[] count = {1};
-            list.forEach(e ->{
-                    Stream.of(e.getClass().getDeclaredFields()).filter(this::isAnnotationPresent).forEach(f-> {
-                        String keyField = f.getAnnotation(KeyField.class).field();
-                        map.put(getKeyBase(field).key() + count[0] + "." + keyField, getFieldValue(f,e));
-                    });
-                   count[0]++;
-            });
+            extractWithIndexedKeys(field, map, list);
             map.put(getKeyBase(field).key() + ".qtde", list.size());
         }
         return map;
+    }
+
+    private void extractWithIndexedKeys(Field field, Map<String, Object> map, List<Object> list) {
+        final int[] count = {1};
+        list.forEach(object -> {
+            getDeclaredFields(object).filter(this::isAnnotationPresent).forEach(objField -> {
+                String keyField = objField.getAnnotation(KeyField.class).field();
+                String indexedKey = String.format("%s%s.%s", getKeyBase(field).key(), count[0], keyField);
+                map.put(indexedKey, getFieldValue(objField, object));
+            });
+            count[0]++;
+        });
+    }
+
+    private Stream<Field> getDeclaredFields(Object object) {
+        return Stream.of(object.getClass().getDeclaredFields());
     }
 
     private KeyBase getKeyBase(Field field) {
