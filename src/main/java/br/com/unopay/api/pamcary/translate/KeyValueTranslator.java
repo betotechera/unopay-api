@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class KeyValueTranslator {
+
+    private ConcurrentMap<String,Object> populateMap;
 
     public List<FieldTO> extractFields(Object object){
         Map<String, Object> translate = extract(object);
@@ -49,7 +53,9 @@ public class KeyValueTranslator {
     @SneakyThrows
     public <T> T populate(Class<T> klass, Map<String, String> map){
         T object = klass.newInstance();
+        populateMap = new ConcurrentHashMap<>();
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
+        populateMap = null;
         return object;
     }
 
@@ -95,8 +101,10 @@ public class KeyValueTranslator {
             field.set(object, enumObj);
             return;
         }
-        Method parseMethod = field.getType().getMethod("valueOf", String.class);
-        field.set(object, parseMethod.invoke(field, entry.getValue()));
+        if(!field.getType().isEnum()) {
+            Method parseMethod = field.getType().getMethod("valueOf", String.class);
+            field.set(object, parseMethod.invoke(field, entry.getValue()));
+        }
         return;
     }
 
@@ -122,16 +130,39 @@ public class KeyValueTranslator {
                 fieldValue = field.get(object);
             }
             Class aClass = field.getAnnotation(WithKeyFields.class).listType();
-            Object newInstance = aClass.newInstance();
-            populateAnnotatedFields(newInstance, entry);
-            ((List) fieldValue).add(newInstance);
+            Object cachedObject = populateMap.get(getPopulateKey(entry, aClass));
+            Boolean containsThisKey = Stream.of(aClass.getDeclaredFields())
+                    .anyMatch( f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, f));
+            if(containsThisKey) {
+                if (cachedObject == null) {
+                    cachedObject = aClass.newInstance();
+                    populateMap.put(getPopulateKey(entry, aClass), cachedObject);
+                    ((List) fieldValue).add(cachedObject);
+                }
+                populateAnnotatedFields(cachedObject, entry);
+            }
         }
     }
 
+    private String getPopulateKey(Entry entry, Class klass) {
+        Matcher matcher = getMatcher(entry.getKey().toString());
+        matcher.find();
+        String group =  matcher.group(0);
+        return getMapKey(klass, group);
+    }
+
+    private String getMapKey(Class aClass, String group) {
+        return group + aClass.getSimpleName();
+    }
+
     private boolean containsNumber(String value){
-        Pattern pattern = Pattern.compile(".+\\d.+");
-        Matcher matcher = pattern.matcher(value);
-        return matcher.matches();
+        Matcher matcher = getMatcher(value);
+        return matcher.find();
+    }
+
+    private Matcher getMatcher(String value) {
+        Pattern pattern = Pattern.compile("\\d");
+        return pattern.matcher(value);
     }
 
     @SneakyThrows

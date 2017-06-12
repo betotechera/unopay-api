@@ -13,7 +13,6 @@ import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.model.filter.TravelDocumentFilter
-import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper
 import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
@@ -308,41 +307,31 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list documents should list from pamcary service'(){
         given:
         def receipt = createFreightReceipt()
-        def wrapper = new TravelDocumentsWrapper().with {
-            cargoContract = receipt.cargoContract
-            travelDocuments = receipt.travelDocuments
-            it
-        }
         def filter = new TravelDocumentFilter()
 
         when:
         service.listDocuments(filter)
 
         then:
-        1 * pamcaryServiceMock.searchDoc(filter) >> wrapper
+        1 * pamcaryServiceMock.searchDoc(filter) >> receipt.cargoContract
     }
 
     def 'when list documents should save returned documents'(){
         given:
+
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(2, "valid")
         CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
             add("contract", instrumentCreditUnderTest.contract)
+            add("travelDocuments", documents)
+            add("complementaryTravelDocuments", complementaryDocuments)
         }})
-        ComplementaryTravelDocument complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
-        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(2, "valid", new Rule(){{
-            add("contract", instrumentCreditUnderTest.contract)
-            add("complementaryTravelDocument", complementaryDocument)
-        }})
-        def wrapper = new TravelDocumentsWrapper().with {
-            cargoContract = cargo
-            travelDocuments = documents
-            it
-        }
         def filter = new TravelDocumentFilter()
         when:
         service.listDocuments(filter)
 
         then:
-        1 * pamcaryServiceMock.searchDoc(filter) >> wrapper
+        1 * pamcaryServiceMock.searchDoc(filter) >> cargo
         that cargoContractService.findAll(), hasSize(1)
         that travelDocumentService.findAll(), hasSize(2)
     }
@@ -353,7 +342,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         CargoContract cargo = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", credit.contract)
         }})
-        ComplementaryTravelDocument complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme("valid")
+        List<ComplementaryTravelDocument> complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid")
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
             add("contract", credit.contract)
             add("complementaryTravelDocument", complementaryDocument)

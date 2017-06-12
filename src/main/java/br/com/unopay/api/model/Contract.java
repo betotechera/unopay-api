@@ -81,7 +81,6 @@ public class Contract implements Serializable {
     private List<Establishment> establishments;
 
     @Column(name="code")
-    @KeyField(key = "viagem.id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer code;
@@ -161,7 +160,6 @@ public class Contract implements Serializable {
     @Size(max = 20, groups = {Create.class, Update.class})
     private String rntrc;
 
-    @Version
     @JsonIgnore
     private Integer version;
 

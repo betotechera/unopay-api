@@ -33,7 +33,7 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("deliveryDateTime",instant("5 seconds ago"));
             add("receiptSituation",random(ReceiptSituation.class));
             add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
-            add("complementaryTravelDocument", one(ComplementaryTravelDocument.class, "valid"));
+            add("complementaryTravelDocument", has(2).of(ComplementaryTravelDocument.class, "valid"));
         }});
 
         Fixture.of(ComplementaryTravelDocument.class).addTemplate("valid", new Rule(){{

@@ -8,13 +8,10 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
-import br.com.unopay.api.pamcary.model.TravelDocumentsWrapper;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
-import java.util.List;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,27 +56,32 @@ public class FreightReceiptService {
         checkContract(freightReceipt, currentUser);
         authorizeFuelSupply(userEmail, freightReceipt);
         checkReferences(freightReceipt);
-        saveOrUpdate(freightReceipt.getCargoContract(), freightReceipt.getTravelDocuments());
+        saveOrUpdate(freightReceipt.getCargoContract());
     }
 
     private void checkReferences(FreightReceipt freightReceipt) {
         cargoContractService.findById(freightReceipt.getCargoContract().getId());
-        freightReceipt.getTravelDocuments().forEach(d -> travelDocumentService.findById(d.getId()));
+        freightReceipt.getCargoContract().getTravelDocuments().forEach(d -> travelDocumentService.findById(d.getId()));
+        freightReceipt.getCargoContract()
+                .getComplementaryTravelDocuments().forEach(d -> complementaryTravelDocumentService.findById(d.getId()));
     }
 
-    private void saveOrUpdate(CargoContract cargoContract, List<TravelDocument> travelDocuments) {
+    private void saveOrUpdate(CargoContract cargoContract) {
         cargoContractService.create(cargoContract);
-        travelDocuments.forEach(doc -> {
-            complementaryTravelDocumentService.create(doc.getComplementaryTravelDocument());
-            travelDocumentService.create(doc);
-        });
+        cargoContract.getTravelDocuments().forEach(doc ->
+            travelDocumentService.create(doc)
+        );
+        cargoContract.getComplementaryTravelDocuments().forEach( complementary ->
+                complementaryTravelDocumentService.create(complementary)
+        );
     }
 
     @Transactional
-    public TravelDocumentsWrapper listDocuments(TravelDocumentFilter filter){
-        TravelDocumentsWrapper wrapper = pamcaryService.searchDoc(filter);
-        saveOrUpdate(wrapper.getCargoContract(), wrapper.getTravelDocuments());
-        return wrapper;
+    public CargoContract listDocuments(TravelDocumentFilter filter){
+        CargoContract cargoContract = pamcaryService.searchDoc(filter);
+        cargoContract.setMeUp();
+        saveOrUpdate(cargoContract);
+        return cargoContract;
     }
 
     private void authorizeFuelSupply(String userEmail, FreightReceipt freightReceipt) {

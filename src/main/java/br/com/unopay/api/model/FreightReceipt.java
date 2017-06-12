@@ -47,11 +47,6 @@ public class FreightReceipt implements Serializable {
     @Valid
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
-    private List<TravelDocument> travelDocuments;
-
-    @Valid
-    @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private CargoContract cargoContract;
 
     @JsonView({Views.Public.class})

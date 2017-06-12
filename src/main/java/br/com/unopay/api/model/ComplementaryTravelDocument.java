@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -14,6 +14,8 @@ import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
@@ -48,6 +50,7 @@ public class ComplementaryTravelDocument  implements Serializable {
     @Enumerated(STRING)
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
+    @KeyEnumField
     @KeyField(key = "viagem.documento.complementar.sigla")
     private ComplementaryTravelDocumentType type;
 
@@ -80,15 +83,19 @@ public class ComplementaryTravelDocument  implements Serializable {
     @Enumerated(STRING)
     @Column(name="receipt_situation")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = { Update.class})
     private ReceiptSituation receiptSituation;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="reason_receipt_situation")
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     private ReasonReceiptSituation reasonReceiptSituation;
+
+    @ManyToOne
+    @JoinColumn(name="cargo_contract_id")
+    private CargoContract cargoContract;
 
     @Version
     @JsonIgnore

@@ -5,7 +5,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 public enum ComplementaryTravelDocumentType implements DescriptableEnum {
 
     PAL("Recibo de Entrega de Pallet"), PFI("Passe Fiscal"),
-    IBA("Licença IBAMA"), CTE("CT-e Assinado"), NFC("Canhoto NF Cliente");
+    IBA("Licença IBAMA"), CTE("CT-e Assinado"), NFC("Canhoto NF Cliente"), CTB("CT-b");
 
     private String description;
 
