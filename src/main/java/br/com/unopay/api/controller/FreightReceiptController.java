@@ -45,7 +45,7 @@ public class FreightReceiptController {
     @ResponseStatus(CREATED)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/freight-receipts", method = POST)
-    public ResponseEntity<CargoContract> create(OAuth2Authentication authentication, @Validated(Create.class)
+    public ResponseEntity<CargoContract> receipt(OAuth2Authentication authentication, @Validated(Create.class)
                                                              @RequestBody FreightReceipt freightReceipt) {
         log.info("user={}, authorizing receipt={}", authentication.getName(), freightReceipt);
          service.receipt(authentication.getName(),freightReceipt);
