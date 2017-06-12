@@ -51,7 +51,8 @@ public class FreightReceiptController {
          service.receipt(authentication.getName(),freightReceipt);
         log.info("authorized receipt={}", freightReceipt);
         return created(URI.create(
-                String.format("/cargo-contracts/%s", freightReceipt.cargoContractId()))).body(freightReceipt.getCargoContract());
+                String.format("/cargo-contracts/%s", freightReceipt.cargoContractId())))
+                .body(freightReceipt.getCargoContract());
 
     }
 

@@ -1,4 +1,3 @@
-
 package br.com.unopay.api.pamcary.transactional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,16 +40,14 @@ public class ExecuteResponse implements Equals2, HashCode2
             return true;
         }
         final ExecuteResponse that = ((ExecuteResponse) object);
-        {
-            ResponseTO lhsReturn;
-            lhsReturn = this.getReturn();
-            ResponseTO rhsReturn;
-            rhsReturn = that.getReturn();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "_return", lhsReturn),
-                    LocatorUtils.property(thatLocator, "_return", rhsReturn), lhsReturn,
-                    rhsReturn, (this._return!= null), (that._return!= null))) {
-                return false;
-            }
+        ResponseTO lhsReturn;
+        lhsReturn = this.getReturn();
+        ResponseTO rhsReturn;
+        rhsReturn = that.getReturn();
+        if (!strategy.equals(LocatorUtils.property(thisLocator, "_return", lhsReturn),
+                LocatorUtils.property(thatLocator, "_return", rhsReturn), lhsReturn,
+                rhsReturn, this._return!= null, that._return!= null)) {
+            return false;
         }
         return true;
     }

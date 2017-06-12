@@ -42,17 +42,15 @@ public class ResponseTO implements Equals2, HashCode2
             return true;
         }
         final ResponseTO that = ((ResponseTO) object);
-        {
-            List<FieldTO> lhsFields;
-            lhsFields = (((this.fields!= null)&&(!this.fields.isEmpty()))?this.getFields():null);
-            List<FieldTO> rhsFields;
-            rhsFields = (((that.fields!= null)&&(!that.fields.isEmpty()))?that.getFields():null);
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "fields", lhsFields),
-                    LocatorUtils.property(thatLocator, "fields", rhsFields), lhsFields, rhsFields,
-                    ((this.fields!= null)&&(!this.fields.isEmpty())),
-                    ((that.fields!= null)&&(!that.fields.isEmpty())))) {
-                return false;
-            }
+        List<FieldTO> lhsFields;
+        lhsFields = this.fields!= null&&!this.fields.isEmpty()?this.getFields():null;
+        List<FieldTO> rhsFields;
+        rhsFields = that.fields!= null&&!that.fields.isEmpty()?that.getFields():null;
+        if (!strategy.equals(LocatorUtils.property(thisLocator, "fields", lhsFields),
+                LocatorUtils.property(thatLocator, "fields", rhsFields), lhsFields, rhsFields,
+                ((this.fields!= null)&&(!this.fields.isEmpty())),
+                ((that.fields!= null)&&(!that.fields.isEmpty())))) {
+            return false;
         }
         return true;
     }
@@ -64,12 +62,10 @@ public class ResponseTO implements Equals2, HashCode2
 
     public int hashCode(ObjectLocator locator, HashCodeStrategy2 strategy) {
         int currentHashCode = 1;
-        {
-            List<FieldTO> theFields;
-            theFields = (((this.fields!= null)&&(!this.fields.isEmpty()))?this.getFields():null);
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fields", theFields),
-                    currentHashCode, theFields, ((this.fields!= null)&&(!this.fields.isEmpty())));
-        }
+        List<FieldTO> theFields;
+        theFields = this.fields!= null&&!this.fields.isEmpty()?this.getFields():null;
+        currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fields", theFields),
+                currentHashCode, theFields, ((this.fields!= null)&&(!this.fields.isEmpty())));
         return currentHashCode;
     }
 
