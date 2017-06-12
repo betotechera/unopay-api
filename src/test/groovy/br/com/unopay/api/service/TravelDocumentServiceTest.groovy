@@ -3,6 +3,7 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.TravelDocument
@@ -15,12 +16,14 @@ class TravelDocumentServiceTest extends SpockApplicationTests {
 
     def 'should create document'(){
         given:
+
         Contract contract = Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid")
-        ComplementaryTravelDocument complementaryDocument = Fixture.from(ComplementaryTravelDocument.class)
-                                                                        .uses(jpaProcessor).gimme("valid")
-        TravelDocument document = Fixture.from(TravelDocument.class).gimme("valid", new Rule(){{
+        CargoContract cargoContract = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", contract)
-            add("complementaryTravelDocument", complementaryDocument)
+        }})
+        TravelDocument document = Fixture.from(TravelDocument.class).gimme("valid", new Rule(){{
+            add("cargoContract", cargoContract)
+            add("contract", contract)
         }})
         when:
         def created = service.create(document)

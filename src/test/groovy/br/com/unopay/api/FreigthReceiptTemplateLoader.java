@@ -17,6 +17,7 @@ import br.com.unopay.api.model.ReceiptStep;
 import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.model.TravelDocumentType;
 import br.com.unopay.api.model.TravelSituation;
+import java.util.UUID;
 
 public class FreigthReceiptTemplateLoader implements TemplateLoader {
 
@@ -33,7 +34,6 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("deliveryDateTime",instant("5 seconds ago"));
             add("receiptSituation",random(ReceiptSituation.class));
             add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
-            add("complementaryTravelDocument", has(2).of(ComplementaryTravelDocument.class, "valid"));
         }});
 
         Fixture.of(ComplementaryTravelDocument.class).addTemplate("valid", new Rule(){{
@@ -50,6 +50,7 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
 
         Fixture.of(CargoContract.class).addTemplate("valid", new Rule(){{
             add("contract",one(Contract.class, "valid"));
+            add("partnerId", UUID.randomUUID().toString());
             add("caveat", random(DocumentCaveat.class));
             add("cargoProfile",random(CargoProfile.class));
             add("receiptObservation", firstName());

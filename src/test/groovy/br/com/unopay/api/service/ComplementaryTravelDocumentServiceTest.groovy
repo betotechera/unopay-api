@@ -1,7 +1,9 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -12,7 +14,10 @@ class ComplementaryTravelDocumentServiceTest extends SpockApplicationTests {
 
     def 'should create complementary document'(){
         given:
-        ComplementaryTravelDocument document = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
+        CargoContract cargoContract = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid")
+        ComplementaryTravelDocument document = Fixture.from(ComplementaryTravelDocument.class).gimme("valid", new Rule(){{
+            add("cargoContract", cargoContract)
+        }})
         when:
         def created = service.create(document)
         def result = service.findById(created.id)

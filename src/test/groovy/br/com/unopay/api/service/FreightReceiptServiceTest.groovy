@@ -39,6 +39,9 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     TravelDocumentService travelDocumentService
 
     @Autowired
+    ComplementaryTravelDocumentService complementaryTravelDocumentService
+
+    @Autowired
     ContractService contractService
 
     @Autowired
@@ -267,7 +270,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
         freightReceipt.with {
-            travelDocuments.find().id = ''
+            cargoContract.travelDocuments.find().id = ''
         }
 
         when:
@@ -319,13 +322,18 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list documents should save returned documents'(){
         given:
 
-        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
-        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(2, "valid")
         CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
             add("contract", instrumentCreditUnderTest.contract)
-            add("travelDocuments", documents)
-            add("complementaryTravelDocuments", complementaryDocuments)
         }})
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "valid", new Rule(){{
+            add("contract", instrumentCreditUnderTest.contract)
+            add("cargoContract", cargo)
+        }})
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid", new Rule(){{
+            add("cargoContract", cargo)
+        }})
+        cargo.setTravelDocuments(documents)
+        cargo.setComplementaryTravelDocuments(complementaryDocuments)
         def filter = new TravelDocumentFilter()
         when:
         service.listDocuments(filter)
@@ -333,26 +341,30 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         then:
         1 * pamcaryServiceMock.searchDoc(filter) >> cargo
         that cargoContractService.findAll(), hasSize(1)
-        that travelDocumentService.findAll(), hasSize(2)
+        that travelDocumentService.findAll(), hasSize(1)
+        that complementaryTravelDocumentService.findAll(), hasSize(1)
     }
 
 
     private FreightReceipt createFreightReceipt() {
         def credit = instrumentCreditUnderTest
         CargoContract cargo = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("contract", credit.contract)
+            add("contract", instrumentCreditUnderTest.contract)
         }})
-        List<ComplementaryTravelDocument> complementaryDocument = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid")
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid", new Rule(){{
+            add("cargoContract", cargo)
+        }})
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("contract", credit.contract)
-            add("complementaryTravelDocument", complementaryDocument)
+            add("cargoContract",cargo)
+            add("contract", instrumentCreditUnderTest.contract)
         }})
+        cargo.setTravelDocuments(documents)
+        cargo.setComplementaryTravelDocuments(complementaryDocuments)
         return new FreightReceipt() {{
             setContract(credit.contract)
             setContractor(credit.contract.contractor)
             setEstablishment(setupCreator.createEstablishment())
             setServiceType(ServiceType.FREIGHT_RECEIPT)
-            setTravelDocuments(documents)
             setCargoContract(cargo)
             setCreditInsertionType(CreditInsertionType.CREDIT_CARD)
             setInstrumentPassword(currentPassword)
