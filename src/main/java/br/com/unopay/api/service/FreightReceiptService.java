@@ -62,6 +62,7 @@ public class FreightReceiptService {
         checkContract(freightReceipt, currentUser);
         authorizeFuelSupply(userEmail, freightReceipt);
         checkReferences(freightReceipt);
+        freightReceipt.getCargoContract().markDocumentsAsDelivered();
         saveOrUpdate(freightReceipt.getCargoContract());
     }
 

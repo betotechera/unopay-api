@@ -141,4 +141,13 @@ public class CargoContract implements Serializable, Updatable {
             );
         }
     }
+
+    public void markDocumentsAsDelivered(){
+        if(travelDocuments != null){
+            travelDocuments.forEach(d -> d.setDeliveryDateTime(new Date()));
+        }
+        if(complementaryTravelDocuments != null){
+            complementaryTravelDocuments.forEach(d -> d.setDeliveryDateTime(new Date()));
+        }
+    }
 }

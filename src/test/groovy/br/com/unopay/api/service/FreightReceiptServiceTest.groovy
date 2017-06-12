@@ -264,7 +264,21 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         that cargoContractService.findAll(), hasSize(1)
-        that travelDocumentService.findAll(), hasSize(2)
+        that travelDocumentService.findAll(), hasSize(1)
+    }
+
+    def 'given a valid freight receipt then travel documents should be saved with current delivered date'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        travelDocumentService.findAll().find().deliveryDateTime > 1.second.ago
+        travelDocumentService.findAll().find().deliveryDateTime < 1.second.from.now
+        complementaryTravelDocumentService.findAll().find().deliveryDateTime > 1.second.ago
+        complementaryTravelDocumentService.findAll().find().deliveryDateTime < 1.second.from.now
     }
 
     def 'given unknown travel document when freight receipt should not be receipted'(){
@@ -390,7 +404,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid", new Rule(){{
             add("cargoContract", cargo)
         }})
-        List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
             add("cargoContract",cargo)
             add("contract", instrumentCreditUnderTest.contract)
         }})
