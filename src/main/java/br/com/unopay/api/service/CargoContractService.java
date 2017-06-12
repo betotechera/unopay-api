@@ -28,6 +28,10 @@ public class CargoContractService {
         return cargoContract.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CARGO_CONTRACT_NOT_FOUND));
     }
 
+    public Optional<CargoContract> findByPartnerId(String partnerId){
+        return repository.findByPartnerId(partnerId);
+    }
+
     public List<CargoContract> findAll(){
         return repository.findAll();
     }

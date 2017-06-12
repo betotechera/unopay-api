@@ -14,6 +14,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import java.util.Optional;
 import javax.transaction.Transactional;
 
 import br.com.unopay.bootcommons.exception.UnovationErrors;
@@ -71,7 +72,7 @@ public class FreightReceiptService {
                 .getComplementaryTravelDocuments().forEach(d -> complementaryTravelDocumentService.findById(d.getId()));
     }
 
-    private void saveOrUpdate(CargoContract cargoContract) {
+    private CargoContract saveOrUpdate(CargoContract cargoContract) {
         cargoContractService.create(cargoContract);
         if(cargoContract.getTravelDocuments() != null) {
             cargoContract.getTravelDocuments().forEach(doc ->{
@@ -88,17 +89,22 @@ public class FreightReceiptService {
 
             );
         }
+        return cargoContract;
     }
 
     @Transactional
     public CargoContract listDocuments(TravelDocumentFilter filter){
-        CargoContract cargoContract = pamcaryService.searchDoc(filter);
-        if(cargoContract == null || cargoContract.getPartnerId() == null) {
+        CargoContract newCargoContract = pamcaryService.searchDoc(filter);
+        if(newCargoContract == null || newCargoContract.getPartnerId() == null) {
             throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
         }
-        cargoContract.setMeUp();
-        saveOrUpdate(cargoContract);
-        return cargoContract;
+        newCargoContract.setMeUp();
+        Optional<CargoContract> currentByPartnerId = cargoContractService.findByPartnerId(newCargoContract.getPartnerId());
+        currentByPartnerId.ifPresent(current -> {
+            current.updateMe(newCargoContract);
+            saveOrUpdate(current);
+        });
+        return currentByPartnerId.orElseGet(() -> saveOrUpdate(newCargoContract));
     }
 
     private void authorizeFuelSupply(String userEmail, FreightReceipt freightReceipt) {

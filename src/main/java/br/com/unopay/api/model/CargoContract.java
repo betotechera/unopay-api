@@ -33,7 +33,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @EqualsAndHashCode
 @Table(name = "cargo_contract")
-public class CargoContract implements Serializable {
+public class CargoContract implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

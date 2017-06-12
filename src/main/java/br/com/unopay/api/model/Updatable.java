@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface Updatable<T extends Updatable> {
+public interface Updatable {
 
     String IGNORED_FIELD = "version";
     String FIELD_ID = "id";
@@ -47,7 +47,7 @@ public interface Updatable<T extends Updatable> {
         return false;
     }
 
-    default void updateMe(T source){
+    default void updateMe(Updatable source){
         BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
     }
 }

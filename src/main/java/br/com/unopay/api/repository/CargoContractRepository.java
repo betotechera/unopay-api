@@ -9,4 +9,5 @@ public interface CargoContractRepository extends CrudRepository<CargoContract, S
     List<CargoContract> findAll();
 
     Optional<CargoContract> findById(String id);
+    Optional<CargoContract> findByPartnerId(String partnerId);
 }

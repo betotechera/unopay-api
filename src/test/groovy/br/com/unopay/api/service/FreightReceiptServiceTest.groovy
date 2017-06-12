@@ -19,6 +19,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
+import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
@@ -321,19 +322,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
     def 'when list documents should save returned documents'(){
         given:
-
-        CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
-            add("contract", instrumentCreditUnderTest.contract)
-        }})
-        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "valid", new Rule(){{
-            add("contract", instrumentCreditUnderTest.contract)
-            add("cargoContract", cargo)
-        }})
-        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid", new Rule(){{
-            add("cargoContract", cargo)
-        }})
-        cargo.setTravelDocuments(documents)
-        cargo.setComplementaryTravelDocuments(complementaryDocuments)
+        def cargo = createCargoContract()
         def filter = new TravelDocumentFilter()
         when:
         service.listDocuments(filter)
@@ -341,6 +330,25 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         then:
         1 * pamcaryServiceMock.searchDoc(filter) >> cargo
         that cargoContractService.findAll(), hasSize(1)
+        that travelDocumentService.findAll(), hasSize(1)
+        that complementaryTravelDocumentService.findAll(), hasSize(1)
+    }
+
+    def 'when list known documents should update returned documents'(){
+        given:
+        def cargo = createCargoContract()
+
+        def filter = new TravelDocumentFilter()
+        def expectedPartnerId = 'updatedPartnerId'
+        when:
+        service.listDocuments(filter)
+        service.listDocuments(filter)
+
+        then:
+        2 * pamcaryServiceMock.searchDoc(filter) >>> [cargo, BeanUtils.cloneBean(cargo.with {
+                                                                        id = null; partnerId = expectedPartnerId; it })]
+        that cargoContractService.findAll(), hasSize(1)
+        cargoContractService.findAll().find().partnerId == expectedPartnerId
         that travelDocumentService.findAll(), hasSize(1)
         that complementaryTravelDocumentService.findAll(), hasSize(1)
     }
@@ -354,6 +362,23 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CARGO_CONTRACT_NOT_FOUND'
+    }
+
+    private CargoContract createCargoContract(){
+        CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("contract", instrumentCreditUnderTest.contract)
+        }})
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "valid", new Rule(){{
+            add("contract", instrumentCreditUnderTest.contract)
+            add("cargoContract", cargo)
+        }})
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.
+                from(ComplementaryTravelDocument.class).gimme(1,"valid", new Rule(){{
+            add("cargoContract", cargo)
+        }})
+        cargo.setTravelDocuments(documents)
+        cargo.setComplementaryTravelDocuments(complementaryDocuments)
+        return cargo
     }
 
 
