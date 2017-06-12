@@ -2,6 +2,7 @@ package br.com.unopay.api.pamcary.service
 
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.CargoContract
+import br.com.unopay.api.model.filter.EstablishmentFilter
 import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.service.CargoContractService
 import br.com.unopay.api.service.ComplementaryTravelDocumentService
@@ -70,7 +71,7 @@ class PamcaryServiceTest extends SpockApplicationTests{
                     setContractCode('1125447')
                     setContractorDocument('64773370106')
                     setContractorDocumentType('2')
-                    setEstablishmentDocument('27064195503000')
+                    setEstablishment(new EstablishmentFilter().with {document = '27064195503000'; it })
                     it
                 }
     }

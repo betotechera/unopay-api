@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +29,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @EqualsAndHashCode
+@KeyBase(key = "viagem.documento.complementar")
 @ToString(exclude = "cargoContract")
 @Table(name = "complementary_travel_document")
 public class ComplementaryTravelDocument  implements Serializable {
@@ -45,7 +47,6 @@ public class ComplementaryTravelDocument  implements Serializable {
 
     @Column(name = "quantity")
     @JsonView({Views.Public.class,Views.List.class})
-    @KeyField(key = "viagem.documento.complementar.qtde")
     private Integer quantity;
 
     @Valid
@@ -53,12 +54,12 @@ public class ComplementaryTravelDocument  implements Serializable {
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
     @KeyEnumField
-    @KeyField(key = "viagem.documento.complementar.sigla")
+    @KeyField(field = "sigla")
     private ComplementaryTravelDocumentType type;
 
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})
-    @KeyField(key = "viagem.documento.complementar.numero")
+    @KeyField(field = "numero")
     private String documentNumber;
 
     @Valid

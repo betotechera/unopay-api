@@ -7,13 +7,11 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.pamcary.translate.KeyField;
-import br.com.unopay.api.pamcary.translate.WithKeyFields;
+import br.com.unopay.api.pamcary.translate.KeyFieldReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -25,17 +23,14 @@ public class FreightReceipt implements Serializable {
 
     public FreightReceipt(){}
 
-    @WithKeyFields
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
     private Contract contract;
 
-    @WithKeyFields
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
     private Contractor contractor;
 
-    @WithKeyFields
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
     private Establishment establishment;
@@ -45,6 +40,7 @@ public class FreightReceipt implements Serializable {
     private ServiceType serviceType;
 
     @Valid
+    @KeyFieldReference
     @NotNull(groups = {Create.class,Update.class})
     @JsonView({Views.Public.class})
     private CargoContract cargoContract;

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
@@ -20,8 +19,6 @@ import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -44,7 +41,7 @@ public class KeyValueTranslator {
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
         return Stream.of(objectWithKeyAnnotation.getClass().getDeclaredFields())
-                .filter(field -> isAnnotationPresent(field, objectWithKeyAnnotation))
+                .filter(this::isAnnotationPresent)
                 .map(field -> getMap(objectWithKeyAnnotation, field))
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
@@ -61,23 +58,28 @@ public class KeyValueTranslator {
 
     private void populateAnnotatedFields(Object object, Entry entry) {
         Stream.of(object.getClass().getDeclaredFields())
-                .filter(field -> isAnnotationPresent(field, object))
+                .filter(this::isAnnotationPresent)
                 .forEach(field -> populateField(object, entry, field));
     }
 
     @SneakyThrows
     private void populateField(Object object, Entry entry, Field field) {
         field.setAccessible(true);
-        if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, field)) {
+        if (field.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, field, object)) {
             if(field.getType() != String.class) {
                 populateComplexField(object, entry, field);
                 return;
             }
             field.set(object, entry.getValue());
         }
-        if(field.isAnnotationPresent(WithKeyFields.class)){
+        if(isReferencedField(field)){
             populateReferencedField(object, entry, field);
         }
+    }
+
+    private boolean isReferencedField(Field field) {
+        return field.isAnnotationPresent(KeyFieldReference.class) ||
+                field.isAnnotationPresent(KeyFieldListReference.class);
     }
 
     @SneakyThrows
@@ -116,9 +118,10 @@ public class KeyValueTranslator {
         return parseMethod.invoke(null, entry.getValue());
     }
 
-    private boolean containsKeyValue(Entry entry, Field field) {
+    @SneakyThrows
+    private boolean containsKeyValue(Entry entry, Field field, Object object) {
         String key = entry.getKey().toString().replaceAll("\\d", "");
-        return Objects.equals(getKey(field), key);
+        return Objects.equals(getKey(field, object), key);
     }
 
     @SneakyThrows
@@ -129,16 +132,19 @@ public class KeyValueTranslator {
                 invokeSetter(object, field, new ArrayList<>());
                 fieldValue = field.get(object);
             }
-            Class aClass = field.getAnnotation(WithKeyFields.class).listType();
+            Class aClass = getListType(field);
             Object cachedObject = populateMap.get(getPopulateKey(entry, aClass));
+            if (cachedObject == null) {
+                cachedObject = aClass.newInstance();
+            }
+            Object finalCachedObject = cachedObject;
             Boolean containsThisKey = Stream.of(aClass.getDeclaredFields())
-                    .anyMatch( f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, f));
+                    .anyMatch( f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entry, f, finalCachedObject));
             if(containsThisKey) {
-                if (cachedObject == null) {
-                    cachedObject = aClass.newInstance();
-                    populateMap.put(getPopulateKey(entry, aClass), cachedObject);
-                    ((List) fieldValue).add(cachedObject);
-                }
+               if(populateMap.get(getPopulateKey(entry, aClass)) == null ) {
+                   populateMap.put(getPopulateKey(entry, aClass), cachedObject);
+                   ((List) fieldValue).add(cachedObject);
+               }
                 populateAnnotatedFields(cachedObject, entry);
             }
         }
@@ -172,46 +178,63 @@ public class KeyValueTranslator {
         setMethod.invoke(object, reference);
     }
 
-    private boolean isAnnotationPresent(Field field, Object object) {
-        boolean annotationFieldPresent = field.isAnnotationPresent(KeyField.class);
-        Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
-        boolean annotationReferencePresent = field.isAnnotationPresent(WithKeyFields.class);
-        return annotationFieldPresent || annotationReferencePresent || referencedFieldAnnotated.isPresent();
+    private boolean isAnnotationPresent(Field field) {
+        return field.isAnnotationPresent(KeyField.class) || isReferencedField(field);
     }
 
     @SneakyThrows
-    private Optional<Pair<Object, List<Field>>> referencedFieldAnnotated(Field field, Object object) {
-        field.setAccessible(true);
-        Object o = field.get(object);
-        if(o != null){
-            List<Field> fields = Stream.of(o.getClass().getDeclaredFields())
-                    .filter(f -> f.isAnnotationPresent(KeyField.class)).collect(Collectors.toList());
-            if(fields.isEmpty()){
-                return Optional.empty();
-            }
-            return Optional.of(new ImmutablePair<>(o, fields));
-        }
-        return Optional.empty();
-    }
-
     private Map<String, Object> getMap(final Object object, final Field field) {
         Map<String, Object> map = new HashMap<>();
-        Optional<Pair<Object, List<Field>>> referencedFieldAnnotated = referencedFieldAnnotated(field, object);
-        if(!referencedFieldAnnotated.isPresent()) {
-            String fieldValue = getFieldValue(field, object);
-            if(fieldValue != null) {
-                map.put(getKey(field), fieldValue);
-            }
+        if(field.isAnnotationPresent(KeyFieldListReference.class)) {
+            return extractList(object, field, map);
         }
-        referencedFieldAnnotated.ifPresent(pair -> pair.getValue().forEach(f ->
-            map.putAll(getMap(pair.getKey(), f))
-        ));
+        if(field.isAnnotationPresent(KeyFieldReference.class)) {
+            field.setAccessible(true);
+            Object o = field.get(object);
+            Stream.of(o.getClass().getDeclaredFields()).forEach(f->
+                    map.putAll(getMap(o,f))
+            );
+            return map;
+        }
+        String fieldValue = getFieldValue(field, object);
+        if(fieldValue != null) {
+            map.put(getKey(field, object), fieldValue);
+        }
         return map;
     }
 
-    private String getKey(Field field){
-        Annotation annotation = field.getAnnotation(KeyField.class);
-        return  ((KeyField) annotation).key();
+    private Map<String, Object> extractList(Object object, Field field, Map<String, Object> map) throws IllegalAccessException {
+        if(field.getType() == List.class){
+            field.setAccessible(true);
+            List<Object> list = (List<Object>) field.get(object);
+            if(list == null){
+                return map;
+            }
+            final int[] count = {1};
+            list.forEach(e ->{
+                    Stream.of(e.getClass().getDeclaredFields()).filter(this::isAnnotationPresent).forEach(f-> {
+                        String keyField = f.getAnnotation(KeyField.class).field();
+                        map.put(getKeyBase(field).key() + count[0] + "." + keyField, getFieldValue(f,e));
+                    });
+                   count[0]++;
+            });
+            map.put(getKeyBase(field).key() + ".qtde", list.size());
+        }
+        return map;
+    }
+
+    private KeyBase getKeyBase(Field field) {
+        return (KeyBase) getListType(field).getAnnotation(KeyBase.class);
+    }
+
+    private Class getListType(Field field) {
+        return field.getAnnotation(KeyFieldListReference.class).listType();
+    }
+
+    private String getKey(Field field, Object object){
+        KeyField keyField = field.getAnnotation(KeyField.class);
+        KeyBase keyBase = object.getClass().getAnnotation(KeyBase.class);
+        return  String.format("%s.%s",keyBase.key(),keyField.field());
     }
 
     private String getFieldValue(Field field, Object object){

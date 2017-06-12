@@ -3,14 +3,13 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
-import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -19,7 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
@@ -32,6 +30,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @EqualsAndHashCode
+@KeyBase(key = "viagem.documento")
 @Table(name = "travel_document")
 @ToString(exclude = "cargoContract")
 public class TravelDocument  implements Serializable {
@@ -54,21 +53,20 @@ public class TravelDocument  implements Serializable {
     private Contract contract;
 
     @Column(name = "quantity")
-    @KeyField(key = "viagem.documento.qtde")
     @JsonView({Views.Public.class,Views.List.class})
     private Integer quantity;
 
     @Valid
     @Enumerated(STRING)
     @KeyEnumField
-    @KeyField(key = "viagem.documento.sigla")
+    @KeyField(field = "sigla")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
-    @KeyField(key = "viagem.documento.numero")
+    @KeyField(field = "numero")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private String documentNumber;

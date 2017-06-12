@@ -4,9 +4,11 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
-import br.com.unopay.api.pamcary.translate.WithKeyFields;
+import br.com.unopay.api.pamcary.translate.KeyFieldListReference;
+import br.com.unopay.api.pamcary.translate.KeyFieldReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -32,6 +34,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @EqualsAndHashCode
+@KeyBase(key = "viagem")
 @Table(name = "cargo_contract")
 public class CargoContract implements Serializable, Updatable {
 
@@ -55,7 +58,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @KeyEnumField
-    @KeyField(key = "viagem.indicador.ressalva")
+    @KeyField(field = "indicador.ressalva")
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
@@ -63,7 +66,7 @@ public class CargoContract implements Serializable, Updatable {
 
     @Valid
     @Enumerated(STRING)
-    @KeyField(key = "viagem.carga.perfil.id")
+    @KeyField(field = "carga.perfil.id")
     @KeyEnumField(valueOfMethodName = "from")
     @Column(name = "cargo_profile")
     @NotNull(groups = {Create.class, Update.class})
@@ -108,15 +111,15 @@ public class CargoContract implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date createdDateTime;
 
-    @KeyField(key = "viagem.id")
+    @KeyField(field = "id")
     @Column(name = "partner_id")
     private String partnerId;
 
-    @WithKeyFields(listType = TravelDocument.class)
+    @KeyFieldListReference(listType = TravelDocument.class)
     @OneToMany(mappedBy="cargoContract")
     List<TravelDocument> travelDocuments;
 
-    @WithKeyFields(listType = ComplementaryTravelDocument.class)
+    @KeyFieldListReference(listType = ComplementaryTravelDocument.class)
     @OneToMany(mappedBy="cargoContract")
     List<ComplementaryTravelDocument> complementaryTravelDocuments;
 

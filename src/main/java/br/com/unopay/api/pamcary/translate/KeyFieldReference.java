@@ -7,7 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface WithKeyFields {
-
-    Class listType() default Object.class;
+public @interface KeyFieldReference {
 }

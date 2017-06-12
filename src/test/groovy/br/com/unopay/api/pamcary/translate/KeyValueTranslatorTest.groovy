@@ -9,12 +9,10 @@ import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import static org.hamcrest.Matchers.hasSize
-import spock.lang.Ignore
 import static spock.util.matcher.HamcrestSupport.that
 
 class KeyValueTranslatorTest extends FixtureApplicationTest {
 
-    @Ignore
     def 'should translate basic level'(){
         given:
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
@@ -27,13 +25,12 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
 
         then:
-        fieldTOS.find { it.key == 'viagem.documento1.sigla' }?.value == cargoContract.travelDocuments.find().type.name()
-        fieldTOS.find { it.key == 'viagem.indicador1.ressalva' }?.value == cargoContract.caveat.name()
         fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == String.valueOf(cargoContract.travelDocuments.size())
+        fieldTOS.find { it.key == 'viagem.documento1.sigla' }?.value == cargoContract.travelDocuments.find().type.name()
         fieldTOS.find { it.key == 'viagem.documento1.numero' }?.value == cargoContract.travelDocuments.find().documentNumber
+        fieldTOS.find { it.key == 'viagem.indicador.ressalva' }?.value == cargoContract.caveat.name()
     }
 
-    @Ignore
     def 'should translate complementary level'(){
         given:
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
@@ -51,7 +48,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         }?.value == contract.complementaryTravelDocuments.find().type.name()
 
         fieldTOS.find {
-            it.key == 'viagem.documento.complementar1.qtde'
+            it.key == 'viagem.documento.complementar.qtde'
         }?.value == String.valueOf(contract.complementaryTravelDocuments.size())
 
         fieldTOS.find {
@@ -106,14 +103,14 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
     def 'should translate fields to travel document'(){
         given:
-        def quantity = '10'
-        def fieldsTO = [new FieldTO() {{ setKey("viagem.documento.qtde"); setValue(quantity) }}]
+        def number = '10005550'
+        def fieldsTO = [new FieldTO() {{ setKey("viagem.documento.numero"); setValue(number) }}]
 
         when:
         TravelDocument travelDocument = new KeyValueTranslator().populate(TravelDocument.class,fieldsTO)
 
         then:
-        travelDocument?.quantity == quantity.toInteger()
+        travelDocument?.documentNumber == number
     }
 
     def 'should translate partner id in cargo document'(){

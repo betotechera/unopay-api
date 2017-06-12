@@ -1,6 +1,5 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.pamcary.translate.WithKeyFields;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
