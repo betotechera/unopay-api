@@ -1,6 +1,8 @@
 package br.com.unopay.api.model;
 
 
+import static br.com.unopay.api.model.CargoProfile.DRY_CARGO;
+import static br.com.unopay.api.model.CargoProfile.IN_BULK;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -137,10 +139,10 @@ public class CargoContract implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(damagedItems == null || damagedItems < 0){
+        if(DRY_CARGO.equals(cargoProfile) && ( damagedItems == null || damagedItems < 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(DAMAGED_ITEMS_REQUIRED);
         }
-        if(cargoWeight == null || cargoWeight < 0){
+        if(IN_BULK.equals(cargoProfile) && (cargoWeight == null || cargoWeight <= 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(WEIGHT_REQUIRED);
         }
     }
