@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface KeyField {
 
-    String field();
+    String baseField();
+
+    String reverseField() default "";
 
 }

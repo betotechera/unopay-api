@@ -16,20 +16,20 @@ public class TravelDocumentFilter implements Serializable {
 
     public TravelDocumentFilter(){}
 
-    @KeyField(field = "favorecido.documento.numero")
+    @KeyField(baseField = "favorecido.documento.numero")
     private String contractorDocument;
 
-    @KeyField(field = "favorecido.documento.tipo")
+    @KeyField(baseField = "favorecido.documento.tipo")
     private String contractorDocumentType;
 
     @KeyFieldReference
     private EstablishmentFilter establishment;
 
-    @KeyField(field = "id")
+    @KeyField(baseField = "id")
     private String contractCode;
 
     @JsonIgnore
-    @KeyField(field = "transacao.nsu")
+    @KeyField(baseField = "transacao.nsu")
     private String transactionNsu;
 
     public void defineTransaction(){

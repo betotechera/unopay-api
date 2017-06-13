@@ -43,6 +43,13 @@ public class PamcaryService {
         return translator.populate(CargoContract.class,result);
     }
 
+    public CargoContract confirmDocDelivery(TravelDocumentFilter travelDocumentFilter){
+        travelDocumentFilter.defineTransaction();
+        List<FieldTO> fieldTOS = translator.extractFields(travelDocumentFilter);
+        List<FieldTO> result = execute("ConfirmDocDelivery", fieldTOS);
+        return translator.populate(CargoContract.class,result);
+    }
+
     private List<FieldTO> execute(final String contextParam, final List<FieldTO> fieldsParam) {
         fieldsParam.add(new FieldTO(){{ setKey(PARTNER_KEY); setValue(partnerNumber);}});
         RequestTO requestTO = new RequestTO() {{

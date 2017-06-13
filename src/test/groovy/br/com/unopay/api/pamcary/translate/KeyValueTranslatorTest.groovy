@@ -8,6 +8,8 @@ import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
+import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
@@ -15,7 +17,8 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
     def 'should translate basic level'(){
         given:
-        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture
+                                                        .from(ComplementaryTravelDocument.class).gimme(1,"valid")
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
         CargoContract cargoContract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
             add("travelDocuments", documents)
@@ -25,15 +28,44 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
 
         then:
-        fieldTOS.find { it.key == 'viagem.documento.qtde' }?.value == String.valueOf(cargoContract.travelDocuments.size())
-        fieldTOS.find { it.key == 'viagem.documento1.sigla' }?.value == cargoContract.travelDocuments.find().type.name()
-        fieldTOS.find { it.key == 'viagem.documento1.numero' }?.value == cargoContract.travelDocuments.find().documentNumber
-        fieldTOS.find { it.key == 'viagem.indicador.ressalva' }?.value == cargoContract.caveat.name()
+        fieldTOS.find {
+            it.key == 'viagem.documento.qtde'
+        }?.value == String.valueOf(cargoContract.travelDocuments.size())
+
+        fieldTOS.find {
+            it.key == 'viagem.documento1.sigla'
+        }?.value == cargoContract.travelDocuments.find().type.name()
+        fieldTOS.find {
+            it.key == 'viagem.documento1.numero'
+        }?.value == cargoContract.travelDocuments.find().documentNumber
+        fieldTOS.find {
+            it.key == 'viagem.indicador.ressalva'
+        }?.value == cargoContract.caveat.name()
+    }
+
+    def 'should translate reserve level'(){
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(new WithReverseField())
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.reverse'
+        }?.value != null
+    }
+
+    def 'class without base annotation should not be translated'(){
+        when:
+        new KeyValueTranslator().extractFields(new WithOutBaseKeyAnnotation())
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BASE_KEY_REQUIRED'
     }
 
     def 'should translate complementary level'(){
         given:
-        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture
+                                                            .from(ComplementaryTravelDocument.class).gimme(1,"valid")
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
         CargoContract contract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
             add("travelDocuments", documents)
@@ -191,5 +223,34 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         then:
         travelDocument.cargoProfile == CargoProfile.DRY_CARGO
+    }
+
+
+
+}
+@KeyBase(key = "viagem")
+class WithReverseField {
+
+    @KeyField(baseField = "base", reverseField = "reverse")
+    private String field = "field"
+
+    public void setField(String field){
+        this.field = field;
+    }
+    public String getField(){
+        this.field;
+    }
+}
+
+class WithOutBaseKeyAnnotation {
+
+    @KeyField(baseField = "viagem.base", reverseField = "viagem.reverse")
+    private String field = "field"
+
+    public void setField(String field){
+        this.field = field;
+    }
+    public String getField(){
+        this.field;
     }
 }

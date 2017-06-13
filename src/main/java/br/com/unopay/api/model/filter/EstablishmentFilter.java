@@ -8,6 +8,6 @@ import lombok.Data;
 @KeyBase(key = "pontoapoio")
 public class EstablishmentFilter {
 
-    @KeyField(field = "documento.numero")
+    @KeyField(baseField = "documento.numero")
     private String document;
 }

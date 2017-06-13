@@ -443,6 +443,10 @@ public final class Errors {
             new UnovationError("WEIGHT_REQUIRED", "Weight greater than or equals zero required.");
     public static final UnovationError DAMAGED_ITEMS_REQUIRED =
             new UnovationError("DAMAGED_ITEMS_REQUIRED", "Damaged items greater than or equals zero required.");
+    public static final UnovationError BASE_KEY_REQUIRED =
+            new UnovationError("BASE_KEY_REQUIRED", "Base key annotation required to translate fields.");
+
+
 
 
 

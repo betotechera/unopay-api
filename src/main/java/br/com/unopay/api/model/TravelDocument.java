@@ -57,14 +57,14 @@ public class TravelDocument  implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @KeyEnumField
-    @KeyField(field = "sigla")
+    @KeyField(baseField = "sigla")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
-    @KeyField(field = "numero")
+    @KeyField(baseField = "numero")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private String documentNumber;

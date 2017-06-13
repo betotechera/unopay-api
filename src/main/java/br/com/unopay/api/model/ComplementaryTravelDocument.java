@@ -50,12 +50,12 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Column(name="type")
     @JsonView({Views.Public.class,Views.List.class})
     @KeyEnumField
-    @KeyField(field = "sigla")
+    @KeyField(baseField = "sigla")
     private ComplementaryTravelDocumentType type;
 
     @Column(name="document_number")
     @JsonView({Views.Public.class,Views.List.class})
-    @KeyField(field = "numero")
+    @KeyField(baseField = "numero")
     private String documentNumber;
 
     @Valid

@@ -1,6 +1,8 @@
 package br.com.unopay.api.pamcary.translate;
 
 import br.com.unopay.api.pamcary.transactional.FieldTO;
+import static br.com.unopay.api.uaa.exception.Errors.BASE_KEY_REQUIRED;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -254,12 +256,18 @@ public class KeyValueTranslator {
         final int[] count = {1};
         list.forEach(object -> {
             getDeclaredFields(object).filter(this::isAnnotationPresent).forEach(objField -> {
-                String keyField = objField.getAnnotation(KeyField.class).field();
+                String keyField = getField(objField);
                 String indexedKey = String.format("%s%s.%s", getKeyBase(field).key(), count[0], keyField);
                 map.put(indexedKey, getFieldValue(objField, object));
             });
             count[0]++;
         });
+    }
+
+    private String getField(Field objField) {
+        KeyField annotation = objField.getAnnotation(KeyField.class);
+        String reverseField = annotation.reverseField();
+        return StringUtils.isEmpty(reverseField) ? annotation.baseField() : reverseField;
     }
 
     private Stream<Field> getDeclaredFields(Object object) {
@@ -275,9 +283,12 @@ public class KeyValueTranslator {
     }
 
     private String getKey(Field field, Object object){
-        KeyField keyField = field.getAnnotation(KeyField.class);
+        String baseField = getField(field);
         KeyBase keyBase = object.getClass().getAnnotation(KeyBase.class);
-        return  String.format("%s.%s",keyBase.key(),keyField.field());
+        if(keyBase == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(BASE_KEY_REQUIRED);
+        }
+        return  String.format("%s.%s",keyBase.key(),baseField);
     }
 
     private String getFieldValue(Field field, Object object){

@@ -64,7 +64,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @KeyEnumField
-    @KeyField(field = "indicador.ressalva")
+    @KeyField(baseField = "indicador.ressalva")
     @Column(name = "caveat")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
@@ -72,7 +72,7 @@ public class CargoContract implements Serializable, Updatable {
 
     @Valid
     @Enumerated(STRING)
-    @KeyField(field = "carga.perfil.id")
+    @KeyField(baseField = "carga.perfil.id")
     @KeyEnumField(valueOfMethodName = "from")
     @Column(name = "cargo_profile")
     @NotNull(groups = {Create.class, Update.class})
@@ -110,6 +110,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="travel_situation")
+    @KeyField(baseField = "quitacao.situacao")
     @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
@@ -120,7 +121,7 @@ public class CargoContract implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date createdDateTime;
 
-    @KeyField(field = "id")
+    @KeyField(baseField = "id")
     @Column(name = "partner_id")
     private String partnerId;
 
