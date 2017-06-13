@@ -1,7 +1,5 @@
 package br.com.unopay.api.infra;
 
-import br.com.unopay.api.config.Queues;
-import br.com.unopay.api.notification.model.Notification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
