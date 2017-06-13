@@ -53,6 +53,17 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         }?.value != null
     }
 
+    def 'should translate use base level when populate'(){
+        given:
+        def base = "base"
+        def fieldsTO = [new FieldTO() {{ setKey("viagem.base"); setValue(base) }}]
+        when:
+        def withReverseField = new KeyValueTranslator().populate(WithReverseField.class, fieldsTO)
+
+        then:
+        withReverseField.field == base
+    }
+
     def 'class without base annotation should not be translated'(){
         when:
         new KeyValueTranslator().extractFields(new WithOutBaseKeyAnnotation())

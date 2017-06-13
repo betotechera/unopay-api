@@ -129,7 +129,8 @@ public class KeyValueTranslator {
     @SneakyThrows
     private boolean containsKeyValue(Object entryKey, Field field, Object object) {
         String key = entryKey.toString().replaceAll("\\d", "");
-        return Objects.equals(getKey(field, object), key);
+        String baseField = field.getAnnotation(KeyField.class).baseField();
+        return Objects.equals(getKey(baseField, object), key);
     }
 
     @SneakyThrows
@@ -226,7 +227,8 @@ public class KeyValueTranslator {
     private void extractKey(Object object, Field field, Map<String, Object> map) {
         String fieldValue = getFieldValue(field, object);
         if (fieldValue != null) {
-            map.put(getKey(field, object), fieldValue);
+            String baseField = getField(field);
+            map.put(getKey(baseField, object), fieldValue);
         }
     }
 
@@ -282,8 +284,7 @@ public class KeyValueTranslator {
         return field.getAnnotation(KeyFieldListReference.class).listType();
     }
 
-    private String getKey(Field field, Object object){
-        String baseField = getField(field);
+    private String getKey(String baseField, Object object){
         KeyBase keyBase = object.getClass().getAnnotation(KeyBase.class);
         if(keyBase == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(BASE_KEY_REQUIRED);
