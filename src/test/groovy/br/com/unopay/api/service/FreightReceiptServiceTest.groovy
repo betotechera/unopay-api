@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
+import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
@@ -99,6 +100,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
         freightReceipt.cargoContract.cargoWeight = weight
+        freightReceipt.cargoContract.cargoProfile == CargoProfile.IN_BULK
 
         when:
         service.receipt(currentUser.email,freightReceipt)
@@ -118,6 +120,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
         freightReceipt.cargoContract.damagedItems = quantity
+        freightReceipt.cargoContract.cargoProfile == CargoProfile.DRY_CARGO
 
         when:
         service.receipt(currentUser.email,freightReceipt)

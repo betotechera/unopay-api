@@ -137,10 +137,10 @@ public class CargoContract implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(damagedItems == null || damagedItems <= 0){
+        if(damagedItems == null || damagedItems < 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(DAMAGED_ITEMS_REQUIRED);
         }
-        if(cargoWeight == null || cargoWeight <= 0){
+        if(cargoWeight == null || cargoWeight < 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(WEIGHT_REQUIRED);
         }
     }
