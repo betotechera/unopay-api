@@ -106,7 +106,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'WEIGHT_GREATER_THAN_ZERO_REQUIRED'
+        assert ex.errors.first().logref == 'WEIGHT_REQUIRED'
 
         where:
         _|weight
@@ -125,7 +125,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED'
+        assert ex.errors.first().logref == 'DAMAGED_ITEMS_REQUIRED'
 
         where:
         _|quantity
