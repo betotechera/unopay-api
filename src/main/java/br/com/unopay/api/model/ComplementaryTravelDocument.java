@@ -32,7 +32,7 @@ import org.hibernate.annotations.GenericGenerator;
 @KeyBase(key = "viagem.documento.complementar")
 @ToString(exclude = "cargoContract")
 @Table(name = "complementary_travel_document")
-public class ComplementaryTravelDocument  implements Serializable {
+public class ComplementaryTravelDocument  implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

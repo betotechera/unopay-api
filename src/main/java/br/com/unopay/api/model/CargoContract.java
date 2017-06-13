@@ -8,12 +8,14 @@ import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.KeyFieldListReference;
-import br.com.unopay.api.pamcary.translate.KeyFieldReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -116,11 +118,11 @@ public class CargoContract implements Serializable, Updatable {
     private String partnerId;
 
     @KeyFieldListReference(listType = TravelDocument.class)
-    @OneToMany(mappedBy="cargoContract")
+    @OneToMany(mappedBy="cargoContract", cascade = CascadeType.ALL)
     private List<TravelDocument> travelDocuments;
 
     @KeyFieldListReference(listType = ComplementaryTravelDocument.class)
-    @OneToMany(mappedBy="cargoContract")
+    @OneToMany(mappedBy="cargoContract", cascade = CascadeType.ALL)
     private List<ComplementaryTravelDocument> complementaryTravelDocuments;
 
     @Version
@@ -130,18 +132,10 @@ public class CargoContract implements Serializable, Updatable {
     public void setMeUp(){
         createdDateTime = new Date();
         if(travelDocuments != null){
-            travelDocuments.forEach(d -> {
-                        d.setCreatedDateTime(new Date());
-                        d.setCargoContract(this);
-                    }
-            );
+            travelDocuments.forEach(d -> d.setCreatedDateTime(new Date()));
         }
         if(complementaryTravelDocuments != null){
-            complementaryTravelDocuments.forEach(d -> {
-                        d.setCreatedDateTime(new Date());
-                        d.setCargoContract(this);
-                    }
-            );
+            complementaryTravelDocuments.forEach(d -> d.setCreatedDateTime(new Date()));
         }
     }
 
@@ -152,5 +146,31 @@ public class CargoContract implements Serializable, Updatable {
         if(complementaryTravelDocuments != null){
             complementaryTravelDocuments.forEach(d -> d.setDeliveryDateTime(new Date()));
         }
+    }
+
+    public TravelDocument travelDocumentByNumber(String documentNumber){
+        if(travelDocuments != null){
+            return travelDocuments.stream()
+                    .filter(d-> Objects.equals(d.getDocumentNumber(), documentNumber))
+                    .reduce((first, last) -> last).orElse(null);
+        }
+        return null;
+    }
+
+    public ComplementaryTravelDocument complementaryDocumentByNumber(String documentNumber){
+        if(complementaryTravelDocuments != null){
+            return complementaryTravelDocuments.stream()
+                    .filter(d-> Objects.equals(d.getDocumentNumber(), documentNumber))
+                    .reduce((first, last) -> last).orElse(null);
+        }
+        return null;
+    }
+
+    public void updateMeAndReferences(CargoContract cargoContract) {
+        updateMe(cargoContract, "travelDocuments", "complementaryTravelDocuments", "version");
+        getTravelDocuments()
+                .forEach(d -> d.updateMe(cargoContract.travelDocumentByNumber(d.getDocumentNumber())));
+        getComplementaryTravelDocuments()
+                .forEach(d -> d.updateMe(cargoContract.complementaryDocumentByNumber(d.getDocumentNumber())));
     }
 }

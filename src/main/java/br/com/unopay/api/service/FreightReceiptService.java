@@ -6,15 +6,18 @@ import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.CargoContract;
+import br.com.unopay.api.model.ComplementaryTravelDocument;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.TravelDocument;
 import br.com.unopay.api.model.filter.TravelDocumentFilter;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
@@ -66,7 +69,7 @@ public class FreightReceiptService {
         authorizeFuelSupply(userEmail, freightReceipt);
         checkReferences(freightReceipt);
         freightReceipt.getCargoContract().markDocumentsAsDelivered();
-        saveOrUpdate(freightReceipt.getCargoContract());
+        cargoContractService.save(freightReceipt.getCargoContract());
         notifier.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, freightReceipt.getCargoContract());
 
     }
@@ -78,37 +81,25 @@ public class FreightReceiptService {
                 .getComplementaryTravelDocuments().forEach(d -> complementaryTravelDocumentService.findById(d.getId()));
     }
 
-    private CargoContract saveOrUpdate(CargoContract cargoContract) {
-        cargoContractService.save(cargoContract);
-        if(cargoContract.getTravelDocuments() != null) {
-            cargoContract.getTravelDocuments().forEach(doc ->{
-                doc.setCargoContract(cargoContract);
-                travelDocumentService.save(doc);
-            });
-        }
-        if(cargoContract.getComplementaryTravelDocuments() != null) {
-            cargoContract.getComplementaryTravelDocuments().forEach(complementary ->{
-                complementary.setCargoContract(cargoContract);
-                complementaryTravelDocumentService.save(complementary);
-            });
-        }
-        return cargoContract;
-    }
-
     @Transactional
     public CargoContract listDocuments(TravelDocumentFilter filter){
-        CargoContract newCargoContract = pamcaryService.searchDoc(filter);
-        if(newCargoContract == null || newCargoContract.getPartnerId() == null) {
-            throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
-        }
+        CargoContract newCargoContract = getCargoContract(filter);
         newCargoContract.setMeUp();
         Optional<CargoContract> currentByPartnerId = cargoContractService
                                                                     .findByPartnerId(newCargoContract.getPartnerId());
         currentByPartnerId.ifPresent(current -> {
-            current.updateMe(newCargoContract);
-            saveOrUpdate(current);
+            current.updateMeAndReferences(newCargoContract);
+            cargoContractService.save(current);
         });
-        return currentByPartnerId.orElseGet(() -> saveOrUpdate(newCargoContract));
+        return currentByPartnerId.orElseGet(() -> cargoContractService.save(newCargoContract));
+    }
+
+    private CargoContract getCargoContract(TravelDocumentFilter filter) {
+        CargoContract newCargoContract = pamcaryService.searchDoc(filter);
+        if(newCargoContract == null || newCargoContract.getPartnerId() == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);
+        }
+        return newCargoContract;
     }
 
     private void authorizeFuelSupply(String userEmail, FreightReceipt freightReceipt) {

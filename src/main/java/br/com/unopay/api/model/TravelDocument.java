@@ -33,7 +33,7 @@ import org.hibernate.annotations.GenericGenerator;
 @KeyBase(key = "viagem.documento")
 @Table(name = "travel_document")
 @ToString(exclude = "cargoContract")
-public class TravelDocument  implements Serializable {
+public class TravelDocument  implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

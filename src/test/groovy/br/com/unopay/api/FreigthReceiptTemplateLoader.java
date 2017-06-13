@@ -8,6 +8,7 @@ import br.com.unopay.api.model.CargoProfile;
 import br.com.unopay.api.model.ComplementaryTravelDocument;
 import br.com.unopay.api.model.ComplementaryTravelDocumentType;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.DocumentCaveat;
 import br.com.unopay.api.model.DocumentTravelSituation;
 import br.com.unopay.api.model.PaymentSource;
@@ -36,6 +37,10 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
         }});
 
+        Fixture.of(TravelDocument.class).addTemplate("toPersist").inherits("valid", new Rule(){{
+            add("contract", null);
+        }});
+
         Fixture.of(ComplementaryTravelDocument.class).addTemplate("valid", new Rule(){{
             add("quantity", random(Integer.class));
             add("type",random(ComplementaryTravelDocumentType.class));
@@ -47,6 +52,8 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("receiptSituation",random(ReceiptSituation.class));
             add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
         }});
+
+
 
         Fixture.of(CargoContract.class).addTemplate("valid", new Rule(){{
             add("contract",one(Contract.class, "valid"));
@@ -60,6 +67,10 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("paymentSource", random(PaymentSource.class));
             add("travelSituation",random(TravelSituation.class));
             add("createdDateTime", instant("this second"));
+        }});
+
+        Fixture.of(CargoContract.class).addTemplate("toPersist").inherits("valid", new Rule(){{
+            add("contract", null);
         }});
     }
 }
