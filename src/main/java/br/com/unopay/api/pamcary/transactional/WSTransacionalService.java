@@ -10,9 +10,8 @@ import javax.xml.ws.WebServiceFeature;
 @WebServiceClient(name = "WSTransacional")
 public class WSTransacionalService extends Service {
 
-
-    public WSTransacionalService(URL WSDL_LOCATION, QName SERVICE) {
-        super(WSDL_LOCATION, SERVICE);
+    public WSTransacionalService(URL wsdlLocation, QName service) {
+        super(wsdlLocation, service);
     }
 
     @WebEndpoint(name = "WSTransacional")

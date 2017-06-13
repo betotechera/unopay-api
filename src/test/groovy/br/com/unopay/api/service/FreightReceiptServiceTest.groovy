@@ -5,6 +5,8 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
@@ -59,6 +61,8 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
     PamcaryService pamcaryServiceMock = Mock(PamcaryService)
 
+    Notifier notifierMock = Mock(Notifier)
+
     ContractorInstrumentCredit instrumentCreditUnderTest
 
     void setup(){
@@ -67,8 +71,20 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
         currentUser = setupCreator.createUser()
         service.pamcaryService = pamcaryServiceMock
+        service.notifier = notifierMock
         paymentInstrumentService.changePassword(instrumentCreditUnderTest.getPaymentInstrumentId(), currentPassword)
         Integer.mixin(TimeCategory)
+    }
+
+    def 'when receipt freight should notify partner'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        1 * notifierMock.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, _)
     }
 
     def 'given a valid freight receipt then should be authorize fuel supply'(){

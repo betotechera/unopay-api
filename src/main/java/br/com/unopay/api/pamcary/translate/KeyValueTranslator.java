@@ -89,12 +89,17 @@ public class KeyValueTranslator {
             populateList(object, entry, field);
             return;
         }
+        Object reference = getObject(object, field);
+        populateAnnotatedFields(reference, entry);
+        invokeSetter(object, field, reference);
+    }
+
+    private Object getObject(Object object, Field field) throws IllegalAccessException, InstantiationException {
         Object reference = field.get(object);
         if(reference == null) {
             reference = field.getType().newInstance();
         }
-        populateAnnotatedFields(reference, entry);
-        invokeSetter(object, field, reference);
+        return reference;
     }
 
     @SneakyThrows

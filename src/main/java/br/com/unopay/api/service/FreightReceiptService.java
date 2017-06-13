@@ -3,6 +3,8 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.EventService;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
@@ -33,6 +35,8 @@ public class FreightReceiptService {
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
     private EventService eventService;
     @Setter
+    private Notifier notifier;
+    @Setter
     private PamcaryService pamcaryService;
 
     @Autowired
@@ -42,7 +46,7 @@ public class FreightReceiptService {
                                  ContractService contractService, UserDetailService userDetailService,
                                  ServiceAuthorizeService serviceAuthorizeService,
                                  ContractorInstrumentCreditService contractorInstrumentCreditService,
-                                 EventService eventService, PamcaryService pamcaryService) {
+                                 EventService eventService, Notifier notifier, PamcaryService pamcaryService) {
         this.cargoContractService = cargoContractService;
         this.travelDocumentService = travelDocumentService;
         this.complementaryTravelDocumentService = complementaryTravelDocumentService;
@@ -51,6 +55,7 @@ public class FreightReceiptService {
         this.serviceAuthorizeService = serviceAuthorizeService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
         this.eventService = eventService;
+        this.notifier = notifier;
         this.pamcaryService = pamcaryService;
     }
 
@@ -62,6 +67,8 @@ public class FreightReceiptService {
         checkReferences(freightReceipt);
         freightReceipt.getCargoContract().markDocumentsAsDelivered();
         saveOrUpdate(freightReceipt.getCargoContract());
+        notifier.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, freightReceipt.getCargoContract());
+
     }
 
     private void checkReferences(FreightReceipt freightReceipt) {

@@ -50,7 +50,10 @@ class AmqpConfig {
 
     @Bean
     public InitializingBean setupQueues(AmqpAdmin amqpAdmin) {
-        return () -> declareQueue(amqpAdmin, Queues.UNOPAY_NOTIFICAITON, Queues.UNOPAY_NOTIFICAITON);
+        return ()->{
+            declareQueue(amqpAdmin, Queues.UNOPAY_NOTIFICAITON, Queues.UNOPAY_NOTIFICAITON);
+            declareQueue(amqpAdmin, Queues.PAMCARY_TRAVEL_DOCUMENTS, Queues.PAMCARY_TRAVEL_DOCUMENTS);
+        };
     }
 
     private void declareQueue(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {

@@ -1,6 +1,7 @@
 package br.com.unopay.api.notification.service;
 
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
@@ -27,18 +28,15 @@ public class NotificationService {
 
     private String url;
 
-    private ObjectMapper objectMapper;
-
-    private RabbitMessagingTemplate messagingTemplate;
+    private Notifier notifier;
 
     private PasswordTokenService passwordTokenService;
 
     @Autowired
-    public NotificationService(ObjectMapper objectMapper, RabbitMessagingTemplate messagingTemplate,
-                               PasswordTokenService passwordTokenService) {
-        this.objectMapper = objectMapper;
-        this.messagingTemplate = messagingTemplate;
+    public NotificationService(PasswordTokenService passwordTokenService,
+                               Notifier notifier) {
         this.passwordTokenService = passwordTokenService;
+        this.notifier = notifier;
     }
 
     public void sendNewPassword(UserDetail user, EventType eventType) {
@@ -47,30 +45,12 @@ public class NotificationService {
         String token = passwordTokenService.createToken(user);
         Map<String, Object> payload = buildPayload(user, token);
         Notification notification = new Notification(email, null, eventType, payload);
-        notify(notification);
+        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
         log.info("reset password message sent to the queue for {}", user);
     }
 
     public void sendNewPassword(UserDetail user) {
         sendNewPassword(user, CREATE_PASSWORD);
-    }
-
-    public void notify(Notification notification) {
-        String payLoadAsString = getNotificationAsString(notification);
-        messagingTemplate.convertAndSend(
-            Queues.UNOPAY_NOTIFICAITON,
-            Queues.UNOPAY_NOTIFICAITON,
-            payLoadAsString
-        );
-    }
-
-    private String getNotificationAsString(Notification notification) {
-        try {
-            return objectMapper.writeValueAsString(notification);
-        } catch (JsonProcessingException e) {
-            log.warn("could not convert notification to string.", e);
-            return  null;
-        }
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {
