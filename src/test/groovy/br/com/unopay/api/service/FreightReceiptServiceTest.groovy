@@ -95,46 +95,6 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         1 * notifierMock.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, _)
     }
 
-    @Unroll
-    'given a cargo contract with #weight wight should not be created'(){
-        given:
-        FreightReceipt freightReceipt = createFreightReceipt()
-        freightReceipt.cargoContract.cargoWeight = weight
-        freightReceipt.cargoContract.cargoProfile == CargoProfile.IN_BULK
-
-        when:
-        service.receipt(currentUser.email,freightReceipt)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'WEIGHT_REQUIRED'
-
-        where:
-        _|weight
-        _|-1
-        _|null
-    }
-
-    @Unroll
-    'given a cargo contract with #quantity damaged items should not be created'(){
-        given:
-        FreightReceipt freightReceipt = createFreightReceipt()
-        freightReceipt.cargoContract.damagedItems = quantity
-        freightReceipt.cargoContract.cargoProfile == CargoProfile.DRY_CARGO
-
-        when:
-        service.receipt(currentUser.email,freightReceipt)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'DAMAGED_ITEMS_REQUIRED'
-
-        where:
-        _|quantity
-        _|-1
-        _|null
-    }
-
     def 'when receipted freight should create travel document with accepted receipt situation'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
