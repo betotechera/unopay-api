@@ -4,20 +4,24 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum TravelDocumentType implements DescriptableEnum{
 
-    MAN("MANIFESTO"), ROM("ROMANEIO"), PVIA("PLANO DE VIAGEM"), AWB("AWB"), CON("CONHECIMENTO"), NFIS("NOTA FISCAL"),
-    DCLI("DOCUMENTO PROPRIO DO CLIENTE"), NPED("NUMERO PEDIDO"), OVEN("ORDEM DE VENDA"),
-    NLOA("NUMERO LOAD"), OCOL("ORDEM DE COLETA"), ATCR("AUTORIZACAO DE CARREGAMENTO"), ATSD("AUTORIZACAO DE SAIDA");
+    MAN("MANIFESTO", "1"), ROM("ROMANEIO", "2"), PVIA("PLANO DE VIAGEM", "3"), AWB("AWB", "4"), CON("CONHECIMENTO", "5"),
+    NFIS("NOTA FISCAL", "6"), DCLI("DOCUMENTO PROPRIO DO CLIENTE", "7"), NPED("NUMERO PEDIDO", "8"),
+    OVEN("ORDEM DE VENDA", "9"),  NLOA("NUMERO LOAD", "10"), OCOL("ORDEM DE COLETA", "11"),
+    ATCR("AUTORIZACAO DE CARREGAMENTO", "12"), ATSD("AUTORIZACAO DE SAIDA", "13");
 
     private String description;
+    private String code;
 
-    TravelDocumentType(String description) {
+    TravelDocumentType(String description, String code) {
         this.description = description;
+        this.code = code;
     }
 
     public String getDescription() {
         return description;
     }
-
-
+    public String getGetCode() {
+        return code;
+    }
 
 }

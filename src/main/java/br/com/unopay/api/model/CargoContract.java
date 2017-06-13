@@ -91,6 +91,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name = "receipt_step")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private ReceiptStep receiptStep;
@@ -98,6 +99,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="payment_source")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private PaymentSource paymentSource;
@@ -105,6 +107,7 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="travel_situation")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private TravelSituation travelSituation;

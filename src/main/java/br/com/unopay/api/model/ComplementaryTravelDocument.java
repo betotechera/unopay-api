@@ -64,12 +64,14 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="situation")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentTravelSituation situation;
 
     @Valid
     @Enumerated(STRING)
     @Column(name = "caveat")
+    @KeyEnumField
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;
 
@@ -84,6 +86,7 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="receipt_situation")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = { Update.class})
     private ReceiptSituation receiptSituation;
@@ -91,6 +94,7 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="reason_receipt_situation")
+    @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private ReasonReceiptSituation reasonReceiptSituation;
