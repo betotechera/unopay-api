@@ -28,7 +28,7 @@ create table complementary_travel_document (
     delivery_date_time timestamp,
     receipt_situation varchar(100),
     reason_receipt_situation varchar(100),
-    cargo_contract_id varchar(256) not null,
+    cargo_contract_id varchar(256),
     version integer,
      constraint fk_compl_cargo foreign key(cargo_contract_id) references cargo_contract(id)
 );
@@ -46,7 +46,7 @@ create table travel_document (
     receipt_situation varchar(100),
     reason_receipt_situation varchar(100),
     version integer,
-    cargo_contract_id varchar(256) not null,
+    cargo_contract_id varchar(256),
     constraint fk_trav_contract foreign key(contract_id) references contract(id),
     constraint fk_trav_cargo foreign key(cargo_contract_id) references cargo_contract(id)
 );

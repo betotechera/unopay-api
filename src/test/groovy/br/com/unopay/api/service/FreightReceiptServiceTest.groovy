@@ -9,11 +9,14 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
+import br.com.unopay.api.model.ComplementaryTravelDocumentType
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
+import br.com.unopay.api.model.DocumentCaveat
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.model.TravelDocumentType
 import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
@@ -367,20 +370,32 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list known documents should update returned documents'(){
         given:
         def cargo = createCargoContract()
-
         def filter = new TravelDocumentFilter()
-        def expectedPartnerId = 'updatedPartnerId'
+        def expectedCaveat = DocumentCaveat.N
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "toPersist", new Rule(){{
+            add("documentNumber", cargo.travelDocuments.find().documentNumber)
+        }})
+        List<ComplementaryTravelDocument> complementary = Fixture.from(ComplementaryTravelDocument.class).gimme(1,"valid", new Rule(){{
+            add("documentNumber", cargo.complementaryTravelDocuments.find().documentNumber)
+        }})
+        CargoContract cloneBean = BeanUtils.cloneBean(cargo)
+        cloneBean.with {
+            id = null; caveat = expectedCaveat; travelDocuments = documents
+            complementaryTravelDocuments = complementary
+            it
+        }
         when:
         service.listDocuments(filter)
         service.listDocuments(filter)
 
         then:
-        2 * pamcaryServiceMock.searchDoc(filter) >>> [cargo, BeanUtils.cloneBean(cargo.with {
-                                                                        id = null; partnerId = expectedPartnerId; it })]
+        2 * pamcaryServiceMock.searchDoc(filter) >>> [cargo,cloneBean]
         that cargoContractService.findAll(), hasSize(1)
-        cargoContractService.findAll().find().partnerId == expectedPartnerId
+        cargoContractService.findAll().find().caveat == expectedCaveat
         that travelDocumentService.findAll(), hasSize(1)
+        travelDocumentService.findAll().find().type == documents.find().type
         that complementaryTravelDocumentService.findAll(), hasSize(1)
+        complementaryTravelDocumentService.findAll().find().type == complementary.find().type
     }
 
     def 'Must return not found if TravelDocumentFilter does not exists'(){
