@@ -2,10 +2,9 @@ package br.com.unopay.api.model.filter;
 
 import br.com.unopay.api.model.PaymentInstrumentSituation;
 import br.com.unopay.api.repository.filter.SearchableField;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.ToString;
-
-import java.io.Serializable;
 
 @Data
 @ToString

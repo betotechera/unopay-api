@@ -1,11 +1,10 @@
 package br.com.unopay.api.model;
 
+import java.io.Serializable;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor

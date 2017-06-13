@@ -4,9 +4,8 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 @Data
 public class ContractorInstrumentCreditFilter  implements Serializable {

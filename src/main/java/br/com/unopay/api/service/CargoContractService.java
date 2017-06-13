@@ -6,7 +6,6 @@ import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

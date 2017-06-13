@@ -1,15 +1,15 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.service.ContractorService;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
-import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.PaymentInstrumentRepository;
 import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,9 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j

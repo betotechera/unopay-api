@@ -4,10 +4,9 @@ import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserTypeService {

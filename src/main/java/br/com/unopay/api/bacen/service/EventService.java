@@ -9,12 +9,11 @@ import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.FUEL_EVENT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class EventService {

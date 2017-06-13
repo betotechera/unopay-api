@@ -6,10 +6,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditSituation
@@ -19,7 +19,6 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import br.com.unopay.api.bacen.model.Service
 import groovy.time.TimeCategory
 import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired

@@ -11,6 +11,8 @@ import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,9 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Slf4j
 @Service

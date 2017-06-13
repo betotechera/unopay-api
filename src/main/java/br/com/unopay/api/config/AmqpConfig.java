@@ -1,5 +1,7 @@
 package br.com.unopay.api.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -17,9 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @Profile("!test")

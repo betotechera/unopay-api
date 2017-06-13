@@ -1,21 +1,20 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import static java.lang.Boolean.FALSE;
-import static javax.persistence.EnumType.STRING;
-import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import lombok.Data;
 
 @Data
 @Embeddable

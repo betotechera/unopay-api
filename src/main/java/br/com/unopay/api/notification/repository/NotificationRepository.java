@@ -2,14 +2,13 @@ package br.com.unopay.api.notification.repository;
 
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Repository
 public class NotificationRepository {

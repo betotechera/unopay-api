@@ -2,17 +2,16 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity

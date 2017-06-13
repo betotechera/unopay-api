@@ -1,12 +1,25 @@
 package br.com.unopay.api;
 
-import br.com.six2six.fixturefactory.*;
-import br.com.six2six.fixturefactory.loader.*;
-import br.com.unopay.api.bacen.model.*;
-import br.com.unopay.api.model.*;
-import java.math.*;
-import java.text.*;
-import java.util.*;
+import br.com.six2six.fixturefactory.Fixture;
+import br.com.six2six.fixturefactory.Rule;
+import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.model.CreditSituation;
+import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.PaymentInstrumentSituation;
+import br.com.unopay.api.model.PaymentInstrumentType;
+import br.com.unopay.api.model.Product;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CreditTemplateLoader implements TemplateLoader {
 

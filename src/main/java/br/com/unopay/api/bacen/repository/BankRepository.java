@@ -1,11 +1,9 @@
 package br.com.unopay.api.bacen.repository;
 
 import br.com.unopay.api.bacen.model.Bank;
-import br.com.unopay.api.bacen.model.Branch;
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
 public interface BankRepository extends CrudRepository<Bank,Integer> {
 

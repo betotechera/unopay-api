@@ -1,10 +1,10 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.model.validation.group.Create;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.util.StringJoiner;
 import br.com.unopay.bootcommons.jsoncollections.ListResults;
@@ -13,6 +13,10 @@ import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 @Timed(prefix = "api")
 @RestController

@@ -8,17 +8,13 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Slf4j

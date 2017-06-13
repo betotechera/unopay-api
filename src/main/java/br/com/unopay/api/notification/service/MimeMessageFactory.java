@@ -3,6 +3,8 @@ package br.com.unopay.api.notification.service;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
+import java.util.EnumMap;
+import javax.mail.internet.MimeMessage;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-
-import javax.mail.internet.MimeMessage;
-import java.util.EnumMap;
 
 @Component
 @Data

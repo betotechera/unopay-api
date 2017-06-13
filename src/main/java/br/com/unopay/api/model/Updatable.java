@@ -1,14 +1,13 @@
 package br.com.unopay.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.BeanUtils;
-
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.BeanUtils;
 
 public interface Updatable {
 

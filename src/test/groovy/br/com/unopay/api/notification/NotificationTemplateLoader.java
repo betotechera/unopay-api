@@ -1,9 +1,12 @@
 package br.com.unopay.api.notification;
 
-import br.com.six2six.fixturefactory.*;
-import br.com.six2six.fixturefactory.loader.*;
-import br.com.unopay.api.notification.model.*;
-import java.util.*;
+import br.com.six2six.fixturefactory.Fixture;
+import br.com.six2six.fixturefactory.Rule;
+import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.notification.model.Email;
+import br.com.unopay.api.notification.model.EventType;
+import br.com.unopay.api.notification.model.Notification;
+import java.util.HashMap;
 
 public class NotificationTemplateLoader implements TemplateLoader {
 

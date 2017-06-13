@@ -1,19 +1,18 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import static javax.persistence.EnumType.STRING;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.util.function.Consumer;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,8 +23,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.function.Consumer;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity

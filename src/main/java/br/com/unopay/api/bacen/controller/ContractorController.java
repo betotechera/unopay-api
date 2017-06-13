@@ -5,15 +5,18 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController

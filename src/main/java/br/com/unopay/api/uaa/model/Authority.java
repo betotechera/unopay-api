@@ -1,17 +1,16 @@
 package br.com.unopay.api.uaa.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
+import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data

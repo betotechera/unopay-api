@@ -3,15 +3,17 @@ package br.com.unopay.api.controller;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
-import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
-import static br.com.unopay.api.model.validation.group.Views.*;
+import static br.com.unopay.api.model.validation.group.Views.List;
+import static br.com.unopay.api.model.validation.group.Views.Public;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +23,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.status;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +33,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 
 @Slf4j

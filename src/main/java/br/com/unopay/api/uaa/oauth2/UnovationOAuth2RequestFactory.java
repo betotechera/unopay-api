@@ -1,5 +1,7 @@
 package br.com.unopay.api.uaa.oauth2;
 
+import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -8,9 +10,6 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.Set;
 
 @Component
 public class UnovationOAuth2RequestFactory extends DefaultOAuth2RequestFactory {

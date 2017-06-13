@@ -1,9 +1,8 @@
 package br.com.unopay.api.uaa.model;
 
-import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class NewPassword  implements Serializable {

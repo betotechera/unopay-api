@@ -3,7 +3,6 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.TravelDocument
 import org.springframework.beans.factory.annotation.Autowired

@@ -5,13 +5,6 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.InternalServerErrorException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.amazonaws.AmazonClientException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -21,6 +14,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Component

@@ -1,11 +1,12 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.CreditPaymentAccount;
-import br.com.unopay.api.service.CreditPaymentAccountService;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.service.CreditPaymentAccountService;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.http.HttpStatus.OK;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @RestController

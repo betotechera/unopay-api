@@ -2,8 +2,8 @@ package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.filter.PersonFilter;
-import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.service.PersonService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

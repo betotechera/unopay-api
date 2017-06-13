@@ -3,12 +3,11 @@ package br.com.unopay.api.notification.service;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.notification.model.Notification;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 @Slf4j

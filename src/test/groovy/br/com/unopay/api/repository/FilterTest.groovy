@@ -4,7 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.model.ServiceType
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
+import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
+import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
 import br.com.unopay.api.bacen.util.SetupCreator
@@ -13,10 +15,6 @@ import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import groovy.time.TimeCategory
-
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
-import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that

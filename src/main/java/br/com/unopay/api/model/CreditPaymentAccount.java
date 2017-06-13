@@ -3,18 +3,18 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_UPDATE_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_UPDATE_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,9 +27,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity

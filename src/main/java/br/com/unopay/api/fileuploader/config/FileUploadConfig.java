@@ -1,12 +1,11 @@
 package br.com.unopay.api.fileuploader.config;
 
 import br.com.unopay.api.fileuploader.model.UploadConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @ConfigurationProperties("unopay.file-uploader")

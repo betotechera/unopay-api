@@ -5,6 +5,10 @@ import br.com.unopay.api.uaa.oauth2.GoogleTokenGranter;
 import br.com.unopay.api.uaa.oauth2.UnopayTokenEnhancer;
 import br.com.unopay.api.uaa.oauth2.UnovationOAuth2RequestFactory;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +25,6 @@ import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableAuthorizationServer

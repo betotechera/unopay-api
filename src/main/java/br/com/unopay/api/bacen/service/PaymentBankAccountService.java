@@ -5,10 +5,9 @@ import br.com.unopay.api.bacen.repository.PaymentBankAccountRepository;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PaymentBankAccountService {

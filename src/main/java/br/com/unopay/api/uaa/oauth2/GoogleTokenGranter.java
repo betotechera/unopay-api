@@ -4,6 +4,7 @@ import br.com.unopay.api.uaa.google.GoogleProfile;
 import br.com.unopay.api.uaa.google.GoogleService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import java.util.Map;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,8 +18,6 @@ import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-
-import java.util.Map;
 
 public class GoogleTokenGranter extends AbstractTokenGranter {
 

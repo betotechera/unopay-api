@@ -3,27 +3,18 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
-import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.ContractEstablishment;
-import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.model.filter.ContractFilter;
-import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

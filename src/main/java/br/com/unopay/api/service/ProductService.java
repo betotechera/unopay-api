@@ -10,14 +10,13 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service

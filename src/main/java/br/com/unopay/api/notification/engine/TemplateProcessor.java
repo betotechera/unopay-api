@@ -2,13 +2,12 @@ package br.com.unopay.api.notification.engine;
 
 import br.com.unopay.api.notification.model.Notification;
 import com.hubspot.jinjava.Jinjava;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @Slf4j

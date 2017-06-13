@@ -18,14 +18,13 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ServiceAuthorizeService {

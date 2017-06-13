@@ -2,12 +2,11 @@ package br.com.unopay.api.notification.config;
 
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.util.Locale;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TemplateConfig {

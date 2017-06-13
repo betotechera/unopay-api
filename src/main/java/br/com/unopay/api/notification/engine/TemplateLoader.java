@@ -1,14 +1,13 @@
 package br.com.unopay.api.notification.engine;
 
 import br.com.unopay.api.notification.model.EventType;
+import java.io.IOException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 public class TemplateLoader {

@@ -6,10 +6,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 
 
 @Data

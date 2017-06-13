@@ -1,7 +1,6 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
-
 import java.util.Arrays;
 
 public enum CreditInsertionType implements DescriptableEnum {

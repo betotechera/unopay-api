@@ -1,13 +1,12 @@
 package br.com.unopay.api.uaa.google;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 @Component
 public class GoogleService {

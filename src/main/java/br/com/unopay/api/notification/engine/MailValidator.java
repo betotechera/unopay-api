@@ -1,9 +1,8 @@
 package br.com.unopay.api.notification.engine;
 
-import org.springframework.stereotype.Component;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MailValidator {

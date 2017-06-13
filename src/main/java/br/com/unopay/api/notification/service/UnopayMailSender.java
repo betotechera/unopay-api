@@ -4,12 +4,11 @@ import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.engine.TemplateProcessor;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.notification.repository.NotificationRepository;
+import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-
-import javax.mail.internet.MimeMessage;
 
 
 @Slf4j

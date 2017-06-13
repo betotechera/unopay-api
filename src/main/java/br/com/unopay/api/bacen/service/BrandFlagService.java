@@ -5,12 +5,11 @@ import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.repository.BrandFlagRepository;
 import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BrandFlagService {

@@ -6,7 +6,6 @@ import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import groovy.time.TimeCategory
 import spock.lang.Unroll
 
 class ServiceAuthorizeTest   extends FixtureApplicationTest {

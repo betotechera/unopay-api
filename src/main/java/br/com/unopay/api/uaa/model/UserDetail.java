@@ -13,13 +13,15 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,14 +35,11 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity
 @Table(name = "oauth_user_details")

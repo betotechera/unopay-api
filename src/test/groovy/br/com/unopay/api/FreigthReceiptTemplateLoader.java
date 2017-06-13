@@ -8,7 +8,6 @@ import br.com.unopay.api.model.CargoProfile;
 import br.com.unopay.api.model.ComplementaryTravelDocument;
 import br.com.unopay.api.model.ComplementaryTravelDocumentType;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.DocumentCaveat;
 import br.com.unopay.api.model.DocumentTravelSituation;
 import br.com.unopay.api.model.PaymentSource;

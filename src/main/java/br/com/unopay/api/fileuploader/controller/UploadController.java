@@ -3,6 +3,7 @@ package br.com.unopay.api.fileuploader.controller;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.bootcommons.exception.BadRequestException;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.regex.Pattern;
 
 @RestController
 @Validated

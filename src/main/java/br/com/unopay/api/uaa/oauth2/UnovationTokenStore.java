@@ -1,12 +1,11 @@
 package br.com.unopay.api.uaa.oauth2;
 
+import java.util.Collection;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-
-import java.util.Collection;
 
 public class UnovationTokenStore implements TokenStore {
 

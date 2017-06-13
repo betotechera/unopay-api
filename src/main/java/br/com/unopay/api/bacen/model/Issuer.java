@@ -1,20 +1,18 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Person;
-import static br.com.unopay.api.uaa.exception.Errors.MOVEMENT_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import static br.com.unopay.api.uaa.exception.Errors.MOVEMENT_ACCOUNT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,9 +27,10 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity

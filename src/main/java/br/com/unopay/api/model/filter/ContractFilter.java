@@ -4,11 +4,10 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
-import lombok.Data;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.util.Set;
+import lombok.Data;
+import lombok.ToString;
 
 @Data
 @ToString

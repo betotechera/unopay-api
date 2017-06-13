@@ -1,23 +1,20 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Updatable;
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.uaa.exception.Errors.LARGE_PAYMENT_RULE_GROUP_NAME;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NAME_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.SHORT_PAYMENT_RULE_GROUP_NAME;
 import static br.com.unopay.api.uaa.exception.Errors.USER_RELATIONSHIP_REQUIRED;
-import br.com.unopay.api.model.validation.group.Create;
-import br.com.unopay.api.model.validation.group.Update;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
-import static javax.persistence.EnumType.STRING;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,7 +23,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity

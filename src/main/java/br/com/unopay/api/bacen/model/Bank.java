@@ -2,14 +2,13 @@ package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity

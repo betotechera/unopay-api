@@ -1,13 +1,14 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserType;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.service.UserTypeService;
 import br.com.unopay.bootcommons.jsoncollections.ListResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Timed(prefix = "api")
 @RestController
