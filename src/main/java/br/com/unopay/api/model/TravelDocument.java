@@ -32,7 +32,6 @@ import org.hibernate.annotations.GenericGenerator;
 @EqualsAndHashCode
 @KeyBase(key = "viagem.documento")
 @Table(name = "travel_document")
-@ToString(exclude = "cargoContract")
 public class TravelDocument  implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
@@ -102,11 +101,6 @@ public class TravelDocument  implements Serializable, Updatable {
     @Column(name="reason_receipt_situation")
     @JsonView({Views.Public.class,Views.List.class})
     private ReasonReceiptSituation reasonReceiptSituation;
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name="cargo_contract_id")
-    private CargoContract cargoContract;
 
     @Version
     @JsonIgnore

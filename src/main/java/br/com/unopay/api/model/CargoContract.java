@@ -20,6 +20,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -118,11 +119,13 @@ public class CargoContract implements Serializable, Updatable {
     private String partnerId;
 
     @KeyFieldListReference(listType = TravelDocument.class)
-    @OneToMany(mappedBy="cargoContract", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cargo_contract_id")
     private List<TravelDocument> travelDocuments;
 
     @KeyFieldListReference(listType = ComplementaryTravelDocument.class)
-    @OneToMany(mappedBy="cargoContract", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cargo_contract_id")
     private List<ComplementaryTravelDocument> complementaryTravelDocuments;
 
     @Version

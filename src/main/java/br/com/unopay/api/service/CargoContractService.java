@@ -6,6 +6,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.List;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class CargoContractService {
     public CargoContract save(CargoContract cargoContract) {
         return repository.save(cargoContract);
     }
+
 
     public CargoContract findById(String id) {
         Optional<CargoContract> cargoContract = repository.findById(id);
