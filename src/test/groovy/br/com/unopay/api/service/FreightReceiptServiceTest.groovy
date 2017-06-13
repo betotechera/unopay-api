@@ -13,7 +13,10 @@ import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
+import br.com.unopay.api.model.ReasonReceiptSituation
+import br.com.unopay.api.model.TravelDocumentSituation
 import br.com.unopay.api.model.FreightReceipt
+import br.com.unopay.api.model.ReceiptSituation
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
@@ -86,6 +89,98 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         1 * notifierMock.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, _)
+    }
+
+    def 'when receipted freight should create travel document with accepted receipt situation'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        travelDocumentService.findAll().find().receiptSituation == ReceiptSituation.ACCEPTED
+    }
+
+    def 'when receipted freight should create travel document with digitized situation'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        travelDocumentService.findAll().find().situation == TravelDocumentSituation.DIGITIZED
+    }
+
+    def 'given a travel document with caveat when receipted freight should create travel document with caveat reason'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.travelDocuments.find().caveat = DocumentCaveat.S
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        travelDocumentService.findAll().find().reasonReceiptSituation == ReasonReceiptSituation.CAVEAT_DOCUMENTATION
+    }
+
+    def 'given a travel document without caveat when receipted freight should create travel document with reason ok'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.travelDocuments.find().caveat = DocumentCaveat.N
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        travelDocumentService.findAll().find().reasonReceiptSituation == ReasonReceiptSituation.DOCUMENTATION_OK
+    }
+
+    def 'when receipted freight should create complementary document with accepted receipt situation'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        complementaryTravelDocumentService.findAll().find().receiptSituation == ReceiptSituation.ACCEPTED
+    }
+
+    def 'when receipted freight should create complementary document with digitized situation'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        complementaryTravelDocumentService.findAll().find().situation == TravelDocumentSituation.DIGITIZED
+    }
+
+    def 'given a complementary document with caveat when receipted freight should create travel document with caveat reason'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.complementaryTravelDocuments.find().caveat = DocumentCaveat.S
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        complementaryTravelDocumentService.findAll().find().reasonReceiptSituation == ReasonReceiptSituation.CAVEAT_DOCUMENTATION
+    }
+
+    def 'given a complementary document without caveat when receipted freight should create travel document with reason ok'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.complementaryTravelDocuments.find().caveat = DocumentCaveat.N
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        complementaryTravelDocumentService.findAll().find().reasonReceiptSituation == ReasonReceiptSituation.DOCUMENTATION_OK
     }
 
     def 'given a valid freight receipt then should be authorize fuel supply'(){

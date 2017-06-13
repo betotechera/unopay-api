@@ -67,7 +67,6 @@ public class FreightReceiptService {
         freightReceipt.getCargoContract().markDocumentsAsDelivered();
         cargoContractService.save(freightReceipt.getCargoContract());
         notifier.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, freightReceipt.getCargoContract());
-
     }
 
     private void checkReferences(FreightReceipt freightReceipt) {

@@ -145,10 +145,10 @@ public class CargoContract implements Serializable, Updatable {
 
     public void markDocumentsAsDelivered(){
         if(travelDocuments != null){
-            travelDocuments.forEach(d -> d.setDeliveryDateTime(new Date()));
+            travelDocuments.forEach(TravelDocument::markAsDelivered);
         }
         if(complementaryTravelDocuments != null){
-            complementaryTravelDocuments.forEach(d -> d.setDeliveryDateTime(new Date()));
+            complementaryTravelDocuments.forEach(ComplementaryTravelDocument::markAsDelivered);
         }
     }
 

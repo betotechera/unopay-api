@@ -4,14 +4,14 @@ import br.com.unopay.api.http.DescriptableEnum;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public enum DocumentTravelSituation implements DescriptableEnum {
+public enum TravelDocumentSituation implements DescriptableEnum {
 
     DIGITIZED("Digitalizado","1"), RETIRED("Retirado","2");
 
     private String description;
     private String code;
 
-    DocumentTravelSituation(String description, String code) {
+    TravelDocumentSituation(String description, String code) {
         this.description = description;
         this.code = code;
     }
@@ -20,8 +20,8 @@ public enum DocumentTravelSituation implements DescriptableEnum {
         return description;
     }
 
-    public static DocumentTravelSituation from(String compareCode){
-        return Stream.of(DocumentTravelSituation.values())
+    public static TravelDocumentSituation from(String compareCode){
+        return Stream.of(TravelDocumentSituation.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
                 .reduce((firs, last) -> last).orElse(null);
     }

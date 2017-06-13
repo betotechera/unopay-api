@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public enum ReceiptSituation implements DescriptableEnum {
 
-    ACCEPTED("Aceita","1"), REFUSED("Recusada","1");
+    ACCEPTED("Aceita","0"), REFUSED("Recusada","1");
 
     private String description;
     private String code;

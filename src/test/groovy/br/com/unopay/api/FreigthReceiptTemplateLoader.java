@@ -9,7 +9,7 @@ import br.com.unopay.api.model.ComplementaryTravelDocument;
 import br.com.unopay.api.model.ComplementaryTravelDocumentType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.DocumentCaveat;
-import br.com.unopay.api.model.DocumentTravelSituation;
+import br.com.unopay.api.model.TravelDocumentSituation;
 import br.com.unopay.api.model.PaymentSource;
 import br.com.unopay.api.model.ReasonReceiptSituation;
 import br.com.unopay.api.model.ReceiptSituation;
@@ -28,7 +28,7 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("quantity", random(Integer.class));
             add("type",random(TravelDocumentType.class));
             add("documentNumber", random("56465456546", "564646898", "SDDDDF54454554"));
-            add("situation", random(DocumentTravelSituation.class));
+            add("situation", random(TravelDocumentSituation.class));
             add("caveat", random(DocumentCaveat.class));
             add("createdDateTime", instant("this second"));
             add("deliveryDateTime",instant("5 seconds ago"));
@@ -44,7 +44,7 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("quantity", random(Integer.class));
             add("type",random(ComplementaryTravelDocumentType.class));
             add("documentNumber", random("56465456546", "564646898", "SDDDDF54454554"));
-            add("situation", random(DocumentTravelSituation.class));
+            add("situation", random(TravelDocumentSituation.class));
             add("caveat", random(DocumentCaveat.class));
             add("createdDateTime", instant("this second"));
             add("deliveryDateTime",instant("5 seconds ago"));

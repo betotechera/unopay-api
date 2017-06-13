@@ -63,7 +63,7 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Column(name="situation")
     @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
-    private DocumentTravelSituation situation;
+    private TravelDocumentSituation situation;
 
     @Valid
     @Enumerated(STRING)
@@ -99,4 +99,15 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @Version
     @JsonIgnore
     private Integer version;
+
+    public void markAsDelivered(){
+        situation = TravelDocumentSituation.DIGITIZED;
+        receiptSituation = ReceiptSituation.ACCEPTED;
+        deliveryDateTime = new Date();
+        if(DocumentCaveat.S.equals(caveat)){
+            reasonReceiptSituation = ReasonReceiptSituation.CAVEAT_DOCUMENTATION;
+        }else{
+            reasonReceiptSituation = ReasonReceiptSituation.DOCUMENTATION_OK;
+        }
+    }
 }
