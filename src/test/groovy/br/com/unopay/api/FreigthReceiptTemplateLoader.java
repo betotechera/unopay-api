@@ -52,16 +52,14 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
         }});
 
-
-
         Fixture.of(CargoContract.class).addTemplate("valid", new Rule(){{
             add("contract",one(Contract.class, "valid"));
             add("partnerId", UUID.randomUUID().toString());
             add("caveat", random(DocumentCaveat.class));
             add("cargoProfile",random(CargoProfile.class));
             add("receiptObservation", firstName());
-            add("cargoWeight", random(Double.class));
-            add("damagedItems", random(Double.class));
+            add("cargoWeight", random(Double.class, range(1, 200)));
+            add("damagedItems", random(Integer.class,range(1, 200)));
             add("receiptStep",random(ReceiptStep.class));
             add("paymentSource", random(PaymentSource.class));
             add("travelSituation",random(TravelSituation.class));

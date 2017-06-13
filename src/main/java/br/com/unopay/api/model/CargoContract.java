@@ -8,6 +8,9 @@ import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.KeyFieldListReference;
+import static br.com.unopay.api.uaa.exception.Errors.DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.WEIGHT_GREATER_THAN_ZERO_REQUIRED;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -84,7 +87,7 @@ public class CargoContract implements Serializable, Updatable {
 
     @Column(name = "damaged_items")
     @JsonView({Views.Public.class,Views.List.class})
-    private Double damagedItems;
+    private Integer damagedItems;
 
     @Valid
     @Enumerated(STRING)
@@ -133,6 +136,15 @@ public class CargoContract implements Serializable, Updatable {
     @JsonIgnore
     private Integer version;
 
+    public void validate(){
+        if(damagedItems == null || damagedItems <= 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED);
+        }
+        if(cargoWeight == null || cargoWeight <= 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(WEIGHT_GREATER_THAN_ZERO_REQUIRED);
+        }
+    }
+
     public void setMeUp(){
         createdDateTime = new Date();
         if(travelDocuments != null){
@@ -143,7 +155,10 @@ public class CargoContract implements Serializable, Updatable {
         }
     }
 
-    public void markDocumentsAsDelivered(){
+    public void markAsDelivered(){
+        receiptStep = ReceiptStep.COLLECTED;
+        paymentSource = PaymentSource.ESTABLISHMENT;
+        travelSituation = TravelSituation.FINISHED;
         if(travelDocuments != null){
             travelDocuments.forEach(TravelDocument::markAsDelivered);
         }

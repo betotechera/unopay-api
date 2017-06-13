@@ -61,10 +61,11 @@ public class FreightReceiptService {
     @Transactional
     public void receipt(String userEmail, FreightReceipt freightReceipt) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        freightReceipt.getCargoContract().validate();
         checkContract(freightReceipt, currentUser);
         authorizeFuelSupply(userEmail, freightReceipt);
         checkReferences(freightReceipt);
-        freightReceipt.getCargoContract().markDocumentsAsDelivered();
+        freightReceipt.getCargoContract().markAsDelivered();
         cargoContractService.save(freightReceipt.getCargoContract());
         notifier.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, freightReceipt.getCargoContract());
     }

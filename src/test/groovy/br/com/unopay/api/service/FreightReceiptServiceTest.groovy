@@ -13,15 +13,19 @@ import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
+import br.com.unopay.api.model.PaymentSource
 import br.com.unopay.api.model.ReasonReceiptSituation
+import br.com.unopay.api.model.ReceiptStep
 import br.com.unopay.api.model.TravelDocumentSituation
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.ReceiptSituation
 import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.model.TravelSituation
 import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
@@ -91,6 +95,44 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         1 * notifierMock.notify(Queues.PAMCARY_TRAVEL_DOCUMENTS, _)
     }
 
+    @Unroll
+    'given a cargo contract with #weight wight should not be created'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.cargoWeight = weight
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'WEIGHT_GREATER_THAN_ZERO_REQUIRED'
+
+        where:
+        _|weight
+        _|-1
+        _|null
+    }
+
+    @Unroll
+    'given a cargo contract with #quantity damaged items should not be created'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        freightReceipt.cargoContract.damagedItems = quantity
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED'
+
+        where:
+        _|quantity
+        _|-1
+        _|null
+    }
+
     def 'when receipted freight should create travel document with accepted receipt situation'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
@@ -100,6 +142,39 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         travelDocumentService.findAll().find().receiptSituation == ReceiptSituation.ACCEPTED
+    }
+
+    def 'when receipted freight should create cargo contract with collected step'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        cargoContractService.findAll().find().receiptStep == ReceiptStep.COLLECTED
+    }
+
+    def 'when receipted freight should create cargo contract with establishment payment'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        cargoContractService.findAll().find().paymentSource == PaymentSource.ESTABLISHMENT
+    }
+
+    def 'when receipted freight should create cargo contract with finalized travel situation'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        cargoContractService.findAll().find().travelSituation == TravelSituation.FINISHED
     }
 
     def 'when receipted freight should create travel document with digitized situation'(){

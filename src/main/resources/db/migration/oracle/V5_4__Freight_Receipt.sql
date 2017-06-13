@@ -6,7 +6,7 @@ create table cargo_contract (
     cargo_profile varchar(100) not null,
     receipt_observation varchar(256),
     cargo_weight decimal(*,2),
-    damaged_items decimal(*,2),
+    damaged_items integer,
     receipt_step varchar(100),
     payment_source varchar(100),
     travel_situation varchar(100),

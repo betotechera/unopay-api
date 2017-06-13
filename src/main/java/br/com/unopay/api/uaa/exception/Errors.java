@@ -439,6 +439,12 @@ public final class Errors {
     public static final UnovationError TRAVEL_DOCUMENT_NOT_FOUND =
             new UnovationError("TRAVEL_DOCUMENT_NOT_FOUND",
                     "Travel document not found.");
+    public static final UnovationError WEIGHT_GREATER_THAN_ZERO_REQUIRED =
+            new UnovationError("WEIGHT_GREATER_THAN_ZERO_REQUIRED", "Weight greater than zero required.");
+    public static final UnovationError DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED =
+            new UnovationError("DAMAGED_ITEMS_GREATER_THAN_ZERO_REQUIRED", "Damaged items greater than zero required.");
+
+
 
 
 
