@@ -36,7 +36,7 @@ public class ExecuteResponse implements Equals2, HashCode2
         if ((object == null)||(this.getClass()!= object.getClass())) {
             return false;
         }
-        if (this == object) {
+        if (this.equals(object)) {
             return true;
         }
         final ExecuteResponse that = ((ExecuteResponse) object);
@@ -44,12 +44,9 @@ public class ExecuteResponse implements Equals2, HashCode2
         lhsReturn = this.getReturn();
         ResponseTO rhsReturn;
         rhsReturn = that.getReturn();
-        if (!strategy.equals(LocatorUtils.property(thisLocator, "_return", lhsReturn),
+        return !strategy.equals(LocatorUtils.property(thisLocator, "_return", lhsReturn),
                 LocatorUtils.property(thatLocator, "_return", rhsReturn), lhsReturn,
-                rhsReturn, this._return!= null, that._return!= null)) {
-            return false;
-        }
-        return true;
+                rhsReturn, this._return!= null, that._return!= null);
     }
 
     public boolean equals(Object object) {
@@ -59,12 +56,10 @@ public class ExecuteResponse implements Equals2, HashCode2
 
     public int hashCode(ObjectLocator locator, HashCodeStrategy2 strategy) {
         int currentHashCode = 1;
-        {
-            ResponseTO theReturn;
-            theReturn = this.getReturn();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "_return", theReturn),
-                    currentHashCode, theReturn, (this._return!= null));
-        }
+        ResponseTO theReturn;
+        theReturn = this.getReturn();
+        currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "_return", theReturn),
+                currentHashCode, theReturn, (this._return!= null));
         return currentHashCode;
     }
 

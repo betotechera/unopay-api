@@ -44,7 +44,7 @@ public class FieldTO implements Equals2, HashCode2
         if ((object == null)||(this.getClass()!= object.getClass())) {
             return false;
         }
-        if (this == object) {
+        if (this.equals(object)) {
             return true;
         }
         final FieldTO that = ((FieldTO) object);
@@ -76,18 +76,14 @@ public class FieldTO implements Equals2, HashCode2
 
     public int hashCode(ObjectLocator locator, HashCodeStrategy2 strategy) {
         int currentHashCode = 1;
-        {
-            String theKey;
-            theKey = this.getKey();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "key", theKey),
-                    currentHashCode, theKey, (this.key!= null));
-        }
-        {
-            String theValue;
-            theValue = this.getValue();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "value", theValue),
-                    currentHashCode, theValue, (this.value!= null));
-        }
+        String theKey;
+        theKey = this.getKey();
+        currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "key", theKey),
+                currentHashCode, theKey, this.key!= null);
+        String theValue;
+        theValue = this.getValue();
+        currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "value", theValue),
+                currentHashCode, theValue, this.value!= null);
         return currentHashCode;
     }
 
