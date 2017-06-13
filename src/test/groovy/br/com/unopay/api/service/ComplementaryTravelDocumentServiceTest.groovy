@@ -14,10 +14,7 @@ class ComplementaryTravelDocumentServiceTest extends SpockApplicationTests {
 
     def 'should create complementary document'(){
         given:
-        CargoContract cargoContract = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid")
-        ComplementaryTravelDocument document = Fixture.from(ComplementaryTravelDocument.class).gimme("valid", new Rule(){{
-            add("cargoContract", cargoContract)
-        }})
+        ComplementaryTravelDocument document = Fixture.from(ComplementaryTravelDocument.class).gimme("valid")
         when:
         def created = service.save(document)
         def result = service.findById(created.id)

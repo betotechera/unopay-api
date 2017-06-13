@@ -415,28 +415,21 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         }})
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "valid", new Rule(){{
             add("contract", instrumentCreditUnderTest.contract)
-            add("cargoContract", cargo)
         }})
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture.
-                from(ComplementaryTravelDocument.class).gimme(1,"valid", new Rule(){{
-            add("cargoContract", cargo)
-        }})
+                from(ComplementaryTravelDocument.class).gimme(1,"valid")
         cargo.setTravelDocuments(documents)
         cargo.setComplementaryTravelDocuments(complementaryDocuments)
         return cargo
     }
-
 
     private FreightReceipt createFreightReceipt() {
         def credit = instrumentCreditUnderTest
         CargoContract cargo = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", instrumentCreditUnderTest.contract)
         }})
-        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid", new Rule(){{
-            add("cargoContract", cargo)
-        }})
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class).uses(jpaProcessor).gimme(1,"valid")
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
-            add("cargoContract",cargo)
             add("contract", instrumentCreditUnderTest.contract)
         }})
         cargo.setTravelDocuments(documents)

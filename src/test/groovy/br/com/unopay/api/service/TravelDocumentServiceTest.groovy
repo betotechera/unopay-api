@@ -17,11 +17,7 @@ class TravelDocumentServiceTest extends SpockApplicationTests {
         given:
 
         Contract contract = Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid")
-        CargoContract cargoContract = Fixture.from(CargoContract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("contract", contract)
-        }})
         TravelDocument document = Fixture.from(TravelDocument.class).gimme("valid", new Rule(){{
-            add("cargoContract", cargoContract)
             add("contract", contract)
         }})
         when:
