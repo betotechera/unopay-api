@@ -47,7 +47,7 @@ public class RequestTO implements Equals2, HashCode2
         if ((object == null)||(this.getClass()!= object.getClass())) {
             return false;
         }
-        if (this == object) {
+        if (this.equals(object)) {
             return true;
         }
         final RequestTO that = ((RequestTO) object);
