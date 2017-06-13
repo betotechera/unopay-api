@@ -9,14 +9,12 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
-import br.com.unopay.api.model.ComplementaryTravelDocumentType
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.TravelDocument
-import br.com.unopay.api.model.TravelDocumentType
 import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
