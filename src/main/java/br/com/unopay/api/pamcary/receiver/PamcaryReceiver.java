@@ -33,6 +33,7 @@ class PamcaryReceiver {
             log.info("confirmDocDelivery received to establishment={}", documentNumber);
             pamcaryService.confirmDocDelivery(documentNumber, freightReceipt.getCargoContract());
             pamcaryService.updateDoc(documentNumber, freightReceipt.getCargoContract());
+            pamcaryService.generateVoucherDelivery(documentNumber,freightReceipt.getCargoContract());
             return;
         }
         log.error("invalid freightReceipt received when try confirmDocDelivery");
