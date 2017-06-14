@@ -29,6 +29,6 @@ public enum ReasonReceiptSituation implements DescriptableEnum{
     public static ReasonReceiptSituation from(String compareCode){
         return Stream.of(ReasonReceiptSituation.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }

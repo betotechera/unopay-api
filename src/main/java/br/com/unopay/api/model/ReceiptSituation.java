@@ -28,6 +28,6 @@ public enum ReceiptSituation implements DescriptableEnum {
     public static ReceiptSituation from(String compareCode){
         return Stream.of(ReceiptSituation.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }

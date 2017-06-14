@@ -83,7 +83,7 @@ public class ContractService {
     public Contract getByIdAndContractorId(String contractId, String contractorId) {
         List<Contract> contracts = repository.findByContractorId(contractorId);
         Optional<Contract> contract = contracts.stream()
-                                    .filter(c -> Objects.equals(c.getId(), contractId)).reduce((first, last) -> first);
+                                    .filter(c -> Objects.equals(c.getId(), contractId)).findFirst();
         return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 

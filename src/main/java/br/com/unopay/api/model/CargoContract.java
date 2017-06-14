@@ -190,7 +190,7 @@ public class CargoContract implements Serializable, Updatable {
         if(travelDocuments != null){
             return travelDocuments.stream()
                     .filter(d-> Objects.equals(d.getDocumentNumber(), documentNumber))
-                    .reduce((first, last) -> last).orElse(null);
+                    .findFirst().orElse(null);
         }
         return null;
     }
@@ -199,7 +199,7 @@ public class CargoContract implements Serializable, Updatable {
         if(complementaryTravelDocuments != null){
             return complementaryTravelDocuments.stream()
                     .filter(d-> Objects.equals(d.getDocumentNumber(), documentNumber))
-                    .reduce((first, last) -> last).orElse(null);
+                    .findFirst().orElse(null);
         }
         return null;
     }

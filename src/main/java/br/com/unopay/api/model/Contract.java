@@ -264,8 +264,7 @@ public class Contract implements Serializable {
 
     public boolean containsEstablishment(String establishmentId) {
        return establishments.stream()
-                .filter(e -> Objects.equals(e.getId(),establishmentId))
-                .reduce((first, last) -> last).isPresent();
+                .anyMatch(e -> Objects.equals(e.getId(),establishmentId));
     }
 
     public void checkValidFor(Contractor contractor, Establishment establishment){
