@@ -6,6 +6,7 @@ import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -61,6 +62,30 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
             it.key == 'viagem.documento.complementar1.data' }?.value == formater.format(cargoContract.getComplementaryTravelDocuments().find().deliveryDateTime)
     }
 
+    def 'should translate all fields required in supply confirmation'(){
+        given:
+        ServiceAuthorize serviceAuthorize =Fixture.from(ServiceAuthorize.class).gimme("valid")
+        SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(serviceAuthorize)
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.id' }?.value?.toInteger() == serviceAuthorize.contract.getCode()
+        fieldTOS.find {
+            it.key == 'viagem.favorecido.documento.tipo' }?.value == serviceAuthorize.contractor.documentType
+        fieldTOS.find {
+            it.key == 'viagem.favorecido.documento.numero' }?.value == serviceAuthorize.contractor.documentNumber
+        fieldTOS.find {
+            it.key == 'viagem.abastecimento.valor' }?.value == String.valueOf(serviceAuthorize.eventValue)
+        fieldTOS.find {
+            it.key == 'viagem.abastecimento.operacao' }?.value == serviceAuthorize.operation
+        fieldTOS.find {
+            it.key == 'viagem.abastecimento.consumo.autorizacao.numero' }?.value == serviceAuthorize.authorizationNumber
+        fieldTOS.find {
+            it.key == 'viagem.abastecimento.consumo.datahora' }?.value == formater.format(serviceAuthorize.solicitationDateTime)
+    }
+
     def 'should translate basic list'(){
         given:
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture
@@ -87,6 +112,16 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         fieldTOS.find {
             it.key == 'viagem.indicador.ressalva'
         }?.value == cargoContract.caveat.name()
+    }
+
+    def 'should translate with method resolver'(){
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(new WithMethodResolver())
+
+        then:
+        fieldTOS.find {
+            it.key == 'resolver.field'
+        }?.value == "field"
     }
 
     def 'should translate base enum with enum reverse method'(){
@@ -388,8 +423,23 @@ class WithDate {
 
 class WithOutBaseKeyAnnotation {
 
+    String getField() {
+        return field
+    }
     @KeyField(baseField = "base", reverseField = "reverse")
     private String field = "field"
+
+}
+
+@KeyBase(key = "resolver")
+class WithMethodResolver {
+
+    @KeyField(baseField = "field", methodResolver = "getField")
+    private WithOutBaseKeyAnnotation field = new WithOutBaseKeyAnnotation()
+
+     String getField(){
+        return field.getField()
+    }
 
 }
 

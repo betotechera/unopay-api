@@ -13,4 +13,6 @@ public @interface KeyField {
 
     String reverseField() default "";
 
+    String methodResolver() default "";
+
 }

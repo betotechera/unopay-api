@@ -869,8 +869,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         }
     }
 
-
-
     private Contract addPhysicalContractorToContract(Contract contract) {
         Contractor contractor = setupCreator.createContractor("physical")
         contract.contractor = contractor

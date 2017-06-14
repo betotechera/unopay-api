@@ -1,11 +1,15 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.model.Document;
+import br.com.unopay.api.model.DocumentType;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.PersonType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
+import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -18,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,6 +33,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @EqualsAndHashCode
+@KeyBase(key = "viagem.favorecido")
 @Table(name = "contractor")
 public class Contractor implements Serializable {
 
@@ -59,6 +65,14 @@ public class Contractor implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String rntrc;
 
+    @Transient
+    @KeyField(baseField = "documento.numero", methodResolver = "getDocumentNumber")
+    private String documentNumber;
+
+    @Transient
+    @KeyField(baseField = "documento.tipo", methodResolver = "getDocumentType")
+    private String documentType;
+
     public void validate(){
         if(person.isLegal() && this.rntrc ==null){
             throw UnovationExceptions.unprocessableEntity()
@@ -76,8 +90,22 @@ public class Contractor implements Serializable {
 
 
     public String getDocumentNumber(){
+        if(getDocument() != null){
+            return getDocument().getNumber();
+        }
+        return null;
+    }
+
+    public String getDocumentType(){
+        if(getDocument() != null){
+            return getDocument().getType().name();
+        }
+        return null;
+    }
+
+    private Document getDocument(){
         if(getPerson() != null && getPerson().getDocument() != null){
-            return getPerson().getDocument().getNumber();
+            return getPerson().getDocument();
         }
         return null;
     }

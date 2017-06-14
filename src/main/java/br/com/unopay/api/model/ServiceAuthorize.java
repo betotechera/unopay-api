@@ -7,6 +7,10 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
+import br.com.unopay.api.pamcary.translate.KeyDate;
+import br.com.unopay.api.pamcary.translate.KeyField;
+import br.com.unopay.api.pamcary.translate.KeyFieldReference;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
@@ -40,6 +44,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@KeyBase(key = "viagem")
 @EqualsAndHashCode(exclude = {"contract"})
 @Table(name = "service_authorize")
 public class ServiceAuthorize implements Serializable {
@@ -55,6 +60,7 @@ public class ServiceAuthorize implements Serializable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
+    @KeyField(baseField = "consumo.autorizacao.numero")
     @Column(name = "authorization_number")
     private String authorizationNumber;
 
@@ -69,12 +75,14 @@ public class ServiceAuthorize implements Serializable {
     private Establishment establishment;
 
     @ManyToOne
+    @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contract_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Contract contract;
 
     @ManyToOne
+    @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contractor_id")
     @JsonView({Views.Public.class,Views.List.class})
@@ -96,6 +104,7 @@ public class ServiceAuthorize implements Serializable {
     private Double eventQuantity;
 
     @Column(name = "event_value")
+    @KeyField(baseField = "abastecimento.valor")
     private BigDecimal eventValue;
 
     @Column(name = "value_fee")
@@ -103,6 +112,8 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "solicitation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
+    @KeyDate(pattern = "dd/MM/yyyy hh:mm:ss")
+    @KeyField(baseField = "abastecimento.consumo.datahora")
     private Date solicitationDateTime;
 
     @Column(name = "credit_insertion_type")
@@ -145,6 +156,9 @@ public class ServiceAuthorize implements Serializable {
     @Version
     @JsonIgnore
     private Integer version;
+
+    @KeyField(baseField = "abastecimento.operacao")
+    private String operation = "1";
 
     public String establishmentDocumentNumber(){
         if(getEstablishment() != null){

@@ -10,6 +10,9 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.pamcary.translate.KeyBase;
+import br.com.unopay.api.pamcary.translate.KeyDate;
+import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
@@ -48,6 +51,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@KeyBase(key = "viagem")
 @Table(name = "contract")
 @EqualsAndHashCode(exclude = {"contractEstablishments", "establishments"})
 public class Contract implements Serializable {
@@ -77,6 +81,7 @@ public class Contract implements Serializable {
     private List<Establishment> establishments;
 
     @Column(name="code")
+    @KeyField(baseField = "id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Integer code;

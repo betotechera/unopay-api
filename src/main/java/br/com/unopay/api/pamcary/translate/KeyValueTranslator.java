@@ -5,9 +5,7 @@ import static br.com.unopay.api.uaa.exception.Errors.BASE_KEY_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +16,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +32,7 @@ public class KeyValueTranslator {
     public List<FieldTO> extractFields(Object object){
         Map<String, Object> translate = extract(object);
         return translate.entrySet().stream()
-                .map( entry -> new FieldTO() {{ setKey(entry.getKey()); setValue(String.valueOf(entry.getValue()));}})
+                .map( entry -> new FieldTO(entry.getKey(),String.valueOf(entry.getValue())))
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +42,7 @@ public class KeyValueTranslator {
     }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
-        return getDeclaredFields(objectWithKeyAnnotation)
+        return ReflectionHelper.getDeclaredFields(objectWithKeyAnnotation)
                 .filter(this::isAnnotationPresent)
                 .map(field -> extractMap(objectWithKeyAnnotation, field))
                 .flatMap(m -> m.entrySet().stream())
@@ -62,7 +59,7 @@ public class KeyValueTranslator {
     }
 
     private void populateAnnotatedFields(Object object, Entry entry) {
-        getDeclaredFields(object)
+        ReflectionHelper.getDeclaredFields(object)
                 .filter(this::isAnnotationPresent)
                 .forEach(field -> populateField(object, entry, field));
     }
@@ -95,7 +92,7 @@ public class KeyValueTranslator {
         }
         Object reference = getObject(object, field);
         populateAnnotatedFields(reference, entry);
-        invokeSetter(object, field, reference);
+        ReflectionHelper.invokeSetter(object, field, reference);
     }
 
     private Object getObject(Object object, Field field) throws IllegalAccessException, InstantiationException {
@@ -154,7 +151,7 @@ public class KeyValueTranslator {
     private List getList(Object object, Field field) throws IllegalAccessException {
         Object fieldValue = field.get(object);
         if (fieldValue == null) {
-            invokeSetter(object, field, new ArrayList<>());
+            ReflectionHelper.invokeSetter(object, field, new ArrayList<>());
             fieldValue = field.get(object);
         }
         return ((List) fieldValue);
@@ -170,7 +167,7 @@ public class KeyValueTranslator {
     }
 
     private boolean objectContainsKey(final Object object, Object entryKey) {
-        return getDeclaredFields(object)
+        return ReflectionHelper.getDeclaredFields(object)
                 .anyMatch(f -> f.isAnnotationPresent(KeyField.class) && containsKeyValue(entryKey, f, object));
     }
 
@@ -200,13 +197,6 @@ public class KeyValueTranslator {
         return pattern.matcher(value);
     }
 
-    @SneakyThrows
-    private void invokeSetter(Object object, Field field, Object reference)  {
-        String methodName = "set" + StringUtils.capitalize(field.getName());
-        Method setMethod = object.getClass().getMethod(methodName, field.getType());
-        setMethod.invoke(object, reference);
-    }
-
     private boolean isAnnotationPresent(Field field) {
         return field.isAnnotationPresent(KeyField.class) || isReferencedField(field);
     }
@@ -227,7 +217,7 @@ public class KeyValueTranslator {
     }
 
     private void extractKey(Object object, Field field, Map<String, Object> map) {
-        String fieldValue = getFieldValue(field, object);
+        String fieldValue = KeyFieldValueResolver.getFieldValue(field, object);
         if (fieldValue != null) {
             String baseField = getField(field);
             map.put(getKey(baseField, object), fieldValue);
@@ -238,7 +228,7 @@ public class KeyValueTranslator {
     private Map<String, Object> extractReference(Object object, Field field, Map<String, Object> map)  {
         field.setAccessible(true);
         Object reference = field.get(object);
-        getDeclaredFields(reference).forEach(referField-> map.putAll(extractMap(reference,referField)));
+        ReflectionHelper.getDeclaredFields(reference).forEach(referField-> map.putAll(extractMap(reference,referField)));
         return map;
     }
 
@@ -259,10 +249,10 @@ public class KeyValueTranslator {
     private void extractWithIndexedKeys(Field field, Map<String, Object> map, List<Object> list) {
         final int[] count = {1};
         list.forEach(object -> {
-            getDeclaredFields(object).filter(this::isAnnotationPresent).forEach(objField -> {
+            ReflectionHelper.getDeclaredFields(object).filter(this::isAnnotationPresent).forEach(objField -> {
                 String keyField = getField(objField);
                 String indexedKey = String.format("%s%s.%s", getKeyBase(field).key(), count[0], keyField);
-                map.put(indexedKey, getFieldValue(objField, object));
+                map.put(indexedKey, KeyFieldValueResolver.getFieldValue(objField, object));
             });
             count[0]++;
         });
@@ -272,10 +262,6 @@ public class KeyValueTranslator {
         KeyField annotation = objField.getAnnotation(KeyField.class);
         String reverseField = annotation.reverseField();
         return StringUtils.isEmpty(reverseField) ? annotation.baseField() : reverseField;
-    }
-
-    private Stream<Field> getDeclaredFields(Object object) {
-        return Stream.of(object.getClass().getDeclaredFields());
     }
 
     private KeyBase getKeyBase(Field field) {
@@ -292,34 +278,5 @@ public class KeyValueTranslator {
             throw UnovationExceptions.unprocessableEntity().withErrors(BASE_KEY_REQUIRED);
         }
         return  String.format("%s.%s",keyBase.key(),baseField);
-    }
-
-    private String getFieldValue(Field field, Object object){
-        try {
-            field.setAccessible(true);
-            Object objectValue = field.get(object);
-            if(objectValue != null && field.getType().isEnum()){
-                return enumExtract(objectValue, field);
-            }
-            if(field.getType() == Date.class && field.isAnnotationPresent(KeyDate.class)){
-                String pattern = field.getAnnotation(KeyDate.class).pattern();
-                SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-                return dateFormat.format(objectValue);
-            }
-            return objectValue == null? null : String.valueOf(objectValue);
-        } catch (IllegalAccessException e) {
-            log.warn("could not get field value", e);
-            return  null;
-        }
-    }
-
-    @SneakyThrows
-    private String enumExtract(Object object, Field field) {
-        String methodName = field.getAnnotation(KeyEnumField.class).reverseMethodName();
-        if(StringUtils.isEmpty(methodName)){
-            return ((Enum) object).name();
-        }
-        Method parseMethod = object.getClass().getMethod(methodName);
-        return (String) parseMethod.invoke(object);
     }
 }
