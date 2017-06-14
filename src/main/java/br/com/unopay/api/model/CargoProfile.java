@@ -9,6 +9,7 @@ public enum CargoProfile implements DescriptableEnum {
     DRY_CARGO("Carga seca","1"), IN_BULK("A granel","2");
 
     private String description;
+
     private String code;
 
     CargoProfile(String description, String code) {
@@ -24,5 +25,9 @@ public enum CargoProfile implements DescriptableEnum {
         return Stream.of(CargoProfile.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
                 .reduce((firs, last) -> last).orElse(null);
+    }
+
+    public String getCode() {
+        return code;
     }
 }

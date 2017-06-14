@@ -83,14 +83,6 @@ public class CargoContract implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private String receiptObservation;
 
-    @Column(name = "cargo_weight")
-    @JsonView({Views.Public.class,Views.List.class})
-    private Double cargoWeight;
-
-    @Column(name = "damaged_items")
-    @JsonView({Views.Public.class,Views.List.class})
-    private Integer damagedItems;
-
     @Valid
     @Enumerated(STRING)
     @Column(name = "receipt_step")
@@ -110,7 +102,6 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name="travel_situation")
-    @KeyField(baseField = "quitacao.situacao")
     @KeyEnumField(valueOfMethodName = "from")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
@@ -124,6 +115,22 @@ public class CargoContract implements Serializable, Updatable {
     @KeyField(baseField = "id")
     @Column(name = "partner_id")
     private String partnerId;
+
+    @Valid
+    @Enumerated(STRING)
+    @Column(name="receipt_situation")
+    @KeyField(baseField = "quitacao.situacao")
+    @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
+    @JsonView({Views.Public.class,Views.List.class})
+    private ReceiptSituation receiptSituation;
+
+    @Valid
+    @Enumerated(STRING)
+    @Column(name="reason_receipt_situation")
+    @KeyField(baseField = "quitacao.situacao.motivo")
+    @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
+    @JsonView({Views.Public.class,Views.List.class})
+    private ReasonReceiptSituation reasonReceiptSituation;
 
     @KeyFieldListReference(listType = TravelDocument.class)
     @OneToMany(cascade = CascadeType.ALL)
@@ -140,10 +147,12 @@ public class CargoContract implements Serializable, Updatable {
     private Integer version;
 
     public void validate(){
-        if(DRY_CARGO.equals(cargoProfile) && ( damagedItems == null || damagedItems < 0)){
+        if(DRY_CARGO.equals(cargoProfile) &&
+                (travelDocuments != null && travelDocuments.stream().anyMatch(TravelDocument::negativeDamageItems))){
             throw UnovationExceptions.unprocessableEntity().withErrors(DAMAGED_ITEMS_REQUIRED);
         }
-        if(IN_BULK.equals(cargoProfile) && (cargoWeight == null || cargoWeight <= 0)){
+        if(IN_BULK.equals(cargoProfile) &&
+                (travelDocuments != null && travelDocuments.stream().anyMatch(TravelDocument::negativeCargoWeight))){
             throw UnovationExceptions.unprocessableEntity().withErrors(WEIGHT_REQUIRED);
         }
     }
@@ -162,6 +171,12 @@ public class CargoContract implements Serializable, Updatable {
         receiptStep = ReceiptStep.COLLECTED;
         paymentSource = PaymentSource.ESTABLISHMENT;
         travelSituation = TravelSituation.FINISHED;
+        receiptSituation = ReceiptSituation.ACCEPTED;
+        if(DocumentCaveat.S.equals(caveat)){
+            reasonReceiptSituation = ReasonReceiptSituation.CAVEAT_DOCUMENTATION;
+        }else{
+            reasonReceiptSituation = ReasonReceiptSituation.DOCUMENTATION_OK;
+        }
         if(travelDocuments != null){
             travelDocuments.forEach(TravelDocument::markAsDelivered);
         }

@@ -4,6 +4,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.pamcary.translate.KeyBase;
+import br.com.unopay.api.pamcary.translate.KeyDate;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,8 +57,8 @@ public class TravelDocument  implements Serializable, Updatable {
 
     @Valid
     @Enumerated(STRING)
-    @KeyEnumField
-    @KeyField(baseField = "sigla")
+    @KeyEnumField(reverseMethodName = "getCode")
+    @KeyField(baseField = "sigla", reverseField = "tipo")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
@@ -80,30 +81,29 @@ public class TravelDocument  implements Serializable, Updatable {
     @Enumerated(STRING)
     @Column(name = "caveat")
     @KeyEnumField
+    @KeyField(baseField = "ressalva")
     @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;
 
     @Column(name = "created_date_time")
     @JsonView({Views.Public.class,Views.List.class})
+    @KeyField(baseField = "data")
+    @KeyDate(pattern = "dd/MM/yyyy")
     private Date createdDateTime;
 
     @Column(name = "delivery_date_time")
     @JsonView({Views.Public.class,Views.List.class})
     private Date deliveryDateTime;
 
-    @Valid
-    @Enumerated(STRING)
-    @Column(name="receipt_situation")
-    @KeyEnumField(valueOfMethodName = "from")
+    @Column(name = "cargo_weight")
+    @KeyField(baseField = "peso")
     @JsonView({Views.Public.class,Views.List.class})
-    private ReceiptSituation receiptSituation;
+    private Double cargoWeight;
 
-    @Valid
-    @Enumerated(STRING)
-    @Column(name="reason_receipt_situation")
-    @KeyEnumField(valueOfMethodName = "from")
+    @Column(name = "damaged_items")
+    @KeyField(baseField = "itensavariados")
     @JsonView({Views.Public.class,Views.List.class})
-    private ReasonReceiptSituation reasonReceiptSituation;
+    private Integer damagedItems;
 
     @Version
     @JsonIgnore
@@ -111,12 +111,13 @@ public class TravelDocument  implements Serializable, Updatable {
 
     public void markAsDelivered(){
         situation = TravelDocumentSituation.DIGITIZED;
-        receiptSituation = ReceiptSituation.ACCEPTED;
         deliveryDateTime = new Date();
-        if(DocumentCaveat.S.equals(caveat)){
-            reasonReceiptSituation = ReasonReceiptSituation.CAVEAT_DOCUMENTATION;
-        }else{
-            reasonReceiptSituation = ReasonReceiptSituation.DOCUMENTATION_OK;
-        }
+    }
+
+    public boolean negativeDamageItems(){
+        return getDamagedItems() == null || getDamagedItems() < 0;
+    }
+    public boolean negativeCargoWeight(){
+        return getCargoWeight() == null || getCargoWeight() <= 0;
     }
 }

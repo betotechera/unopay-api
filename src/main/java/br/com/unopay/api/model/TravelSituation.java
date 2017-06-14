@@ -10,6 +10,9 @@ public enum TravelSituation  implements DescriptableEnum {
     CANCELED("CANCELADA","4"), ACTIVE("ATIVA","5");
 
     private String description;
+
+
+
     private String code;
 
     TravelSituation(String description, String code) {
@@ -19,6 +22,10 @@ public enum TravelSituation  implements DescriptableEnum {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getCode() {
+        return code;
     }
 
     public static TravelSituation from(String compareCode){

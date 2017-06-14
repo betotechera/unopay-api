@@ -10,34 +10,31 @@ import spock.lang.Unroll
 
 class CargoContractTest extends FixtureApplicationTest {
 
-
     void setup(){
         Integer.mixin(TimeCategory)
     }
-
-
-
 
     def 'should update me'(){
         given:
         CargoContract a = Fixture.from(CargoContract.class).gimme("valid")
         CargoContract b = Fixture.from(CargoContract.class).gimme("valid")
-        b.cargoWeight = 20D
         b.partnerId = '112233'
         when:
          a.updateMe(b)
 
         then:
         a.partnerId == b.partnerId
-        a.cargoWeight == b.cargoWeight
     }
 
     @Unroll
-    def 'given a CargoContract with  DRY_CARGO and #quantity damagedItems should throw error'(){
+    'given a CargoContract with  DRY_CARGO and #quantity damagedItems should throw error'(){
         given:
-        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
+        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("travelDocuments", documents)
+        }})
         contract.cargoProfile = CargoProfile.DRY_CARGO
-        contract.damagedItems = quantity
+        contract.travelDocuments.find().damagedItems = quantity
         when:
         contract.validate()
 
@@ -49,12 +46,16 @@ class CargoContractTest extends FixtureApplicationTest {
         _|-1
         _|null
     }
+
     @Unroll
-    def 'given a CargoContract with  IN_BULK and #weight cargoWeight should throw error'(){
+    'given a CargoContract with  IN_BULK and #weight cargoWeight should throw error'(){
         given:
-        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
+        CargoContract contract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("travelDocuments", documents)
+        }})
         contract.cargoProfile = CargoProfile.IN_BULK
-        contract.cargoWeight = weight
+        contract.travelDocuments.find().cargoWeight = weight
         when:
         contract.validate()
 

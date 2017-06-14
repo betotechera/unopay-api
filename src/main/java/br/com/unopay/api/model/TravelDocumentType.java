@@ -20,7 +20,7 @@ public enum TravelDocumentType implements DescriptableEnum{
     public String getDescription() {
         return description;
     }
-    public String getGetCode() {
+    public String getCode() {
         return code;
     }
 

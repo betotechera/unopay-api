@@ -5,7 +5,9 @@ import static br.com.unopay.api.uaa.exception.Errors.BASE_KEY_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -297,12 +299,27 @@ public class KeyValueTranslator {
             field.setAccessible(true);
             Object objectValue = field.get(object);
             if(objectValue != null && field.getType().isEnum()){
-                return ((Enum) objectValue).name();
+                return enumExtract(objectValue, field);
+            }
+            if(field.getType() == Date.class && field.isAnnotationPresent(KeyDate.class)){
+                String pattern = field.getAnnotation(KeyDate.class).pattern();
+                SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+                return dateFormat.format(objectValue);
             }
             return objectValue == null? null : String.valueOf(objectValue);
         } catch (IllegalAccessException e) {
             log.warn("could not get field value", e);
             return  null;
         }
+    }
+
+    @SneakyThrows
+    private String enumExtract(Object object, Field field) {
+        String methodName = field.getAnnotation(KeyEnumField.class).reverseMethodName();
+        if(StringUtils.isEmpty(methodName)){
+            return ((Enum) object).name();
+        }
+        Method parseMethod = object.getClass().getMethod(methodName);
+        return (String) parseMethod.invoke(object);
     }
 }

@@ -10,6 +10,11 @@ public enum ComplementaryTravelDocumentType implements DescriptableEnum {
     IBA("Licença IBAMA","23"), CTE("CT-e Assinado","24"), NFC("Canhoto NF Cliente","25"), CTB("CT-b","26");
 
     private String description;
+
+    public String getCode() {
+        return code;
+    }
+
     private String code;
 
     ComplementaryTravelDocumentType(String description, String code) {

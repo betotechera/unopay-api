@@ -32,8 +32,8 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("caveat", random(DocumentCaveat.class));
             add("createdDateTime", instant("this second"));
             add("deliveryDateTime",instant("5 seconds ago"));
-            add("receiptSituation",random(ReceiptSituation.class));
-            add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
+            add("cargoWeight", random(Double.class, range(1, 200)));
+            add("damagedItems", random(Integer.class,range(1, 200)));
         }});
 
         Fixture.of(TravelDocument.class).addTemplate("toPersist").inherits("valid", new Rule(){{
@@ -48,8 +48,6 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("caveat", random(DocumentCaveat.class));
             add("createdDateTime", instant("this second"));
             add("deliveryDateTime",instant("5 seconds ago"));
-            add("receiptSituation",random(ReceiptSituation.class));
-            add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
         }});
 
         Fixture.of(CargoContract.class).addTemplate("valid", new Rule(){{
@@ -58,12 +56,13 @@ public class FreigthReceiptTemplateLoader implements TemplateLoader {
             add("caveat", random(DocumentCaveat.class));
             add("cargoProfile",random(CargoProfile.class));
             add("receiptObservation", firstName());
-            add("cargoWeight", random(Double.class, range(1, 200)));
-            add("damagedItems", random(Integer.class,range(1, 200)));
+
             add("receiptStep",random(ReceiptStep.class));
             add("paymentSource", random(PaymentSource.class));
             add("travelSituation",random(TravelSituation.class));
             add("createdDateTime", instant("this second"));
+            add("receiptSituation",random(ReceiptSituation.class));
+            add("reasonReceiptSituation",random(ReasonReceiptSituation.class));
         }});
 
         Fixture.of(CargoContract.class).addTemplate("toPersist").inherits("valid", new Rule(){{

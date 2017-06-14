@@ -9,6 +9,11 @@ public enum ReceiptSituation implements DescriptableEnum {
     ACCEPTED("Aceita","0"), REFUSED("Recusada","1");
 
     private String description;
+
+    public String getCode() {
+        return code;
+    }
+
     private String code;
 
     ReceiptSituation(String description, String code) {

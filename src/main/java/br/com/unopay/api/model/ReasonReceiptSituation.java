@@ -10,6 +10,11 @@ public enum ReasonReceiptSituation implements DescriptableEnum{
     CAVEAT_DOCUMENTATION("Documentacao com ressalva.","3"), GAVE_UP("Desistencia","4");
 
     private String description;
+
+    public String getCode() {
+        return code;
+    }
+
     private String code;
 
     ReasonReceiptSituation(String description, String code) {

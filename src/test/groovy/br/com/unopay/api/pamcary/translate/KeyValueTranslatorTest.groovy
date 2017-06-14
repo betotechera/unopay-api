@@ -8,14 +8,60 @@ import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.pamcary.transactional.FieldTO
-import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
+import java.text.SimpleDateFormat
+
 class KeyValueTranslatorTest extends FixtureApplicationTest {
 
-    def 'should translate basic level'(){
+
+    def 'should translate all fields required in freight receipt confirmation'(){
+        given:
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture
+                .from(ComplementaryTravelDocument.class).gimme(1,"valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1,"valid")
+        CargoContract cargoContract = Fixture.from(CargoContract.class).gimme("valid", new Rule(){{
+            add("travelDocuments", documents)
+            add("complementaryTravelDocuments", complementaryDocuments)
+        }})
+        SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy")
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(cargoContract)
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.id' }?.value == cargoContract.partnerId
+        fieldTOS.find {
+            it.key == 'viagem.quitacao.situacao' }?.value == cargoContract.receiptSituation.getCode()
+        fieldTOS.find {
+            it.key == 'viagem.quitacao.situacao.motivo' }?.value == cargoContract.reasonReceiptSituation.getCode()
+        fieldTOS.find {
+            it.key == 'viagem.documento.qtde' }?.value?.toInteger() == cargoContract.getTravelDocuments().size()
+        fieldTOS.find {
+            it.key == 'viagem.documento1.tipo' }?.value == cargoContract.getTravelDocuments().find().type.getCode()
+        fieldTOS.find {
+            it.key == 'viagem.documento1.numero' }?.value == cargoContract.getTravelDocuments().find().documentNumber
+        fieldTOS.find {
+            it.key == 'viagem.documento1.ressalva' }?.value == cargoContract.getTravelDocuments().find().caveat.name()
+        fieldTOS.find {
+            it.key == 'viagem.documento1.data' }?.value == formater.format(cargoContract.getTravelDocuments().find().createdDateTime)
+        fieldTOS.find {
+            it.key == 'viagem.documento1.itensavariados' }?.value == cargoContract.getTravelDocuments().find().damagedItems.toString()
+        fieldTOS.find {
+            it.key == 'viagem.documento1.peso' }?.value == cargoContract.getTravelDocuments().find().cargoWeight.toString()
+        fieldTOS.find {
+            it.key == 'viagem.documento.complementar.qtde' }?.value?.toInteger() == cargoContract.getComplementaryTravelDocuments().size()
+        fieldTOS.find {
+            it.key == 'viagem.documento.complementar1.tipo' }?.value == cargoContract.getComplementaryTravelDocuments().find().type.getCode()
+        fieldTOS.find {
+            it.key == 'viagem.documento.complementar1.ressalva' }?.value == cargoContract.getComplementaryTravelDocuments().find().caveat.name()
+        fieldTOS.find {
+            it.key == 'viagem.documento.complementar1.data' }?.value == formater.format(cargoContract.getComplementaryTravelDocuments().find().deliveryDateTime)
+    }
+
+    def 'should translate basic list'(){
         given:
         List<ComplementaryTravelDocument> complementaryDocuments = Fixture
                                                         .from(ComplementaryTravelDocument.class).gimme(1,"valid")
@@ -33,14 +79,59 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         }?.value == String.valueOf(cargoContract.travelDocuments.size())
 
         fieldTOS.find {
-            it.key == 'viagem.documento1.sigla'
-        }?.value == cargoContract.travelDocuments.find().type.name()
+            it.key == 'viagem.documento1.tipo'
+        }?.value == cargoContract.travelDocuments.find().type.getCode()
         fieldTOS.find {
             it.key == 'viagem.documento1.numero'
         }?.value == cargoContract.travelDocuments.find().documentNumber
         fieldTOS.find {
             it.key == 'viagem.indicador.ressalva'
         }?.value == cargoContract.caveat.name()
+    }
+
+    def 'should translate base enum with enum reverse method'(){
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(new WithBaseField())
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.base.enum'
+        }?.value == EnumType.SIGLA.code
+    }
+
+    def 'should translate date'(){
+        given:
+        def withDate = new WithDate()
+        def date = new Date()
+        withDate.setDate(date)
+        SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy")
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(withDate)
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.date'
+        }?.value == formater.format(date)
+    }
+
+    def 'should translate reserve enum with enum reverse method'(){
+        when:
+        List<FieldTO> fieldTOS =  new KeyValueTranslator().extractFields(new WithReverseField())
+
+        then:
+        fieldTOS.find {
+            it.key == 'viagem.reverse.enum'
+        }?.value == EnumType.SIGLA.code
+    }
+
+    def 'should translate use base level when populate enum'(){
+        given:
+        def fieldsTO = [new FieldTO() {{ setKey("viagem.base.enum"); setValue("1") }}]
+        when:
+        def withReverseField = new KeyValueTranslator().populate(WithReverseField.class, fieldsTO)
+
+        then:
+        withReverseField.enumType == EnumType.SIGLA
     }
 
     def 'should translate reserve level'(){
@@ -87,8 +178,8 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
 
         then:
         fieldTOS.find {
-            it.key == 'viagem.documento.complementar1.sigla'
-        }?.value == contract.complementaryTravelDocuments.find().type.name()
+            it.key == 'viagem.documento.complementar1.tipo'
+        }?.value == contract.complementaryTravelDocuments.find().type.getCode()
 
         fieldTOS.find {
             it.key == 'viagem.documento.complementar.qtde'
@@ -245,23 +336,79 @@ class WithReverseField {
     @KeyField(baseField = "base", reverseField = "reverse")
     private String field = "field"
 
-    public void setField(String field){
-        this.field = field;
+
+    @KeyField(baseField = "base.enum", reverseField = "reverse.enum")
+    @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
+    private EnumType enumType = EnumType.SIGLA
+
+    String getField(){
+        this.field
     }
-    public String getField(){
-        this.field;
+
+    EnumType getEnumType() {
+        return enumType
     }
+}
+
+@KeyBase(key = "viagem")
+class WithBaseField {
+
+    @KeyField(baseField = "base")
+    private String field = "field"
+
+
+    @KeyField(baseField = "base.enum")
+    @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
+    private EnumType enumType = EnumType.SIGLA
+
+    String getField(){
+        this.field
+    }
+
+    EnumType getEnumType() {
+        return enumType
+    }
+}
+
+@KeyBase(key = "viagem")
+class WithDate {
+
+    Date getDate() {
+        return date
+    }
+
+    void setDate(Date date) {
+        this.date = date
+    }
+    @KeyDate(pattern = "dd/MM/yyyy")
+    @KeyField(baseField = "date")
+    private Date date
+
 }
 
 class WithOutBaseKeyAnnotation {
 
-    @KeyField(baseField = "viagem.base", reverseField = "viagem.reverse")
+    @KeyField(baseField = "base", reverseField = "reverse")
     private String field = "field"
 
-    public void setField(String field){
-        this.field = field;
+}
+
+enum EnumType {
+
+    SIGLA("Field", "1")
+
+    String getCode() {
+        return code
     }
-    public String getField(){
-        this.field;
+    private String code
+    private String description
+
+    EnumType(String description, String code){
+        this.description = description
+        this.code = code
+    }
+
+    static EnumType from(String compareCode){
+        return values().find { it.code == compareCode }
     }
 }
