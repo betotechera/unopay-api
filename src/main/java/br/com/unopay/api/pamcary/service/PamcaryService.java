@@ -11,7 +11,6 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.extern.slf4j.Slf4j;

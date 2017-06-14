@@ -99,13 +99,13 @@ public class FreightReceiptService {
     }
 
     private void authorizeFuelSupply(String userEmail, FreightReceipt freightReceipt) {
-        defineFueInstrumentCredit(freightReceipt);
+        defineFuelInstrumentCredit(freightReceipt);
         eventService.findByIdAndServiceType(freightReceipt.fuelEventId(), ServiceType.FUEL_ALLOWANCE);
         ServiceAuthorize fuelSupplyServiceAuthorize = new ServiceAuthorize().toFuelSupply(freightReceipt);
         serviceAuthorizeService.create(userEmail, fuelSupplyServiceAuthorize);
     }
 
-    private void defineFueInstrumentCredit(FreightReceipt freightReceipt) {
+    private void defineFuelInstrumentCredit(FreightReceipt freightReceipt) {
         ContractorInstrumentCredit credit = contractorInstrumentCreditService
                             .findByContractIdAndServiceType(freightReceipt.contractId(), ServiceType.FUEL_ALLOWANCE);
         freightReceipt.setInstrumentCredit(new ContractorInstrumentCredit(){{ setId(credit.getId());}});
