@@ -48,7 +48,7 @@ class KeyValueTranslatorTest extends FixtureApplicationTest {
         fieldTOS.find {
             it.key == 'viagem.documento1.data' }?.value == formater.format(cargoContract.getTravelDocuments().find().createdDateTime)
         fieldTOS.find {
-            it.key == 'viagem.documento1.itensavariados' }?.value == cargoContract.getTravelDocuments().find().damagedItems.toString()
+            it.key == 'viagem.documento1.itensavariados' }?.value?.toInteger() == cargoContract.getTravelDocuments().find().damagedItems
         fieldTOS.find {
             it.key == 'viagem.documento1.peso' }?.value == cargoContract.getTravelDocuments().find().cargoWeight.toString()
         fieldTOS.find {
