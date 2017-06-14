@@ -2,7 +2,6 @@ package br.com.unopay.api.pamcary.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.TravelDocument
