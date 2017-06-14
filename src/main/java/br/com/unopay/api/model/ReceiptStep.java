@@ -29,6 +29,6 @@ public enum ReceiptStep implements DescriptableEnum {
     public static ReceiptStep from(String compareCode){
         return Stream.of(ReceiptStep.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }

@@ -29,6 +29,6 @@ public enum ComplementaryTravelDocumentType implements DescriptableEnum {
     public static ComplementaryTravelDocumentType from(String compareCode){
         return Stream.of(ComplementaryTravelDocumentType.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }

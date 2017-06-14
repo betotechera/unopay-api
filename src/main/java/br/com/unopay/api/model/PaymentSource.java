@@ -23,6 +23,6 @@ public enum PaymentSource implements DescriptableEnum {
     public static PaymentSource from(String compareCode){
         return Stream.of(PaymentSource.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }

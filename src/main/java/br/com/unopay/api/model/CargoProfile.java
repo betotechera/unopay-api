@@ -24,7 +24,7 @@ public enum CargoProfile implements DescriptableEnum {
     public static CargoProfile from(String compareCode){
         return Stream.of(CargoProfile.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 
     public String getCode() {

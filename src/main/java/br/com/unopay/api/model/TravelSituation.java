@@ -31,6 +31,6 @@ public enum TravelSituation  implements DescriptableEnum {
     public static TravelSituation from(String compareCode){
         return Stream.of(TravelSituation.values())
                 .filter(c-> Objects.equals(c.code, compareCode))
-                .reduce((firs, last) -> last).orElse(null);
+                .findFirst().orElse(null);
     }
 }
