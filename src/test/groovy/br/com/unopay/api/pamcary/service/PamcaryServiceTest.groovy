@@ -1,9 +1,13 @@
 package br.com.unopay.api.pamcary.service
 
+import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.CargoContract
+import br.com.unopay.api.model.ComplementaryTravelDocument
+import br.com.unopay.api.model.TravelDocument
+import br.com.unopay.api.model.filter.CargoContractFilter
 import br.com.unopay.api.model.filter.EstablishmentFilter
-import br.com.unopay.api.model.filter.TravelDocumentFilter
 import br.com.unopay.api.service.CargoContractService
 import br.com.unopay.api.service.ComplementaryTravelDocumentService
 import br.com.unopay.api.service.FreightReceiptService
@@ -12,7 +16,7 @@ import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
-class PamcaryServiceTest extends SpockApplicationTests{
+class PamcaryServiceTest {
 
     @Autowired
     PamcaryService service
@@ -29,9 +33,10 @@ class PamcaryServiceTest extends SpockApplicationTests{
     @Autowired
     ComplementaryTravelDocumentService complementaryTravelDocumentService
 
-    def 'soap integration test'(){
+
+    def 'soap searchDoc integration test'(){
         given:
-        TravelDocumentFilter filter = createFilter()
+        CargoContractFilter filter = createFilter()
 
         when:
         CargoContract searchDoc = service.searchDoc(filter)
@@ -50,7 +55,7 @@ class PamcaryServiceTest extends SpockApplicationTests{
 
     def 'should list and save documents'(){
         given:
-        TravelDocumentFilter filter = createFilter()
+        CargoContractFilter filter = createFilter()
 
         when:
         def documents = freightReceiptService.listDocuments(filter)
@@ -65,8 +70,27 @@ class PamcaryServiceTest extends SpockApplicationTests{
         documents.complementaryTravelDocuments.each { complementaryTravelDocumentService.findById(it.getId())}
     }
 
-    private TravelDocumentFilter createFilter() {
-        new TravelDocumentFilter().with
+    def 'soap confirmDocDelivery integration test'(){
+        given:
+
+        List<ComplementaryTravelDocument> complementaryDocuments = Fixture.from(ComplementaryTravelDocument.class)
+                .gimme(1,"valid")
+        List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "valid")
+        CargoContract cargo = Fixture.from(CargoContract.class).gimme("valid",new Rule(){{
+            add("partnerId", "1125447")
+            add("travelDocuments", documents)
+            add("complementaryTravelDocuments", complementaryDocuments)
+        }})
+
+        when:
+        service.confirmDocDelivery('27064195503000',cargo)
+
+        then:
+        true
+    }
+
+    private CargoContractFilter createFilter() {
+        new CargoContractFilter().with
                 {
                     setContractCode('1125447')
                     setContractorDocument('64773370106')

@@ -8,7 +8,6 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
-import br.com.unopay.api.model.CargoProfile
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
@@ -22,7 +21,7 @@ import br.com.unopay.api.model.ReceiptStep
 import br.com.unopay.api.model.TravelDocument
 import br.com.unopay.api.model.TravelDocumentSituation
 import br.com.unopay.api.model.TravelSituation
-import br.com.unopay.api.model.filter.TravelDocumentFilter
+import br.com.unopay.api.model.filter.CargoContractFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
@@ -440,7 +439,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list documents should list from pamcary service'(){
         given:
         def receipt = createFreightReceipt()
-        def filter = new TravelDocumentFilter()
+        def filter = new CargoContractFilter()
 
         when:
         service.listDocuments(filter)
@@ -452,7 +451,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list documents should save returned documents'(){
         given:
         def cargo = createCargoContract()
-        def filter = new TravelDocumentFilter()
+        def filter = new CargoContractFilter()
         when:
         service.listDocuments(filter)
 
@@ -466,7 +465,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'when list known documents should update returned documents'(){
         given:
         def cargo = createCargoContract()
-        def filter = new TravelDocumentFilter()
+        def filter = new CargoContractFilter()
         def expectedCaveat = DocumentCaveat.N
         List<TravelDocument> documents = Fixture.from(TravelDocument.class).gimme(1, "toPersist", new Rule(){{
             add("documentNumber", cargo.travelDocuments.find().documentNumber)
@@ -498,7 +497,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         given:
 
         when:
-        service.listDocuments(new TravelDocumentFilter())
+        service.listDocuments(new CargoContractFilter())
 
         then:
         def ex = thrown(NotFoundException)

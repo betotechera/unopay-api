@@ -23,6 +23,12 @@ public class FieldTO implements Equals2, HashCode2
     protected String key;
     protected String value;
 
+    public FieldTO(){}
+    public FieldTO(String key, String value){
+        this.key = key;
+        this.value = value;
+    }
+
     public String getKey() {
         return key;
     }

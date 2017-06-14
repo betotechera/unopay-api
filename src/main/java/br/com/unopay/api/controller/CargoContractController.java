@@ -1,7 +1,7 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.CargoContract;
-import br.com.unopay.api.model.filter.TravelDocumentFilter;
+import br.com.unopay.api.model.filter.CargoContractFilter;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.CargoContractService;
 import br.com.unopay.api.service.FreightReceiptService;
@@ -37,7 +37,7 @@ public class CargoContractController {
     @ResponseStatus(OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/cargo-contracts/documents", method = GET)
-    public CargoContract listDocuments(TravelDocumentFilter filter) {
+    public CargoContract listDocuments(CargoContractFilter filter) {
         log.info("searching documents={}", filter);
         CargoContract cargoContract = freightReceiptService.listDocuments(filter);
         log.info("found cargoContract={}", cargoContract);

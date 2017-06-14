@@ -10,7 +10,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.model.filter.TravelDocumentFilter;
+import br.com.unopay.api.model.filter.CargoContractFilter;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -78,7 +78,7 @@ public class FreightReceiptService {
     }
 
     @Transactional
-    public CargoContract listDocuments(TravelDocumentFilter filter){
+    public CargoContract listDocuments(CargoContractFilter filter){
         CargoContract newCargoContract = getCargoContract(filter);
         newCargoContract.setMeUp();
         Optional<CargoContract> currentByPartnerId = cargoContractService
@@ -90,7 +90,7 @@ public class FreightReceiptService {
         return currentByPartnerId.orElseGet(() -> cargoContractService.save(newCargoContract));
     }
 
-    private CargoContract getCargoContract(TravelDocumentFilter filter) {
+    private CargoContract getCargoContract(CargoContractFilter filter) {
         CargoContract newCargoContract = pamcaryService.searchDoc(filter);
         if(newCargoContract == null || newCargoContract.getPartnerId() == null) {
             throw UnovationExceptions.notFound().withErrors(Errors.CARGO_CONTRACT_NOT_FOUND);

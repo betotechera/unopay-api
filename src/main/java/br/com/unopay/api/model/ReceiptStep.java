@@ -13,6 +13,10 @@ public enum ReceiptStep implements DescriptableEnum {
     private String description;
     private String code;
 
+    public String getCode() {
+        return code;
+    }
+
     ReceiptStep(String description, String code) {
         this.description = description;
         this.code = code;

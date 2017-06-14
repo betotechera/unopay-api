@@ -86,7 +86,8 @@ public class CargoContract implements Serializable, Updatable {
     @Valid
     @Enumerated(STRING)
     @Column(name = "receipt_step")
-    @KeyEnumField(valueOfMethodName = "from")
+    @KeyField(baseField = "digitalizacao.etapa.tipo")
+    @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private ReceiptStep receiptStep;

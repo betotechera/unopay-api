@@ -10,11 +10,11 @@ import lombok.Data;
 
 @Data
 @KeyBase(key = "viagem")
-public class TravelDocumentFilter implements Serializable {
+public class CargoContractFilter implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    public TravelDocumentFilter(){}
+    public CargoContractFilter(){}
 
     @KeyField(baseField = "favorecido.documento.numero")
     private String contractorDocument;
@@ -28,11 +28,4 @@ public class TravelDocumentFilter implements Serializable {
     @KeyField(baseField = "id")
     private String contractCode;
 
-    @JsonIgnore
-    @KeyField(baseField = "transacao.nsu")
-    private String transactionNsu;
-
-    public void defineTransaction(){
-        transactionNsu = UUID.randomUUID().toString();
-    }
 }
