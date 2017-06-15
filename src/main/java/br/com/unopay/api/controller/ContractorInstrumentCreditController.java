@@ -83,7 +83,7 @@ public class ContractorInstrumentCreditController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/payment-instruments/{instrumentId}/credits/{id}", method = RequestMethod.DELETE)
     public void cancel(@PathVariable String instrumentId, @PathVariable  String id) {
         log.info("canceling payment instrument credit id={}", id);
@@ -91,7 +91,7 @@ public class ContractorInstrumentCreditController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/contracts/{contractId}/payment-instruments/credits", method = RequestMethod.DELETE)
     public void cancelContractCredits(@PathVariable String contractId) {
         log.info("canceling payment instrument credit to contract id={}", contractId);
