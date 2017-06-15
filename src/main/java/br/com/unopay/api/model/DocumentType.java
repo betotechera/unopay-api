@@ -8,24 +8,32 @@ import java.util.List;
 
 public enum DocumentType{
 
-    CNPJ(LEGAL),
-    STATE_REGISTRATION(LEGAL),
-    CPF(PHYSICAL),
-    RNTRC,
-    PIS(PHYSICAL),
-    CNH(PHYSICAL),
-    PASSPORT(PHYSICAL),
-    RG(PHYSICAL);
+    CNPJ(LEGAL,"1"),
+    STATE_REGISTRATION(LEGAL,"0"),
+    CPF(PHYSICAL,"2"),
+    RNTRC("0"),
+    PIS(PHYSICAL,"0"),
+    CNH(PHYSICAL, "0"),
+    PASSPORT(PHYSICAL, "0"),
+    RG(PHYSICAL, "0");
 
     private List<PersonType> personTypes;
 
-    DocumentType() {
+    public String getCode() {
+        return code;
+    }
+
+    private String code;
+
+    DocumentType(String code) {
+        this.code = code;
         this.personTypes = new ArrayList<>();
         this.personTypes.addAll(Arrays.asList(PersonType.values()));
     }
 
 
-    DocumentType(PersonType personType) {
+    DocumentType(PersonType personType, String code) {
+        this.code = code;
         this.personTypes = new ArrayList<>();
         this.personTypes.add(personType);
     }

@@ -98,7 +98,7 @@ public class Contractor implements Serializable {
 
     public String getDocumentType(){
         if(getDocument() != null){
-            return getDocument().getType().name();
+            return getDocument().getType().getCode();
         }
         return null;
     }
