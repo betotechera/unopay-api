@@ -15,13 +15,14 @@ public class CacheConfig {
 
     public final static String BANKS =  "banks";
     public final static String BRAND_FLAGS =  "brand-flags";
+    public final static String CONTRACTOR_INSTRUMENTS =  "contractor-instruments";
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Primary
     @Bean
-    public RedisCacheManager cacheManager(ObjectMapper objectMapper) {
+    public RedisCacheManager cacheManager() {
         RedisCacheManager cache = new RedisCacheManager(redisTemplate);
         cache.setDefaultExpiration(0);
         cache.setUsePrefix(true);

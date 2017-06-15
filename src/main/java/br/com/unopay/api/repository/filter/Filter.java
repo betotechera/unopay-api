@@ -32,9 +32,11 @@ public class Filter<T> implements Specification<T> {
 
     private static final int JOIN_LEVEL_ONE_SIZE = 2;
     private static final int JOIN_LEVEL_TWO_SIZE = 3;
+    private static final int JOIN_LEVEL_TREE_SIZE = 4;
     private static final int SOURCE_FIELD_INDEX = 0;
     private static final int FIRST_JOIN_FIELD_INDEX = 1;
     private static final int SECOND_JOIN_FIELD_INDEX = 2;
+    private static final int TREE_JOIN_FIELD_INDEX = 3;
     private static final int MINIMUM_JOIN_SIZE = 2;
 
     public Filter(Object fields){
@@ -84,6 +86,12 @@ public class Filter<T> implements Specification<T> {
             Join<T, Object> firstJoin = root.join(fields[SOURCE_FIELD_INDEX]);
             Join<T, Object> secondJoin = firstJoin.join(fields[FIRST_JOIN_FIELD_INDEX]);
             return addOperator(secondJoin.get(fields[SECOND_JOIN_FIELD_INDEX]), pair.getValue());
+        }
+        if(fields.length == JOIN_LEVEL_TREE_SIZE){
+            Join<T, Object> firstJoin = root.join(fields[SOURCE_FIELD_INDEX]);
+            Join<T, Object> secondJoin = firstJoin.join(fields[FIRST_JOIN_FIELD_INDEX]);
+            Join<T, Object> treeJoin = secondJoin.join(fields[SECOND_JOIN_FIELD_INDEX]);
+            return addOperator(treeJoin.get(fields[TREE_JOIN_FIELD_INDEX]), pair.getValue());
         }
         throw new UnprocessableEntityException(String.format("Invalid filter join length: %s",fields.length));
     }

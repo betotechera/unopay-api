@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,11 +30,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@ToString(exclude = "paymentRuleGroups")
 @EqualsAndHashCode(exclude = "paymentRuleGroups")
 @Table(name = "issuer")
 public class Issuer implements Serializable{
@@ -63,7 +66,7 @@ public class Issuer implements Serializable{
     @JoinTable(name = "payment_rule_group_issuer",
             joinColumns = { @JoinColumn(name = "issuer_id") },
             inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
-    private List<PaymentRuleGroup> paymentRuleGroups;
+    private Set<PaymentRuleGroup> paymentRuleGroups;
 
 
     @Column(name = "tax")
