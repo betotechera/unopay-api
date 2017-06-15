@@ -28,10 +28,10 @@ import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.repository.PaymentInstrumentRepository
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.service.CreditPaymentAccountService
-import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.service.ProductService
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
@@ -72,7 +72,7 @@ class SetupCreator {
     private ContractService contractService
 
     @Autowired
-    private PaymentInstrumentService paymentInstrumentService
+    private PaymentInstrumentRepository paymentInstrumentRepository
 
     @Autowired
     private CreditPaymentAccountService creditPaymentAccountService
@@ -160,7 +160,7 @@ class SetupCreator {
             paymentInstrument.externalNumberId = number
         }
         paymentInstrument
-        paymentInstrumentService.save(paymentInstrument)
+        paymentInstrumentRepository.save(paymentInstrument)
     }
 
     Hirer createHirer() {
@@ -179,6 +179,7 @@ class SetupCreator {
         event.with {
             service = serviceUnderTest
             ncmCode = UUID.randomUUID()
+            name = UUID.randomUUID()
         }
         eventService.create(event)
     }
@@ -342,11 +343,11 @@ class SetupCreator {
 
     void encodeInstrumentPassword(ContractorInstrumentCredit instrumentCredit) {
         def instrumentPasswordUnderTest = instrumentCredit.paymentInstrument.password
-        instrumentCredit.paymentInstrument.with {
+        def byId = paymentInstrumentRepository.findById(instrumentCredit.paymentInstrumentId).get()
+        byId.with {
             password = passwordEncoder.encode(instrumentPasswordUnderTest)
         }
-        paymentInstrumentService.update(instrumentCredit.paymentInstrumentId,
-                instrumentCredit.paymentInstrument)
+        paymentInstrumentRepository.save(byId)
         instrumentCredit.paymentInstrument.with {
             password = instrumentPasswordUnderTest
         }

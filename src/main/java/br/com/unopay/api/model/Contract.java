@@ -128,15 +128,11 @@ public class Contract implements Serializable {
     private CreditInsertionType creditInsertionType;
 
     @Column(name = "begin_date")
-    @Temporal(TemporalType.DATE)
     @JsonView({Views.Public.class,Views.List.class})
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date begin;
 
     @Column(name = "end_date")
-    @Temporal(TemporalType.DATE)
     @JsonView({Views.Public.class,Views.List.class})
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date end;
 
     @Column(name = "issue_invoice")

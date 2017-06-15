@@ -20,11 +20,8 @@ class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {
     void 'valid service authorize credit should be created'() {
         given:
         String accessToken = getUserAccessToken()
-
-
         ServiceAuthorize credit = setupCreator.createServiceAuthorize()
-        credit.contract.begin = null
-        credit.contract.end = null
+
         when:
         def result = this.mvc.perform(post('/service-authorizations/?access_token={access_token}',accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
