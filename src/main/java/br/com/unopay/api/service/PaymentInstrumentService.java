@@ -66,13 +66,11 @@ public class PaymentInstrumentService {
     public void update(String id, PaymentInstrument instrument) {
         PaymentInstrument current = findById(id);
         validateReference(instrument);
-        current.updateMe(instrument);
-        if(instrument.hasPassword()){
-            String encodedPassword = passwordEncoder.encode(instrument.getPassword());
-            instrument.setPassword(encodedPassword);
-        }
-
         instrument.validate();
+        current.updateMe(instrument, "password");
+        if(instrument.isResetPassword()){
+            current.setPassword(null);
+        }
         try{
             repository.save(current);
         }catch (DataIntegrityViolationException e){

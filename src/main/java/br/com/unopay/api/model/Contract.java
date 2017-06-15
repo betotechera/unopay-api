@@ -48,6 +48,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
@@ -129,11 +130,13 @@ public class Contract implements Serializable {
     @Column(name = "begin_date")
     @Temporal(TemporalType.DATE)
     @JsonView({Views.Public.class,Views.List.class})
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date begin;
 
     @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     @JsonView({Views.Public.class,Views.List.class})
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date end;
 
     @Column(name = "issue_invoice")

@@ -29,7 +29,7 @@ class PamcaryReceiver {
     @RabbitListener(queues = Queues.PAMCARY_TRAVEL_DOCUMENTS)
     void freightReceiptNotify(String objectAsString) {
         FreightReceipt freightReceipt = getAsObject(objectAsString, FreightReceipt.class);
-        if(freightReceipt.getEstablishment() != null) {
+        if(freightReceipt != null && freightReceipt.getEstablishment() != null) {
             String documentNumber = freightReceipt.getEstablishment().documentNumber();
             log.info("confirmDocDelivery received to establishment={}", documentNumber);
             pamcaryService.confirmDocDelivery(documentNumber, freightReceipt.getCargoContract());
@@ -43,7 +43,7 @@ class PamcaryReceiver {
     @RabbitListener(queues = Queues.PAMCARY_AUTHORIZATION_SUPPLY)
     void authorizationSupplyNotify(String objectAsString) {
         ServiceAuthorize serviceAuthorize = getAsObject(objectAsString, ServiceAuthorize.class);
-        if(serviceAuthorize.getEstablishment() != null) {
+        if(serviceAuthorize != null && serviceAuthorize.getEstablishment() != null) {
             String documentNumber = serviceAuthorize.getEstablishment().documentNumber();
             log.info("confirmDocDelivery received to establishment={}", documentNumber);
             pamcaryService.supplyConfirm(documentNumber, serviceAuthorize);

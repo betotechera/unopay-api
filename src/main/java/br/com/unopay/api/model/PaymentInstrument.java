@@ -7,6 +7,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -74,7 +76,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     private Date expirationDate;
 
     @Column(name = "password")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonIgnore
     private String password;
 
     @Column(name = "situation")
@@ -90,6 +92,10 @@ public class PaymentInstrument implements Serializable, Updatable {
     @Version
     @JsonIgnore
     private Integer version;
+
+    @Transient
+    @JsonProperty
+    private boolean resetPassword;
 
     public void setMeUp(){
         createdDate = new Date();

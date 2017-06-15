@@ -97,6 +97,45 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         result.externalNumberId == instrument.externalNumberId
     }
 
+    def 'a known Instrument with password when reset password should reset password'(){
+        given:
+        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
+
+        when:
+        service.update(created.id, instrument.with { resetPassword = true; it })
+        PaymentInstrument result = service.findById(created.id)
+
+        then:
+        result.password == null
+    }
+
+    def 'a known Instrument with password when not reset password should not reset password'(){
+        given:
+        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
+
+        when:
+        service.update(created.id, instrument.with { resetPassword = false; it })
+        PaymentInstrument result = service.findById(created.id)
+
+        then:
+        result.password != null
+    }
+
+    def 'a known Instrument when update should not update password'(){
+        given:
+        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument created = service.save(instrument.with { password = null; it })
+
+        when:
+        service.update(created.id, instrument.with { password = "12345"; it })
+        PaymentInstrument result = service.findById(created.id)
+
+        then:
+        result.password == null
+    }
+
     def 'a known Instrument with unknown product id should be updated'(){
         given:
         PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")

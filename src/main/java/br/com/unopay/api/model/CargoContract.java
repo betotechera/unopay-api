@@ -205,7 +205,7 @@ public class CargoContract implements Serializable, Updatable {
     }
 
     public void updateMeAndReferences(CargoContract cargoContract) {
-        updateMe(cargoContract, "travelDocuments", "complementaryTravelDocuments", "version");
+        updateMe(cargoContract, "travelDocuments", "complementaryTravelDocuments");
         getTravelDocuments()
                 .forEach(d -> d.updateMe(cargoContract.travelDocumentByNumber(d.getDocumentNumber())));
         getComplementaryTravelDocuments()
