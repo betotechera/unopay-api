@@ -52,6 +52,7 @@ class AmqpConfig {
         return ()->{
             declareQueue(amqpAdmin, Queues.UNOPAY_NOTIFICAITON, Queues.UNOPAY_NOTIFICAITON);
             declareQueue(amqpAdmin, Queues.PAMCARY_TRAVEL_DOCUMENTS, Queues.PAMCARY_TRAVEL_DOCUMENTS);
+            declareQueue(amqpAdmin, Queues.PAMCARY_AUTHORIZATION_SUPPLY, Queues.PAMCARY_AUTHORIZATION_SUPPLY);
         };
     }
 

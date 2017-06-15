@@ -1,6 +1,7 @@
 package br.com.unopay.api.pamcary.service;
 
 import br.com.unopay.api.model.CargoContract;
+import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.CargoContractFilter;
 import br.com.unopay.api.pamcary.transactional.FieldTO;
 import br.com.unopay.api.pamcary.transactional.RequestTO;
@@ -67,6 +68,15 @@ public class PamcaryService {
         addEstablishmentDocument(establishmentDocument,fields);
         List<FieldTO> result = execute("ConfirmDocDelivery", fields);
         log.info("confirmDocDelivery result={}", getMessageDescription(result));
+        checkResult(result);
+    }
+
+    public void supplyConfirm(String establishmentDocument, ServiceAuthorize serviceAuthorize){
+        log.info("supplyConfirm request={}", serviceAuthorize);
+        List<FieldTO> fields = translator.extractFields(serviceAuthorize);
+        addEstablishmentDocument(establishmentDocument,fields);
+        List<FieldTO> result = execute("SupplyConfirm", fields);
+        log.info("supplyConfirm result={}", getMessageDescription(result));
         checkResult(result);
     }
 

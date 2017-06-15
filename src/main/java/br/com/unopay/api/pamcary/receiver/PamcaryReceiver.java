@@ -3,6 +3,7 @@ package br.com.unopay.api.pamcary.receiver;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.model.FreightReceipt;
+import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,8 +27,8 @@ class PamcaryReceiver {
     }
 
     @RabbitListener(queues = Queues.PAMCARY_TRAVEL_DOCUMENTS)
-    void freightReceiptNotify(String notificationAsString) {
-        FreightReceipt freightReceipt = getAsObject(notificationAsString, FreightReceipt.class);
+    void freightReceiptNotify(String objectAsString) {
+        FreightReceipt freightReceipt = getAsObject(objectAsString, FreightReceipt.class);
         if(freightReceipt.getEstablishment() != null) {
             String documentNumber = freightReceipt.getEstablishment().documentNumber();
             log.info("confirmDocDelivery received to establishment={}", documentNumber);
@@ -37,6 +38,18 @@ class PamcaryReceiver {
             return;
         }
         log.error("invalid freightReceipt received when try confirmDocDelivery");
+    }
+
+    @RabbitListener(queues = Queues.PAMCARY_AUTHORIZATION_SUPPLY)
+    void authorizationSupplyNotify(String objectAsString) {
+        ServiceAuthorize serviceAuthorize = getAsObject(objectAsString, ServiceAuthorize.class);
+        if(serviceAuthorize.getEstablishment() != null) {
+            String documentNumber = serviceAuthorize.getEstablishment().documentNumber();
+            log.info("confirmDocDelivery received to establishment={}", documentNumber);
+            pamcaryService.supplyConfirm(documentNumber, serviceAuthorize);
+            return;
+        }
+        log.error("invalid serviceAuthorize received when try supplyConfirm");
     }
 
     <T> T getAsObject(String notificationAsString, Class<T> klass) {

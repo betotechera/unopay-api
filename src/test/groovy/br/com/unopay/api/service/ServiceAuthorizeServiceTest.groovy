@@ -9,6 +9,8 @@ import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
@@ -49,6 +51,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     @Autowired
     PasswordEncoder passwordEncoder
 
+    Notifier notifierMock = Mock(Notifier)
+
     Contractor contractorUnderTest
     Contract contractUnderTest
     UserDetail userUnderTest
@@ -63,6 +67,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         eventUnderTest = setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
         userUnderTest = setupCreator.createUser()
         establishmentUnderTest = setupCreator.createEstablishment()
+        service.notifier = notifierMock
         Integer.mixin(TimeCategory)
         Date.mixin(TimeCategory)
     }
@@ -79,6 +84,31 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'when authorize supply should notify partner'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.serviceType = ServiceType.FUEL_ALLOWANCE
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        1 * notifierMock.notify(Queues.PAMCARY_AUTHORIZATION_SUPPLY, _)
+    }
+
+    void 'when authorize other service should not notify partner'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.event = setupCreator.createEvent(ServiceType.FREIGHT_RECEIPT)
+        serviceAuthorize.serviceType = ServiceType.FREIGHT_RECEIPT
+
+        when:
+        service.create(userUnderTest.email, serviceAuthorize)
+
+        then:
+        0 * notifierMock.notify(Queues.PAMCARY_AUTHORIZATION_SUPPLY, _)
+    }
+
     void 'new service authorize should be created with product fee value'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -88,7 +118,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.valueFee == eventUnderTest.service.taxVal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        result.valueFee == eventUnderTest.service.taxVal.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     void 'when new service authorize created should generate authorization number'(){
@@ -853,8 +883,6 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
         instrumentCredit.with { paymentInstrument.password = password; it }
     }
-
-
 
     private ServiceAuthorize createServiceAuthorize() {
         setupCreator.encodeInstrumentPassword(instrumentCreditUnderTest)
