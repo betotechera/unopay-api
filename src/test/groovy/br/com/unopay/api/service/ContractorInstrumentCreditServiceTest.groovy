@@ -517,7 +517,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         when:
         Page<ContractorInstrumentCredit> credits =  service
-                .findContractorCredits(contractUnderTest.id, contractorUnderTest.id, new UnovationPageRequest())
+                .findContractorCredits(contractUnderTest.id, contractorUnderTest.documentNumber, new UnovationPageRequest())
 
         then:
         that credits.getContent(), hasSize(1)
@@ -530,7 +530,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         when:
         Page<ContractorInstrumentCredit> credits =  service
-                .findContractorCredits('', contractorUnderTest.id, new UnovationPageRequest())
+                .findContractorCredits('', contractorUnderTest.documentNumber, new UnovationPageRequest())
 
         then:
         that credits.getContent(), hasSize(0)

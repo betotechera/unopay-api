@@ -1,7 +1,6 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.service.ContractorService;
-import static br.com.unopay.api.config.CacheConfig.BRAND_FLAGS;
 import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_INSTRUMENTS;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
@@ -15,7 +14,6 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,6 +64,11 @@ public class PaymentInstrumentService {
 
     public List<PaymentInstrument> findByContractorId(String contractorId) {
         List<PaymentInstrument> contracts = repository.findByContractorId(contractorId);
+        return contracts;
+    }
+
+    public List<PaymentInstrument> findByContractorDocument(String contractorDocumentNumber) {
+        List<PaymentInstrument> contracts = repository.findByContractorPersonDocumentNumber(contractorDocumentNumber);
         return contracts;
     }
 

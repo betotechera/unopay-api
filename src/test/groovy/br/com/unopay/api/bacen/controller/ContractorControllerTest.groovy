@@ -119,11 +119,11 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         String accessToken = getClientAccessToken()
         def instrumentCredit = setupCreator.createContractorInstrumentCredit()
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
-        def id = instrumentCredit.contract.contractor.id
+        def document = instrumentCredit.contract.contractor.documentNumber
         def contractId = instrumentCredit.contract.id
 
         when:
-        def result = this.mvc.perform(get("/contractors/{id}/credits?contractId={contractId}&access_token={access_token}",id,contractId, accessToken)
+        def result = this.mvc.perform(get("/contractors/{document}/credits?contractId={contractId}&access_token={access_token}",document,contractId, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -136,10 +136,10 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getClientAccessToken()
         PaymentInstrument instrumentCredit =  Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid")
-        def id = instrumentCredit.contractor.id
+        def document = instrumentCredit.contractor.documentNumber
 
         when:
-        def result = this.mvc.perform(get("/contractors/{id}/payment-instruments?&access_token={access_token}",id, accessToken)
+        def result = this.mvc.perform(get("/contractors/{document}/payment-instruments?&access_token={access_token}",document, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())

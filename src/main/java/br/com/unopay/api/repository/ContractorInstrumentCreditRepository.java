@@ -24,5 +24,5 @@ public interface ContractorInstrumentCreditRepository
 
     Optional<ContractorInstrumentCredit> findFirstByContractIdAndServiceType(String contractId,ServiceType serviceType);
 
-    Page<ContractorInstrumentCredit> findByContractIdAndContractContractorId(String contractId, String contractorId, Pageable pageable);
+    Page<ContractorInstrumentCredit> findByContractIdAndContractContractorPersonDocumentNumber(String contractId, String contractorId, Pageable pageable);
 }

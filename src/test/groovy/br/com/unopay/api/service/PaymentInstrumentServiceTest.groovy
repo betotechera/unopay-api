@@ -224,4 +224,16 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         then:
         that result, hasSize(1)
     }
+
+    def 'given a contractor credit instruments when find by contractor document should be found'(){
+        given:
+        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        service.save(instrument)
+
+        when:
+        List<PaymentInstrument> result = service.findByContractorDocument(instrument.contractor.getDocumentNumber())
+
+        then:
+        that result, hasSize(1)
+    }
 }

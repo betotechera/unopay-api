@@ -114,22 +114,23 @@ public class ContractorController {
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/contractors/{id}/credits", method = RequestMethod.GET)
-    public Results<ContractorInstrumentCredit> getCredits(@PathVariable  String id,@RequestParam(required = false)
-                                                    String contractId, @Validated UnovationPageRequest pageable) {
-        log.info("search Contractor credits id={}", id);
+    @RequestMapping(value = "/contractors/{contractorDocument}/credits", method = RequestMethod.GET)
+    public Results<ContractorInstrumentCredit> getCredits(@PathVariable  String contractorDocument,
+                                                          @RequestParam(required = false) String contractId,
+                                                          @Validated UnovationPageRequest pageable) {
+        log.info("search Contractor credits document={}", contractorDocument);
         Page<ContractorInstrumentCredit> page = contractorInstrumentCreditService
-                                                                    .findContractorCredits(contractId, id, pageable);
+                                                    .findContractorCredits(contractId, contractorDocument, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
 
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/contractors/{id}/payment-instruments", method = RequestMethod.GET)
-    public Results<PaymentInstrument> getInstruments(@PathVariable String id) {
-        log.info("search Contractor instruments id={}", id);
-        List<PaymentInstrument> contracts = paymentInstrumentService.findByContractorId(id);
+    @RequestMapping(value = "/contractors/{contractorDocument}/payment-instruments", method = RequestMethod.GET)
+    public Results<PaymentInstrument> getInstruments(@PathVariable String contractorDocument) {
+        log.info("search Contractor instruments document={}", contractorDocument);
+        List<PaymentInstrument> contracts = paymentInstrumentService.findByContractorDocument(contractorDocument);
         return new Results<>(contracts);
     }
 
