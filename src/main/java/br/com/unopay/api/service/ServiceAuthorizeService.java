@@ -2,8 +2,11 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
@@ -21,6 +24,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,8 @@ public class ServiceAuthorizeService {
     private EstablishmentService establishmentService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
+    @Setter
+    private Notifier notifier;
 
 
     @Autowired
@@ -45,7 +51,8 @@ public class ServiceAuthorizeService {
                                    UserDetailService userDetailService,
                                    EstablishmentService establishmentService,
                                    ContractService contractService,
-                                   PaymentInstrumentService paymentInstrumentService) {
+                                   PaymentInstrumentService paymentInstrumentService,
+                                   Notifier notifier) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
         this.eventService = eventService;
@@ -53,6 +60,7 @@ public class ServiceAuthorizeService {
         this.establishmentService = establishmentService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.notifier = notifier;
     }
 
     @Transactional
@@ -66,8 +74,15 @@ public class ServiceAuthorizeService {
         serviceAuthorize.setMeUp(instrumentCredit);
         instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
         serviceAuthorize.setAuthorizationNumber(generateAuthorizationNumber(serviceAuthorize));
-        serviceAuthorize.setSituation(TransactionSituation.AUTHORIZED);
-        return repository.save(serviceAuthorize);
+        ServiceAuthorize authorized = repository.save(serviceAuthorize);
+        notifySupplyWhenRequired(serviceAuthorize, authorized);
+        return authorized;
+    }
+
+    private void notifySupplyWhenRequired(ServiceAuthorize serviceAuthorize, ServiceAuthorize authorized) {
+        if(ServiceType.FUEL_ALLOWANCE.equals(serviceAuthorize.getServiceType())) {
+            notifier.notify(Queues.PAMCARY_AUTHORIZATION_SUPPLY, authorized);
+        }
     }
 
     private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {

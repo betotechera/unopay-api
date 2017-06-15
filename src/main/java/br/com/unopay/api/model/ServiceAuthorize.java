@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -157,6 +158,7 @@ public class ServiceAuthorize implements Serializable {
     @JsonIgnore
     private Integer version;
 
+    @Transient
     @KeyField(baseField = "abastecimento.operacao")
     private String operation = "1";
 
@@ -249,6 +251,7 @@ public class ServiceAuthorize implements Serializable {
         solicitationDateTime = new Date();
         setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
         setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
+        situation = TransactionSituation.AUTHORIZED;
     }
 
     public ServiceAuthorize toFuelSupply(FreightReceipt freightReceipt) {

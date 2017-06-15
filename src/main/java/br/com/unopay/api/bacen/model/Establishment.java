@@ -42,11 +42,13 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@ToString(exclude = "services")
 @EqualsAndHashCode(exclude = "services")
 @Table(name = "establishment")
 public class Establishment implements Serializable, Updatable {
