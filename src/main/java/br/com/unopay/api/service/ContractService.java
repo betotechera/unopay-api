@@ -147,9 +147,12 @@ public class ContractService {
         contractorService.getById(contractorId);
         Page<Contract> contractPage = getActiveContracts(contractorId,serviceType);
         List<Contract> contracts = contractPage.getContent();
-        return contracts.stream()
-                .filter(contract -> contract.validToEstablishment(establishmentId) )
-                .collect(Collectors.toList());
+        if(establishmentId !=null) {
+            return contracts.stream()
+                    .filter(contract -> contract.validToEstablishment(establishmentId))
+                    .collect(Collectors.toList());
+        }
+        return contracts;
     }
 
     private Page<Contract> getActiveContracts(String contractorId, Set<ServiceType> serviceType) {

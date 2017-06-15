@@ -96,7 +96,7 @@ public class ContractorController {
     @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
-    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam String establishmentId,@RequestParam Set<ServiceType> serviceType) {
+    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam(required = false) String establishmentId,@RequestParam(required = false) Set<ServiceType> serviceType) {
         log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
         List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType);
         return new Results<>(contracts);
