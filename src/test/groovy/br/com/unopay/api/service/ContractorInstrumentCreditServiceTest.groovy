@@ -13,8 +13,12 @@ import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
+import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import static spock.util.matcher.HamcrestSupport.that
 
 import java.math.RoundingMode
 
@@ -504,6 +508,32 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'CONTRACT_WITHOUT_CREDITS'
+    }
+
+    def 'should return all contractor credits'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        service.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
+
+        when:
+        Page<ContractorInstrumentCredit> credits =  service
+                .findContractorCredits(contractUnderTest.id, contractorUnderTest.id, new UnovationPageRequest())
+
+        then:
+        that credits.getContent(), hasSize(1)
+    }
+
+    def 'given contractor without credits when find should not be returned'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        service.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
+
+        when:
+        Page<ContractorInstrumentCredit> credits =  service
+                .findContractorCredits('', contractorUnderTest.id, new UnovationPageRequest())
+
+        then:
+        that credits.getContent(), hasSize(0)
     }
 
     private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {

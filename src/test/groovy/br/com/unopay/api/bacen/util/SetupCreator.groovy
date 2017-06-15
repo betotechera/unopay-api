@@ -137,7 +137,7 @@ class SetupCreator {
         paymentRuleGroupService.create(paymentRuleGroup)
     }
 
-    PaymentInstrument createPaymentInstrument(String label) {
+    PaymentInstrument createPaymentInstrument(String label = "valid") {
         PaymentInstrument paymentInstrument =  Fixture.from(PaymentInstrument.class).gimme(label)
         paymentInstrument.with {
             product = createProduct()

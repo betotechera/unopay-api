@@ -3,6 +3,10 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
@@ -25,10 +29,13 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     private static final String CONTRACTOR_ENDPOINT = '/contractors?access_token={access_token}'
     private static final String CONTRACTOR_ID_ENDPOINT = '/contractors/{id}?access_token={access_token}'
 
-    @Autowired
-    private PaymentRuleGroupRepository repository
 
-    
+    @Autowired
+    SetupCreator setupCreator
+
+    @Autowired
+    ContractorInstrumentCreditService contractorInstrumentCreditService
+
     void 'should create contractor'() {
         given:
             String accessToken = getClientAccessToken()
@@ -105,6 +112,39 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'known contractor credits should be found when find credits'() {
+        given:
+        String accessToken = getClientAccessToken()
+        def instrumentCredit = setupCreator.createContractorInstrumentCredit()
+        contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
+        def id = instrumentCredit.contract.contractor.id
+        def contractId = instrumentCredit.contract.id
+
+        when:
+        def result = this.mvc.perform(get("/contractors/{id}/credits?contractId={contractId}&access_token={access_token}",id,contractId, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].contract', is(notNullValue())))
+    }
+
+    void 'known contractor instruments should be found when find instruments'() {
+        given:
+        String accessToken = getClientAccessToken()
+        PaymentInstrument instrumentCredit =  Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid")
+        def id = instrumentCredit.contractor.id
+
+        when:
+        def result = this.mvc.perform(get("/contractors/{id}/payment-instruments?&access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].contractor', is(notNullValue())))
     }
 
     Contractor getContractor() {

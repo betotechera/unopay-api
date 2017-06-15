@@ -4,8 +4,12 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,5 +22,7 @@ public interface ContractorInstrumentCreditRepository
 
     Set<ContractorInstrumentCredit> findByContractId(String contractId);
 
-    Optional<ContractorInstrumentCredit> findFirstByContractIdAndServiceType(String contractId, ServiceType serviceType);
+    Optional<ContractorInstrumentCredit> findFirstByContractIdAndServiceType(String contractId,ServiceType serviceType);
+
+    Page<ContractorInstrumentCredit> findByContractIdAndContractContractorId(String contractId, String contractorId, Pageable pageable);
 }

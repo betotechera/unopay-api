@@ -392,15 +392,8 @@ public final class Errors {
             new UnovationError("CREDIT_EXPIRED","Credit expired.");
     public static final UnovationError CREDIT_UNAVAILABLE =
             new UnovationError("CREDIT_UNAVAILABLE","Credit unavailable.");
-
     public static final UnovationError CREDIT_FOR_SERVICE_TYPE_NOT_FOUND =
             new UnovationError("CREDIT_FOR_SERVICE_TYPE_NOT_FOUND","Credit for service type not found.");
-
-
-
-
-
-
 
     /* service authorize */
     public static final UnovationError ESTABLISHMENT_REQUIRED =

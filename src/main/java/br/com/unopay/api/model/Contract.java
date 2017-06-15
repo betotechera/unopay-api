@@ -11,7 +11,6 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.pamcary.translate.KeyBase;
-import br.com.unopay.api.pamcary.translate.KeyDate;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
@@ -40,15 +39,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity

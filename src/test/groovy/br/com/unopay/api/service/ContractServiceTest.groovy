@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
@@ -331,6 +332,24 @@ class ContractServiceTest extends SpockApplicationTests {
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
         service.addEstablishments(contract.id,contractEstablishment)
         List<Contract> contracts = service.findByEstablishmentId(contractEstablishment.establishment.id)
+
+        then:
+        that contracts, hasSize(1)
+    }
+
+    void 'should return valid contract contracts'(){
+        given:
+        Contract contract = createContract()
+        ContractEstablishment contractEstablishment = Fixture.from(ContractEstablishment.class).gimme("valid")
+        contract.situation = ContractSituation.ACTIVE
+        contract = service.save(contract)
+        when:
+        contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
+        service.addEstablishments(contract.id,contractEstablishment)
+        def contractorId=contract.contractor.id
+        def establishmentId = contractEstablishment.establishment.id
+        def services = [contract.serviceType.find()] as Set
+        List<Contract> contracts = service.getContractorValidContracts(contractorId, establishmentId, services)
 
         then:
         that contracts, hasSize(1)

@@ -170,4 +170,10 @@ public class ContractorInstrumentCreditService {
         Optional<ContractorInstrumentCredit> credit =  repository.findFirstByContractIdAndServiceType(contractId, serviceType);
         return credit.orElseThrow(()->UnovationExceptions.notFound().withErrors(CREDIT_FOR_SERVICE_TYPE_NOT_FOUND));
     }
+
+    public Page<ContractorInstrumentCredit> findContractorCredits(String contractId, String contractorId,
+                                                                                    UnovationPageRequest pageable) {
+        return repository.findByContractIdAndContractContractorId(contractId, contractorId,
+                new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
 }

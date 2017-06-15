@@ -5,7 +5,9 @@ import br.com.unopay.api.bacen.util.SetupCreator
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
@@ -209,5 +211,17 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
+    }
+
+    def 'given a contractor credit instruments when find by contractor should be found'(){
+        given:
+        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        service.save(instrument)
+
+        when:
+        List<PaymentInstrument> result = service.findByContractorId(instrument.contractorId())
+
+        then:
+        that result, hasSize(1)
     }
 }
