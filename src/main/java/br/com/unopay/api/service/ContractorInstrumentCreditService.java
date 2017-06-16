@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.model.CreditSituation;
 import static br.com.unopay.api.model.CreditSituation.PROCESSING;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
@@ -167,7 +168,8 @@ public class ContractorInstrumentCreditService {
     }
 
     ContractorInstrumentCredit findByContractIdAndServiceType(String contractId, ServiceType serviceType){
-        Optional<ContractorInstrumentCredit> credit =  repository.findFirstByContractIdAndServiceType(contractId, serviceType);
+        Optional<ContractorInstrumentCredit> credit =  repository
+                .findFirstByContractIdAndServiceTypeAndSituation(contractId, serviceType, CreditSituation.AVAILABLE);
         return credit.orElseThrow(()->UnovationExceptions.notFound().withErrors(CREDIT_FOR_SERVICE_TYPE_NOT_FOUND));
     }
 

@@ -45,7 +45,7 @@ class PamcaryReceiver {
         ServiceAuthorize serviceAuthorize = getAsObject(objectAsString, ServiceAuthorize.class);
         if(serviceAuthorize != null && serviceAuthorize.getEstablishment() != null) {
             String documentNumber = serviceAuthorize.getEstablishment().documentNumber();
-            log.info("confirmDocDelivery received to establishment={}", documentNumber);
+            log.info("supplyConfirm received to establishment={}", documentNumber);
             pamcaryService.supplyConfirm(documentNumber, serviceAuthorize);
             return;
         }

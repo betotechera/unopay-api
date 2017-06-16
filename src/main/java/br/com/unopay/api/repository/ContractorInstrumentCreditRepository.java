@@ -2,6 +2,7 @@ package br.com.unopay.api.repository;
 
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import java.util.List;
@@ -22,7 +23,11 @@ public interface ContractorInstrumentCreditRepository
 
     Set<ContractorInstrumentCredit> findByContractId(String contractId);
 
-    Optional<ContractorInstrumentCredit> findFirstByContractIdAndServiceType(String contractId,ServiceType serviceType);
+    Optional<ContractorInstrumentCredit> findFirstByContractIdAndServiceTypeAndSituation(String contractId,
+                                                                                         ServiceType serviceType,
+                                                                                         CreditSituation situation);
 
-    Page<ContractorInstrumentCredit> findByContractIdAndContractContractorPersonDocumentNumber(String contractId, String contractorId, Pageable pageable);
+    Page<ContractorInstrumentCredit> findByContractIdAndContractContractorPersonDocumentNumber(String contractId,
+                                                                                               String contractorId,
+                                                                                               Pageable pageable);
 }
