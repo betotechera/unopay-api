@@ -15,6 +15,7 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
+import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -229,6 +230,30 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.installmentNumber == 2L
+    }
+
+    def 'given a instrument credit with same service but with other contract then installment number should not be incremented'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
+        def otherContract = setupCreator.createPersistedContract(contractUnderTest.contractor, contractUnderTest.product)
+        def account = setupCreator.createCreditPaymentAccountFromContract(otherContract)
+        ContractorInstrumentCredit creditOtherContract = BeanUtils.cloneBean(instrumentCredit).with {
+            id = null
+            contract = otherContract
+            creditPaymentAccount = account
+            value = account.availableBalance - 0.01
+
+            it
+        }
+        insertCreditAndRollback(creditOtherContract)
+
+        when:
+        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
+
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.installmentNumber == 1L
     }
 
     def 'should create instrument credit with contractor contract'(){
@@ -552,14 +577,15 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         that credits.getContent(), hasSize(0)
     }
 
-    private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find()) {
+    private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find(),
+                                                              Contract contractTest = contractUnderTest) {
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
         instrumentCredit.with {
             paymentInstrument = paymentInstrumentUnderTest
             creditPaymentAccount = creditPaymentAccountUnderTest
             serviceType = svt
             value = creditPaymentAccountUnderTest.availableBalance - (Math.random() * 1)
-            contract = contractUnderTest
+            contract = contractTest
         }
         instrumentCredit
     }

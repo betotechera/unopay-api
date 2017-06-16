@@ -17,8 +17,8 @@ import org.springframework.stereotype.Repository;
 public interface ContractorInstrumentCreditRepository
         extends UnovationFilterRepository<ContractorInstrumentCredit,String, ContractorInstrumentCreditFilter> {
 
-    ContractorInstrumentCredit findFirstByServiceTypeAndContractProductIdOrderByCreatedDateTimeDesc(ServiceType type,
-                                                                                                    String productId);
+    ContractorInstrumentCredit findFirstByServiceTypeAndContractIdOrderByCreatedDateTimeDesc(ServiceType type,
+                                                                                             String productId);
 
     Optional<ContractorInstrumentCredit> findById(String id);
 

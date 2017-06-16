@@ -76,8 +76,8 @@ public class ContractorInstrumentCreditService {
 
     private void incrementInstallmentNumber(ContractorInstrumentCredit instrumentCredit) {
         ContractorInstrumentCredit last = repository
-                .findFirstByServiceTypeAndContractProductIdOrderByCreatedDateTimeDesc(instrumentCredit.getServiceType(),
-                                                                                        instrumentCredit.productId());
+                .findFirstByServiceTypeAndContractIdOrderByCreatedDateTimeDesc(instrumentCredit.getServiceType(),
+                                                                                        instrumentCredit.contractId());
         instrumentCredit.incrementInstallmentNumber(last);
     }
 
