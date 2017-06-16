@@ -285,4 +285,11 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     public void subtractValue(BigDecimal value) {
         this.value = this.value.subtract(value);
     }
+
+    public String productId(){
+        if(getContract()!=null && getContract().getProduct() != null) {
+            return getContract().getProduct().getId();
+        }
+        return null;
+    }
 }

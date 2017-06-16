@@ -215,6 +215,22 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.installmentNumber == 1L
     }
 
+    def 'given a instrument credit with same service but with pitfall then installment number should be incremented'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
+        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
+        insertCreditAndRollback(instrumentCredit)
+        insertCreditAndRollback(anotherCredit)
+
+        when:
+        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
+
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.installmentNumber == 2L
+    }
+
     def 'should create instrument credit with contractor contract'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -547,4 +563,10 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         }
         instrumentCredit
     }
+
+    private void insertCreditAndRollback(ContractorInstrumentCredit instrumentCredit) {
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
+    }
+
 }
