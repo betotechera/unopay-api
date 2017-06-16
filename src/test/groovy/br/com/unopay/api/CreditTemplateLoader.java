@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditInsertionType;
@@ -128,6 +129,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("availableBalance", random(BigDecimal.class, range(201, 400)));
             add("blockedBalance",random(BigDecimal.class));
             add("createdDateTime", instant("1 second from now"));
+            add("creditType", random(ContractorCreditType.class));
         }});
 
         Fixture.of(ContractorInstrumentCredit.class).addTemplate("toPersist")

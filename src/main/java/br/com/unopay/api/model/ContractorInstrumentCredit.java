@@ -126,6 +126,12 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date createdDateTime;
 
+    @Column(name = "credit_type")
+    @Enumerated(EnumType.STRING)
+    @JsonView({Views.Public.class,Views.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private ContractorCreditType creditType;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -273,6 +279,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         instrumentCredit.setIssuerFee(this.issuerFee);
         instrumentCredit.setPaymentInstrument(this.paymentInstrument);
         instrumentCredit.setServiceType(this.serviceType);
+        instrumentCredit.setCreditType(this.getCreditType());
         instrumentCredit.setValue(value);
         return instrumentCredit;
     }
