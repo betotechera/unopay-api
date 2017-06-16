@@ -46,6 +46,7 @@ public class KeyValueTranslator {
                 .filter(this::isAnnotationPresent)
                 .map(field -> extractMap(objectWithKeyAnnotation, field))
                 .flatMap(m -> m.entrySet().stream())
+                .filter(entry -> entry.getValue() != null)
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
 
@@ -228,7 +229,8 @@ public class KeyValueTranslator {
     private Map<String, Object> extractReference(Object object, Field field, Map<String, Object> map)  {
         field.setAccessible(true);
         Object reference = field.get(object);
-        ReflectionHelper.getDeclaredFields(reference).forEach(referField-> map.putAll(extractMap(reference,referField)));
+        ReflectionHelper.getDeclaredFields(reference)
+                .filter(this::isAnnotationPresent).forEach(referField-> map.putAll(extractMap(reference,referField)));
         return map;
     }
 
