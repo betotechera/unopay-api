@@ -21,7 +21,7 @@ create table establishment (
     bach_shipment_mail varchar(256) not null,
     alternative_mail varchar(256),
     cancellation_tolerance integer,
-    fee decimal(3,2),
+    tax decimal(3,2),
     accredited_network_id varchar(256) not null,
     brand_flag_id varchar(256) not null,
     logo_uri varchar(256),
