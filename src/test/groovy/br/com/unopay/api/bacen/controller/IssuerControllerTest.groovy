@@ -43,7 +43,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/issuers/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(issuer.with { id= extractId(location);  tax = 0.3d ; person.id = '1'; paymentAccount.id = '1'; it }))
+                .content(toJson(issuer.with { id= extractId(location);  fee = 0.3d ; person.id = '1'; paymentAccount.id = '1'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
@@ -82,7 +82,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.tax', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.fee', is(notNullValue())))
     }
 
     void 'all issuers should be found'() {
@@ -99,7 +99,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].tax', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].fee', is(notNullValue())))
     }
 
 

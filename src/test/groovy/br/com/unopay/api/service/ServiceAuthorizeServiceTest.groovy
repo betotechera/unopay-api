@@ -118,7 +118,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.valueFee == eventUnderTest.service.taxVal.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.valueFee == eventUnderTest.service.feeVal.setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     void 'when new service authorize created should generate authorization number'(){

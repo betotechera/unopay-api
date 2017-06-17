@@ -69,9 +69,9 @@ public class Issuer implements Serializable{
     private Set<PaymentRuleGroup> paymentRuleGroups;
 
 
-    @Column(name = "tax")
+    @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
-    private Double tax;
+    private Double fee;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
@@ -92,7 +92,7 @@ public class Issuer implements Serializable{
     Long version;
 
     public void updateMe(Issuer other){
-        setTax(other.getTax());
+        setFee(other.getFee());
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());

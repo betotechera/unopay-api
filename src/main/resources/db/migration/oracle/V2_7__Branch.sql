@@ -5,7 +5,7 @@ create table branch (
     contact_mail varchar(256) not null,
     invoice_mail varchar(256) not null,
     alternative_mail varchar(256),
-    tax decimal(3,2),
+    fee decimal(3,2),
     cancellation_tolerance integer,
     technical_contact varchar(256),
     branch_photo_uri varchar(256),

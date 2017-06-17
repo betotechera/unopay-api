@@ -14,7 +14,7 @@ class IssuerTest extends FixtureApplicationTest{
         issuerA.updateMe(issuerB)
 
         then:
-        issuerA.tax == issuerB.tax
+        issuerA.fee == issuerB.fee
         issuerA.paymentAccount == issuerB.paymentAccount
         issuerA.movementAccount == issuerB.movementAccount
         issuerA.paymentRuleGroupIds == issuerB.paymentRuleGroupIds

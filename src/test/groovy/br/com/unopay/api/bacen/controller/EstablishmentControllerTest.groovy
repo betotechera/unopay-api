@@ -56,7 +56,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/establishments/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(establishment.with { id= extractId(location);  tax = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
+                .content(toJson(establishment.with { id= extractId(location);  fee = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
@@ -95,7 +95,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.tax', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.fee', is(notNullValue())))
     }
 
     void 'all establishments should be found'() {
@@ -112,7 +112,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].tax', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].fee', is(notNullValue())))
     }
 
 

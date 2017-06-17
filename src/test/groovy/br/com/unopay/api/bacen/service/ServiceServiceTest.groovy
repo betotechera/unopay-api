@@ -100,57 +100,57 @@ class ServiceServiceTest extends SpockApplicationTests {
     def 'given a service with val tax only should be created'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
-        provider.setTaxVal(100.0)
-        provider.setTaxPercent(null)
+        provider.setFeeVal(100.0)
+        provider.setFeePercent(null)
 
         when:
         Service created = service.create(provider)
         def result = service.findById(created.id)
 
         then:
-        result.taxVal == 100.0
-        result.taxPercent == null
+        result.feeVal == 100.0
+        result.feePercent == null
     }
 
     def 'given a service with percent tax only should be created'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
-        provider.setTaxVal(null)
-        provider.setTaxPercent(1.0)
+        provider.setFeeVal(null)
+        provider.setFeePercent(1.0)
 
         when:
         Service created = service.create(provider)
         def result = service.findById(created.id)
 
         then:
-        result.taxVal == null
-        result.taxPercent == 1.0d
+        result.feeVal == null
+        result.feePercent == 1.0d
     }
 
     def 'given a service without tax should not be created'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
-        provider.setTaxVal(null)
-        provider.setTaxPercent(null)
+        provider.setFeeVal(null)
+        provider.setFeePercent(null)
 
         when:
         service.create(provider)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'LEAST_ONE_TAX_REQUIRED'
+        ex.errors.find().logref == 'LEAST_ONE_FEE_REQUIRED'
     }
     def 'given a service with a invalid tax percent it should not be created'(){
         given:
         Service provider = Fixture.from(Service.class).gimme("valid")
-        provider.setTaxPercent(2D)
+        provider.setFeePercent(2D)
 
         when:
         service.create(provider)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'INVALID_TAX_PERCENT'
+        ex.errors.find().logref == 'INVALID_FEE_PERCENT'
     }
     def 'given an service with the same name, it should not be updated'(){
         given:

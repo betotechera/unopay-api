@@ -102,9 +102,9 @@ public class Establishment implements Serializable, Updatable {
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
-    @Column(name = "tax")
+    @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
-    private Double tax;
+    private Double fee;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")

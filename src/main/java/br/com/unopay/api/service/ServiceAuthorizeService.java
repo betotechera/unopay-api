@@ -10,7 +10,6 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
@@ -105,7 +104,7 @@ public class ServiceAuthorizeService {
     private void validateEvent(ServiceAuthorize serviceAuthorize) {
         Event event = getAcceptableEvent(serviceAuthorize);
         serviceAuthorize.validateEvent(event);
-        serviceAuthorize.setValueFee(event.getService().getTaxVal());
+        serviceAuthorize.setValueFee(event.getService().getFeeVal());
     }
 
     private Event getAcceptableEvent(ServiceAuthorize serviceAuthorize) {

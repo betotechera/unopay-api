@@ -53,20 +53,20 @@ public class Service implements Serializable {
     @JsonView({Views.Public.class, Views.List.class})
     private ServiceType type;
 
-    @Column(name = "tax_val")
+    @Column(name = "fee_val")
     @JsonView({Views.Public.class, Views.List.class})
-    private BigDecimal taxVal;
+    private BigDecimal feeVal;
 
-    @Column(name = "tax_percent")
+    @Column(name = "fee_percent")
     @JsonView({Views.Public.class, Views.List.class})
-    private Double taxPercent;
+    private Double feePercent;
 
     public void validate() {
-        if(taxPercent == null && taxVal == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEAST_ONE_TAX_REQUIRED);
+        if(feePercent == null && feeVal == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.LEAST_ONE_FEE_REQUIRED);
         }
-        if ((taxPercent != null  && taxPercent < 0) || (taxPercent != null && taxPercent > 1D)) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_TAX_PERCENT);
+        if ((feePercent != null  && feePercent < 0) || (feePercent != null && feePercent > 1D)) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_FEE_PERCENT);
         }
 
     }
@@ -74,8 +74,8 @@ public class Service implements Serializable {
     public void updateModel(Service service) {
         this.name = service.getName();
         this.code = service.getCode();
-        this.taxPercent = service.getTaxPercent();
-        this.taxVal = service.getTaxVal();
+        this.feePercent = service.getFeePercent();
+        this.feeVal = service.getFeeVal();
     }
 
 }

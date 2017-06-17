@@ -3,8 +3,8 @@ create table service (
  type varchar(50) not null,
  name varchar(256) not null,
   code integer not null,
- tax_val decimal(20,2),
- tax_percent decimal(3,2)
+ fee_val decimal(20,2),
+ fee_percent decimal(3,2)
 );
 
 create table event (
@@ -17,8 +17,8 @@ create table event (
  constraint fk_service_event foreign key(service_id) REFERENCES service(id)
 );
 
-insert into service(id, code,type, name, tax_val, tax_percent) values ('1', 1,'ELECTRONIC_TOLL', 'Super servicço master', 2300.45, 0.3);
-insert into service(id, code,type, name, tax_val, tax_percent) values ('2', 2,'FREIGHT', 'Serviço teste', 5, 0.1);
+insert into service(id, code,type, name, fee_val, fee_percent) values ('1', 1,'ELECTRONIC_TOLL', 'Super servicço master', 2300.45, 0.3);
+insert into service(id, code,type, name, fee_val, fee_percent) values ('2', 2,'FREIGHT', 'Serviço teste', 5, 0.1);
 insert into event(id, service_id,ncm_code, name, request_quantity) values ('1', '2','1','Evento',0);
 
 

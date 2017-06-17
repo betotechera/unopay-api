@@ -32,12 +32,12 @@ public final class Errors {
             SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
     public static final UnovationError
             SERVICE_REQUIRED = new UnovationError("SERVICE_REQUIRED","Service required");
-    public static final UnovationError INVALID_TAX_PERCENT =
-            new UnovationError("INVALID_TAX_PERCENT","taxPercent must be between 0 and 1");
+    public static final UnovationError INVALID_FEE_PERCENT =
+            new UnovationError("INVALID_FEE_PERCENT","feePercent must be between 0 and 1");
     public static final UnovationError
             SERVICE_WITH_EVENTS = new UnovationError("SERVICE_WITH_EVENTS","Service has events");
-    public static final UnovationError LEAST_ONE_TAX_REQUIRED =
-            new UnovationError("LEAST_ONE_TAX_REQUIRED","Least one service tax required");
+    public static final UnovationError LEAST_ONE_FEE_REQUIRED =
+            new UnovationError("LEAST_ONE_FEE_REQUIRED","Least one service fee required");
     public static final UnovationError SERVICE_NAME_ALREADY_EXISTS =
             new UnovationError("SERVICE_NAME_ALREADY_EXISTS","Service name already exists");
     public static final UnovationError SERVICE_CODE_ALREADY_EXISTS =

@@ -127,7 +127,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
-            add("tax", random(Double.class));
+            add("fee", random(Double.class));
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
         }});
@@ -179,8 +179,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("name", firstName());
             add("code", random(Integer.class));
             add("type", random(ServiceType.class));
-            add("taxVal", random(BigDecimal.class));
-            add("taxPercent", random(Double.class));
+            add("feeVal", random(BigDecimal.class));
+            add("feePercent", random(Double.class));
         }});
 
         Fixture.of(Service.class).addTemplate("persisted").inherits("valid", new Rule(){{
@@ -233,7 +233,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bachShipmentMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
-            add("tax", random(Double.class, range(0.00, 1)));
+            add("fee", random(Double.class, range(0.00, 1)));
             add("network", one(AccreditedNetwork.class, "valid"));
             add("brandFlag", one(BrandFlag.class, "persisted"));
             add("logoUri", "/tmp/path");
@@ -255,7 +255,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
-            add("tax", random(Double.class, range(0.00, 1)));
+            add("fee", random(Double.class, range(0.00, 1)));
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("branchPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");

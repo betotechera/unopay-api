@@ -25,7 +25,7 @@ class BranchTest extends FixtureApplicationTest{
         branchA.gatheringChannel == branchB.gatheringChannel
         branchA.invoiceMail == branchB.invoiceMail
         branchA.person == branchB.person
-        branchA.tax == branchB.tax
+        branchA.fee == branchB.fee
         branchA.technicalContact == branchB.technicalContact
     }
 

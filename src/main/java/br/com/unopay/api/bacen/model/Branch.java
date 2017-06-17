@@ -80,9 +80,9 @@ public class Branch implements Serializable {
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
-    @Column(name = "tax")
+    @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
-    private Double tax;
+    private Double fee;
 
     @Column(name = "technical_contact")
     private String technicalContact;
@@ -157,7 +157,7 @@ public class Branch implements Serializable {
         gatheringChannel = other.getGatheringChannel();
         invoiceMail = other.getInvoiceMail();
         person = other.getPerson();
-        tax = other.getTax();
+        fee = other.getFee();
         technicalContact = other.getTechnicalContact();
 
     }

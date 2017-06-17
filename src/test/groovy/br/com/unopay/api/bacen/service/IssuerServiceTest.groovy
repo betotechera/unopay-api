@@ -172,14 +172,14 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         Issuer created = service.create(issuer)
 
-        issuer.with { tax = 0.3 }
+        issuer.with { fee = 0.3 }
         when:
         service.update(created.id, issuer)
         Issuer result = service.findById(created.id)
 
         then:
         result != null
-        result.tax == 0.3d
+        result.fee == 0.3d
     }
 
     def 'a person issuer should be updated'(){
@@ -264,7 +264,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
 
-        issuer.with { tax = 0.3 }
+        issuer.with { fee = 0.3 }
         when:
         service.update('', issuer)
 
@@ -279,7 +279,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer created = service.create(issuer)
         issuer.getPerson().setId(null)
 
-        issuer.with { tax = 0.3 }
+        issuer.with { fee = 0.3 }
         when:
         service.update(created.id, issuer)
 
@@ -293,7 +293,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         issuer.setPerson(null)
 
-        issuer.with { tax = 0.3 }
+        issuer.with { fee = 0.3 }
         when:
         service.update('', issuer)
 

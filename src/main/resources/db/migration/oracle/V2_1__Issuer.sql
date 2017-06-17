@@ -29,7 +29,7 @@ create table payment_bank_account (
 create table issuer (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
-    tax decimal(3,2),
+    fee decimal(3,2),
     payment_account_id varchar(256) not null,
     movement_account_id varchar(256) not null,
     version integer,
