@@ -324,7 +324,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CREDIT_EXPIRED'
+        assert ex.errors.first().logref == 'EXPIRED_CREDIT'
     }
 
     @Unroll

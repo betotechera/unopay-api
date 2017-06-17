@@ -388,8 +388,8 @@ public final class Errors {
 
     public static final UnovationError CONTRACT_WITHOUT_CREDITS =
             new UnovationError("CONTRACT_WITHOUT_CREDITS","Contact without credits.");
-    public static final UnovationError CREDIT_EXPIRED =
-            new UnovationError("CREDIT_EXPIRED","Credit expired.");
+    public static final UnovationError EXPIRED_CREDIT =
+            new UnovationError("EXPIRED_CREDIT","Expired credit.");
     public static final UnovationError CREDIT_UNAVAILABLE =
             new UnovationError("CREDIT_UNAVAILABLE","Credit unavailable.");
     public static final UnovationError FINAL_SUPPLY_CREDIT_NOT_FOUND =

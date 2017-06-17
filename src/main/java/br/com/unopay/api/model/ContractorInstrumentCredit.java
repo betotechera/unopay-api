@@ -6,7 +6,7 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_EXPIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EXPIRED_CREDIT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
 import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
@@ -258,7 +258,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     public void validate() {
         if(new Date().after(expirationDateTime)){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_EXPIRED);
+            throw UnovationExceptions.unprocessableEntity().withErrors(EXPIRED_CREDIT);
         }
         if(!CreditSituation.AVAILABLE.equals(situation)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_UNAVAILABLE);
