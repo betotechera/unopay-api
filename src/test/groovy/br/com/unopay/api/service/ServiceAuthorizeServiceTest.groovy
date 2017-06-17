@@ -317,7 +317,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     void 'given a expired credit should not be authorized'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest.with { expirationDateTime = 1.day.ago; it })
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest.with { expirationDateTime = 1.second.ago; it })
 
         when:
         service.create(userUnderTest.email, serviceAuthorize)
