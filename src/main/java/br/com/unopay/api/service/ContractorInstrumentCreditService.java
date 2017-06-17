@@ -2,6 +2,7 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
 import br.com.unopay.api.model.CreditSituation;
@@ -11,7 +12,7 @@ import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_FOR_SERVICE_TYPE_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.FINAL_SUPPLY_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
@@ -171,8 +172,10 @@ public class ContractorInstrumentCreditService {
 
     ContractorInstrumentCredit findByContractIdAndServiceType(String contractId, ServiceType serviceType){
         Optional<ContractorInstrumentCredit> credit =  repository
-                .findFirstByContractIdAndServiceTypeAndSituation(contractId, serviceType, CreditSituation.AVAILABLE);
-        return credit.orElseThrow(()->UnovationExceptions.notFound().withErrors(CREDIT_FOR_SERVICE_TYPE_NOT_FOUND));
+                .findFirstByContractIdAndServiceTypeAndSituationAndCreditType(contractId, serviceType,
+                                                                            CreditSituation.AVAILABLE,
+                                                                                ContractorCreditType.FINAL_PAYMENT);
+        return credit.orElseThrow(()->UnovationExceptions.notFound().withErrors(FINAL_SUPPLY_CREDIT_NOT_FOUND));
     }
 
     public Page<ContractorInstrumentCredit> findContractorCredits(String contractId, String contractorDocument,

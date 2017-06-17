@@ -10,6 +10,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.ContractorCreditType
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
@@ -75,6 +76,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void setup(){
         instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
         instrumentCreditUnderTest.serviceType = ServiceType.FUEL_ALLOWANCE
+        instrumentCreditUnderTest.creditType = ContractorCreditType.FINAL_PAYMENT
         contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
         currentUser = setupCreator.createUser()
         service.pamcaryService = pamcaryServiceMock
@@ -198,6 +200,21 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
                 .find { it.contract.id == freightReceipt.contract.id && it.serviceType == ServiceType.FUEL_ALLOWANCE}
     }
 
+    def 'given a freight receipt without final payment credit should not be authorize fuel supply'(){
+        given:
+        FreightReceipt freightReceipt = createFreightReceipt()
+        contractorInstrumentCreditRepository.save(instrumentCreditUnderTest.with {
+            creditType = ContractorCreditType.PAY_ADVANCE
+            it
+        })
+        when:
+        service.receipt(currentUser.email,freightReceipt)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'FINAL_SUPPLY_CREDIT_NOT_FOUND'
+    }
+
 
     def 'given a valid freight receipt with invalid event should not be authorize fuel supply'(){
         given:
@@ -223,7 +240,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'CREDIT_FOR_SERVICE_TYPE_NOT_FOUND'
+        assert ex.errors.first().logref == 'FINAL_SUPPLY_CREDIT_NOT_FOUND'
     }
 
     void 'given unknown contractor service should not be receipted'(){
