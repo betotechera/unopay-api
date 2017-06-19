@@ -256,7 +256,7 @@ COMMENT ON COLUMN cargo_contract.caveat IS 'Ressalva do Documento. Permite Valor
 COMMENT ON COLUMN cargo_contract.cargo_profile IS 'Perfil da Carga. Permite Valores DRY_CARGO("Carga seca"), IN_BULK("A granel");';
 COMMENT ON COLUMN cargo_contract.receipt_observation IS 'Observação Quitação';
 COMMENT ON COLUMN cargo_contract.receipt_step IS 'Etapa de Quitação - Permite Valores CONSULTED("Consultado"), COLLECTED("Coletado"), RECEIVED("Recebido"), DIGITIZED("Digitalizado"), ARCHIVED("Arquivado"), SENT("Enviado")';
-COMMENT ON COLUMN cargo_contract.payment_source IS 'Fonte do Pagamento. Permite os valores CONTRACTOR("Contratante"), ESTABLISHMENT("Estabelecimento") e PAMCARY("Pamcary")';
+COMMENT ON COLUMN cargo_contract.payment_source IS 'Fonte do Pagamento. Permite os valores HIRER("Contratante"), ESTABLISHMENT("Estabelecimento") e PAMCARY("Pamcary")';
 COMMENT ON COLUMN cargo_contract.travel_situation IS 'Situação da viagem. Permite os valores PENDING("PENDENTE"), OPENED("EM ABERTO"), FINISHED("FINALIZADA"), CANCELED("CANCELADA") e ACTIVE("ATIVA")';
 COMMENT ON COLUMN cargo_contract.created_date_time IS 'Data de Criação';
 COMMENT ON COLUMN cargo_contract.receipt_situation IS 'Situação da Quitação. Permite os valores ACCEPTED("Aceita") e REFUSED("Recusada")';
