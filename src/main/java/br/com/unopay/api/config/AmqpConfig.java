@@ -41,7 +41,7 @@ class AmqpConfig {
 
     private RetryOperationsInterceptor rejectAndDontRequeueInterceptor() {
         return RetryInterceptorBuilder.stateless()
-                .maxAttempts(5)
+                .maxAttempts(8)
                 .backOffOptions(1000, 2, 5000)
                 .recoverer(new RejectAndDontRequeueRecoverer())
                 .build();

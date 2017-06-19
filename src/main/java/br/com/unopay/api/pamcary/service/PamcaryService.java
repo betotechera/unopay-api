@@ -15,6 +15,7 @@ import java.util.Objects;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -133,7 +134,7 @@ public class PamcaryService {
 
     private void checkResult(List<FieldTO> result) {
         if(result.stream().anyMatch(this::isErrorMessage)){
-            throw UnovationExceptions.unprocessableEntity();
+            throw new AmqpRejectAndDontRequeueException(getMessageDescription(result));
         }
     }
 }
