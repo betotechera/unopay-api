@@ -4,7 +4,6 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -14,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -50,12 +48,6 @@ public class Partner implements Serializable {
     @JoinColumn(name="bank_account_id")
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
-
 
     public void updateModel(Partner hirer) {
         person.update(hirer.getPerson());

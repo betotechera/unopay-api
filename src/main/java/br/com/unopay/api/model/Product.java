@@ -159,11 +159,9 @@ public class Product implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal administrationCreditInsertionFee;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;
-
 
     public void validate(){
         if(getCode().length() > MAX_CODE_LENGTH){

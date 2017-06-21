@@ -105,7 +105,6 @@ public class TravelDocument  implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Integer damagedItems;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;

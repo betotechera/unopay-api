@@ -143,7 +143,6 @@ public class CargoContract implements Serializable, Updatable {
     @JoinColumn(name = "cargo_contract_id")
     private List<ComplementaryTravelDocument> complementaryTravelDocuments;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;

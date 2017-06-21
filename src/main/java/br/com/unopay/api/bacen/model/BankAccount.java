@@ -9,7 +9,6 @@ import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.TYPE_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -21,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -75,11 +73,6 @@ public class BankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccountType type;
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
-
 
     public void updateMe(BankAccount other){
         setBank(other.getBank());

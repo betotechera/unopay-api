@@ -3,7 +3,6 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -83,11 +81,6 @@ public class LegalPersonDetail implements Serializable{
     })
     @JsonView({Views.Public.class})
     private Document responsibleDocument;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
 
     public void update(LegalPersonDetail legalPersonDetail) {
         this.setResponsibleName(legalPersonDetail.getResponsibleName());

@@ -11,7 +11,6 @@ import static br.com.unopay.api.uaa.exception.Errors.HEAD_OFFICE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,7 +24,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -117,11 +115,6 @@ public class Branch implements Serializable {
     @Embedded
     @JsonView({Views.Public.class})
     private InvoiceReceipt invoiceReceipt;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
 
 
     public void validateCreate(){

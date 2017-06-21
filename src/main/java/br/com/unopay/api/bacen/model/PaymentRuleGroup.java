@@ -10,7 +10,6 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NAME_REQ
 import static br.com.unopay.api.uaa.exception.Errors.SHORT_PAYMENT_RULE_GROUP_NAME;
 import static br.com.unopay.api.uaa.exception.Errors.USER_RELATIONSHIP_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -22,7 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -81,11 +79,6 @@ public class PaymentRuleGroup implements Serializable, Updatable {
     @JoinColumn(name="institution_id")
     @JsonView({Views.Public.class})
     private Institution institution;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
 
     public void validate(){
         if (getName() == null) {

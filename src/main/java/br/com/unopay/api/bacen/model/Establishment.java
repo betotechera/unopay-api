@@ -17,7 +17,6 @@ import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Set;
@@ -38,7 +37,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -183,12 +181,6 @@ public class Establishment implements Serializable, Updatable {
     @Embedded
     @JsonView({Views.Public.class})
     private InvoiceReceipt invoiceReceipt;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
-
 
     public void validateCreate(){
         if(getBankAccount() == null) {

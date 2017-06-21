@@ -154,7 +154,6 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private TransactionSituation situation;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;

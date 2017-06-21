@@ -5,7 +5,6 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,7 +15,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,11 +60,6 @@ public class Service implements Serializable {
     @Column(name = "fee_percent")
     @JsonView({Views.Public.class, Views.List.class})
     private Double feePercent;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
 
     public void validate() {
         if(feePercent == null && feeVal == null){

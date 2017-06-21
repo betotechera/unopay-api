@@ -7,7 +7,6 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Objects;
@@ -18,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -68,11 +66,6 @@ public class Event implements Serializable {
     @Column(name ="quantity_unity")
     @JsonView({Views.Public.class,Views.List.class})
     private String quantityUnity;
-
-    @Column
-    @Version
-    @JsonIgnore
-    private Integer version;
 
     public void updateMe(Event other){
         setName(other.getName());

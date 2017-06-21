@@ -144,7 +144,6 @@ public class CreditPaymentAccount implements Serializable, Updatable {
     @Column(name = "payment_account_id")
     private String paymentAccount;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;

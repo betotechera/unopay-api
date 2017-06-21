@@ -115,11 +115,9 @@ public class Credit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal blockedValue;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;
-
 
     public boolean withProduct(){
         return product != null;

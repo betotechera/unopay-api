@@ -65,11 +65,9 @@ public class ContractEstablishment implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private ContractOrigin origin = UNOPAY;
 
-    @Column
     @Version
     @JsonIgnore
     private Integer version;
-
 
     public String getEstablishmentId() {
         return establishment.getId();
