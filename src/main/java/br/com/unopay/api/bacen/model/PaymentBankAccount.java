@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -66,6 +67,11 @@ public class PaymentBankAccount implements Serializable{
     @Column(name = "pre_paid_payment_days")
     @JsonView({Views.Public.class})
     private Integer prePaidPaymentDays;
+
+    @Column
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     @JsonIgnore
     public String getBankAccountId() {

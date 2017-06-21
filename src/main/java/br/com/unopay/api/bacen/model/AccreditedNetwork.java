@@ -6,6 +6,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Set;
@@ -21,6 +22,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -87,6 +89,11 @@ public class AccreditedNetwork implements Serializable {
     @JoinColumn(name="bank_account_id")
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
+
+    @Column
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     public AccreditedNetwork(){}
 

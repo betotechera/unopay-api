@@ -12,6 +12,7 @@ import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -72,6 +74,11 @@ public class Contractor implements Serializable {
     @Transient
     @KeyField(baseField = "documento.tipo", methodResolver = "getDocumentType")
     private String documentType;
+
+    @Column
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     public void validate(){
         if(person.isLegal() && this.rntrc ==null){

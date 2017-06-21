@@ -1,6 +1,7 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -9,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -38,6 +41,11 @@ public class PhysicalPersonDetail implements Serializable{
     @Column(name="birth_date")
     @JsonView({Views.Public.class,Views.List.class})
     private Date birthDate;
+
+    @Column
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     public void updateForHirer(PhysicalPersonDetail detail) {
         this.email = detail.getEmail();

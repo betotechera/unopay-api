@@ -1,12 +1,15 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,4 +31,10 @@ public class Bank implements Serializable {
     @Column(name = "name")
     @JsonView({Views.Public.class, Views.List.class})
     private String name;
+
+    @Column
+    @Version
+    @JsonIgnore
+    private Integer version;
+
 }

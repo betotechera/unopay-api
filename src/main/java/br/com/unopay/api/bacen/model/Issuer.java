@@ -87,9 +87,11 @@ public class Issuer implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount movementAccount;
 
+    @Column
     @Version
     @JsonIgnore
-    Long version;
+    private Integer version;
+
 
     public void updateMe(Issuer other){
         setFee(other.getFee());

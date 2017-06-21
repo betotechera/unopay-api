@@ -89,9 +89,11 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private String externalNumberId;
 
+    @Column
     @Version
     @JsonIgnore
     private Integer version;
+
 
     @Transient
     @JsonProperty

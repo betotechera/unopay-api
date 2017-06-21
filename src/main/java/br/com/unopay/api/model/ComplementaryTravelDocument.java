@@ -82,9 +82,11 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private Date deliveryDateTime;
 
+    @Column
     @Version
     @JsonIgnore
     private Integer version;
+
 
     public void markAsDelivered(){
         situation = TravelDocumentSituation.DIGITIZED;
