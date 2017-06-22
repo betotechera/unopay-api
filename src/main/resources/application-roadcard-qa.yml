@@ -1,0 +1,68 @@
+soap:
+  pamcary:
+    partner-number: '24122925000173'
+  client:
+    wsdl-location: classpath:wsdl/WSTransacional-wsdl.xml
+    transacional-service: "http://webservice.pamcard.jee.pamcary.com.br"
+    ssl:
+      key-store: classpath:wsdl/unovation.p12
+      key-store-password: 'UFK#@01a'
+      trust-store: classpath:wsdl/cacerts
+      trust-store-password: 'changeit'
+unopay:
+  credit:
+    defaultPaymentRuleGroup: '01'
+    defaultCreditInsertionType: 'PAMCARD_SYSTEM'
+  api: api.qa.unvlocal.com.br:8080
+  resetPassword:
+        url: 'http://unopay.qa.unovation.com.br/#/page/password/'
+  notification:
+    defaultTemplate: "email-templates/%s/%s.html"
+    subjectByEvent:
+      'PASSWORD_RESET' : "Foi requisitado a mudança de senha"
+      'CREATE_PASSWORD' : "Crie sua nova senha"
+      'USER_CREATED' : "Seu usuario foi criado"
+    defaultMail:
+      from: 'no-reply@roadcard.com.br'
+      personalFrom: 'RoadCard'
+  file-uploader:
+    configs:
+      avatar:
+        folder: avatar
+      ciot:
+        folder: ciot
+amazon:
+  s3:
+    bucketName: unopay-files
+    cdn:
+      uri: https://s3-us-west-2.amazonaws.com/unopay-files
+    accessKey: AKIAIVBZ43OSHKREK4XQ
+    secretKey: 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
+multipart:
+  max-file-size: 9000Kb
+spring:
+    jpa:
+        hibernate.ddl-auto: none
+        database-platform: org.hibernate.dialect.Oracle10gDialect
+        generate-ddl: false
+        database: ORACLE
+    datasource:
+        url: jdbc:oracle:thin:@172.31.1.103:1521:ORCL
+        username: administrator
+        password: thUHegu4wU5r
+        driverClassName: oracle.jdbc.OracleDriver
+    redis:
+        host: redis.unvlocal.com.br
+        port: 6379
+    rabbitmq:
+        host: rabbit.unvlocal.com.br
+        port: 5672
+        username: unopay
+        password: unopay
+    mail:
+      default-encoding: UTF-8
+      host: smtp.unvlocal.com.br
+      port: 1025
+      test-connection: false
+      properties:
+        mail.smtp.host: smtp.gmail.com
