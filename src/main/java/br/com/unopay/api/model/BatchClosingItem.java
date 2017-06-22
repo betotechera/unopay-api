@@ -48,9 +48,9 @@ public class BatchClosingItem implements Serializable {
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JoinColumn(name="authorization_id")
+    @JoinColumn(name="service_authorize_id")
     @JsonView({Views.Public.class,Views.List.class})
-    private ServiceAuthorize authorization;
+    private ServiceAuthorize serviceAuthorize;
 
     @Column(name = "document_number_invoice")
     @NotNull(groups = {Create.class, Update.class})
@@ -61,11 +61,11 @@ public class BatchClosingItem implements Serializable {
     @JsonView({Views.Public.class})
     private String invoiceNumber;
 
-    @Column(name = "invoice_situation")
+    @Column(name = "invoice_document_situation")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class})
-    private DocumentSituation invoiceSituation;
+    private DocumentSituation invoiceDocumentSituation;
 
     @Column(name = "invoice_document_uri")
     @JsonView({Views.Public.class})
@@ -75,7 +75,7 @@ public class BatchClosingItem implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class})
-    private IssueInvoiceType issueType;
+    private IssueInvoiceType issueInvoiceType;
 
     @JsonIgnore
     @Version

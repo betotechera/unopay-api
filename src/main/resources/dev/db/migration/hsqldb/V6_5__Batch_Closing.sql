@@ -22,15 +22,15 @@ create table batch_closing (
 create table batch_closing_item (
     id VARCHAR(256) PRIMARY KEY,
     batch_closing_id varchar(256) not null,
-    authorization_id varchar(256) not null,
+    service_authorize_id varchar(256) not null,
     document_number_invoice varchar(256) not null,
     invoice_number varchar(256),
-    invoice_situation varchar(100) not null,
+    invoice_document_situation varchar(100) not null,
     invoice_document_uri varchar(256),
     issue_invoice_type varchar(100) not null,
     version integer,
     constraint fk_batch_item foreign key(batch_closing_id) references batch_closing(id),
-    constraint fk_batch_item_auth foreign key(authorization_id) references service_authorize(id)
+    constraint fk_batch_item_auth foreign key(service_authorize_id) references service_authorize(id)
 );
 
 
