@@ -39,6 +39,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -157,6 +158,7 @@ public class Contract implements Serializable {
     private String rntrc;
 
     @JsonIgnore
+    @Version
     private Integer version;
 
     public void validate(){

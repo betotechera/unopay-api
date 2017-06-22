@@ -3,6 +3,8 @@ create table batch_closing (
     establishment_id varchar(256) not null,
     issuer_id varchar(256) not null,
     accredited_network_id varchar(256) not null,
+    hirer_id varchar(256) not null,
+    issue_invoice char(1) not null,
     closing_date_time TIMESTAMP not null,
     value decimal(20,2) not null,
     period varchar(256) not null,
@@ -13,21 +15,21 @@ create table batch_closing (
     version integer,
     constraint fk_batch_est foreign key(establishment_id) references establishment(id),
     constraint fk_batch_issuer foreign key(issuer_id) references issuer(id),
-    constraint fk_batch_network foreign key(accredited_network_id) references accredited_network(id)
+    constraint fk_batch_network foreign key(accredited_network_id) references accredited_network(id),
+    constraint fk_batch_hirer foreign key(hirer_id) references hirer(id)
 );
 
 create table batch_closing_item (
     id VARCHAR(256) PRIMARY KEY,
     batch_closing_id varchar(256) not null,
-    hirer_id varchar(256) not null,
     authorization_id varchar(256) not null,
-    fiscal_document TIMESTAMP not null,
+    document_number_invoice varchar(256) not null,
     invoice_number varchar(256),
     invoice_situation varchar(100) not null,
     invoice_document_uri varchar(256),
+    issue_invoice_type varchar(100) not null,
     version integer,
     constraint fk_batch_item foreign key(batch_closing_id) references batch_closing(id),
-    constraint fk_batch_item_hirer foreign key(hirer_id) references hirer(id),
     constraint fk_batch_item_auth foreign key(authorization_id) references service_authorize(id)
 );
 
