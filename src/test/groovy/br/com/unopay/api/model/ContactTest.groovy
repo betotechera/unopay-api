@@ -1,9 +1,9 @@
 package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.FixtureApplicationTest
 
-class ContactTest extends SpockApplicationTests {
+class ContactTest extends FixtureApplicationTest {
 
     def 'should be equals'(){
         given:

@@ -56,7 +56,3 @@ spring:
     test-connection: false
     properties:
       mail.smtp.host: smtp.gmail.com
-quartz:
-  delegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-  appMaxJobRetries: 10
-  appDelayBetweenFailedJobsInSeconds: 10

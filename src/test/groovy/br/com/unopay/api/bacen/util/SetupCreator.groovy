@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.util
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
@@ -18,6 +19,7 @@ import br.com.unopay.api.bacen.service.HirerService
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService
 import br.com.unopay.api.bacen.service.ServiceService
+import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
@@ -29,6 +31,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.repository.PaymentInstrumentRepository
+import br.com.unopay.api.service.BatchClosingService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.service.CreditPaymentAccountService
@@ -91,6 +94,23 @@ class SetupCreator {
 
     @Autowired
     private PasswordEncoder passwordEncoder
+
+    @Autowired
+    private BatchClosingService batchClosingService
+
+
+
+    BatchClosing createBatchClosing() {
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid", new Rule() {
+            {
+                add("establishment", createEstablishment())
+                add("issuer", createIssuer())
+                add("accreditedNetwork", createNetwork())
+                add("hirer", createHirer())
+            }
+        })
+        batchClosingService.save(batchClosing)
+    }
 
 
     UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()){

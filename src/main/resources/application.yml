@@ -31,3 +31,7 @@ springfox:
     swagger:
       v2:
         path: /docs
+quartz:
+  delegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+  appMaxJobRetries: 10
+  appDelayBetweenFailedJobsInSeconds: 10
