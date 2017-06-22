@@ -28,6 +28,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Integer.mixin(TimeCategory)
     }
 
+
     void 'credit with product should be inserted with product payment rule group'(){
         given:
         def knownProduct = setupCreator.createProduct()

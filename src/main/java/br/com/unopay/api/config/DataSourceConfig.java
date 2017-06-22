@@ -29,9 +29,10 @@ public class DataSourceConfig {
         EmbeddedDatabase embeddedDatabase = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.HSQL)
                 .continueOnError(true)
-                .setName("uaa")
+                .setName("unopay")
                 .build();
         return embeddedDatabase;
     }
+
 
 }

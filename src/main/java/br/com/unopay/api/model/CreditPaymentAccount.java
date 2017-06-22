@@ -178,6 +178,13 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         return null;
     }
 
+    public BigDecimal getAvailableBalance(){
+        if(availableBalance != null) {
+            return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return  BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
     public void updateMyBalance(Credit credit) {
         if(credit == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_REQUIRED_WHEN_UPDATE_BALANCE);
@@ -187,13 +194,6 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             return;
         }
         this.availableBalance = this.availableBalance.add(credit.getAvailableValue());
-    }
-
-    public BigDecimal getAvailableBalance(){
-        if(availableBalance != null) {
-            return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
-        }
-        return  BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public boolean withProduct(){
