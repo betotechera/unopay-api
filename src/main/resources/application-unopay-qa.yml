@@ -5,7 +5,7 @@ spring:
         generate-ddl: false
         database: ORACLE
     datasource:
-        url: jdbc:oracle:thin:@172.31.1.103:1521:ORCL
+        url: jdbc:oracle:thin:@172.31.42.109:1521:ORCL
         username: administrator
-        password: thUHegu4wU5r
+        password: LVTQB5MkBuH0
         driverClassName: oracle.jdbc.OracleDriver

@@ -30,18 +30,5 @@ class ContractorTest extends SpockApplicationTests {
         !shouldBeEquals
 
     }
-    def 'validate'(){
-        given:
-        Contractor a = Fixture.from(Contractor.class).gimme("valid")
-        a.person.type == PersonType.LEGAL
-        a.rntrc = null
-        when:
-        a.validate()
-
-        then:
-        thrown(UnprocessableEntityException)
-
-    }
-
 
 }
