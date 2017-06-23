@@ -73,15 +73,6 @@ public class Contractor implements Serializable {
     @KeyField(baseField = "documento.tipo", methodResolver = "getDocumentType")
     private String documentType;
 
-    public void validate(){
-        if(person.isLegal() && this.rntrc ==null){
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(Errors.RNTRC_REQUIRED_FOR_LEGAL_PERSON);
-
-        }
-
-    }
-
     public void updateModel(Contractor hirer) {
         person.update(hirer.getPerson());
         this.rntrc  = hirer.getRntrc();
