@@ -1,11 +1,6 @@
 spring:
-    jpa:
-        hibernate.ddl-auto: none
-        database-platform: org.hibernate.dialect.Oracle10gDialect
-        generate-ddl: false
-        database: ORACLE
-    datasource:
-        url: jdbc:oracle:thin:@172.31.42.109:1521:ORCL
-        username: administrator
-        password: LVTQB5MkBuH0
-        driverClassName: oracle.jdbc.OracleDriver
+  datasource:
+      url: jdbc:oracle:thin:@172.31.42.109:1521:ORCL
+      username: administrator
+      password: LVTQB5MkBuH0
+      driverClassName: oracle.jdbc.OracleDriver
