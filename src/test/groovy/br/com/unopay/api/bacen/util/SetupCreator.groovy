@@ -353,7 +353,7 @@ class SetupCreator {
             contractor = instrumentCreditUnderTest.contract.contractor
             event = createEvent(ServiceType.FUEL_ALLOWANCE)
             serviceType = ServiceType.FUEL_ALLOWANCE
-            eventValue = instrumentCreditUnderTest.availableBalance - 0.1
+            eventValue = 0.1
             user = createUser()
             contractorInstrumentCredit = instrumentCreditUnderTest
             establishment = establishmentUnderTest
