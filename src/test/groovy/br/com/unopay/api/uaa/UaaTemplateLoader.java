@@ -4,11 +4,18 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.model.CreditInsertionType;
+import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
+import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
+import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UaaTemplateLoader implements TemplateLoader {
 
@@ -18,46 +25,24 @@ public class UaaTemplateLoader implements TemplateLoader {
         Fixture.of(UserDetail.class).addTemplate("without-group", new Rule(){{
             add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
             add("email", "${name}@gmail.com");
-            add("name", firstName());
+            add("name", regex("\\d{2}\\w{8}"));
             add("type", one(UserType.class, "valid"));
             add("password", regex("\\d{5,8}"));
         }});
 
-        Fixture.of(UserDetail.class).addTemplate("without-institution", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", "${name}@gmail.com");
-            add("name", firstName());
+        Fixture.of(UserDetail.class).addTemplate("without-institution").inherits("without-group", new Rule(){{
             add("type", one(UserType.class, "institution"));
-            add("password", regex("\\d{5,8}"));
         }});
 
-
-        Fixture.of(UserDetail.class).addTemplate("with-institution", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", "${name}@gmail.com");
-            add("name", firstName());
-            add("type", one(UserType.class, "institution"));
+        Fixture.of(UserDetail.class).addTemplate("with-institution").inherits("without-group", new Rule(){{
             add("institution", one(Institution.class, "user"));
-            add("password", regex("\\d{5,8}"));
         }});
 
-
-
-        Fixture.of(UserDetail.class).addTemplate("with-group", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", "${name}@gmail.com");
-            add("password", regex("\\d{5,8}"));
-            add("name", firstName());
-            add("type", one(UserType.class, "valid"));
+        Fixture.of(UserDetail.class).addTemplate("with-group").inherits("without-group", new Rule(){{
             add("groups", has(1).of(Group.class, "valid"));
         }});
 
-        Fixture.of(UserDetail.class).addTemplate("group-with-unknown-role", new Rule(){{
-            add("id", uniqueRandom("1e765bed-5459-49fb-b6fa-e841960f4bd2", "89e349d8-0ee3-42ce-afaf-6ea3b9ceffc4", "254859ed-4690-4752-bfe5-608d48ee8b14", "e3ddf1e7-b6d1-48bd-a5e8-c7d8aa88e329"));
-            add("email", "${name}@gmail.com");
-            add("name", firstName());
-            add("password", regex("\\d{5,8}"));
-            add("type", one(UserType.class, "valid"));
+        Fixture.of(UserDetail.class).addTemplate("group-with-unknown-role").inherits("without-group", new Rule(){{
             add("groups", has(1).of(Group.class, "with-unknown-role"));
         }});
 

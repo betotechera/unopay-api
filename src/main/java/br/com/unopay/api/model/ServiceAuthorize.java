@@ -41,9 +41,10 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
-
+@Slf4j
 @Data
 @Entity
 @KeyBase(key = "viagem")
@@ -246,10 +247,14 @@ public class ServiceAuthorize implements Serializable {
         if(event != null && event.isRequestQuantity() && (eventQuantity == null || eventQuantity <= 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) == -1 || eventValue.compareTo(BigDecimal.ZERO) == 0){
+        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) == -1 ||
+                eventValue.compareTo(BigDecimal.ZERO) == 0){
+            log.info("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED {}", eventValue);
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
         if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) == -1){
+            log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
+                    getContractorInstrumentCredit().getAvailableBalance(), eventValue);
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
     }
