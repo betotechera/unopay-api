@@ -342,8 +342,8 @@ class SetupCreator {
         instrumentCredit
     }
 
-    ServiceAuthorize createServiceAuthorize(){
-        def instrumentCreditUnderTest = createContractorInstrumentCredit()
+    ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit instrumentCreditUnderTest = createContractorInstrumentCredit(),
+                                            Establishment establishmentUnderTest = createEstablishment() ){
         encodeInstrumentPassword(instrumentCreditUnderTest)
         def password = instrumentCreditUnderTest.paymentInstrument.password
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
@@ -355,7 +355,7 @@ class SetupCreator {
             serviceType = ServiceType.FUEL_ALLOWANCE
             user = createUser()
             contractorInstrumentCredit = instrumentCreditUnderTest
-            establishment = createEstablishment()
+            establishment = establishmentUnderTest
             contractorInstrumentCredit.paymentInstrument.password = password
             it
         }

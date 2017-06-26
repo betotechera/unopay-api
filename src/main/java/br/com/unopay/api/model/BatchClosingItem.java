@@ -1,12 +1,13 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +33,13 @@ public class BatchClosingItem implements Serializable {
     public static final long serialVersionUID = 1L;
 
     public BatchClosingItem(){}
+
+    public BatchClosingItem(ServiceAuthorize serviceAuthorize){
+        this.serviceAuthorize = serviceAuthorize;
+        this.documentNumberInvoice = serviceAuthorize.getContract().getHirerDocumentNumber();
+        this.invoiceDocumentSituation = DocumentSituation.APPROVED;
+        this.issueInvoiceType = IssueInvoiceType.BY_AUTHORIZATION;
+    }
 
     @Id
     @Column(name="id")
@@ -80,5 +88,14 @@ public class BatchClosingItem implements Serializable {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public BigDecimal eventValue(){
+        if(getServiceAuthorize() != null) {
+            return getServiceAuthorize().getEventValue();
+        }
+        return null;
+    }
+
+
 
 }

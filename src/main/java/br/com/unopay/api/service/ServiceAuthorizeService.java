@@ -22,6 +22,7 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -172,6 +173,10 @@ public class ServiceAuthorizeService {
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
+    }
+
+    public Stream<ServiceAuthorize> findByEstablishment(String establishmentId){
+        return repository.findByEstablishmentIdOrderByContractHirer(establishmentId);
     }
 
     public List<ServiceAuthorize> findAll(){

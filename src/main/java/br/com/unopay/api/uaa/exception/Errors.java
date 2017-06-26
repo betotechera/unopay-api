@@ -297,6 +297,8 @@ public final class Errors {
     /* Contract */
     public static final UnovationError CONTRACT_NOT_FOUND =
             new UnovationError("CONTRACT_NOT_FOUND","Contract not found.");
+    public static final UnovationError CONTRACTOR_CONTRACT_NOT_FOUND =
+            new UnovationError("CONTRACTOR_CONTRACT_NOT_FOUND","Contractor contract not found.");
     public static final UnovationError CONTRACT_ALREADY_EXISTS =
             new UnovationError("CONTRACT_ALREADY_EXISTS","Contract already exists.");
     public static  final UnovationError CONTRACT_END_IS_BEFORE_BEGIN =

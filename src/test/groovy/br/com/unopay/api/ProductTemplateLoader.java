@@ -19,33 +19,22 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class ProductTemplateLoader implements TemplateLoader {
 
     @Override
     public void load() {
         Fixture.of(Product.class).addTemplate("valid", new Rule(){{
-            Set<CreditInsertionType> creditInsertionTypes = new HashSet<CreditInsertionType>(){{{
-                addAll(Arrays.asList(CreditInsertionType.values()));
-            }}};
-
-            Set<ServiceType> serviceTypes = new HashSet<ServiceType>(){{{
-                addAll(Arrays.asList(ServiceType.values()));
-            }}};
-
-            Set<PaymentInstrumentType> paymentInstrumentTypes = new HashSet<PaymentInstrumentType>(){{{
-                addAll(Arrays.asList(PaymentInstrumentType.values()));
-            }}};
-
-            add("code", random("AB12", "C124", "ABC1", "CC24", "CD24", "DC24", "AVC4", "AAD1"));
-            add("name", firstName());
+            add("code", regex("\\w{2}\\d{2}"));
+            add("name",  regex("\\w{15}"));
             add("type", uniqueRandom(ProductType.class));
             add("issuer", one(Issuer.class, "valid"));
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
-            add("paymentInstrumentTypes", paymentInstrumentTypes);
-            add("serviceTypes", serviceTypes);
-            add("creditInsertionTypes", creditInsertionTypes);
+            add("paymentInstrumentTypes", has(1).of(PaymentInstrumentType.class));
+            add("serviceTypes", has(1).of(ServiceType.class));
+            add("creditInsertionTypes", has(1).of(CreditInsertionType.class));
             add("minimumCreditInsertion", random(BigDecimal.class, range(0.0, 0.1)));
             add("maximumCreditInsertion", random(BigDecimal.class, range(900, 9000000.00)));
             add("paymentInstrumentValidDays", random(Integer.class));

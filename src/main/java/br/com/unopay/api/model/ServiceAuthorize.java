@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -200,6 +201,13 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public String hirerId(){
+        if(getContract() != null && getContract().getHirer() != null) {
+            return getContract().getHirer().getId();
+        }
+        return null;
+    }
+
     public String contractorInstrumentCreditId(){
         if(getContractorInstrumentCredit() != null){
             return getContractorInstrumentCredit().getId();
@@ -267,4 +275,12 @@ public class ServiceAuthorize implements Serializable {
         serviceType = ServiceType.FUEL_ALLOWANCE;
         return this;
     }
+
+    public boolean containsSameEstablishment(ServiceAuthorize serviceAuthorize){
+        return serviceAuthorize != null &&
+                serviceAuthorize.getEstablishment() != null &&
+                getEstablishment() != null &&
+                Objects.equals(getEstablishment().getId(), serviceAuthorize.getEstablishment().getId());
+    }
+
 }

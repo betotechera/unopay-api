@@ -21,7 +21,7 @@ create table batch_closing (
 
 create table batch_closing_item (
     id VARCHAR(256) PRIMARY KEY,
-    batch_closing_id varchar(256) not null,
+    batch_closing_id varchar(256),
     service_authorize_id varchar(256) not null,
     document_number_invoice varchar(256) not null,
     invoice_number varchar(256),

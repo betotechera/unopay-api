@@ -12,31 +12,52 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
+@ToString(exclude = "batchClosingItems")
+@EqualsAndHashCode(exclude = "batchClosingItems")
 @Table(name = "batch_closing")
 public class BatchClosing implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
     public BatchClosing(){}
+
+    public BatchClosing(ServiceAuthorize serviceAuthorize){
+        this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();
+        this.establishment = serviceAuthorize.getEstablishment();
+        this.hirer = serviceAuthorize.getContract().getHirer();
+        this.issuer = serviceAuthorize.getContract().getProduct().getIssuer();
+        this.period = serviceAuthorize.getEstablishment().getCheckout().getPeriod();
+        this.issueInvoice = serviceAuthorize.getContract().isIssueInvoice();
+        this.closingDateTime = new Date();
+        this.paymentDateTime = new Date();
+        this.paymentReleaseDateTime = new Date();
+        this.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH;
+    }
 
     @Id
     @Column(name="id")
@@ -105,6 +126,10 @@ public class BatchClosing implements Serializable {
     @JsonView({Views.Public.class})
     private Date paymentDateTime;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "batch_closing_id")
+    private List<BatchClosingItem> batchClosingItems;
+
     @Column(name = "payment_id")
     @JsonView({Views.Public.class})
     private String paymentId;
@@ -113,4 +138,20 @@ public class BatchClosing implements Serializable {
     @Version
     private Integer version;
 
+    public void updateValue(BigDecimal value){
+        if(this.value ==null ){
+            this.value = value;
+            return;
+        }
+        this.value = this.value.add(value);
+    }
+
+    public void addItem(BatchClosingItem batchClosingItem){
+        if(this.batchClosingItems == null){
+            this.batchClosingItems = new ArrayList<>();
+        }
+        if(!batchClosingItems.contains(batchClosingItem)) {
+            this.batchClosingItems.add(batchClosingItem);
+        }
+    }
 }

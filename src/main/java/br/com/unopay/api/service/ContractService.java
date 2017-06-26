@@ -10,6 +10,7 @@ import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
@@ -84,7 +85,7 @@ public class ContractService {
         List<Contract> contracts = repository.findByContractorId(contractorId);
         Optional<Contract> contract = contracts.stream()
                                     .filter(c -> Objects.equals(c.getId(), contractId)).findFirst();
-        return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
+        return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACTOR_CONTRACT_NOT_FOUND));
     }
 
     public void delete(String id) {

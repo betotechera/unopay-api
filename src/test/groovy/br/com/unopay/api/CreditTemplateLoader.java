@@ -28,23 +28,15 @@ public class CreditTemplateLoader implements TemplateLoader {
     public void load() {
         Fixture.of(PaymentInstrument.class).addTemplate("valid", new Rule(){{
             add("type", random(PaymentInstrumentType.class));
-            add("number", random("9a7f16d6",
-                    "a6f76a78-5b9c", "42bebfbd-02a7",
-                    "20aeb4c8-5d4a", "62f0f5f4-de11",
-                    "d5756a65-cf17", "b39204ad-fc90",
-                    "0d029ab6-e8e4", "06f25495-77ec"));
+            add("number", regex("\\d{5}\\.\\w{5}"));
             add("product", one(Product.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("createdDate", instant("now"));
             add("expirationDate", afterDate(new SimpleDateFormat("yyyy-MM-dd")
                     .format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
-            add("password", random("AABCD555", "!@#$$%#$#KMKK", "@##$$$$$"));
+            add("password", regex("\\W{3}\\w{3}\\d{2}"));
             add("situation", random(PaymentInstrumentSituation.class));
-            add("externalNumberId", random("9a7f16d6-a974-4730-a929-b167c0ad30f0",
-                    "a6f76a78-5b9c-4083-835f-44ad879a99ea", "42bebfbd-02a7-4094-a123-712d96b1a2d7",
-                    "20aeb4c8-5d4a-4d05-8ac5-dc5474ef6699", "62f0f5f4-de11-44e6-afa9-d834c2b33287",
-                    "d5756a65-cf17-4bec-82ae-1f2fb389f49f", "b39204ad-fc90-46eb-9bba-b1247bc24874",
-                    "0d029ab6-e8e4-4817-ba57-9222c8b9bd01", "06f25495-77ec-4e30-b5aa-aa257d677c4f"));
+            add("externalNumberId", regex("\\d{10}\\.\\w{5}"));
         }});
 
         Fixture.of(PaymentInstrument.class).addTemplate("without-product")
@@ -68,7 +60,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class, range(1, 200)));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
-            add("cnabId",random("56465456", "78979879897"));
+            add("cnabId",regex("\\d{10}"));
             add("availableValue", random(BigDecimal.class, range(1, 200)));
             add("blockedValue",random(BigDecimal.class, range(1, 200)));
         }});
@@ -108,7 +100,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("creditNumber",random(Long.class));
             add("insertionCreatedDateTime",beforeDate("24/04/2017",
                     new SimpleDateFormat("dd/MM/yyyy")));
-            add("value",random(BigDecimal.class, range(1, 200)));
+            add("value",random(BigDecimal.class, range(21, 200)));
             add("situation",random(CreditSituation.class));
             add("creditSource", firstName());
             add("availableBalance", random(BigDecimal.class, range(201, 400)));
@@ -121,7 +113,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("serviceType", random(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
             add("creditInsertionType",random(CreditInsertionType.class));
             add("installmentNumber",random(Long.class));
-            add("value",random(BigDecimal.class, range(1, 200)));
+            add("value",random(BigDecimal.class, range(21, 200)));
             add("expirationDateTime",instant("1 day from now"));
             add("issuerFee",random(BigDecimal.class, range(1, 200)));
             add("creditPaymentAccount", one(CreditPaymentAccount.class, "valid"));
