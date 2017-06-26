@@ -3,7 +3,7 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
@@ -21,14 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BranchControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Establishment headOfficeUnderTest
 
     void setup(){
         flyway.clean()
         flyway.migrate()
-        headOfficeUnderTest = setupCreator.createHeadOffice()
+        headOfficeUnderTest = fixtureCreator.createHeadOffice()
     }
 
     void 'valid branch should be created'() {

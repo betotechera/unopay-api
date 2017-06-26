@@ -1,7 +1,7 @@
 package br.com.unopay.api.service
 
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -15,11 +15,11 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
     PaymentInstrumentService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     def 'a new Instrument should be created'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
 
         when:
         PaymentInstrument created = service.save(instrument)
@@ -31,7 +31,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a Instrument with unknown product id should be created'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().setId('')
 
         when:
@@ -44,7 +44,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a Instrument with unknown contractor id should be created'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getContractor().setId('')
 
         when:
@@ -57,7 +57,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a Instrument with same external id should not be created'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
 
         when:
         service.save(instrument.with { externalNumberId = 'sameNumber' ; it })
@@ -70,7 +70,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a Instrument with same external id should not be updated'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         def externalId = 'sameExternalId'
         service.save(instrument.with { externalNumberId = externalId; it })
         PaymentInstrument created = service.save(instrument.with { id = null; externalNumberId = 'id'; it })
@@ -85,7 +85,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument should be updated'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
 
         when:
@@ -101,7 +101,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument with password when reset password should reset password'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
 
         when:
@@ -114,7 +114,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument with password when not reset password should not reset password'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
 
         when:
@@ -127,7 +127,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument when update should not update password'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = null; it })
 
         when:
@@ -140,7 +140,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument with unknown product id should be updated'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
         instrument.getProduct().setId('')
 
@@ -154,7 +154,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument with unknown contractor id should be updated'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
         instrument.getContractor().setId('')
 
@@ -168,7 +168,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a unknown Instrument should not be updated'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
 
         when:
         service.update('', instrument)
@@ -180,7 +180,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument should be found'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
 
         when:
@@ -192,7 +192,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'a known Instrument should be deleted'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
 
         when:
@@ -215,7 +215,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'given a contractor credit instruments when find by contractor should be found'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         service.save(instrument)
 
         when:
@@ -227,7 +227,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
     def 'given a contractor credit instruments when find by contractor document should be found'(){
         given:
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         service.save(instrument)
 
         when:

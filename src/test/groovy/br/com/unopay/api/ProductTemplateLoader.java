@@ -33,8 +33,6 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
             add("paymentInstrumentTypes", has(1).of(PaymentInstrumentType.class));
-            add("serviceTypes", has(1).of(ServiceType.class));
-            add("creditInsertionTypes", has(1).of(CreditInsertionType.class));
             add("minimumCreditInsertion", random(BigDecimal.class, range(0.0, 0.1)));
             add("maximumCreditInsertion", random(BigDecimal.class, range(900, 9000000.00)));
             add("paymentInstrumentValidDays", random(Integer.class));
@@ -44,6 +42,8 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentInstrumentEmissionFee", random(BigDecimal.class));
             add("paymentInstrumentSecondCopyFee", random(BigDecimal.class));
             add("administrationCreditInsertionFee", random(BigDecimal.class, range(0.00, 1)));
+            add("serviceTypes", Arrays.asList(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
+            add("creditInsertionTypes", Arrays.asList(CreditInsertionType.values()));
         }});
 
         Fixture.of(Product.class).addTemplate("creditWithoutDirectDebit").inherits("valid", new Rule(){{

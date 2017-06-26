@@ -1,6 +1,6 @@
 package br.com.unopay.api.controller
 
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     @Autowired
     ContractorInstrumentCreditService service
@@ -22,7 +22,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = setupCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
         String instrumentId = credit?.paymentInstrument?.id
 
         when:
@@ -40,7 +40,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = setupCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
 
         String instrumentId = credit?.paymentInstrument?.id
         def inserted = service.insert(instrumentId, credit)
@@ -58,7 +58,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = setupCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
 
         String instrumentId = credit?.paymentInstrument?.id
         def inserted = service.insert(instrumentId, credit)

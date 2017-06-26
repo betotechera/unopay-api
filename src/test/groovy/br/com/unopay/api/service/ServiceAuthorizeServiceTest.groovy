@@ -8,7 +8,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
@@ -33,7 +33,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     ServiceAuthorizeService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     @Autowired
     ContractService contractService
@@ -64,9 +64,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         instrumentCreditUnderTest = createInstrumentCredit()
         contractorUnderTest = instrumentCreditUnderTest.contract.contractor
         contractUnderTest = instrumentCreditUnderTest.contract
-        eventUnderTest = setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
-        userUnderTest = setupCreator.createUser()
-        establishmentUnderTest = setupCreator.createEstablishment()
+        eventUnderTest = fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
+        userUnderTest = fixtureCreator.createUser()
+        establishmentUnderTest = fixtureCreator.createEstablishment()
         service.notifier = notifierMock
         Integer.mixin(TimeCategory)
         Date.mixin(TimeCategory)
@@ -99,7 +99,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     void 'when authorize other service should not notify partner'(){
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.event = setupCreator.createEvent(ServiceType.FREIGHT_RECEIPT)
+        serviceAuthorize.event = fixtureCreator.createEvent(ServiceType.FREIGHT_RECEIPT)
         serviceAuthorize.serviceType = ServiceType.FREIGHT_RECEIPT
 
         when:
@@ -355,7 +355,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             serviceType = serviceTypeUnderTest
-            event = setupCreator.createEvent(serviceTypeUnderTest)
+            event = fixtureCreator.createEvent(serviceTypeUnderTest)
         }
 
         when:
@@ -433,9 +433,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type then the establishment should be the user establishment'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest).find()
+        fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest).find()
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -447,9 +447,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type then the contract should belongs to establishment'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        def contracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def contracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
         def instrumentCredit = createCreditInstrumentWithContract(contracts.find())
         serviceAuthorize.with {
             contract.id = contracts.find().id
@@ -468,8 +468,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user not is establishment type when the contract without establishment should be authorized'(){
         given:
-        def anotherContract = setupCreator
-                .createPersistedContract(setupCreator.createContractor(), instrumentCreditUnderTest.contract.product)
+        def anotherContract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), instrumentCreditUnderTest.contract.product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         def instrumentCredit = createCreditInstrumentWithContract(anotherContract)
         serviceAuthorize.with {
@@ -490,9 +490,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     @Unroll
     void 'given a #situation contract should not be authorized'(){
         given:
-        def anotherContract = setupCreator
-                .createPersistedContract(setupCreator.createContractor(),
-                instrumentCreditUnderTest.contract.product, setupCreator.createHirer(), situation)
+        def anotherContract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, fixtureCreator.createHirer(), situation)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with { contract.id = anotherContract.id }
 
@@ -513,9 +513,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a contract finalized should not be authorized'(){
         given:
-        def anotherContract = setupCreator
-                .createContract(setupCreator.createContractor(),
-                instrumentCreditUnderTest.contract.product, setupCreator.createHirer())
+        def anotherContract = fixtureCreator
+                .createContract(fixtureCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, fixtureCreator.createHirer())
         anotherContract.with {
             situation = ContractSituation.ACTIVE
             begin = 2.day.ago
@@ -535,9 +535,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a contract does not begin should not be authorized'(){
         given:
-        def anotherContract = setupCreator
-                .createContract(setupCreator.createContractor(),
-                instrumentCreditUnderTest.contract.product, setupCreator.createHirer())
+        def anotherContract = fixtureCreator
+                .createContract(fixtureCreator.createContractor(),
+                instrumentCreditUnderTest.contract.product, fixtureCreator.createHirer())
         anotherContract.with {
             situation = ContractSituation.ACTIVE
             begin = 1.day.from.now
@@ -557,7 +557,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user not is establishment type when the contract with another establishment should not be authorized'(){
         given:
-        def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             contract.id = anotherContracts.find().id
@@ -575,8 +575,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type when the contract with another establishment should not be authorized'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             contract.id = anotherContracts.find().id
@@ -594,10 +594,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type when the contract belongs to another establishment should not be authorized'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        def contracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def contracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         serviceAuthorize.with {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor
@@ -643,8 +643,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type then the contractor payment instrument credit should belongs to contract'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -666,8 +666,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when user is establishment type when the contractor payment instrument credit with another contract should not be authorized'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(contractUnderTest)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -688,8 +688,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password then birth date of the contractor should be informed'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
@@ -706,8 +706,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password then birth date of the physical contractor should be right'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
@@ -724,8 +724,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password then birth date of the legal contractor should not be required'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
@@ -748,8 +748,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given payment instrument with password when the contractor password is same of payment instrument password should be authorized'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -771,8 +771,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given payment instrument with password when the contractor password not is same of payment instrument password should not be authorized'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -793,8 +793,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password then the password should be required'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
@@ -811,8 +811,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password then password of the legal contractor should be required'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
 
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
@@ -835,8 +835,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password when password of the legal contractor should update instrument password'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
         def expectedPassword = '1235555AAAA'
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
         paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
@@ -859,8 +859,8 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'given a payment instrument without password when password of the physical contractor present should update instrument password'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def establishmentContracts = setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
         def expectedPassword = '1235555AAAA'
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
@@ -876,16 +876,16 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {
-        def instrumentCredit = setupCreator
+        def instrumentCredit = fixtureCreator
                 .createContractorInstrumentCredit(contract.contractor, contract)
-        setupCreator.encodeInstrumentPassword(instrumentCredit)
+        fixtureCreator.encodeInstrumentPassword(instrumentCredit)
         def password = instrumentCredit.paymentInstrument.password
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
         instrumentCredit.with { paymentInstrument.password = password; it }
     }
 
     private ServiceAuthorize createServiceAuthorize() {
-        setupCreator.encodeInstrumentPassword(instrumentCreditUnderTest)
+        fixtureCreator.encodeInstrumentPassword(instrumentCreditUnderTest)
         return Fixture.from(ServiceAuthorize.class).gimme("valid").with {
             contract = contractUnderTest
             contractor = contractorUnderTest
@@ -898,7 +898,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     private Contract addPhysicalContractorToContract(Contract contract) {
-        Contractor contractor = setupCreator.createContractor("physical")
+        Contractor contractor = fixtureCreator.createContractor("physical")
         contract.contractor = contractor
         contractService.save(contract)
     }
@@ -918,7 +918,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     private ContractorInstrumentCredit createInstrumentCredit() {
-        def instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
+        def instrumentCreditUnderTest = fixtureCreator.createContractorInstrumentCredit()
         def cloned = BeanUtils.cloneBean(instrumentCreditUnderTest.contract)
         contractorInstrumentCreditService.insert(instrumentCreditUnderTest.paymentInstrumentId, instrumentCreditUnderTest)
         instrumentCreditUnderTest.with { contract.product.serviceTypes = cloned.product.serviceTypes }

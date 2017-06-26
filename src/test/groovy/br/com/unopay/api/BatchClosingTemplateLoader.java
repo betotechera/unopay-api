@@ -3,6 +3,10 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
@@ -25,6 +29,10 @@ public class BatchClosingTemplateLoader  implements TemplateLoader {
             add("paymentDateTime", instant("10 days from now"));
             add("issueInvoice", random(Boolean.class));
             add("paymentId","ASDSD5546D7F88D");
+            add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
+            add("establishment", one(Establishment.class, "valid"));
+            add("hirer", one(Hirer.class, "valid"));
+            add("issuer", one(Issuer.class, "valid"));
         }});
 
         Fixture.of(BatchClosingItem.class).addTemplate("valid", new Rule() {{

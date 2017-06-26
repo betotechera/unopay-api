@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.ServiceType
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
@@ -41,7 +41,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     FreightReceiptService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     @Autowired
     CargoContractService cargoContractService
@@ -74,11 +74,11 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     ContractorInstrumentCredit instrumentCreditUnderTest
 
     void setup(){
-        instrumentCreditUnderTest = setupCreator.createContractorInstrumentCredit()
+        instrumentCreditUnderTest = fixtureCreator.createContractorInstrumentCredit()
         instrumentCreditUnderTest.serviceType = ServiceType.FUEL_ALLOWANCE
         instrumentCreditUnderTest.creditType = ContractorCreditType.FINAL_PAYMENT
         contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
-        currentUser = setupCreator.createUser()
+        currentUser = fixtureCreator.createUser()
         service.pamcaryService = pamcaryServiceMock
         service.notifier = notifierMock
         paymentInstrumentService.changePassword(instrumentCreditUnderTest.getPaymentInstrumentId(), currentPassword)
@@ -219,7 +219,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     def 'given a valid freight receipt with invalid event should not be authorize fuel supply'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        freightReceipt.setFuelEvent(setupCreator.createEvent(ServiceType.FREIGHT))
+        freightReceipt.setFuelEvent(fixtureCreator.createEvent(ServiceType.FREIGHT))
 
         when:
         service.receipt(currentUser.email,freightReceipt)
@@ -261,9 +261,9 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'given a contract finalized should not be receipted'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        def anotherContract = setupCreator
-                .createContract(setupCreator.createContractor(),
-                freightReceipt.contract.product, setupCreator.createHirer())
+        def anotherContract = fixtureCreator
+                .createContract(fixtureCreator.createContractor(),
+                freightReceipt.contract.product, fixtureCreator.createHirer())
         anotherContract.with {
             situation = ContractSituation.ACTIVE
             begin = 2.day.ago
@@ -284,9 +284,9 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'given a contract does not begin should not be receipted'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        def anotherContract = setupCreator
-                .createContract(setupCreator.createContractor(),
-                freightReceipt.contract.product, setupCreator.createHirer())
+        def anotherContract = fixtureCreator
+                .createContract(fixtureCreator.createContractor(),
+                freightReceipt.contract.product, fixtureCreator.createHirer())
         anotherContract.with {
             situation = ContractSituation.ACTIVE
             begin = 1.day.from.now
@@ -307,10 +307,10 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'when user not is establishment type then the contract with another establishment should not be receipted'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         freightReceipt.with {
             contract.id = anotherContracts.find().id
-            establishment.id = setupCreator.createEstablishment().id
+            establishment.id = fixtureCreator.createEstablishment().id
             contractor = anotherContracts.find().contractor
         }
 
@@ -324,12 +324,12 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
     void 'when user is establishment type when the contract with another establishment should not be receipted'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        def anotherContracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         FreightReceipt freightReceipt = createFreightReceipt()
         freightReceipt.with {
             contract.id = anotherContracts.find().id
-            establishment.id = setupCreator.createEstablishment().id
+            establishment.id = fixtureCreator.createEstablishment().id
             contractor = anotherContracts.find().contractor
         }
 
@@ -344,10 +344,10 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
     void 'when user is establishment type when the contract belongs to another establishment should not be receipted'(){
         given:
-        def userEstablishment = setupCreator.createEstablishmentUser()
-        setupCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
         FreightReceipt freightReceipt = createFreightReceipt()
-        def contracts = setupCreator.addContractsToEstablishment(setupCreator.createEstablishment(), instrumentCreditUnderTest)
+        def contracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
         freightReceipt.with {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor
@@ -365,9 +365,9 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'given a #situation contract should not be receipted'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        def anotherContract = setupCreator
-                .createPersistedContract(setupCreator.createContractor(),
-                freightReceipt.contract.product, setupCreator.createHirer(), situation)
+        def anotherContract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(),
+                freightReceipt.contract.product, fixtureCreator.createHirer(), situation)
 
         freightReceipt.getContract().setId(anotherContract.id)
 
@@ -549,12 +549,12 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
         return new FreightReceipt() {{
             setContract(credit.contract)
             setContractor(credit.contract.contractor)
-            setEstablishment(setupCreator.createEstablishment())
+            setEstablishment(fixtureCreator.createEstablishment())
             setServiceType(ServiceType.FREIGHT_RECEIPT)
             setCargoContract(cargo)
             setCreditInsertionType(CreditInsertionType.CREDIT_CARD)
             setInstrumentPassword(currentPassword)
-            setFuelEvent(setupCreator.createEvent(ServiceType.FUEL_ALLOWANCE))
+            setFuelEvent(fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE))
             setFuelSupplyQuantity(3D)
             setFuelSupplyValue(10.0)
         }}

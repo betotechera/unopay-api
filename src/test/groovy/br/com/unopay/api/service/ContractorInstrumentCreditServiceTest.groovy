@@ -5,7 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.ServiceType
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditPaymentAccount
@@ -38,7 +38,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     PaymentInstrumentService paymentInstrumentService
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Contractor contractorUnderTest
     Contract contractUnderTest
@@ -47,13 +47,13 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     Hirer hirerUnderTest
 
     void setup(){
-        contractorUnderTest = setupCreator.createContractor()
-        hirerUnderTest = setupCreator.createHirer()
-        contractUnderTest = setupCreator
-                            .createPersistedContract(contractorUnderTest, setupCreator.createProduct(), hirerUnderTest)
-        paymentInstrumentUnderTest = setupCreator
+        contractorUnderTest = fixtureCreator.createContractor()
+        hirerUnderTest = fixtureCreator.createHirer()
+        contractUnderTest = fixtureCreator
+                            .createPersistedContract(contractorUnderTest, fixtureCreator.createProduct(), hirerUnderTest)
+        paymentInstrumentUnderTest = fixtureCreator
                                     .createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
-        creditPaymentAccountUnderTest = setupCreator.createCreditPaymentAccountFromContract(contractUnderTest)
+        creditPaymentAccountUnderTest = fixtureCreator.createCreditPaymentAccountFromContract(contractUnderTest)
         Integer.mixin(TimeCategory)
     }
 
@@ -235,8 +235,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     def 'given a instrument credit with same service but with other contract then installment number should not be incremented'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
-        def otherContract = setupCreator.createPersistedContract(contractUnderTest.contractor, contractUnderTest.product)
-        def account = setupCreator.createCreditPaymentAccountFromContract(otherContract)
+        def otherContract = fixtureCreator.createPersistedContract(contractUnderTest.contractor, contractUnderTest.product)
+        def account = fixtureCreator.createCreditPaymentAccountFromContract(otherContract)
         ContractorInstrumentCredit creditOtherContract = BeanUtils.cloneBean(instrumentCredit).with {
             id = null
             contract = otherContract
@@ -288,11 +288,11 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'instrument credit with credit payment instrument of another hirer should not be inserted'(){
         given:
-        def contractor = setupCreator.createContractor()
+        def contractor = fixtureCreator.createContractor()
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
-            paymentInstrument = setupCreator
-                    .createPaymentInstrumentWithProduct(contractUnderTest.product, contractor,'newNumber')
+            paymentInstrument = fixtureCreator
+                    .createPaymentInstrumentWithProduct(contractUnderTest.product, contractor)
         }
         when:
        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
@@ -318,11 +318,11 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'payment instrument credit with credit payment account belongs to another hirer should not be inserted'(){
         given:
-        def contractor = setupCreator.createContractor()
-        def anotherContract = setupCreator.createContract(contractor, contractUnderTest.product)
+        def contractor = fixtureCreator.createContractor()
+        def anotherContract = fixtureCreator.createContract(contractor, contractUnderTest.product)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
-            creditPaymentAccount = setupCreator.createCreditPaymentAccountFromContract(anotherContract)
+            creditPaymentAccount = fixtureCreator.createCreditPaymentAccountFromContract(anotherContract)
         }
         when:
         service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
@@ -334,7 +334,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a contractor with two or more contracts when insert credit should be inserted with contract informed'(){
         given:
-        def anotherContract = setupCreator
+        def anotherContract = fixtureCreator
                             .createPersistedContract(contractorUnderTest, contractUnderTest.product, hirerUnderTest)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
@@ -357,7 +357,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
 
         def paymentAccount = creditPaymentAccounts.find()?.with {
-            product = setupCreator.createProduct('AXZY', myContract.product.paymentRuleGroup);
+            product = fixtureCreator.createProduct(myContract.product.paymentRuleGroup)
             it
         }
         creditPaymentAccountService.save(paymentAccount)

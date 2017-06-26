@@ -5,8 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.model.ServiceType
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
@@ -25,7 +24,7 @@ class ContractServiceTest extends SpockApplicationTests {
     ContractService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Hirer hirerUnderTest
     Contractor contractorUnderTest
@@ -34,10 +33,10 @@ class ContractServiceTest extends SpockApplicationTests {
 
 
     void setup(){
-        hirerUnderTest = setupCreator.createHirer()
-        contractorUnderTest = setupCreator.createContractor()
-        productUnderTest = setupCreator.createSimpleProduct()
-        establishmentUnderTest = setupCreator.createHeadOffice()
+        hirerUnderTest = fixtureCreator.createHirer()
+        contractorUnderTest = fixtureCreator.createContractor()
+        productUnderTest = fixtureCreator.createProduct()
+        establishmentUnderTest = fixtureCreator.createHeadOffice()
     }
 
     void 'new contract should be created'(){

@@ -2,6 +2,7 @@ package br.com.unopay.api
 
 import br.com.six2six.fixturefactory.processor.Processor
 import br.com.unopay.api.bacen.model.Bank
+import br.com.unopay.api.uaa.model.Authority
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.text.WordUtils
 import org.springframework.context.annotation.Scope
@@ -28,6 +29,7 @@ class JpaProcessor implements Processor{
         if(object.getClass().isAnnotationPresent(Embeddable.class)) return
         try {
             if(Bank.class == object.class) return
+            if(Authority.class == object.class) return
 
             def field = object.getClass().getDeclaredFields().find { it.isAnnotationPresent(Id)}
             def method = object.class.getMethod("set" + WordUtils.capitalize(field.getName()), String.class)

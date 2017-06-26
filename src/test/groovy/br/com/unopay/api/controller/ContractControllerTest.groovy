@@ -3,7 +3,7 @@ package br.com.unopay.api.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ContractControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Hirer hirerUnderTest
 
@@ -31,9 +31,9 @@ class ContractControllerTest extends AuthServerApplicationTests {
     Product productUnderTest
 
     void setup(){
-        hirerUnderTest = setupCreator.createHirer()
-        productUnderTest = setupCreator.createSimpleProduct()
-        contractorUnderTest = setupCreator.createContractor()
+        hirerUnderTest = fixtureCreator.createHirer()
+        productUnderTest = fixtureCreator.createProduct()
+        contractorUnderTest = fixtureCreator.createContractor()
     }
 
     void 'valid contract should be created'() {

@@ -36,7 +36,7 @@ public class CreditTemplateLoader implements TemplateLoader {
                     .format(new Date()), new SimpleDateFormat("yyyy-MM-dd")));
             add("password", regex("\\W{3}\\w{3}\\d{2}"));
             add("situation", random(PaymentInstrumentSituation.class));
-            add("externalNumberId", regex("\\d{10}\\.\\w{5}"));
+            add("externalNumberId", regex("\\d{10}\\-\\w{15}\\-\\d{10}"));
         }});
 
         Fixture.of(PaymentInstrument.class).addTemplate("without-product")

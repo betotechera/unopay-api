@@ -3,7 +3,7 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
@@ -20,7 +20,7 @@ class CreditServiceTest extends SpockApplicationTests {
     CreditService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
     CreditPaymentAccountService paymentAccountServiceMock = Mock(CreditPaymentAccountService)
 
     void setup(){
@@ -31,8 +31,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with product should be inserted with product payment rule group'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -45,8 +45,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with unknown product should not be inserted'(){
         given:
-        Product product = setupCreator.createProduct()
-        Credit credit = setupCreator.createCredit(product.with { id = ''; it })
+        Product product = fixtureCreator.createProduct()
+        Credit credit = fixtureCreator.createCredit(product.with { id = ''; it })
 
         when:
         service.insert(credit)
@@ -58,9 +58,9 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with unknown payment rule groups should not be inserted'(){
         given:
-        PaymentRuleGroup unknownPaymentRuleGroup = setupCreator.createPaymentRuleGroup().with { id = ''; it }
-        def knownProduct = setupCreator.createProduct().with { paymentRuleGroup = unknownPaymentRuleGroup; it }
-        Credit credit = setupCreator.createCredit(knownProduct)
+        PaymentRuleGroup unknownPaymentRuleGroup = fixtureCreator.createPaymentRuleGroup().with { id = ''; it }
+        def knownProduct = fixtureCreator.createProduct().with { paymentRuleGroup = unknownPaymentRuleGroup; it }
+        Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(credit)
@@ -72,8 +72,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit should be generate credit number'() {
         given:
-        def knownProduct = setupCreator.createProduct()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with { creditNumber = null; it }
 
         when:
@@ -86,8 +86,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit then generated credit number should be incremented'() {
         given:
-        def knownProduct = setupCreator.createProduct()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with { creditNumber = null; it }
 
         when:
@@ -101,8 +101,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit without direct debit payment type then payment account should be created'(){
         given:
-        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(credit)
@@ -113,8 +113,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit with direct debit payment type then payment account should not be created'(){
         given:
-        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(credit)
@@ -125,8 +125,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'a credit should be inserted with now date time'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
+        def knownProduct = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -145,8 +145,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit with direct debit insertion type should be inserted with processing situation'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
+        def knownProduct = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -168,8 +168,8 @@ class CreditServiceTest extends SpockApplicationTests {
     @Unroll
     "given a credit with #insertionType insertion type should be inserted with processing situation"(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
+        def knownProduct = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -197,9 +197,9 @@ class CreditServiceTest extends SpockApplicationTests {
     @Unroll
     void 'when insert credits with #insertionType available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionTypes = [insertionType]; it }
-        Credit creditA =  setupCreator.createCredit(knownProduct)
-        Credit creditB =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct().with { creditInsertionTypes = [insertionType]; it }
+        Credit creditA =  fixtureCreator.createCredit(knownProduct)
+        Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -218,9 +218,9 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credits with direct debit, available balance should be zero'(){
         given:
-        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
-        Credit creditA =  setupCreator.createCredit(knownProduct)
-        Credit creditB =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit creditA =  fixtureCreator.createCredit(knownProduct)
+        Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -234,10 +234,10 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given more one credit when insert credits available balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
-        Credit creditA =  setupCreator.createCredit(knownProduct)
-        Credit creditB = setupCreator.createCredit(knownProduct)
-        Credit creditC =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
+        Credit creditA =  fixtureCreator.createCredit(knownProduct)
+        Credit creditB = fixtureCreator.createCredit(knownProduct)
+        Credit creditC =  fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -251,9 +251,9 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credits with direct debit, block balance should be updated'(){
         given:
-        def knownProduct = setupCreator.createProduct().with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
-        Credit creditA = setupCreator.createCredit(knownProduct)
-        Credit creditB =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct().with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
+        Credit creditA = fixtureCreator.createCredit(knownProduct)
+        Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -267,9 +267,9 @@ class CreditServiceTest extends SpockApplicationTests {
     @Unroll
     void 'when insert credits with #insertionType, block balance should be zero'(){
         given:
-        def knownProduct = setupCreator.createProductWithCreditInsertionType([insertionType])
-        Credit creditA =  setupCreator.createCredit(knownProduct)
-        Credit creditB =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([insertionType])
+        Credit creditA =  fixtureCreator.createCredit(knownProduct)
+        Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
         when:
         service.insert(creditA)
@@ -288,8 +288,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with product should be inserted with product credit insertion type'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        Credit credit =  setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProduct()
+        Credit credit =  fixtureCreator.createCredit(knownProduct)
 
         when:
         def inserted  = service.insert(credit)
@@ -302,8 +302,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with product should not be inserted when do not match product minimum value restriction'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
+        def knownProduct = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -321,8 +321,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit with product should not be inserted when do not match product maximum value restriction'(){
         given:
-        def knownProduct = setupCreator.createProduct()
-        def hirer = setupCreator.createHirer()
+        def knownProduct = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -340,7 +340,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit without product should not be inserted when value is not greater than zero'(){
         given:
-        def hirer = setupCreator.createHirer()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields")
                 .with {
             hirerDocument = hirer.getDocumentNumber()
@@ -358,8 +358,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit without product should be inserted with default credit insert type'(){
         given:
-        def hirer = setupCreator.createHirer()
-        setupCreator.createPaymentRuleGroupDefault()
+        def hirer = fixtureCreator.createHirer()
+        fixtureCreator.createPaymentRuleGroupDefault()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType")
                 .with {
                         hirerDocument = hirer.getDocumentNumber()
@@ -374,8 +374,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit without product should be inserted with default payment rule group'(){
         given:
-        def paymentRuleGroup = setupCreator.createPaymentRuleGroupDefault()
-        def hirer = setupCreator.createHirer()
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroupDefault()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with {
                         hirerDocument = hirer.getDocumentNumber()
@@ -409,7 +409,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'given a credit with unknown hirer document should not be inserted'(){
         given:
         Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with { product = setupCreator.createProduct()
+                .with { product = fixtureCreator.createProduct()
             it }
 
         when:
@@ -422,8 +422,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit without payment rule group and product should be inserted'(){
         given:
-        setupCreator.createPaymentRuleGroupDefault()
-        def hirer = setupCreator.createHirer()
+        fixtureCreator.createPaymentRuleGroupDefault()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup")
                             .with { hirerDocument = hirer.getDocumentNumber(); it }
 
@@ -484,10 +484,10 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     private Credit createCredit() {
-        def hirer = setupCreator.createHirer()
+        def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct")
                 .with {
-            product = setupCreator.createProduct()
+            product = fixtureCreator.createProduct()
             hirerDocument = hirer.getDocumentNumber()
             it
         }

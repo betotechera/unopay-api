@@ -7,7 +7,7 @@ import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractorInstrumentCredit
@@ -28,7 +28,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     ServiceAuthorizeService serviceAuthorizeService
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     def 'should create batch closing'(){
         given:
@@ -57,7 +57,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Contract contract = Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid")
         ContractorInstrumentCredit instrumentCredit = createCredit(contract)
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        def serviceAuthorize = setupCreator.createServiceAuthorize(instrumentCredit, establishment)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment)
         def serviceAuthorizeB = BeanUtils.cloneBean(serviceAuthorize)
         serviceAuthorizeService.create(serviceAuthorize.user.email, serviceAuthorize)
         serviceAuthorizeService.create(serviceAuthorize.user.email, serviceAuthorizeB)
@@ -75,7 +75,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Contract contract = Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid")
         ContractorInstrumentCredit instrumentCredit = createCredit(contract)
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        def serviceAuthorize = setupCreator.createServiceAuthorize(instrumentCredit, establishment)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment)
         def serviceAuthorizeB = BeanUtils.cloneBean(serviceAuthorize)
         def serviceAuthorizeC = BeanUtils.cloneBean(serviceAuthorize)
         serviceAuthorizeService.create(serviceAuthorize.user.email, serviceAuthorize)
@@ -152,7 +152,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Contract contract = Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid")
         ContractorInstrumentCredit instrumentCredit = createCredit(contract)
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        def serviceAuthorize = setupCreator.createServiceAuthorize(instrumentCredit, establishment)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment)
         def serviceAuthorizeB = BeanUtils.cloneBean(serviceAuthorize)
         serviceAuthorizeService.create(serviceAuthorize.user.email, serviceAuthorize)
         serviceAuthorizeService.create(serviceAuthorize.user.email, serviceAuthorizeB)
@@ -192,7 +192,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     private ServiceAuthorize createAuthorizeByEstablishmentAndContract(Contract contract, Establishment establishment) {
         ContractorInstrumentCredit instrumentCredit = createCredit(contract)
-        setupCreator.createServiceAuthorize(instrumentCredit, establishment)
+        fixtureCreator.createServiceAuthorize(instrumentCredit, establishment)
     }
 
 }

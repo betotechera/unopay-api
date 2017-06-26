@@ -3,7 +3,7 @@ package br.com.unopay.api.service
 import br.com.unopay.api.SpockApplicationTests
 import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditPaymentAccount
@@ -17,7 +17,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
     CreditPaymentAccountService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     @Autowired
     CreditService creditService
@@ -28,7 +28,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a  payment account should be created'(){
         given:
-        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+        CreditPaymentAccount paymentAccount = fixtureCreator.createCreditPaymentAccount()
 
         when:
         def created  = service.save(paymentAccount)
@@ -40,7 +40,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown payment rule group should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+        CreditPaymentAccount paymentAccount = fixtureCreator.createCreditPaymentAccount()
                                                 .with { paymentRuleGroup.id = ''; it }
 
         when:
@@ -53,7 +53,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown product should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount().with { product.id = ''; it }
+        CreditPaymentAccount paymentAccount = fixtureCreator.createCreditPaymentAccount().with { product.id = ''; it }
 
         when:
         service.save(paymentAccount)
@@ -66,7 +66,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account with unknown issuer should not be created'(){
         given:
-        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+        CreditPaymentAccount paymentAccount = fixtureCreator.createCreditPaymentAccount()
                                                     .with { product.issuer.id = ''; it }
 
         when:
@@ -79,8 +79,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'new payment account should be created from credit'(){
         given:
-        Credit create = setupCreator.createCredit()
-                                    .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        Credit create = fixtureCreator.createCredit()
+                                    .with { paymentRuleGroup = fixtureCreator.createPaymentRuleGroup(); it}
 
         when:
         def created  = service.register(create)
@@ -92,8 +92,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account without product should be created'(){
         given:
-        Credit create = setupCreator.createCredit(null)
-                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        Credit create = fixtureCreator.createCredit(null)
+                .with { paymentRuleGroup = fixtureCreator.createPaymentRuleGroup(); it}
 
         when:
         def created  = service.register(create)
@@ -105,7 +105,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'payment account should be created with date time now'(){
         given:
-        CreditPaymentAccount paymentAccount = setupCreator.createCreditPaymentAccount()
+        CreditPaymentAccount paymentAccount = fixtureCreator.createCreditPaymentAccount()
 
         when:
         def created  = service.save(paymentAccount)
@@ -118,8 +118,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit with existing service credit should update balance when insert without direct debit'(){
         given:
-        def knownProduct = setupCreator.createProductWithOutDirectDebit()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = FREIGHT
@@ -135,8 +135,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit without same service credit should insert new credit when insert without direct debit'(){
         given:
-        def knownProduct = setupCreator.createProductWithOutDirectDebit()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = FREIGHT
@@ -151,9 +151,9 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'should update balance grouped by product and service'(){
         given:
-        setupCreator.createPaymentRuleGroupDefault()
-        def knownProduct = setupCreator.createProductWithOutDirectDebit()
-        Credit credit = setupCreator.createCredit(null)
+        fixtureCreator.createPaymentRuleGroupDefault()
+        def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
+        Credit credit = fixtureCreator.createCredit(null)
                 .with {
                         creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
                         serviceType = ELECTRONIC_TOLL
@@ -174,9 +174,9 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a credit without service and product should update balance when insert without direct debit'(){
         given:
-        setupCreator.createPaymentRuleGroupDefault()
-        def knownProduct = setupCreator.createProductWithOutDirectDebit()
-        Credit credit = setupCreator.createCredit(knownProduct)
+        fixtureCreator.createPaymentRuleGroupDefault()
+        def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
+        Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
             creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
             serviceType = ELECTRONIC_TOLL
@@ -197,8 +197,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a existing payment account with balance when subtract should be subtract credit'(){
         given:
-        Credit credit = setupCreator.createCredit()
-                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        Credit credit = fixtureCreator.createCredit()
+                .with { paymentRuleGroup = fixtureCreator.createPaymentRuleGroup(); it}
         service.register(credit)
         def created  = service.register(credit)
         when:
@@ -211,8 +211,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a existing payment account when subtracted with id should be subtracted'(){
         given:
-        Credit credit = setupCreator.createCredit()
-                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        Credit credit = fixtureCreator.createCredit()
+                .with { paymentRuleGroup = fixtureCreator.createPaymentRuleGroup(); it}
         service.register(credit)
         def created  = service.register(credit)
         when:
@@ -235,8 +235,8 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'given a existing payment account when increment should be incremented'(){
         given:
-        Credit credit = setupCreator.createCredit()
-                .with { paymentRuleGroup = setupCreator.createPaymentRuleGroup(); it}
+        Credit credit = fixtureCreator.createCredit()
+                .with { paymentRuleGroup = fixtureCreator.createPaymentRuleGroup(); it}
         def created  = service.register(credit)
         when:
         service.giveBack(created.id, credit.availableValue)

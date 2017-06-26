@@ -5,7 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -18,16 +18,16 @@ class ProductServiceTest extends SpockApplicationTests {
     ProductService service
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Issuer issuerUnderTest
     AccreditedNetwork networkUnderTest
     PaymentRuleGroup paymentRuleGroupUnderTest
 
     void setup(){
-        issuerUnderTest = setupCreator.createIssuer()
-        paymentRuleGroupUnderTest = setupCreator.createPaymentRuleGroup()
-        networkUnderTest = setupCreator.createNetwork()
+        issuerUnderTest = fixtureCreator.createIssuer()
+        paymentRuleGroupUnderTest = fixtureCreator.createPaymentRuleGroup()
+        networkUnderTest = fixtureCreator.createNetwork()
     }
 
     void 'new product should be created'(){

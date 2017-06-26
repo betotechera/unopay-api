@@ -2,6 +2,9 @@ package br.com.unopay.api.uaa;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
+import br.com.six2six.fixturefactory.function.AtomicFunction;
+import br.com.six2six.fixturefactory.function.Function;
+import br.com.six2six.fixturefactory.function.impl.RegexFunction;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.model.CreditInsertionType;
@@ -16,6 +19,7 @@ import br.com.unopay.api.uaa.model.UserType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 public class UaaTemplateLoader implements TemplateLoader {
 
@@ -105,5 +109,15 @@ public class UaaTemplateLoader implements TemplateLoader {
         }});
 
 
+    }
+
+    private Function passwordEncodedRegex(final String pattern) {
+        final Object generateValue = new RegexFunction(pattern).generateValue();
+        return new AtomicFunction() {
+            @Override
+            public <T> T generateValue() {
+                return (T) new StandardPasswordEncoder().encode((CharSequence) generateValue);
+            }
+        };
     }
 }

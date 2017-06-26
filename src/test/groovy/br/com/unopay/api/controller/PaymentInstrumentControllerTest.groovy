@@ -1,6 +1,6 @@
 package br.com.unopay.api.controller
 
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
@@ -18,13 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
 
     void 'valid instrument should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
         when:
@@ -38,7 +38,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
     void 'known instrument should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
         def mvcResult = this.mvc.perform(post('/payment-instruments?access_token={access_token}', accessToken)
@@ -58,7 +58,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
     void 'known instrument should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
         def mvcResult = this.mvc.perform(post('/payment-instruments?access_token={access_token}', accessToken)
@@ -77,7 +77,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
     void 'known payment-instruments should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        PaymentInstrument instrument = setupCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
         def mvcResult = this.mvc.perform(post('/payment-instruments?access_token={access_token}', accessToken)

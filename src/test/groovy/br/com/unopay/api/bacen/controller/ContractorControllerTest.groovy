@@ -2,9 +2,7 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.bacen.util.SetupCreator
-import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.service.ContractorInstrumentCreditService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -31,7 +29,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
@@ -117,7 +115,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor credits should be found when find credits'() {
         given:
         String accessToken = getClientAccessToken()
-        def instrumentCredit = setupCreator.createContractorInstrumentCredit()
+        def instrumentCredit = fixtureCreator.createContractorInstrumentCredit()
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
         def document = instrumentCredit.contract.contractor.documentNumber
         def contractId = instrumentCredit.contract.id

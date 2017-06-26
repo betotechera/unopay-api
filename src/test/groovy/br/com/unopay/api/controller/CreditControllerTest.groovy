@@ -1,6 +1,6 @@
 package br.com.unopay.api.controller
 
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,13 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CreditControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     void 'valid credit should be created'() {
         given:
         String accessToken = getUserAccessToken()
 
-        Credit credit = setupCreator.createCredit()
+        Credit credit = fixtureCreator.createCredit()
         String document = credit.getHirerDocument()
 
         when:

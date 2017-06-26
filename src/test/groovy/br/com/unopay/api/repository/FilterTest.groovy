@@ -9,7 +9,7 @@ import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
 import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
@@ -28,7 +28,7 @@ class FilterTest extends SpockApplicationTests {
     HirerRepository hirerRepository
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Hirer hirerUnderTest
     Contractor contractorUnderTest
@@ -36,9 +36,9 @@ class FilterTest extends SpockApplicationTests {
 
     void setup(){
         Integer.mixin(TimeCategory)
-        hirerUnderTest = setupCreator.createHirer()
-        contractorUnderTest = setupCreator.createContractor()
-        productUnderTest = setupCreator.createSimpleProduct()
+        hirerUnderTest = fixtureCreator.createHirer()
+        contractorUnderTest = fixtureCreator.createContractor()
+        productUnderTest = fixtureCreator.createProduct()
     }
 
     def 'should return contracts in period'(){
@@ -131,7 +131,7 @@ class FilterTest extends SpockApplicationTests {
 
     def 'should return hirer when find document in more one join'() {
         given:
-        Hirer hirerA = setupCreator.createHirer()
+        Hirer hirerA = fixtureCreator.createHirer()
 
         def filter = new HirerFilter()
 

@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,12 +21,12 @@ class BranchServiceTest extends SpockApplicationTests {
     AccreditedNetworkService accreditedNetworkService
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Establishment headOfficeUnderTest
 
     void setup(){
-        headOfficeUnderTest = setupCreator.createHeadOffice()
+        headOfficeUnderTest = fixtureCreator.createHeadOffice()
     }
 
     def 'a valid branch should be created'(){
@@ -233,7 +233,7 @@ class BranchServiceTest extends SpockApplicationTests {
     def 'a branch with changed headOffice should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def newHeadOffice = setupCreator.createHeadOffice()
+        def newHeadOffice = fixtureCreator.createHeadOffice()
         def created = service.create(branch)
         branch.headOffice = newHeadOffice
 

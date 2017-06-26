@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
@@ -22,16 +22,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest extends AuthServerApplicationTests {
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     Issuer issuerUnderTest
     AccreditedNetwork networkUnderTest
     PaymentRuleGroup paymentRuleGroupUnderTest
 
     void setup(){
-        issuerUnderTest = setupCreator.createIssuer()
-        paymentRuleGroupUnderTest = setupCreator.createPaymentRuleGroup()
-        networkUnderTest = setupCreator.createNetwork()
+        issuerUnderTest = fixtureCreator.createIssuer()
+        paymentRuleGroupUnderTest = fixtureCreator.createPaymentRuleGroup()
+        networkUnderTest = fixtureCreator.createNetwork()
     }
 
     void 'valid product should be created'() {

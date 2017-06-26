@@ -5,7 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.util.SetupCreator
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -20,12 +20,12 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     BranchService branchService
 
     @Autowired
-    SetupCreator setupCreator
+    FixtureCreator fixtureCreator
 
     AccreditedNetwork networkUnderTest
 
     void setup(){
-        networkUnderTest = setupCreator.createNetwork()
+        networkUnderTest = fixtureCreator.createNetwork()
     }
 
 
