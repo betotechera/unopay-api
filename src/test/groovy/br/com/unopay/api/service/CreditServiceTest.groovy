@@ -166,11 +166,12 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
+        def creditInsertionType = insertionType
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
             add("product", knownProduct)
             add("situation", CreditSituation.CONFIRMED)
-            add("creditInsertionType", insertionType)
+            add("creditInsertionType", creditInsertionType)
         }})
 
         when:
