@@ -42,12 +42,26 @@ public class PaymentRuleGroupService {
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
         try {
             paymentRuleGroup.validate();
+            checkIfAnPaymentRuleGroupWithTheSameValuesAlreadyExists(paymentRuleGroup);
           return repository.save(paymentRuleGroup);
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("PaymentRuleGroup code already exists %s", paymentRuleGroup.toString()), e);
             throw UnovationExceptions.conflict().withErrors(PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS)
                     .withArguments(paymentRuleGroup.getCode());
         }
+    }
+
+    private void checkIfAnPaymentRuleGroupWithTheSameValuesAlreadyExists(PaymentRuleGroup paymentRuleGroup) {
+        if(paymentRuleGroupAlreadyExists(paymentRuleGroup))
+            throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_ALREADY_EXISTS)
+                    .withArguments(paymentRuleGroup.getCode());
+    }
+
+    private Boolean paymentRuleGroupAlreadyExists(PaymentRuleGroup paymentRuleGroup) {
+        return repository.
+                countByInstitutionAndPurposeAndScopeAndUserRelationship
+                (paymentRuleGroup.getInstitution(),paymentRuleGroup.getPurpose(),paymentRuleGroup.getScope(),
+                                paymentRuleGroup.getUserRelationship()) > 0;
     }
 
     public Page<PaymentRuleGroup> findByFilter(PaymentRuleGroupFilter filter, UnovationPageRequest pageable) {

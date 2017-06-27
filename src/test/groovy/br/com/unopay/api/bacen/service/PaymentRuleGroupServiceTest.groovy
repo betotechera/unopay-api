@@ -66,6 +66,20 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS'
     }
 
+    void 'should not allow create paymentRuleGroups with same values'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+
+        when:
+        service.create(group)
+        service.create(group.with { id = null;code = code+'1'; it })
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'PAYMENT_RULE_GROUP_ALREADY_EXISTS'
+    }
+
+
     void 'given paymentRuleGroups without name should not bet created'(){
         given:
         PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("without-name")
