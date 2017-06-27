@@ -1,6 +1,7 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator
@@ -27,7 +28,6 @@ class CreditServiceTest extends SpockApplicationTests {
         service.creditPaymentAccountService = paymentAccountServiceMock
         Integer.mixin(TimeCategory)
     }
-
 
     void 'credit with product should be inserted with product payment rule group'(){
         given:
@@ -127,12 +127,10 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-
-            it }
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+        }})
 
         when:
         def inserted  = service.insert(credit)
@@ -147,14 +145,12 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            situation = CreditSituation.CONFIRMED
-            creditInsertionType = CreditInsertionType.DIRECT_DEBIT
-
-            it }
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("situation", CreditSituation.CONFIRMED)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
 
         when:
         def inserted  = service.insert(credit)
@@ -170,14 +166,12 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            situation = CreditSituation.CONFIRMED
-            creditInsertionType = insertionType
-
-            it }
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("situation", CreditSituation.CONFIRMED)
+            add("creditInsertionType", insertionType)
+        }})
 
         when:
         def inserted  = service.insert(credit)
@@ -188,10 +182,10 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getSituation() == situation
 
         where:
-        insertionType|situation
-        CreditInsertionType.BOLETO|CreditSituation.CONFIRMED
-        CreditInsertionType.CREDIT_CARD|CreditSituation.CONFIRMED
-        CreditInsertionType.PAMCARD_SYSTEM|CreditSituation.CONFIRMED
+        insertionType                      | situation
+        CreditInsertionType.BOLETO         | CreditSituation.CONFIRMED
+        CreditInsertionType.CREDIT_CARD    | CreditSituation.CONFIRMED
+        CreditInsertionType.PAMCARD_SYSTEM | CreditSituation.CONFIRMED
     }
 
     @Unroll
@@ -210,10 +204,10 @@ class CreditServiceTest extends SpockApplicationTests {
         result.availableValue == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
 
         where:
-        insertionType|_
-        CreditInsertionType.BOLETO|_
-        CreditInsertionType.CREDIT_CARD|_
-        CreditInsertionType.PAMCARD_SYSTEM|_
+        insertionType                      | _
+        CreditInsertionType.BOLETO         | _
+        CreditInsertionType.CREDIT_CARD    | _
+        CreditInsertionType.PAMCARD_SYSTEM | _
     }
 
     void 'when insert credits with direct debit, available balance should be zero'(){
@@ -251,7 +245,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credits with direct debit, block balance should be updated'(){
         given:
-        def knownProduct = fixtureCreator.createProduct().with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
+        def knownProduct = fixtureCreator.createProduct()
+                .with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
         Credit creditA = fixtureCreator.createCredit(knownProduct)
         Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
@@ -280,10 +275,10 @@ class CreditServiceTest extends SpockApplicationTests {
         result.blockedValue == 0.0
 
         where:
-        insertionType|_
-        CreditInsertionType.BOLETO|_
-        CreditInsertionType.CREDIT_CARD|_
-        CreditInsertionType.PAMCARD_SYSTEM|_
+        insertionType                      | _
+        CreditInsertionType.BOLETO         | _
+        CreditInsertionType.CREDIT_CARD    | _
+        CreditInsertionType.PAMCARD_SYSTEM | _
     }
 
     void 'credit with product should be inserted with product credit insertion type'(){
@@ -304,13 +299,12 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            value = knownProduct.minimumCreditInsertion - 1
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("value", knownProduct.minimumCreditInsertion - 1)
+        }})
 
-            it }
         when:
         service.insert(credit)
 
@@ -323,13 +317,12 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = knownProduct
-            value = knownProduct.maximumCreditInsertion + 1
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("value", knownProduct.maximumCreditInsertion+1)
+        }})
 
-            it }
         when:
         service.insert(credit)
 
@@ -341,13 +334,11 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'credit without product should not be inserted when value is not greater than zero'(){
         given:
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields")
-                .with {
-            hirerDocument = hirer.getDocumentNumber()
-            product = null
-            value = 0
-
-            it }
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", null)
+            add("value", 0.0)
+        }})
         when:
         service.insert(credit)
 
@@ -360,10 +351,10 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def hirer = fixtureCreator.createHirer()
         fixtureCreator.createPaymentRuleGroupDefault()
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType")
-                .with {
-                        hirerDocument = hirer.getDocumentNumber()
-                      it }
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+        }})
+
         when:
         def inserted = service.insert(credit)
         def result = service.findById(inserted.id)
@@ -376,10 +367,9 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def paymentRuleGroup = fixtureCreator.createPaymentRuleGroupDefault()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with {
-                        hirerDocument = hirer.getDocumentNumber()
-                    it }
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+        }})
 
         when:
         def inserted  = service.insert(credit)
@@ -408,9 +398,9 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit with unknown hirer document should not be inserted'(){
         given:
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with { product = fixtureCreator.createProduct()
-            it }
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
+            add("product", fixtureCreator.createProduct())
+        }})
 
         when:
         service.insert(credit)
@@ -424,8 +414,9 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         fixtureCreator.createPaymentRuleGroupDefault()
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup")
-                            .with { hirerDocument = hirer.getDocumentNumber(); it }
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+        }})
 
         when:
         def inserted  = service.insert(credit)
@@ -485,14 +476,10 @@ class CreditServiceTest extends SpockApplicationTests {
 
     private Credit createCredit() {
         def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("withProduct")
-                .with {
-            product = fixtureCreator.createProduct()
-            hirerDocument = hirer.getDocumentNumber()
-            it
-        }
-        credit
+        Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
+            add("product", fixtureCreator.createProduct())
+            add("hirerDocument",hirer.getDocumentNumber() )
+        }})
     }
-
 
 }
