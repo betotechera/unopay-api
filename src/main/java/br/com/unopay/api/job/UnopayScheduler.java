@@ -16,10 +16,10 @@ public class UnopayScheduler {
 
     private Scheduler scheduler;
 
-    private static final String EVERY_DAY = "0 0 3 ? * MON-FRI *";
-    private static final String WEEKLY = "0 0 3 ? * MON *";
-    private static final String BIWEEKLY = "0 3 0 1,15 * ?";
-    private static final String EVERY_MONTH = "0 0 3 ? * MON#1 *";
+    public static final String EVERY_DAY = "0 0 3 ? * MON-FRI *";
+    public static final String WEEKLY = "0 0 3 ? * MON *";
+    public static final String BIWEEKLY = "0 3 0 1,15 * ?";
+    public static final String EVERY_MONTH = "0 0 3 ? * MON#1 *";
 
     @Autowired
     public UnopayScheduler(Scheduler scheduler) {

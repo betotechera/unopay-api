@@ -6,7 +6,7 @@ import org.quartz.JobDetail;
 
 @Slf4j
 @DisallowConcurrentExecution
-public class BatchClosureJob extends Job{
+public class BatchClosureJob extends Job {
 
     @Override
     void execute(JobDetail jobDetail) {

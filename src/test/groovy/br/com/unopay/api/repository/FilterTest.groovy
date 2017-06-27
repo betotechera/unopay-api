@@ -1,6 +1,7 @@
 package br.com.unopay.api.repository
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
@@ -39,23 +40,33 @@ class FilterTest extends SpockApplicationTests {
         hirerUnderTest = fixtureCreator.createHirer()
         contractorUnderTest = fixtureCreator.createContractor()
         productUnderTest = fixtureCreator.createProduct()
+        Fixture.of(Contract.class).addTemplate("withReferences").inherits("valid", new Rule() {{
+            add("hirer",hirerUnderTest)
+            add("contractor",contractorUnderTest)
+            add("product",productUnderTest)
+            add("serviceType",productUnderTest.serviceTypes)
+        }})
     }
 
     def 'should return contracts in period'(){
         given:
-        Contract contractA = createContract().with { begin = 5.day.ago; end = new Date(); it }
-        Contract contractB = createContract().with { begin = 4.day.ago; end = 1.day.ago; it }
-        Contract contractC = createContract().with { begin = 6.day.ago; end = 1.day.from.now; it }
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme("withReferences", new Rule(){{
+            add("begin", instant("5 days ago"))
+            add("end", instant("now"))
+        }})
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme("withReferences", new Rule(){{
+            add("begin", instant("4 days ago"))
+            add("end", instant("1 day ago"))
+        }})
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme("withReferences", new Rule(){{
+            add("begin", instant("6 days ago"))
+            add("end", instant("1 day from now"))
+        }})
 
         def filter = new ContractFilter()
-
         def beginPeriodUnderTest = new Period(5.day.ago, 4.day.ago)
         def endPeriodUnderTest = new Period(1.day.ago, new Date())
         filter.with { beginPeriod = beginPeriodUnderTest; endPeriod = endPeriodUnderTest }
-
-        repository.save(contractA)
-        repository.save(contractB)
-        repository.save(contractC)
 
         when:
         def result = repository.findAll(filter)
@@ -67,17 +78,16 @@ class FilterTest extends SpockApplicationTests {
 
     def 'should not return contracts out of period'() {
         given:
-        Contract contractA = createContract()
-        Contract contractB = createContract()
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(2, "withReferences", new Rule(){{
+            add("begin", instant("5 days ago"))
+            add("end", instant("now"))
+        }})
 
         def filter = new ContractFilter()
 
         def beginPeriodUnderTest = new Period(1.day.from.now, 1.day.from.now)
         def endPeriodUnderTest = new Period(2.day.from.now, 2.day.from.now)
         filter.with { beginPeriod = beginPeriodUnderTest; endPeriod = endPeriodUnderTest }
-
-        repository.save(contractA)
-        repository.save(contractB)
 
         when:
         def result = repository.findAll(filter)
@@ -88,17 +98,13 @@ class FilterTest extends SpockApplicationTests {
 
     def 'should return contracts like name'() {
         given:
-        Contract contractA = createContract().with { name = 'amanda'; it }
-        Contract contractB = createContract().with { name = 'fernanda'; it}
-        Contract contractC = createContract().with { name = 'teste'; it}
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("name", uniqueRandom("amanda", "fernanda", "joao"))
+        }})
 
         def filter = new ContractFilter()
 
         filter.with { name = 'anda' }
-
-        repository.save(contractA)
-        repository.save(contractB)
-        repository.save(contractC)
 
         when:
         def result = repository.findAll(filter)
@@ -109,17 +115,13 @@ class FilterTest extends SpockApplicationTests {
 
     def 'should return contracts in list'() {
         given:
-        Contract contractA = createContract().with { serviceType = [FUEL_ALLOWANCE,FREIGHT]; it }
-        Contract contractB = createContract().with { serviceType = [FREIGHT_RECEIPT,FREIGHT]; it}
-        Contract contractC = createContract().with { serviceType = [FUEL_ALLOWANCE,FREIGHT_RECEIPT]; it}
-
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("serviceType",
+                    uniqueRandom([FUEL_ALLOWANCE,FREIGHT], [FREIGHT_RECEIPT,FREIGHT], [FUEL_ALLOWANCE,FREIGHT_RECEIPT]))
+        }})
         def filter = new ContractFilter()
 
         filter.with { serviceType = [FUEL_ALLOWANCE] }
-
-        repository.save(contractA)
-        repository.save(contractB)
-        repository.save(contractC)
 
         when:
         def result = repository.findAll(filter)
@@ -146,32 +148,18 @@ class FilterTest extends SpockApplicationTests {
 
     def 'should return contracts like exact name'() {
         given:
-        Contract contractA = createContract().with { name = 'jose'; it }
-        Contract contractB = createContract().with { name = 'fernanda'; it}
-        Contract contractC = createContract().with { name = 'teste'; it}
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("name", uniqueRandom("jose", "fernanda", "joao"))
+        }})
 
         def filter = new ContractFilter()
 
         filter.with { name = 'jose' }
-
-        repository.save(contractA)
-        repository.save(contractB)
-        repository.save(contractC)
 
         when:
         def result = repository.findAll(filter)
 
         then:
         that result, hasSize(1)
-    }
-
-    private Contract createContract() {
-        return Fixture.from(Contract.class).gimme("endedNow").with {
-            hirer = hirerUnderTest
-            contractor = contractorUnderTest
-            product = productUnderTest
-            serviceType = productUnderTest.serviceTypes
-            it
-        }
     }
 }
