@@ -1,11 +1,15 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.RecurrencePeriod
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.job.BatchClosingJob
+import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -24,22 +28,54 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
     AccreditedNetwork networkUnderTest
 
+    UnopayScheduler schedulerMock = Mock(UnopayScheduler)
+
     void setup(){
         networkUnderTest = fixtureCreator.createNetwork()
+        service.scheduler =  schedulerMock
     }
 
-
-
-    def 'a valid establishment should be created'(){
+    def 'a valid establishment should be schedule closing job'(){
         given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                        .gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid", new Rule(){{
+            add("network", networkUnderTest)
+            add("checkout.period", RecurrencePeriod.BIWEEKLY)
+        }})
 
         when:
         Establishment created = service.create(establishment)
 
         then:
+        1 * schedulerMock.schedule(_,RecurrencePeriod.BIWEEKLY.pattern, BatchClosingJob.class)
+    }
+
+    def 'a valid establishment should be created'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class)
+                                        .gimme("valid").with { network = networkUnderTest; it }
+        when:
+        Establishment created = service.create(establishment)
+
+        then:
         created != null
+    }
+
+    def 'a valid establishment when update should schedule closing job'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid", new Rule(){{
+            add("network", networkUnderTest)
+            add("checkout.period", RecurrencePeriod.DAILY)
+        }})
+        Establishment created = service.create(establishment)
+
+        def newField = "teste"
+        establishment.technicalContact = newField
+
+        when:
+        service.update(created.id, establishment)
+
+        then:
+        1 * schedulerMock.schedule(_,RecurrencePeriod.DAILY.pattern, BatchClosingJob.class)
     }
 
     def 'a valid establishment should be updated'(){
@@ -657,6 +693,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         def ex = thrown(ConflictException)
         ex.errors.find().logref == 'ESTABLISHMENT_WITH_BRANCH'
     }
+
     def 'a unknown establishment should not be deleted'(){
         when:
         service.delete('')

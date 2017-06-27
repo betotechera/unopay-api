@@ -4,6 +4,8 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.bacen.repository.EstablishmentRepository;
+import br.com.unopay.api.job.BatchClosingJob;
+import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -13,6 +15,7 @@ import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +32,8 @@ public class EstablishmentService {
     private BrandFlagService brandFlagService;
     private BankAccountService bankAccountService;
     private UserDetailRepository userDetailRepository;
+    @Setter
+    private UnopayScheduler scheduler;
 
     @Autowired
     public EstablishmentService(EstablishmentRepository repository,
@@ -38,7 +43,8 @@ public class EstablishmentService {
                                 AccreditedNetworkService networkService,
                                 BrandFlagService brandFlagService,
                                 BankAccountService bankAccountService,
-                                UserDetailRepository userDetailRepository) {
+                                UserDetailRepository userDetailRepository,
+                                UnopayScheduler scheduler) {
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
@@ -47,13 +53,16 @@ public class EstablishmentService {
         this.brandFlagService = brandFlagService;
         this.bankAccountService = bankAccountService;
         this.userDetailRepository = userDetailRepository;
+        this.scheduler = scheduler;
     }
 
     public Establishment create(Establishment establishment) {
         establishment.validateCreate();
         saveReferences(establishment);
         validateReferences(establishment);
-        return repository.save(establishment);
+        Establishment created = repository.save(establishment);
+        scheduleClosingJob(created);
+        return created;
     }
 
     public void update(String id, Establishment establishment) {
@@ -63,6 +72,7 @@ public class EstablishmentService {
         saveReferences(establishment);
         current.updateMe(establishment);
         repository.save(current);
+        scheduleClosingJob(current);
     }
 
     public Establishment findById(String id) {
@@ -117,5 +127,9 @@ public class EstablishmentService {
 
     public Page<Establishment> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private void scheduleClosingJob(Establishment created) {
+        scheduler.schedule(created.getId(), created.getCheckout().getPeriod().getPattern(),BatchClosingJob.class);
     }
 }
