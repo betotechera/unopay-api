@@ -2,6 +2,7 @@ package br.com.unopay.api.repository
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
@@ -36,7 +37,6 @@ class FilterTest extends SpockApplicationTests {
     Product productUnderTest
 
     void setup(){
-        Integer.mixin(TimeCategory)
         hirerUnderTest = fixtureCreator.createHirer()
         contractorUnderTest = fixtureCreator.createContractor()
         productUnderTest = fixtureCreator.createProduct()
@@ -64,8 +64,8 @@ class FilterTest extends SpockApplicationTests {
         }})
 
         def filter = new ContractFilter()
-        def beginPeriodUnderTest = new Period(5.day.ago, 4.day.ago)
-        def endPeriodUnderTest = new Period(1.day.ago, new Date())
+        def beginPeriodUnderTest = new Period(instant("5 days ago"), instant("4 days ago"))
+        def endPeriodUnderTest = new Period(instant("1 day ago"), instant("now"))
         filter.with { beginPeriod = beginPeriodUnderTest; endPeriod = endPeriodUnderTest }
 
         when:
@@ -85,8 +85,8 @@ class FilterTest extends SpockApplicationTests {
 
         def filter = new ContractFilter()
 
-        def beginPeriodUnderTest = new Period(1.day.from.now, 1.day.from.now)
-        def endPeriodUnderTest = new Period(2.day.from.now, 2.day.from.now)
+        def beginPeriodUnderTest = new Period(instant("1 day from now"), instant("1 day from now"))
+        def endPeriodUnderTest = new Period(instant("2 days from now"), instant("2 days from now"))
         filter.with { beginPeriod = beginPeriodUnderTest; endPeriod = endPeriodUnderTest }
 
         when:
@@ -161,5 +161,9 @@ class FilterTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(1)
+    }
+
+    private Date instant(String pattern){
+        new ChronicFunction(pattern).generateValue().getTime()
     }
 }
