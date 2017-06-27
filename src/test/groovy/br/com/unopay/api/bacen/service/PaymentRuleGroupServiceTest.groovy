@@ -56,10 +56,12 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
     void 'should not allow create paymentRuleGroups with same codes'(){
         given:
         PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        PaymentRuleGroup second = Fixture.from(PaymentRuleGroup.class).gimme("valid")
 
         when:
         service.create(group)
-        service.create(group.with { id = null; it })
+        second.code = group.code
+        service.create(second)
 
         then:
         def ex = thrown(ConflictException)
