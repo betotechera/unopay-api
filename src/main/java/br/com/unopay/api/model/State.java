@@ -3,8 +3,10 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.http.DescriptableEnum;
 
 public enum State implements DescriptableEnum {
-
+    AC("ACRE"),
+    AL("ALAGOAS"),
     AM("AMAZONAS"),
+    AP("AMAPÁ"),
     BA("BAHIA"),
     CE("CEARÁ"),
     DF("DISTRITO FEDERAL"),
