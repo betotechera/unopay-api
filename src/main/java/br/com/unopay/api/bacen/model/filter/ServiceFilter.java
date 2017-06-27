@@ -12,7 +12,7 @@ public class ServiceFilter implements Serializable {
     public static final Long serialVersionUID = 1L;
 
     @SearchableField
-    private String code;
+    private Integer code;
 
     @SearchableField
     private String name;
