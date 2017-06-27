@@ -42,28 +42,27 @@ public class Address implements Serializable {
 
     @Column(name="street_name")
     @JsonView({Views.Public.class})
-    @Size(min=2, max = 250, groups = {Create.class, Update.class})
+    @Size(max = 250, groups = {Create.class, Update.class})
     private String streetName;
-
 
     @Column(name="street_number")
     @JsonView({Views.Public.class})
-    @Size(min=1, max = 30, groups = {Create.class, Update.class})
+    @Size(max = 30, groups = {Create.class, Update.class})
     private String number;
 
     @Column(name="complement")
     @JsonView({Views.Public.class})
-    @Size(min=2, max = 250, groups = {Create.class, Update.class})
+    @Size(max = 250, groups = {Create.class, Update.class})
     private String complement;
 
     @Column(name="district")
     @JsonView({Views.Public.class})
-    @Size(min=2, max = 250, groups = {Create.class, Update.class})
+    @Size(max = 250, groups = {Create.class, Update.class})
     private String district;
 
     @Column(name="city")
     @JsonView({Views.Public.class,Views.List.class})
-    @Size(min=2, max = 250, groups = {Create.class, Update.class})
+    @Size(max = 250, groups = {Create.class, Update.class})
     private String city;
 
     @Enumerated(STRING)
