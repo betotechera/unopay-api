@@ -48,7 +48,7 @@ public class Address implements Serializable {
 
     @Column(name="street_number")
     @JsonView({Views.Public.class})
-    @Size(min=2, max = 250, groups = {Create.class, Update.class})
+    @Size(min=1, max = 30, groups = {Create.class, Update.class})
     private String number;
 
     @Column(name="complement")
