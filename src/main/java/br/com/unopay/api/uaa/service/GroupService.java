@@ -14,6 +14,7 @@ import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
+import br.com.unopay.api.uaa.model.filter.GroupFilter;
 import br.com.unopay.api.uaa.repository.AuthorityRepository;
 import br.com.unopay.api.uaa.repository.GroupRepository;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -87,8 +88,8 @@ public class GroupService {
         repository.delete(id);
     }
 
-    public Page<Group> findAll(UnovationPageRequest pageRequest) {
-        return repository.findAll(new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
+    public Page<Group> findAll(GroupFilter filter, UnovationPageRequest pageRequest) {
+        return repository.findAll(filter,new PageRequest(pageRequest.getPageStartingAtZero(), pageRequest.getSize()));
     }
 
     @Transactional

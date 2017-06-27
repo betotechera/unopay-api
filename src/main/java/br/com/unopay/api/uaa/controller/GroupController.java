@@ -5,6 +5,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.filter.GroupFilter;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.util.StringJoiner;
 import br.com.unopay.bootcommons.jsoncollections.ListResults;
@@ -85,9 +86,9 @@ public class GroupController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.List.class)
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
-    Results<Group> findAllGroups(@Valid UnovationPageRequest pageable) {
-        LOGGER.info("getting all groups");
-        Page<Group> page =  service.findAll(pageable);
+    Results<Group> findAllGroups(GroupFilter groupFilter,@Valid UnovationPageRequest pageable) {
+        LOGGER.info("getting all groups by filter={}",groupFilter);
+        Page<Group> page =  service.findAll(groupFilter,pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), api);
     }

@@ -6,6 +6,7 @@ import br.com.unopay.api.uaa.model.Authority
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.model.UserType
+import br.com.unopay.api.uaa.model.filter.GroupFilter
 import br.com.unopay.api.uaa.repository.GroupRepository
 import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.api.uaa.repository.UserTypeRepository
@@ -162,7 +163,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
-        Page<Group> groups = service.findAll(page)
+        Page<Group> groups = service.findAll(new GroupFilter(),page)
 
         then:
         that groups.content, hasSize(2)
@@ -174,7 +175,7 @@ class GroupServiceTest extends SpockApplicationTests {
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(1)}}
-        Page<Group> groups = service.findAll(page)
+        Page<Group> groups = service.findAll(new GroupFilter(),page)
 
         then:
         that groups.content, hasSize(0)
