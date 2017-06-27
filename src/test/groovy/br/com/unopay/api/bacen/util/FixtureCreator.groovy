@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.util
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.six2six.fixturefactory.function.AtomicFunction
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.bacen.model.AccreditedNetwork
@@ -42,7 +41,7 @@ class FixtureCreator {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule(){{
             add("establishment", establishmentUnderTest)
-            add("password", encodedPassword(generatePassword))
+            add("password", passwordEncoder.encode(generatePassword))
         }})
         user.with { password = generatePassword; it }
     }
@@ -50,7 +49,7 @@ class FixtureCreator {
     UserDetail createUser(){
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule(){{
-            add("password", encodedPassword(generatePassword))
+            add("password", passwordEncoder.encode(generatePassword))
         }})
         user.with { password = generatePassword; it }
     }
@@ -67,7 +66,7 @@ class FixtureCreator {
         PaymentInstrument inst = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("product", product)
             add("contractor", contractor)
-            add("password", encodedPassword(generatePassword))
+            add("password", passwordEncoder.encode(generatePassword))
         }})
         inst.with { password = generatePassword; it }
     }
@@ -93,23 +92,22 @@ class FixtureCreator {
         }})
     }
 
-    Contract createPersistedContract(contractorUnderTest = createContractor(),
-                                     Product productUnderTest = createProduct(),
-                                     hirer = createHirer(), situationUnderTest = ContractSituation.ACTIVE){
+    Contract createPersistedContract(contractor = createContractor(), Product product = createProduct(),
+                                     hirer = createHirer(), situation = ContractSituation.ACTIVE){
         Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
-            add("contractor", contractorUnderTest)
-            add("product", productUnderTest)
-            add("serviceType",productUnderTest.serviceTypes)
-            add("situation", situationUnderTest)
+            add("contractor", contractor)
+            add("product", product)
+            add("serviceType",product.serviceTypes)
+            add("situation", situation)
         }})
     }
 
-    List addContractsToEstablishment(Establishment establishmentUnderTest, Product product) {
+    List addContractsToEstablishment(Establishment establishment, Product product) {
         def contractA = createPersistedContract(createContractor(), product)
         def contractB = createPersistedContract(createContractor(), product)
         Fixture.from(ContractEstablishment.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("establishment", establishmentUnderTest)
+            add("establishment", establishment)
             add("contract", uniqueRandom(contractA, contractB))
         }})
         [contractB, contractA]
@@ -150,7 +148,7 @@ class FixtureCreator {
     }
 
     ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = instrumentCredit(),
-                                            Establishment establishmentUnderTest = createEstablishment() ){
+                                            Establishment establishment = createEstablishment() ){
         credit = createContractorInstrumentCreditPersisted()
         Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
             add("contract",credit.contract)
@@ -160,7 +158,7 @@ class FixtureCreator {
             add("eventValue",0.1)
             add("user",createUser())
             add("contractorInstrumentCredit",credit)
-            add("establishment",establishmentUnderTest)
+            add("establishment",establishment)
             add("contractorInstrumentCredit.paymentInstrument.password",credit.paymentInstrument.password)
         }})
     }
@@ -225,14 +223,5 @@ class FixtureCreator {
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {
         Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
-    }
-
-    private AtomicFunction encodedPassword(final String password) {
-        new AtomicFunction() {
-            @Override
-            <T> T generateValue() {
-                return passwordEncoder.encode(password)
-            }
-        }
     }
 }
