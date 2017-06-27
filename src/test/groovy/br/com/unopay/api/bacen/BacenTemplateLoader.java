@@ -44,9 +44,9 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("code", regex("\\d{8,10}"));
             add("name", "Arranjo");
             add("institution", one(Institution.class, "persisted"));
-            add("purpose", Purpose.BUY);
-            add("scope", Scope.DOMESTIC);
-            add("userRelationship", UserRelationship.POSTPAID);
+            add("purpose", uniqueRandom(Purpose.class));
+            add("scope", uniqueRandom(Scope.class));
+            add("userRelationship", uniqueRandom(UserRelationship.class));
         }});
 
         Fixture.of(PaymentRuleGroup.class).addTemplate("default").inherits("valid", new Rule(){{

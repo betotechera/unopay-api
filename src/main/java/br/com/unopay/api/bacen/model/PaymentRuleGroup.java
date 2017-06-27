@@ -96,4 +96,5 @@ public class PaymentRuleGroup implements Serializable, Updatable {
         if (getName().length() < MIN) {
             throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_PAYMENT_RULE_GROUP_NAME);
         }
-    }}
+    }
+}

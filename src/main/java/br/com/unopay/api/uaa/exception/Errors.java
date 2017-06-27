@@ -1,6 +1,7 @@
 package br.com.unopay.api.uaa.exception;
 
 import br.com.unopay.bootcommons.exception.UnovationError;
+import br.com.unopay.bootcommons.exception.UnovationErrors;
 
 public final class Errors {
 
@@ -139,7 +140,8 @@ public final class Errors {
             new UnovationError("SHORT_PAYMENT_RULE_GROUP_NAME","Name is too short");
     public static final UnovationError PAYMENT_RULE_GROUP_ID_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
-
+    public static final UnovationError PAYMENT_RULE_GROUP_ALREADY_EXISTS =
+            new UnovationError("PAYMENT_RULE_GROUP_ALREADY_EXISTS","PaymentRuleGroup Already Exists");
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =

@@ -6,6 +6,10 @@ import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.Service
+import br.com.unopay.api.bacen.model.filter.ServiceFilter
+import br.com.unopay.api.bacen.repository.ServiceRepository
+
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
 import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
@@ -25,6 +29,9 @@ class FilterTest extends SpockApplicationTests {
 
     @Autowired
     ContractRepository repository
+
+    @Autowired
+    ServiceRepository serviceRepository
 
     @Autowired
     HirerRepository hirerRepository
@@ -145,6 +152,24 @@ class FilterTest extends SpockApplicationTests {
         then:
         that result, hasSize(1)
     }
+
+    def 'should return service equals Integer code'() {
+        given:
+        Fixture.from(Service.class).uses(jpaProcessor).gimme(3,"valid", new Rule(){{
+            add("code", uniqueRandom(1, 2, 3))
+        }})
+
+        def filter = new ServiceFilter()
+
+        filter.with { code = 2 }
+
+        when:
+        def result = serviceRepository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
+    }
+
 
     def 'should return contracts like exact name'() {
         given:

@@ -13,8 +13,6 @@ import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ContractTemplateLoader implements TemplateLoader {
 

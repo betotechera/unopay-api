@@ -100,7 +100,7 @@ public class Filter<T> implements Specification<T> {
         if(value instanceof Period){
             return createPeriodBetween(key, value);
         }
-        if(value instanceof Enum){
+        if(value instanceof Enum || value instanceof Integer){
             return cb.equal(key, value);
         }
         if(value instanceof Collection){
