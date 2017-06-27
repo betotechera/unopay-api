@@ -163,7 +163,7 @@ class FilterTest extends SpockApplicationTests {
         that result, hasSize(1)
     }
 
-    private Date instant(String pattern){
+    private static Date instant(String pattern){
         new ChronicFunction(pattern).generateValue().getTime()
     }
 }

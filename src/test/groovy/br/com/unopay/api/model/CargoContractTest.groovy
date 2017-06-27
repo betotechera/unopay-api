@@ -35,16 +35,18 @@ class CargoContractTest extends FixtureApplicationTest {
         }})
         contract.cargoProfile = CargoProfile.DRY_CARGO
         contract.travelDocuments.find().damagedItems = quantity
+
         when:
         contract.validate()
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors?.first()?.logref == 'DAMAGED_ITEMS_REQUIRED'
+
         where:
-        _|quantity
-        _|-1
-        _|null
+        _ | quantity
+        _ | -1
+        _ | null
     }
 
     @Unroll
@@ -56,17 +58,19 @@ class CargoContractTest extends FixtureApplicationTest {
         }})
         contract.cargoProfile = CargoProfile.IN_BULK
         contract.travelDocuments.find().cargoWeight = weight
+
         when:
         contract.validate()
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors?.first()?.logref == 'WEIGHT_REQUIRED'
+
         where:
-        _|weight
-        _|-1
-        _|0
-        _|null
+        _ | weight
+        _ | -1
+        _ | 0
+        _ | null
     }
 
 
