@@ -16,6 +16,7 @@ import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.PaymentSource
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ReasonReceiptSituation
 import br.com.unopay.api.model.ReceiptSituation
 import br.com.unopay.api.model.ReceiptStep
@@ -73,10 +74,13 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
 
     ContractorInstrumentCredit instrumentCreditUnderTest
 
+    Product productUnderTest
+
     void setup(){
-        instrumentCreditUnderTest = fixtureCreator.createContractorInstrumentCredit()
+        instrumentCreditUnderTest = fixtureCreator.instrumentCredit()
         instrumentCreditUnderTest.serviceType = ServiceType.FUEL_ALLOWANCE
         instrumentCreditUnderTest.creditType = ContractorCreditType.FINAL_PAYMENT
+        productUnderTest = instrumentCreditUnderTest.contract.product
         contractorInstrumentCreditRepository.save(instrumentCreditUnderTest)
         currentUser = fixtureCreator.createUser()
         service.pamcaryService = pamcaryServiceMock
@@ -307,7 +311,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'when user not is establishment type then the contract with another establishment should not be receipted'(){
         given:
         FreightReceipt freightReceipt = createFreightReceipt()
-        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), productUnderTest)
         freightReceipt.with {
             contract.id = anotherContracts.find().id
             establishment.id = fixtureCreator.createEstablishment().id
@@ -325,7 +329,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'when user is establishment type when the contract with another establishment should not be receipted'(){
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
-        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
+        def anotherContracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), productUnderTest)
         FreightReceipt freightReceipt = createFreightReceipt()
         freightReceipt.with {
             contract.id = anotherContracts.find().id
@@ -345,9 +349,9 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
     void 'when user is establishment type when the contract belongs to another establishment should not be receipted'(){
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
-        fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, instrumentCreditUnderTest)
+        fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
         FreightReceipt freightReceipt = createFreightReceipt()
-        def contracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), instrumentCreditUnderTest)
+        def contracts = fixtureCreator.addContractsToEstablishment(fixtureCreator.createEstablishment(), productUnderTest)
         freightReceipt.with {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor

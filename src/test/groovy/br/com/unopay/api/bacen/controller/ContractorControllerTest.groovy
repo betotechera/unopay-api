@@ -115,7 +115,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     void 'known contractor credits should be found when find credits'() {
         given:
         String accessToken = getClientAccessToken()
-        def instrumentCredit = fixtureCreator.createContractorInstrumentCredit()
+        def instrumentCredit = fixtureCreator.instrumentCredit()
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
         def document = instrumentCredit.contract.contractor.documentNumber
         def contractId = instrumentCredit.contract.id

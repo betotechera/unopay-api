@@ -22,7 +22,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.instrumentCredit()
         String instrumentId = credit?.paymentInstrument?.id
 
         when:
@@ -40,7 +40,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.instrumentCredit()
 
         String instrumentId = credit?.paymentInstrument?.id
         def inserted = service.insert(instrumentId, credit)
@@ -58,7 +58,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
         given:
         String accessToken = getUserAccessToken()
 
-        ContractorInstrumentCredit credit = fixtureCreator.createContractorInstrumentCredit()
+        ContractorInstrumentCredit credit = fixtureCreator.instrumentCredit()
 
         String instrumentId = credit?.paymentInstrument?.id
         def inserted = service.insert(instrumentId, credit)

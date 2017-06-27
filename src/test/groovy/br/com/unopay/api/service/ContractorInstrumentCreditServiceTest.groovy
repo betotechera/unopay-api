@@ -52,7 +52,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         contractUnderTest = fixtureCreator
                             .createPersistedContract(contractorUnderTest, fixtureCreator.createProduct(), hirerUnderTest)
         paymentInstrumentUnderTest = fixtureCreator
-                                    .createPaymentInstrumentWithProduct(contractUnderTest.product, contractorUnderTest)
+                                    .createInstrumentToProduct(contractUnderTest.product, contractorUnderTest)
         creditPaymentAccountUnderTest = fixtureCreator.createCreditPaymentAccountFromContract(contractUnderTest)
         Integer.mixin(TimeCategory)
     }
@@ -292,7 +292,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
             paymentInstrument = fixtureCreator
-                    .createPaymentInstrumentWithProduct(contractUnderTest.product, contractor)
+                    .createInstrumentToProduct(contractUnderTest.product, contractor)
         }
         when:
        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
