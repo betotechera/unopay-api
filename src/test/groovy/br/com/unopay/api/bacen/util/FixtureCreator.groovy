@@ -135,6 +135,27 @@ class FixtureCreator {
         }})
     }
 
+    ContractorInstrumentCredit createInstrumentToContract(Contract contract){
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contractor", contract.contractor)
+            add("product", contract.product)
+        }})
+        CreditPaymentAccount paymentAccount = Fixture.from(CreditPaymentAccount.class)
+                .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirerDocument", contract.hirerDocumentNumber)
+            add("product", contract.product)
+        }})
+        ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class)
+                .uses(jpaProcessor).gimme("allFields", new Rule(){{
+            add("contract", contract)
+            add("paymentInstrument", paymentInstrument)
+            add("creditPaymentAccount", paymentAccount)
+        }})
+        instrumentCredit
+    }
+
+
     ContractorInstrumentCredit createContractorInstrumentCreditPersisted(){
         def contractUnderTest = createPersistedContract()
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contractUnderTest)
@@ -165,6 +186,15 @@ class FixtureCreator {
 
     BatchClosing createBatchClosing() {
         Fixture.from(BatchClosing.class).uses(jpaProcessor).uses(jpaProcessor).gimme("valid")
+    }
+
+    BatchClosing creataBatchToPersist(){
+       Fixture.from(BatchClosing.class).gimme("valid", new Rule(){{
+            add("establishment",createEstablishment())
+            add("issuer",createIssuer())
+            add("accreditedNetwork",createNetwork())
+            add("hirer",createHirer())
+        }})
     }
 
     Hirer createHirer() {

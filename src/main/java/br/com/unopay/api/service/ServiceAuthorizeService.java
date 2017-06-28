@@ -176,10 +176,14 @@ public class ServiceAuthorizeService {
     }
 
     public Stream<ServiceAuthorize> findByEstablishment(String establishmentId){
-        return repository.findByEstablishmentIdOrderByContractHirer(establishmentId);
+        return repository.findByEstablishmentIdAndBatchClosingDateTimeIsNullOrderByContractHirer(establishmentId);
     }
 
     public List<ServiceAuthorize> findAll(){
         return repository.findAll();
+    }
+
+    public ServiceAuthorize save(ServiceAuthorize serviceAuthorize){
+        return repository.save(serviceAuthorize);
     }
 }

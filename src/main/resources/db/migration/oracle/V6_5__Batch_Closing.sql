@@ -65,3 +65,5 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_BATCH_CLOSING','Per
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BATCH_CLOSING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BATCH_CLOSING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
+alter table service_authorize add batch_closing_date_time timestamp;
