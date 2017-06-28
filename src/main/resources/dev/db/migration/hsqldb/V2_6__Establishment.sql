@@ -39,6 +39,7 @@ create table establishment (
     minimum_deposit_value decimal(10,2),
     invoice_receipt_period  VARCHAR(16),
     invoice_receipt_type varchar(10),
+    issue_invoice_type varchar(100) not null,
     version integer,
     CONSTRAINT establishment_pers_id UNIQUE (person_id),
     constraint fk_establishment_person foreign key(person_id) references person(id),

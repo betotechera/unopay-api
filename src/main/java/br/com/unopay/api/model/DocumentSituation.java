@@ -7,7 +7,8 @@ import java.util.stream.Stream;
 public enum DocumentSituation implements DescriptableEnum{
 
     APPROVED("Documentacao aprovada","1"), INCOMPLETE("Documentacao incompleta","2"),
-    CAVEAT("Documentacao com ressalva.","3"), PENDING("Desistencia","4"), CANCELED("Documentaçao cancelada", "5");
+    CAVEAT("Documentacao com ressalva.","3"), PENDING("Documentação pendente","4"),
+    CANCELED("Documentaçao cancelada", "5");
 
     private String description;
 

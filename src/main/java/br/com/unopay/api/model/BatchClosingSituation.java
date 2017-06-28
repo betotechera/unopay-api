@@ -24,7 +24,7 @@ public enum BatchClosingSituation  implements DescriptableEnum {
 
     @Override
     public String getDescription() {
-        return null;
+        return description;
     }
 
 }

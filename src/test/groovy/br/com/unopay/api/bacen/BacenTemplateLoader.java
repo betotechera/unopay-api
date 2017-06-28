@@ -32,6 +32,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
+import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
 import java.math.BigDecimal;
 
@@ -236,6 +237,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("gatheringChannels", has(2).of(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
+            add("issueInvoiceType", uniqueRandom(IssueInvoiceType.class));
         }});
 
         Fixture.of(Branch.class).addTemplate("valid", new Rule(){{
