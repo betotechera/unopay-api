@@ -289,4 +289,11 @@ public class ServiceAuthorize implements Serializable {
         return 0;
     }
 
+    public IssueInvoiceType establishmentIssueInvoiceType(){
+        if(getEstablishment() != null) {
+            return getEstablishment().getIssueInvoiceType();
+        }
+        return null;
+    }
+
 }

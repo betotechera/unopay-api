@@ -37,8 +37,8 @@ public class BatchClosingItem implements Serializable {
     public BatchClosingItem(ServiceAuthorize serviceAuthorize){
         this.serviceAuthorize = serviceAuthorize;
         this.documentNumberInvoice = serviceAuthorize.getContract().getHirerDocumentNumber();
-        this.invoiceDocumentSituation = DocumentSituation.APPROVED;
-        this.issueInvoiceType = IssueInvoiceType.BY_AUTHORIZATION;
+        this.invoiceDocumentSituation = DocumentSituation.PENDING;
+        this.issueInvoiceType = serviceAuthorize.establishmentIssueInvoiceType();
     }
 
     @Id

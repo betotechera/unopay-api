@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
+import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -181,6 +182,12 @@ public class Establishment implements Serializable, Updatable {
     @Embedded
     @JsonView({Views.Public.class})
     private InvoiceReceipt invoiceReceipt;
+
+    @Column(name = "issue_invoice_type")
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(EnumType.STRING)
+    @JsonView({Views.Public.class})
+    private IssueInvoiceType issueInvoiceType;
 
     public void validateCreate(){
         if(getBankAccount() == null) {

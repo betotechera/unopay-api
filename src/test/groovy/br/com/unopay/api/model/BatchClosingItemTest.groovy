@@ -17,6 +17,28 @@ class BatchClosingItemTest extends FixtureApplicationTest {
         batchClosingItem.documentNumberInvoice == serviceAuthorize.contract.hirerDocumentNumber
     }
 
+    def 'should create from service authorize with pending invoice situation'(){
+        given:
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
+
+        when:
+        def batchClosingItem = new BatchClosingItem(serviceAuthorize)
+
+        then:
+        batchClosingItem.invoiceDocumentSituation == DocumentSituation.PENDING
+    }
+
+    def 'should create from service authorize with establishment issue invoice type'(){
+        given:
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
+
+        when:
+        def batchClosingItem = new BatchClosingItem(serviceAuthorize)
+
+        then:
+        batchClosingItem.issueInvoiceType == serviceAuthorize.establishmentIssueInvoiceType()
+    }
+
     def 'should be equals'(){
         given:
         BatchClosingItem a = Fixture.from(BatchClosingItem.class).gimme("valid")
