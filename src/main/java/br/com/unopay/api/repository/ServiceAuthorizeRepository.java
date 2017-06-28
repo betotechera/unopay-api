@@ -12,5 +12,5 @@ public interface ServiceAuthorizeRepository extends
 
     Optional<ServiceAuthorize> findById(String id);
     List<ServiceAuthorize> findAll();
-    Stream<ServiceAuthorize> findByEstablishmentIdOrderByContractHirer(String establishmentId);
+    Stream<ServiceAuthorize> findByEstablishmentIdAndBatchClosingDateTimeIsNullOrderByContractHirer(String establishmentId);
 }

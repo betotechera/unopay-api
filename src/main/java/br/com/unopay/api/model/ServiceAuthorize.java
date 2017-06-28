@@ -156,6 +156,9 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private TransactionSituation situation;
 
+    @Column(name = "batch_closing_date_time")
+    private Date batchClosingDateTime;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -163,13 +166,6 @@ public class ServiceAuthorize implements Serializable {
     @Transient
     @KeyField(baseField = "abastecimento.operacao")
     private String operation = "1";
-
-    public String establishmentDocumentNumber(){
-        if(getEstablishment() != null){
-            return getEstablishment().documentNumber();
-        }
-        return null;
-    }
 
     public String contractId(){
         if(getContract() != null){
@@ -281,11 +277,9 @@ public class ServiceAuthorize implements Serializable {
         return this;
     }
 
-    public boolean containsSameEstablishment(ServiceAuthorize serviceAuthorize){
-        return serviceAuthorize != null &&
-                serviceAuthorize.getEstablishment() != null &&
-                getEstablishment() != null &&
-                Objects.equals(getEstablishment().getId(), serviceAuthorize.getEstablishment().getId());
+    public ServiceAuthorize buildBatchSlosingDate(){
+        this.batchClosingDateTime = new Date();
+        return this;
     }
 
 }
