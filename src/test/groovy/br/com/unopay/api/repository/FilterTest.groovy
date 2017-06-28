@@ -16,6 +16,8 @@ import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
@@ -188,7 +190,5 @@ class FilterTest extends SpockApplicationTests {
         that result, hasSize(1)
     }
 
-    private static Date instant(String pattern){
-        new ChronicFunction(pattern).generateValue().getTime()
-    }
+
 }

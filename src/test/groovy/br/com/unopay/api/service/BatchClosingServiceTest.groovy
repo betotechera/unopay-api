@@ -1,10 +1,12 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.BatchClosing
+import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ServiceAuthorize
 import org.apache.commons.beanutils.BeanUtils
@@ -64,6 +66,40 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         that batchClosings, hasSize(1)
         that batchClosings.find().batchClosingItems, hasSize(2)
 
+    }
+
+    def 'given a contract with issue invoice should create batch closing document received situation'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
+            add("issueInvoice", true)
+        }})
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment, 2)
+
+        when:
+        service.create(establishment.id)
+        Set<BatchClosing> batchClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that batchClosings, hasSize(1)
+        batchClosings.find().situation == BatchClosingSituation.DOCUMENT_RECEIVED
+    }
+
+    def 'given a contract without issue invoice should create batch closing finalized situation'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
+            add("issueInvoice", false)
+        }})
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment, 2)
+
+        when:
+        service.create(establishment.id)
+        Set<BatchClosing> batchClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that batchClosings, hasSize(1)
+        batchClosings.find().situation == BatchClosingSituation.FINALIZED
     }
 
     def 'should create batch closing value by establishment'(){

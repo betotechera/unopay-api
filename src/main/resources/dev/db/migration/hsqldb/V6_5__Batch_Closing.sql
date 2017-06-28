@@ -10,7 +10,7 @@ create table batch_closing (
     period varchar(256) not null,
     payment_release_date_time TIMESTAMP NOT NULL,
     situation varchar(50) not null,
-    payment_date_time TIMESTAMP NOT NULL,
+    payment_date_time TIMESTAMP,
     payment_id varchar(256),
     version integer,
     constraint fk_batch_est foreign key(establishment_id) references establishment(id),

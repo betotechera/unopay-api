@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 
 @Data
 @Entity
@@ -47,6 +48,7 @@ public class BatchClosing implements Serializable {
     public BatchClosing(){}
 
     public BatchClosing(ServiceAuthorize serviceAuthorize){
+        Date closingPaymentDays = new DateTime().plusDays(serviceAuthorize.establishmentClosingPaymentDays()).toDate();
         this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();
         this.establishment = serviceAuthorize.getEstablishment();
         this.hirer = serviceAuthorize.getContract().getHirer();
@@ -54,8 +56,7 @@ public class BatchClosing implements Serializable {
         this.period = serviceAuthorize.getEstablishment().getCheckout().getPeriod();
         this.issueInvoice = serviceAuthorize.getContract().isIssueInvoice();
         this.closingDateTime = new Date();
-        this.paymentDateTime = new Date();
-        this.paymentReleaseDateTime = new Date();
+        this.paymentReleaseDateTime = closingPaymentDays;
         this.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH;
     }
 
@@ -153,5 +154,14 @@ public class BatchClosing implements Serializable {
         if(!batchClosingItems.contains(batchClosingItem)) {
             this.batchClosingItems.add(batchClosingItem);
         }
+    }
+
+    public BatchClosing defineSituation() {
+        if(issueInvoice){
+            situation = BatchClosingSituation.DOCUMENT_RECEIVED;
+            return this;
+        }
+        situation = BatchClosingSituation.FINALIZED;
+        return this;
     }
 }

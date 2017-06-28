@@ -136,11 +136,7 @@ class FixtureCreator {
     }
 
     ContractorInstrumentCredit createInstrumentToContract(Contract contract){
-        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
-                .uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("contractor", contract.contractor)
-            add("product", contract.product)
-        }})
+        PaymentInstrument paymentInstrument = createInstrumentToProduct(contract.product, contract.contractor)
         CreditPaymentAccount paymentAccount = Fixture.from(CreditPaymentAccount.class)
                 .uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirerDocument", contract.hirerDocumentNumber)
@@ -168,9 +164,8 @@ class FixtureCreator {
         }})
     }
 
-    ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = instrumentCredit(),
+    ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                             Establishment establishment = createEstablishment() ){
-        credit = createContractorInstrumentCreditPersisted()
         Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
             add("contract",credit.contract)
             add("contractor",credit.contract.contractor)

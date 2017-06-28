@@ -282,4 +282,11 @@ public class ServiceAuthorize implements Serializable {
         return this;
     }
 
+    public int establishmentClosingPaymentDays(){
+        if(getEstablishment() != null && getEstablishment().getCheckout() != null) {
+            return getEstablishment().getCheckout().getClosingPaymentDays();
+        }
+        return 0;
+    }
+
 }
