@@ -183,7 +183,7 @@ class FixtureCreator {
         Fixture.from(BatchClosing.class).uses(jpaProcessor).uses(jpaProcessor).gimme("valid")
     }
 
-    BatchClosing creataBatchToPersist(){
+    BatchClosing createBatchToPersist(){
        Fixture.from(BatchClosing.class).gimme("valid", new Rule(){{
             add("establishment",createEstablishment())
             add("issuer",createIssuer())

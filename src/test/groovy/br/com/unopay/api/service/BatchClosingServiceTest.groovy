@@ -27,7 +27,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'should create batch closing'(){
         given:
-        BatchClosing batchClosing = fixtureCreator.creataBatchToPersist()
+        BatchClosing batchClosing = fixtureCreator.createBatchToPersist()
 
         when:
         def created = service.save(batchClosing)
