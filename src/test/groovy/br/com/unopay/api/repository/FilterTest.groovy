@@ -2,27 +2,23 @@ package br.com.unopay.api.repository
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Service
-import br.com.unopay.api.bacen.model.filter.ServiceFilter
-import br.com.unopay.api.bacen.repository.ServiceRepository
-
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
 import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
 import br.com.unopay.api.bacen.model.filter.HirerFilter
+import br.com.unopay.api.bacen.model.filter.ServiceFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
+import br.com.unopay.api.bacen.repository.ServiceRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
-import static br.com.unopay.api.function.FixtureFunctions.*
-import br.com.unopay.api.function.FixtureFunctions
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Period
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
-import groovy.time.TimeCategory
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that

@@ -2,10 +2,8 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
-import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
-import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.BatchClosingRepository;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;

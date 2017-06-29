@@ -176,7 +176,8 @@ public class ServiceAuthorizeService {
     }
 
     public Stream<ServiceAuthorize> findByEstablishment(String establishmentId){
-        return repository.findByEstablishmentIdAndBatchClosingDateTimeIsNullOrderByContractHirer(establishmentId);
+        return repository
+                .findByEstablishmentIdForProcessBatchClosing(establishmentId);
     }
 
     public List<ServiceAuthorize> findAll(){

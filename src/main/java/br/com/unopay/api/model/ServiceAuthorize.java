@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -63,7 +62,7 @@ public class ServiceAuthorize implements Serializable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @KeyField(baseField = "consumo.autorizacao.numero")
+    @KeyField(baseField = "abastecimento.consumo.autorizacao.numero")
     @Column(name = "authorization_number")
     private String authorizationNumber;
 

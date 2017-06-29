@@ -1,4 +1,6 @@
-<definitions name='WSTransacional' targetNamespace='http://webservice.pamcard.jee.pamcary.com.br' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://webservice.pamcard.jee.pamcary.com.br' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+<definitions name='WSTransacional' targetNamespace='http://webservice.pamcard.jee.pamcary.com.br'
+             xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/'
+             xmlns:tns='http://webservice.pamcard.jee.pamcary.com.br'>
  <types>
   <xs:schema targetNamespace='http://webservice.pamcard.jee.pamcary.com.br' version='1.0' xmlns:tns='http://webservice.pamcard.jee.pamcary.com.br' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
    <xs:element name='execute' type='tns:execute'/>

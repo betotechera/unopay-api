@@ -7,18 +7,11 @@ import br.com.six2six.fixturefactory.function.Function;
 import br.com.six2six.fixturefactory.function.impl.RegexFunction;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.model.CreditInsertionType;
-import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
-import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
-import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
-import br.com.unopay.api.model.Product;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 public class UaaTemplateLoader implements TemplateLoader {

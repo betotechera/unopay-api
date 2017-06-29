@@ -165,7 +165,7 @@ class FixtureCreator {
     }
 
     ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
-                                            Establishment establishment = createEstablishment() ){
+                                            Establishment establishment = createEstablishment(), String dateAsText = "1 day ago"){
         Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
             add("contract",credit.contract)
             add("contractor",credit.contract.contractor)
@@ -173,6 +173,7 @@ class FixtureCreator {
             add("serviceType",ServiceType.FUEL_ALLOWANCE)
             add("eventValue",0.1)
             add("user",createUser())
+            add("authorizationDateTime", instant(dateAsText))
             add("contractorInstrumentCredit",credit)
             add("establishment",establishment)
             add("contractorInstrumentCredit.paymentInstrument.password",credit.paymentInstrument.password)

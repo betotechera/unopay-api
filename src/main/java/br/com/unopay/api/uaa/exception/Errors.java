@@ -1,7 +1,6 @@
 package br.com.unopay.api.uaa.exception;
 
 import br.com.unopay.bootcommons.exception.UnovationError;
-import br.com.unopay.bootcommons.exception.UnovationErrors;
 
 public final class Errors {
 

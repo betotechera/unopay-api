@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class ProductTemplateLoader implements TemplateLoader {
 

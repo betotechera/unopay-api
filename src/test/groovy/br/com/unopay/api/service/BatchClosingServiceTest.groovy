@@ -51,6 +51,34 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         that bachClosings, hasSize(1)
     }
 
+    def 'given authorizations of one or more days ago should be processed'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizationsAt(contracts, establishment, "1 day ago")
+
+        when:
+        service.create(establishment.id)
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that bachClosings, hasSize(1)
+    }
+
+    def 'given authorizations only today should not be processed'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizationsAt(contracts, establishment, "1 hour ago")
+
+        when:
+        service.create(establishment.id)
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that bachClosings, hasSize(0)
+    }
+
     def 'should not create batch closing to processed authorizations by establishment'(){
         given:
         List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
@@ -113,7 +141,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
-        bachClosings.find().value == totalByHirer.entrySet().find().value
+        bachClosings.find()?.value == totalByHirer.entrySet().find().value
     }
 
     def 'should create batch closing value by hirer'(){
@@ -127,8 +155,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
-        that bachClosings.find { it.hirer.id == totalByHirer.entrySet().find().key }.batchClosingItems, hasSize(3)
-        that bachClosings.find { it.hirer.id == totalByHirer.entrySet().last().key }.batchClosingItems, hasSize(3)
+        that bachClosings.find { it.hirer.id == totalByHirer.entrySet().find().key }?.batchClosingItems, hasSize(3)
+        that bachClosings.find { it.hirer.id == totalByHirer.entrySet().last().key }?.batchClosingItems, hasSize(3)
     }
 
     def 'should create batch closing value by establishment and hirer'(){
@@ -175,25 +203,30 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
-        that bachClosings.find().batchClosingItems, hasSize(2)
+        that bachClosings.find()?.batchClosingItems, hasSize(2)
     }
 
 
 
-    Map createServiceAuthorizations(List<Contract> contract, Establishment establishment, authorizations = 1) {
+    Map createServiceAuthorizations(List<Contract> contract, Establishment establishment, Integer authorizations = 1) {
         return createServiceAuthorizations(contract, Arrays.asList(establishment), authorizations)
     }
 
-    Map createServiceAuthorizations(List<Contract> contracts, List<Establishment> establishments, authorizations = 1) {
+    Map createServiceAuthorizationsAt(List<Contract> contract, Establishment establishment, String dateAsText) {
+        return createServiceAuthorizations(contract, Arrays.asList(establishment), 2, dateAsText)
+    }
+
+    Map createServiceAuthorizations(List<Contract> contracts, List<Establishment> establishments,
+                                    numberOfAuthorizations = 1, String dateAsText = "1 day ago") {
         def sumValueByHirer = [:]
         (1..contracts.size()).each { Integer index ->
             def establishment = contracts.size() != establishments.size() ? establishments.find() : establishments.get(index-1)
             def instrumentCredit = fixtureCreator.createInstrumentToContract(contracts.get(index-1))
-            def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment)
-            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.eventValue * authorizations)
-            (1..authorizations).each {
+            def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment, dateAsText)
+            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.eventValue * numberOfAuthorizations)
+            (1..numberOfAuthorizations).each {
                 ServiceAuthorize cloned = BeanUtils.cloneBean(serviceAuthorize)
-                serviceAuthorizeService.create(serviceAuthorize.user.email, cloned)
+                serviceAuthorizeService.save(cloned)
             }
         }
         return sumValueByHirer

@@ -3,9 +3,7 @@ package br.com.unopay.api.model.filter;
 import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.KeyFieldReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.UUID;
 import lombok.Data;
 
 @Data

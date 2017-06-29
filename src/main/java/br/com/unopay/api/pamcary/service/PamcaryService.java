@@ -8,7 +8,6 @@ import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
 import br.com.unopay.api.pamcary.transactional.WSTransacionalService;
 import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 import java.util.List;
 import java.util.Objects;

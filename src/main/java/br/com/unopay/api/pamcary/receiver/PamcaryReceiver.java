@@ -1,10 +1,8 @@
 package br.com.unopay.api.pamcary.receiver;
 
 import br.com.unopay.api.config.Queues;
-import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.pamcary.service.PamcaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;

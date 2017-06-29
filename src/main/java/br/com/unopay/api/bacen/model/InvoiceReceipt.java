@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -8,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
 import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;

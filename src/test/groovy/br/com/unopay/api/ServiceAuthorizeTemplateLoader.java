@@ -11,6 +11,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
 
@@ -35,6 +36,9 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("cancellationDateTime",instant("one day from now"));
             add("transactionLogCode",random(Integer.class, range(1, 200)));
             add("transactionLog",firstName());
+            add("authorizationNumber", regex("\\w{15}"));
+            add("valueFee", random(BigDecimal.class, range(1, 3)));
+            add("situation", random(TransactionSituation.class));
             add("user",one(UserDetail.class, "without-group"));
         }});
 
