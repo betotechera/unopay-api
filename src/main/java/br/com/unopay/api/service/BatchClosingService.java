@@ -2,12 +2,17 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
+import br.com.unopay.api.model.BatchClosingSituation;
+import br.com.unopay.api.model.DocumentSituation;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
+import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BATCH;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -83,11 +88,27 @@ public class BatchClosingService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    @Transactional
     public void invoiceInformationReceive(List<BatchClosingItem> batchClosingItems) {
         batchClosingItems.forEach(batchClosingItem -> {
             BatchClosingItem current = batchClosingItemService.findById(batchClosingItem.getId());
             current.updateOnly(batchClosingItem, "invoiceNumber", "invoiceDocumentUri");
+            current.setInvoiceDocumentSituation(DocumentSituation.APPROVED);
             batchClosingItemService.save(current);
         });
+        batchClosingItems.stream().map(BatchClosingItem::getBatchClosing)
+                .map(BatchClosing::getId).filter(Objects::nonNull).distinct().forEach(id -> {
+                    BatchClosing current = findById(id);
+                    validateBatchClosing(current);
+                    current.setSituation(BatchClosingSituation.DOCUMENT_RECEIVED);
+                    repository.save(current);
+                });
+    }
+
+    private void validateBatchClosing(BatchClosing batchClosing) {
+        if(!batchClosing.getIssueInvoice()){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVOICE_NOT_REQUIRED_FOR_BATCH.withArguments(batchClosing.getId()));
+        }
     }
 }

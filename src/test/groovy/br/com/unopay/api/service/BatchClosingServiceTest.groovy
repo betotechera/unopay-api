@@ -13,6 +13,7 @@ import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,12 +41,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issueInvoice", true)
         }})
-        def serviceAuthorize = fixtureCreator.createServiceAuthorize()
-        serviceAuthorizeService.create(fixtureCreator.createUser().email, serviceAuthorize)
-        List<BatchClosingItem> batchClosingItems = Fixture.from(BatchClosingItem.class).uses(jpaProcessor).gimme(2,"valid", new Rule(){{
-            add("batchClosing", batchClosing)
-            add("serviceAuthorize", serviceAuthorize)
-        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
         def expectedInvoiceNumber = "54654687646798"
         def expectedDocumentUri = "file://teste.temp"
 
@@ -54,8 +50,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             it.invoiceNumber = expectedInvoiceNumber
             it.invoiceDocumentUri = expectedDocumentUri
             it.batchClosing = new BatchClosing()
-            it.invoiceDocumentSituation = DocumentSituation.APPROVED
             it.issueInvoiceType = IssueInvoiceType.BY_AUTHORIZATION
+            it.serviceAuthorize = new ServiceAuthorize()
         }
         service.invoiceInformationReceive(batchClosingItems)
         def result = service.findById(batchClosing.id)
@@ -64,10 +60,73 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         result.batchClosingItems.every {
             it.invoiceNumber == expectedInvoiceNumber &&
             it.invoiceDocumentUri == expectedDocumentUri &&
-            it.invoiceDocumentSituation == DocumentSituation.PENDING &&
             it.issueInvoiceType == IssueInvoiceType.BY_BATCH
         }
     }
+
+    def 'given a known batch closing with issue invoice situation should update invoice documentation to approved'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+        service.invoiceInformationReceive(batchClosingItems)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.batchClosingItems.every {
+                    it.invoiceDocumentSituation == DocumentSituation.APPROVED
+        }
+    }
+
+    def 'given a known batch closing with issue invoice situation should update batch situation to received'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+        service.invoiceInformationReceive(batchClosingItems)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.situation == BatchClosingSituation.DOCUMENT_RECEIVED
+    }
+
+    def 'given a known batch closing without issue invoice situation should not be received'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", false)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+        service.invoiceInformationReceive(batchClosingItems)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVOICE_NOT_REQUIRED_FOR_BATCH'
+        assert ex.errors.first().arguments.find() == batchClosing.id
+    }
+
 
     def 'should create batch closing'(){
         given:
@@ -262,8 +321,6 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         then:
         that bachClosings.find()?.batchClosingItems, hasSize(2)
     }
-
-
 
     Map createServiceAuthorizations(List<Contract> contract, Establishment establishment, Integer authorizations = 1) {
         return createServiceAuthorizations(contract, Arrays.asList(establishment), authorizations)

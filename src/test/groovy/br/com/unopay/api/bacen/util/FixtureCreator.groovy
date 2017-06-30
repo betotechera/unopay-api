@@ -14,12 +14,14 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.model.BatchClosing
+import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditPaymentAccount
+import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
@@ -180,6 +182,22 @@ class FixtureCreator {
         }})
     }
 
+    ServiceAuthorize createServiceAuthorizePersisted(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
+                                            Establishment establishment = createEstablishment(), String dateAsText = "1 day ago"){
+        Fixture.from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract",credit.contract)
+            add("contractor",credit.contract.contractor)
+            add("event",createEvent(ServiceType.FUEL_ALLOWANCE))
+            add("serviceType",ServiceType.FUEL_ALLOWANCE)
+            add("eventValue",0.1)
+            add("user",createUser())
+            add("authorizationDateTime", instant(dateAsText))
+            add("contractorInstrumentCredit",credit)
+            add("establishment",establishment)
+            add("contractorInstrumentCredit.paymentInstrument.password",credit.paymentInstrument.password)
+        }})
+    }
+
     BatchClosing createBatchClosing() {
         Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid")
     }
@@ -218,6 +236,17 @@ class FixtureCreator {
         Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("creditInsertionTypes",creditTypes)
         }})
+    }
+
+    List<BatchClosingItem> createBatchItems(batchClosing) {
+        def serviceAuthorize = createServiceAuthorizePersisted()
+        Fixture.from(BatchClosingItem.class).uses(jpaProcessor).gimme(2, "valid", new Rule() {
+            {
+                add("batchClosing", batchClosing)
+                add("serviceAuthorize", serviceAuthorize)
+                add("invoiceDocumentSituation", DocumentSituation.PENDING)
+            }
+        })
     }
 
     CreditPaymentAccount createCreditPaymentAccount() {

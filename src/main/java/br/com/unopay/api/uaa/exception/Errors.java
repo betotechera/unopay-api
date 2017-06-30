@@ -442,6 +442,11 @@ public final class Errors {
     public static final UnovationError BASE_KEY_REQUIRED =
             new UnovationError("BASE_KEY_REQUIRED", "Base key annotation required to translate fields.");
 
+    /* batch closing */
+    public static final UnovationError INVOICE_NOT_REQUIRED_FOR_BATCH =
+            new UnovationError("INVOICE_NOT_REQUIRED_FOR_BATCH", "Invoice not required for batch.");
+
+
 
 
 
