@@ -2,6 +2,7 @@ package br.com.unopay.api.notification.service;
 
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
@@ -43,6 +44,13 @@ public class NotificationService {
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
         log.info("reset password message sent to the queue for {}", user);
+    }
+
+    public void sendBatchClosingMail(String emailAsText, BatchClosing batchClosing){
+        Email email = new Email(emailAsText);
+        Map<String,Object> payload = new HashMap<String, Object>() {{ put("batch", batchClosing); }};
+        Notification notification = new Notification(email, null, EventType.BATCH_CLOSED, payload);
+        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
     }
 
     public void sendNewPassword(UserDetail user) {

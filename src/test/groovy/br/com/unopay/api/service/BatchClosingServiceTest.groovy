@@ -5,10 +5,12 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.notification.service.NotificationService
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +27,12 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    NotificationService notificationServiceMock = Mock(NotificationService)
+
+    void setup(){
+        service.notificationService = notificationServiceMock
+    }
+
     def 'should create batch closing'(){
         given:
         BatchClosing batchClosing = fixtureCreator.createBatchToPersist()
@@ -35,6 +43,19 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'when create batch closing should send email notification'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment)
+
+        when:
+        service.create(establishment.id)
+
+        then:
+        1 * notificationServiceMock.sendBatchClosingMail(_, _)
     }
 
     def 'should create batch closing by establishment'(){

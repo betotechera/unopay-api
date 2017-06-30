@@ -12,14 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class TemplateLoader {
 
-    private String resetTemplate;
-    private String newUserTemplate;
+    private ResourceLoader resourceLoader;
 
     @SneakyThrows
     @Autowired
     public TemplateLoader(ResourceLoader resourceLoader){
-        this.resetTemplate = getTemplate(resourceLoader,"classpath:/password-reset.html");
-        this.newUserTemplate =  getTemplate(resourceLoader,"classpath:/create-password.html");
+        this.resourceLoader = resourceLoader;
     }
 
     private String getTemplate(ResourceLoader resourceLoader,String location) throws IOException {
@@ -30,14 +28,12 @@ public class TemplateLoader {
         return resourceLoader.getResource(location);
     }
 
+    @SneakyThrows
     public String getTemplate(EventType eventType){
-        if(EventType.PASSWORD_RESET.equals(eventType)) {
-            return resetTemplate;
-        }
-        if(EventType.CREATE_PASSWORD.equals(eventType)) {
-            return newUserTemplate;
-        }
-        return "<h3> Ola {{user.name}} <br> utilize a senha: {{token}} " +
-                "para gerar sua nova senha clicando nesse link: </h3>";
+        return getTemplate(resourceLoader,String.format("classpath:/%s.html", createDefaultName(eventType.name())));
+    }
+
+    private static String createDefaultName(String templateName) {
+        return templateName.toLowerCase().replace("_", "-");
     }
 }
