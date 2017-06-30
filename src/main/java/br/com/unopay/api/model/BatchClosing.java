@@ -163,4 +163,11 @@ public class BatchClosing implements Serializable {
         situation = BatchClosingSituation.FINALIZED;
         return this;
     }
+
+    public String establishmentBatchMail(){
+        if(getEstablishment()!= null) {
+            return getEstablishment().getBachShipmentMail();
+        }
+        return null;
+    }
 }

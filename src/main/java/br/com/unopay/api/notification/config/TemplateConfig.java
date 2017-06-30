@@ -1,5 +1,7 @@
 package br.com.unopay.api.notification.config;
 
+import br.com.unopay.api.notification.filter.CnpjFormat;
+import br.com.unopay.api.notification.filter.DateStringFormat;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class TemplateConfig {
     @Bean
     public  Jinjava jinjava() {
-        return new Jinjava(jinjavaConfig());
+        Jinjava jinjava = new Jinjava(jinjavaConfig());
+        jinjava.getGlobalContext().registerFilter(new DateStringFormat());
+        jinjava.getGlobalContext().registerFilter(new CnpjFormat());
+        return jinjava;
     }
 
     private JinjavaConfig jinjavaConfig() {
