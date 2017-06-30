@@ -77,7 +77,7 @@ public class PaymentInstrumentService {
         PaymentInstrument current = findById(id);
         validateReference(instrument);
         instrument.validate();
-        current.updateMe(instrument, "password");
+        current.updateAllExcept(instrument, "password");
         if(instrument.isResetPassword()){
             current.setPassword(null);
         }

@@ -12,7 +12,6 @@ import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BA
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,6 +59,20 @@ public class BatchClosingService {
         }
     }
 
+    @Transactional
+    public void updateInvoiceInformation(List<BatchClosingItem> batchClosingItems) {
+        Set<BatchClosing> batchClosingStream = updateBatchItems(batchClosingItems);
+        updateBatch(batchClosingStream);
+    }
+
+    public Set<BatchClosing> findByEstablishmentId(String establishmentId) {
+        return repository.findByEstablishmentId(establishmentId);
+    }
+
+    public Page<BatchClosing> findByFilter(BatchClosingFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
     private ServiceAuthorize processBatchClosingItem(BatchClosingItem batchClosingItem) {
         ServiceAuthorize currentAuthorize = batchClosingItem.getServiceAuthorize();
         BatchClosing currentBatClosing = getCurrentBatchClosing(currentAuthorize);
@@ -79,20 +92,6 @@ public class BatchClosingService {
         Optional<BatchClosing> batchClosing = repository
                 .findFirstByEstablishmentIdAndHirerId(currentAuthorize.establishmentId(), currentAuthorize.hirerId());
         return batchClosing.orElse(new BatchClosing(currentAuthorize));
-    }
-
-    public Set<BatchClosing> findByEstablishmentId(String establishmentId) {
-        return repository.findByEstablishmentId(establishmentId);
-    }
-
-    public Page<BatchClosing> findByFilter(BatchClosingFilter filter, UnovationPageRequest pageable) {
-        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
-    }
-
-    @Transactional
-    public void updateInvoiceInformation(List<BatchClosingItem> batchClosingItems) {
-        Set<BatchClosing> batchClosingStream = updateBatchItems(batchClosingItems);
-        updateBatch(batchClosingStream);
     }
 
     private void updateBatch(Set<BatchClosing> batchClosings) {

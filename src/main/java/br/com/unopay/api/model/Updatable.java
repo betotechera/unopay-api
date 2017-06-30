@@ -26,11 +26,11 @@ public interface Updatable {
     }
 
     @JsonIgnore
-    default String[] otherFields(String[] fields){
+    default String[] otherFields(String[] filterFields){
         Field[] attributes =  getClass().getDeclaredFields();
         Stream.of(attributes).forEach(f -> f.setAccessible(true));
         return Stream.of(attributes)
-                .filter(field -> Stream.of(fields).noneMatch(f -> Objects.equals(f, field.getName())))
+                .filter(field -> Stream.of(filterFields).noneMatch(name -> Objects.equals(name, field.getName())))
                 .map(Field::getName)
                 .toArray(String[]::new);
     }
@@ -61,12 +61,12 @@ public interface Updatable {
         BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
     }
 
-    default void updateMe(Updatable source, String... ignoredFields ){
-        String[] alreadyIgnoredFields = ArrayUtils.addAll(source.myNullFields(), ignoredFields);
-        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(alreadyIgnoredFields, IGNORED_FIELD));
+    default void updateAllExcept(Updatable source, String... ignoredField){
+        String[] ignoreFields = ArrayUtils.addAll(source.myNullFields(), ignoredField);
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(ignoreFields, IGNORED_FIELD));
     }
-    default void updateOnly(Updatable source, String... nonIgnored){
-        String[] alreadyIgnoredFields = ArrayUtils.addAll(source.myNullFields(), otherFields(nonIgnored));
-        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(alreadyIgnoredFields, IGNORED_FIELD));
+    default void updateOnly(Updatable source, String... updatableFields){
+        String[] ignoreFields = ArrayUtils.addAll(source.myNullFields(), otherFields(updatableFields));
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(ignoreFields, IGNORED_FIELD));
     }
 }
