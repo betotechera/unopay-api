@@ -46,7 +46,7 @@ public class BatchClosingService {
         try (Stream<ServiceAuthorize> stream = serviceAuthorizeService.findByEstablishment(establishmentId)){
             stream.map(BatchClosingItem::new)
             .map(this::processBatchClosingItem)
-            .forEach(this::updateBatchClosingItemSituation);
+            .forEach(this::updateBatchClosingSituation);
         }
     }
 
@@ -59,10 +59,10 @@ public class BatchClosingService {
         return serviceAuthorizeService.save(currentAuthorize.buildBatchSlosingDate());
     }
 
-    private void updateBatchClosingItemSituation(ServiceAuthorize currentAuthorize){
-        BatchClosing currentBatClosing = getCurrentBatchClosing(currentAuthorize);
-        repository.save(currentBatClosing.defineSituation());
-        notificationService.sendBatchClosingMail(currentBatClosing.establishmentBatchMail(), currentBatClosing);
+    private void updateBatchClosingSituation(ServiceAuthorize currentAuthorize){
+        BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
+        repository.save(currentBatchClosing.defineSituation());
+        notificationService.sendBatchClosedMail(currentBatchClosing.establishmentBatchMail(), currentBatchClosing);
     }
 
     private BatchClosing getCurrentBatchClosing(ServiceAuthorize currentAuthorize) {

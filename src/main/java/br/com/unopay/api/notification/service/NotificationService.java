@@ -46,7 +46,7 @@ public class NotificationService {
         log.info("reset password message sent to the queue for {}", user);
     }
 
-    public void sendBatchClosingMail(String emailAsText, BatchClosing batchClosing){
+    public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
         Email email = new Email(emailAsText);
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("batch", batchClosing); }};
         Notification notification = new Notification(email, null, EventType.BATCH_CLOSED, payload);

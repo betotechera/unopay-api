@@ -7,7 +7,7 @@ public enum BatchClosingSituation  implements DescriptableEnum {
     PROCESSING_MANUAL_BATCH("Em processamento fechamento manual", "1"),
     PROCESSING_AUTOMATIC_BATCH("Em processamento fechamento Automático", "2"),
     DOCUMENT_RECEIVED("Documentos recebidos", "3"), PAYMENT_RELEASED("Liberado para pagamento","4"),
-    CANCELED("Cancelado", "5"), FINALIZED("Finalizado","6");
+    CANCELED("Cancelado", "5"),  FINALIZED("Finalizado","6");
 
     private String description;
 

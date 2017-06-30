@@ -5,7 +5,6 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Contract
@@ -55,7 +54,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.create(establishment.id)
 
         then:
-        1 * notificationServiceMock.sendBatchClosingMail(_, _)
+        1 * notificationServiceMock.sendBatchClosedMail(_, _)
     }
 
     def 'should create batch closing by establishment'(){
