@@ -27,7 +27,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @EqualsAndHashCode
 @Table(name = "batch_closing_item")
-public class BatchClosingItem implements Serializable {
+public class BatchClosingItem implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

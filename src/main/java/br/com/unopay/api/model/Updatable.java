@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -20,6 +21,16 @@ public interface Updatable {
         Stream.of(attributes).forEach(f -> f.setAccessible(true));
         return Stream.of(attributes)
                 .filter(field -> isReferenceWithoutIdValue(field, this) || isNullField(field, this))
+                .map(Field::getName)
+                .toArray(String[]::new);
+    }
+
+    @JsonIgnore
+    default String[] otherFields(String[] fields){
+        Field[] attributes =  getClass().getDeclaredFields();
+        Stream.of(attributes).forEach(f -> f.setAccessible(true));
+        return Stream.of(attributes)
+                .filter(field -> Stream.of(fields).noneMatch(f -> Objects.equals(f, field.getName())))
                 .map(Field::getName)
                 .toArray(String[]::new);
     }
@@ -52,6 +63,10 @@ public interface Updatable {
 
     default void updateMe(Updatable source, String... ignoredFields ){
         String[] alreadyIgnoredFields = ArrayUtils.addAll(source.myNullFields(), ignoredFields);
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(alreadyIgnoredFields, IGNORED_FIELD));
+    }
+    default void updateOnly(Updatable source, String... nonIgnored){
+        String[] alreadyIgnoredFields = ArrayUtils.addAll(source.myNullFields(), otherFields(nonIgnored));
         BeanUtils.copyProperties(source, this, ArrayUtils.addAll(alreadyIgnoredFields, IGNORED_FIELD));
     }
 }

@@ -6,8 +6,11 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.BatchClosing
+import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.DocumentSituation
+import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.notification.service.NotificationService
 import org.apache.commons.beanutils.BeanUtils
@@ -30,6 +33,40 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     void setup(){
         service.notificationService = notificationServiceMock
+    }
+
+    def 'given a known batch closing with issue invoice situation should update only invoice item fields'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+        }})
+        def serviceAuthorize = fixtureCreator.createServiceAuthorize()
+        serviceAuthorizeService.create(fixtureCreator.createUser().email, serviceAuthorize)
+        List<BatchClosingItem> batchClosingItems = Fixture.from(BatchClosingItem.class).uses(jpaProcessor).gimme(2,"valid", new Rule(){{
+            add("batchClosing", batchClosing)
+            add("serviceAuthorize", serviceAuthorize)
+        }})
+        def expectedInvoiceNumber = "54654687646798"
+        def expectedDocumentUri = "file://teste.temp"
+
+        when:
+        batchClosingItems.each {
+            it.invoiceNumber = expectedInvoiceNumber
+            it.invoiceDocumentUri = expectedDocumentUri
+            it.batchClosing = new BatchClosing()
+            it.invoiceDocumentSituation = DocumentSituation.APPROVED
+            it.issueInvoiceType = IssueInvoiceType.BY_AUTHORIZATION
+        }
+        service.invoiceInformationReceive(batchClosingItems)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.batchClosingItems.every {
+            it.invoiceNumber == expectedInvoiceNumber &&
+            it.invoiceDocumentUri == expectedDocumentUri &&
+            it.invoiceDocumentSituation == DocumentSituation.PENDING &&
+            it.issueInvoiceType == IssueInvoiceType.BY_BATCH
+        }
     }
 
     def 'should create batch closing'(){

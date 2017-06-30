@@ -7,6 +7,7 @@ import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -22,14 +23,17 @@ public class BatchClosingService {
 
     private BatchClosingRepository repository;
     private ServiceAuthorizeService serviceAuthorizeService;
+    private BatchClosingItemService batchClosingItemService;
     @Setter private NotificationService notificationService;
 
     @Autowired
     public BatchClosingService(BatchClosingRepository repository,
                                ServiceAuthorizeService serviceAuthorizeService,
+                               BatchClosingItemService batchClosingItemService,
                                NotificationService notificationService) {
         this.repository = repository;
         this.serviceAuthorizeService = serviceAuthorizeService;
+        this.batchClosingItemService = batchClosingItemService;
         this.notificationService = notificationService;
     }
 
@@ -79,4 +83,11 @@ public class BatchClosingService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    public void invoiceInformationReceive(List<BatchClosingItem> batchClosingItems) {
+        batchClosingItems.forEach(batchClosingItem -> {
+            BatchClosingItem current = batchClosingItemService.findById(batchClosingItem.getId());
+            current.updateOnly(batchClosingItem, "invoiceNumber", "invoiceDocumentUri");
+            batchClosingItemService.save(current);
+        });
+    }
 }

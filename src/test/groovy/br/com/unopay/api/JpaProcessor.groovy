@@ -49,8 +49,8 @@ class JpaProcessor implements Processor{
                 }
             }
             entityManager.persist(object)
-        } catch (NoSuchMethodException | SecurityException e) {
-            log.error("Jpa processor error with class={} message={}", object.getClass().getName(), e)
+        } catch (Exception e) {
+            log.error("Jpa processor error with class={} message={}", object.getClass().getName(), e.getMessage())
         }
 
     }

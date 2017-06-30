@@ -181,7 +181,7 @@ class FixtureCreator {
     }
 
     BatchClosing createBatchClosing() {
-        Fixture.from(BatchClosing.class).uses(jpaProcessor).uses(jpaProcessor).gimme("valid")
+        Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid")
     }
 
     BatchClosing createBatchToPersist(){
