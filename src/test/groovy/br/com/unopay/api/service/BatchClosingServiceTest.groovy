@@ -44,8 +44,6 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
         def expectedInvoiceNumber = "54654687646798"
         def expectedDocumentUri = "file://teste.temp"
-
-        when:
         batchClosingItems.each {
             it.invoiceNumber = expectedInvoiceNumber
             it.invoiceDocumentUri = expectedDocumentUri
@@ -53,7 +51,9 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             it.issueInvoiceType = IssueInvoiceType.BY_AUTHORIZATION
             it.serviceAuthorize = new ServiceAuthorize()
         }
-        service.invoiceInformationReceive(batchClosingItems)
+
+        when:
+        service.updateInvoiceInformation(batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -71,13 +71,14 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
-        when:
         batchClosingItems.each {
             it.invoiceNumber = "54654687646798"
             it.invoiceDocumentUri = "file://teste.temp"
             it.invoiceDocumentSituation = DocumentSituation.PENDING
         }
-        service.invoiceInformationReceive(batchClosingItems)
+
+        when:
+        service.updateInvoiceInformation(batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -93,13 +94,14 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
-        when:
         batchClosingItems.each {
             it.invoiceNumber = "54654687646798"
             it.invoiceDocumentUri = "file://teste.temp"
             it.invoiceDocumentSituation = DocumentSituation.PENDING
         }
-        service.invoiceInformationReceive(batchClosingItems)
+
+        when:
+        service.updateInvoiceInformation(batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -113,13 +115,14 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
-        when:
         batchClosingItems.each {
             it.invoiceNumber = "54654687646798"
             it.invoiceDocumentUri = "file://teste.temp"
             it.invoiceDocumentSituation = DocumentSituation.PENDING
         }
-        service.invoiceInformationReceive(batchClosingItems)
+
+        when:
+        service.updateInvoiceInformation(batchClosingItems)
 
         then:
         def ex = thrown(UnprocessableEntityException)

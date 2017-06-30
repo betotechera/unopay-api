@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
@@ -89,20 +90,27 @@ public class BatchClosingService {
     }
 
     @Transactional
-    public void invoiceInformationReceive(List<BatchClosingItem> batchClosingItems) {
-        batchClosingItems.forEach(batchClosingItem -> {
+    public void updateInvoiceInformation(List<BatchClosingItem> batchClosingItems) {
+        Set<BatchClosing> batchClosingStream = updateBatchItems(batchClosingItems);
+        updateBatch(batchClosingStream);
+    }
+
+    private void updateBatch(Set<BatchClosing> batchClosings) {
+        batchClosings.forEach(batchClosing -> {
+            validateBatchClosing(batchClosing);
+            batchClosing.setSituation(BatchClosingSituation.DOCUMENT_RECEIVED);
+            repository.save(batchClosing);
+        });
+    }
+
+    private Set<BatchClosing> updateBatchItems(List<BatchClosingItem> batchClosingItems) {
+        return batchClosingItems.stream().map(batchClosingItem -> {
             BatchClosingItem current = batchClosingItemService.findById(batchClosingItem.getId());
             current.updateOnly(batchClosingItem, "invoiceNumber", "invoiceDocumentUri");
             current.setInvoiceDocumentSituation(DocumentSituation.APPROVED);
             batchClosingItemService.save(current);
-        });
-        batchClosingItems.stream().map(BatchClosingItem::getBatchClosing)
-                .map(BatchClosing::getId).filter(Objects::nonNull).distinct().forEach(id -> {
-                    BatchClosing current = findById(id);
-                    validateBatchClosing(current);
-                    current.setSituation(BatchClosingSituation.DOCUMENT_RECEIVED);
-                    repository.save(current);
-                });
+            return current.getBatchClosing();
+        }).collect(Collectors.toSet());
     }
 
     private void validateBatchClosing(BatchClosing batchClosing) {
