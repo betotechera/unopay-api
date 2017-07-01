@@ -48,28 +48,28 @@ multipart:
 spring:
   encryptor:
     password: vEexq7mVjQj948B7
-    jpa:
-        hibernate.ddl-auto: none
-        database-platform: org.hibernate.dialect.Oracle10gDialect
-        generate-ddl: false
-        database: ORACLE
-    datasource:
-        url: jdbc:oracle:thin:@10.10.0.94:1521:ORCLD
-        username: road_pp_h
-        password: road_pp_h
-        driverClassName: oracle.jdbc.OracleDriver
-    redis:
-        host: 10.10.0.193
-        port: 6379
-    rabbitmq:
-        host: 10.10.0.193
-        port: 5672
-        username: unopay
-        password: unopay
-    mail:
-      default-encoding: UTF-8
-      host:  10.10.0.61
-      port: 25
-      test-connection: false
-      properties:
-        mail.smtp.host: smtp.gmail.com
+  jpa:
+    hibernate.ddl-auto: none
+    database-platform: org.hibernate.dialect.Oracle10gDialect
+    generate-ddl: false
+    database: ORACLE
+  datasource:
+    url: jdbc:oracle:thin:@10.10.0.94:1521:ORCLD
+    username: road_pp_h
+    password: road_pp_h
+    driverClassName: oracle.jdbc.OracleDriver
+  redis:
+    host: 10.10.0.193
+    port: 6379
+  rabbitmq:
+    host: 10.10.0.193
+    port: 5672
+    username: unopay
+    password: unopay
+  mail:
+    default-encoding: UTF-8
+    host:  10.10.0.61
+    port: 25
+    test-connection: false
+    properties:
+      mail.smtp.host: smtp.gmail.com
