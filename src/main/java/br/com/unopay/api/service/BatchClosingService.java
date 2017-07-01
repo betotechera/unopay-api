@@ -11,6 +11,7 @@ import br.com.unopay.api.repository.BatchClosingRepository;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_CLOSING_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH;
 import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BATCH;
+import static br.com.unopay.api.uaa.exception.Errors.SITUATION_NOT_ALLOWED;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -87,6 +88,16 @@ public class BatchClosingService {
         repository.save(current.cancel());
     }
 
+    public void review(String batchId, BatchClosingSituation newSituation) {
+        BatchClosing current = findById(batchId);
+        if(BatchClosingSituation.CANCELED.equals(newSituation)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(SITUATION_NOT_ALLOWED);
+        }
+        current.checkCanBeChanged();
+        current.setSituation(newSituation);
+        repository.save(current);
+    }
+
     public Set<BatchClosing> findByEstablishmentId(String establishmentId) {
         return repository.findByEstablishmentId(establishmentId);
     }
@@ -146,4 +157,5 @@ public class BatchClosingService {
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
         }
     }
+
 }

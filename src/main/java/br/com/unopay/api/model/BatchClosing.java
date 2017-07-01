@@ -8,7 +8,8 @@ import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.BATCH_ALREADY_FINALIZED;
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -181,15 +182,28 @@ public class BatchClosing implements Serializable {
         return false;
     }
 
+    @JsonIgnore
     public boolean isFinalized() {
         return BatchClosingSituation.FINALIZED.equals(situation);
     }
 
+    @JsonIgnore
+    public boolean isCanceled() {
+        return BatchClosingSituation.CANCELED.equals(situation);
+    }
+
     public BatchClosing cancel(){
-        if(isFinalized()){
-            throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_ALREADY_FINALIZED);
-        }
+        checkCanBeChanged();
         setSituation(BatchClosingSituation.CANCELED);
         return this;
+    }
+
+    public void checkCanBeChanged() {
+        if(isFinalized()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_FINALIZED);
+        }
+        if(isCanceled()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_CANCELED);
+        }
     }
 }

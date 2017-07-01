@@ -38,6 +38,79 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.notificationService = notificationServiceMock
     }
 
+    def 'given a known batch closing when update should be revised'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.PAYMENT_RELEASED)
+        }})
+
+        when:
+        service.review(batchClosing.id, BatchClosingSituation.DOCUMENT_RECEIVED)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.situation == BatchClosingSituation.DOCUMENT_RECEIVED
+    }
+
+    def 'given a known batch closing with canceled situation should not be revised'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.CANCELED)
+        }})
+
+        when:
+        service.review(batchClosing.id, BatchClosingSituation.DOCUMENT_RECEIVED)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_CANCELED'
+    }
+
+    def 'given a known batch closing when update to canceled should not be revised'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.CANCELED)
+        }})
+
+        when:
+        service.review(batchClosing.id, BatchClosingSituation.CANCELED)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'SITUATION_NOT_ALLOWED'
+    }
+
+    def 'given a known batch closing with finalized situation should not be revised'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.FINALIZED)
+        }})
+
+        when:
+        service.review(batchClosing.id, BatchClosingSituation.DOCUMENT_RECEIVED)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_FINALIZED'
+    }
+
+    def 'given a unknown batch closing should not be revised'(){
+        when:
+        service.review('', BatchClosingSituation.DOCUMENT_RECEIVED)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'BATCH_CLOSING_NOT_FOUND'
+    }
+
     def 'given a known batch closing without finalized situation when canceled should update items invoice information'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
@@ -118,7 +191,23 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'BATCH_ALREADY_FINALIZED'
+        assert ex.errors.first().logref == 'BATCH_FINALIZED'
+    }
+
+    def 'given a known batch closing with canceled situation should not be canceled'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.CANCELED)
+        }})
+
+        when:
+        service.cancel(user.email, batchClosing.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_CANCELED'
     }
 
     def 'given a known batch closing from other establishment should not be canceled'(){

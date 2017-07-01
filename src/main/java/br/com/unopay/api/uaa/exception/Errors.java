@@ -452,8 +452,15 @@ public final class Errors {
     public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH =
             new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH",
                     "Establishment not qualified for this batch");
-    public static final UnovationError BATCH_ALREADY_FINALIZED =
-            new UnovationError("BATCH_ALREADY_FINALIZED", "Batch already finalized");
+    public static final UnovationError BATCH_FINALIZED =
+            new UnovationError("BATCH_FINALIZED", "Batch already finalized");
+    public static final UnovationError BATCH_CANCELED =
+            new UnovationError("BATCH_CANCELED", "Batch canceled");
+    public static final UnovationError SITUATION_NOT_ALLOWED =
+            new UnovationError("SITUATION_NOT_ALLOWED", "Situation not allowed");
+
+
+
 
 
 
