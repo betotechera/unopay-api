@@ -753,15 +753,21 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     void 'when authorize service should archive and encrypt typed password'(){
         given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def userEstablishment = fixtureCreator.createEstablishmentUser()
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+
+        def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
+        serviceAuthorize.with {
+            contractorInstrumentCredit.paymentInstrument.password= '123456'
+        }
 
         when:
-        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def created = service.create(userEstablishment.email, serviceAuthorize)
         def result = service.findById(created.id)
 
         then:
         result.typedPassword != null
-        new String(encryptor.decrypt(DatatypeConverter.parseBase64Binary(result.typedPassword))) == serviceAuthorize.instrumentPassword()
+        new String(encryptor.decrypt(DatatypeConverter.parseBase64Binary(result.typedPassword))) == '123456'
     }
 
     void 'given payment instrument with password when the contractor password is same of payment instrument password should be authorized'(){
