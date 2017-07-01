@@ -3,6 +3,7 @@ package br.com.unopay.api.repository;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,6 +16,6 @@ public interface ServiceAuthorizeRepository extends
     List<ServiceAuthorize> findAll();
 
     @Query("SELECT s FROM ServiceAuthorize s WHERE s.establishment.id = ?1 and  " +
-            " s.authorizationDateTime < CURRENT_DATE and s.batchClosingDateTime is null order by s.contract.hirer")
-    Stream<ServiceAuthorize> findByEstablishmentIdForProcessBatchClosing(String establishmentId);
+            " s.authorizationDateTime < ?2 and s.batchClosingDateTime is null order by s.contract.hirer")
+    Stream<ServiceAuthorize> findByEstablishmentIdForProcessBatchClosing(String establishmentId, Date date);
 }

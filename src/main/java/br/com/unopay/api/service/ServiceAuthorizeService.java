@@ -20,6 +20,7 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -175,9 +176,9 @@ public class ServiceAuthorizeService {
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
     }
 
-    public Stream<ServiceAuthorize> findByEstablishment(String establishmentId){
+    public Stream<ServiceAuthorize> findByEstablishmentAndCreatedAt(String establishmentId, Date at){
         return repository
-                .findByEstablishmentIdForProcessBatchClosing(establishmentId);
+                .findByEstablishmentIdForProcessBatchClosing(establishmentId, at);
     }
 
     public List<ServiceAuthorize> findAll(){

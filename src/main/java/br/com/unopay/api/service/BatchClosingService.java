@@ -16,6 +16,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,19 +34,19 @@ import org.springframework.stereotype.Service;
 public class BatchClosingService {
 
     private BatchClosingRepository repository;
-    private ServiceAuthorizeService serviceAuthorizeService;
+    private ServiceAuthorizeService authorizeService;
     private BatchClosingItemService batchClosingItemService;
     private UserDetailService userDetailService;
     @Setter private NotificationService notificationService;
 
     @Autowired
     public BatchClosingService(BatchClosingRepository repository,
-                               ServiceAuthorizeService serviceAuthorizeService,
+                               ServiceAuthorizeService authorizeService,
                                BatchClosingItemService batchClosingItemService,
                                UserDetailService userDetailService,
                                NotificationService notificationService) {
         this.repository = repository;
-        this.serviceAuthorizeService = serviceAuthorizeService;
+        this.authorizeService = authorizeService;
         this.batchClosingItemService = batchClosingItemService;
         this.userDetailService = userDetailService;
         this.notificationService = notificationService;
@@ -60,8 +62,13 @@ public class BatchClosingService {
     }
 
     @Transactional
-    public void create(String establishmentId) {
-        try (Stream<ServiceAuthorize> stream = serviceAuthorizeService.findByEstablishment(establishmentId)){
+    public void create(String establishmentId){
+        create(establishmentId, today());
+    }
+
+    @Transactional
+    public void create(String establishmentId, Date at) {
+        try (Stream<ServiceAuthorize> stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
             stream.map(BatchClosingItem::new)
             .map(this::processBatchClosingItem)
             .forEach(this::updateBatchClosingSituation);
@@ -82,7 +89,7 @@ public class BatchClosingService {
         BatchClosing current = findById(batchId);
         checkUserQualifiedForBatch(currentUser, current);
         current.getBatchClosingItems().forEach(closingItem -> {
-            serviceAuthorizeService.save(closingItem.resetAuthorizeBatchClosingDate());
+            authorizeService.save(closingItem.resetAuthorizeBatchClosingDate());
             batchClosingItemService.save(closingItem.cancelDocumentInvoice());
         });
         repository.save(current.cancel());
@@ -112,7 +119,7 @@ public class BatchClosingService {
         currentBatClosing.addItem(batchClosingItem);
         currentBatClosing.updateValue(batchClosingItem.eventValue());
         repository.save(currentBatClosing);
-        return serviceAuthorizeService.save(currentAuthorize.buildBatchClosingDate());
+        return authorizeService.save(currentAuthorize.buildBatchClosingDate());
     }
 
     private void updateBatchClosingSituation(ServiceAuthorize currentAuthorize){
@@ -158,4 +165,12 @@ public class BatchClosingService {
         }
     }
 
+    private Date today() {
+        return new DateTime()
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillis(0)
+                .toDate();
+    }
 }

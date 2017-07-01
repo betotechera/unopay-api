@@ -38,6 +38,34 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.notificationService = notificationServiceMock
     }
 
+    def 'should create batch closing by establishment when manual process'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
+
+        when:
+        service.create(establishment.id, instant("1 day ago"))
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that bachClosings, hasSize(1)
+    }
+
+    def 'should create batch closing by establishment with invalid date should not be processd'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
+
+        when:
+        service.create(establishment.id, instant("2 day ago"))
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that bachClosings, hasSize(0)
+    }
+
     def 'given a known batch closing when update should be revised'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
