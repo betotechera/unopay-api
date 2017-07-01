@@ -41,7 +41,7 @@ class FixtureCreator {
 
     UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()){
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule(){{
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule(){{
             add("establishment", establishmentUnderTest)
             add("password", passwordEncoder.encode(generatePassword))
         }})

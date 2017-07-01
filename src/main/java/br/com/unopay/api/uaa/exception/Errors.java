@@ -445,6 +445,14 @@ public final class Errors {
     /* batch closing */
     public static final UnovationError INVOICE_NOT_REQUIRED_FOR_BATCH =
             new UnovationError("INVOICE_NOT_REQUIRED_FOR_BATCH", "Invoice not required for batch.");
+    public static final UnovationError BATCH_CLOSING_ITEM_NOT_FOUND =
+            new UnovationError("BATCH_CLOSING_ITEM_NOT_FOUND", "Batch closing item not found");
+    public static final UnovationError BATCH_CLOSING_NOT_FOUND =
+            new UnovationError("BATCH_CLOSING_NOT_FOUND", "Batch closing not found");
+    public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH =
+            new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH",
+                    "Establishment not qualified for this batch");
+
 
 
 

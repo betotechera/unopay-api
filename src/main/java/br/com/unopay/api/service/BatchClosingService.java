@@ -8,7 +8,11 @@ import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_CLOSING_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH;
 import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BATCH;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
@@ -29,16 +33,19 @@ public class BatchClosingService {
     private BatchClosingRepository repository;
     private ServiceAuthorizeService serviceAuthorizeService;
     private BatchClosingItemService batchClosingItemService;
+    private UserDetailService userDetailService;
     @Setter private NotificationService notificationService;
 
     @Autowired
     public BatchClosingService(BatchClosingRepository repository,
                                ServiceAuthorizeService serviceAuthorizeService,
                                BatchClosingItemService batchClosingItemService,
+                               UserDetailService userDetailService,
                                NotificationService notificationService) {
         this.repository = repository;
         this.serviceAuthorizeService = serviceAuthorizeService;
         this.batchClosingItemService = batchClosingItemService;
+        this.userDetailService = userDetailService;
         this.notificationService = notificationService;
     }
 
@@ -47,7 +54,8 @@ public class BatchClosingService {
     }
 
     public BatchClosing findById(String id) {
-        return repository.findOne(id);
+        Optional<BatchClosing> batchClosing = repository.findById(id);
+        return batchClosing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(BATCH_CLOSING_NOT_FOUND));
     }
 
     @Transactional
@@ -60,9 +68,11 @@ public class BatchClosingService {
     }
 
     @Transactional
-    public void updateInvoiceInformation(List<BatchClosingItem> batchClosingItems) {
-        Set<BatchClosing> batchClosingStream = updateBatchItems(batchClosingItems);
-        updateBatch(batchClosingStream);
+    public void updateInvoiceInformation(String userEmail, List<BatchClosingItem> batchClosingItems) {
+        Set<BatchClosing> batchClosings = updateBatchItems(batchClosingItems);
+        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        batchClosings.forEach(batchClosing -> checkUserQualifiedForBatch(currentUser, batchClosing));
+        updateBatch(batchClosings);
     }
 
     public Set<BatchClosing> findByEstablishmentId(String establishmentId) {
@@ -116,6 +126,12 @@ public class BatchClosingService {
         if(!batchClosing.getIssueInvoice()){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVOICE_NOT_REQUIRED_FOR_BATCH.withArguments(batchClosing.getId()));
+        }
+    }
+
+    private void checkUserQualifiedForBatch(UserDetail currentUser, BatchClosing batchClosing) {
+        if(!batchClosing.myEstablishmentIs(currentUser.getEstablishment())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
         }
     }
 }

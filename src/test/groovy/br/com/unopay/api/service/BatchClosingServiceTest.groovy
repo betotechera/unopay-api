@@ -13,6 +13,7 @@ import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
@@ -38,8 +39,10 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'given a known batch closing with issue invoice situation should update only invoice item fields'(){
         given:
+        def user = fixtureCreator.createEstablishmentUser()
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issueInvoice", true)
+            add("establishment", user.establishment)
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
         def expectedInvoiceNumber = "54654687646798"
@@ -53,7 +56,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.updateInvoiceInformation(batchClosingItems)
+        service.updateInvoiceInformation(user.email, batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -66,8 +69,10 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'given a known batch closing with issue invoice situation should update invoice documentation to approved'(){
         given:
+        def user = fixtureCreator.createEstablishmentUser()
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issueInvoice", true)
+            add("establishment", user.establishment)
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
@@ -78,7 +83,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.updateInvoiceInformation(batchClosingItems)
+        service.updateInvoiceInformation(user.email, batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -89,8 +94,10 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'given a known batch closing with issue invoice situation should update batch situation to received'(){
         given:
+        def user = fixtureCreator.createEstablishmentUser()
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issueInvoice", true)
+            add("establishment", user.establishment)
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
@@ -101,7 +108,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.updateInvoiceInformation(batchClosingItems)
+        service.updateInvoiceInformation(user.email, batchClosingItems)
         def result = service.findById(batchClosing.id)
 
         then:
@@ -110,8 +117,10 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'given a known batch closing without issue invoice situation should not be received'(){
         given:
+        def user = fixtureCreator.createEstablishmentUser()
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issueInvoice", false)
+            add("establishment", user.establishment)
         }})
         List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
 
@@ -122,12 +131,59 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.updateInvoiceInformation(batchClosingItems)
+        service.updateInvoiceInformation(user.email, batchClosingItems)
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'INVOICE_NOT_REQUIRED_FOR_BATCH'
         assert ex.errors.first().arguments.find() == batchClosing.id
+    }
+
+    def 'given a known batch closing but unknown batch item should return error'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+            add("establishment", user.establishment)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        batchClosingItems.each {
+            it.id = ''
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+
+        when:
+        service.updateInvoiceInformation(user.email, batchClosingItems)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'BATCH_CLOSING_ITEM_NOT_FOUND'
+    }
+
+    def 'given a known batch closing from other establishment should return error'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+            add("establishment", user.establishment)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+
+        when:
+        service.updateInvoiceInformation(fixtureCreator.createUser().email, batchClosingItems)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH'
     }
 
 

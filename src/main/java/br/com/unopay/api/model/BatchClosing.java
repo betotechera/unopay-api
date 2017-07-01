@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -169,5 +170,12 @@ public class BatchClosing implements Serializable {
             return getEstablishment().getBachShipmentMail();
         }
         return null;
+    }
+
+    public boolean myEstablishmentIs(Establishment establishment){
+        if(this.establishment != null && establishment != null) {
+            return Objects.equals(establishment.getId(), this.establishment.getId());
+        }
+        return false;
     }
 }
