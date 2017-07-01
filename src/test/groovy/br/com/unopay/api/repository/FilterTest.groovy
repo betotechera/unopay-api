@@ -21,6 +21,7 @@ import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
 class FilterTest extends SpockApplicationTests {
@@ -184,6 +185,28 @@ class FilterTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(1)
+    }
+
+    def 'should return contracts like name with ignore case'() {
+        given:
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("name", uniqueRandom("JoSe", "fernanda", "joao"))
+        }})
+
+        def filter = new ContractFilter()
+
+        filter.with { name = findName }
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
+
+        where:
+        findName | _
+        'JOse'   | _
+        'jose'   | _
     }
 
 

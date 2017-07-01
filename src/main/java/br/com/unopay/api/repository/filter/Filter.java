@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -107,7 +108,7 @@ public class Filter<T> implements Specification<T> {
             return cb.isMember(value,key);
         }
 
-        return cb.like(key, "%" + value + "%");
+        return cb.like(cb.lower(key), ("%" + value + "%").toLowerCase());
     }
 
     @SneakyThrows
