@@ -20,13 +20,8 @@ public class UnopayEncryptor {
     }
 
     public String encrypt(byte[] encrypt) {
-        try {
-            byte[] encryptedPassword = encryptor.encrypt(encrypt);
-            return DatatypeConverter.printBase64Binary(encryptedPassword);
-        }catch (Exception e){
-            log.error("when encrypt={} message={}",encrypt, e.getMessage());
-            return null;
-        }
+        byte[] encryptedPassword = encryptor.encrypt(encrypt);
+        return DatatypeConverter.printBase64Binary(encryptedPassword);
     }
 
     public String decrypt(String decrypt){
