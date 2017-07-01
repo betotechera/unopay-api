@@ -80,7 +80,7 @@ public class BatchClosingService {
         Set<BatchClosing> batchClosings = updateBatchItems(batchClosingItems);
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         batchClosings.forEach(batchClosing -> checkUserQualifiedForBatch(currentUser, batchClosing));
-        updateBatch(batchClosings);
+        updateBatchSituation(batchClosings);
     }
 
     @Transactional
@@ -134,7 +134,7 @@ public class BatchClosingService {
         return batchClosing.orElse(new BatchClosing(currentAuthorize));
     }
 
-    private void updateBatch(Set<BatchClosing> batchClosings) {
+    private void updateBatchSituation(Set<BatchClosing> batchClosings) {
         batchClosings.forEach(batchClosing -> {
             validateBatchClosing(batchClosing);
             batchClosing.setSituation(BatchClosingSituation.DOCUMENT_RECEIVED);
