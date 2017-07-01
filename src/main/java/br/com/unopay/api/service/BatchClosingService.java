@@ -166,11 +166,6 @@ public class BatchClosingService {
     }
 
     private Date today() {
-        return new DateTime()
-                .withHourOfDay(0)
-                .withMinuteOfHour(0)
-                .withSecondOfMinute(0)
-                .withMillis(0)
-                .toDate();
+        return new DateTime().withMillisOfDay(0).toDate();
     }
 }
