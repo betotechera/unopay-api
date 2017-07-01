@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
@@ -25,13 +26,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
-import javax.xml.bind.DatatypeConverter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -45,7 +44,7 @@ public class ServiceAuthorizeService {
     private EstablishmentService establishmentService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
-    private BytesEncryptor encryptor;
+    private UnopayEncryptor encryptor;
     @Setter
     private Notifier notifier;
 
@@ -58,7 +57,7 @@ public class ServiceAuthorizeService {
                                    EstablishmentService establishmentService,
                                    ContractService contractService,
                                    PaymentInstrumentService paymentInstrumentService,
-                                   BytesEncryptor encryptor, Notifier notifier) {
+                                   UnopayEncryptor encryptor, Notifier notifier) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
         this.eventService = eventService;
@@ -71,18 +70,19 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
-    public ServiceAuthorize create(String userEmail, ServiceAuthorize serviceAuthorize) {
+    public ServiceAuthorize create(String userEmail, ServiceAuthorize authorize) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        checkContract(serviceAuthorize, currentUser);
-        defineEstablishment(serviceAuthorize, currentUser);
-        ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(serviceAuthorize);
-        serviceAuthorize.setReferences(currentUser, instrumentCredit);
-        validateEvent(serviceAuthorize);
-        serviceAuthorize.setMeUp(instrumentCredit);
-        instrumentCreditService.subtract(instrumentCredit.getId(), serviceAuthorize.getEventValue());
-        serviceAuthorize.setAuthorizationNumber(generateAuthorizationNumber(serviceAuthorize));
-        ServiceAuthorize authorized = repository.save(serviceAuthorize);
-        notifySupplyWhenRequired(serviceAuthorize, authorized);
+        checkContract(authorize, currentUser);
+        defineEstablishment(authorize, currentUser);
+        ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(authorize);
+        authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));
+        authorize.setReferences(currentUser, instrumentCredit);
+        validateEvent(authorize);
+        authorize.setMeUp(instrumentCredit);
+        instrumentCreditService.subtract(instrumentCredit.getId(), authorize.getEventValue());
+        authorize.setAuthorizationNumber(generateAuthorizationNumber(authorize));
+        ServiceAuthorize authorized = repository.save(authorize);
+        notifySupplyWhenRequired(authorize, authorized);
         return authorized;
     }
 
@@ -131,7 +131,6 @@ public class ServiceAuthorizeService {
         updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
-        encryptAndSetTypedPassword(serviceAuthorize);
         return instrumentCredit;
     }
 
@@ -148,15 +147,6 @@ public class ServiceAuthorizeService {
             validateRequiredPasswordInformation(serviceAuthorize, instrumentCredit.getContract());
             paymentInstrumentService.changePassword(instrumentCredit
                     .getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
-        }
-    }
-
-    private void encryptAndSetTypedPassword(ServiceAuthorize serviceAuthorize) {
-        try {
-            byte[] encryptedPassword = encryptor.encrypt(serviceAuthorize.paymentInstrumentPasswordAsByte());
-            serviceAuthorize.setTypedPassword(DatatypeConverter.printBase64Binary(encryptedPassword));
-        }catch (Exception e){
-            log.error("when encrypt password {}", e.getMessage());
         }
     }
 

@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
@@ -24,11 +25,8 @@ import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.encrypt.BytesEncryptor
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
-
-import javax.xml.bind.DatatypeConverter
 
 class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
@@ -45,7 +43,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     PaymentInstrumentService paymentInstrumentService
 
     @Autowired
-    BytesEncryptor encryptor
+    UnopayEncryptor encryptor
 
 
     @Autowired
@@ -767,7 +765,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
         then:
         result.typedPassword != null
-        new String(encryptor.decrypt(DatatypeConverter.parseBase64Binary(result.typedPassword))) == '123456'
+        encryptor.decrypt(result.typedPassword) == '123456'
     }
 
     void 'given payment instrument with password when the contractor password is same of payment instrument password should be authorized'(){

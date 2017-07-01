@@ -307,10 +307,7 @@ public class ServiceAuthorize implements Serializable {
 
     @SneakyThrows
     public byte[] paymentInstrumentPasswordAsByte(){
-        if(getContractorInstrumentCredit() != null && getContractorInstrumentCredit().getPaymentInstrument() != null) {
-            return getContractorInstrumentCredit().getPaymentInstrument().getPassword().getBytes("UTF-8");
-        }
-        return null;
+        return getContractorInstrumentCredit().getPaymentInstrument().getPassword().getBytes();
     }
 
 }

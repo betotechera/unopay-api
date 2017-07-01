@@ -36,9 +36,9 @@ public class KeyValueTranslator {
                 .collect(Collectors.toList());
     }
 
-    public <T> T populate(Class<T> klass, List<FieldTO> fieldTOS){
+    public <T> T populate(Class<T> clazz, List<FieldTO> fieldTOS){
         Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return populate(klass, map);
+        return populate(clazz, map);
     }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
@@ -51,8 +51,8 @@ public class KeyValueTranslator {
     }
 
     @SneakyThrows
-    public <T> T populate(Class<T> klass, Map<String, String> map){
-        T object = klass.newInstance();
+    public <T> T populate(Class<T> clazz, Map<String, String> map){
+        T object = clazz.newInstance();
         listObjectsCache = new ConcurrentHashMap<>();
         map.entrySet().forEach(entry -> populateAnnotatedFields(object, entry));
         listObjectsCache = null;
@@ -159,10 +159,10 @@ public class KeyValueTranslator {
     }
 
     @SneakyThrows
-    private Object getListObject(Entry entry, Class aClass) {
-        Object cachedObject = listObjectsCache.get(getListObjectKey(entry, aClass));
+    private Object getListObject(Entry entry, Class clazz) {
+        Object cachedObject = listObjectsCache.get(getListObjectKey(entry, clazz));
         if (cachedObject == null) {
-            cachedObject = aClass.newInstance();
+            cachedObject = clazz.newInstance();
         }
         return cachedObject;
     }
@@ -177,11 +177,11 @@ public class KeyValueTranslator {
         return listObjectsCache.get(getListObjectKey(entryKey, aClass)) == null;
     }
 
-    private String getListObjectKey(Object entryKey, Class klass) {
+    private String getListObjectKey(Object entryKey, Class clazz) {
         Matcher matcher = getMatcher(entryKey.toString());
         matcher.find();
         String group =  matcher.group(0);
-        return getMapKey(klass, group);
+        return getMapKey(clazz, group);
     }
 
     private String getMapKey(Class aClass, String group) {
