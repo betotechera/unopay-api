@@ -5,8 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
-import static br.com.unopay.api.function.FixtureFunctions.*
-import br.com.unopay.api.function.FixtureFunctions
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.BatchClosingSituation
