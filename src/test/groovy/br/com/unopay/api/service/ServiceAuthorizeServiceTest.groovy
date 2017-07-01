@@ -24,8 +24,11 @@ import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.encrypt.BytesEncryptor
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
+
+import javax.xml.bind.DatatypeConverter
 
 class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
@@ -39,10 +42,10 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     ContractService contractService
 
     @Autowired
-    ContractorInstrumentCreditService contractorInstrumentCreditService
+    PaymentInstrumentService paymentInstrumentService
 
     @Autowired
-    PaymentInstrumentService paymentInstrumentService
+    BytesEncryptor encryptor
 
 
     @Autowired
@@ -343,12 +346,12 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CREDIT_UNAVAILABLE'
 
         where:
-        _|situationUnderTest
-        _|CreditSituation.CANCELED
-        _|CreditSituation.EXPIRED
-        _|CreditSituation.PROCESSING
-        _|CreditSituation.TO_COLLECT
-        _|CreditSituation.CONFIRMED
+        _ | situationUnderTest
+        _ | CreditSituation.CANCELED
+        _ | CreditSituation.EXPIRED
+        _ | CreditSituation.PROCESSING
+        _ | CreditSituation.TO_COLLECT
+        _ | CreditSituation.CONFIRMED
     }
 
     @Unroll
@@ -368,9 +371,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert result.id != null
 
         where:
-        _|serviceTypeUnderTest
-        _|ServiceType.FUEL_ALLOWANCE
-        _|ServiceType.FREIGHT_RECEIPT
+        _ | serviceTypeUnderTest
+        _ | ServiceType.FUEL_ALLOWANCE
+        _ | ServiceType.FREIGHT_RECEIPT
     }
 
     @Unroll
@@ -389,9 +392,9 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'SERVICE_NOT_ACCEPTABLE'
 
         where:
-        _|serviceTypeUnderTest
-        _|ServiceType.FREIGHT
-        _|ServiceType.ELECTRONIC_TOLL
+        _ | serviceTypeUnderTest
+        _ | ServiceType.FREIGHT
+        _ | ServiceType.ELECTRONIC_TOLL
     }
 
     void 'service authorize should be create with current user'(){
@@ -506,11 +509,11 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACT_NOT_ACTIVATED'
 
         where:
-        _|situation
-        _|ContractSituation.CANCELLED
-        _|ContractSituation.EXPIRED
-        _|ContractSituation.FINALIZED
-        _|ContractSituation.SUSPENDED
+        _ | situation
+        _ | ContractSituation.CANCELLED
+        _ | ContractSituation.EXPIRED
+        _ | ContractSituation.FINALIZED
+        _ | ContractSituation.SUSPENDED
     }
 
     void 'given a contract finalized should not be authorized'(){
@@ -748,6 +751,19 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         result.id != null
     }
 
+    void 'when authorize service should archive and encrypt typed password'(){
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created  = service.create(userUnderTest.email, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.typedPassword != null
+        new String(encryptor.decrypt(DatatypeConverter.parseBase64Binary(result.typedPassword))) == serviceAuthorize.instrumentPassword()
+    }
+
     void 'given payment instrument with password when the contractor password is same of payment instrument password should be authorized'(){
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
@@ -878,11 +894,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     }
 
     private ContractorInstrumentCredit createCreditInstrumentWithContract(Contract contract) {
-        def instrumentCredit = fixtureCreator
-                .instrumentCredit(contract.contractor, contract)
-        def password = instrumentCredit.paymentInstrument.password
-        contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
-        instrumentCredit.with { paymentInstrument.password = password; it }
+        fixtureCreator.createContractorInstrumentCreditPersisted(contract)
     }
 
     private ServiceAuthorize createServiceAuthorize() {
@@ -905,7 +917,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
 
     private ServiceAuthorize physicalContractorWithoutPassword(Contract contractParam, userEstablishment) {
         def contractResult = addPhysicalContractorToContract(contractParam)
-        def instrumentCredit = createCreditInstrumentWithContract(contractResult)
+        def instrumentCredit = fixtureCreator.createContractorInstrumentCreditPersisted(contractResult)
         paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {

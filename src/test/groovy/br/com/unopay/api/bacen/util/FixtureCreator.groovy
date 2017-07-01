@@ -154,8 +154,7 @@ class FixtureCreator {
     }
 
 
-    ContractorInstrumentCredit createContractorInstrumentCreditPersisted(){
-        def contractUnderTest = createPersistedContract()
+    ContractorInstrumentCredit createContractorInstrumentCreditPersisted(Contract contractUnderTest = createPersistedContract()){
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contractUnderTest)
         Fixture.from(ContractorInstrumentCredit.class).uses(jpaProcessor).gimme("toPersist", new Rule(){{
             add("paymentInstrument",createInstrumentToProduct(contractUnderTest.product, contractUnderTest.contractor))

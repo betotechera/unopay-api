@@ -25,12 +25,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
+import javax.xml.bind.DatatypeConverter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ServiceAuthorizeService {
 
@@ -41,6 +45,7 @@ public class ServiceAuthorizeService {
     private EstablishmentService establishmentService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
+    private BytesEncryptor encryptor;
     @Setter
     private Notifier notifier;
 
@@ -53,7 +58,7 @@ public class ServiceAuthorizeService {
                                    EstablishmentService establishmentService,
                                    ContractService contractService,
                                    PaymentInstrumentService paymentInstrumentService,
-                                   Notifier notifier) {
+                                   BytesEncryptor encryptor, Notifier notifier) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
         this.eventService = eventService;
@@ -61,6 +66,7 @@ public class ServiceAuthorizeService {
         this.establishmentService = establishmentService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.encryptor = encryptor;
         this.notifier = notifier;
     }
 
@@ -125,6 +131,7 @@ public class ServiceAuthorizeService {
         updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
         paymentInstrumentService
                 .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
+        encryptAndSetTypedPassword(serviceAuthorize);
         return instrumentCredit;
     }
 
@@ -141,6 +148,15 @@ public class ServiceAuthorizeService {
             validateRequiredPasswordInformation(serviceAuthorize, instrumentCredit.getContract());
             paymentInstrumentService.changePassword(instrumentCredit
                     .getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
+        }
+    }
+
+    private void encryptAndSetTypedPassword(ServiceAuthorize serviceAuthorize) {
+        try {
+            byte[] encryptedPassword = encryptor.encrypt(serviceAuthorize.paymentInstrumentPasswordAsByte());
+            serviceAuthorize.setTypedPassword(DatatypeConverter.printBase64Binary(encryptedPassword));
+        }catch (Exception e){
+            log.error("when encrypt password {}", e.getMessage());
         }
     }
 

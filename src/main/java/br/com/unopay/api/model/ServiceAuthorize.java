@@ -40,6 +40,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -52,6 +53,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class ServiceAuthorize implements Serializable {
 
     public static final long serialVersionUID = 1L;
+
 
     public ServiceAuthorize(){}
 
@@ -157,6 +159,9 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "batch_closing_date_time")
     private Date batchClosingDateTime;
+
+    @Column(name = "typed_password")
+    private String typedPassword;
 
     @Version
     @JsonIgnore
@@ -296,6 +301,14 @@ public class ServiceAuthorize implements Serializable {
     public IssueInvoiceType establishmentIssueInvoiceType(){
         if(getEstablishment() != null) {
             return getEstablishment().getIssueInvoiceType();
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    public byte[] paymentInstrumentPasswordAsByte(){
+        if(getContractorInstrumentCredit() != null && getContractorInstrumentCredit().getPaymentInstrument() != null) {
+            return getContractorInstrumentCredit().getPaymentInstrument().getPassword().getBytes("UTF-8");
         }
         return null;
     }

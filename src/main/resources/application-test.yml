@@ -42,6 +42,8 @@ amazon:
 multipart:
   max-file-size: 9000Kb
 spring:
+  encryptor:
+    password: teste
   redis:
     host: redis.unvlocal.com.br
     port: 6379

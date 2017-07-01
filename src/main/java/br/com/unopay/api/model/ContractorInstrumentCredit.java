@@ -38,6 +38,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -299,4 +300,5 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
         return null;
     }
+
 }

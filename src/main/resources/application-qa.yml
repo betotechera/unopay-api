@@ -42,6 +42,8 @@ amazon:
 multipart:
   max-file-size: 9000Kb
 spring:
+  encryptor:
+    password: vEexq7mVjQj948B7
     jpa:
         hibernate.ddl-auto: none
         database-platform: org.hibernate.dialect.Oracle10gDialect

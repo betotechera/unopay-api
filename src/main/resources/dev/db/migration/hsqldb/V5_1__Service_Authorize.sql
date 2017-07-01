@@ -21,6 +21,7 @@ create table service_authorize (
     user_id varchar(256) not null,
     situation varchar(50) not null,
     batch_closing_date_time timestamp,
+    typed_password varchar(256),
     version integer,
     constraint fk_serv_auth_est foreign key(establishment_id) references establishment(id),
     constraint fk_serv_auth_contract foreign key(contract_id) references contract(id),
