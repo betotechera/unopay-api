@@ -194,6 +194,7 @@ class FixtureCreator {
             add("authorizationDateTime", instant(dateAsText))
             add("contractorInstrumentCredit",credit)
             add("establishment",establishment)
+            add("batchClosingDateTime", new Date())
             add("contractorInstrumentCredit.paymentInstrument.password",credit.paymentInstrument.password)
         }})
     }

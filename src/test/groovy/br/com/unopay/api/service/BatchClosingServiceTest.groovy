@@ -5,6 +5,8 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.BatchClosingSituation
@@ -36,6 +38,107 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     void setup(){
         service.notificationService = notificationServiceMock
     }
+
+    def 'given a known batch closing without finalized situation when canceled should update items invoice information'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
+        }})
+        fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        service.cancel(user.email, batchClosing.id)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.batchClosingItems.every {
+            it.invoiceDocumentSituation == DocumentSituation.CANCELED
+        }
+    }
+
+    def 'given a known batch closing without finalized situation when canceled should reset service authorized batch closing date date'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
+        }})
+        fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        service.cancel(user.email, batchClosing.id)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.batchClosingItems.every {
+            it.serviceAuthorize.batchClosingDateTime == null
+        }
+    }
+
+    def 'given a unknown batch closing should not be canceled'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+
+        when:
+        service.cancel(user.email, '')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'BATCH_CLOSING_NOT_FOUND'
+    }
+
+    def 'given a known batch closing without finalized situation should be canceled'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
+        }})
+        fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        service.cancel(user.email, batchClosing.id)
+        def result = service.findById(batchClosing.id)
+
+        then:
+        result.situation == BatchClosingSituation.CANCELED
+    }
+
+    def 'given a known batch closing with finalized situation should not be canceled'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+            add("situation", BatchClosingSituation.FINALIZED)
+        }})
+
+        when:
+        service.cancel(user.email, batchClosing.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_ALREADY_FINALIZED'
+    }
+
+    def 'given a known batch closing from other establishment should not be canceled'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishment", user.establishment)
+        }})
+        fixtureCreator.createBatchItems(batchClosing)
+
+        when:
+        service.cancel(fixtureCreator.createUser().email, batchClosing.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH'
+    }
+
+
 
     def 'given a known batch closing with issue invoice situation should update only invoice item fields'(){
         given:
@@ -224,6 +327,24 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
         then:
         that bachClosings, hasSize(1)
+    }
+
+    def 'when create batch closing should update service authorize closing date'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment)
+
+        when:
+        service.create(establishment.id)
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        bachClosings.every {
+            it.batchClosingItems.every {
+                it.serviceAuthorize.batchClosingDateTime > instant("1 second ago")
+            }
+        }
     }
 
     def 'given authorizations of one or more days ago should be processed'(){

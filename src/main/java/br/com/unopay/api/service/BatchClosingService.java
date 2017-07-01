@@ -75,6 +75,18 @@ public class BatchClosingService {
         updateBatch(batchClosings);
     }
 
+    @Transactional
+    public void cancel(String userEmail, String batchId) {
+        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        BatchClosing current = findById(batchId);
+        checkUserQualifiedForBatch(currentUser, current);
+        current.getBatchClosingItems().forEach(closingItem -> {
+            serviceAuthorizeService.save(closingItem.resetAuthorizeBatchClosingDate());
+            batchClosingItemService.save(closingItem.cancelDocumentInvoice());
+        });
+        repository.save(current.cancel());
+    }
+
     public Set<BatchClosing> findByEstablishmentId(String establishmentId) {
         return repository.findByEstablishmentId(establishmentId);
     }
@@ -89,7 +101,7 @@ public class BatchClosingService {
         currentBatClosing.addItem(batchClosingItem);
         currentBatClosing.updateValue(batchClosingItem.eventValue());
         repository.save(currentBatClosing);
-        return serviceAuthorizeService.save(currentAuthorize.buildBatchSlosingDate());
+        return serviceAuthorizeService.save(currentAuthorize.buildBatchClosingDate());
     }
 
     private void updateBatchClosingSituation(ServiceAuthorize currentAuthorize){

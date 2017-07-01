@@ -95,6 +95,19 @@ public class BatchClosingItem implements Serializable, Updatable {
         return null;
     }
 
+    public BatchClosingItem cancelDocumentInvoice(){
+        setInvoiceDocumentSituation(DocumentSituation.CANCELED);
+        return this;
+    }
+
+    public ServiceAuthorize resetAuthorizeBatchClosingDate(){
+        if(getServiceAuthorize() != null){
+            return getServiceAuthorize().resetBatchClosingDate();
+        }
+        return null;
+    }
+
+
 
 
 }
