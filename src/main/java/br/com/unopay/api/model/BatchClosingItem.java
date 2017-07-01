@@ -107,7 +107,4 @@ public class BatchClosingItem implements Serializable, Updatable {
         return null;
     }
 
-
-
-
 }
