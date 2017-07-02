@@ -477,11 +477,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         that bachClosings, hasSize(1)
     }
 
-    def 'given authorizations only today should not be processed'(){
+    def 'given authorizations of today should not be processed'(){
         given:
         List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        createServiceAuthorizationsAt(contracts, establishment, "1 minute ago")
+        createServiceAuthorizationsAt(contracts, establishment, "today")
 
         when:
         service.create(establishment.id)
