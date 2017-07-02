@@ -160,6 +160,7 @@ public class ServiceAuthorize implements Serializable {
     @Column(name = "batch_closing_date_time")
     private Date batchClosingDateTime;
 
+    @JsonIgnore
     @Column(name = "typed_password")
     private String typedPassword;
 
@@ -168,6 +169,7 @@ public class ServiceAuthorize implements Serializable {
     private Integer version;
 
     @Transient
+    @JsonIgnore
     @KeyField(baseField = "abastecimento.operacao")
     private String operation = "1";
 
