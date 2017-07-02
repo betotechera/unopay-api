@@ -481,7 +481,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         given:
         List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        createServiceAuthorizationsAt(contracts, establishment, "1 hour ago")
+        createServiceAuthorizationsAt(contracts, establishment, "1 minute ago")
 
         when:
         service.create(establishment.id)
