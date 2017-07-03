@@ -434,15 +434,22 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'should create batch closing by establishment'(){
         given:
         List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        createServiceAuthorizations(contracts, establishment)
+        def (Establishment establishmentA, Establishment establishmentsB) = Fixture.from(Establishment.class)
+                                                                                .uses(jpaProcessor).gimme(2, "valid")
+        createServiceAuthorizations(contracts, establishmentA,1)
+        createServiceAuthorizations(contracts, establishmentsB,3)
 
         when:
-        service.create(establishment.id)
-        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+        service.create(establishmentA.id)
+        service.create(establishmentsB.id)
+        Set<BatchClosing> bachClosingsA = service.findByEstablishmentId(establishmentA.id)
+        Set<BatchClosing> bachClosingsB = service.findByEstablishmentId(establishmentsB.id)
 
         then:
-        that bachClosings, hasSize(1)
+        that bachClosingsA, hasSize(1)
+        that bachClosingsA.find().batchClosingItems, hasSize(1)
+        that bachClosingsB, hasSize(1)
+        that bachClosingsB.find().batchClosingItems, hasSize(3)
     }
 
     def 'when create batch closing should update service authorize closing date'(){
