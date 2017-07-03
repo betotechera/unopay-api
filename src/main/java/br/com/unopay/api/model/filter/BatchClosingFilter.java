@@ -26,4 +26,7 @@ public class BatchClosingFilter {
     @SearchableField
     private BatchClosingSituation situation;
 
+    @SearchableField
+    private String number;
+
 }
