@@ -78,14 +78,14 @@ public class BatchClosingService {
     @Transactional
     public void updateInvoiceInformation(String userEmail, List<BatchClosingItem> batchClosingItems) {
         Set<BatchClosing> batchClosings = updateBatchItems(batchClosingItems);
-        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        UserDetail currentUser = getUserByEmail(userEmail);
         batchClosings.forEach(batchClosing -> checkUserQualifiedForBatch(currentUser, batchClosing));
         updateBatchSituation(batchClosings);
     }
 
     @Transactional
     public void cancel(String userEmail, String batchId) {
-        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        UserDetail currentUser = getUserByEmail(userEmail);
         BatchClosing current = findById(batchId);
         checkUserQualifiedForBatch(currentUser, current);
         current.getBatchClosingItems().forEach(closingItem -> {
@@ -172,8 +172,26 @@ public class BatchClosingService {
             throw UnovationExceptions.unprocessableEntity().withErrors(SITUATION_NOT_ALLOWED);
         }
     }
-
+    private BatchClosingFilter buildFilterBy(BatchClosingFilter filter, UserDetail currentUser) {
+        if(currentUser.isEstablishmentType())
+            filter.setEstablishment(currentUser.establishmentId());
+        if(currentUser.isIssuerType())
+            filter.setIssuer(currentUser.issuerId());
+        if(currentUser.isAccreditedNetworkType())
+            filter.setAccreditedNetwork(currentUser.accreditedNetworkId());
+        if(currentUser.isHirerType())
+            filter.setHirer(currentUser.hirerId());
+        return filter;
+    }
     private Date today() {
         return new DateTime().withMillisOfDay(0).toDate();
+    }
+
+    public Page<BatchClosing> findMyByFilter(String userEmail, BatchClosingFilter filter, UnovationPageRequest pageable) {
+        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
+    }
+
+    private UserDetail getUserByEmail(String userEmail) {
+        return userDetailService.getByEmail(userEmail);
     }
 }

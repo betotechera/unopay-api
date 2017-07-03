@@ -22,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -86,11 +87,11 @@ public class BatchClosingController {
 
     @ResponseStatus(OK)
     @JsonView(List.class)
-    @PreAuthorize("hasRole('ROLE_LIST_BATCH_CLOSING')")
+    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/my", method = GET)
-    public Results<BatchClosing> getMy(BatchClosingFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<BatchClosing> findMyByFilter(OAuth2Authentication authentication,BatchClosingFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search batchClosing with filter={}", filter);
-        Page<BatchClosing> page =  service.findByFilter(filter, pageable);
+        Page<BatchClosing> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/batch-closings", api));
     }
