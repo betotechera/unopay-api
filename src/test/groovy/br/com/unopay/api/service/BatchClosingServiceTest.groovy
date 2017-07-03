@@ -158,7 +158,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
     }
 
-    def 'given a known batch closing without finalized situation when canceled should reset service authorized batch closing date date'(){
+    def 'given a known batch closing without finalized situation when canceled should reset service authorized batch closing date'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
         BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
