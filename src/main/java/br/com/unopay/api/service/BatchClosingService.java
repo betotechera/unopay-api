@@ -97,9 +97,7 @@ public class BatchClosingService {
 
     public void review(String batchId, BatchClosingSituation newSituation) {
         BatchClosing current = findById(batchId);
-        if(BatchClosingSituation.CANCELED.equals(newSituation)){
-            throw UnovationExceptions.unprocessableEntity().withErrors(SITUATION_NOT_ALLOWED);
-        }
+        checkAllowedSituation(newSituation);
         current.checkCanBeChanged();
         current.setSituation(newSituation);
         repository.save(current);
@@ -115,10 +113,10 @@ public class BatchClosingService {
 
     private ServiceAuthorize processBatchClosingItem(BatchClosingItem batchClosingItem) {
         ServiceAuthorize currentAuthorize = batchClosingItem.getServiceAuthorize();
-        BatchClosing currentBatClosing = getCurrentBatchClosing(currentAuthorize);
-        currentBatClosing.addItem(batchClosingItem);
-        currentBatClosing.updateValue(batchClosingItem.eventValue());
-        repository.save(currentBatClosing);
+        BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
+        currentBatchClosing.addItem(batchClosingItem);
+        currentBatchClosing.updateValue(batchClosingItem.eventValue());
+        repository.save(currentBatchClosing);
         return authorizeService.save(currentAuthorize.buildBatchClosingDate());
     }
 
@@ -162,6 +160,12 @@ public class BatchClosingService {
     private void checkUserQualifiedForBatch(UserDetail currentUser, BatchClosing batchClosing) {
         if(!batchClosing.myEstablishmentIs(currentUser.getEstablishment())){
             throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
+        }
+    }
+
+    private void checkAllowedSituation(BatchClosingSituation newSituation) {
+        if(BatchClosingSituation.CANCELED.equals(newSituation)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(SITUATION_NOT_ALLOWED);
         }
     }
 
