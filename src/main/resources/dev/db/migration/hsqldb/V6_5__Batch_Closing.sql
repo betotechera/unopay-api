@@ -12,6 +12,7 @@ create table batch_closing (
     situation varchar(50) not null,
     payment_date_time TIMESTAMP,
     payment_id varchar(256),
+    batch_number varchar(100),
     version integer,
     constraint fk_batch_est foreign key(establishment_id) references establishment(id),
     constraint fk_batch_issuer foreign key(issuer_id) references issuer(id),

@@ -13,12 +13,13 @@ import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,11 +34,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
-import org.joda.time.DateTime;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -50,7 +52,7 @@ public class BatchClosing implements Serializable {
 
     public BatchClosing(){}
 
-    public BatchClosing(ServiceAuthorize serviceAuthorize){
+    public BatchClosing(ServiceAuthorize serviceAuthorize,Long total){
         Date closingPaymentDays = new DateTime().plusDays(serviceAuthorize.establishmentClosingPaymentDays()).toDate();
         this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();
         this.establishment = serviceAuthorize.getEstablishment();
@@ -61,6 +63,14 @@ public class BatchClosing implements Serializable {
         this.closingDateTime = new Date();
         this.paymentReleaseDateTime = closingPaymentDays;
         this.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH;
+        this.number = generateBatchNumber(total);
+    }
+
+    @SneakyThrows
+    private String generateBatchNumber(Long total) {
+        String batchNumber = String.valueOf(establishment.getType().ordinal()) + String.valueOf(total) +
+                        String.valueOf(this.closingDateTime.getTime());
+        return batchNumber.substring(0, Math.min(batchNumber.length(), 12));
     }
 
     @Id
@@ -75,6 +85,10 @@ public class BatchClosing implements Serializable {
     @JoinColumn(name="establishment_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Establishment establishment;
+
+    @Column(name = "batch_number")
+    @JsonView({Views.Public.class,Views.List.class})
+    private String number;
 
     @ManyToOne
     @NotNull(groups = {Create.class})

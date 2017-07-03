@@ -221,4 +221,31 @@ public class UserDetail implements Serializable {
         }
         return Optional.empty();
     }
+    @JsonIgnore
+    public boolean isIssuerType() {
+        return issuer != null;
+    }
+
+    public String issuerId() {
+        return isIssuerType() ? issuer.getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isAccreditedNetworkType() {
+        return accreditedNetwork != null;
+    }
+
+    public String accreditedNetworkId() {
+        return isAccreditedNetworkType() ? accreditedNetwork.getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isHirerType() {
+        return hirer != null;
+    }
+
+    public String hirerId() {
+        return isHirerType() ? hirer.getId() : null;
+    }
+
 }

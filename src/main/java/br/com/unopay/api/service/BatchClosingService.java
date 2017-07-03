@@ -129,7 +129,11 @@ public class BatchClosingService {
     private BatchClosing getCurrentBatchClosing(ServiceAuthorize currentAuthorize) {
         Optional<BatchClosing> batchClosing = repository
                 .findFirstByEstablishmentIdAndHirerId(currentAuthorize.establishmentId(), currentAuthorize.hirerId());
-        return batchClosing.orElse(new BatchClosing(currentAuthorize));
+        return batchClosing.orElse(new BatchClosing(currentAuthorize,getTotal()));
+    }
+
+    private Long getTotal() {
+        return repository.count();
     }
 
     private void updateBatchSituation(Set<BatchClosing> batchClosings) {
