@@ -55,6 +55,7 @@ public class BatchClosingController {
     @RequestMapping(value = "/batch-closings", method = POST)
     public ResponseEntity<BatchClosing> create(@Validated(Create.class) @RequestBody BatchClosing batchClosing) {
         log.info("creating batchClosing {}", batchClosing);
+        service.create(batchClosing.establishmentId(),batchClosing.getClosingDateTime());
         return created(URI.create("/batch-closings/"+batchClosing.getId())).body(batchClosing);
 
     }

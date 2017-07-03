@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
@@ -81,7 +82,7 @@ public class BatchClosing implements Serializable {
     private String id;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Establishment establishment;
@@ -91,53 +92,49 @@ public class BatchClosing implements Serializable {
     private String number;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
     @JoinColumn(name="issuer_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Issuer issuer;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
     @JoinColumn(name="accredited_network_id")
     @JsonView({Views.Public.class,Views.List.class})
     private AccreditedNetwork accreditedNetwork;
 
     @ManyToOne
-    @NotNull(groups = {Create.class})
     @JoinColumn(name="hirer_id")
     @JsonView({Views.Public.class,Views.List.class})
     private Hirer hirer;
 
-    @NotNull(groups = {Create.class})
     @JoinColumn(name="issue_invoice")
     @JsonView({Views.Public.class,Views.List.class})
     private Boolean issueInvoice;
 
     @Column(name = "closing_date_time")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class,Update.class})
     private Date closingDateTime;
 
     @Column(name = "value")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     private BigDecimal value;
 
     @Column(name = "period")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     private RecurrencePeriod period;
 
     @Column(name = "payment_release_date_time")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     private Date paymentReleaseDateTime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situation")
     @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     private BatchClosingSituation situation;
 
     @Column(name = "payment_date_time")
@@ -219,5 +216,9 @@ public class BatchClosing implements Serializable {
         if(isCanceled()){
             throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_CANCELED);
         }
+    }
+
+    public String establishmentId() {
+        return establishment != null ? establishment.getId() : null;
     }
 }
