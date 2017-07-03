@@ -22,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.created;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +55,7 @@ public class BatchClosingController {
     @RequestMapping(value = "/batch-closings", method = POST)
     public ResponseEntity<BatchClosing> create(@Validated(Create.class) @RequestBody BatchClosing batchClosing) {
         log.info("creating batchClosing {}", batchClosing);
-        return created(URI.create("/contracts/"+batchClosing.getId())).body(batchClosing);
+        return created(URI.create("/batch-closings/"+batchClosing.getId())).body(batchClosing);
 
     }
     @ResponseStatus(OK)
@@ -81,7 +82,18 @@ public class BatchClosingController {
         log.info("search batchClosing with filter={}", filter);
         Page<BatchClosing> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/contracts", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/batch-closings", api));
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(List.class)
+    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_BATCH_CLOSING')")
+    @RequestMapping(value = "/batch-closings/my", method = GET)
+    public Results<BatchClosing> findMyByFilter(OAuth2Authentication authentication,BatchClosingFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search batchClosing with filter={}", filter);
+        Page<BatchClosing> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/batch-closings", api));
     }
 
 }

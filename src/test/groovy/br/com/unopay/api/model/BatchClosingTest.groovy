@@ -12,7 +12,7 @@ class BatchClosingTest extends FixtureApplicationTest {
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
 
         when:
-        def batchClosing = new BatchClosing(serviceAuthorize)
+        def batchClosing = new BatchClosing(serviceAuthorize,0)
 
         then:
         batchClosing.accreditedNetwork == serviceAuthorize.contract.product.accreditedNetwork
@@ -23,6 +23,7 @@ class BatchClosingTest extends FixtureApplicationTest {
         batchClosing.issueInvoice == serviceAuthorize.contract.issueInvoice
         batchClosing.closingDateTime < instant("1 second from now")
         batchClosing.closingDateTime > instant("1 second ago")
+        batchClosing.number
     }
 
     def 'should create from service authorize with right payment release date'(){
@@ -30,7 +31,7 @@ class BatchClosingTest extends FixtureApplicationTest {
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
 
         when:
-        def batchClosing = new BatchClosing(serviceAuthorize)
+        def batchClosing = new BatchClosing(serviceAuthorize,0)
 
         then:
         def closingPaymentDays = serviceAuthorize.establishment.checkout.closingPaymentDays
@@ -44,7 +45,7 @@ class BatchClosingTest extends FixtureApplicationTest {
         }})
 
         when:
-        def batchClosing = new BatchClosing(serviceAuthorize)
+        def batchClosing = new BatchClosing(serviceAuthorize,0)
 
         then:
         batchClosing.defineSituation().situation == BatchClosingSituation.FINALIZED
@@ -57,7 +58,7 @@ class BatchClosingTest extends FixtureApplicationTest {
         }})
 
         when:
-        def batchClosing = new BatchClosing(serviceAuthorize)
+        def batchClosing = new BatchClosing(serviceAuthorize,0)
 
         then:
         batchClosing.defineSituation().situation == BatchClosingSituation.DOCUMENT_RECEIVED
