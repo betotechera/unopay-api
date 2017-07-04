@@ -3,11 +3,11 @@ package br.com.unopay.api.payment
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Specification
 
-class RemittanceColumnTest extends Specification{
+class RecordColumnTest extends Specification{
 
     def 'given a column without value should return value with default pad left'(){
         given:
-        def column = new RemittanceColumn(new RemittanceColumnRule(1, 5),null)
+        def column = new RecordColumn(new RecordColumnRule(1, 5))
 
         when:
         def value = column.getValue()
@@ -18,7 +18,7 @@ class RemittanceColumnTest extends Specification{
 
     def 'given a column without value and with pad left should return value with defined pad left'(){
         given:
-        def column = new RemittanceColumn(new RemittanceColumnRule(1, 5,padLeftType),null)
+        def column = new RecordColumn(new RecordColumnRule(1, 5,padLeftType))
 
         when:
         def value = column.getValue()
@@ -34,7 +34,7 @@ class RemittanceColumnTest extends Specification{
 
     def 'when define value greater than length should return error'(){
         when:
-        new RemittanceColumn(new RemittanceColumnRule(1, 2), "123")
+        new RecordColumn(new RecordColumnRule(1, 2), "123")
 
         then:
         def ex = thrown(UnprocessableEntityException)

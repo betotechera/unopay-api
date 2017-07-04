@@ -4,12 +4,16 @@ import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_COLUMN_LENGTH_NO
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.apache.commons.lang3.StringUtils;
 
-public class RemittanceColumn {
+public class RecordColumn {
 
-    private RemittanceColumnRule rule;
+    private RecordColumnRule rule;
     private String value;
 
-    public RemittanceColumn(RemittanceColumnRule rule, String value) {
+    public RecordColumn(RecordColumnRule rule) {
+        this.rule = rule;
+    }
+
+    public RecordColumn(RecordColumnRule rule, String value) {
         this.rule = rule;
         setValue(value);
     }

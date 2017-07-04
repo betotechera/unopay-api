@@ -462,6 +462,12 @@ public final class Errors {
     /* Service Payment */
     public static final UnovationError REMITTANCE_COLUMN_LENGTH_NOT_MET =
             new UnovationError("REMITTANCE_COLUMN_LENGTH_NOT_MET", "Remittance column length not met");
+    public static final UnovationError HEADER_REQUIRED_ON_WRAPPED_RECORD =
+            new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on rapped record.");
+    public static final UnovationError TRAILER_REQUIRED_ON_WRAPPED_RECORD =
+            new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on rapped record.");
+
+
 
 
 
