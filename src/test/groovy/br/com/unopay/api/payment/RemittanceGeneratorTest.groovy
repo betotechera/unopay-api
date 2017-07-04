@@ -12,7 +12,12 @@ class RemittanceGeneratorTest extends FixtureApplicationTest {
         def generator = new RemittanceGenerator()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def account = issuer.paymentAccount
-        def header = new RemittanceFileHeader() {{ add('codigoBanco',account.bankAccount.bacenCode.toString()) }}
+        def header = new RemittanceFileHeader() {{
+            add('codigoBanco',account.bankAccount.bacenCode.toString())
+            add('loteServico',null)
+            add('tipoRegistro',null)
+            add('febraban',null)
+        }}
 
         when:
         String remittance = generator.addHeader(header).build()
@@ -27,7 +32,12 @@ class RemittanceGeneratorTest extends FixtureApplicationTest {
         def generator = new RemittanceGenerator()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def account = issuer.paymentAccount
-        def trailer = new RemittanceFileTrailer(){{ add('codigoBanco',account.bankAccount.bacenCode.toString()) }}
+        def trailer = new RemittanceFileTrailer() {{
+            add('codigoBanco',account.bankAccount.bacenCode.toString())
+            add('loteServico',null)
+            add('tipoRegistro',null)
+            add('febraban',null)
+        }}
         when:
         String remittance = generator.addTrailer(trailer).build()
 
@@ -41,8 +51,18 @@ class RemittanceGeneratorTest extends FixtureApplicationTest {
         def generator = new RemittanceGenerator()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def account = issuer.paymentAccount
-        def header = new RemittanceFileHeader(){{ add('codigoBanco',account.bankAccount.bacenCode.toString()) }}
-        def trailer = new RemittanceFileTrailer(){{ add('codigoBanco',account.bankAccount.bacenCode.toString()) }}
+        def header = new RemittanceFileHeader() {{
+            add('codigoBanco',account.bankAccount.bacenCode.toString())
+            add('loteServico',null)
+            add('tipoRegistro',null)
+            add('febraban',null)
+        }}
+        def trailer = new RemittanceFileTrailer() {{
+            add('codigoBanco',account.bankAccount.bacenCode.toString())
+            add('loteServico',null)
+            add('tipoRegistro',null)
+            add('febraban',null)
+        }}
         when:
         String remittance = generator
                 .addHeader(header)
@@ -66,7 +86,7 @@ class RemittanceGeneratorTest extends FixtureApplicationTest {
                 .addBatch(batch).build()
 
         then:
-        def expected = "${StringUtils.leftPad(account.bankAccount.bacenCode.toString(),3,'0')}00000         "
+        def expected = "${StringUtils.leftPad(account.bankAccount.bacenCode.toString(),3,'0')}"
         remittance.split("/n")[1]  == expected
     }
 
@@ -85,7 +105,7 @@ class RemittanceGeneratorTest extends FixtureApplicationTest {
                 .addTrailer(trailer).build()
 
         then:
-        def expected = "${StringUtils.leftPad(account.bankAccount.bacenCode.toString(),3,'0')}00000         "
+        def expected = "${StringUtils.leftPad(account.bankAccount.bacenCode.toString(),3,'0')}"
         remittance.split("/n").find()  == expected
         remittance.split("/n").last()  == expected
     }
