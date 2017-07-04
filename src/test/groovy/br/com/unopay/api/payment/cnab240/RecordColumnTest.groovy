@@ -41,4 +41,16 @@ class RecordColumnTest extends Specification{
         assert ex.errors.first().logref == 'REMITTANCE_COLUMN_LENGTH_NOT_MET'
 
     }
+
+    def 'given a rule with default value should fill with this'(){
+        given:
+        def defaultValue = "1234"
+        def column = new RecordColumn(new RecordColumnRule(1, 4, defaultValue))
+
+        when:
+        def value = column.getValue()
+
+        then:
+        value == defaultValue
+    }
 }

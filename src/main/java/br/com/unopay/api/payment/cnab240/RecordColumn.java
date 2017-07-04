@@ -26,7 +26,8 @@ public class RecordColumn {
     }
 
     public String getValue(){
-        String value = this.value != null ? this.value : this.rule.getLeftPad().getValue();
+        String value = this.value != null ? this.value : this.rule.getDefaultValue();
+        value = value != null ? value : this.rule.getLeftPad().getValue();
         return StringUtils.leftPad(value,this.rule.getLength(), this.rule.getLeftPad().getValue());
     }
 
