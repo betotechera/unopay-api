@@ -11,6 +11,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.PersonType;
 import br.com.unopay.api.model.PhysicalPersonDetail;
 import br.com.unopay.api.model.RegistryEntity;
+
 import static br.com.unopay.api.model.State.SP;
 
 

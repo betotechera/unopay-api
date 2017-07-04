@@ -18,7 +18,7 @@ public class FilledRecord implements RemittanceRecord {
         columns.add(new RecordColumn(layout.get(ruleKey),value));
     }
 
-    public void fill(String ruleKey) {
+    public void defaultFill(String ruleKey) {
         columns.add(new RecordColumn(layout.get(ruleKey)));
     }
 

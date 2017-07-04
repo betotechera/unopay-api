@@ -1,8 +1,12 @@
 package br.com.unopay.api.payment
 
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.payment.RemittanceLayout.*
-import static br.com.unopay.api.payment.RemittanceRecord.*
+import static br.com.unopay.api.payment.RemittanceLayout.getBatchHeader
+import static br.com.unopay.api.payment.RemittanceLayout.getBatchSegment
+import static br.com.unopay.api.payment.RemittanceLayout.getBatchTrailer
+import static br.com.unopay.api.payment.RemittanceLayout.getRemittanceHeader
+import static br.com.unopay.api.payment.RemittanceLayout.getRemittanceTrailer
+import static br.com.unopay.api.payment.RemittanceRecord.SEPARATOR
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class WrappedRecordTest extends FixtureApplicationTest {
@@ -12,9 +16,9 @@ class WrappedRecordTest extends FixtureApplicationTest {
         new WrappedRecord()
                 .createTrailer(new FilledRecord(remittanceHeader) {{
                 fill('codigoBanco', "12")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
             }}).getRecord()
 
         then:
@@ -26,9 +30,9 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
                 fill('codigoBanco', "8")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
             }}).getRecord()
 
         then:
@@ -40,9 +44,9 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
                 fill('codigoBanco', "75")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
         }}).createTrailer(new FilledRecord(remittanceTrailer)).getRecord()
 
         then:
@@ -54,9 +58,9 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord().createTrailer(new FilledRecord(remittanceTrailer) {{
                 fill('codigoBanco', "888")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
             }})
                 .createHeader(new FilledRecord(remittanceTrailer)).getRecord()
 
@@ -70,15 +74,15 @@ class WrappedRecordTest extends FixtureApplicationTest {
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
                 fill('codigoBanco', "15")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
                 fill('codigoBanco', "15")
-                fill('loteServico')
-                fill('tipoRegistro')
-                fill('febraban')
+                defaultFill('loteServico')
+                defaultFill('tipoRegistro')
+                defaultFill('febraban')
             }}).getRecord()
 
         then:

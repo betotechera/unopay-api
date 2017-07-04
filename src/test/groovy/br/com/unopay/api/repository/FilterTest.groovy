@@ -21,7 +21,6 @@ import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
 class FilterTest extends SpockApplicationTests {
