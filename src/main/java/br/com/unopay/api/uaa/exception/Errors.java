@@ -459,6 +459,11 @@ public final class Errors {
     public static final UnovationError SITUATION_NOT_ALLOWED =
             new UnovationError("SITUATION_NOT_ALLOWED", "Situation not allowed");
 
+    /* Service Payment */
+    public static final UnovationError REMITTANCE_COLUMN_LENGTH_NOT_MET =
+            new UnovationError("REMITTANCE_COLUMN_LENGTH_NOT_MET", "Remittance column length not met");
+
+
 
 
 
