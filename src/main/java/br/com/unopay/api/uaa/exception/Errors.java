@@ -459,6 +459,17 @@ public final class Errors {
     public static final UnovationError SITUATION_NOT_ALLOWED =
             new UnovationError("SITUATION_NOT_ALLOWED", "Situation not allowed");
 
+    /* Service Payment */
+    public static final UnovationError REMITTANCE_COLUMN_LENGTH_NOT_MET =
+            new UnovationError("REMITTANCE_COLUMN_LENGTH_NOT_MET", "Remittance column length not met");
+    public static final UnovationError HEADER_REQUIRED_ON_WRAPPED_RECORD =
+            new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on rapped record.");
+    public static final UnovationError TRAILER_REQUIRED_ON_WRAPPED_RECORD =
+            new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on rapped record.");
+
+
+
+
 
 
 

@@ -10,8 +10,8 @@ import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
-import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit

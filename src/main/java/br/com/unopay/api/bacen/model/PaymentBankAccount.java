@@ -39,7 +39,6 @@ public class PaymentBankAccount implements Serializable{
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @SuppressWarnings("squid:S1192")
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
@@ -66,6 +65,8 @@ public class PaymentBankAccount implements Serializable{
     @Column(name = "pre_paid_payment_days")
     @JsonView({Views.Public.class})
     private Integer prePaidPaymentDays;
+
+    private String bankContractNumber;
 
     @JsonIgnore
     public String getBankAccountId() {
