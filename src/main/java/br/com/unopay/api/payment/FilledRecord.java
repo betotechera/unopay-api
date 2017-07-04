@@ -6,12 +6,13 @@ import java.util.Map;
 
 public class FilledRecord implements RemittanceRecord {
 
+    private List<RecordColumn> columns;
     private Map<String, RecordColumnRule> layout;
 
     public FilledRecord(Map<String, RecordColumnRule> layout){
         this.layout = layout;
+        this.columns = new ArrayList<>();
     }
-    private final List<RecordColumn> columns = new ArrayList<>();
 
     public void fill(String ruleKey, String value) {
         columns.add(new RecordColumn(layout.get(ruleKey),value));
