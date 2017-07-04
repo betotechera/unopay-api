@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class RemittanceGenerator {
 
+    public static final String SEPARATOR = ";";
     private RemittanceLine header;
     private RemittanceLine trailer;
     private List<RemittanceLine> segments;
@@ -22,9 +23,9 @@ public class RemittanceGenerator {
         String header = getLine(this.header.getValues());
         String batch = segments.stream()
                 .map(remittanceLine -> getLine(remittanceLine.getValues()))
-                .reduce(header, (first, last) -> first.concat("/n").concat(last));
+                .reduce(header, (first, last) -> first.concat(SEPARATOR).concat(last));
         String trailer = getLine(this.trailer.getValues());
-        return batch.concat("/n").concat(trailer);
+        return batch.concat(SEPARATOR).concat(trailer);
     }
 
     private String getLine(Collection<RemittanceColumn> columns) {
