@@ -1,4 +1,4 @@
-package br.com.unopay.api.payment;
+package br.com.unopay.api.payment.cnab240;
 
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_COLUMN_LENGTH_NOT_MET;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;

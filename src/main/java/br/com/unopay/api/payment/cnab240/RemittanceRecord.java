@@ -1,4 +1,4 @@
-package br.com.unopay.api.payment;
+package br.com.unopay.api.payment.cnab240;
 
 public interface RemittanceRecord {
 

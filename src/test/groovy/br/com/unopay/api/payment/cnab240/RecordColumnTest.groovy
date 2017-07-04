@@ -1,5 +1,8 @@
-package br.com.unopay.api.payment
+package br.com.unopay.api.payment.cnab240
 
+import br.com.unopay.api.payment.cnab240.LeftPadType
+import br.com.unopay.api.payment.cnab240.RecordColumn
+import br.com.unopay.api.payment.cnab240.RecordColumnRule
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Specification
 

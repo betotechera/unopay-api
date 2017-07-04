@@ -1,6 +1,5 @@
-package br.com.unopay.api.payment;
+package br.com.unopay.api.payment.cnab240;
 
-import static br.com.unopay.api.payment.RecordHelper.getRecords;
 import static br.com.unopay.api.uaa.exception.Errors.HEADER_REQUIRED_ON_WRAPPED_RECORD;
 import static br.com.unopay.api.uaa.exception.Errors.TRAILER_REQUIRED_ON_WRAPPED_RECORD;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -20,7 +19,7 @@ public class WrappedRecord implements RemittanceRecord {
     public String getRecord() {
         validate();
         String header = this.header.getRecord();
-        String batch = getRecords(header, batchRecords);
+        String batch = RecordHelper.getRecords(header, batchRecords);
         String trailer = this.trailer.getRecord();
         return batch.concat(SEPARATOR).concat(trailer);
     }

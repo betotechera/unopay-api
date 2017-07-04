@@ -1,12 +1,12 @@
-package br.com.unopay.api.payment
+package br.com.unopay.api.payment.cnab240
 
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.payment.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.payment.RemittanceLayout.getBatchSegment
-import static br.com.unopay.api.payment.RemittanceLayout.getBatchTrailer
-import static br.com.unopay.api.payment.RemittanceLayout.getRemittanceHeader
-import static br.com.unopay.api.payment.RemittanceLayout.getRemittanceTrailer
-import static br.com.unopay.api.payment.RemittanceRecord.SEPARATOR
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegment
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceHeader
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceTrailer
+import static br.com.unopay.api.payment.cnab240.RemittanceRecord.SEPARATOR
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class WrappedRecordTest extends FixtureApplicationTest {

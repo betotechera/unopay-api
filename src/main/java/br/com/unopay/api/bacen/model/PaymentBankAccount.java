@@ -66,8 +66,6 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.Public.class})
     private Integer prePaidPaymentDays;
 
-    private String bankContractNumber;
-
     @JsonIgnore
     public String getBankAccountId() {
         return bankAccount.getId();

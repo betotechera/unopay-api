@@ -1,6 +1,5 @@
-package br.com.unopay.api.payment;
+package br.com.unopay.api.payment.cnab240;
 
-import static br.com.unopay.api.payment.RemittanceRecord.SEPARATOR;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +16,6 @@ public class RecordHelper {
     public static String getRecords(String initialValue, List<RemittanceRecord> records) {
         return records.stream()
                 .map(RemittanceRecord::getRecord)
-                .reduce(initialValue, (first, last) -> first.concat(SEPARATOR).concat(last));
+                .reduce(initialValue, (first, last) -> first.concat(RemittanceRecord.SEPARATOR).concat(last));
     }
 }
