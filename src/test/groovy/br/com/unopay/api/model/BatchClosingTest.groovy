@@ -77,8 +77,12 @@ class BatchClosingTest extends FixtureApplicationTest {
     }
 
     def 'should not be equals'(){
-        BatchClosing a = Fixture.from(BatchClosing.class).gimme("valid")
-        BatchClosing b = Fixture.from(BatchClosing.class).gimme("valid")
+        BatchClosing a = Fixture.from(BatchClosing.class).gimme("valid", new Rule(){{
+            add("number", "AAAAAAA")
+        }})
+        BatchClosing b = Fixture.from(BatchClosing.class).gimme("valid", new Rule(){{
+            add("number", "BBBBBB")
+        }})
 
         when:
         def shouldBeEquals = a == b

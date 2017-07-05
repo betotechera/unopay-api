@@ -19,7 +19,7 @@ public class WrappedRecord implements RemittanceRecord {
     public String getRecord() {
         validate();
         String header = this.header.getRecord();
-        String batch = RecordHelper.getRecords(header, batchRecords);
+        String batch = getRecords(header, batchRecords);
         String trailer = this.trailer.getRecord();
         return batch.concat(SEPARATOR).concat(trailer);
     }
@@ -46,6 +46,12 @@ public class WrappedRecord implements RemittanceRecord {
         if(trailer == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(TRAILER_REQUIRED_ON_WRAPPED_RECORD);
         }
+    }
+
+    private String getRecords(String initialValue, List<RemittanceRecord> records) {
+        return records.stream()
+                .map(RemittanceRecord::getRecord)
+                .reduce(initialValue, (first, last) -> first.concat(RemittanceRecord.SEPARATOR).concat(last));
     }
 }
 
