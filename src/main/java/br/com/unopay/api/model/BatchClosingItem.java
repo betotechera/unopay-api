@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -48,6 +49,7 @@ public class BatchClosingItem implements Serializable, Updatable {
     private String id;
 
     @ManyToOne
+    @JsonBackReference
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="batch_closing_id")
     @JsonView({Views.Public.class,Views.List.class})

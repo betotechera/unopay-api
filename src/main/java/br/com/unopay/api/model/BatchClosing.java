@@ -13,6 +13,7 @@ import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,7 +46,7 @@ import java.util.Objects;
 @Data
 @Entity
 @ToString(exclude = "batchClosingItems")
-@EqualsAndHashCode(exclude = "batchClosingItems")
+@EqualsAndHashCode(of = {"id", "number"})
 @Table(name = "batch_closing")
 public class BatchClosing implements Serializable {
 
@@ -141,6 +142,7 @@ public class BatchClosing implements Serializable {
     @JsonView({Views.Public.class})
     private Date paymentDateTime;
 
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "batch_closing_id")
     private List<BatchClosingItem> batchClosingItems;

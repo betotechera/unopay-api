@@ -70,7 +70,7 @@ public class BatchClosingService {
     public void create(String establishmentId, Date at) {
         try (Stream<ServiceAuthorize> stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
             stream.map(BatchClosingItem::new)
-            .map(this::processBatchClosingItem)
+            .map(this::processBatchClosingItem).collect(Collectors.toSet())
             .forEach(this::updateBatchClosingSituation);
         }
     }
@@ -111,19 +111,18 @@ public class BatchClosingService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private ServiceAuthorize processBatchClosingItem(BatchClosingItem batchClosingItem) {
+    private BatchClosing processBatchClosingItem(BatchClosingItem batchClosingItem) {
         ServiceAuthorize currentAuthorize = batchClosingItem.getServiceAuthorize();
         BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
         currentBatchClosing.addItem(batchClosingItem);
         currentBatchClosing.updateValue(batchClosingItem.eventValue());
-        repository.save(currentBatchClosing);
-        return authorizeService.save(currentAuthorize.buildBatchClosingDate());
+        authorizeService.save(currentAuthorize.buildBatchClosingDate());
+        return repository.save(currentBatchClosing);
     }
 
-    private void updateBatchClosingSituation(ServiceAuthorize currentAuthorize){
-        BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
-        repository.save(currentBatchClosing.defineSituation());
-        notificationService.sendBatchClosedMail(currentBatchClosing.establishmentBatchMail(), currentBatchClosing);
+    private void updateBatchClosingSituation(BatchClosing batchClosing){
+        repository.save(batchClosing.defineSituation());
+        notificationService.sendBatchClosedMail(batchClosing.establishmentBatchMail(), batchClosing);
     }
 
     private BatchClosing getCurrentBatchClosing(ServiceAuthorize currentAuthorize) {
