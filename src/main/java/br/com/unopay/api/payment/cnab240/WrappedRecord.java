@@ -19,7 +19,7 @@ public class WrappedRecord implements RemittanceRecord {
     public String getRecord() {
         validate();
         String header = this.header.getRecord();
-        String batch = getRecords(header, batchRecords);
+        String batch = getRecords(header);
         String trailer = this.trailer.getRecord();
         return batch.concat(SEPARATOR).concat(trailer);
     }
@@ -48,8 +48,8 @@ public class WrappedRecord implements RemittanceRecord {
         }
     }
 
-    private String getRecords(String initialValue, List<RemittanceRecord> records) {
-        return records.stream()
+    private String getRecords(String initialValue) {
+        return batchRecords.stream()
                 .map(RemittanceRecord::getRecord)
                 .reduce(initialValue, (first, last) -> first.concat(RemittanceRecord.SEPARATOR).concat(last));
     }
