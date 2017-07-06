@@ -74,7 +74,6 @@ public class BatchClosingService {
         create(establishmentId, today());
     }
 
-    @Synchronized
     @Transactional
     public BatchClosing create(String establishmentId, Date at) {
         checkAlreadyRunning(establishmentId);
