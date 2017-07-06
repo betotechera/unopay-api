@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.model.BatchClosingSituation.*;
 import static br.com.unopay.api.model.BatchClosingSituation.CANCELED;
+import static br.com.unopay.api.model.BatchClosingSituation.DOCUMENT_RECEIVED;
 import static br.com.unopay.api.model.BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_ALREADY_RUNNING;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_CLOSING_NOT_FOUND;
