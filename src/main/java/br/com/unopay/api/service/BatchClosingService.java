@@ -90,7 +90,7 @@ public class BatchClosingService {
         Optional<BatchClosing> processingBatch = repository
                                 .findByEstablishmentIdAndSituation(establishmentId, PROCESSING_AUTOMATIC_BATCH);
         processingBatch.ifPresent((ThrowingConsumer)-> {
-            log.warn("Attempt of run already running closing job for establishment={}", establishmentId);
+            log.warn("Attempt to run a job that is already running for establishment={}", establishmentId);
             throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_ALREADY_RUNNING);
         });
     }
