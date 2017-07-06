@@ -23,6 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.stream.Stream
+
 class BatchClosingServiceTest extends SpockApplicationTests {
 
     @Autowired
@@ -38,6 +43,34 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     void setup(){
         service.notificationService = notificationServiceMock
+    }
+
+    def 'given a batch processing should not open concurrent process'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment, 40)
+
+        ExecutorService executor = Executors.newFixedThreadPool(1)
+        when:
+        List<Callable<String>> callable = Arrays.asList(
+        new Callable() {
+            @Override
+            Object call() throws Exception {
+                return  service.create(establishment.id, instant("1 day ago"))
+            }
+        },
+        new Callable() {
+            @Override
+            Object call() throws Exception {
+                return  service.create(establishment.id, instant("1 day ago"))
+            }
+        })
+        executor.invokeAll(callable).each { it.get() }
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_ALREADY_RUNNING'
     }
 
     def 'should ever create new batch closing when processed'(){

@@ -466,6 +466,10 @@ public final class Errors {
             new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on rapped record.");
     public static final UnovationError TRAILER_REQUIRED_ON_WRAPPED_RECORD =
             new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on rapped record.");
+    public static final UnovationError BATCH_ALREADY_RUNNING =
+            new UnovationError("BATCH_ALREADY_RUNNING", "Batch already running.");
+
+
 
 
 

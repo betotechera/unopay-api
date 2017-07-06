@@ -18,4 +18,6 @@ public interface BatchClosingRepository extends UnovationFilterRepository<BatchC
 
     Optional<BatchClosing> findById(String id);
 
+    Optional<BatchClosing> findByEstablishmentIdAndSituation(String establishmentId, BatchClosingSituation situation);
+
 }
