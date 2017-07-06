@@ -14,11 +14,13 @@ import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
 class BatchClosingServiceTest extends SpockApplicationTests {
@@ -36,6 +38,65 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     void setup(){
         service.notificationService = notificationServiceMock
+    }
+
+    def 'should ever create new batch closing when processed'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        def totalByHirer = createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
+        service.create(establishment.id, instant("1 day ago"))
+        serviceAuthorizeService.findAll().each { it.batchClosingDateTime = null; serviceAuthorizeService.save(it)}
+
+        when:
+        service.create(establishment.id, instant("1 day ago"))
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that bachClosings, hasSize(2)
+        bachClosings.find().value == totalByHirer.entrySet().find().value
+        bachClosings.last().value == totalByHirer.entrySet().find().value
+    }
+
+    def 'given a canceled batch closing should create new batch closing'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
+            add("issueInvoice", true)
+        }})
+        def totalByHirer = createServiceAuthorizationsAt(contracts, user.establishment, "2 day ago")
+        def created = service.create(user.establishment.id, instant("1 day ago"))
+        service.cancel(user.email, created.id)
+
+        when:
+        service.create(user.establishment.id, instant("1 day ago"))
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(user.establishment.id)
+
+        then:
+        that bachClosings, hasSize(2)
+        bachClosings.find().value == totalByHirer.entrySet().find().value
+        bachClosings.last().value == totalByHirer.entrySet().find().value
+    }
+
+    def 'given a finalized batch closing should create new batch closing'(){
+        given:
+        def user = fixtureCreator.createEstablishmentUser()
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
+            add("issueInvoice", false)
+        }})
+        def totalByHirer = createServiceAuthorizationsAt(contracts, user.establishment, "2 day ago")
+        service.create(user.establishment.id, instant("1 day ago"))
+        serviceAuthorizeService.findAll().each { it.batchClosingDateTime = null; serviceAuthorizeService.save(it)}
+
+        when:
+        service.create(user.establishment.id, instant("1 day ago"))
+        Set<BatchClosing> bachClosings = service.findByEstablishmentId(user.establishment.id)
+
+        then:
+        that bachClosings, hasSize(2)
+        bachClosings.find().value == totalByHirer.entrySet().find().value
+        bachClosings.last().value == totalByHirer.entrySet().find().value
+
     }
 
     def 'should create batch closing by establishment when manual process'(){
@@ -643,7 +704,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.eventValue * numberOfAuthorizations)
             (1..numberOfAuthorizations).each {
                 ServiceAuthorize cloned = BeanUtils.cloneBean(serviceAuthorize)
-                serviceAuthorizeService.save(cloned)
+                serviceAuthorizeService.save(cloned.with {id = null; it})
             }
         }
         return sumValueByHirer

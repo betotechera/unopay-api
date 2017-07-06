@@ -8,10 +8,6 @@ import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
-import static br.com.unopay.api.uaa.exception.Errors.BATCH_CLOSING_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH;
-import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BATCH;
-import static br.com.unopay.api.uaa.exception.Errors.SITUATION_NOT_ALLOWED;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -29,6 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.model.BatchClosingSituation.CANCELED;
+import static br.com.unopay.api.model.BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH;
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_CLOSING_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH;
+import static br.com.unopay.api.uaa.exception.Errors.INVOICE_NOT_REQUIRED_FOR_BATCH;
+import static br.com.unopay.api.uaa.exception.Errors.SITUATION_NOT_ALLOWED;
 
 @Service
 public class BatchClosingService {
@@ -67,11 +70,12 @@ public class BatchClosingService {
     }
 
     @Transactional
-    public void create(String establishmentId, Date at) {
+    public BatchClosing create(String establishmentId, Date at) {
         try (Stream<ServiceAuthorize> stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
-            stream.map(BatchClosingItem::new)
-            .map(this::processBatchClosingItem).collect(Collectors.toSet())
-            .forEach(this::updateBatchClosingSituation);
+            Set<BatchClosing> batchClosing = stream.map(BatchClosingItem::new)
+                    .map(this::processBatchClosingItem).collect(Collectors.toSet());
+            batchClosing.forEach(this::updateBatchClosingSituation);
+            return batchClosing.stream().findFirst().orElse(null);
         }
     }
 
@@ -127,7 +131,8 @@ public class BatchClosingService {
 
     private BatchClosing getCurrentBatchClosing(ServiceAuthorize currentAuthorize) {
         Optional<BatchClosing> batchClosing = repository
-                .findFirstByEstablishmentIdAndHirerId(currentAuthorize.establishmentId(), currentAuthorize.hirerId());
+                .findFirstByEstablishmentIdAndHirerIdAndSituation(currentAuthorize.establishmentId(),
+                        currentAuthorize.hirerId(), PROCESSING_AUTOMATIC_BATCH);
         return batchClosing.orElse(new BatchClosing(currentAuthorize,getTotal()));
     }
 
@@ -167,7 +172,7 @@ public class BatchClosingService {
     }
 
     private void checkAllowedSituation(BatchClosingSituation newSituation) {
-        if(BatchClosingSituation.CANCELED.equals(newSituation)){
+        if(CANCELED.equals(newSituation)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SITUATION_NOT_ALLOWED);
         }
     }
