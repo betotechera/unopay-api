@@ -210,6 +210,10 @@ public class BatchClosingService {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
 
+    public List<BatchClosing> findAll(){
+        return repository.findAll();
+    }
+
     private UserDetail getUserByEmail(String userEmail) {
         return userDetailService.getByEmail(userEmail);
     }

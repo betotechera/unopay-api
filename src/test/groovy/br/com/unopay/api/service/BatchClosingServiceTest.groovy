@@ -49,8 +49,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         given:
         List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
-        createServiceAuthorizations(contracts, establishment, 40)
-        def created = service.create(establishment.id, instant("1 day ago"))
+        createServiceAuthorizations(contracts, establishment, 1)
+        def created = service.create(establishment.id, instant("now"))
         created.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH
         service.save(created)
 
