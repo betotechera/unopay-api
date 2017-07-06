@@ -45,6 +45,22 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.notificationService = notificationServiceMock
     }
 
+    def 'given a batch processing should not open concurrent process'(){
+        given:
+        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment, 40)
+        def created = service.create(establishment.id, instant("1 day ago"))
+        created.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH
+        service.save(created)
+
+        when:
+        service.create(establishment.id, instant("1 day ago"))
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BATCH_ALREADY_RUNNING'
+    }
 
     def 'should ever create new batch closing when processed'(){
         given:
