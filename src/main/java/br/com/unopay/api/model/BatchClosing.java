@@ -117,7 +117,7 @@ public class BatchClosing implements Serializable {
     private Date closingDateTime;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal value;
 
     @Column(name = "period")
@@ -131,8 +131,8 @@ public class BatchClosing implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situation")
-    @JsonView({Views.Public.class})
     @NotNull(groups = {Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private BatchClosingSituation situation;
 
     @Column(name = "payment_date_time")
