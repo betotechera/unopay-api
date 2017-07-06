@@ -85,7 +85,7 @@ public class BatchClosing implements Serializable {
     @ManyToOne
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private Establishment establishment;
 
     @Column(name = "batch_number")
@@ -94,17 +94,17 @@ public class BatchClosing implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private Issuer issuer;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private AccreditedNetwork accreditedNetwork;
 
     @ManyToOne
     @JoinColumn(name="hirer_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class})
     private Hirer hirer;
 
     @JoinColumn(name="issue_invoice")
@@ -112,8 +112,8 @@ public class BatchClosing implements Serializable {
     private Boolean issueInvoice;
 
     @Column(name = "closing_date_time")
-    @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Date closingDateTime;
 
     @Column(name = "value")
@@ -122,11 +122,11 @@ public class BatchClosing implements Serializable {
 
     @Column(name = "period")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private RecurrencePeriod period;
 
     @Column(name = "payment_release_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Date paymentReleaseDateTime;
 
     @Enumerated(EnumType.STRING)
@@ -136,7 +136,7 @@ public class BatchClosing implements Serializable {
     private BatchClosingSituation situation;
 
     @Column(name = "payment_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Date paymentDateTime;
 
     @JsonManagedReference
@@ -145,7 +145,7 @@ public class BatchClosing implements Serializable {
     private List<BatchClosingItem> batchClosingItems;
 
     @Column(name = "payment_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private String paymentId;
 
     @JsonIgnore
