@@ -37,12 +37,8 @@ public class BatchClosingTemplateLoader  implements TemplateLoader {
         }});
 
         Fixture.of(BatchClosingItem.class).addTemplate("valid", new Rule() {{
-            add("documentNumberInvoice",random("07f2606d-730c-4586-8a2a-88ce821895fd",
-                    "29bfe491-c75b-4643-83ec-c8f56cdd5e38", "07c90794-061b-4cff-99ba-cc112da52cf6",
-                    "624e9e23-031a-4a79-a3cd-a6d1ed045371", "c9e7f041-ebc0-4adf-9416-9a9c6cc7c6ed"));
-            add("invoiceNumber",random("07f2606d-730c-4586-8a2a-88ce821895fd",
-                    "29bfe491-c75b-4643-83ec-c8f56cdd5e38", "07c90794-061b-4cff-99ba-cc112da52cf6",
-                    "624e9e23-031a-4a79-a3cd-a6d1ed045371", "c9e7f041-ebc0-4adf-9416-9a9c6cc7c6ed"));
+            add("documentNumberInvoice",regex("\\w15"));
+            add("invoiceNumber",regex("\\w15"));
             add("invoiceDocumentSituation", DocumentSituation.PENDING);
             add("issueInvoiceType", IssueInvoiceType.BY_BATCH);
             add("invoiceDocumentUri",random("file://tmp/tmp.jpg", "https://s3.com/nf.pdf"));

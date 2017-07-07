@@ -67,7 +67,7 @@ public class PaymentRemittanceItem  implements Serializable {
     @Column(name = "situation")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
-    private String situation;
+    private RemittanceSituation situation;
 
     @Column(name = "occurrence_code")
     @JsonView({Views.Public.class})
