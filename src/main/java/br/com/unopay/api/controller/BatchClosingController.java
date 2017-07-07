@@ -13,6 +13,7 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.engine.jdbc.batch.spi.Batch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,13 @@ public class BatchClosingController {
     @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
+        log.info("removing batchClosing id={}", id);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
+    @RequestMapping(value = "/batch-closings/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable  String id, @RequestBody BatchClosing batchClosing) {
         log.info("removing batchClosing id={}", id);
     }
 
