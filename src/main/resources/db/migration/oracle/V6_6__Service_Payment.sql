@@ -41,7 +41,8 @@ create table payment_remittance_item (
     occurrence_code varchar(100) not null,
     version integer,
     constraint fk_remittance_item foreign key(payment_remittance_id) references payment_remittance(id),
-    constraint fk_remittance_item_estab foreign key(establishment_id) references establishment(id)
+    constraint fk_remittance_item_estab foreign key(establishment_id) references establishment(id),
+    constraint fk_remittance_Item_bank foreign key(establishment_bank_code) references bank(bacen_code)
 );
 
 COMMENT ON TABLE payment_remittance_item IS 'Item de Remessa de Pagamento';
