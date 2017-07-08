@@ -56,7 +56,7 @@ public class PaymentRemittance implements Serializable {
     @Column(name = "issuer_bank_code")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
-    private String issuerBankCode;
+    private Integer issuerBankCode;
 
     @Column(name = "remittance_number")
     @JsonView({Views.Public.class})
@@ -67,7 +67,7 @@ public class PaymentRemittance implements Serializable {
     @Column(name = "service_type")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
-    private PaymentServiceType PaymentServiceType;
+    private PaymentServiceType paymentServiceType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transfer_option")
@@ -99,7 +99,7 @@ public class PaymentRemittance implements Serializable {
     @Column(name = "situation")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
-    private String situation;
+    private RemittanceSituation situation;
 
     @Column(name = "submission_return_date_time")
     @JsonView({Views.Public.class})

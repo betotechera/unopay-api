@@ -208,6 +208,7 @@ class FixtureCreator {
             add("issuer",createIssuer())
             add("accreditedNetwork",createNetwork())
             add("hirer",createHirer())
+           add("payment", null)
         }})
     }
 

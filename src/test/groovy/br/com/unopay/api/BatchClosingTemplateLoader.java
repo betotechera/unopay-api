@@ -14,6 +14,7 @@ import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import java.math.BigDecimal;
 
 public class BatchClosingTemplateLoader  implements TemplateLoader {
@@ -29,16 +30,17 @@ public class BatchClosingTemplateLoader  implements TemplateLoader {
             add("situation",random(BatchClosingSituation.class));
             add("paymentDateTime", instant("10 days from now"));
             add("issueInvoice", random(Boolean.class));
-            add("paymentId","ASDSD5546D7F88D");
+            add("payment",one(PaymentRemittanceItem.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
             add("establishment", one(Establishment.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));
             add("issuer", one(Issuer.class, "valid"));
+
         }});
 
         Fixture.of(BatchClosingItem.class).addTemplate("valid", new Rule() {{
-            add("documentNumberInvoice",regex("\\w15"));
-            add("invoiceNumber",regex("\\w15"));
+            add("documentNumberInvoice",regex("\\w{15}"));
+            add("invoiceNumber",regex("\\w{15}"));
             add("invoiceDocumentSituation", DocumentSituation.PENDING);
             add("issueInvoiceType", IssueInvoiceType.BY_BATCH);
             add("invoiceDocumentUri",random("file://tmp/tmp.jpg", "https://s3.com/nf.pdf"));

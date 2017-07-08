@@ -11,7 +11,10 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
+
+import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -144,9 +147,11 @@ public class BatchClosing implements Serializable {
     @JoinColumn(name = "batch_closing_id")
     private List<BatchClosingItem> batchClosingItems;
 
-    @Column(name = "payment_id")
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name="payment_id")
     @JsonView({Views.Public.class,Views.List.class})
-    private String paymentId;
+    private PaymentRemittanceItem payment;
 
     @JsonIgnore
     @Version

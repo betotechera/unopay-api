@@ -57,7 +57,7 @@ public class PaymentRemittanceItem  implements Serializable {
     @Column(name = "establishment_bank_code")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
-    private String establishmentBankCode;
+    private Integer establishmentBankCode;
 
     @Column(name = "value")
     @JsonView({Views.Public.class})
