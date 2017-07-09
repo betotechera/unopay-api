@@ -1,7 +1,7 @@
 package br.com.unopay.api.payment.model;
 
+import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.model.BatchClosingItem;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -40,6 +42,17 @@ public class PaymentRemittance implements Serializable {
     public static final long serialVersionUID = 1L;
 
     public PaymentRemittance(){}
+
+    public PaymentRemittance(Issuer issuer, Long total){
+        this.issuer = issuer;
+        this.issuerBankCode = issuer.getPaymentAccount().getBankAccount().getBacenCode();
+        this.situation = RemittanceSituation.PROCESSING;
+        this.operationType = PaymentOperationType.CREDIT;
+        this.paymentServiceType = PaymentServiceType.SUPPLIER_PAYMENT;
+        this.createdDateTime = new Date();
+        this.transferOption = PaymentTransferOption.DOC_TED;
+        this.number = generateBatchNumber(total);
+    }
 
     @Id
     @Column(name="id")
@@ -109,9 +122,24 @@ public class PaymentRemittance implements Serializable {
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "payment_remittance_id")
-    private List<PaymentRemittanceItem> remittanceItems;
+    private Set<PaymentRemittanceItem> remittanceItems;
 
     @JsonIgnore
     @Version
     private Integer version;
+
+    @SneakyThrows
+    private String generateBatchNumber(Long total) {
+        String remittance = String.valueOf(situation.ordinal()) + String.valueOf(total) +
+                String.valueOf(this.createdDateTime.getTime());
+        return remittance.substring(0, Math.min(remittance.length(), 12));
+    }
+
+    public void defineTransferOption(Bank bank) {
+        if(Objects.equals(bank.getBacenCode(), this.getIssuerBankCode())){
+            this.transferOption = PaymentTransferOption.CURRENT_ACCOUNT_CREDIT;
+            return;
+        }
+        this.transferOption = PaymentTransferOption.DOC_TED;
+    }
 }

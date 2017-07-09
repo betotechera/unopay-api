@@ -458,16 +458,23 @@ public final class Errors {
             new UnovationError("BATCH_CANCELED", "Batch canceled");
     public static final UnovationError SITUATION_NOT_ALLOWED =
             new UnovationError("SITUATION_NOT_ALLOWED", "Situation not allowed");
+    public static final UnovationError BATCH_ALREADY_RUNNING =
+            new UnovationError("BATCH_ALREADY_RUNNING", "Batch already running.");
 
-    /* Service Payment */
+    /* Cnba240 */
     public static final UnovationError REMITTANCE_COLUMN_LENGTH_NOT_MET =
             new UnovationError("REMITTANCE_COLUMN_LENGTH_NOT_MET", "Remittance column length not met");
     public static final UnovationError HEADER_REQUIRED_ON_WRAPPED_RECORD =
             new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on rapped record.");
     public static final UnovationError TRAILER_REQUIRED_ON_WRAPPED_RECORD =
             new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on rapped record.");
-    public static final UnovationError BATCH_ALREADY_RUNNING =
-            new UnovationError("BATCH_ALREADY_RUNNING", "Batch already running.");
+
+
+    /* Service Payment */
+    public static final UnovationError PROCESSING_REMITTANCE_ITEM_NOT_FOUND =
+            new UnovationError("PROCESSING_REMITTANCE_ITEM_NOT_FOUND", "Processing remittance item not found");
+
+
 
 
 

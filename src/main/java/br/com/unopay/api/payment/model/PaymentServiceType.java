@@ -17,7 +17,7 @@ public enum PaymentServiceType implements DescriptableEnum {
     CONSIGNMENT_PLOTS("12", "Consignação de Parcelas"),
     GLOSSARY_CONSIGNATION("13", "Glosa da Consignação (INSS)"),
     CONSULTATION_OF_TAXES_PAYABLE("14", "Consulta de Tributos a pagar"),
-    SUPPLIER_PAYMENT("20", "Pagamento Fornecedor");
+    SUPPLIER_PAYMENT("20", "Pagamento a Fornecedor");
 
     private String code;
     private String description;

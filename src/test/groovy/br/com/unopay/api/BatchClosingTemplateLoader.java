@@ -30,12 +30,15 @@ public class BatchClosingTemplateLoader  implements TemplateLoader {
             add("situation",random(BatchClosingSituation.class));
             add("paymentDateTime", instant("10 days from now"));
             add("issueInvoice", random(Boolean.class));
-            add("payment",one(PaymentRemittanceItem.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
             add("establishment", one(Establishment.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));
             add("issuer", one(Issuer.class, "valid"));
 
+        }});
+
+        Fixture.of(BatchClosing.class).addTemplate("withPayment").inherits("valid", new Rule(){{
+            add("payment",one(PaymentRemittanceItem.class, "valid"));
         }});
 
         Fixture.of(BatchClosingItem.class).addTemplate("valid", new Rule() {{

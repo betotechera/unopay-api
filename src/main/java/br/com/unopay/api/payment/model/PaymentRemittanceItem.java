@@ -1,6 +1,7 @@
 package br.com.unopay.api.payment.model;
 
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -33,6 +34,12 @@ public class PaymentRemittanceItem  implements Serializable {
     public static final long serialVersionUID = 1L;
 
     public PaymentRemittanceItem(){}
+
+    public PaymentRemittanceItem(BatchClosing batchClosing){
+        this.establishment = batchClosing.getEstablishment();
+        this.establishmentBankCode = batchClosing.getEstablishment().getBankAccount().getBacenCode();
+        this.situation = RemittanceSituation.PROCESSING;
+    }
 
     @Id
     @Column(name="id")
@@ -77,4 +84,12 @@ public class PaymentRemittanceItem  implements Serializable {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public void updateValue(BigDecimal value){
+        if(this.value ==null ){
+            this.value = value;
+            return;
+        }
+        this.value = this.value.add(value);
+    }
 }

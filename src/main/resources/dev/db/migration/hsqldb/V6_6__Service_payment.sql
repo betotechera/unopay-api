@@ -38,7 +38,7 @@ create table payment_remittance_item (
     establishment_bank_code integer not null,
     value decimal(20,2) not null,
     situation varchar(150) not null,
-    occurrence_code varchar(100) not null,
+    occurrence_code varchar(100),
     version integer,
     constraint fk_remittance_item foreign key(payment_remittance_id) references payment_remittance(id),
     constraint fk_remittance_item_estab foreign key(establishment_id) references establishment(id),
