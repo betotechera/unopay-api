@@ -132,6 +132,10 @@ public class Issuer implements Serializable{
         return paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());
     }
 
+    public String depositPeriodPattern(){
+        return getPaymentAccount().getDepositPeriod().getPattern();
+    }
+
     @JsonIgnore
     public boolean hasPaymentRuleGroup(){
         return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();

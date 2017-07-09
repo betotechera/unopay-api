@@ -1,9 +1,14 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
+import br.com.unopay.api.bacen.model.RecurrencePeriod
+import br.com.unopay.api.job.BatchClosingJob
+import br.com.unopay.api.job.RemittanceJob
+import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -18,6 +23,25 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
     @Autowired
     PaymentRuleGroupService paymentRuleGroupService
+
+    UnopayScheduler schedulerMock = Mock(UnopayScheduler)
+
+    def setup(){
+        service.scheduler = schedulerMock
+    }
+
+    def 'when create issuer should be schedule remittance job'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid", new Rule(){{
+            add("paymentAccount.depositPeriod", RecurrencePeriod.BIWEEKLY)
+        }})
+
+        when:
+        service.create(issuer)
+
+        then:
+        1 * schedulerMock.schedule(_,RecurrencePeriod.BIWEEKLY.pattern, RemittanceJob.class)
+    }
 
     def 'a valid issuer should be created'(){
         given:
@@ -165,6 +189,19 @@ class IssuerServiceTest  extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
         ex.errors.find().arguments.find() == "[$idNotFound]"
+    }
+
+    def 'when update issuer should be schedule remittance job'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("paymentAccount.depositPeriod", RecurrencePeriod.BIWEEKLY)
+        }})
+
+        when:
+        service.update(issuer.id, issuer)
+
+        then:
+        1 * schedulerMock.schedule(_,RecurrencePeriod.BIWEEKLY.pattern, RemittanceJob.class)
     }
 
     def 'given a existing issuer should be updated'(){
