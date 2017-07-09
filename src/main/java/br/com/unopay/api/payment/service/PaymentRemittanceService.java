@@ -42,17 +42,25 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    public void create(String issuerId) {
-        Issuer issuer = issuerService.findById(issuerId);
-        Set<BatchClosing> closings = batchClosingService.findByIssuerId(issuerId);
-        Set<PaymentRemittanceItem> remittanceItems = closings.stream().map(batchClosing -> {
-            PaymentRemittanceItem currentItem = getCurrentItem(batchClosing.establishmentId(), batchClosing);
-            currentItem.updateValue(batchClosing.getValue());
-            return paymentRemittanceItemService.save(currentItem);
-        }).collect(Collectors.toSet());
-        PaymentRemittance paymentRemittance = new PaymentRemittance(issuer, getTotal());
+    public void create(String issuer) {
+        Issuer currentIssuer = issuerService.findById(issuer);
+        Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
+        Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
+        createRemittance(currentIssuer, remittanceItems);
+    }
+
+    private void createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
+        PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
         paymentRemittance.setRemittanceItems(remittanceItems);
         save(paymentRemittance);
+    }
+
+    private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {
+        return batchByEstablishment.stream().map(batchClosing -> {
+                PaymentRemittanceItem currentItem = getCurrentItem(batchClosing.establishmentId(), batchClosing);
+                currentItem.updateValue(batchClosing.getValue());
+                return paymentRemittanceItemService.save(currentItem);
+            }).collect(Collectors.toSet());
     }
 
     public Set<PaymentRemittance> findByIssuer(String issuerId){

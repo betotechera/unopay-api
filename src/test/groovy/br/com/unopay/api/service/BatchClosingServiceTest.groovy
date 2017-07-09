@@ -1,9 +1,11 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.BatchClosing
@@ -14,19 +16,12 @@ import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.notification.service.NotificationService
-import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
-
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.stream.Stream
 
 class BatchClosingServiceTest extends SpockApplicationTests {
 
@@ -45,10 +40,42 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.notificationService = notificationServiceMock
     }
 
+    def 'should return all batch closing with payment date before today and finalized'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("situation", BatchClosingSituation.FINALIZED)
+            add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("1 day ago"))
+        }})
+
+        when:
+        def result = service.findFinalizedByIssuerAndPaymentBeforeToday(issuer.id)
+
+        then:
+        that result, hasSize(1)
+    }
+
+    def 'should not return batch closing with today payment date and finalized'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("situation", BatchClosingSituation.FINALIZED)
+            add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("today"))
+        }})
+
+        when:
+        def result = service.findFinalizedByIssuerAndPaymentBeforeToday(issuer.id)
+
+        then:
+        that result, hasSize(0)
+    }
+
     def 'given a batch processing should not open concurrent process'(){
         given:
-        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         createServiceAuthorizations(contracts, establishment, 1)
         def created = service.create(establishment.id, instant("now"))
         created.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH
@@ -64,8 +91,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'should ever create new batch closing when processed'(){
         given:
-        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         def totalByHirer = createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
         service.create(establishment.id, instant("1 day ago"))
         serviceAuthorizeService.findAll().each { it.batchClosingDateTime = null; serviceAuthorizeService.save(it)}
@@ -83,7 +110,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a canceled batch closing should create new batch closing'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid", new Rule(){{
             add("issueInvoice", true)
         }})
         def totalByHirer = createServiceAuthorizationsAt(contracts, user.establishment, "2 day ago")

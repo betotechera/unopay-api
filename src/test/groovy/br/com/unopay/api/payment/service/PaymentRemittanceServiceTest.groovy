@@ -73,6 +73,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("situation", BatchClosingSituation.FINALIZED)
             add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("1 day ago"))
         }})
 
         when:
@@ -94,6 +95,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             add("situation", BatchClosingSituation.FINALIZED)
             add("establishment", uniqueRandom(establishmentA, establishmentB))
             add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("1 day ago"))
         }})
 
         when:
@@ -116,6 +118,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             add("situation", BatchClosingSituation.FINALIZED)
             add("establishment", establishment)
             add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("1 day ago"))
         }})
 
         when:

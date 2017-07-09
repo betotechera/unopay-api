@@ -209,8 +209,9 @@ public class BatchClosingService {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
 
-    public Set<BatchClosing> findByIssuerId(String hirerId){
-        return repository.findByIssuerIdAndSituation(hirerId, BatchClosingSituation.FINALIZED);
+    public Set<BatchClosing> findFinalizedByIssuerAndPaymentBeforeToday(String issuerId){
+        return repository.findByIssuerIdAndSituationAndPaymentReleaseDateTimeBeforeOrderByEstablishment(issuerId,
+                                                                            BatchClosingSituation.FINALIZED, today());
     }
 
     public List<BatchClosing> findAll(){
