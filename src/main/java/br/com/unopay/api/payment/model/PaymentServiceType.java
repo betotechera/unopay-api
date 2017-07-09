@@ -4,8 +4,8 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum PaymentServiceType implements DescriptableEnum {
 
-    COLLECTION("Cobrança","01"),
-    BOLETO("Bloqueto Eletrônico", "03"),
+    COLLECTION("01", "Cobrança"),
+    BOLETO("03", "Bloqueto Eletrônico"),
     BANK_RECONCILIATION("04", "Conciliação Bancária"),
     DEBITS("05", "Débitos"),
     CHECK_CUSTODY("06", "Custódia de Cheques"),
