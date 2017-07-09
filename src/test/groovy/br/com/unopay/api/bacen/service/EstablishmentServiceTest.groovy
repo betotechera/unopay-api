@@ -43,7 +43,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         }})
 
         when:
-        Establishment created = service.create(establishment)
+        service.create(establishment)
 
         then:
         1 * schedulerMock.schedule(_,RecurrencePeriod.BIWEEKLY.pattern, BatchClosingJob.class)

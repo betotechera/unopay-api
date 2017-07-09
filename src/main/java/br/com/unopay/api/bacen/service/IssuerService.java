@@ -1,18 +1,22 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.job.BatchClosingJob;
+import br.com.unopay.api.job.RemittanceJob;
+import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,20 +24,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
+
 @Slf4j
 @Service
 public class IssuerService {
 
     private IssuerRepository repository;
     private UserDetailRepository userDetailRepository;
-
     private PersonService personService;
-
     private BankAccountService bankAccountService;
-
     private PaymentBankAccountService paymentBankAccountService;
-
     private PaymentRuleGroupService paymentRuleGroupService;
+    @Setter private UnopayScheduler scheduler;
+
+    public IssuerService(){}
 
     @Autowired
     public IssuerService(IssuerRepository repository,
@@ -41,13 +46,15 @@ public class IssuerService {
                          PersonService personService,
                          BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
-                         PaymentRuleGroupService paymentRuleGroupService) {
+                         PaymentRuleGroupService paymentRuleGroupService,
+                         UnopayScheduler scheduler) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
         this.personService = personService;
         this.bankAccountService = bankAccountService;
         this.paymentBankAccountService = paymentBankAccountService;
         this.paymentRuleGroupService = paymentRuleGroupService;
+        this.scheduler = scheduler;
     }
 
     public Issuer create(Issuer issuer) {
@@ -55,7 +62,9 @@ public class IssuerService {
         issuer.validate();
         createRequiredReferences(issuer);
         validateReferences(issuer);
-        return repository.save(issuer);
+        Issuer created = repository.save(issuer);
+        scheduleClosingJob(created);
+        return created;
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person issuer already exists %s", issuer.getPerson()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.PERSON_ISSUER_ALREADY_EXISTS);
@@ -77,7 +86,8 @@ public class IssuerService {
         personService.save(current.getPerson());
         bankAccountService.update(issuer.getMomentAccountId(),issuer.getMovementAccount());
         paymentBankAccountService.update(issuer.getPaymentAccountId(),issuer.getPaymentAccount());
-        return  repository.save(current);
+        scheduleClosingJob(current);
+        return repository.save(current);
     }
 
     private void validateReferences(Issuer issuer) {
@@ -111,5 +121,9 @@ public class IssuerService {
         bankAccountService.create(issuer.getMovementAccount());
         issuer.setPaymentAccount(paymentBankAccount);
         issuer.setPerson(person);
+    }
+
+    private void scheduleClosingJob(Issuer created) {
+        scheduler.schedule(created.getId(), created.depositPeriodPattern(),RemittanceJob.class);
     }
 }
