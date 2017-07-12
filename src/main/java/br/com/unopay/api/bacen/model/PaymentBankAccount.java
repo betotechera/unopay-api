@@ -66,6 +66,11 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.Public.class})
     private Integer prePaidPaymentDays;
 
+    @Column(name = "bank_agreement_number")
+    @JsonView({Views.Public.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String bankAgreementNumber;
+
     @JsonIgnore
     public String getBankAccountId() {
         return bankAccount.getId();

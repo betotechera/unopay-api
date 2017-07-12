@@ -2,8 +2,10 @@ package br.com.unopay.api.payment.cnab240;
 
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_COLUMN_LENGTH_NOT_MET;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+@Slf4j
 public class RecordColumn {
 
     private RecordColumnRule rule;
@@ -20,6 +22,7 @@ public class RecordColumn {
 
     private void setValue(String value){
         if(value != null && value.length() > this.rule.getLength()){
+            log.error("cnab240 rule={} unexpected length={}", getOrder(), value.length());
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_COLUMN_LENGTH_NOT_MET);
         }
         this.value = value;

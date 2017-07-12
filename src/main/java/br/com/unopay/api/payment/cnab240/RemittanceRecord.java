@@ -4,5 +4,5 @@ public interface RemittanceRecord {
 
     String SEPARATOR = ";";
 
-    String getRecord();
+    String build();
 }

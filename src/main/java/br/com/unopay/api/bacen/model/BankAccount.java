@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
@@ -107,6 +108,22 @@ public class BankAccount implements Serializable{
             return getBank().getBacenCode();
         }
         return null;
+    }
+
+    public String agentDvFirstDigit(){
+        return StringUtils.left(agencyDigit, 1);
+    }
+
+    public String agentDvLastDigit(){
+        return StringUtils.right(agencyDigit, 1);
+    }
+
+    public String accountDvFirstDigit(){
+        return StringUtils.left(accountNumberDigit, 1);
+    }
+
+    public String accountDvLastDigit(){
+        return StringUtils.right(accountNumberDigit, 1);
     }
 
 }

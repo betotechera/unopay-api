@@ -1,6 +1,10 @@
 package br.com.unopay.api.payment.cnab240
 
 import br.com.unopay.api.FixtureApplicationTest
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.CODIGO_BANCO
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.INICIO_FEBRABAN
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.LOTE_SERVICO
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.TIPO_REGISTRO
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegment
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
@@ -15,11 +19,11 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         new WrappedRecord()
                 .createTrailer(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "12")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
-            }}).getRecord()
+                fill(CODIGO_BANCO, "12")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
+            }}).build()
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -29,11 +33,11 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'when create wrapped record without trailer should return error'(){
         when:
         new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "8")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
-            }}).getRecord()
+                fill(CODIGO_BANCO, "8")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
+            }}).build()
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -43,11 +47,11 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file header'(){
         when:
         String remittance = new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "75")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
-        }}).createTrailer(new FilledRecord(remittanceTrailer)).getRecord()
+                fill(CODIGO_BANCO, "75")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
+        }}).createTrailer(new FilledRecord(remittanceTrailer)).build()
 
         then:
         def expected = "07500000         "
@@ -57,12 +61,12 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file trailer'(){
         when:
         String remittance = new WrappedRecord().createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill('codigoBanco', "888")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
+                fill(CODIGO_BANCO, "888")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
             }})
-                .createHeader(new FilledRecord(remittanceTrailer)).getRecord()
+                .createHeader(new FilledRecord(remittanceTrailer)).build()
 
         then:
         def expected = "88800000         "
@@ -73,17 +77,17 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "15")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
+                fill(CODIGO_BANCO, "15")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill('codigoBanco', "15")
-                defaultFill('loteServico')
-                defaultFill('tipoRegistro')
-                defaultFill('febraban')
-            }}).getRecord()
+                fill(CODIGO_BANCO, "15")
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(INICIO_FEBRABAN)
+            }}).build()
 
         then:
         def expected = "01500000         "
@@ -94,10 +98,10 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file bach lines'(){
         when:
         String remittance = new WrappedRecord().addRecord(new FilledRecord(batchSegment) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer))
-                .createHeader(new FilledRecord(remittanceTrailer)).getRecord()
+                .createHeader(new FilledRecord(remittanceTrailer)).build()
 
         then:
         def expected = "005"
@@ -109,17 +113,17 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "8")
+                fill(CODIGO_BANCO, "8")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill('codigoBanco', "8")
+                fill(CODIGO_BANCO, "8")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill('codigoBanco', "8")
+                fill(CODIGO_BANCO, "8")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill('codigoBanco', "8")
-            }}).getRecord()
+                fill(CODIGO_BANCO, "8")
+            }}).build()
         then:
         def expected = "008"
         remittance.split(SEPARATOR).size() == 4
@@ -131,27 +135,27 @@ class WrappedRecordTest extends FixtureApplicationTest {
         given:
         WrappedRecord batch = new WrappedRecord()
                 .createHeader(new FilledRecord(batchHeader) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
                 .createTrailer(new FilledRecord(batchTrailer) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
 
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill('codigoBanco', "5")
+                fill(CODIGO_BANCO, "5")
             }})
                 .addRecord(batch)
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill('codigoBanco', "5")
-            }}).getRecord()
+                fill(CODIGO_BANCO, "5")
+            }}).build()
 
         then:
         def expected = "005"

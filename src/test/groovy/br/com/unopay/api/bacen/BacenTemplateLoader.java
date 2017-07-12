@@ -147,7 +147,7 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(BankAccount.class).addTemplate("valid", new Rule(){{
             add("bank", one(Bank.class, "valid"));
-            add("agency", random("6465", "55794", "004456"));
+            add("agency", regex("\\d{4}"));
             add("agencyDigit", random("a2", "1", "A"));
             add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
             add("accountNumberDigit", random("a2", "1", "A"));
@@ -164,6 +164,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("depositPeriod", random(RecurrencePeriod.class));
             add("postPaidPaymentDays", random(Integer.class,range(1,31)));
             add("prePaidPaymentDays", random(Integer.class,range(1,31)));
+            add("bankAgreementNumber", regex("\\d{20}"));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

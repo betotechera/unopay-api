@@ -22,6 +22,7 @@ create table payment_bank_account (
  deposit_period varchar(50) not null,
  post_paid_payment_days integer not null,
  pre_paid_payment_days integer not null,
+ bank_agreement_number varchar(20) not null,
  constraint fk_payment_bank_account foreign key(bank_account_id) REFERENCES bank_account(id)
 );
 
