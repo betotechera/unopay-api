@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static br.com.unopay.api.payment.cnab240.ColumnType.*;
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.*;
+import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA;
+import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER;
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.CEP;
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.CIDADE;
