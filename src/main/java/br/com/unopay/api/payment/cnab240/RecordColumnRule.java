@@ -6,18 +6,13 @@ public class RecordColumnRule {
 
     @Getter private Integer order;
     @Getter private Integer length;
-    @Getter private LeftPadType leftPad = LeftPadType.ZERO;
+    @Getter private ColumnType columnType = ColumnType.ALPHA;
     @Getter private String defaultValue;
 
-    public RecordColumnRule(Integer order, Integer length) {
+    public RecordColumnRule(Integer order, Integer length, ColumnType columnType) {
         this.order = order;
         this.length = length;
-    }
-
-    public RecordColumnRule(Integer order, Integer length, LeftPadType leftPad) {
-        this.order = order;
-        this.length = length;
-        this.leftPad = leftPad;
+        this.columnType = columnType;
     }
 
     public RecordColumnRule(Integer order, Integer length, String defaultValue) {
@@ -26,10 +21,10 @@ public class RecordColumnRule {
         this.defaultValue = defaultValue;
     }
 
-    public RecordColumnRule(Integer order, Integer length, LeftPadType leftPad, String defaultValue) {
+    public RecordColumnRule(Integer order, Integer length, String defaultValue, ColumnType columnType) {
         this.order = order;
         this.length = length;
-        this.leftPad = leftPad;
+        this.columnType = columnType;
         this.defaultValue = defaultValue;
     }
 }

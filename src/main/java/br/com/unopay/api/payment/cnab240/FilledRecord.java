@@ -5,7 +5,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FilledRecord implements RemittanceRecord {
 
     private List<RecordColumn> columns;
@@ -17,11 +19,13 @@ public class FilledRecord implements RemittanceRecord {
     }
 
     public void fill(String ruleKey, String value) {
-        columns.add(new RecordColumn(layout.get(ruleKey),value));
+        RecordColumnRule columnRule = layout.get(ruleKey);
+
+        columns.add(new RecordColumn(columnRule,value));
     }
 
     public void fill(String ruleKey, Integer value) {
-        columns.add(new RecordColumn(layout.get(ruleKey),String.valueOf(value)));
+        fill(ruleKey, String.valueOf(value));
     }
 
     public void defaultFill(String ruleKey) {

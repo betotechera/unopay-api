@@ -7,18 +7,18 @@ class RecordColumnTest extends Specification{
 
     def 'given a column without value should return value with default pad left'(){
         given:
-        def column = new RecordColumn(new RecordColumnRule(1, 5))
+        def column = new RecordColumn(new RecordColumnRule(1, 5, ColumnType.ALPHA))
 
         when:
         def value = column.getValue()
 
         then:
-        value == '00000'
+        value == '     '
     }
 
     def 'given a column without value and with pad left should return value with defined pad left'(){
         given:
-        def column = new RecordColumn(new RecordColumnRule(1, 5,padLeftType))
+        def column = new RecordColumn(new RecordColumnRule(1, 5,columnType))
 
         when:
         def value = column.getValue()
@@ -27,18 +27,38 @@ class RecordColumnTest extends Specification{
         value == expected
 
         where:
-        padLeftType       | expected
-        LeftPadType.SPACE | '     '
-        LeftPadType.ZERO  | '00000'
+        columnType       | expected
+        ColumnType.ALPHA | '     '
+        ColumnType.NUMBER  | '00000'
     }
 
     def 'when define value greater than length should return error'(){
         when:
-        new RecordColumn(new RecordColumnRule(1, 2), "123")
+        new RecordColumn(new RecordColumnRule(1, 2, ColumnType.NUMBER), "123")
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'REMITTANCE_COLUMN_LENGTH_NOT_MET'
+
+    }
+
+    def 'given a null rule should return error'(){
+        when:
+        new RecordColumn(null, "1")
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'RULE_COLUMN_REQUIRED'
+    }
+
+    def 'given a column without value should fill with default left pad value'(){
+        given:
+        def column = new RecordColumn(new RecordColumnRule(1, 2, ColumnType.ALPHA), null)
+        when:
+        def value = column.getValue()
+
+        then:
+        value == '  '
 
     }
 

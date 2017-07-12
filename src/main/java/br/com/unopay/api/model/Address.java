@@ -5,6 +5,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.util.regex.Matcher;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import static javax.persistence.EnumType.STRING;
@@ -77,5 +78,19 @@ public class Address implements Serializable {
     @Column(name="longitude")
     @JsonView({Views.Public.class})
     private Double longitude;
+
+    public String firstZipCode(){
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d{5})(\\d{3})");
+        Matcher matcher = pattern.matcher(zipCode);
+        matcher.find();
+        return matcher.group(1);
+    }
+
+    public String lastZipeCode(){
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d{5})(\\d{3})");
+        Matcher matcher = pattern.matcher(zipCode);
+        matcher.find();
+        return matcher.group(2);
+    }
 
 }

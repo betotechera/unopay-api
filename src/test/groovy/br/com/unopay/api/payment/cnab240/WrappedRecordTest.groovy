@@ -1,15 +1,15 @@
 package br.com.unopay.api.payment.cnab240
 
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.CODIGO_BANCO
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.INICIO_FEBRABAN
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.LOTE_SERVICO
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.TIPO_REGISTRO
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegment
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceTrailer
+import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.CODIGO_BANCO
+import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.INICIO_FEBRABAN
+import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.LOTE_SERVICO
+import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.TIPO_REGISTRO
 import static br.com.unopay.api.payment.cnab240.RemittanceRecord.SEPARATOR
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
@@ -69,7 +69,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
                 .createHeader(new FilledRecord(remittanceTrailer)).build()
 
         then:
-        def expected = "88800000         "
+        def expected = "88899999         "
         remittance.split(SEPARATOR).last() == expected
     }
 
@@ -90,9 +90,8 @@ class WrappedRecordTest extends FixtureApplicationTest {
             }}).build()
 
         then:
-        def expected = "01500000         "
-        remittance.split(SEPARATOR).find() == expected
-        remittance.split(SEPARATOR).last() == expected
+        remittance.split(SEPARATOR).find() == "01500000         "
+        remittance.split(SEPARATOR).last() == "01599999         "
     }
 
     def 'should fill file bach lines'(){
