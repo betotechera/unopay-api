@@ -20,7 +20,6 @@ public class FilledRecord implements RemittanceRecord {
 
     public void fill(String ruleKey, String value) {
         RecordColumnRule columnRule = layout.get(ruleKey);
-
         columns.add(new RecordColumn(columnRule,value));
     }
 
