@@ -4,23 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.BatchClosing
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.ALPHA
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
-import static br.com.unopay.api.payment.cnab240.ColumnType.NUMBER
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentB
