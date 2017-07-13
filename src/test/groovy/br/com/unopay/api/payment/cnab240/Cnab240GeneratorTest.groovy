@@ -286,7 +286,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             fill(LOGRADOURO, address.getStreetName())
             fill(NUMERO, address.getNumber())
             fill(COMPLEMENTO, address.getComplement())
-            fill(BAIRRO, address.getDistrict()) //confirmar isso para emissor
+            fill(BAIRRO, address.getDistrict())
             fill(CIDADE, address.getCity())
             fill(CEP, address.firstZipCode())
             fill(COMPLEMENTO_CEP, address.lastZipeCode())
