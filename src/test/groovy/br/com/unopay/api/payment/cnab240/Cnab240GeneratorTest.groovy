@@ -87,7 +87,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create remittance header'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
@@ -129,7 +129,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create remittance trailer'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
@@ -153,7 +153,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create batch header'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
@@ -198,7 +198,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create segment A'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
@@ -246,7 +246,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create segment B'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
@@ -289,7 +289,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create batch trailer'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
