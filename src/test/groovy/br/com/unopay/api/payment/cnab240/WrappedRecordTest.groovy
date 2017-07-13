@@ -2,6 +2,7 @@ package br.com.unopay.api.payment.cnab240
 
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
+import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceTrailer
@@ -95,7 +96,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
 
     def 'should fill file bach lines'(){
         when:
-        String remittance = new WrappedRecord().addRecord(new FilledRecord(batchSegment) {{
+        String remittance = new WrappedRecord().addRecord(new FilledRecord(batchSegmentA) {{
                 fill(BANCO_COMPENSACAO, "5")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer))
@@ -113,10 +114,10 @@ class WrappedRecordTest extends FixtureApplicationTest {
                 .createHeader(new FilledRecord(remittanceHeader) {{
                 fill(BANCO_COMPENSACAO, "8")
             }})
-                .addRecord(new FilledRecord(batchSegment) {{
+                .addRecord(new FilledRecord(batchSegmentA) {{
                 fill(BANCO_COMPENSACAO, "8")
             }})
-                .addRecord(new FilledRecord(batchSegment) {{
+                .addRecord(new FilledRecord(batchSegmentA) {{
                 fill(BANCO_COMPENSACAO, "8")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
@@ -135,10 +136,10 @@ class WrappedRecordTest extends FixtureApplicationTest {
                 .createHeader(new FilledRecord(batchHeader) {{
                 fill(BANCO_COMPENSACAO, "5")
             }})
-                .addRecord(new FilledRecord(batchSegment) {{
+                .addRecord(new FilledRecord(batchSegmentA) {{
                 fill(BANCO_COMPENSACAO, "5")
             }})
-                .addRecord(new FilledRecord(batchSegment) {{
+                .addRecord(new FilledRecord(batchSegmentA) {{
                 fill(BANCO_COMPENSACAO, "5")
             }})
                 .createTrailer(new FilledRecord(batchTrailer) {{
