@@ -3,6 +3,7 @@ package br.com.unopay.api.controller;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Views;
 import static br.com.unopay.api.model.validation.group.Views.List;
 import static br.com.unopay.api.model.validation.group.Views.Public;
 import br.com.unopay.api.service.BatchClosingService;
@@ -11,7 +12,6 @@ import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +32,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
 
 
 @Slf4j
@@ -75,8 +77,15 @@ public class BatchClosingController {
         log.info("removing batchClosing id={}", id);
     }
 
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
+    @RequestMapping(value = "/batch-closings/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable  String id, @RequestBody BatchClosing batchClosing) {
+        log.info("removing batchClosing id={}", id);
+    }
+
     @ResponseStatus(OK)
-    @JsonView(List.class)
+    @JsonView({Views.BatchClosing.List.class})
     @PreAuthorize("hasRole('ROLE_LIST_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings", method = GET)
     public Results<BatchClosing> getByParams(BatchClosingFilter filter, @Validated UnovationPageRequest pageable) {

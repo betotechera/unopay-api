@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import static br.com.unopay.api.model.validation.group.Views.*;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,13 +39,13 @@ public class Person implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
     @Size(min=2, max = 150, groups = {Create.class, Update.class})
     private String name;
 
@@ -52,38 +53,39 @@ public class Person implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private PersonType type;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Embedded
+    @JsonView({Public.class,List.class})
     private Document document;
 
     @OneToOne
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
     @OneToOne
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @JoinColumn(name="physical_person_detail_id")
     private PhysicalPersonDetail physicalPersonDetail;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @JoinColumn(name="address_id")
     private Address address;
 
     @Column(name="telephone")
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String telephone;
 
     @Column(name="cell_phone")
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String cellPhone;
 
