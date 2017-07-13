@@ -8,4 +8,8 @@ public interface Views {
     interface List {}
 
     interface GroupUserType {}
+
+    interface BatchClosing {
+        interface List {}
+    }
 }

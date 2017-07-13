@@ -9,6 +9,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import static br.com.unopay.api.model.validation.group.Views.*;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
@@ -61,7 +62,7 @@ public class Establishment implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -70,97 +71,102 @@ public class Establishment implements Serializable, Updatable {
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
     private Person person;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private EstablishmentType type;
 
     @Column(name="contact_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private String contactMail;
 
     @Column(name="invoice_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private String invoiceMail;
 
     @Column(name="bach_shipment_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private String bachShipmentMail;
 
     @Column(name="alternative_mail")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private String alternativeMail;
 
     @Column(name="cancellation_tolerance")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
     @Column(name = "fee")
+    @JsonView({Public.class})
     @NotNull(groups = {Create.class, Update.class})
     private Double fee;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private AccreditedNetwork network;
 
     @ManyToOne
     @JoinColumn(name="brand_flag_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private BrandFlag brandFlag;
 
     @Column(name = "logo_uri")
+    @JsonView({Public.class})
     private String logoUri;
 
     @Valid
     @OneToOne
     @JoinColumn(name="operational_contact_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private Contact operationalContact;
 
     @Valid
     @OneToOne
     @JoinColumn(name="administrative_contact_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private Contact administrativeContact;
 
     @Valid
     @OneToOne
     @JoinColumn(name="financier_contact_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private Contact financierContact;
 
     @Column(name = "technical_contact")
+    @JsonView({Public.class})
     private String technicalContact;
 
+    @JsonView({Public.class})
     @Column(name = "establishment_photo_uri")
     private String establishmentPhotoUri;
 
+    @JsonView({Public.class})
     @Column(name = "contract_uri")
     private String contractUri;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = GatheringChannel.class)
     @Column(name = "gathering_channel", nullable = false)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "establishment_gathering", joinColumns = @JoinColumn(name = "establishment_id"))
     private Set<GatheringChannel> gatheringChannels;
 
     @ManyToMany
     @BatchSize(size = 10)
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     @JoinTable(name = "establishment_service",
             joinColumns = { @JoinColumn(name = "establishment_id") },
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
@@ -170,23 +176,23 @@ public class Establishment implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="movement_account_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Public.class,List.class})
     private BankAccount bankAccount;
 
     @Valid
     @Embedded
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     private Checkout checkout;
 
     @Valid
     @Embedded
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     private InvoiceReceipt invoiceReceipt;
 
     @Column(name = "issue_invoice_type")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Public.class})
     private IssueInvoiceType issueInvoiceType;
 
     public void validateCreate(){
