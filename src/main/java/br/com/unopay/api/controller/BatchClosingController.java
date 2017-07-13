@@ -62,7 +62,7 @@ public class BatchClosingController {
 
     }
     @ResponseStatus(OK)
-    @JsonView(Public.class)
+    @JsonView(Views.BatchClosing.Detail.class)
     @PreAuthorize("hasRole('ROLE_LIST_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/{id}", method = GET)
     public BatchClosing get(@PathVariable String id) {

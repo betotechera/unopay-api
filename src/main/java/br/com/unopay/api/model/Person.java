@@ -45,7 +45,6 @@ public class Person implements Serializable{
 
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
-    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
     @Size(min=2, max = 150, groups = {Create.class, Update.class})
     private String name;
 

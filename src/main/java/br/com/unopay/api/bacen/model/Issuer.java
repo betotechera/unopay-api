@@ -47,16 +47,14 @@ public class Issuer implements Serializable{
 
     @Id
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
     private String id;
 
     @Valid
-    @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
-    @JsonView({Views.Public.class,Views.List.class})
     @JoinColumn(name="person_id")
+    @NotNull(groups = {Create.class, Update.class})
     private Person person;
 
 
@@ -71,6 +69,7 @@ public class Issuer implements Serializable{
 
     @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
     private Double fee;
 
     @Valid

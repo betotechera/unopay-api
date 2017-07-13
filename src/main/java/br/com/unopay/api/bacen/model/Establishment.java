@@ -62,7 +62,7 @@ public class Establishment implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
-    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
+    @JsonView({Public.class,List.class,Views.BatchClosing.List.class,Views.BatchClosing.Detail.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -71,7 +71,7 @@ public class Establishment implements Serializable, Updatable {
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
-    @JsonView({Public.class,List.class,Views.BatchClosing.List.class})
+    @JsonView({Public.class,List.class,Views.BatchClosing.List.class,Views.BatchClosing.Detail.class})
     private Person person;
 
     @Valid

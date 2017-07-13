@@ -10,6 +10,7 @@ public interface Views {
     interface GroupUserType {}
 
     interface BatchClosing {
+        interface Detail {}
         interface List {}
     }
 }
