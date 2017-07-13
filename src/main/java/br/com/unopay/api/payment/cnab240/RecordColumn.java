@@ -30,8 +30,8 @@ public class RecordColumn {
         return StringUtils.leftPad(value,this.rule.getLength(), this.rule.getColumnType().getLeftPad());
     }
 
-    public Integer getOrder() {
-        return this.rule.getOrder();
+    public Integer getPosition() {
+        return this.rule.getPosition();
     }
 
     private void validateRule(RecordColumnRule rule) {
@@ -42,7 +42,7 @@ public class RecordColumn {
 
     private void setValue(String value){
         if(value != null && value.length() > this.rule.getLength()){
-            log.error("cnab240 rule={} unexpected length={}", getOrder(), value.length());
+            log.error("cnab240 rule={} unexpected length={}", getPosition(), value.length());
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_COLUMN_LENGTH_NOT_MET);
         }
         this.value = value;

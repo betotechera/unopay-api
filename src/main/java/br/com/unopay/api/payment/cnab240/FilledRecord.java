@@ -33,7 +33,7 @@ public class FilledRecord implements RemittanceRecord {
 
     public String build() {
         return columns.stream()
-                .sorted(Comparator.comparing(RecordColumn::getOrder))
+                .sorted(Comparator.comparing(RecordColumn::getPosition))
                 .map(RecordColumn::getValue).collect(Collectors.joining());
     }
 }

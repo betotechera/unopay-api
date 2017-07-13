@@ -110,7 +110,11 @@ public class Cnab240Generator {
         FilledRecord segmentA = createSegmentA(batchClosing);
         FilledRecord segmentB = createSegmentB(batchClosing);
         FilledRecord batchTrailer = createBatchTrailer(batchClosing);
-        return new WrappedRecord().createHeader(batchHeader).addRecord(segmentA).addRecord(segmentB).createTrailer(batchTrailer);
+        return new WrappedRecord()
+                .createHeader(batchHeader)
+                .addRecord(segmentA)
+                .addRecord(segmentB)
+                .createTrailer(batchTrailer);
     }
 
     private FilledRecord createSegmentB(final BatchClosing batchClosing) {
