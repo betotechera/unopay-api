@@ -2,11 +2,10 @@ package br.com.unopay.api.payment.cnab240
 
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegment
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceTrailer
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.CODIGO_BANCO
+import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.BANCO_COMPENSACAO
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.INICIO_FEBRABAN
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.LOTE_SERVICO
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.TIPO_REGISTRO
@@ -19,7 +18,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         new WrappedRecord()
                 .createTrailer(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "12")
+                fill(BANCO_COMPENSACAO, "12")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -33,7 +32,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'when create wrapped record without trailer should return error'(){
         when:
         new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "8")
+                fill(BANCO_COMPENSACAO, "8")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -47,7 +46,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file header'(){
         when:
         String remittance = new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "75")
+                fill(BANCO_COMPENSACAO, "75")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -61,7 +60,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file trailer'(){
         when:
         String remittance = new WrappedRecord().createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill(CODIGO_BANCO, "888")
+                fill(BANCO_COMPENSACAO, "888")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -77,13 +76,13 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "15")
+                fill(BANCO_COMPENSACAO, "15")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill(CODIGO_BANCO, "15")
+                fill(BANCO_COMPENSACAO, "15")
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -97,7 +96,7 @@ class WrappedRecordTest extends FixtureApplicationTest {
     def 'should fill file bach lines'(){
         when:
         String remittance = new WrappedRecord().addRecord(new FilledRecord(batchSegment) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer))
                 .createHeader(new FilledRecord(remittanceTrailer)).build()
@@ -112,16 +111,16 @@ class WrappedRecordTest extends FixtureApplicationTest {
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "8")
+                fill(BANCO_COMPENSACAO, "8")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill(CODIGO_BANCO, "8")
+                fill(BANCO_COMPENSACAO, "8")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill(CODIGO_BANCO, "8")
+                fill(BANCO_COMPENSACAO, "8")
             }})
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill(CODIGO_BANCO, "8")
+                fill(BANCO_COMPENSACAO, "8")
             }}).build()
         then:
         def expected = "008"
@@ -134,26 +133,26 @@ class WrappedRecordTest extends FixtureApplicationTest {
         given:
         WrappedRecord batch = new WrappedRecord()
                 .createHeader(new FilledRecord(batchHeader) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
                 .addRecord(new FilledRecord(batchSegment) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
                 .createTrailer(new FilledRecord(batchTrailer) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
 
         when:
         String remittance = new WrappedRecord()
                 .createHeader(new FilledRecord(remittanceHeader) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }})
                 .addRecord(batch)
                 .createTrailer(new FilledRecord(remittanceTrailer) {{
-                fill(CODIGO_BANCO, "5")
+                fill(BANCO_COMPENSACAO, "5")
             }}).build()
 
         then:

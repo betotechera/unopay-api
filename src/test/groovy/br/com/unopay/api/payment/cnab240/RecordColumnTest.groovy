@@ -65,7 +65,7 @@ class RecordColumnTest extends Specification{
     def 'given a rule with default value should fill with this'(){
         given:
         def defaultValue = "1234"
-        def column = new RecordColumn(new RecordColumnRule(1, 4, defaultValue))
+        def column = new RecordColumn(new RecordColumnRule(1, 4, defaultValue, ColumnType.NUMBER))
 
         when:
         def value = column.getValue()

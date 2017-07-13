@@ -2,7 +2,7 @@ package br.com.unopay.api.payment.cnab240;
 
 public class RemittanceLayoutKeys {
 
-    public static final String CODIGO_BANCO = "codigoBanco";
+    public static final String BANCO_COMPENSACAO = "bancoCompensacao";
     public static final String LOTE_SERVICO = "loteServico";
     public static final String TIPO_REGISTRO = "tipoRegistro";
     public static final String TIPO_INSCRICAO = "tipoInscricao";
@@ -44,4 +44,33 @@ public class RemittanceLayoutKeys {
     public static final String QUANTIDADE_LOTES = "quantidadeLotes";
     public static final String QUANTIDADE_REGISTROS = "quantidadeRegistros";
     public static final String QUANTIDADE_CONTAS = "quantidadeContas";
+    public static final String NUMERO_REGISTRO = "numeroRegistro";
+    public static final String SEGMENTO = "segmento";
+    public static final String TIPO_MOVIMENTO = "tipoMovimento";
+    public static final String INSTITUICAO_MOVIMENTO = "instituicaoMovimento";
+    public static final String CAMARA_CENTRALIZADORA = "camaraCentralizadora";
+    public static final String BANCO_FAVORECIDO = "bancoFavorecido";
+    public static final String NOME_FAVORECIDO = "nomeFavorecido";
+    public static final String DOCUMENTO_EMPRESA = "documentoEmpresa";
+    public static final String DATA_PAGAMENTO = "dataPagamento";
+    public static final String TIPO_MOEDA = "tipoMoeda";
+    public static final String QUANTIDADE_MOEDA = "quantidadeMoeda";
+    public static final String VALOR_PAGAMENTO = "valorPagamento";
+    public static final String DOCUMENTO_ATRIBUIDO_BANCO = "documentoAtribuidoBanco";
+    public static final String DATA_REAL_PAGAMENTO = "dataRealPagamento";
+    public static final String VALOR_REAL_PAGAMENTO = "valorRealPagamento";
+    public static final String INFORMACAO = "informacao";
+    public static final String FINALIDADE_DOC = "finalidadeDoc";
+    public static final String FINALIDADE_TED = "finalidadeTed";
+    public static final String AVISO = "aviso";
+    public static final String TIPO_INSCRICAO_FAVORECIDO = "tipoInscricaoFavorecido";
+    public static final String NUMERO_INSCRICAO_FAVORECIDO = "numeroInscricaoFavorecido";
+    public static final String BAIRRO = "bairro";
+    public static final String DATA_VENCIMENTO = "dataVencimento";
+    public static final String VALOR_DOCUMENTO = "valorDocumento";
+    public static final String VALOR_ABATIMENTO = "valorAbatimento";
+    public static final String VALOR_DESCONTO = "valorDesconto";
+    public static final String VALOR_MORA = "valorMora";
+    public static final String VALOR_MULTA = "valorMulta";
+    public static final String CODIGO_DOCUMENTO_FAVORECIDO = "codigoDocumentoFavorecido";
 }

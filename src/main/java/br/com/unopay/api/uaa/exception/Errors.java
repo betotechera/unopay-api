@@ -465,13 +465,11 @@ public final class Errors {
     public static final UnovationError REMITTANCE_COLUMN_LENGTH_NOT_MET =
             new UnovationError("REMITTANCE_COLUMN_LENGTH_NOT_MET", "Remittance column length not met");
     public static final UnovationError HEADER_REQUIRED_ON_WRAPPED_RECORD =
-            new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on rapped record.");
+            new UnovationError("HEADER_REQUIRED_ON_WRAPPED_RECORD", "Header required on wrapped record.");
     public static final UnovationError TRAILER_REQUIRED_ON_WRAPPED_RECORD =
-            new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on rapped record.");
+            new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on wrapped record.");
     public static final UnovationError RULE_COLUMN_REQUIRED =
             new UnovationError("RULE_COLUMN_REQUIRED", "Rule column required when fill cnab240 field.");
-
-
 
 
     /* Service Payment */

@@ -15,12 +15,6 @@ public class RecordColumnRule {
         this.columnType = columnType;
     }
 
-    public RecordColumnRule(Integer order, Integer length, String defaultValue) {
-        this.order = order;
-        this.length = length;
-        this.defaultValue = defaultValue;
-    }
-
     public RecordColumnRule(Integer order, Integer length, String defaultValue, ColumnType columnType) {
         this.order = order;
         this.length = length;
