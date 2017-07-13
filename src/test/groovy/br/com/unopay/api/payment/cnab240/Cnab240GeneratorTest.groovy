@@ -3,7 +3,6 @@ package br.com.unopay.api.payment.cnab240
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
-import br.com.unopay.api.model.BatchClosing
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentB
@@ -82,21 +81,22 @@ import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.VALOR_MULTA
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.VALOR_PAGAMENTO
 import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO
 import static br.com.unopay.api.payment.cnab240.RemittanceRecord.SEPARATOR
+import br.com.unopay.api.payment.model.PaymentRemittance
 
 class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create remittance header'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.issuer.paymentAccount.bankAccount
-        def person = batchClosing.issuer.person
+        def bankAccount = remittance.issuer.paymentAccount.bankAccount
+        def person = remittance.issuer.person
         def record = new FilledRecord(remittanceHeader) {{
                 fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
                 defaultFill(LOTE_SERVICO)
@@ -104,7 +104,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 defaultFill(INICIO_FEBRABAN)
                 defaultFill(TIPO_INSCRICAO)
                 fill(NUMERO_INSCRICAO_EMPRESA, person.document.number)
-                fill(CONVEIO_BANCO, batchClosing.issuer.paymentAccount.bankAgreementNumber)
+                fill(CONVEIO_BANCO, remittance.issuer.paymentAccount.bankAgreementNumber)
                 fill(AGENCIA, bankAccount.agency)
                 fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit())
                 fill(NUMERO_CONTA, bankAccount.accountNumber)
@@ -129,15 +129,15 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create remittance trailer'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.issuer.paymentAccount.bankAccount
+        def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(remittanceTrailer) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
             defaultFill(LOTE_SERVICO)
@@ -153,17 +153,17 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create batch header'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.issuer.paymentAccount.bankAccount
-        def address = batchClosing.issuer.person.address
-        def person = batchClosing.issuer.person
+        def bankAccount = remittance.issuer.paymentAccount.bankAccount
+        def address = remittance.issuer.person.address
+        def person = remittance.issuer.person
         def record = new FilledRecord(batchHeader) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
             defaultFill(LOTE_SERVICO)
@@ -175,7 +175,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(INICIO_FEBRABAN)
             defaultFill(TIPO_INSCRICAO)
             fill(NUMERO_INSCRICAO_EMPRESA, person.document.number)
-            fill(CONVEIO_BANCO, batchClosing.issuer.paymentAccount.bankAgreementNumber)
+            fill(CONVEIO_BANCO, remittance.issuer.paymentAccount.bankAgreementNumber)
             fill(AGENCIA, bankAccount.agency)
             fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit())
             fill(NUMERO_CONTA, bankAccount.accountNumber)
@@ -198,16 +198,16 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create segment A'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.establishment.bankAccount
-        def establishment = batchClosing.establishment
+        def establishment = remittance.remittanceItems.find().establishment
+        def bankAccount = establishment.bankAccount
         def person = establishment.person
         def record = new FilledRecord(batchSegmentA) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
@@ -228,11 +228,11 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             fill(DOCUMENTO_EMPRESA, person.document.number)
             fill(DATA_PAGAMENTO, currentDate.format("ddMMyyyy"))
             defaultFill(TIPO_MOEDA)
-            fill(QUANTIDADE_MOEDA, batchClosing.getValue().toString())
-            fill(VALOR_PAGAMENTO, batchClosing.getValue().toString())
+            fill(QUANTIDADE_MOEDA, remittance.getRemittanceItems().find().getValue().toString())
+            fill(VALOR_PAGAMENTO, remittance.getRemittanceItems().find().getValue().toString())
             defaultFill(DOCUMENTO_ATRIBUIDO_BANCO)
             defaultFill(DATA_REAL_PAGAMENTO)
-            fill(VALOR_REAL_PAGAMENTO, batchClosing.getValue().toString())
+            fill(VALOR_REAL_PAGAMENTO, remittance.getRemittanceItems().find().getValue().toString())
             defaultFill(INFORMACAO)
             defaultFill(FINALIDADE_DOC)
             defaultFill(FINALIDADE_TED)
@@ -246,17 +246,18 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create segment B'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.issuer.paymentAccount.bankAccount
-        def address = batchClosing.issuer.person.address
-        def person = batchClosing.issuer.person
+        def establishment = remittance.remittanceItems.find().establishment
+        def bankAccount = establishment.bankAccount
+        def address = establishment.person.address
+        def person = establishment.person
         def record = new FilledRecord(batchSegmentB) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
             defaultFill(LOTE_SERVICO)
@@ -275,7 +276,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             fill(COMPLEMENTO_CEP, address.lastZipeCode())
             fill(ESTADO, address.getState().name())
             fill(DATA_VENCIMENTO, currentDate.format("ddMMyyyy"))
-            fill(VALOR_DOCUMENTO, batchClosing.getValue().toString())
+            fill(VALOR_DOCUMENTO, remittance.getRemittanceItems().find().getValue().toString())
             defaultFill(VALOR_ABATIMENTO)
             defaultFill(VALOR_DESCONTO)
             defaultFill(VALOR_MORA)
@@ -288,22 +289,22 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     def 'should create batch trailer'(){
         given:
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid")
         def currentDate = instant("now")
         def generator = new Cnab240Generator(currentDate)
 
         when:
-        String cnab240 = generator.generate(batchClosing)
+        String cnab240 = generator.generate(remittance)
 
         then:
-        def bankAccount = batchClosing.issuer.paymentAccount.bankAccount
+        def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(batchTrailer) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
             fill(LOTE_SERVICO, "0009")
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(SOMATORIA_VALORES,"1")
-            fill(QUANTIDADE_MOEDAS, batchClosing.value.toString())
+            fill(SOMATORIA_VALORES,remittance.total().toString())
+            fill(QUANTIDADE_MOEDAS, remittance.total().toString())
             defaultFill(NUMERO_AVISO_DEBITO)
             defaultFill(FIM_FEBRABAN)
             defaultFill(OCORRENCIAS)

@@ -1,6 +1,7 @@
 package br.com.unopay.api.payment.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
@@ -18,6 +19,20 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
         paymentRemittance.issuer == issuer
         paymentRemittance.issuerBankCode == issuer.paymentAccount.bankAccount.bacenCode
         paymentRemittance.number
+    }
+
+    def 'should return sum of all payments'(){
+        given:
+        List<PaymentRemittanceItem> items = Fixture.from(PaymentRemittanceItem.class).gimme(3,"valid")
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("remittanceItems", items)
+        }})
+
+        when:
+        BigDecimal total = remittance.total()
+
+        then:
+        total == remittance.remittanceItems.sum { it.value }
     }
 
     def 'should be created with processing situation'(){

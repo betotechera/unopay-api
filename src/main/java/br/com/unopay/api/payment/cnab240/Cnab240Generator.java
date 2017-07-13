@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -94,10 +96,10 @@ public class Cnab240Generator {
         this.currentDate = currentDate;
     }
 
-    public String generate(BatchClosing batchClosing) {
-        FilledRecord remittanceHeader = createRemittanceHeader(batchClosing);
-        WrappedRecord batch = createBatch(batchClosing);
-        FilledRecord remittanceTrailer = createRemittanceTrailer(batchClosing);
+    public String generate(PaymentRemittance remittance) {
+        FilledRecord remittanceHeader = createRemittanceHeader(remittance);
+        WrappedRecord batch = createBatch(remittance);
+        FilledRecord remittanceTrailer = createRemittanceTrailer(remittance);
         return new WrappedRecord()
                 .createHeader(remittanceHeader)
                 .addRecord(batch)
@@ -105,11 +107,11 @@ public class Cnab240Generator {
                 .build();
     }
 
-    private WrappedRecord createBatch(BatchClosing batchClosing) {
-        FilledRecord batchHeader = createBatchHeader(batchClosing);
-        FilledRecord segmentA = createSegmentA(batchClosing);
-        FilledRecord segmentB = createSegmentB(batchClosing);
-        FilledRecord batchTrailer = createBatchTrailer(batchClosing);
+    private WrappedRecord createBatch(PaymentRemittance remittance) {
+        FilledRecord batchHeader = createBatchHeader(remittance);
+        FilledRecord segmentA = createSegmentA(remittance.getRemittanceItems().stream().findFirst().get());
+        FilledRecord segmentB = createSegmentB(remittance.getRemittanceItems().stream().findFirst().get());
+        FilledRecord batchTrailer = createBatchTrailer(remittance);
         return new WrappedRecord()
                 .createHeader(batchHeader)
                 .addRecord(segmentA)
@@ -117,9 +119,9 @@ public class Cnab240Generator {
                 .createTrailer(batchTrailer);
     }
 
-    private FilledRecord createSegmentB(final BatchClosing batchClosing) {
-        BankAccount bankAccount = batchClosing.getIssuer().getPaymentAccount().getBankAccount();
-        Person person = batchClosing.getIssuer().getPerson();
+    private FilledRecord createSegmentB(final PaymentRemittanceItem remittanceItem) {
+        BankAccount bankAccount = remittanceItem.getEstablishment().getBankAccount();
+        Person person = remittanceItem.getEstablishment().getPerson();
         Address address = person.getAddress();
         return new FilledRecord(getBatchSegmentB()) {{
                 fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
@@ -139,7 +141,7 @@ public class Cnab240Generator {
                 fill(COMPLEMENTO_CEP, address.lastZipeCode());
                 fill(ESTADO, address.getState().name());
                 fill(DATA_VENCIMENTO, new SimpleDateFormat("ddMMyyyy").format(currentDate));
-                fill(VALOR_DOCUMENTO, batchClosing.getValue().toString());
+                fill(VALOR_DOCUMENTO, remittanceItem.getValue().toString());
                 defaultFill(VALOR_ABATIMENTO);
                 defaultFill(VALOR_DESCONTO);
                 defaultFill(VALOR_MORA);
@@ -149,8 +151,8 @@ public class Cnab240Generator {
             }};
     }
 
-    private FilledRecord createSegmentA(final BatchClosing batchClosing) {
-        Establishment establishment = batchClosing.getEstablishment();
+    private FilledRecord createSegmentA(final PaymentRemittanceItem remittanceItem) {
+        Establishment establishment = remittanceItem.getEstablishment();
         BankAccount bankAccount = establishment.getBankAccount();
         Person person = establishment.getPerson();
         return new FilledRecord(getBatchSegmentA()) {{
@@ -172,11 +174,11 @@ public class Cnab240Generator {
             fill(DOCUMENTO_EMPRESA, person.getDocument().getNumber());
             fill(DATA_PAGAMENTO, new SimpleDateFormat("ddMMyyyy").format(currentDate));
             defaultFill(TIPO_MOEDA);
-            fill(QUANTIDADE_MOEDA, batchClosing.getValue().toString());
-            fill(VALOR_PAGAMENTO, batchClosing.getValue().toString());
+            fill(QUANTIDADE_MOEDA, remittanceItem.getValue().toString());
+            fill(VALOR_PAGAMENTO, remittanceItem.getValue().toString());
             defaultFill(DOCUMENTO_ATRIBUIDO_BANCO);
             defaultFill(DATA_REAL_PAGAMENTO);
-            fill(VALOR_REAL_PAGAMENTO, batchClosing.getValue().toString());
+            fill(VALOR_REAL_PAGAMENTO, remittanceItem.getValue().toString());
             defaultFill(INFORMACAO);
             defaultFill(FINALIDADE_DOC);
             defaultFill(FINALIDADE_TED);
@@ -186,24 +188,24 @@ public class Cnab240Generator {
         }};
     }
 
-    private FilledRecord createBatchTrailer(final BatchClosing batchClosing) {
-        BankAccount bankAccount = batchClosing.getIssuer().getPaymentAccount().getBankAccount();
+    private FilledRecord createBatchTrailer(final PaymentRemittance remittance) {
+        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         return new FilledRecord(getBatchTrailer()) {{
                 fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
                 fill(LOTE_SERVICO, "0009");
                 defaultFill(TIPO_REGISTRO);
                 defaultFill(INICIO_FEBRABAN);
-                fill(SOMATORIA_VALORES,"1");
-                fill(QUANTIDADE_MOEDAS, batchClosing.getValue().toString());
+                fill(SOMATORIA_VALORES,remittance.total().toString());
+                fill(QUANTIDADE_MOEDAS, remittance.total().toString());
                 defaultFill(NUMERO_AVISO_DEBITO);
                 defaultFill(FIM_FEBRABAN);
                 defaultFill(OCORRENCIAS);
             }};
     }
 
-    private FilledRecord createBatchHeader(final BatchClosing batchClosing) {
-        BankAccount bankAccount = batchClosing.getIssuer().getPaymentAccount().getBankAccount();
-        Person person = batchClosing.getIssuer().getPerson();
+    private FilledRecord createBatchHeader(final PaymentRemittance remittance) {
+        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
+        Person person = remittance.getIssuer().getPerson();
         Address address = person.getAddress();
         return new FilledRecord(getBatchHeader()) {{
                 fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
@@ -216,7 +218,7 @@ public class Cnab240Generator {
                 defaultFill(INICIO_FEBRABAN);
                 defaultFill(TIPO_INSCRICAO);
                 fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber());
-                fill(CONVEIO_BANCO, batchClosing.getIssuer().getPaymentAccount().getBankAgreementNumber());
+                fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber());
                 fill(AGENCIA, bankAccount.getAgency());
                 fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit());
                 fill(NUMERO_CONTA, bankAccount.getAccountNumber());
@@ -236,9 +238,9 @@ public class Cnab240Generator {
             }};
     }
 
-    private FilledRecord createRemittanceHeader(final BatchClosing batchClosing) {
-        BankAccount bankAccount = batchClosing.getIssuer().getPaymentAccount().getBankAccount();
-        Person person = batchClosing.getIssuer().getPerson();
+    private FilledRecord createRemittanceHeader(final PaymentRemittance remittance) {
+        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
+        Person person = remittance.getIssuer().getPerson();
         return new FilledRecord(getRemittanceHeader()) {{
                 fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
                 defaultFill(LOTE_SERVICO);
@@ -246,7 +248,7 @@ public class Cnab240Generator {
                 defaultFill(INICIO_FEBRABAN);
                 defaultFill(TIPO_INSCRICAO);
                 fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber());
-                fill(CONVEIO_BANCO, batchClosing.getIssuer().getPaymentAccount().getBankAgreementNumber());
+                fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber());
                 fill(AGENCIA, bankAccount.getAgency());
                 fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit());
                 fill(NUMERO_CONTA, bankAccount.getAccountNumber());
@@ -267,8 +269,8 @@ public class Cnab240Generator {
             }};
     }
 
-    private FilledRecord createRemittanceTrailer(final BatchClosing batchClosing) {
-        BankAccount bankAccount = batchClosing.getIssuer().getPaymentAccount().getBankAccount();
+    private FilledRecord createRemittanceTrailer(final PaymentRemittance remittance) {
+        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         return new FilledRecord(getRemittanceTrailer()) {{
             fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
             defaultFill(LOTE_SERVICO);

@@ -30,10 +30,11 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("submissionDateTime", instant("1 hour from now"));
             add("situation", uniqueRandom(RemittanceSituation.class));
             add("submissionReturnDateTime", instant("2 days from now"));
+            add("remittanceItems", has(2).of(PaymentRemittanceItem.class, "valid")
+                    .targetAttribute("paymentRemittance"));
         }});
 
         Fixture.of(PaymentRemittanceItem.class).addTemplate("valid", new Rule() {{
-            add("paymentRemittance", one(PaymentRemittance.class, "valid"));
             add("establishment",one(Establishment.class, "valid"));
             add("establishmentBankCode",random(1, 341));
             add("value",random(BigDecimal.class));

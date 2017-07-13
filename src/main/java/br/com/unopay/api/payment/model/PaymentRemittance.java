@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -141,5 +143,15 @@ public class PaymentRemittance implements Serializable {
             return;
         }
         this.transferOption = PaymentTransferOption.DOC_TED;
+    }
+
+    public BigDecimal total() {
+        if (this.remittanceItems != null) {
+            return this.remittanceItems.stream()
+                    .map(PaymentRemittanceItem::getValue)
+                    .reduce((last, current) -> current.add(last))
+                    .orElse(BigDecimal.ZERO);
+        }
+        return BigDecimal.ZERO;
     }
 }
