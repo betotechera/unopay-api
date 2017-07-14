@@ -21,7 +21,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
         Fixture.of(PaymentRemittance.class).addTemplate("valid", new Rule() {{
             add("issuerBankCode", random(1, 341));
             add("issuer", one(Issuer.class, "valid"));
-            add("number", regex("\\d{10}"));
+            add("number", regex("\\d{6}"));
             add("paymentServiceType", uniqueRandom(PaymentServiceType.class));
             add("transferOption", uniqueRandom(PaymentTransferOption.class));
             add("operationType", uniqueRandom(PaymentOperationType.class));

@@ -15,7 +15,7 @@ public enum PaymentOperationType  implements DescriptableEnum {
     private String code;
     private String description;
 
-    PaymentOperationType(String description, String code) {
+    PaymentOperationType(String code, String description) {
         this.code = code;
         this.description = description;
     }

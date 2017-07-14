@@ -1,16 +1,16 @@
-package br.com.unopay.api.payment.cnab240
+package br.com.unopay.api.payment.cnab240.filler
 
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchSegmentA
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getBatchTrailer
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceHeader
-import static br.com.unopay.api.payment.cnab240.RemittanceLayout.getRemittanceTrailer
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.BANCO_COMPENSACAO
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.INICIO_FEBRABAN
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.LOTE_SERVICO
-import static br.com.unopay.api.payment.cnab240.RemittanceLayoutKeys.TIPO_REGISTRO
-import static br.com.unopay.api.payment.cnab240.RemittanceRecord.SEPARATOR
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchHeader
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchTrailer
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceHeader
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceTrailer
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.INICIO_FEBRABAN
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.LOTE_SERVICO
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.TIPO_REGISTRO
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class WrappedRecordTest extends FixtureApplicationTest {

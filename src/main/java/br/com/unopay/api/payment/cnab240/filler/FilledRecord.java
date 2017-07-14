@@ -1,4 +1,4 @@
-package br.com.unopay.api.payment.cnab240;
+package br.com.unopay.api.payment.cnab240.filler;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package br.com.unopay.api.payment.cnab240;
+package br.com.unopay.api.payment.cnab240.filler;
 
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package br.com.unopay.api.payment.cnab240
+package br.com.unopay.api.payment.cnab240.filler
 
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Specification
