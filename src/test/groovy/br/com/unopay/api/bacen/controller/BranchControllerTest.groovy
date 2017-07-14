@@ -120,7 +120,4 @@ class BranchControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/branches/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

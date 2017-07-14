@@ -36,7 +36,7 @@ public class BatchClosingItem implements Serializable, Updatable {
 
     public BatchClosingItem(ServiceAuthorize serviceAuthorize){
         this.serviceAuthorize = serviceAuthorize;
-        this.documentNumberInvoice = serviceAuthorize.getContract().getHirerDocumentNumber();
+        this.documentNumberInvoice = serviceAuthorize.getContract().hirerDocumentNumber();
         this.invoiceDocumentSituation = DocumentSituation.PENDING;
         this.issueInvoiceType = serviceAuthorize.establishmentIssueInvoiceType();
     }

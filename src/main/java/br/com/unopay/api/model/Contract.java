@@ -61,7 +61,6 @@ public class Contract implements Serializable {
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -81,7 +80,6 @@ public class Contract implements Serializable {
     @Column(name="code")
     @KeyField(baseField = "id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     private Integer code;
 
     @Column(name="name")
@@ -170,7 +168,7 @@ public class Contract implements Serializable {
     }
 
     public void validateActive(){
-        if(!isActive()){
+        if(!active()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
         }
          if(!inProgress()){
@@ -178,7 +176,7 @@ public class Contract implements Serializable {
         }
     }
 
-    public boolean isActive() {
+    public boolean active() {
         return ContractSituation.ACTIVE.equals(situation);
     }
 
@@ -222,7 +220,7 @@ public class Contract implements Serializable {
                         .count() > 0;
     }
 
-    public String getHirerDocumentNumber(){
+    public String hirerDocumentNumber(){
         if(getHirer() != null){
             return  getHirer().getDocumentNumber();
         }
@@ -257,7 +255,7 @@ public class Contract implements Serializable {
     }
 
     public boolean validToEstablishment(String establishmentId){
-        return meetsEstablishmentRestrictions(establishmentId) && inProgress() && isActive();
+        return meetsEstablishmentRestrictions(establishmentId) && inProgress() && active();
     }
 
     public boolean meetsEstablishmentRestrictions(String establishmentId) {

@@ -103,6 +103,11 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         }
     }
 
+    protected String getLocationHeader(MvcResult mvcResult) {
+        mvcResult.getResponse().getHeader("Location")
+    }
+
+
     protected String getUAAManagerAccessToken() throws Exception {
         MvcResult result = uaaManagerClientCredentials()
                 .andExpect(status().isOk())

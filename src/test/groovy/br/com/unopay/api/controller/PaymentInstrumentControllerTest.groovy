@@ -99,7 +99,4 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/payment-instruments/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

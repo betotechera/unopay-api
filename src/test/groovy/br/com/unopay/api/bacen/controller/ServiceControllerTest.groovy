@@ -87,7 +87,4 @@ class ServiceControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/services/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

@@ -14,7 +14,7 @@ class BatchClosingItemTest extends FixtureApplicationTest {
 
         then:
         batchClosingItem.serviceAuthorize == serviceAuthorize
-        batchClosingItem.documentNumberInvoice == serviceAuthorize.contract.hirerDocumentNumber
+        batchClosingItem.documentNumberInvoice == serviceAuthorize.contract.hirerDocumentNumber()
     }
 
     def 'should create from service authorize with pending invoice situation'(){

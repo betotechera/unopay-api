@@ -9,6 +9,11 @@ public interface Views {
 
     interface GroupUserType {}
 
+    interface ServiceAuthorize {
+        interface Detail {}
+        interface List {}
+    }
+
     interface BatchClosing {
         interface Detail {}
         interface List {}

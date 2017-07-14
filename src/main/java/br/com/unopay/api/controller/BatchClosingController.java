@@ -51,7 +51,7 @@ public class BatchClosingController {
         this.service = service;
     }
 
-    @JsonView(Public.class)
+    @JsonView(Views.BatchClosing.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings", method = POST)

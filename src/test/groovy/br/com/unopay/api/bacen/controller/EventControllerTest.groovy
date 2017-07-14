@@ -87,7 +87,4 @@ class EventControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/events/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

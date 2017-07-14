@@ -110,9 +110,6 @@ class ContractControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/contracts/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 
     private Contract createContract() {
         Contract contract = Fixture.from(Contract.class).gimme("valid")

@@ -87,7 +87,5 @@ class BankAccountControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/bankAccounts/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
+
 }
