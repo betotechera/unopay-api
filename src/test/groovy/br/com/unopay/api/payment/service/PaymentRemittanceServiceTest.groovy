@@ -29,6 +29,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     void setup() {
        service.cnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
+        cnab240GeneratorMock.generate(_,_) >> '005;006'
     }
 
     def 'when create payment remittance should update cnab240'(){
