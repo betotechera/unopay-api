@@ -105,7 +105,7 @@ public class Establishment implements Serializable, Updatable {
     private Integer cancellationTolerance;
 
     @Column(name = "fee")
-    @JsonView({Public.class})
+    @JsonView({Public.class,List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Double fee;
 
@@ -122,7 +122,7 @@ public class Establishment implements Serializable, Updatable {
     private BrandFlag brandFlag;
 
     @Column(name = "logo_uri")
-    @JsonView({Public.class})
+    @JsonView({Public.class,List.class})
     private String logoUri;
 
     @Valid
