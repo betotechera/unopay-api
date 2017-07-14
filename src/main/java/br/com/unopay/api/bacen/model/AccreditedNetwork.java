@@ -41,7 +41,7 @@ public class AccreditedNetwork implements Serializable {
     @Id
     @GeneratedValue(generator="system-uuid")
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class,Views.List.class,Views.BatchClosing.Detail.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -56,7 +56,7 @@ public class AccreditedNetwork implements Serializable {
     @Valid
     @ManyToOne
     @JoinColumn(name="person_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Public.class,Views.List.class,Views.BatchClosing.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Person person;
 

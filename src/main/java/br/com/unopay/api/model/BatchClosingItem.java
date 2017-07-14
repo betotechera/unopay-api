@@ -44,7 +44,6 @@ public class BatchClosingItem implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -52,38 +51,38 @@ public class BatchClosingItem implements Serializable, Updatable {
     @JsonBackReference
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="batch_closing_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private BatchClosing batchClosing;
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="service_authorize_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private ServiceAuthorize serviceAuthorize;
 
     @Column(name = "document_number_invoice")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private String documentNumberInvoice;
 
     @Column(name = "invoice_number")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private String invoiceNumber;
 
     @Column(name = "invoice_document_situation")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private DocumentSituation invoiceDocumentSituation;
 
     @Column(name = "invoice_document_uri")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private String invoiceDocumentUri;
 
     @Column(name = "issue_invoice_type")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private IssueInvoiceType issueInvoiceType;
 
     @JsonIgnore

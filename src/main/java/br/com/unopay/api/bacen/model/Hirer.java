@@ -31,7 +31,6 @@ public class Hirer implements Serializable {
 
     public Hirer(){}
 
-    @JsonView({Views.Public.class,Views.List.class})
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
@@ -40,7 +39,6 @@ public class Hirer implements Serializable {
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     @JoinColumn(name="person_id")
     private Person person;
 

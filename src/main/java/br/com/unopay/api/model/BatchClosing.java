@@ -81,77 +81,77 @@ public class BatchClosing implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private Establishment establishment;
 
     @Column(name = "batch_number")
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private String number;
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private Issuer issuer;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private AccreditedNetwork accreditedNetwork;
 
     @ManyToOne
     @JoinColumn(name="hirer_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private Hirer hirer;
 
     @JoinColumn(name="issue_invoice")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private Boolean issueInvoice;
 
     @Column(name = "closing_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private Date closingDateTime;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private BigDecimal value;
 
     @Column(name = "period")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private RecurrencePeriod period;
 
     @Column(name = "payment_release_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private Date paymentReleaseDateTime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situation")
     @NotNull(groups = {Update.class})
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private BatchClosingSituation situation;
 
     @Column(name = "payment_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private Date paymentDateTime;
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "batch_closing_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BatchClosing.Detail.class})
     private List<BatchClosingItem> batchClosingItems;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="payment_id")
-    @JsonView({Views.Public.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private PaymentRemittanceItem payment;
 
     @JsonIgnore

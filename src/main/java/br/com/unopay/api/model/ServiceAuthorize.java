@@ -59,7 +59,6 @@ public class ServiceAuthorize implements Serializable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -70,6 +69,7 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "authorization_date_time")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView({Views.Public.class,Views.List.class})
     private Date authorizationDateTime;
 
     @ManyToOne
@@ -105,19 +105,23 @@ public class ServiceAuthorize implements Serializable {
     private Event event;
 
     @Column(name = "event_quantity")
+    @JsonView({Views.Public.class,Views.List.class})
     private Double eventQuantity;
 
     @Column(name = "event_value")
     @KeyField(baseField = "abastecimento.valor")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal eventValue;
 
     @Column(name = "value_fee")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal valueFee;
 
     @Column(name = "solicitation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
     @KeyDate(pattern = "dd/MM/yyyy hh:mm:ss")
     @KeyField(baseField = "abastecimento.consumo.datahora")
+    @JsonView({Views.Public.class,Views.List.class})
     private Date solicitationDateTime;
 
     @Column(name = "credit_insertion_type")
@@ -132,19 +136,24 @@ public class ServiceAuthorize implements Serializable {
     private ContractorInstrumentCredit contractorInstrumentCredit;
 
     @Column(name = "last_inst_credit_balance")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal lastInstrumentCreditBalance;
 
     @Column(name = "current_inst_credit_balance")
+    @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal currentInstrumentCreditBalance;
 
     @Column(name = "cancellation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView({Views.Public.class,Views.List.class})
     private Date cancellationDateTime;
 
     @Column(name = "transaction_log_code")
+    @JsonView({Views.Public.class,Views.List.class})
     private Integer transactionLogCode;
 
     @Column(name = "transaction_log")
+    @JsonView({Views.Public.class,Views.List.class})
     private String transactionLog;
 
     @ManyToOne
@@ -158,6 +167,7 @@ public class ServiceAuthorize implements Serializable {
     private TransactionSituation situation;
 
     @Column(name = "batch_closing_date_time")
+    @JsonView({Views.Public.class,Views.List.class})
     private Date batchClosingDateTime;
 
     @JsonIgnore
