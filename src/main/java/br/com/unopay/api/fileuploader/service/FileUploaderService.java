@@ -45,6 +45,10 @@ public class FileUploaderService extends AbstractUploadService {
     public String uploadFile(MultipartFile file, String filePath) {
         log.info("uploading file {}", filePath);
         byte[] content = getBytes(file);
+        return uploadBytes(filePath, content);
+    }
+
+    public String uploadBytes(String filePath, byte[] content) {
         try {
             FORK_JOIN_POOL.submit(() -> {
                 List<Runnable> runnable = Collections.singletonList(() -> amazonS3Service.upload(filePath, content));

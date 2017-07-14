@@ -2,17 +2,28 @@ package br.com.unopay.api.payment.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.model.BatchClosing;
+import br.com.unopay.api.payment.cnab240.Cnab240Generator;
+import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 
 @Service
 public class PaymentRemittanceService {
@@ -21,38 +32,65 @@ public class PaymentRemittanceService {
     private BatchClosingService batchClosingService;
     private PaymentRemittanceItemService paymentRemittanceItemService;
     private IssuerService issuerService;
+    @Setter private Cnab240Generator cnab240Generator;
+    @Setter private FileUploaderService fileUploaderService;
 
     @Autowired
     public PaymentRemittanceService(PaymentRemittanceRepository repository,
                                     BatchClosingService batchClosingService,
                                     PaymentRemittanceItemService paymentRemittanceItemService,
-                                    IssuerService issuerService) {
+                                    IssuerService issuerService,
+                                    Cnab240Generator cnab240Generator,
+                                    FileUploaderService fileUploaderService) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
         this.issuerService = issuerService;
-    }
-
-    public PaymentRemittance save(PaymentRemittance paymentRemittance) {
-        return repository.save(paymentRemittance);
+        this.cnab240Generator = cnab240Generator;
+        this.fileUploaderService = fileUploaderService;
     }
 
     public PaymentRemittance findById(String id) {
         return repository.findOne(id);
     }
 
+    public PaymentRemittance save(PaymentRemittance paymentRemittance) {
+        return repository.save(paymentRemittance);
+    }
+
     @Transactional
-    public void create(String issuer) {
+    public PaymentRemittance create(String issuer) {
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
         Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
-        createRemittance(currentIssuer, remittanceItems);
+        PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
+        String generate = cnab240Generator.generate(remittance, new Date());
+        uploadCnab240(generate, remittance.getNumber());
+        return remittance;
     }
 
-    private void createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
+    @SneakyThrows
+    private void uploadCnab240(String generate, String number) {
+        try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            Stream.of(generate.split(FilledRecord.SEPARATOR)).forEach(line -> write(outputStream, line));
+            fileUploaderService.uploadBytes(createName(number), outputStream.toByteArray());
+        }
+    }
+
+    private String createName(String number) {
+        return String.format("Pagamento%s%s.REM", DATE_FORMAT.format(new Date()), StringUtils.leftPad(number,6, "0"));
+    }
+
+    @SneakyThrows
+    private void write(ByteArrayOutputStream outputStream, String line) {
+        outputStream.write(line.concat("\n").getBytes());
+        outputStream.flush();
+    }
+
+    private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
         paymentRemittance.setRemittanceItems(remittanceItems);
-        save(paymentRemittance);
+        return save(paymentRemittance);
     }
 
     private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {

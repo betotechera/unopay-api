@@ -28,4 +28,11 @@ public class Bank implements Serializable {
     @Column(name = "name")
     @JsonView({Views.Public.class, Views.List.class})
     private String name;
+
+    public String getName(){
+        if(this.name.length() > 30) {
+            return name.substring(0, 30);
+        }
+        return this.name;
+    }
 }

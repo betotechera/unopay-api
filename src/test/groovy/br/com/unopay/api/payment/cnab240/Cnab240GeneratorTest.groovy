@@ -91,10 +91,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
         def bankAccount = remittance.issuer.paymentAccount.bankAccount
@@ -133,10 +133,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
         def headersAndTrailers = 4
@@ -158,10 +158,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
         def bankAccount = remittance.issuer.paymentAccount.bankAccount
@@ -203,10 +203,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
         then:
         List<FilledRecord> records = remittance.remittanceItems.withIndex().collect {
             it, index -> createSegmentA(currentDate, it, index)
@@ -219,10 +219,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
         List<FilledRecord> records = remittance.remittanceItems.withIndex().collect {
@@ -236,10 +236,10 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator(currentDate)
+        def generator = new Cnab240Generator()
 
         when:
-        String cnab240 = generator.generate(remittance)
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
         def segments = 2

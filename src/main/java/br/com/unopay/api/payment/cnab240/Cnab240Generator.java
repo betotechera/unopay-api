@@ -11,7 +11,9 @@ import br.com.unopay.api.payment.cnab240.mapped.SegmentB;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Cnab240Generator {
 
     public static final int HEADERS_POSITION = 2;
@@ -19,11 +21,8 @@ public class Cnab240Generator {
     public static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("hhmmss");
     private Date currentDate;
 
-    public Cnab240Generator(Date currentDate){
+    public String generate(PaymentRemittance remittance, Date currentDate) {
         this.currentDate = currentDate;
-    }
-
-    public String generate(PaymentRemittance remittance) {
         FilledRecord remittanceHeader = new RemittanceHeader(currentDate).create(remittance);
         WrappedRecord batch = createBatch(remittance);
         FilledRecord remittanceTrailer = new RemittanceTrailer().create(remittance);

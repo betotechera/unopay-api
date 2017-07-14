@@ -6,8 +6,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
+import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.model.PaymentRemittance
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,6 +22,42 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    Cnab240Generator cnab240GeneratorMock = Mock(Cnab240Generator)
+    FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
+
+    void setup() {
+       service.cnab240Generator = cnab240GeneratorMock
+        service.fileUploaderService = uploaderServiceMock
+    }
+
+    def 'when create payment remittance should update cnab240'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("issuer",issuer)
+        }})
+
+        when:
+        service.create(issuer.id)
+
+        then:
+        1 * uploaderServiceMock.uploadBytes(!null,!null)
+    }
+
+    def 'when create payment remittance should generate cnab240 String'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("issuer",issuer)
+        }})
+
+        when:
+        service.create(issuer.id)
+
+        then:
+        1 * cnab240GeneratorMock.generate(!null,!null) >> '005;006'
+    }
 
     def 'payment remittance should be created'(){
         given:

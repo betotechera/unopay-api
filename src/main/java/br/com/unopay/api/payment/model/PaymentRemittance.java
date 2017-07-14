@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -29,7 +28,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -53,7 +51,7 @@ public class PaymentRemittance implements Serializable {
         this.paymentServiceType = PaymentServiceType.SUPPLIER_PAYMENT;
         this.createdDateTime = new Date();
         this.transferOption = PaymentTransferOption.DOC_TED;
-        this.number = generateBatchNumber(total);
+        this.number = String.valueOf(total + 1);
     }
 
     @Id
@@ -129,13 +127,6 @@ public class PaymentRemittance implements Serializable {
     @JsonIgnore
     @Version
     private Integer version;
-
-    @SneakyThrows
-    private String generateBatchNumber(Long total) {
-        String remittance = String.valueOf(situation.ordinal()) + String.valueOf(total) +
-                String.valueOf(this.createdDateTime.getTime());
-        return remittance.substring(0, Math.min(remittance.length(), 12));
-    }
 
     public void defineTransferOption(Bank bank) {
         if(Objects.equals(bank.getBacenCode(), this.getIssuerBankCode())){
