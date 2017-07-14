@@ -83,7 +83,7 @@ public class ContractorInstrumentCreditService {
     }
 
     private void validateCreditPaymentAccount(ContractorInstrumentCredit instrumentCredit, Contract contract) {
-        if(isCreditPaymentAccountFromAnotherHirer(contract.getHirerDocumentNumber(), instrumentCredit)){
+        if(isCreditPaymentAccountFromAnotherHirer(contract.hirerDocumentNumber(), instrumentCredit)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER);
         }
         if(!contract.isProductCodeEquals(instrumentCredit.getCreditPaymentAccountProductCode())){

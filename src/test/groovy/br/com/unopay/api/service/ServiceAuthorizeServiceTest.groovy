@@ -178,6 +178,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         result.lastInstrumentCreditBalance == instrumentCreditUnderTest.availableBalance
     }
 
+
     void 'given a event value less than credit balance should archive current credit balance'(){
         given:
 

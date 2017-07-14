@@ -124,7 +124,4 @@ class ProductControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/products/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

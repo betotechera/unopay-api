@@ -107,7 +107,4 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/issuers/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }

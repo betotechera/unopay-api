@@ -141,7 +141,7 @@ class FixtureCreator {
         PaymentInstrument paymentInstrument = createInstrumentToProduct(contract.product, contract.contractor)
         CreditPaymentAccount paymentAccount = Fixture.from(CreditPaymentAccount.class)
                 .uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("hirerDocument", contract.hirerDocumentNumber)
+            add("hirerDocument", contract.hirerDocumentNumber())
             add("product", contract.product)
         }})
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class)

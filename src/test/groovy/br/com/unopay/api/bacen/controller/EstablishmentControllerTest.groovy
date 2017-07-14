@@ -120,7 +120,4 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         location.replaceAll('/establishments/', "")
     }
 
-    private String getLocationHeader(MvcResult mvcResult) {
-        mvcResult.getResponse().getHeader("Location")
-    }
 }
