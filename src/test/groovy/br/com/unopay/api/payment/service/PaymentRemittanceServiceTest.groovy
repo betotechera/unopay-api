@@ -27,7 +27,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
 
     void setup() {
-       service.cnab240Generator = cnab240GeneratorMock
+        service.cnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
         cnab240GeneratorMock.generate(_,_) >> '005;006'
     }

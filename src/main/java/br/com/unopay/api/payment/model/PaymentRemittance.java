@@ -29,7 +29,10 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 
 
 @Data
@@ -144,5 +147,22 @@ public class PaymentRemittance implements Serializable {
                     .orElse(BigDecimal.ZERO);
         }
         return BigDecimal.ZERO;
+    }
+
+    public String getFileUri() {
+        String toFormat = "remittance/%s/Pagamento%s%s.REM";
+        return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
+    }
+
+    private String createTimeFormatted() {
+        return DATE_FORMAT.format(createdDateTime);
+    }
+
+    private String numberAsString() {
+        return StringUtils.leftPad(number,6, "0");
+    }
+
+    private String documentNumber(){
+        return this.issuer.getPerson().getDocument().getNumber();
     }
 }

@@ -19,11 +19,8 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 
 @Service
 public class PaymentRemittanceService {
@@ -65,20 +62,16 @@ public class PaymentRemittanceService {
         Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         String generate = cnab240Generator.generate(remittance, new Date());
-        uploadCnab240(generate, remittance.getNumber());
+        uploadCnab240(generate, remittance.getFileUri());
         return remittance;
     }
 
     @SneakyThrows
-    private void uploadCnab240(String generate, String number) {
+    private void uploadCnab240(String generate, String fileUri) {
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Stream.of(generate.split(FilledRecord.SEPARATOR)).forEach(line -> write(outputStream, line));
-            fileUploaderService.uploadBytes(createName(number), outputStream.toByteArray());
+            fileUploaderService.uploadBytes(fileUri, outputStream.toByteArray());
         }
-    }
-
-    private String createName(String number) {
-        return String.format("Pagamento%s%s.REM", DATE_FORMAT.format(new Date()), StringUtils.leftPad(number,6, "0"));
     }
 
     @SneakyThrows
