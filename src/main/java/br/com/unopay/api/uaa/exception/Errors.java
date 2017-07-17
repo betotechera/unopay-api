@@ -476,6 +476,11 @@ public final class Errors {
     public static final UnovationError PROCESSING_REMITTANCE_ITEM_NOT_FOUND =
             new UnovationError("PROCESSING_REMITTANCE_ITEM_NOT_FOUND", "Processing remittance item not found");
 
+    /* Remittance */
+    public static final UnovationError REMITTANCE_ALREADY_RUNNING =
+            new UnovationError("REMITTANCE_ALREADY_RUNNING", "Remittance already running.");
+
+
 
 
 

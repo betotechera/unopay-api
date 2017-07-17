@@ -12,6 +12,7 @@ import br.com.unopay.api.payment.model.PaymentTransferOption;
 import br.com.unopay.api.payment.model.RemittanceSituation;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +27,10 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.payment.model.RemittanceSituation.*;
+import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
+import static br.com.unopay.bootcommons.exception.UnovationExceptions.*;
 
 @Service
 public class PaymentRemittanceService {
@@ -62,6 +67,7 @@ public class PaymentRemittanceService {
 
     @Transactional
     public void create(String issuer) {
+        checkRunning(issuer);
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
         Set<BatchClosing> sameIssuerBank = filter(batchByEstablishment, batch ->
@@ -70,6 +76,11 @@ public class PaymentRemittanceService {
                                               batch -> !batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
         createRemittanceByBank(currentIssuer, sameIssuerBank);
         createRemittanceByBank(currentIssuer, withOthersBanks);
+    }
+
+    private void checkRunning(String issuer) {
+        Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
+        current.ifPresent(remittance ->{ throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING); });
     }
 
     private void createRemittanceByBank(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
@@ -84,10 +95,10 @@ public class PaymentRemittanceService {
 
     private void updateSituation(Set<PaymentRemittanceItem> remittanceItems, PaymentRemittance remittance) {
         remittanceItems.forEach(paymentRemittanceItem ->  {
-            paymentRemittanceItem.setSituation(RemittanceSituation.REMITTANCE_FILE_GENERATED);
+            paymentRemittanceItem.setSituation(REMITTANCE_FILE_GENERATED);
             paymentRemittanceItemService.save(paymentRemittanceItem);
         });
-        remittance.setSituation(RemittanceSituation.REMITTANCE_FILE_GENERATED);
+        remittance.setSituation(REMITTANCE_FILE_GENERATED);
         save(remittance);
     }
 

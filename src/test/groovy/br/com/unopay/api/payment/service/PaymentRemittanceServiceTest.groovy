@@ -14,6 +14,7 @@ import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentTransferOption
 import br.com.unopay.api.payment.model.RemittanceSituation
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
@@ -35,7 +36,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         cnab240GeneratorMock.generate(_,_) >> '005;006'
     }
 
-    def 'a created remittance should have remittance_file_generated situation'(){
+    def 'a created remittance should have remittance file generated situation'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
@@ -60,6 +61,54 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         that result, hasSize(1)
         result.find().situation == RemittanceSituation.REMITTANCE_FILE_GENERATED
         result.every { it.situation == RemittanceSituation.REMITTANCE_FILE_GENERATED }
+    }
+
+    def 'when try create remittance when has running should return error'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        from(PaymentRemittance.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("situation", RemittanceSituation.PROCESSING)
+            add("issuer", issuer)
+        }})
+
+        when:
+        service.create(issuer.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'REMITTANCE_ALREADY_RUNNING'
+    }
+
+    def 'should ever create a new remittance when execute'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("bank.bacenCode", issuerBanK)
+        }})
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("bankAccount", bankAccount)
+        }})
+        from(BatchClosing.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("situation", BatchClosingSituation.FINALIZED)
+            add("issuer", issuer)
+            add("establishment", establishment)
+            add("paymentReleaseDateTime", instant("1 day ago"))
+        }})
+        service.create(issuer.id)
+
+        when:
+        from(BatchClosing.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("situation", BatchClosingSituation.FINALIZED)
+            add("issuer", issuer)
+            add("establishment", establishment)
+            add("paymentReleaseDateTime", instant("1 day ago"))
+        }})
+        service.create(issuer.id)
+        def result = service.findByIssuer(issuer.id)
+
+        then:
+        that result, hasSize(2)
     }
 
     def 'when create a remittance to the same bank should be current account credit transfer option'(){
