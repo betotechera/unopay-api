@@ -271,8 +271,10 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         then:
         that all, hasSize(1)
         that all.find().remittanceItems, hasSize(2)
-        all.find().remittanceItems.find { batchClosingA.establishmentId() == it.establishment.id }.value == batchClosingA.value
-        all.find().remittanceItems.find { batchClosingB.establishmentId() == it.establishment.id }.value == batchClosingB.value
+        all.find().remittanceItems.find {
+            batchClosingA.establishmentId() == it.establishment.id }.value == batchClosingA.value
+        all.find().remittanceItems.find {
+            batchClosingB.establishmentId() == it.establishment.id }.value == batchClosingB.value
     }
 
     def 'remittance item value should be a sum of batch closing value of establishment'(){
