@@ -19,11 +19,13 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
 
     def 'payment remittance item should be created'(){
         given:
-        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor)
+                                                                                            .gimme("valid", new Rule(){{
             add("issuer", fixtureCreator.createIssuer())
         }})
 
-        PaymentRemittanceItem paymentRemittanceItem = Fixture.from(PaymentRemittanceItem.class).gimme("valid", new Rule(){{
+        PaymentRemittanceItem paymentRemittanceItem = Fixture.from(PaymentRemittanceItem.class)
+                                                                                            .gimme("valid", new Rule(){{
             add("paymentRemittance", paymentRemittance)
             add("establishment", fixtureCreator.createEstablishment())
         }})
@@ -38,11 +40,13 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
 
     def 'given a payment remittance item with processing situation should be found'(){
         given:
-        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor)
+                                                                                            .gimme("valid", new Rule(){{
             add("issuer", fixtureCreator.createIssuer())
         }})
         def establishment = fixtureCreator.createEstablishment()
-        PaymentRemittanceItem item = Fixture.from(PaymentRemittanceItem.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        PaymentRemittanceItem item = Fixture.from(PaymentRemittanceItem.class).uses(jpaProcessor)
+                                                                                            .gimme("valid", new Rule() {
             {
                 add("paymentRemittance", paymentRemittance)
                 add("establishment", establishment)
