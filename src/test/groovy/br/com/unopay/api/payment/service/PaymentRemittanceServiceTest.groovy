@@ -40,18 +40,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
-        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bank.bacenCode", issuerBanK)
-        }})
-        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bankAccount", bankAccount)
-        }})
-        from(BatchClosing.class).uses(jpaProcessor).gimme(3, "valid", new Rule(){{
-            add("situation", BatchClosingSituation.FINALIZED)
-            add("issuer", issuer)
-            add("establishment", establishment)
-            add("paymentReleaseDateTime", instant("1 day ago"))
-        }})
+        createBatchForBank(issuerBanK, issuer)
 
         when:
         service.create(issuer.id)
@@ -83,27 +72,11 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
-        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bank.bacenCode", issuerBanK)
-        }})
-        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bankAccount", bankAccount)
-        }})
-        from(BatchClosing.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("situation", BatchClosingSituation.FINALIZED)
-            add("issuer", issuer)
-            add("establishment", establishment)
-            add("paymentReleaseDateTime", instant("1 day ago"))
-        }})
+        createBatchForBank(issuerBanK, issuer)
         service.create(issuer.id)
 
         when:
-        from(BatchClosing.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("situation", BatchClosingSituation.FINALIZED)
-            add("issuer", issuer)
-            add("establishment", establishment)
-            add("paymentReleaseDateTime", instant("1 day ago"))
-        }})
+        createBatchForBank(issuerBanK, issuer)
         service.create(issuer.id)
         def result = service.findByIssuer(issuer.id)
 
@@ -115,18 +88,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
-        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bank.bacenCode", issuerBanK)
-        }})
-        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bankAccount", bankAccount)
-        }})
-        from(BatchClosing.class).uses(jpaProcessor).gimme(3, "valid", new Rule(){{
-            add("situation", BatchClosingSituation.FINALIZED)
-            add("issuer", issuer)
-            add("establishment", establishment)
-            add("paymentReleaseDateTime", instant("1 day ago"))
-        }})
+        createBatchForBank(issuerBanK, issuer)
 
         when:
         service.create(issuer.id)
@@ -140,18 +102,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when create a remittance to the other bank should be doc/ted transfer option'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bank.bacenCode", 473)
-        }})
-        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("bankAccount", bankAccount)
-        }})
-        from(BatchClosing.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("situation", BatchClosingSituation.FINALIZED)
-            add("issuer", issuer)
-            add("establishment", establishment)
-            add("paymentReleaseDateTime", instant("1 day ago"))
-        }})
+        createBatchForBank(473, issuer)
 
         when:
         service.create(issuer.id)
@@ -356,5 +307,26 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             }
         })
         issuer
+    }
+
+    private void createBatchForBank(issuerBanK, issuer) {
+        BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("bank.bacenCode", issuerBanK)
+            }
+        })
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("bankAccount", bankAccount)
+            }
+        })
+        from(BatchClosing.class).uses(jpaProcessor).gimme(3, "valid", new Rule() {
+            {
+                add("situation", BatchClosingSituation.FINALIZED)
+                add("issuer", issuer)
+                add("establishment", establishment)
+                add("paymentReleaseDateTime", instant("1 day ago"))
+            }
+        })
     }
 }
