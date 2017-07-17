@@ -5,22 +5,11 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
-import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EXPIRED_CREDIT;
-import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
-import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
-import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import static java.math.BigDecimal.ZERO;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -38,9 +27,20 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
+import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EXPIRED_CREDIT;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
+import static java.math.BigDecimal.ZERO;
 
 
 @Data

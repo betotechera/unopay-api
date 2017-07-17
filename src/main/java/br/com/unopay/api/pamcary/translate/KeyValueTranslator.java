@@ -1,7 +1,6 @@
 package br.com.unopay.api.pamcary.translate;
 
 import br.com.unopay.api.pamcary.transactional.FieldTO;
-import static br.com.unopay.api.uaa.exception.Errors.BASE_KEY_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,6 +19,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import static br.com.unopay.api.uaa.exception.Errors.BASE_KEY_REQUIRED;
 
 @Slf4j
 @Component

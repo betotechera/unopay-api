@@ -12,6 +12,8 @@ public class PaymentRemittanceItemService {
 
     private PaymentRemittanceItemRepository repository;
 
+    public PaymentRemittanceItemService(){}
+
     @Autowired
     public PaymentRemittanceItemService(PaymentRemittanceItemRepository repository) {
         this.repository = repository;

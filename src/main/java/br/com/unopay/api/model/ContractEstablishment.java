@@ -1,7 +1,6 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Establishment;
-import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +24,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
 
 @Data
 @Entity

@@ -6,9 +6,6 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_UPDATE_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -29,6 +26,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_UPDATE_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THEN_AVAILABLE_BALANCE;
 
 @Data
 @Entity

@@ -1,15 +1,6 @@
 package br.com.unopay.api.uaa.service;
 
 import br.com.unopay.api.uaa.exception.Errors;
-import static br.com.unopay.api.uaa.exception.Errors.GROUP_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.GROUP_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.GROUP_WITH_MEMBERS;
-import static br.com.unopay.api.uaa.exception.Errors.KNOWN_AUTHORITIES_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.KNOWN_GROUP_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.KNOWN_MEMBERS_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.UNKNOWN_GROUP_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.Authority;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -34,6 +25,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.GROUP_WITH_MEMBERS;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_AUTHORITIES_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_GROUP_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.KNOWN_MEMBERS_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.UNKNOWN_GROUP_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.USER_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
 
 @Service
 public class GroupService {

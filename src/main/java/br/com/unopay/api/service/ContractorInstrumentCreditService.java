@@ -6,17 +6,9 @@ import br.com.unopay.api.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.CreditPaymentAccount;
 import br.com.unopay.api.model.CreditSituation;
-import static br.com.unopay.api.model.CreditSituation.PROCESSING;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
-import static br.com.unopay.api.uaa.exception.Errors.FINAL_SUPPLY_CREDIT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_VALID;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
@@ -28,6 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.model.CreditSituation.PROCESSING;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
+import static br.com.unopay.api.uaa.exception.Errors.FINAL_SUPPLY_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_VALID;
 
 @Service
 public class ContractorInstrumentCreditService {

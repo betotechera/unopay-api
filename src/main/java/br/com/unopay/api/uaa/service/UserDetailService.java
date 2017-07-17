@@ -6,9 +6,6 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
-import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
@@ -40,6 +37,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 
 @Service
 @Timed

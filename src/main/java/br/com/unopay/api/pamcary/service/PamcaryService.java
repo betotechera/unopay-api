@@ -8,7 +8,6 @@ import br.com.unopay.api.pamcary.transactional.RequestTO;
 import br.com.unopay.api.pamcary.transactional.WSTransacional;
 import br.com.unopay.api.pamcary.transactional.WSTransacionalService;
 import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
-import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 import java.util.List;
 import java.util.Objects;
 import javax.net.ssl.SSLSocketFactory;
@@ -18,6 +17,8 @@ import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 
 @Slf4j
 @Service

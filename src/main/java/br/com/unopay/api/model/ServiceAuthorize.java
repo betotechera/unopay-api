@@ -11,11 +11,6 @@ import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyDate;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.KeyFieldReference;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,6 +38,12 @@ import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 
 @Slf4j
 @Data

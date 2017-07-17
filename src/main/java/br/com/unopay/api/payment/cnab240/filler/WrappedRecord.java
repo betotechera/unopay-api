@@ -1,10 +1,11 @@
 package br.com.unopay.api.payment.cnab240.filler;
 
-import static br.com.unopay.api.uaa.exception.Errors.HEADER_REQUIRED_ON_WRAPPED_RECORD;
-import static br.com.unopay.api.uaa.exception.Errors.TRAILER_REQUIRED_ON_WRAPPED_RECORD;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.ArrayList;
 import java.util.List;
+
+import static br.com.unopay.api.uaa.exception.Errors.HEADER_REQUIRED_ON_WRAPPED_RECORD;
+import static br.com.unopay.api.uaa.exception.Errors.TRAILER_REQUIRED_ON_WRAPPED_RECORD;
 
 public class WrappedRecord implements RemittanceRecord {
 

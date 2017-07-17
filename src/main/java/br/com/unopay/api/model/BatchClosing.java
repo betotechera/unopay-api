@@ -9,22 +9,18 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
-import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
-
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
-import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
-import org.joda.time.DateTime;
-
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,12 +35,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
+
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
+import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 
 @Data
 @Entity

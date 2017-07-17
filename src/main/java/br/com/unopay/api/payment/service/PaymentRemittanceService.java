@@ -9,10 +9,8 @@ import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.model.PaymentTransferOption;
-import br.com.unopay.api.payment.model.RemittanceSituation;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Date;
@@ -28,9 +26,10 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.payment.model.RemittanceSituation.*;
+import static br.com.unopay.api.payment.model.RemittanceSituation.PROCESSING;
+import static br.com.unopay.api.payment.model.RemittanceSituation.REMITTANCE_FILE_GENERATED;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
-import static br.com.unopay.bootcommons.exception.UnovationExceptions.*;
+import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessableEntity;
 
 @Service
 public class PaymentRemittanceService {
@@ -41,6 +40,8 @@ public class PaymentRemittanceService {
     private IssuerService issuerService;
     @Setter private Cnab240Generator cnab240Generator;
     @Setter private FileUploaderService fileUploaderService;
+
+    public PaymentRemittanceService(){}
 
     @Autowired
     public PaymentRemittanceService(PaymentRemittanceRepository repository,
@@ -74,8 +75,8 @@ public class PaymentRemittanceService {
                                                         batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
         Set<BatchClosing> withOthersBanks = filter(batchByEstablishment,
                                               batch -> !batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
-        createRemittanceByBank(currentIssuer, sameIssuerBank);
-        createRemittanceByBank(currentIssuer, withOthersBanks);
+        createRemittanceAndItems(currentIssuer, sameIssuerBank);
+        createRemittanceAndItems(currentIssuer, withOthersBanks);
     }
 
     private void checkRunning(String issuer) {
@@ -83,7 +84,7 @@ public class PaymentRemittanceService {
         current.ifPresent(remittance ->{ throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING); });
     }
 
-    private void createRemittanceByBank(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
+    private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
         if(!batchByEstablishment.isEmpty()) {
             Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
             PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);

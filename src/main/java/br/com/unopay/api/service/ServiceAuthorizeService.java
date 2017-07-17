@@ -6,29 +6,22 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.config.Queues;
-import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_ACCEPTED;
-import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
-import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
-
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
+import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 
 @Slf4j
 @Service

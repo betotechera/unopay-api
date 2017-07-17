@@ -1,12 +1,13 @@
 package br.com.unopay.api.uaa.infra;
 
 import br.com.unopay.api.infra.CacheService;
-import static br.com.unopay.api.uaa.exception.Errors.TOKEN_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.TOKEN_NOT_FOUND;
 
 @Service
 public class PasswordTokenService {

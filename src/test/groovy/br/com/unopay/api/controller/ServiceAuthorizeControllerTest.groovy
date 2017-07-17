@@ -1,18 +1,16 @@
 package br.com.unopay.api.controller
 
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.service.ServiceAuthorizeService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {

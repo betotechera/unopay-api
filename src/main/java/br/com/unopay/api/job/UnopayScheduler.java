@@ -3,14 +3,15 @@ package br.com.unopay.api.job;
 import java.util.Date;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
-import static org.quartz.TriggerBuilder.newTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 @Slf4j
 @Component

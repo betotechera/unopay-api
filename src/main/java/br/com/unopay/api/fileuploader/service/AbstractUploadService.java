@@ -1,9 +1,10 @@
 package br.com.unopay.api.fileuploader.service;
 
 import br.com.unopay.api.fileuploader.util.Slug;
-import static java.util.Locale.ENGLISH;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Locale.ENGLISH;
 
 public abstract class AbstractUploadService {
     private static final Pattern IMAGE_EXTENSION_PATTERN = Pattern

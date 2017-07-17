@@ -3,11 +3,6 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.ACCOUNT_NUMBER_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.AGENCY_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.TYPE_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -26,6 +21,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.ACCOUNT_NUMBER_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.AGENCY_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_CODE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.TYPE_REQUIRED;
 
 @Data
 @Entity

@@ -5,7 +5,6 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
-import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -16,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 
 @Service
 @Slf4j

@@ -2,12 +2,13 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.repository.CargoContractRepository;
-import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.CARGO_CONTRACT_NOT_FOUND;
 
 @Service
 public class CargoContractService {

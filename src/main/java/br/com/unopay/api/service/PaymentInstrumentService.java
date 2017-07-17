@@ -1,12 +1,9 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.service.ContractorService;
-import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_INSTRUMENTS;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.PaymentInstrumentRepository;
-import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
@@ -19,6 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_INSTRUMENTS;
+import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 
 @Service
 @Slf4j

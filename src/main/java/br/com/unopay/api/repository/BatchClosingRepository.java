@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import lombok.Data;
 
 public interface BatchClosingRepository extends UnovationFilterRepository<BatchClosing,String, BatchClosingFilter> {
 

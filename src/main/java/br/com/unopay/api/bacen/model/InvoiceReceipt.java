@@ -7,10 +7,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Embeddable

@@ -10,10 +10,6 @@ import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
@@ -27,6 +23,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 
 @Slf4j
 @Service

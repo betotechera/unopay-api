@@ -1,11 +1,9 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
-import br.com.unopay.api.job.BatchClosingJob;
 import br.com.unopay.api.job.RemittanceJob;
 import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.Person;

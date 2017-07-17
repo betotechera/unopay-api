@@ -1,8 +1,6 @@
 package br.com.unopay.api.model;
 
 
-import static br.com.unopay.api.model.CargoProfile.DRY_CARGO;
-import static br.com.unopay.api.model.CargoProfile.IN_BULK;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -10,8 +8,6 @@ import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.pamcary.translate.KeyFieldListReference;
-import static br.com.unopay.api.uaa.exception.Errors.DAMAGED_ITEMS_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.WEIGHT_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -22,7 +18,6 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import static javax.persistence.EnumType.STRING;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,6 +31,12 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.model.CargoProfile.DRY_CARGO;
+import static br.com.unopay.api.model.CargoProfile.IN_BULK;
+import static br.com.unopay.api.uaa.exception.Errors.DAMAGED_ITEMS_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.WEIGHT_REQUIRED;
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
