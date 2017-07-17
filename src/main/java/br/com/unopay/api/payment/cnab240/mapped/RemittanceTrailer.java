@@ -17,6 +17,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.TIPO
 public class RemittanceTrailer {
 
     public static final int HEADERS_AND_TRAILERS = 4;
+    public static final int SEGMENTS = 2;
 
     public FilledRecord create(final PaymentRemittance remittance) {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
@@ -26,7 +27,7 @@ public class RemittanceTrailer {
             defaultFill(TIPO_REGISTRO);
             defaultFill(INICIO_FEBRABAN);
             fill(QUANTIDADE_LOTES,"1");
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() + HEADERS_AND_TRAILERS);
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS);
             defaultFill(QUANTIDADE_CONTAS);
             defaultFill(FIM_FEBRABAN);
         }};

@@ -139,6 +139,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
+        def segments = 2
         def headersAndTrailers = 4
         def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(remittanceTrailer) {{
@@ -147,7 +148,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
             fill(QUANTIDADE_LOTES,"1")
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() + headersAndTrailers)
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + headersAndTrailers)
             defaultFill(QUANTIDADE_CONTAS)
             defaultFill(FIM_FEBRABAN)
         }}
