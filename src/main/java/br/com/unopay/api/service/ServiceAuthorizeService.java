@@ -76,7 +76,7 @@ public class ServiceAuthorizeService {
 
     @Transactional
     public ServiceAuthorize create(String userEmail, ServiceAuthorize authorize) {
-        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        UserDetail currentUser = getUserByEmail(userEmail);
         checkContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(authorize);
@@ -89,6 +89,10 @@ public class ServiceAuthorizeService {
         ServiceAuthorize authorized = repository.save(authorize);
         notifySupplyWhenRequired(authorize, authorized);
         return authorized;
+    }
+
+    private UserDetail getUserByEmail(String userEmail) {
+        return userDetailService.getByEmail(userEmail);
     }
 
     private void notifySupplyWhenRequired(ServiceAuthorize serviceAuthorize, ServiceAuthorize authorized) {
@@ -203,4 +207,20 @@ public class ServiceAuthorizeService {
     public Page<ServiceAuthorize> findByFilter(ServiceAuthorizeFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter,new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
+
+    public Page<ServiceAuthorize> findMyByFilter(String userEmail, ServiceAuthorizeFilter filter, UnovationPageRequest pageable) {
+        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
+    }
+    private ServiceAuthorizeFilter buildFilterBy(ServiceAuthorizeFilter filter, UserDetail currentUser) {
+        if(currentUser.isEstablishmentType())
+            filter.setEstablishment(currentUser.establishmentId());
+        if(currentUser.isContractorType())
+            filter.setContractor(currentUser.contractorId());
+        if(currentUser.isAccreditedNetworkType())
+            filter.setNetwork(currentUser.accreditedNetworkId());
+        if(currentUser.isHirerType())
+            filter.setHirer(currentUser.hirerId());
+        return filter;
+    }
+
 }
