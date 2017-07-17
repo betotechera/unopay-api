@@ -4,3 +4,6 @@ spring:
       username: administrator
       password: thUHegu4wU5r
       driverClassName: oracle.jdbc.OracleDriver
+unopay:
+  resetPassword:
+        url: 'http://roadcard.qa.unovation.com.br/#/page/password/'
