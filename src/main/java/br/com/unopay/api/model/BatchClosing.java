@@ -226,4 +226,12 @@ public class BatchClosing implements Serializable {
     public String establishmentId() {
         return establishment != null ? establishment.getId() : null;
     }
+
+    public boolean establishmentBankCodeIs(Integer bacenCode){
+        return Objects.equals(this.getEstablishment().getBankAccount().getBacenCode(), bacenCode);
+    }
+
+    public Integer establishmentBankCode(){
+        return this.getEstablishment().getBankAccount().getBacenCode();
+    }
 }

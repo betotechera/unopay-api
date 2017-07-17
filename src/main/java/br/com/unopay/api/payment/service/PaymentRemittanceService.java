@@ -8,12 +8,17 @@ import br.com.unopay.api.payment.cnab240.Cnab240Generator;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.PaymentTransferOption;
+import br.com.unopay.api.payment.model.RemittanceSituation;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
@@ -56,14 +61,34 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    public PaymentRemittance create(String issuer) {
+    public void create(String issuer) {
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
-        Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
-        PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
-        String generate = cnab240Generator.generate(remittance, new Date());
-        uploadCnab240(generate, remittance.getFileUri());
-        return remittance;
+        Set<BatchClosing> sameIssuerBank = filter(batchByEstablishment, batch ->
+                                                        batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
+        Set<BatchClosing> withOthersBanks = filter(batchByEstablishment,
+                                              batch -> !batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
+        createRemittanceByBank(currentIssuer, sameIssuerBank);
+        createRemittanceByBank(currentIssuer, withOthersBanks);
+    }
+
+    private void createRemittanceByBank(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
+        if(!batchByEstablishment.isEmpty()) {
+            Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
+            PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
+            String generate = cnab240Generator.generate(remittance, new Date());
+            uploadCnab240(generate, remittance.getFileUri());
+            updateSituation(remittanceItems, remittance);
+        }
+    }
+
+    private void updateSituation(Set<PaymentRemittanceItem> remittanceItems, PaymentRemittance remittance) {
+        remittanceItems.forEach(paymentRemittanceItem ->  {
+            paymentRemittanceItem.setSituation(RemittanceSituation.REMITTANCE_FILE_GENERATED);
+            paymentRemittanceItemService.save(paymentRemittanceItem);
+        });
+        remittance.setSituation(RemittanceSituation.REMITTANCE_FILE_GENERATED);
+        save(remittance);
     }
 
     @SneakyThrows
@@ -82,6 +107,10 @@ public class PaymentRemittanceService {
 
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
+        Integer bank = remittanceItems.stream().map(PaymentRemittanceItem::getEstablishmentBankCode).findFirst().get();
+        if(Objects.equals(bank, currentIssuer.paymentBankCode())){
+            paymentRemittance.setTransferOption(PaymentTransferOption.CURRENT_ACCOUNT_CREDIT);
+        }
         paymentRemittance.setRemittanceItems(remittanceItems);
         return save(paymentRemittance);
     }
@@ -105,5 +134,11 @@ public class PaymentRemittanceService {
     private PaymentRemittanceItem getCurrentItem(String id,BatchClosing batchClosing){
         Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(id);
         return current.orElse(new PaymentRemittanceItem(batchClosing));
+    }
+
+    private <T> Set<T> filter(Collection<T> collection, Predicate<T> consumer) {
+        return collection.stream()
+                .filter(consumer)
+                .collect(Collectors.toSet());
     }
 }

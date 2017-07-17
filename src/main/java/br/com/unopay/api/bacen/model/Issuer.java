@@ -126,6 +126,10 @@ public class Issuer implements Serializable{
         return  null;
     }
 
+    public Integer paymentBankCode(){
+        return  this.paymentAccount.getBankAccount().getBacenCode();
+    }
+
     @JsonIgnore
     public List<String> getPaymentRuleGroupIds() {
         return paymentRuleGroups.stream().map(PaymentRuleGroup::getId).collect(Collectors.toList());

@@ -196,8 +196,8 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
-            add("bacenCode", uniqueRandom(341, 1, 33));
-            add("name", uniqueRandom("Itau", "Bradesco", "BB"));
+            add("bacenCode", uniqueRandom(341, 318, 33));
+            add("name", uniqueRandom("Itau", "BMG", "SANTANDER"));
         }});
 
         Fixture.of(BrandFlag.class).addTemplate("persisted", new Rule(){{
