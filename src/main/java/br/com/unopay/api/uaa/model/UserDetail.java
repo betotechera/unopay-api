@@ -248,4 +248,12 @@ public class UserDetail implements Serializable {
         return isHirerType() ? hirer.getId() : null;
     }
 
+    @JsonIgnore
+    public boolean isContractorType() {
+        return contractor != null;
+    }
+
+    public String contractorId() {
+        return isContractorType() ? contractor.getId() : null;
+    }
 }

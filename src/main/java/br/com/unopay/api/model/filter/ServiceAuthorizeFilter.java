@@ -13,6 +13,18 @@ public class ServiceAuthorizeFilter implements Serializable {
 
     ServiceAuthorizeFilter(){}
 
+    @SearchableField(field = "establishment.id")
+    private String establishment;
+
+    @SearchableField(field = "establishment.network.id")
+    private String network;
+
+    @SearchableField(field = "contractor.id")
+    private String contractor;
+
+    @SearchableField(field = "contract.hirer.id")
+    private String hirer;
+
     @SearchableField(field = "authorizationDateTime")
     private Period authorizationDateTime;
 
