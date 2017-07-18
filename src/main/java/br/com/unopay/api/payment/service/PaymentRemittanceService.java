@@ -117,12 +117,16 @@ public class PaymentRemittanceService {
 
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
-        Integer bank = remittanceItems.stream().map(PaymentRemittanceItem::getEstablishmentBankCode).findFirst().get();
+        Integer bank = getAnyEstablishmentBankCode(remittanceItems);
         if(currentIssuer.bankCodeIs(bank)){
             paymentRemittance.defineCurrentAccountTransferOption();
         }
         paymentRemittance.setRemittanceItems(remittanceItems);
         return save(paymentRemittance);
+    }
+
+    private Integer getAnyEstablishmentBankCode(Set<PaymentRemittanceItem> remittanceItems) {
+        return remittanceItems.stream().map(PaymentRemittanceItem::getEstablishmentBankCode).findFirst().orElse(null);
     }
 
     private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {

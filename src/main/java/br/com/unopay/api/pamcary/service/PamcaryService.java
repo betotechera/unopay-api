@@ -10,6 +10,7 @@ import br.com.unopay.api.pamcary.transactional.WSTransacionalService;
 import br.com.unopay.api.pamcary.translate.KeyValueTranslator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -122,7 +123,8 @@ public class PamcaryService {
     }
 
     private String getMessageDescription(List<FieldTO> result) {
-        return result.stream().filter(this::isMessageDescription).findFirst().get().getValue();
+        Optional<FieldTO> fieldTO = result.stream().filter(this::isMessageDescription).findFirst();
+        return fieldTO.map(FieldTO::getValue).orElse(null);
     }
 
     private boolean isMessageKey(FieldTO field) {
