@@ -31,7 +31,7 @@ public class RecordColumn {
     }
 
     public Integer getPosition() {
-        return this.rule.getPosition();
+        return this.rule.getField();
     }
 
     private void validateRule(RecordColumnRule rule) {

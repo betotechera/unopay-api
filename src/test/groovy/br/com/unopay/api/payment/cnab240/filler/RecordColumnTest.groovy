@@ -7,7 +7,7 @@ class RecordColumnTest extends Specification{
 
     def 'given a column without value should return value with default pad left'(){
         given:
-        def column = new RecordColumn(new RecordColumnRule(1, 5, ColumnType.ALPHA))
+        def column = new RecordColumn(new RecordColumnRule(1,1,1, 5, ColumnType.ALPHA))
 
         when:
         def value = column.getValue()
@@ -18,7 +18,7 @@ class RecordColumnTest extends Specification{
 
     def 'given a column without value and with pad left should return value with defined pad left'(){
         given:
-        def column = new RecordColumn(new RecordColumnRule(1, 5,columnType))
+        def column = new RecordColumn(new RecordColumnRule(1,1,1, 5,columnType))
 
         when:
         def value = column.getValue()
@@ -34,7 +34,7 @@ class RecordColumnTest extends Specification{
 
     def 'when define value greater than length should return error'(){
         when:
-        new RecordColumn(new RecordColumnRule(1, 2, ColumnType.NUMBER), "123")
+        new RecordColumn(new RecordColumnRule(1,1,1, 2, ColumnType.NUMBER), "123")
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -53,7 +53,7 @@ class RecordColumnTest extends Specification{
 
     def 'given a column without value should fill with default left pad value'(){
         given:
-        def column = new RecordColumn(new RecordColumnRule(1, 2, ColumnType.ALPHA), null)
+        def column = new RecordColumn(new RecordColumnRule(1,1,1, 2, ColumnType.ALPHA), null)
         when:
         def value = column.getValue()
 
@@ -65,7 +65,7 @@ class RecordColumnTest extends Specification{
     def 'given a rule with default value should fill with this'(){
         given:
         def defaultValue = "1234"
-        def column = new RecordColumn(new RecordColumnRule(1, 4, defaultValue, ColumnType.NUMBER))
+        def column = new RecordColumn(new RecordColumnRule(1,1,1, 4, defaultValue, ColumnType.NUMBER))
 
         when:
         def value = column.getValue()
