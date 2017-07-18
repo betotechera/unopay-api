@@ -120,8 +120,8 @@ public class PaymentRemittanceService {
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
         Integer bank = remittanceItems.stream().map(PaymentRemittanceItem::getEstablishmentBankCode).findFirst().get();
-        if(Objects.equals(bank, currentIssuer.paymentBankCode())){
-            paymentRemittance.setTransferOption(PaymentTransferOption.CURRENT_ACCOUNT_CREDIT);
+        if(currentIssuer.bankCodeIs(bank)){
+            paymentRemittance.defineCurrentAccountTransferOption();
         }
         paymentRemittance.setRemittanceItems(remittanceItems);
         return save(paymentRemittance);

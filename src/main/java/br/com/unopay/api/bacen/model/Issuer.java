@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -125,6 +126,10 @@ public class Issuer implements Serializable{
             return getPaymentAccount().getId();
         }
         return  null;
+    }
+
+    public boolean bankCodeIs(Integer code){
+        return Objects.equals(code, paymentBankCode());
     }
 
     public Integer paymentBankCode(){

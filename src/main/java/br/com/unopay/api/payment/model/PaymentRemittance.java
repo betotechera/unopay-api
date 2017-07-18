@@ -154,6 +154,10 @@ public class PaymentRemittance implements Serializable {
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
     }
 
+    public void defineCurrentAccountTransferOption(){
+        setTransferOption(PaymentTransferOption.CURRENT_ACCOUNT_CREDIT);
+    }
+
     private String createTimeFormatted() {
         return DATE_FORMAT.format(createdDateTime);
     }
