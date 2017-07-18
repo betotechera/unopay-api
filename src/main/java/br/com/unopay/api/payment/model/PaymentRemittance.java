@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -159,7 +160,7 @@ public class PaymentRemittance implements Serializable {
     }
 
     private String createTimeFormatted() {
-        return DATE_FORMAT.format(createdDateTime);
+        return new SimpleDateFormat(DATE_FORMAT).format(createdDateTime);
     }
 
     private String numberAsString() {

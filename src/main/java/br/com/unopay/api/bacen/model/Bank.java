@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "bacenCode")
 @Table(name = "bank")
 public class Bank implements Serializable {
 

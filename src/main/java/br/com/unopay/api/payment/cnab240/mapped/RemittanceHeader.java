@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
@@ -62,8 +63,8 @@ public class RemittanceHeader {
             fill(NOME_BANCO, bankAccount.getBank().getName());
             defaultFill(MEIO_FEBRABAN);
             defaultFill(CODIGO_REMESSA);
-            fill(DATA_GERACAO_ARQUIVO, DATE_FORMAT.format(currentDate));
-            fill(HORA_GERACAO_ARQUIVO, HOUR_FORMAT.format(currentDate));
+            fill(DATA_GERACAO_ARQUIVO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
+            fill(HORA_GERACAO_ARQUIVO, new SimpleDateFormat(HOUR_FORMAT).format(currentDate));
             fill(SEQUENCIAL_ARQUIVO, remittance.getNumber());
             defaultFill(LAYOUT_ARQUIVO);
             defaultFill(DENSIDADE_GRAVACAO);

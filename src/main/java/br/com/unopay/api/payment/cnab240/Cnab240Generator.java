@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 public class Cnab240Generator {
 
     public static final int HEADERS_POSITION = 2;
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
-    public static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("hhmmss");
+    public static final String DATE_FORMAT = "ddMMyyyy";
+    public static final String HOUR_FORMAT = "hhmmss";
     private Date currentDate;
 
     public String generate(PaymentRemittance remittance, Date currentDate) {

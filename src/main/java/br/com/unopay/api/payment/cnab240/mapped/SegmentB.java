@@ -5,6 +5,7 @@ import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
@@ -64,7 +65,7 @@ public class SegmentB {
             fill(CEP, address.firstZipCode());
             fill(COMPLEMENTO_CEP, address.lastZipeCode());
             fill(ESTADO, address.getState().name());
-            fill(DATA_VENCIMENTO, DATE_FORMAT.format(currentDate));
+            fill(DATA_VENCIMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
             fill(VALOR_DOCUMENTO, remittanceItem.getValue().toString());
             defaultFill(VALOR_ABATIMENTO);
             defaultFill(VALOR_DESCONTO);

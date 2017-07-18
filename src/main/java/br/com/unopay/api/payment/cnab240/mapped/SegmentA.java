@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
@@ -68,7 +69,7 @@ public class SegmentA {
             fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit());
             fill(NOME_FAVORECIDO, person.getName());
             fill(DOCUMENTO_EMPRESA, person.getDocument().getNumber());
-            fill(DATA_PAGAMENTO, DATE_FORMAT.format(currentDate));
+            fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
             defaultFill(TIPO_MOEDA);
             fill(QUANTIDADE_MOEDA, remittanceItem.getValue().toString());
             fill(VALOR_PAGAMENTO, remittanceItem.getValue().toString());
