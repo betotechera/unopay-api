@@ -34,9 +34,4 @@ public class FilledRecord implements RemittanceRecord {
                 .sorted(Comparator.comparing(RecordColumn::getPosition))
                 .map(RecordColumn::getValue).collect(Collectors.joining());
     }
-
-    public Object extract(String ruleKey, String cnab240) {
-        RecordColumnRule rule = layout.get(ruleKey);
-        return cnab240.substring(rule.getBegin() -1,rule.getEnd());
-    }
 }

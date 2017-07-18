@@ -141,7 +141,7 @@ public class RemittanceLayout {
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "3", ColumnType.NUMBER));
         put(NUMERO_REGISTRO, new RecordColumnRule(4,9,13,5, ColumnType.NUMBER));
         put(SEGMENTO, new RecordColumnRule(5,14,14,1, "A", ColumnType.ALPHA));
-        put(TIPO_MOVIMENTO, new RecordColumnRule(6,15,15,2, "0", ColumnType.NUMBER));
+        put(TIPO_MOVIMENTO, new RecordColumnRule(6,15,15,1, "0", ColumnType.NUMBER));
         put(INSTITUICAO_MOVIMENTO, new RecordColumnRule(7,16,17,2,"23", ColumnType.NUMBER));
         put(CAMARA_CENTRALIZADORA, new RecordColumnRule(8,18,20,3, "18", ColumnType.NUMBER));
         put(BANCO_FAVORECIDO, new RecordColumnRule(9,21,23,3, ColumnType.NUMBER));

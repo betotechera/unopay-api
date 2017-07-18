@@ -58,6 +58,48 @@ class WrappedRecordTest extends FixtureApplicationTest {
         remittance.split(SEPARATOR).find() == expected
     }
 
+    def 'should replace unaccepted number characters in number column'(){
+        when:
+        def forFill = chars
+        String remittance = new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
+            fill(BANCO_COMPENSACAO, forFill)
+            defaultFill(LOTE_SERVICO)
+            defaultFill(TIPO_REGISTRO)
+            defaultFill(INICIO_FEBRABAN)
+        }}).createTrailer(new FilledRecord(remittanceTrailer)).build()
+
+        then:
+        def expected = "05500000         "
+        remittance.split(SEPARATOR).find() == expected
+
+        where:
+        chars|_
+        "5.5"|_
+        "5/5"|_
+        "5-5"|_
+    }
+
+    def 'should not replace unaccepted number characters in alpha column'(){
+        when:
+        def forFill = chars
+        String remittance = new WrappedRecord().createHeader(new FilledRecord(remittanceHeader) {{
+            fill(BANCO_COMPENSACAO, "55")
+            defaultFill(LOTE_SERVICO)
+            defaultFill(TIPO_REGISTRO)
+            fill(INICIO_FEBRABAN, forFill)
+        }}).createTrailer(new FilledRecord(remittanceTrailer)).build()
+
+        then:
+        def expected = "05500000      ${forFill}"
+        remittance.split(SEPARATOR).find() == expected
+
+        where:
+        chars|_
+        "5.5"|_
+        "5/5"|_
+        "5-5"|_
+    }
+
     def 'should fill file trailer'(){
         when:
         String remittance = new WrappedRecord().createTrailer(new FilledRecord(remittanceTrailer) {{
