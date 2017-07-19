@@ -470,6 +470,8 @@ public final class Errors {
             new UnovationError("TRAILER_REQUIRED_ON_WRAPPED_RECORD", "Trailer required on wrapped record.");
     public static final UnovationError RULE_COLUMN_REQUIRED =
             new UnovationError("RULE_COLUMN_REQUIRED", "Rule column required when fill cnab240 field.");
+    public static final UnovationError LAYOUT_COLUMN_NOT_FILLED =
+            new UnovationError("LAYOUT_COLUMN_NOT_FILLED", "Layout column not filled.");
 
 
     /* Service Payment */
@@ -479,6 +481,8 @@ public final class Errors {
     /* Remittance */
     public static final UnovationError REMITTANCE_ALREADY_RUNNING =
             new UnovationError("REMITTANCE_ALREADY_RUNNING", "Remittance already running.");
+
+
 
 
 

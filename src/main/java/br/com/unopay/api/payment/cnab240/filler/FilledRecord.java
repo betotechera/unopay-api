@@ -1,10 +1,14 @@
 package br.com.unopay.api.payment.cnab240.filler;
 
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static br.com.unopay.api.uaa.exception.Errors.LAYOUT_COLUMN_NOT_FILLED;
 
 public class FilledRecord implements RemittanceRecord {
 
@@ -30,8 +34,20 @@ public class FilledRecord implements RemittanceRecord {
     }
 
     public String build() {
+        checkAllFieldsFilled();
         return columns.stream()
-                .sorted(Comparator.comparing(RecordColumn::getPosition))
+                .sorted(Comparator.comparing(RecordColumn::getField))
                 .map(RecordColumn::getValue).collect(Collectors.joining());
+    }
+
+    private void checkAllFieldsFilled() {
+        Set<Integer> fields = columns.stream().map(RecordColumn::getField).collect(Collectors.toSet());
+        Set<String> unfilledKeys = layout.entrySet().stream()
+                .filter(entry -> !fields.contains(entry.getValue().getField()))
+                .map(Map.Entry::getKey).collect(Collectors.toSet());
+        if(!unfilledKeys.isEmpty()){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(LAYOUT_COLUMN_NOT_FILLED.withArguments(unfilledKeys));
+        }
     }
 }

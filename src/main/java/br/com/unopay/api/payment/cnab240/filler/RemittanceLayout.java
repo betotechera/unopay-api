@@ -113,7 +113,7 @@ public class RemittanceLayout {
         put(TIPO_SERVICO, new RecordColumnRule(5,10,11,2, "20", ColumnType.NUMBER));
         put(FORMA_LANCAMENTO, new RecordColumnRule(6,12,13,2, ColumnType.NUMBER));
         put(LAYOUT_ARQUIVO, new RecordColumnRule(7,14,16,3, "040", ColumnType.NUMBER));
-        put(INICIO_FEBRABAN, new RecordColumnRule(8,17,17,9, ColumnType.ALPHA));
+        put(INICIO_FEBRABAN, new RecordColumnRule(8,17,17,1, ColumnType.ALPHA));
         put(TIPO_INSCRICAO, new RecordColumnRule(9,18,18,1, "2", ColumnType.NUMBER));
         put(NUMERO_INSCRICAO_EMPRESA, new RecordColumnRule(10,19,32,14, ColumnType.NUMBER));
         put(CONVEIO_BANCO, new RecordColumnRule(11,33,52,20, ColumnType.ALPHA));

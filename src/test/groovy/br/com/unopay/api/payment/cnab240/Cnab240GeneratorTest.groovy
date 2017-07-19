@@ -246,6 +246,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         def segments = 2
         def myPosition = 1
         def headers = 2
+        def HEADERS_AND_TRAILERS = 4
         def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(batchTrailer) {{
             fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
@@ -255,6 +256,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             fill(SOMATORIA_VALORES,remittance.total().toString())
             fill(QUANTIDADE_MOEDAS, remittance.total().toString())
             defaultFill(NUMERO_AVISO_DEBITO)
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS);
             defaultFill(FIM_FEBRABAN)
             defaultFill(OCORRENCIAS)
         }}
