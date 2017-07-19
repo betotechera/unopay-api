@@ -37,13 +37,13 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.TIPO
 
 public class BatchHeader {
 
-    public FilledRecord create(final PaymentRemittance remittance) {
+    public FilledRecord create(final PaymentRemittance remittance, Integer position) {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();
         Address address = person.getAddress();
         return new FilledRecord(getBatchHeader()) {{
             defaultFill(BANCO_COMPENSACAO);
-            defaultFill(LOTE_SERVICO);
+            fill(LOTE_SERVICO, position);
             defaultFill(TIPO_REGISTRO);
             fill(TIPO_OPERACAO, remittance.getOperationType().getCode());
             fill(TIPO_SERVICO, remittance.getPaymentServiceType().getCode());

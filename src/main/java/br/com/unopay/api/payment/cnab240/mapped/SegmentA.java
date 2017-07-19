@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -71,11 +72,11 @@ public class SegmentA {
             fill(DOCUMENTO_EMPRESA, person.getDocument().getNumber());
             fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
             defaultFill(TIPO_MOEDA);
-            fill(QUANTIDADE_MOEDA, remittanceItem.getValue().toString());
-            fill(VALOR_PAGAMENTO, remittanceItem.getValue().toString());
+            defaultFill(QUANTIDADE_MOEDA);
+            fill(VALOR_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue()));
             defaultFill(DOCUMENTO_ATRIBUIDO_BANCO);
             defaultFill(DATA_REAL_PAGAMENTO);
-            fill(VALOR_REAL_PAGAMENTO, remittanceItem.getValue().toString());
+            fill(VALOR_REAL_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue()));
             defaultFill(INFORMACAO);
             defaultFill(FINALIDADE_DOC);
             defaultFill(FINALIDADE_TED);

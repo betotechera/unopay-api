@@ -9,41 +9,42 @@ import br.com.unopay.api.payment.cnab240.mapped.RemittanceTrailer;
 import br.com.unopay.api.payment.cnab240.mapped.SegmentA;
 import br.com.unopay.api.payment.cnab240.mapped.SegmentB;
 import br.com.unopay.api.payment.model.PaymentRemittance;
-import java.text.SimpleDateFormat;
+import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Cnab240Generator {
 
-    public static final int HEADERS_POSITION = 2;
     public static final String DATE_FORMAT = "ddMMyyyy";
     public static final String HOUR_FORMAT = "hhmmss";
+    public static final int BATCH_LINES = 4;
     private Date currentDate;
 
     public String generate(PaymentRemittance remittance, Date currentDate) {
         this.currentDate = currentDate;
         FilledRecord remittanceHeader = new RemittanceHeader(currentDate).create(remittance);
-        WrappedRecord batch = createBatch(remittance);
+        WrappedRecord records = new WrappedRecord().createHeader(remittanceHeader);
+        addBatches(remittance, records);
         FilledRecord remittanceTrailer = new RemittanceTrailer().create(remittance);
-        return new WrappedRecord()
-                .createHeader(remittanceHeader)
-                .addRecord(batch)
+        return records
                 .createTrailer(remittanceTrailer)
                 .build();
     }
 
-    private WrappedRecord createBatch(PaymentRemittance remittance) {
-        FilledRecord batchHeader = new BatchHeader().create(remittance);
-        WrappedRecord remittanceRecords = new WrappedRecord().createHeader(batchHeader);
-        int[] currentPosition = {HEADERS_POSITION};
-        remittance.getRemittanceItems().forEach(paymentRemittanceItem ->  {
-            currentPosition[0]++;
-            remittanceRecords
-                    .addRecord(new SegmentA(currentDate).create(paymentRemittanceItem, currentPosition[0]))
-                    .addRecord(new SegmentB(currentDate).create(paymentRemittanceItem, currentPosition[0]));
-
+    private void addBatches(PaymentRemittance remittance, WrappedRecord records) {
+        int[] currentPosition = {1};
+        remittance.getRemittanceItems().forEach(paymentRemittanceItem -> {
+            records.addRecord(createBatch(remittance, paymentRemittanceItem, currentPosition[0]));
+            currentPosition[0]+= BATCH_LINES;
         });
-        return remittanceRecords.createTrailer(new BatchTrailer().create(remittance));
+    }
+
+    private WrappedRecord createBatch(PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
+        FilledRecord batchHeader = new BatchHeader().create(remittance, position++);
+        return new WrappedRecord().createHeader(batchHeader)
+                    .addRecord(new SegmentA(currentDate).create(item, position++))
+                    .addRecord(new SegmentB(currentDate).create(item, position++))
+                    .createTrailer(new BatchTrailer().create(remittance, position));
     }
 }

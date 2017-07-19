@@ -9,6 +9,7 @@ import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
@@ -202,7 +203,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableValue == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableValue == Rounder.round(creditB.value)
 
         where:
         insertionType                      | _
@@ -241,7 +242,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.availableValue == creditC.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.availableValue == Rounder.round(creditC.value)
     }
 
     void 'when insert credits with direct debit, block balance should be updated'(){
@@ -257,7 +258,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.blockedValue == creditB.value.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.blockedValue == Rounder.round(creditB.value)
     }
 
     @Unroll

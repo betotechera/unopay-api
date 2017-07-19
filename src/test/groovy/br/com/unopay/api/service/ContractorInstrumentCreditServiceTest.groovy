@@ -11,6 +11,7 @@ import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.model.CreditPaymentAccount
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -79,7 +80,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         creditPaymentAccountService
                 .findById(instrumentCredit.creditPaymentAccount.id)
-                .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
+                .availableBalance == Rounder.round(expectedPaymentAccountBalance)
     }
 
     def 'when insert instrument credit then balance should be equals value'(){
@@ -478,7 +479,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         creditPaymentAccountService
                            .findById(instrumentCredit.creditPaymentAccount.id)
-                            .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
+                            .availableBalance == Rounder.round(expectedPaymentAccountBalance)
     }
 
     def 'when cancel instrument credit already canceled should return error'(){
@@ -523,7 +524,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         creditPaymentAccountService
                 .findById(instrumentCredit.creditPaymentAccount.id)
-                .availableBalance == expectedPaymentAccountBalance.setScale(2, RoundingMode.HALF_UP)
+                .availableBalance == Rounder.round(expectedPaymentAccountBalance)
     }
 
     def 'given a unknown contract should not be canceled'(){

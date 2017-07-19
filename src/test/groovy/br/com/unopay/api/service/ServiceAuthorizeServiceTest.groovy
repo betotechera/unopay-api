@@ -20,6 +20,7 @@ import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -121,7 +122,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.valueFee == eventUnderTest.service.feeVal.setScale(2, BigDecimal.ROUND_HALF_UP)
+        result.valueFee == Rounder.round(eventUnderTest.service.feeVal)
     }
 
     void 'when new service authorize created should generate authorization number'(){

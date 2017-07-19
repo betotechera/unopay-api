@@ -1,10 +1,10 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,12 +46,11 @@ public class SegmentB {
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
         Person person = remittanceItem.getEstablishment().getPerson();
         Address address = person.getAddress();
-        int myPosition = 1;
         return new FilledRecord(getBatchSegmentB()) {{
             defaultFill(BANCO_COMPENSACAO);
-            fill(LOTE_SERVICO, position + myPosition);
+            fill(LOTE_SERVICO, position);
             defaultFill(TIPO_REGISTRO);
-            fill(NUMERO_REGISTRO, position + myPosition);
+            fill(NUMERO_REGISTRO, position);
             defaultFill(SEGMENTO);
             defaultFill(INICIO_FEBRABAN);
             defaultFill(TIPO_INSCRICAO_FAVORECIDO);
@@ -65,7 +64,7 @@ public class SegmentB {
             fill(COMPLEMENTO_CEP, address.lastZipeCode());
             fill(ESTADO, address.getState().name());
             fill(DATA_VENCIMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
-            fill(VALOR_DOCUMENTO, remittanceItem.getValue().toString());
+            fill(VALOR_DOCUMENTO, Rounder.roundToString(remittanceItem.getValue()));
             defaultFill(VALOR_ABATIMENTO);
             defaultFill(VALOR_DESCONTO);
             defaultFill(VALOR_MORA);

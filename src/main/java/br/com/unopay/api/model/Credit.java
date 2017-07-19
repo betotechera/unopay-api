@@ -6,6 +6,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -190,16 +191,16 @@ public class Credit implements Serializable, Updatable {
 
     public BigDecimal getAvailableValue(){
         if(availableValue != null) {
-            return availableValue.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return Rounder.round(availableValue);
         }
-        return BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return Rounder.zero();
     }
 
     public BigDecimal getBlockedValue(){
         if(blockedValue != null) {
-            return blockedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return Rounder.round(blockedValue);
         }
-        return BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return Rounder.zero();
     }
 
     public void defineCreditNumber(Long lastCreditNumber) {

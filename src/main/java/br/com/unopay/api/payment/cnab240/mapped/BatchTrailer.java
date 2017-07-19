@@ -1,8 +1,8 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.util.Rounder;
 
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchTrailer;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
@@ -20,17 +20,14 @@ import static br.com.unopay.api.payment.cnab240.mapped.RemittanceTrailer.SEGMENT
 
 public class BatchTrailer {
 
-    public FilledRecord create(final PaymentRemittance remittance) {
-        int segments = 2;
-        int myPosition = 1;
-        int headers = 2;
+    public FilledRecord create(final PaymentRemittance remittance, Integer position) {
         return new FilledRecord(getBatchTrailer()) {{
             defaultFill(BANCO_COMPENSACAO);
-            fill(LOTE_SERVICO, remittance.getRemittanceItems().size() * segments + headers + myPosition);
+            fill(LOTE_SERVICO, position);
             defaultFill(TIPO_REGISTRO);
             defaultFill(INICIO_FEBRABAN);
-            fill(SOMATORIA_VALORES,remittance.total().toString());
-            fill(QUANTIDADE_MOEDAS, remittance.total().toString());
+            fill(SOMATORIA_VALORES, Rounder.roundToString(remittance.total()));
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total()));
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS);
             defaultFill(NUMERO_AVISO_DEBITO);
             defaultFill(FIM_FEBRABAN);

@@ -84,6 +84,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentRemittanceItem
+import br.com.unopay.api.util.Rounder
 
 class Cnab240GeneratorTest extends FixtureApplicationTest{
 
@@ -208,11 +209,14 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         when:
         String cnab240 = generator.generate(remittance, currentDate)
         then:
-        List<FilledRecord> records = remittance.remittanceItems.withIndex().collect {
-            it, index -> createSegmentA(currentDate, it, index)
+        int index = 0
+        List<FilledRecord> records = remittance.remittanceItems.collect {
+            def segmentA = createSegmentA(currentDate, it, index)
+            index+=4
+            segmentA
         }
         cnab240.split(SEPARATOR)[2] == records.find().build()
-        cnab240.split(SEPARATOR)[4] == records.last().build()
+        cnab240.split(SEPARATOR)[6] == records.last().build()
     }
 
     def 'should create segment B'(){
@@ -225,11 +229,14 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        List<FilledRecord> records = remittance.remittanceItems.withIndex().collect {
-            it, index -> createSegmentB(currentDate, it, index)
+        int index = 0
+        List<FilledRecord> records = remittance.remittanceItems.collect {
+            def segmentB = createSegmentB(currentDate, it, index)
+            index=+4
+            segmentB
         }
         cnab240.split(SEPARATOR)[3] == records.first().build()
-        cnab240.split(SEPARATOR)[5] == records.last().build()
+        cnab240.split(SEPARATOR)[7] == records.last().build()
     }
 
     def 'should create batch trailer'(){
@@ -243,27 +250,25 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
         then:
         def segments = 2
-        def myPosition = 1
-        def headers = 2
         def HEADERS_AND_TRAILERS = 4
         def record = new FilledRecord(batchTrailer) {{
             defaultFill(BANCO_COMPENSACAO)
-            fill(LOTE_SERVICO, remittance.remittanceItems.size() * segments + headers + myPosition)
+            fill(LOTE_SERVICO, "8")
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(SOMATORIA_VALORES,remittance.total().toString())
-            fill(QUANTIDADE_MOEDAS, remittance.total().toString())
+            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.total()))
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total()))
             defaultFill(NUMERO_AVISO_DEBITO)
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS);
             defaultFill(FIM_FEBRABAN)
             defaultFill(OCORRENCIAS)
         }}
-        cnab240.split(SEPARATOR)[6] == record.build()
+        cnab240.split(SEPARATOR)[8] == record.build()
     }
 
 
     private FilledRecord createSegmentA(Date currentDate, PaymentRemittanceItem item, Integer index) {
-        def headers = 3
+        def headers = 2
         def establishment = item.establishment
         def bankAccount = establishment.bankAccount
         def person = establishment.person
@@ -287,11 +292,11 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 fill(DOCUMENTO_EMPRESA, person.document.number)
                 fill(DATA_PAGAMENTO, currentDate.format("ddMMyyyy"))
                 defaultFill(TIPO_MOEDA)
-                fill(QUANTIDADE_MOEDA, item.getValue().toString())
-                fill(VALOR_PAGAMENTO, item.getValue().toString())
+                defaultFill(QUANTIDADE_MOEDA)
+                fill(VALOR_PAGAMENTO, Rounder.roundToString(item.getValue()))
                 defaultFill(DOCUMENTO_ATRIBUIDO_BANCO)
                 defaultFill(DATA_REAL_PAGAMENTO)
-                fill(VALOR_REAL_PAGAMENTO, item.getValue().toString())
+                fill(VALOR_REAL_PAGAMENTO, Rounder.roundToString(item.getValue()))
                 defaultFill(INFORMACAO)
                 defaultFill(FINALIDADE_DOC)
                 defaultFill(FINALIDADE_TED)
@@ -303,7 +308,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
     }
 
     private FilledRecord createSegmentB(Date currentDate, PaymentRemittanceItem item, Integer index) {
-        def latest = 4
+        def latest = 3
         def establishment = item.establishment
         def address = establishment.person.address
         def person = establishment.person
@@ -326,7 +331,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 fill(COMPLEMENTO_CEP, address.lastZipeCode())
                 fill(ESTADO, address.getState().name())
                 fill(DATA_VENCIMENTO, currentDate.format("ddMMyyyy"))
-                fill(VALOR_DOCUMENTO, item.getValue().toString())
+                fill(VALOR_DOCUMENTO, Rounder.roundToString(item.getValue()))
                 defaultFill(VALOR_ABATIMENTO)
                 defaultFill(VALOR_DESCONTO)
                 defaultFill(VALOR_MORA)

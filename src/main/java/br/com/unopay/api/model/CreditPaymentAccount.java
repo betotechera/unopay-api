@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -181,9 +182,9 @@ public class CreditPaymentAccount implements Serializable, Updatable {
 
     public BigDecimal getAvailableBalance(){
         if(availableBalance != null) {
-            return availableBalance.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return Rounder.round(availableBalance);
         }
-        return  BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return  Rounder.zero();
     }
 
     public void updateMyBalance(Credit credit) {
