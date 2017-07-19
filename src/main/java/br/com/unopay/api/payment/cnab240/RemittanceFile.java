@@ -3,12 +3,18 @@ package br.com.unopay.api.payment.cnab240;
 import br.com.unopay.api.payment.cnab240.filler.RecordColumnRule;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentB;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR;
 import static br.com.unopay.api.uaa.exception.Errors.RULE_COLUMN_REQUIRED;
 
 public class RemittanceFile {
 
+    public static final int ADJUSTMENT = 1;
     private Map<String, RecordColumnRule> layout;
     private String cnab240;
 
@@ -17,18 +23,30 @@ public class RemittanceFile {
         this.cnab240 = cnab240;
     }
 
-    public Object extract(String ruleKey, Integer lineNumber) {
-        RecordColumnRule rule = getValidRule(ruleKey);
-        int adjustment = 1;
-        String line = cnab240.split(SEPARATOR)[lineNumber - adjustment];
-        return line.substring(rule.getBegin() - adjustment,rule.getEnd());
+    public String extract(String ruleKey, Integer lineNumber) {
+        RecordColumnRule rule = getValidRule(this.layout,ruleKey);
+        return extractOnLine(cnab240.split(SEPARATOR)[lineNumber - ADJUSTMENT], rule);
     }
 
-    private RecordColumnRule getValidRule(String ruleKey) {
+    public String extractOnLine(String line, RecordColumnRule rule) {
+        return line.substring(rule.getBegin() - ADJUSTMENT,rule.getEnd());
+    }
+
+    private RecordColumnRule getValidRule(Map<String, RecordColumnRule> layout, String ruleKey) {
         RecordColumnRule rule = layout.get(ruleKey);
         if(rule == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(RULE_COLUMN_REQUIRED);
         }
         return rule;
+    }
+
+    public String findSegmentLine(String ruleKey, String value) {
+        RecordColumnRule rule =getValidRule(getBatchSegmentB(),ruleKey);
+        Optional<String> found = Stream.of(cnab240.split(SEPARATOR)).filter(s -> Objects.equals(extractOnLine(s, rule), leftPad(value, rule))).findFirst();
+        return found.orElse(null);
+    }
+
+    private String leftPad(String value, RecordColumnRule rule) {
+        return StringUtils.leftPad(value,rule.getLength(), rule.getColumnType().getLeftPad());
     }
 }

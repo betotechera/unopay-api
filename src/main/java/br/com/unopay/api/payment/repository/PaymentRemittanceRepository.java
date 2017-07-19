@@ -11,4 +11,5 @@ public interface PaymentRemittanceRepository
                             extends UnovationFilterRepository<PaymentRemittance,String, PaymentRemittanceFilter> {
     Set<PaymentRemittance> findByIssuerId(String issuerId);
     Optional<PaymentRemittance> findByIssuerIdAndSituation(String issuerId, RemittanceSituation situation);
+    Optional<PaymentRemittance> findByNumber(String number);
 }
