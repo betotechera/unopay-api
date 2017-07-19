@@ -1,5 +1,7 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.job.BatchClosingJob;
+import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
 import br.com.unopay.api.model.BatchClosingSituation;
@@ -46,17 +48,20 @@ public class BatchClosingService {
     private UserDetailService userDetailService;
     @Setter private NotificationService notificationService;
 
+    private UnopayScheduler scheduler;
+
     @Autowired
     public BatchClosingService(BatchClosingRepository repository,
                                ServiceAuthorizeService authorizeService,
                                BatchClosingItemService batchClosingItemService,
                                UserDetailService userDetailService,
-                               NotificationService notificationService) {
+                               NotificationService notificationService, UnopayScheduler scheduler) {
         this.repository = repository;
         this.authorizeService = authorizeService;
         this.batchClosingItemService = batchClosingItemService;
         this.userDetailService = userDetailService;
         this.notificationService = notificationService;
+        this.scheduler = scheduler;
     }
 
     public BatchClosing save(BatchClosing batchClosing) {
@@ -71,6 +76,10 @@ public class BatchClosingService {
     @Transactional
     public void create(String establishmentId){
         create(establishmentId, today());
+    }
+
+    public void scheduleBatchClosing(BatchClosing batchClosing){
+        scheduler.schedule(batchClosing.establishmentId(),batchClosing.getClosingDateTime(), BatchClosingJob.class);
     }
 
     @Transactional
