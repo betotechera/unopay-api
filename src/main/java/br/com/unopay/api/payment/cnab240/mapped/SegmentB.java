@@ -44,12 +44,11 @@ public class SegmentB {
     }
 
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
-        BankAccount bankAccount = remittanceItem.getEstablishment().getBankAccount();
         Person person = remittanceItem.getEstablishment().getPerson();
         Address address = person.getAddress();
         int myPosition = 1;
         return new FilledRecord(getBatchSegmentB()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             fill(LOTE_SERVICO, position + myPosition);
             defaultFill(TIPO_REGISTRO);
             fill(NUMERO_REGISTRO, position + myPosition);

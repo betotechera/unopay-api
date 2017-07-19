@@ -42,7 +42,7 @@ public class BatchHeader {
         Person person = remittance.getIssuer().getPerson();
         Address address = person.getAddress();
         return new FilledRecord(getBatchHeader()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             defaultFill(LOTE_SERVICO);
             defaultFill(TIPO_REGISTRO);
             fill(TIPO_OPERACAO, remittance.getOperationType().getCode());

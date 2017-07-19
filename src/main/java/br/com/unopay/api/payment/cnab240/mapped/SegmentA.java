@@ -53,7 +53,7 @@ public class SegmentA {
         BankAccount bankAccount = establishment.getBankAccount();
         Person person = establishment.getPerson();
         return new FilledRecord(getBatchSegmentA()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             fill(LOTE_SERVICO, position);
             defaultFill(TIPO_REGISTRO);
             fill(NUMERO_REGISTRO, position);

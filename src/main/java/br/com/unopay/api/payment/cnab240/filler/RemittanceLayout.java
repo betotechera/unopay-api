@@ -79,7 +79,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALO
 public class RemittanceLayout {
 
     private static final Map<String, RecordColumnRule> remittanceHeader = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, "0000", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "0", ColumnType.NUMBER));
         put(INICIO_FEBRABAN, new RecordColumnRule(4,9,17,9, ColumnType.ALPHA));
@@ -106,7 +106,7 @@ public class RemittanceLayout {
     }};
 
     private static final Map<String, RecordColumnRule> batchHeader = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, "0001", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "1", ColumnType.NUMBER));
         put(TIPO_OPERACAO, new RecordColumnRule(4,9,9,1, "C", ColumnType.ALPHA));
@@ -136,7 +136,7 @@ public class RemittanceLayout {
     }};
 
     private static final Map<String, RecordColumnRule> batchSegmentA = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, "0002", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "3", ColumnType.NUMBER));
         put(NUMERO_REGISTRO, new RecordColumnRule(4,9,13,5, ColumnType.NUMBER));
@@ -168,7 +168,7 @@ public class RemittanceLayout {
     }};
 
     private static final Map<String, RecordColumnRule> batchSegmentB = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, "0003", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "3", ColumnType.NUMBER));
         put(NUMERO_REGISTRO, new RecordColumnRule(4,9,13,5, ColumnType.NUMBER));
@@ -195,7 +195,7 @@ public class RemittanceLayout {
     }};
 
     private static final Map<String, RecordColumnRule> batchTrailer = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "5", ColumnType.NUMBER));
         put(INICIO_FEBRABAN, new RecordColumnRule(4,9,17,9, ColumnType.ALPHA));
@@ -208,7 +208,7 @@ public class RemittanceLayout {
     }};
 
     private static final HashMap<String, RecordColumnRule> remittanceTrailer = new HashMap<String, RecordColumnRule>(){{
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2,4,7,4, "9999", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3,8,8,1, "9", ColumnType.NUMBER));
         put(INICIO_FEBRABAN, new RecordColumnRule(4,9,17,9, ColumnType.ALPHA));

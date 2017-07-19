@@ -20,9 +20,8 @@ public class RemittanceTrailer {
     public static final int SEGMENTS = 2;
 
     public FilledRecord create(final PaymentRemittance remittance) {
-        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         return new FilledRecord(getRemittanceTrailer()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             defaultFill(LOTE_SERVICO);
             defaultFill(TIPO_REGISTRO);
             defaultFill(INICIO_FEBRABAN);

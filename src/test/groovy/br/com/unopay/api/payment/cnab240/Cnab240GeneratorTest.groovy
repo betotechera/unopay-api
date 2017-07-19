@@ -100,7 +100,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def person = remittance.issuer.person
         def record = new FilledRecord(remittanceHeader) {{
-                fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+                defaultFill(BANCO_COMPENSACAO)
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
@@ -141,9 +141,8 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         then:
         def segments = 2
         def headersAndTrailers = 4
-        def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(remittanceTrailer) {{
-            fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+            defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
@@ -169,7 +168,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         def address = remittance.issuer.person.address
         def person = remittance.issuer.person
         def record = new FilledRecord(batchHeader) {{
-            fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+            defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
             defaultFill(TIPO_REGISTRO)
             fill(TIPO_OPERACAO, remittance.operationType.code)
@@ -247,9 +246,8 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         def myPosition = 1
         def headers = 2
         def HEADERS_AND_TRAILERS = 4
-        def bankAccount = remittance.issuer.paymentAccount.bankAccount
         def record = new FilledRecord(batchTrailer) {{
-            fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+            defaultFill(BANCO_COMPENSACAO)
             fill(LOTE_SERVICO, remittance.remittanceItems.size() * segments + headers + myPosition)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
@@ -271,7 +269,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         def person = establishment.person
         new FilledRecord(batchSegmentA) {
             {
-                fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+                defaultFill(BANCO_COMPENSACAO)
                 fill(LOTE_SERVICO, index + headers)
                 defaultFill(TIPO_REGISTRO)
                 fill(NUMERO_REGISTRO, index + headers)
@@ -307,12 +305,11 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
     private FilledRecord createSegmentB(Date currentDate, PaymentRemittanceItem item, Integer index) {
         def latest = 4
         def establishment = item.establishment
-        def bankAccount = establishment.bankAccount
         def address = establishment.person.address
         def person = establishment.person
         new FilledRecord(batchSegmentB) {
             {
-                fill(BANCO_COMPENSACAO, bankAccount.bacenCode)
+                defaultFill(BANCO_COMPENSACAO)
                 fill(LOTE_SERVICO, latest + index)
                 defaultFill(TIPO_REGISTRO)
                 fill(NUMERO_REGISTRO, latest + index)

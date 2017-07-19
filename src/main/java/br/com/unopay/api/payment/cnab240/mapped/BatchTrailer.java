@@ -24,9 +24,8 @@ public class BatchTrailer {
         int segments = 2;
         int myPosition = 1;
         int headers = 2;
-        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         return new FilledRecord(getBatchTrailer()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             fill(LOTE_SERVICO, remittance.getRemittanceItems().size() * segments + headers + myPosition);
             defaultFill(TIPO_REGISTRO);
             defaultFill(INICIO_FEBRABAN);

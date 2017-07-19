@@ -47,7 +47,7 @@ public class RemittanceHeader {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();
         return new FilledRecord(getRemittanceHeader()) {{
-            fill(BANCO_COMPENSACAO, bankAccount.getBacenCode());
+            defaultFill(BANCO_COMPENSACAO);
             defaultFill(LOTE_SERVICO);
             defaultFill(TIPO_REGISTRO);
             defaultFill(INICIO_FEBRABAN);
