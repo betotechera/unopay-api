@@ -4,7 +4,6 @@ import br.com.unopay.api.payment.cnab240.filler.RecordColumnRule;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,8 +41,9 @@ public class RemittanceFile {
 
     public String findSegmentLine(String ruleKey, String value) {
         RecordColumnRule rule =getValidRule(getBatchSegmentB(),ruleKey);
-        Optional<String> found = Stream.of(cnab240.split(SEPARATOR)).filter(s -> Objects.equals(extractOnLine(s, rule), leftPad(value, rule))).findFirst();
-        return found.orElse(null);
+        return Stream.of(cnab240.split(SEPARATOR))
+                .filter(line -> Objects.equals(extractOnLine(line, rule), leftPad(value, rule)))
+                .findFirst().orElse(null);
     }
 
     private String leftPad(String value, RecordColumnRule rule) {
