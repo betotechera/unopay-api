@@ -252,11 +252,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing without finalized situation when canceled should update items invoice information'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("establishment", user.establishment)
-            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
-        }})
-        fixtureCreator.createBatchItems(batchClosing)
+        BatchClosing batchClosing = createNotFinishedBatch(user)
 
         when:
         service.cancel(user.email, batchClosing.id)
@@ -271,11 +267,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing without finalized situation when canceled should reset service authorized batch closing date'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("establishment", user.establishment)
-            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
-        }})
-        fixtureCreator.createBatchItems(batchClosing)
+        BatchClosing batchClosing = createNotFinishedBatch(user)
 
         when:
         service.cancel(user.email, batchClosing.id)
@@ -302,11 +294,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing without finalized situation should be canceled'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("establishment", user.establishment)
-            add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
-        }})
-        fixtureCreator.createBatchItems(batchClosing)
+        BatchClosing batchClosing = createNotFinishedBatch(user)
 
         when:
         service.cancel(user.email, batchClosing.id)
@@ -315,6 +303,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         then:
         result.situation == BatchClosingSituation.CANCELED
     }
+
 
     def 'given a known batch closing with finalized situation should not be canceled'(){
         given:
@@ -399,17 +388,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing with issue invoice situation should update invoice documentation to approved'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issueInvoice", true)
-            add("establishment", user.establishment)
-        }})
-        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
-
-        batchClosingItems.each {
-            it.invoiceNumber = "54654687646798"
-            it.invoiceDocumentUri = "file://teste.temp"
-            it.invoiceDocumentSituation = DocumentSituation.PENDING
-        }
+        def (List<BatchClosingItem> batchClosingItems, BatchClosing batchClosing) = addInvoiceInformation(user)
 
         when:
         service.updateInvoiceInformation(user.email, batchClosingItems)
@@ -421,20 +400,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
     }
 
+
     def 'given a known batch closing with issue invoice situation should update batch situation to received'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issueInvoice", true)
-            add("establishment", user.establishment)
-        }})
-        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
-
-        batchClosingItems.each {
-            it.invoiceNumber = "54654687646798"
-            it.invoiceDocumentUri = "file://teste.temp"
-            it.invoiceDocumentSituation = DocumentSituation.PENDING
-        }
+        def (List<BatchClosingItem> batchClosingItems, BatchClosing batchClosing) = addInvoiceInformation(user)
 
         when:
         service.updateInvoiceInformation(user.email, batchClosingItems)
@@ -758,4 +728,33 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
         return sumValueByHirer
     }
+
+    private BatchClosing createNotFinishedBatch(user) {
+        BatchClosing batchClosing = from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("establishment", user.establishment)
+                add("situation", BatchClosingSituation.DOCUMENT_RECEIVED)
+            }
+        })
+        fixtureCreator.createBatchItems(batchClosing)
+        batchClosing
+    }
+
+    private List addInvoiceInformation(user) {
+        BatchClosing batchClosing = from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("issueInvoice", true)
+                add("establishment", user.establishment)
+            }
+        })
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+        [batchClosingItems, batchClosing]
+    }
+
 }

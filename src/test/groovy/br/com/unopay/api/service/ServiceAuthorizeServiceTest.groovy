@@ -730,18 +730,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     void 'given a payment instrument without password then birth date of the legal contractor should not be required'(){
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
-        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
-        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
-        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with {
-            contract = establishmentContracts.find()
-            establishment = userEstablishment.establishment
-            contractor = establishmentContracts.find().contractor
-            contractorInstrumentCredit = instrumentCredit
-            contractorInstrumentCredit.paymentInstrument.password = "123456"
-        }
+        ServiceAuthorize serviceAuthorize = serviceAuthorizeWithoutPassword(userEstablishment, "1223456")
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -836,18 +825,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     void 'given a payment instrument without password then password of the legal contractor should be required'(){
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
-        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
-        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
-        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with {
-            contract = establishmentContracts.find()
-            establishment = userEstablishment.establishment
-            contractor = establishmentContracts.find().contractor
-            contractorInstrumentCredit = instrumentCredit
-            contractorInstrumentCredit.paymentInstrument.password = null
-        }
+        ServiceAuthorize serviceAuthorize = serviceAuthorizeWithoutPassword(userEstablishment, null)
 
         when:
         service.create(userEstablishment.email, serviceAuthorize)
@@ -931,6 +909,22 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             establishment = userEstablishment.establishment
             contractor = contractResult.contractor
             contractorInstrumentCredit = instrumentCredit
+        }
+        serviceAuthorize
+    }
+
+    private ServiceAuthorize serviceAuthorizeWithoutPassword(UserDetail userEstablishment, String pwd) {
+        def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+
+        def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        paymentInstrumentService.save(instrumentCredit.paymentInstrument.with { password = null; it })
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            contract = establishmentContracts.find()
+            establishment = userEstablishment.establishment
+            contractor = establishmentContracts.find().contractor
+            contractorInstrumentCredit = instrumentCredit
+            contractorInstrumentCredit.paymentInstrument.password = pwd
         }
         serviceAuthorize
     }
