@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
-import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
+import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
@@ -13,6 +13,7 @@ import br.com.unopay.api.service.BatchClosingService;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -23,7 +24,15 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentB;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceHeader;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.SEQUENCIAL_ARQUIVO;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR;
 import static br.com.unopay.api.payment.model.RemittanceSituation.PROCESSING;
 import static br.com.unopay.api.payment.model.RemittanceSituation.REMITTANCE_FILE_GENERATED;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
@@ -66,7 +75,7 @@ public class PaymentRemittanceService {
 
     @Transactional
     public void create(String issuer) {
-        checkRunning(issuer);
+        checkAlreadyRunning(issuer);
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
         Set<BatchClosing> sameIssuerBank = filter(batchByEstablishment, batch ->
@@ -77,9 +86,9 @@ public class PaymentRemittanceService {
         createRemittanceAndItems(currentIssuer, withOthersBanks);
     }
 
-    private void checkRunning(String issuer) {
+    private void checkAlreadyRunning(String issuer) {
         Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
-        current.ifPresent(remittance ->{ throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING); });
+        current.ifPresent((ThrowingConsumer)-> { throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING);});
     }
 
     private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
@@ -104,7 +113,7 @@ public class PaymentRemittanceService {
     @SneakyThrows
     private void uploadCnab240(String generate, String fileUri) {
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            Stream.of(generate.split(FilledRecord.SEPARATOR)).forEach(line -> write(outputStream, line));
+            Stream.of(generate.split(SEPARATOR)).forEach(line -> write(outputStream, line));
             fileUploaderService.uploadBytes(fileUri, outputStream.toByteArray());
         }
     }
@@ -154,5 +163,39 @@ public class PaymentRemittanceService {
         return collection.stream()
                 .filter(consumer)
                 .collect(Collectors.toSet());
+    }
+
+    @SneakyThrows
+    public void update(MultipartFile multipartFile) {
+        String cnab240 = new String(multipartFile.getBytes());
+        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        String remittanceNumber = remittanceExtractor.extractOnLineFirstLine(SEQUENCIAL_ARQUIVO);
+        Optional<PaymentRemittance> byNumber = repository.findByNumber(Integer.valueOf(remittanceNumber).toString());
+        byNumber.ifPresent(paymentRemittance -> updateItems(cnab240, paymentRemittance.getRemittanceItems()));
+    }
+
+    private void updateItems(String cnab240, Set<PaymentRemittanceItem> items){
+        String[] cnabLines = cnab240.split(SEPARATOR);
+        for(int line = 4; line < cnabLines.length; line+=4){
+            RemittanceExtractor segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
+            String document = segmentB.extractOnLine(NUMERO_INSCRICAO_FAVORECIDO, line);
+            Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, document);
+            final int previousLine = line -1;
+            remittanceItem.ifPresent(item ->
+                    updateItem(cnab240, previousLine, item)
+            );
+        }
+    }
+
+    private void updateItem(String cnab240, int previousLine, PaymentRemittanceItem item) {
+        RemittanceExtractor segmentA = new RemittanceExtractor(getBatchSegmentA(), cnab240);
+        String occurrences = segmentA.extractOnLine(OCORRENCIAS, previousLine);
+        item.setOccurrenceCode(occurrences);
+        paymentRemittanceItemService.save(item);
+    }
+
+    private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
+        return items.stream()
+                        .filter(item -> Objects.equals(item.getEstablishment().documentNumber(), document)).findFirst();
     }
 }

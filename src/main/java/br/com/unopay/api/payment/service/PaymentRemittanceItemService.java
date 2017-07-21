@@ -30,4 +30,9 @@ public class PaymentRemittanceItemService {
     public PaymentRemittanceItem findById(String id) {
         return repository.findOne(id);
     }
+
+    public PaymentRemittanceItem findByEstablishmentDocument(String document){
+        Optional<PaymentRemittanceItem> byEstablishment = repository.findByEstablishmentPersonDocumentNumber(document);
+        return byEstablishment.orElse(null);
+    }
 }

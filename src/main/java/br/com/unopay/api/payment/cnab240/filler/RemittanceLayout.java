@@ -26,7 +26,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGI
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO;
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_EMPRESA;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.ESTADO;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_DOC;
@@ -151,7 +151,7 @@ public class RemittanceLayout {
         put(DIGITO_CONTA, new RecordColumnRule(13,42,42,1, ColumnType.ALPHA));
         put(DIGITO_AGENCIA_CONTA, new RecordColumnRule(14,43,43,1, ColumnType.ALPHA));
         put(NOME_FAVORECIDO, new RecordColumnRule(15,44,73,30, ColumnType.ALPHA));
-        put(DOCUMENTO_EMPRESA, new RecordColumnRule(16,74,93,20, ColumnType.ALPHA));
+        put(DOCUMENTO_ATRIBUIDO_EMPRESA, new RecordColumnRule(16,74,93,20, ColumnType.ALPHA));
         put(DATA_PAGAMENTO, new RecordColumnRule(17,94,101,8, ColumnType.NUMBER));
         put(TIPO_MOEDA, new RecordColumnRule(18,102,104,3, "BRL",  ColumnType.ALPHA));
         put(QUANTIDADE_MOEDA, new RecordColumnRule(19,105,119,15, ColumnType.NUMBER));

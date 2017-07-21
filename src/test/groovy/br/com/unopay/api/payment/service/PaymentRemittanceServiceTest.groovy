@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.fileuploader.service.FileUploaderService
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
@@ -17,12 +18,17 @@ import br.com.unopay.api.payment.model.RemittanceSituation
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     @Autowired
     PaymentRemittanceService service
+
+    @Autowired
+    PaymentRemittanceItemService itemService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -35,6 +41,24 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.fileUploaderService = uploaderServiceMock
         cnab240GeneratorMock.generate(_,_) >> '005;006'
     }
+
+    def 'given valid cnab file should update occurrence code'(){
+        given:
+        def result = createRemittance()
+        def currentDate = instant("now")
+        String cnab240 = new Cnab240Generator().generate(result, currentDate)
+        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+
+        when:
+        service.update(file)
+
+        then:
+        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        documents.every {
+            itemService.findByEstablishmentDocument(it)?.occurrenceCode
+        }
+    }
+
 
     def 'a created remittance should have remittance file generated situation'(){
         given:
@@ -330,5 +354,13 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
                 add("paymentReleaseDateTime", instant("1 day ago"))
             }
         })
+    }
+
+    private PaymentRemittance createRemittance(){
+        Issuer issuer = fixtureCreator.createIssuer()
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        createBatchForBank(issuerBanK, issuer)
+        service.create(issuer.id)
+        return service.findByIssuer(issuer.id).find()
     }
 }

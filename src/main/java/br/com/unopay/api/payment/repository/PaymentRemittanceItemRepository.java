@@ -9,4 +9,5 @@ public interface PaymentRemittanceItemRepository extends CrudRepository<PaymentR
 
     Optional<PaymentRemittanceItem> findByEstablishmentIdAndSituation(String establishmentId,
                                                                       RemittanceSituation situation);
+    Optional<PaymentRemittanceItem> findByEstablishmentPersonDocumentNumber(String document);
 }

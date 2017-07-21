@@ -51,7 +51,7 @@ public class RemittanceLayoutKeys {
     public static final String CAMARA_CENTRALIZADORA = "camaraCentralizadora";
     public static final String BANCO_FAVORECIDO = "bancoFavorecido";
     public static final String NOME_FAVORECIDO = "nomeFavorecido";
-    public static final String DOCUMENTO_EMPRESA = "documentoEmpresa";
+    public static final String DOCUMENTO_ATRIBUIDO_EMPRESA = "documentoAtribuidoEmpresa";
     public static final String DATA_PAGAMENTO = "dataPagamento";
     public static final String TIPO_MOEDA = "tipoMoeda";
     public static final String QUANTIDADE_MOEDA = "quantidadeMoeda";

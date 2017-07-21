@@ -29,7 +29,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGI
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_EMPRESA
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.ESTADO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_DOC
@@ -194,7 +194,7 @@ class FilledRecordTest extends FixtureApplicationTest {
                 defaultFill(DIGITO_CONTA)
                 defaultFill(DIGITO_AGENCIA_CONTA)
                 defaultFill(NOME_FAVORECIDO)
-                defaultFill(DOCUMENTO_EMPRESA)
+                defaultFill(DOCUMENTO_ATRIBUIDO_EMPRESA)
                 defaultFill(DATA_PAGAMENTO)
                 defaultFill(TIPO_MOEDA)
                 defaultFill(QUANTIDADE_MOEDA)

@@ -32,7 +32,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGI
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_EMPRESA
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.ESTADO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_DOC
@@ -289,7 +289,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit())
                 fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit())
                 fill(NOME_FAVORECIDO, person.name)
-                fill(DOCUMENTO_EMPRESA, person.document.number)
+                fill(DOCUMENTO_ATRIBUIDO_EMPRESA, person.document.number)
                 fill(DATA_PAGAMENTO, currentDate.format("ddMMyyyy"))
                 defaultFill(TIPO_MOEDA)
                 defaultFill(QUANTIDADE_MOEDA)

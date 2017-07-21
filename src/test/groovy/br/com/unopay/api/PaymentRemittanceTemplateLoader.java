@@ -25,7 +25,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("paymentServiceType", uniqueRandom(PaymentServiceType.class));
             add("transferOption", uniqueRandom(PaymentTransferOption.class));
             add("operationType", uniqueRandom(PaymentOperationType.class));
-            add("occurrenceCode", regex("\\d{2}\\w{5}"));
+            add("occurrenceCode", regex("\\w{2}"));
             add("createdDateTime", instant("now"));
             add("submissionDateTime", instant("1 hour from now"));
             add("situation", uniqueRandom(RemittanceSituation.class));
@@ -33,8 +33,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(PaymentRemittance.class).addTemplate("withItems").inherits("valid", new Rule() {{
-            add("remittanceItems", has(2).of(PaymentRemittanceItem.class, "valid")
-                    .targetAttribute("paymentRemittance"));
+            add("remittanceItems", has(2).of(PaymentRemittanceItem.class, "valid"));
         }});
 
         Fixture.of(PaymentRemittanceItem.class).addTemplate("valid", new Rule() {{
