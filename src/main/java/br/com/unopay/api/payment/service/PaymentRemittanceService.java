@@ -74,7 +74,7 @@ public class PaymentRemittanceService {
     }
 
     @SneakyThrows
-    public void update(MultipartFile multipartFile) {
+    public void processReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
         RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
         String remittanceNumber = remittanceExtractor.extractOnLineFirstLine(SEQUENCIAL_ARQUIVO);

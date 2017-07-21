@@ -50,7 +50,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
 
         when:
-        service.update(file)
+        service.processReturn(file)
 
         then:
         def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
