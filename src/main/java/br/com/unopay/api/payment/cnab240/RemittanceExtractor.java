@@ -19,7 +19,7 @@ public class RemittanceExtractor {
         this.cnab240 = cnab240;
     }
 
-    public String extractOnLineFirstLine(String ruleKey) {
+    public String extractOnFirstLine(String ruleKey) {
         RecordColumnRule rule = getValidRule(this.layout,ruleKey);
         return extractOnLine(cnab240.split(SEPARATOR)[FIRST_LINE - ADJUSTMENT], rule);
     }

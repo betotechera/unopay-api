@@ -13,7 +13,6 @@ import br.com.unopay.api.service.BatchClosingService;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -77,9 +76,9 @@ public class PaymentRemittanceService {
     public void processReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
         RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
-        String remittanceNumber = remittanceExtractor.extractOnLineFirstLine(SEQUENCIAL_ARQUIVO);
-        Optional<PaymentRemittance> byNumber = repository.findByNumber(Integer.valueOf(remittanceNumber).toString());
-        byNumber.ifPresent(paymentRemittance -> updateItems(cnab240, paymentRemittance.getRemittanceItems()));
+        String remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
+        Optional<PaymentRemittance> byNumber = repository.findByNumber(getNumberWithoutLeftPad(remittanceNumber));
+        byNumber.ifPresent(paymentRemittance -> updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems()));
     }
 
     @Transactional
@@ -168,7 +167,7 @@ public class PaymentRemittanceService {
         return current.orElse(new PaymentRemittanceItem(batchClosing));
     }
 
-    private void updateItems(String cnab240, Set<PaymentRemittanceItem> items){
+    private void updateItemsSituation(String cnab240, Set<PaymentRemittanceItem> items){
         String[] cnabLines = cnab240.split(SEPARATOR);
         for(int line = 4; line < cnabLines.length; line+=4){
             RemittanceExtractor segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
@@ -176,12 +175,12 @@ public class PaymentRemittanceService {
             Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, document);
             final int previousLine = line -1;
             remittanceItem.ifPresent(item ->
-                    updateItem(cnab240, previousLine, item)
+                    updateItemSituation(cnab240, previousLine, item)
             );
         }
     }
 
-    private void updateItem(String cnab240, int previousLine, PaymentRemittanceItem item) {
+    private void updateItemSituation(String cnab240, int previousLine, PaymentRemittanceItem item) {
         RemittanceExtractor segmentA = new RemittanceExtractor(getBatchSegmentA(), cnab240);
         String occurrences = segmentA.extractOnLine(OCORRENCIAS, previousLine);
         item.setOccurrenceCode(occurrences);
@@ -196,5 +195,9 @@ public class PaymentRemittanceService {
         return collection.stream()
                 .filter(consumer)
                 .collect(Collectors.toSet());
+    }
+
+    private String getNumberWithoutLeftPad(String remittanceNumber) {
+        return Integer.valueOf(remittanceNumber).toString();
     }
 }
