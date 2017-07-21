@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -90,5 +91,9 @@ public class PaymentRemittanceItem  implements Serializable {
             return;
         }
         this.value = this.value.add(value);
+    }
+
+    public boolean establishmentDocumentIs(String document){
+        return Objects.equals(getEstablishment().documentNumber(), document);
     }
 }

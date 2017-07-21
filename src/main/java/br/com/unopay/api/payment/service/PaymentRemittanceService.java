@@ -73,6 +73,15 @@ public class PaymentRemittanceService {
         return repository.save(paymentRemittance);
     }
 
+    @SneakyThrows
+    public void update(MultipartFile multipartFile) {
+        String cnab240 = new String(multipartFile.getBytes());
+        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        String remittanceNumber = remittanceExtractor.extractOnLineFirstLine(SEQUENCIAL_ARQUIVO);
+        Optional<PaymentRemittance> byNumber = repository.findByNumber(Integer.valueOf(remittanceNumber).toString());
+        byNumber.ifPresent(paymentRemittance -> updateItems(cnab240, paymentRemittance.getRemittanceItems()));
+    }
+
     @Transactional
     public void create(String issuer) {
         checkAlreadyRunning(issuer);
@@ -159,21 +168,6 @@ public class PaymentRemittanceService {
         return current.orElse(new PaymentRemittanceItem(batchClosing));
     }
 
-    private <T> Set<T> filter(Collection<T> collection, Predicate<T> consumer) {
-        return collection.stream()
-                .filter(consumer)
-                .collect(Collectors.toSet());
-    }
-
-    @SneakyThrows
-    public void update(MultipartFile multipartFile) {
-        String cnab240 = new String(multipartFile.getBytes());
-        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
-        String remittanceNumber = remittanceExtractor.extractOnLineFirstLine(SEQUENCIAL_ARQUIVO);
-        Optional<PaymentRemittance> byNumber = repository.findByNumber(Integer.valueOf(remittanceNumber).toString());
-        byNumber.ifPresent(paymentRemittance -> updateItems(cnab240, paymentRemittance.getRemittanceItems()));
-    }
-
     private void updateItems(String cnab240, Set<PaymentRemittanceItem> items){
         String[] cnabLines = cnab240.split(SEPARATOR);
         for(int line = 4; line < cnabLines.length; line+=4){
@@ -195,7 +189,12 @@ public class PaymentRemittanceService {
     }
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
-        return items.stream()
-                        .filter(item -> Objects.equals(item.getEstablishment().documentNumber(), document)).findFirst();
+        return items.stream().filter(item -> item.establishmentDocumentIs(document)).findFirst();
+    }
+
+    private <T> Set<T> filter(Collection<T> collection, Predicate<T> consumer) {
+        return collection.stream()
+                .filter(consumer)
+                .collect(Collectors.toSet());
     }
 }
