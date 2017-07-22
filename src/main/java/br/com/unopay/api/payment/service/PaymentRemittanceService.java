@@ -37,6 +37,7 @@ import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessa
 @Service
 public class PaymentRemittanceService {
 
+    public static final int LINE_POSTION = 4;
     private PaymentRemittanceRepository repository;
     private BatchClosingService batchClosingService;
     private PaymentRemittanceItemService paymentRemittanceItemService;
@@ -146,10 +147,10 @@ public class PaymentRemittanceService {
     }
 
     private void updateItemsSituation(String cnab240, Set<PaymentRemittanceItem> items){
-        for(int currentLine = 4; currentLine < cnab240.split(SEPARATOR).length; currentLine += 4){
+        for(int currentLine = LINE_POSTION; currentLine < cnab240.split(SEPARATOR).length; currentLine += LINE_POSTION){
             String document = getDocumentNumber(cnab240, currentLine);
             Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, document);
-            final int previousLine = currentLine -1;
+            final int previousLine = currentLine - 1;
             remittanceItem.ifPresent(item -> updateItemSituation(cnab240, previousLine, item));
         }
     }
