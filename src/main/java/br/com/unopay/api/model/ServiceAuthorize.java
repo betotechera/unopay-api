@@ -295,7 +295,7 @@ public class ServiceAuthorize implements Serializable {
         return this;
     }
 
-    public ServiceAuthorize buildBatchClosingDate(){
+    public ServiceAuthorize defineBatchClosingDate(){
         this.batchClosingDateTime = new Date();
         return this;
     }

@@ -158,7 +158,7 @@ public class BatchClosing implements Serializable {
     private Integer version;
 
     public void updateValue(BigDecimal value){
-        if(this.value ==null ){
+        if(this.value == null ){
             this.value = value;
             return;
         }

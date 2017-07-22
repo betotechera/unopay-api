@@ -143,7 +143,7 @@ public class BatchClosingService {
         BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
         currentBatchClosing.addItem(batchClosingItem);
         currentBatchClosing.updateValue(batchClosingItem.eventValue());
-        authorizeService.save(currentAuthorize.buildBatchClosingDate());
+        authorizeService.save(currentAuthorize.defineBatchClosingDate());
         return repository.save(currentBatchClosing);
     }
 
