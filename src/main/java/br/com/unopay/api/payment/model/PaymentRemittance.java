@@ -54,7 +54,6 @@ public class PaymentRemittance implements Serializable {
         this.operationType = PaymentOperationType.CREDIT;
         this.paymentServiceType = PaymentServiceType.SUPPLIER_PAYMENT;
         this.createdDateTime = new Date();
-        this.transferOption = PaymentTransferOption.DOC_TED;
         this.number = String.valueOf(total + 1);
     }
 
@@ -85,12 +84,6 @@ public class PaymentRemittance implements Serializable {
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
     private PaymentServiceType paymentServiceType;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "transfer_option")
-    @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class})
-    private PaymentTransferOption transferOption;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "operation_type")
@@ -132,14 +125,6 @@ public class PaymentRemittance implements Serializable {
     @Version
     private Integer version;
 
-    public void defineTransferOption(Bank bank) {
-        if(Objects.equals(bank.getBacenCode(), this.getIssuerBankCode())){
-            this.transferOption = PaymentTransferOption.CURRENT_ACCOUNT_CREDIT;
-            return;
-        }
-        this.transferOption = PaymentTransferOption.DOC_TED;
-    }
-
     public BigDecimal total() {
         if (this.remittanceItems != null) {
             return this.remittanceItems.stream()
@@ -153,10 +138,6 @@ public class PaymentRemittance implements Serializable {
     public String getFileUri() {
         String toFormat = "remittance/%s/Pagamento%s%s.REM";
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
-    }
-
-    public void defineCurrentAccountTransferOption(){
-        setTransferOption(PaymentTransferOption.CURRENT_ACCOUNT_CREDIT);
     }
 
     private String createTimeFormatted() {

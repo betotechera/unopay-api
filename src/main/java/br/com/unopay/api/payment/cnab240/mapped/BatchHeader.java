@@ -5,6 +5,7 @@ import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchHeader;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
@@ -37,7 +38,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.TIPO
 
 public class BatchHeader {
 
-    public FilledRecord create(final PaymentRemittance remittance, Integer position) {
+    public FilledRecord create(final PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();
         Address address = person.getAddress();
@@ -47,7 +48,7 @@ public class BatchHeader {
             defaultFill(TIPO_REGISTRO);
             fill(TIPO_OPERACAO, remittance.getOperationType().getCode());
             fill(TIPO_SERVICO, remittance.getPaymentServiceType().getCode());
-            fill(FORMA_LANCAMENTO,remittance.getTransferOption().getCode());
+            fill(FORMA_LANCAMENTO,item.getTransferOption().getCode());
             defaultFill(LAYOUT_ARQUIVO);
             defaultFill(INICIO_FEBRABAN);
             defaultFill(TIPO_INSCRICAO);

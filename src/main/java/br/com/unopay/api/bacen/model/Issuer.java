@@ -128,10 +128,6 @@ public class Issuer implements Serializable{
         return  null;
     }
 
-    public boolean bankCodeIs(Integer code){
-        return Objects.equals(code, paymentBankCode());
-    }
-
     public Integer paymentBankCode(){
         return  this.paymentAccount.getBankAccount().getBacenCode();
     }

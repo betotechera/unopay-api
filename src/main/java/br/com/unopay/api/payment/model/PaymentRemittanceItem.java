@@ -1,5 +1,6 @@
 package br.com.unopay.api.payment.model;
 
+import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.validation.group.Create;
@@ -12,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -42,6 +45,7 @@ public class PaymentRemittanceItem  implements Serializable {
         this.establishment = batchClosing.getEstablishment();
         this.establishmentBankCode = batchClosing.getEstablishment().getBankAccount().getBacenCode();
         this.situation = RemittanceSituation.PROCESSING;
+        defineTransferOption(batchClosing.getIssuer().paymentBankCode());
     }
 
     @Id
@@ -78,6 +82,12 @@ public class PaymentRemittanceItem  implements Serializable {
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transfer_option")
+    @JsonView({Views.Public.class})
+    @NotNull(groups = {Create.class})
+    private PaymentTransferOption transferOption;
+
     @Column(name = "occurrence_code")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class})
@@ -99,12 +109,20 @@ public class PaymentRemittanceItem  implements Serializable {
         return Objects.equals(getEstablishment().documentNumber(), document);
     }
 
-    public void updateOcurrenceFields(String occurrenceCode){
+    public void updateOccurrenceFields(String occurrenceCode){
         setOccurrenceCode(occurrenceCode);
         if(Objects.equals(SUCCESS_RETURN, occurrenceCode)){
             setSituation(RemittanceSituation.RETURN_PROCESSED_SUCCESSFULLY);
             return;
         }
         setSituation(RemittanceSituation.RETURN_PROCESSED_WITH_ERROR);
+    }
+
+    private void defineTransferOption(Integer bankCode) {
+        if(Objects.equals(bankCode, this.establishment.getBankAccount().getBacenCode())){
+            this.transferOption = PaymentTransferOption.CURRENT_ACCOUNT_CREDIT;
+            return;
+        }
+        this.transferOption = PaymentTransferOption.DOC_TED;
     }
 }

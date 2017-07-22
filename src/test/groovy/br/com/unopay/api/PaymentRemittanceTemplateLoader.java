@@ -23,7 +23,6 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("issuer", one(Issuer.class, "valid"));
             add("number", regex("\\d{6}"));
             add("paymentServiceType", uniqueRandom(PaymentServiceType.class));
-            add("transferOption", uniqueRandom(PaymentTransferOption.class));
             add("operationType", uniqueRandom(PaymentOperationType.class));
             add("occurrenceCode", regex("\\w{2}"));
             add("createdDateTime", instant("now"));
@@ -40,6 +39,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("establishment",one(Establishment.class, "valid"));
             add("establishmentBankCode",random(1, 341));
             add("value",random(BigDecimal.class));
+            add("transferOption", uniqueRandom(PaymentTransferOption.class));
             add("situation", random(RemittanceSituation.class));
             add("occurrenceCode",regex("\\d{2}"));
         }});

@@ -2,9 +2,36 @@ package br.com.unopay.api.payment.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.model.BatchClosing
 
 class PaymentRemittanceItemTest extends FixtureApplicationTest{
+
+    def 'give a establishment with same bank of issuer should be created with credit transfer option'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        batchClosing.establishment.bankAccount.bank = batchClosing.issuer.paymentAccount.bankAccount.bank
+
+        when:
+        def paymentRemittance = new PaymentRemittanceItem(batchClosing)
+
+        then:
+        paymentRemittance.transferOption == PaymentTransferOption.CURRENT_ACCOUNT_CREDIT
+    }
+
+
+    def 'give a establishment without same bank of issuer should be created with doc/ted transfer option'(){
+        given:
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).gimme("valid")
+        batchClosing.establishment.bankAccount.bank.bacenCode = 8888
+
+        when:
+        def paymentRemittance = new PaymentRemittanceItem(batchClosing)
+
+        then:
+        paymentRemittance.transferOption == PaymentTransferOption.DOC_TED
+    }
 
     def 'should create from batch closed'(){
         given:

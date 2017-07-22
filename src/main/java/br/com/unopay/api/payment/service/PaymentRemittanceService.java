@@ -11,11 +11,9 @@ import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
@@ -93,12 +91,17 @@ public class PaymentRemittanceService {
         checkAlreadyRunning(issuer);
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
-        Set<BatchClosing> sameIssuerBank = filter(batchByEstablishment, batch ->
-                                                        batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
-        Set<BatchClosing> withOthersBanks = filter(batchByEstablishment,
-                                              batch -> !batch.establishmentBankCodeIs(currentIssuer.paymentBankCode()));
-        createRemittanceAndItems(currentIssuer, sameIssuerBank);
-        createRemittanceAndItems(currentIssuer, withOthersBanks);
+        if(!batchByEstablishment.isEmpty()) {
+            createRemittanceAndItems(currentIssuer, batchByEstablishment);
+        }
+    }
+
+    private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
+        Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
+        PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
+        String generate = cnab240Generator.generate(remittance, new Date());
+        fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
+        updateSituation(remittanceItems, remittance);
     }
 
     public Set<PaymentRemittance> findByIssuer(String issuerId){
@@ -108,16 +111,6 @@ public class PaymentRemittanceService {
     private void checkAlreadyRunning(String issuer) {
         Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
         current.ifPresent((ThrowingConsumer)-> { throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING);});
-    }
-
-    private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
-        if(!batchByEstablishment.isEmpty()) {
-            Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
-            PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
-            String generate = cnab240Generator.generate(remittance, new Date());
-            fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
-            updateSituation(remittanceItems, remittance);
-        }
     }
 
     private void updateSituation(Set<PaymentRemittanceItem> remittanceItems, PaymentRemittance remittance) {
@@ -131,16 +124,8 @@ public class PaymentRemittanceService {
 
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
-        Integer bank = getAnyEstablishmentBankCode(remittanceItems);
-        if(currentIssuer.bankCodeIs(bank)){
-            paymentRemittance.defineCurrentAccountTransferOption();
-        }
         paymentRemittance.setRemittanceItems(remittanceItems);
         return save(paymentRemittance);
-    }
-
-    private Integer getAnyEstablishmentBankCode(Set<PaymentRemittanceItem> remittanceItems) {
-        return remittanceItems.stream().map(PaymentRemittanceItem::getEstablishmentBankCode).findFirst().orElse(null);
     }
 
     private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {
@@ -176,7 +161,7 @@ public class PaymentRemittanceService {
     private void updateItemSituation(String cnab240, int line, PaymentRemittanceItem item) {
         RemittanceExtractor segmentA = getRemittanceExtractor(cnab240);
         String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
-        item.updateOcurrenceFields(occurrenceCode);
+        item.updateOccurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
     }
 
@@ -186,12 +171,6 @@ public class PaymentRemittanceService {
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
         return items.stream().filter(item -> item.establishmentDocumentIs(document)).findFirst();
-    }
-
-    private <T> Set<T> filter(Collection<T> collection, Predicate<T> consumer) {
-        return collection.stream()
-                .filter(consumer)
-                .collect(Collectors.toSet());
     }
 
     private String getNumberWithoutLeftPad(String remittanceNumber) {

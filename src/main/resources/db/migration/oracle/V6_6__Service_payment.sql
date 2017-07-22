@@ -4,7 +4,6 @@ create table payment_remittance (
     issuer_bank_code integer not null,
     remittance_number varchar(256) not null,
     service_type varchar(256) not null,
-    transfer_option varchar(150) not null,
     operation_type varchar(150) not null,
     occurrence_code varchar(256),
     created_date_time TIMESTAMP not null,
@@ -22,7 +21,6 @@ COMMENT ON COLUMN payment_remittance.issuer_id IS 'Chave Identificação da IP E
 COMMENT ON COLUMN payment_remittance.issuer_bank_code IS 'Código do banco da conta pagamento da Instituição de Pagamento emissora';
 COMMENT ON COLUMN payment_remittance.remittance_number IS 'Número sequencial único da remessa';
 COMMENT ON COLUMN payment_remittance.service_type IS 'Tipo de Serviço FEBRABAN';
-COMMENT ON COLUMN payment_remittance.transfer_option IS 'Forma de Lançamento FEBRABAN';
 COMMENT ON COLUMN payment_remittance.operation_type IS ' Tipo de operação FEBRABAN';
 COMMENT ON COLUMN payment_remittance.occurrence_code IS ' Código de ocorrência do banco';
 COMMENT ON COLUMN payment_remittance.created_date_time IS 'Data que a remessa foi criada';
@@ -36,6 +34,7 @@ create table payment_remittance_item (
     payment_remittance_id varchar(256),
     establishment_id varchar(256) not null,
     establishment_bank_code integer not null,
+    transfer_option varchar(150) not null,
     value decimal(*,2) not null,
     situation varchar(150) not null,
     occurrence_code varchar(100),
@@ -47,6 +46,7 @@ create table payment_remittance_item (
 
 COMMENT ON TABLE payment_remittance_item IS 'Item de Remessa de Pagamento';
 COMMENT ON COLUMN payment_remittance_item.id IS 'ID Item de Remessa de pagamento';
+COMMENT ON COLUMN payment_remittance_item.transfer_option IS 'Forma de Lançamento FEBRABAN';
 COMMENT ON COLUMN payment_remittance_item.payment_remittance_id IS 'Chave Identificação da Remessa de pagamento';
 COMMENT ON COLUMN payment_remittance_item.establishment_id IS 'Chave Identificação do Estabelecimento';
 COMMENT ON COLUMN payment_remittance_item.establishment_bank_code IS 'Código do banco da conta bancária do estabelecimento';

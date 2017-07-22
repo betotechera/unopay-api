@@ -174,7 +174,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(TIPO_REGISTRO)
             fill(TIPO_OPERACAO, remittance.operationType.code)
             fill(TIPO_SERVICO, remittance.paymentServiceType.code)
-            fill(FORMA_LANCAMENTO,remittance.transferOption.code)
+            fill(FORMA_LANCAMENTO,remittance.remittanceItems.find().transferOption.code)
             defaultFill(LAYOUT_ARQUIVO)
             defaultFill(INICIO_FEBRABAN)
             defaultFill(TIPO_INSCRICAO)

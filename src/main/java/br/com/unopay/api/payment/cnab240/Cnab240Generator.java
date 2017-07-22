@@ -41,7 +41,7 @@ public class Cnab240Generator {
     }
 
     private WrappedRecord createBatch(PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
-        FilledRecord batchHeader = new BatchHeader().create(remittance, position++);
+        FilledRecord batchHeader = new BatchHeader().create(remittance,item, position++);
         return new WrappedRecord().createHeader(batchHeader)
                     .addRecord(new SegmentA(currentDate).create(item, position++))
                     .addRecord(new SegmentB(currentDate).create(item, position++))

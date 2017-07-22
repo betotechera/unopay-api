@@ -165,36 +165,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         that result, hasSize(2)
     }
 
-    def 'when create a remittance to the same bank should be current account credit transfer option'(){
-        given:
-        Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
-        createBatchForBank(issuerBanK, issuer)
-
-        when:
-        service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
-
-        then:
-        that result, hasSize(1)
-        result.find().transferOption == PaymentTransferOption.CURRENT_ACCOUNT_CREDIT
-    }
-
-    def 'when create a remittance to the other bank should be doc/ted transfer option'(){
-        given:
-        Issuer issuer = fixtureCreator.createIssuer()
-        createBatchForBank(473, issuer)
-
-        when:
-        service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
-
-        then:
-        that result, hasSize(1)
-        result.find().transferOption == PaymentTransferOption.DOC_TED
-    }
-
-    def 'should create a remittance to the same bank of the issuer and another remittance to the other banks'(){
+    def 'a remittanceItem to the same bank of the issuer and remittanceItem of other banks should have different transfer option'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
@@ -218,9 +189,15 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def result = service.findByIssuer(issuer.id)
 
         then:
-        that result, hasSize(2)
-        result.find { it.remittanceItems.every { it.establishment.bankAccount.bacenCode == issuerBanK }}
-        result.find { it.remittanceItems.every { it.establishment.bankAccount.bacenCode in [473,477] }}
+        that result, hasSize(1)
+        result.find { it.remittanceItems
+                .findAll { it.establishment.bankAccount.bacenCode == issuerBanK }
+                .every{ it.transferOption == PaymentTransferOption.CURRENT_ACCOUNT_CREDIT}
+        }
+        result.find { it.remittanceItems
+                .findAll { it.establishment.bankAccount.bacenCode in [473,477] }
+                .every { it.transferOption == PaymentTransferOption.DOC_TED}
+        }
     }
 
     def 'given a issuer without batch closed should not create remittance'(){
