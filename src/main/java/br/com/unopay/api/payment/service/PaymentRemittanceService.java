@@ -11,14 +11,12 @@ import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -103,6 +101,10 @@ public class PaymentRemittanceService {
         createRemittanceAndItems(currentIssuer, withOthersBanks);
     }
 
+    public Set<PaymentRemittance> findByIssuer(String issuerId){
+        return repository.findByIssuerId(issuerId);
+    }
+
     private void checkAlreadyRunning(String issuer) {
         Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
         current.ifPresent((ThrowingConsumer)-> { throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING);});
@@ -113,7 +115,7 @@ public class PaymentRemittanceService {
             Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
             PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
             String generate = cnab240Generator.generate(remittance, new Date());
-            uploadCnab240(generate, remittance.getFileUri());
+            fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
             updateSituation(remittanceItems, remittance);
         }
     }
@@ -125,20 +127,6 @@ public class PaymentRemittanceService {
         });
         remittance.setSituation(REMITTANCE_FILE_GENERATED);
         save(remittance);
-    }
-
-    @SneakyThrows
-    private void uploadCnab240(String generate, String fileUri) {
-        try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            Stream.of(generate.split(SEPARATOR)).forEach(line -> write(outputStream, line));
-            fileUploaderService.uploadBytes(fileUri, outputStream.toByteArray());
-        }
-    }
-
-    @SneakyThrows
-    private void write(ByteArrayOutputStream outputStream, String line) {
-        outputStream.write(line.concat("\n").getBytes());
-        outputStream.flush();
     }
 
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
@@ -161,10 +149,6 @@ public class PaymentRemittanceService {
                 currentItem.updateValue(batchClosing.getValue());
                 return paymentRemittanceItemService.save(currentItem);
             }).collect(Collectors.toSet());
-    }
-
-    public Set<PaymentRemittance> findByIssuer(String issuerId){
-        return repository.findByIssuerId(issuerId);
     }
 
     private Long getTotal() {

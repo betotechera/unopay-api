@@ -5,6 +5,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.InternalServerErrorException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.amazonaws.AmazonClientException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -14,12 +15,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Stream;
 import javax.annotation.Resource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR;
 
 @Slf4j
 @Component
@@ -61,6 +66,13 @@ public class FileUploaderService extends AbstractUploadService {
         return getURLAsString(filePath);
     }
 
+    @SneakyThrows
+    public void uploadCnab240(String generate, String fileUri) {
+        try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            Stream.of(generate.split(SEPARATOR)).forEach(line -> write(outputStream, line));
+            uploadBytes(fileUri, outputStream.toByteArray());
+        }
+    }
 
     public String upload(MultipartFile file, String service) {
         String relativePath = getRelativePath(service);
@@ -90,6 +102,12 @@ public class FileUploaderService extends AbstractUploadService {
 
     private String getURLAsString(String filePath) {
         return String.format("%s/%s",cdnUri.replaceFirst("/$", ""),filePath.replaceFirst("^/", ""));
+    }
+
+    @SneakyThrows
+    private void write(ByteArrayOutputStream outputStream, String line) {
+        outputStream.write(line.concat("\n").getBytes());
+        outputStream.flush();
     }
 
     private byte[] getBytes(MultipartFile file) {
