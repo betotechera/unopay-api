@@ -147,14 +147,14 @@ public class PaymentRemittanceService {
 
     private void updateItemsSituation(String cnab240, Set<PaymentRemittanceItem> items){
         for(int currentLine = LINE_POSITION; currentLine < cnab240.split(SEPARATOR).length; currentLine+=LINE_POSITION){
-            String document = getDocumentNumber(cnab240, currentLine);
-            Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, document);
+            String establishmentDocument = getEstablishmentDocumentNumber(cnab240, currentLine);
+            Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, establishmentDocument);
             final int previousLine = currentLine - 1;
             remittanceItem.ifPresent(item -> updateItemSituation(cnab240, previousLine, item));
         }
     }
 
-    private String getDocumentNumber(String cnab240, int line) {
+    private String getEstablishmentDocumentNumber(String cnab240, int line) {
         RemittanceExtractor segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
         return segmentB.extractOnLine(NUMERO_INSCRICAO_FAVORECIDO, line);
     }
