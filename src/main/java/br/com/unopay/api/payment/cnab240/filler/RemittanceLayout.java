@@ -76,7 +76,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALOR_PAGAMENTO;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO;
 
-public class RemittanceLayout {
+public abstract class RemittanceLayout {
 
     private static final Map<String, RecordColumnRule> remittanceHeader = new HashMap<String, RecordColumnRule>(){{
         put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));
