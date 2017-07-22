@@ -77,8 +77,7 @@ public class PaymentRemittanceService {
     @SneakyThrows
     public void processReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
-        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
-        String remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
+        String remittanceNumber = getRemittanceNumber(cnab240);
         Optional<PaymentRemittance> current = repository.findByNumber(getNumberWithoutLeftPad(remittanceNumber));
         current.ifPresent(paymentRemittance -> {
             updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems());
@@ -158,6 +157,11 @@ public class PaymentRemittanceService {
     private String getDocumentNumber(String cnab240, int line) {
         RemittanceExtractor segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
         return segmentB.extractOnLine(NUMERO_INSCRICAO_FAVORECIDO, line);
+    }
+
+    private String getRemittanceNumber(String cnab240) {
+        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        return remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
     }
 
     private void updateItemSituation(String cnab240, int line, PaymentRemittanceItem item) {
