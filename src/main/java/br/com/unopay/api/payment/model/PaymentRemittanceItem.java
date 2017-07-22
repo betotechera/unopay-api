@@ -34,6 +34,8 @@ public class PaymentRemittanceItem  implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public static final String SUCCESS_RETURN = "00";
+
     public PaymentRemittanceItem(){}
 
     public PaymentRemittanceItem(BatchClosing batchClosing){
@@ -95,5 +97,14 @@ public class PaymentRemittanceItem  implements Serializable {
 
     public boolean establishmentDocumentIs(String document){
         return Objects.equals(getEstablishment().documentNumber(), document);
+    }
+
+    public void updateOcurrenceFields(String occurrenceCode){
+        setOccurrenceCode(occurrenceCode);
+        if(Objects.equals(SUCCESS_RETURN, occurrenceCode)){
+            setSituation(RemittanceSituation.RETURN_PROCESSED_SUCCESSFULLY);
+            return;
+        }
+        setSituation(RemittanceSituation.RETURN_PROCESSED_WITH_ERROR);
     }
 }

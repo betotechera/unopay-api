@@ -12,6 +12,10 @@ import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
+import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
+import br.com.unopay.api.payment.cnab240.RemittanceExtractor
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentTransferOption
 import br.com.unopay.api.payment.model.RemittanceSituation
@@ -35,11 +39,65 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     Cnab240Generator cnab240GeneratorMock = Mock(Cnab240Generator)
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
+    LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
+    RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
 
     void setup() {
         service.cnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
+        service.layoutExtractorSelector = extractorSelectorMock
         cnab240GeneratorMock.generate(_,_) >> '005;006'
+        extractorSelectorMock.define(getBatchSegmentA(),_) >> extractorMock
+    }
+
+    def 'when process return should update return date'(){
+        given:
+        def remittance = createRemittance()
+        def currentDate = instant("now")
+        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+        def result = service.findByIssuer(remittance.issuer.id).find()
+
+        then:
+        result.submissionReturnDateTime < instant("1 second from now")
+        result.submissionReturnDateTime > instant("1 second ago")
+    }
+
+    def 'given a cnab with right debit should have successfully situation'(){
+        given:
+        def result = createRemittance()
+        def currentDate = instant("now")
+        String cnab240 = new Cnab240Generator().generate(result, currentDate)
+        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+
+        then:
+        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        documents.every {
+            itemService.findByEstablishmentDocument(it)?.situation == RemittanceSituation.RETURN_PROCESSED_SUCCESSFULLY
+        }
+    }
+
+    def 'given a cnab without right debit should have error situation'(){
+        given:
+        def result = createRemittance()
+        def currentDate = instant("now")
+        String cnab240 = new Cnab240Generator().generate(result, currentDate)
+        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '01'
+        when:
+        service.processReturn(file)
+
+        then:
+        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        documents.every {
+            itemService.findByEstablishmentDocument(it)?.situation == RemittanceSituation.RETURN_PROCESSED_WITH_ERROR
+        }
     }
 
     def 'given valid cnab file should update occurrence code'(){
@@ -48,17 +106,16 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def currentDate = instant("now")
         String cnab240 = new Cnab240Generator().generate(result, currentDate)
         MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
-
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
         when:
         service.processReturn(file)
 
         then:
         def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
         documents.every {
-            itemService.findByEstablishmentDocument(it)?.occurrenceCode
+            itemService.findByEstablishmentDocument(it)?.occurrenceCode == '00'
         }
     }
-
 
     def 'a created remittance should have remittance file generated situation'(){
         given:

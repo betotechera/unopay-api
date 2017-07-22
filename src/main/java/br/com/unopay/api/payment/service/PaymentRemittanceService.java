@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
+import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
@@ -46,6 +47,7 @@ public class PaymentRemittanceService {
     private IssuerService issuerService;
     @Setter private Cnab240Generator cnab240Generator;
     @Setter private FileUploaderService fileUploaderService;
+    @Setter private LayoutExtractorSelector layoutExtractorSelector;
 
     public PaymentRemittanceService(){}
 
@@ -55,13 +57,15 @@ public class PaymentRemittanceService {
                                     PaymentRemittanceItemService paymentRemittanceItemService,
                                     IssuerService issuerService,
                                     Cnab240Generator cnab240Generator,
-                                    FileUploaderService fileUploaderService) {
+                                    FileUploaderService fileUploaderService,
+                                    LayoutExtractorSelector layoutExtractorSelector) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
         this.issuerService = issuerService;
         this.cnab240Generator = cnab240Generator;
         this.fileUploaderService = fileUploaderService;
+        this.layoutExtractorSelector = layoutExtractorSelector;
     }
 
     public PaymentRemittance findById(String id) {
@@ -72,13 +76,18 @@ public class PaymentRemittanceService {
         return repository.save(paymentRemittance);
     }
 
+    @Transactional
     @SneakyThrows
     public void processReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
         RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
         String remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
-        Optional<PaymentRemittance> byNumber = repository.findByNumber(getNumberWithoutLeftPad(remittanceNumber));
-        byNumber.ifPresent(paymentRemittance -> updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems()));
+        Optional<PaymentRemittance> current = repository.findByNumber(getNumberWithoutLeftPad(remittanceNumber));
+        current.ifPresent(paymentRemittance -> {
+            updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems());
+            paymentRemittance.setSubmissionReturnDateTime(new Date());
+            repository.save(paymentRemittance);
+        });
     }
 
     @Transactional
@@ -180,11 +189,15 @@ public class PaymentRemittanceService {
         }
     }
 
-    private void updateItemSituation(String cnab240, int previousLine, PaymentRemittanceItem item) {
-        RemittanceExtractor segmentA = new RemittanceExtractor(getBatchSegmentA(), cnab240);
-        String occurrences = segmentA.extractOnLine(OCORRENCIAS, previousLine);
-        item.setOccurrenceCode(occurrences);
+    private void updateItemSituation(String cnab240, int line, PaymentRemittanceItem item) {
+        RemittanceExtractor segmentA = getRemittanceExtractor(cnab240);
+        String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
+        item.updateOcurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
+    }
+
+    private RemittanceExtractor getRemittanceExtractor(String cnab240) {
+        return layoutExtractorSelector.define(getBatchSegmentA(), cnab240);
     }
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
