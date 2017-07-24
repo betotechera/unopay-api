@@ -11,6 +11,7 @@ import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentB;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceHeader;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.CONVEIO_BANCO;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.SEQUENCIAL_ARQUIVO;
@@ -32,6 +35,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATO
 import static br.com.unopay.api.payment.model.RemittanceSituation.PROCESSING;
 import static br.com.unopay.api.payment.model.RemittanceSituation.REMITTANCE_FILE_GENERATED;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
+import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_WITH_INVALID_DATA;
 import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessableEntity;
 
 @Service
@@ -80,6 +84,7 @@ public class PaymentRemittanceService {
         String remittanceNumber = getRemittanceNumber(cnab240);
         Optional<PaymentRemittance> current = repository.findByNumber(remittanceNumber);
         current.ifPresent(paymentRemittance -> {
+            checkRemittanceInformation(cnab240, paymentRemittance);
             updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems());
             paymentRemittance.setSubmissionReturnDateTime(new Date());
             repository.save(paymentRemittance);
@@ -170,6 +175,15 @@ public class PaymentRemittanceService {
         String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
         item.updateOccurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
+    }
+
+    private void checkRemittanceInformation(String cnab240, PaymentRemittance remittance) {
+        RemittanceExtractor remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        String document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
+        String agreementNumber = remittanceHeader.extractOnFirstLine(CONVEIO_BANCO);
+        if(!remittance.issuerDocumentNumberIs(document) || !remittance.issuerBankAgreementNumberIs(agreementNumber)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_WITH_INVALID_DATA);
+        }
     }
 
     private RemittanceExtractor getRemittanceExtractor(String cnab240) {

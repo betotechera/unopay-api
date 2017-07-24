@@ -120,6 +120,10 @@ public class Person implements Serializable{
         update(person);
     }
 
+    public String documentNumber(){
+        return getDocument().getNumber();
+    }
+
     @JsonIgnore
     public boolean isPhysical() {
         return PersonType.PHYSICAL.equals(this.type) && physicalPersonDetail != null;

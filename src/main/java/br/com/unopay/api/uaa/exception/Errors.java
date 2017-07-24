@@ -481,6 +481,10 @@ public final class Errors {
     /* Remittance */
     public static final UnovationError REMITTANCE_ALREADY_RUNNING =
             new UnovationError("REMITTANCE_ALREADY_RUNNING", "Remittance already running.");
+    public static final UnovationError REMITTANCE_WITH_INVALID_DATA =
+            new UnovationError("REMITTANCE_WITH_INVALID_DATA", "Remittance with invalid data.");
+
+
 
 
 

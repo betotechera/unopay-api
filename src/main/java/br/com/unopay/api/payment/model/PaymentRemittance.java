@@ -140,6 +140,14 @@ public class PaymentRemittance implements Serializable {
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
     }
 
+    public boolean issuerDocumentNumberIs(String document){
+        return document != null && Objects.equals(getIssuer().documentNumber(), document);
+    }
+
+    public boolean issuerBankAgreementNumberIs(String number){
+        return number != null && Objects.equals(getIssuer().getPaymentAccount().getBankAgreementNumber(), number);
+    }
+
     private String createTimeFormatted() {
         return new SimpleDateFormat(DATE_FORMAT).format(createdDateTime);
     }
@@ -151,4 +159,5 @@ public class PaymentRemittance implements Serializable {
     private String documentNumber(){
         return this.issuer.getPerson().getDocument().getNumber();
     }
+
 }

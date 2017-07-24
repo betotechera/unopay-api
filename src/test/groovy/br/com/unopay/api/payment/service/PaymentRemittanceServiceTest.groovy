@@ -23,7 +23,6 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.web.multipart.MultipartFile
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentRemittanceServiceTest extends SpockApplicationTests {
@@ -50,12 +49,41 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         extractorSelectorMock.define(getBatchSegmentA(),_) >> extractorMock
     }
 
+    def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
+        given:
+        def remittancePersisted = createRemittance()
+        def wrongRemittance = remittancePersisted.with { issuer.paymentAccount.bankAgreementNumber = 'AAAAA'; it }
+        def currentDate = instant("now")
+        MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'REMITTANCE_WITH_INVALID_DATA'
+    }
+
+    def 'when process cnab then the issuer document field should be equals persisted remittance'(){
+        given:
+        def remittancePersisted = createRemittance()
+        def wrongRemittance = remittancePersisted.with { issuer.person.document.number = 'AAAAA'; it }
+        def currentDate = instant("now")
+        MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'REMITTANCE_WITH_INVALID_DATA'
+    }
+
     def 'when process return should update return date'(){
         given:
         def remittance = createRemittance()
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
-        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        MockMultipartFile file = createCnabFile(remittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
         when:
         service.processReturn(file)
@@ -70,8 +98,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         def result = createRemittance()
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(result, currentDate)
-        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
         when:
         service.processReturn(file)
@@ -87,8 +114,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         def result = createRemittance()
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(result, currentDate)
-        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '01'
         when:
         service.processReturn(file)
@@ -104,8 +130,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         def result = createRemittance()
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(result, currentDate)
-        MultipartFile file = new MockMultipartFile('file', cnab240.getBytes())
+        MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
         when:
         service.processReturn(file)
@@ -396,5 +421,10 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         createBatchForBank(issuerBanK, issuer)
         service.create(issuer.id)
         return service.findByIssuer(issuer.id).find()
+    }
+
+    private MockMultipartFile createCnabFile(PaymentRemittance remittance, Date currentDate) {
+        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        new MockMultipartFile('file', cnab240.getBytes())
     }
 }

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -139,6 +138,10 @@ public class Issuer implements Serializable{
 
     public String depositPeriodPattern(){
         return getPaymentAccount().getDepositPeriod().getPattern();
+    }
+
+    public String documentNumber(){
+        return person.documentNumber();
     }
 
     @JsonIgnore
