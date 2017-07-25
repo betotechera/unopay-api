@@ -53,9 +53,10 @@ public class PaymentRuleGroupService {
     }
 
     private void checkIfAnPaymentRuleGroupWithTheSameValuesAlreadyExists(PaymentRuleGroup paymentRuleGroup) {
-        if(paymentRuleGroupAlreadyExists(paymentRuleGroup))
+        if(paymentRuleGroupAlreadyExists(paymentRuleGroup)) {
             throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_ALREADY_EXISTS)
                     .withArguments(paymentRuleGroup.getCode());
+        }
     }
 
     private Boolean paymentRuleGroupAlreadyExists(PaymentRuleGroup paymentRuleGroup) {

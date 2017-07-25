@@ -212,14 +212,18 @@ public class ServiceAuthorizeService {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
     private ServiceAuthorizeFilter buildFilterBy(ServiceAuthorizeFilter filter, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType())
+        if(currentUser.isEstablishmentType()) {
             filter.setEstablishment(currentUser.establishmentId());
-        if(currentUser.isContractorType())
+        }
+        if(currentUser.isContractorType()) {
             filter.setContractor(currentUser.contractorId());
-        if(currentUser.isAccreditedNetworkType())
+        }
+        if(currentUser.isAccreditedNetworkType()) {
             filter.setNetwork(currentUser.accreditedNetworkId());
-        if(currentUser.isHirerType())
+        }
+        if(currentUser.isHirerType()) {
             filter.setHirer(currentUser.hirerId());
+        }
         return filter;
     }
 

@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -136,7 +137,7 @@ public class PaymentRemittance implements Serializable {
     }
 
     public String getFileUri() {
-        String toFormat = "remittance/%s/Pagamento%s%s.REM";
+        val toFormat = "remittance/%s/Pagamento%s%s.REM";
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
     }
 

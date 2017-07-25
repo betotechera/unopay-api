@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,9 +81,9 @@ public class PaymentRemittanceService {
     @Transactional
     @SneakyThrows
     public void processReturn(MultipartFile multipartFile) {
-        String cnab240 = new String(multipartFile.getBytes());
-        String remittanceNumber = getRemittanceNumber(cnab240);
-        Optional<PaymentRemittance> current = repository.findByNumber(remittanceNumber);
+        val cnab240 = new String(multipartFile.getBytes());
+        val remittanceNumber = getRemittanceNumber(cnab240);
+        val current = repository.findByNumber(remittanceNumber);
         current.ifPresent(paymentRemittance -> {
             checkRemittanceInformation(cnab240, paymentRemittance);
             updateItemsSituation(cnab240, paymentRemittance.getRemittanceItems());
@@ -94,17 +95,17 @@ public class PaymentRemittanceService {
     @Transactional
     public void create(String issuer) {
         checkAlreadyRunning(issuer);
-        Issuer currentIssuer = issuerService.findById(issuer);
-        Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
+        val currentIssuer = issuerService.findById(issuer);
+        val batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
         if(!batchByEstablishment.isEmpty()) {
             createRemittanceAndItems(currentIssuer, batchByEstablishment);
         }
     }
 
     private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
-        Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
-        PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
-        String generate = cnab240Generator.generate(remittance, new Date());
+        val remittanceItems = processItems(batchByEstablishment);
+        val remittance = createRemittance(currentIssuer, remittanceItems);
+        val generate = cnab240Generator.generate(remittance, new Date());
         fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
         updateSituation(remittanceItems, remittance);
     }
@@ -114,7 +115,7 @@ public class PaymentRemittanceService {
     }
 
     private void checkAlreadyRunning(String issuer) {
-        Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
+        val current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
         current.ifPresent((ThrowingConsumer)-> { throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING);});
     }
 
@@ -128,7 +129,7 @@ public class PaymentRemittanceService {
     }
 
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
-        PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
+        val paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
         paymentRemittance.setRemittanceItems(remittanceItems);
         return save(paymentRemittance);
     }
@@ -146,7 +147,7 @@ public class PaymentRemittanceService {
     }
 
     private PaymentRemittanceItem getCurrentItem(String id,BatchClosing batchClosing){
-        Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(id);
+        val current = paymentRemittanceItemService.findProcessingByEstablishment(id);
         return current.orElse(new PaymentRemittanceItem(batchClosing));
     }
 
@@ -160,27 +161,27 @@ public class PaymentRemittanceService {
     }
 
     private String getEstablishmentDocumentNumber(String cnab240, int line) {
-        RemittanceExtractor segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
+        val segmentB = new RemittanceExtractor(getBatchSegmentB(), cnab240);
         return segmentB.extractOnLine(NUMERO_INSCRICAO_FAVORECIDO, line);
     }
 
     private String getRemittanceNumber(String cnab240) {
-        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
-        String remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
+        val remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        val remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
         return getNumberWithoutLeftPad(remittanceNumber);
     }
 
     private void updateItemSituation(String cnab240, int line, PaymentRemittanceItem item) {
-        RemittanceExtractor segmentA = getRemittanceExtractor(cnab240);
-        String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
+        val segmentA = getRemittanceExtractor(cnab240);
+        val occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
         item.updateOccurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
     }
 
     private void checkRemittanceInformation(String cnab240, PaymentRemittance remittance) {
-        RemittanceExtractor remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
-        String document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
-        String agreementNumber = remittanceHeader.extractOnFirstLine(CONVEIO_BANCO);
+        val remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        val document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
+        val agreementNumber = remittanceHeader.extractOnFirstLine(CONVEIO_BANCO);
         if(!remittance.issuerDocumentNumberIs(document) || !remittance.issuerBankAgreementNumberIs(agreementNumber)){
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_WITH_INVALID_DATA);
         }

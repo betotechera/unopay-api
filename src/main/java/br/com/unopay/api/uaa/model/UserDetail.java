@@ -130,9 +130,7 @@ public class UserDetail implements Serializable {
     @JsonIgnore
     Long version;
 
-    public UserDetail() {
-        //for serialization only
-    }
+    public UserDetail() {}
 
     public UserDetail(String id, String email, String password) {
         this.id = id;
@@ -194,12 +192,15 @@ public class UserDetail implements Serializable {
     }
 
     public void updateModel(UserDetail user) {
-        if(user.getEmail() !=null)
+        if(user.getEmail() !=null) {
             this.setEmail(user.getEmail());
-        if(user.getName() !=null)
+        }
+        if(user.getName() !=null) {
             this.setName(user.getName());
-        if(user.getType() !=null)
+        }
+        if(user.getType() !=null) {
             this.setType(user.getType());
+        }
     }
 
     @JsonIgnore
