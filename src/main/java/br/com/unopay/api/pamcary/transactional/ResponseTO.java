@@ -35,7 +35,7 @@ public class ResponseTO implements Equals2, HashCode2
 
     public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object,
                           EqualsStrategy2 strategy) {
-        if ((object == null)||(this.getClass()!= object.getClass())) {
+        if (object == null||this.getClass()!= object.getClass()) {
             return false;
         }
         if (this.equals(object)) {
@@ -48,8 +48,8 @@ public class ResponseTO implements Equals2, HashCode2
         rhsFields = that.fields!= null&&!that.fields.isEmpty()?that.getFields():null;
         if (!strategy.equals(LocatorUtils.property(thisLocator, "fields", lhsFields),
                 LocatorUtils.property(thatLocator, "fields", rhsFields), lhsFields, rhsFields,
-                ((this.fields!= null)&&(!this.fields.isEmpty())),
-                ((that.fields!= null)&&(!that.fields.isEmpty())))) {
+                this.fields!= null&&!this.fields.isEmpty(),
+                that.fields!= null&&!that.fields.isEmpty())) {
             return false;
         }
         return true;
@@ -65,7 +65,7 @@ public class ResponseTO implements Equals2, HashCode2
         List<FieldTO> theFields;
         theFields = this.fields!= null&&!this.fields.isEmpty()?this.getFields():null;
         currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fields", theFields),
-                currentHashCode, theFields, ((this.fields!= null)&&(!this.fields.isEmpty())));
+                currentHashCode, theFields, this.fields!= null&&!this.fields.isEmpty());
         return currentHashCode;
     }
 

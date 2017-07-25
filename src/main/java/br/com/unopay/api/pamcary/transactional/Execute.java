@@ -33,7 +33,7 @@ public class Execute implements Equals2, HashCode2
 
     public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator,
                           Object object, EqualsStrategy2 strategy) {
-        if ((object == null)||(this.getClass()!= object.getClass())) {
+        if (object == null||this.getClass()!= object.getClass()) {
             return false;
         }
         if (this.equals(object)) {
