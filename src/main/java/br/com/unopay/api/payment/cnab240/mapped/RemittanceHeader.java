@@ -6,7 +6,6 @@ import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import org.apache.commons.lang3.ObjectUtils;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;

@@ -1,6 +1,5 @@
 package br.com.unopay.api.payment.model;
 
-import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.validation.group.Create;

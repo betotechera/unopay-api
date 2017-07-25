@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import static spock.util.matcher.HamcrestSupport.that
 
-import java.math.RoundingMode
-
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     @Autowired

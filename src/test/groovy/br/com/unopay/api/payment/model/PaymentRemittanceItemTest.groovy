@@ -2,8 +2,6 @@ package br.com.unopay.api.payment.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.model.BatchClosing
 
 class PaymentRemittanceItemTest extends FixtureApplicationTest{
