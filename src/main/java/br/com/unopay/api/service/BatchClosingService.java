@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -85,8 +86,8 @@ public class BatchClosingService {
     @Transactional
     public BatchClosing create(String establishmentId, Date at) {
         checkAlreadyRunning(establishmentId);
-        try (val stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
-            val batchClosing = stream.map(BatchClosingItem::new)
+        try (Stream<ServiceAuthorize> stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
+            Set<BatchClosing> batchClosing = stream.map(BatchClosingItem::new)
                     .map(this::processBatchClosingItem).collect(Collectors.toSet());
             batchClosing.forEach(this::updateBatchClosingSituation);
             return batchClosing.stream().findFirst().orElse(null);
@@ -94,7 +95,8 @@ public class BatchClosingService {
     }
 
     private void checkAlreadyRunning(String establishmentId) {
-        val processingBatch = repository.findByEstablishmentIdAndSituation(establishmentId, PROCESSING_AUTOMATIC_BATCH);
+        Optional<BatchClosing> processingBatch = repository
+                                        .findByEstablishmentIdAndSituation(establishmentId, PROCESSING_AUTOMATIC_BATCH);
         processingBatch.ifPresent((ThrowingConsumer)-> {
             log.warn("Attempt to run a job that is already running for establishment={}", establishmentId);
             throw UnovationExceptions.unprocessableEntity().withErrors(BATCH_ALREADY_RUNNING);
@@ -111,8 +113,8 @@ public class BatchClosingService {
 
     @Transactional
     public void cancel(String userEmail, String batchId) {
-        val currentUser = getUserByEmail(userEmail);
-        val current = findById(batchId);
+        UserDetail currentUser = getUserByEmail(userEmail);
+        BatchClosing current = findById(batchId);
         checkUserQualifiedForBatch(currentUser, current);
         current.getBatchClosingItems().forEach(closingItem -> {
             authorizeService.save(closingItem.resetAuthorizeBatchClosingDate());
@@ -122,7 +124,7 @@ public class BatchClosingService {
     }
 
     public void review(String batchId, BatchClosingSituation newSituation) {
-        val current = findById(batchId);
+        BatchClosing current = findById(batchId);
         checkAllowedSituation(newSituation);
         current.checkCanBeChanged();
         current.setSituation(newSituation);
@@ -138,8 +140,8 @@ public class BatchClosingService {
     }
 
     private BatchClosing processBatchClosingItem(BatchClosingItem batchClosingItem) {
-        val currentAuthorize = batchClosingItem.getServiceAuthorize();
-        val currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
+        ServiceAuthorize currentAuthorize = batchClosingItem.getServiceAuthorize();
+        BatchClosing currentBatchClosing = getCurrentBatchClosing(currentAuthorize);
         currentBatchClosing.addItem(batchClosingItem);
         currentBatchClosing.updateValue(batchClosingItem.eventValue());
         authorizeService.save(currentAuthorize.defineBatchClosingDate());
@@ -152,7 +154,7 @@ public class BatchClosingService {
     }
 
     private BatchClosing getCurrentBatchClosing(ServiceAuthorize currentAuthorize) {
-        val batchClosing = repository
+        Optional<BatchClosing>  batchClosing = repository
                 .findFirstByEstablishmentIdAndHirerIdAndSituation(currentAuthorize.establishmentId(),
                         currentAuthorize.hirerId(), PROCESSING_AUTOMATIC_BATCH);
         return batchClosing.orElse(new BatchClosing(currentAuthorize,getTotal()));
@@ -172,7 +174,7 @@ public class BatchClosingService {
 
     private Set<BatchClosing> updateBatchItems(List<BatchClosingItem> batchClosingItems) {
         return batchClosingItems.stream().map(batchClosingItem -> {
-            val current = batchClosingItemService.findById(batchClosingItem.getId());
+            BatchClosingItem current = batchClosingItemService.findById(batchClosingItem.getId());
             current.updateOnly(batchClosingItem, "invoiceNumber", "invoiceDocumentUri");
             current.setInvoiceDocumentSituation(DocumentSituation.APPROVED);
             batchClosingItemService.save(current);
