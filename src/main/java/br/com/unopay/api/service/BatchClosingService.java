@@ -219,7 +219,8 @@ public class BatchClosingService {
         return new DateTime().withMillisOfDay(0).toDate();
     }
 
-    public Page<BatchClosing> findMyByFilter(String userEmail, BatchClosingFilter filter, UnovationPageRequest pageable) {
+    public Page<BatchClosing> findMyByFilter(String userEmail, BatchClosingFilter filter,
+                                             UnovationPageRequest pageable) {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
 

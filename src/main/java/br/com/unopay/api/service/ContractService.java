@@ -145,7 +145,8 @@ public class ContractService {
         }
         return contracts;
     }
-    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId, Set<ServiceType> serviceType) {
+    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId,
+                                                      Set<ServiceType> serviceType) {
         contractorService.getById(contractorId);
         Page<Contract> contractPage = getActiveContracts(contractorId,serviceType);
         List<Contract> contracts = contractPage.getContent();

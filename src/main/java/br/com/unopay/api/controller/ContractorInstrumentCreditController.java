@@ -71,7 +71,7 @@ public class ContractorInstrumentCreditController {
         log.info("search ContractorInstrumentCredit with filter={}", filter);
         Page<ContractorInstrumentCredit> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-instruments/credits", api));
+        return PageableResults.create(pageable, page.getContent(),String.format("%s/payment-instruments/credits", api));
     }
 
     @ResponseStatus(OK)

@@ -73,7 +73,8 @@ public class ServiceAuthorizeController {
     @JsonView({Views.ServiceAuthorize.List.class})
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/service-authorizations", method = GET)
-    public Results<ServiceAuthorize> getByParams(ServiceAuthorizeFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<ServiceAuthorize> getByParams(ServiceAuthorizeFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
         log.info("search ServiceAuthorize with filter={}", filter);
         Page<ServiceAuthorize> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
@@ -84,7 +85,8 @@ public class ServiceAuthorizeController {
     @JsonView(Views.ServiceAuthorize.List.class)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/service-authorizations/my", method = GET)
-    public Results<ServiceAuthorize> findMyByFilter(OAuth2Authentication authentication,ServiceAuthorizeFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<ServiceAuthorize> findMyByFilter(OAuth2Authentication authentication,ServiceAuthorizeFilter filter,
+                                                    @Validated UnovationPageRequest pageable) {
         log.info("search my serviceAuthorizes with filter={}", filter);
         Page<ServiceAuthorize> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());

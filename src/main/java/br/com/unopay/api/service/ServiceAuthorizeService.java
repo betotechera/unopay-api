@@ -208,7 +208,8 @@ public class ServiceAuthorizeService {
         return repository.findAll(filter,new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    public Page<ServiceAuthorize> findMyByFilter(String userEmail, ServiceAuthorizeFilter filter, UnovationPageRequest pageable) {
+    public Page<ServiceAuthorize> findMyByFilter(String userEmail, ServiceAuthorizeFilter filter,
+                                                 UnovationPageRequest pageable) {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
     private ServiceAuthorizeFilter buildFilterBy(ServiceAuthorizeFilter filter, UserDetail currentUser) {
