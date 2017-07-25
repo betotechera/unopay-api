@@ -11,6 +11,7 @@ import br.com.unopay.api.payment.cnab240.mapped.SegmentB;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import java.util.Date;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,8 +22,10 @@ public class Cnab240Generator {
     public static final int BATCH_LINES = 4;
     private Date currentDate;
 
+    public Cnab240Generator(){}
+
     public String generate(PaymentRemittance remittance, Date currentDate) {
-        this.currentDate = currentDate;
+        this.currentDate = ObjectUtils.clone(currentDate);
         FilledRecord remittanceHeader = new RemittanceHeader(currentDate).create(remittance);
         WrappedRecord records = new WrappedRecord().createHeader(remittanceHeader);
         addBatches(remittance, records);

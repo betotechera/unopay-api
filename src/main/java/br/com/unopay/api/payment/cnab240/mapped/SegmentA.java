@@ -8,6 +8,7 @@ import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.lang3.ObjectUtils;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA;
@@ -45,8 +46,10 @@ public class SegmentA {
 
     private Date currentDate;
 
+    public SegmentA(){}
+
     public SegmentA(Date currentDate){
-        this.currentDate = currentDate;
+        this.currentDate = ObjectUtils.clone(currentDate);
     }
 
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {

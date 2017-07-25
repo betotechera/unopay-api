@@ -1,6 +1,5 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 
@@ -18,6 +17,8 @@ public class RemittanceTrailer {
 
     public static final int HEADERS_AND_TRAILERS = 4;
     public static final int SEGMENTS = 2;
+
+    public RemittanceTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance) {
         return new FilledRecord(getRemittanceTrailer()) {{

@@ -20,6 +20,8 @@ import static br.com.unopay.api.payment.cnab240.mapped.RemittanceTrailer.SEGMENT
 
 public class BatchTrailer {
 
+    public BatchTrailer(){}
+
     public FilledRecord create(final PaymentRemittance remittance, Integer position) {
         return new FilledRecord(getBatchTrailer()) {{
             defaultFill(BANCO_COMPENSACAO);

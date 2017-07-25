@@ -37,6 +37,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
@@ -322,6 +323,10 @@ public class ServiceAuthorize implements Serializable {
     @SneakyThrows
     public byte[] paymentInstrumentPasswordAsByte(){
         return getContractorInstrumentCredit().getPaymentInstrument().getPassword().getBytes();
+    }
+
+    public void setAuthorizationDateTime(Date dateTime){
+        this.authorizationDateTime = ObjectUtils.clone(dateTime);
     }
 
 }

@@ -38,6 +38,8 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.TIPO
 
 public class BatchHeader {
 
+    public BatchHeader(){}
+
     public FilledRecord create(final PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();

@@ -39,6 +39,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
 
@@ -232,5 +233,17 @@ public class BatchClosing implements Serializable {
 
     public Integer establishmentBankCode(){
         return this.getEstablishment().getBankAccount().getBacenCode();
+    }
+
+    public void setPaymentDateTime(Date dateTime){
+        this.paymentDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setPaymentReleaseDateTime(Date dateTime){
+        this.paymentReleaseDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setClosingDateTime(Date dateTime){
+        this.closingDateTime = ObjectUtils.clone(dateTime);
     }
 }

@@ -1,6 +1,5 @@
 package br.com.unopay.api.payment.model;
 
-import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
@@ -30,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -146,6 +146,18 @@ public class PaymentRemittance implements Serializable {
 
     public boolean issuerBankAgreementNumberIs(String number){
         return number != null && Objects.equals(getIssuer().getPaymentAccount().getBankAgreementNumber(), number);
+    }
+
+    public void setSubmissionDateTime(Date dateTime){
+        this.submissionDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setSubmissionReturnDateTime(Date dateTime){
+        this.submissionReturnDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
     }
 
     private String createTimeFormatted() {

@@ -6,6 +6,8 @@ import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
+import org.apache.commons.lang3.ObjectUtils;
 
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 import static br.com.unopay.api.payment.cnab240.Cnab240Generator.HOUR_FORMAT;
@@ -39,8 +41,10 @@ public class RemittanceHeader {
 
     private Date currentDate;
 
+    public RemittanceHeader(){}
+
     public RemittanceHeader(Date currentDate){
-        this.currentDate = currentDate;
+        this.currentDate = ObjectUtils.clone(currentDate);
     }
 
     public FilledRecord create(final PaymentRemittance remittance) {
