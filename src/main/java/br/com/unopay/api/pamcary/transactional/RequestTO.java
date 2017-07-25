@@ -1,6 +1,5 @@
 package br.com.unopay.api.pamcary.transactional;
 
-import groovy.transform.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,7 +12,6 @@ import org.jvnet.jaxb2_commons.lang.HashCode2;
 import org.jvnet.jaxb2_commons.lang.HashCodeStrategy2;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 
-@EqualsAndHashCode
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "requestTO", propOrder = {
     "context",
