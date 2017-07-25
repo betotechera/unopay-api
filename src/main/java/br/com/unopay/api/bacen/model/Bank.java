@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 public class Bank implements Serializable {
 
     public static final long serialVersionUID = 1L;
+    public static final int MAX_CNAB_NAME_SIZE = 30;
 
     public Bank(){}
 
@@ -30,8 +31,8 @@ public class Bank implements Serializable {
     private String name;
 
     public String getName(){
-        if(this.name.length() > 30) {
-            return name.substring(0, 30);
+        if(this.name.length() > MAX_CNAB_NAME_SIZE) {
+            return name.substring(0, MAX_CNAB_NAME_SIZE);
         }
         return this.name;
     }

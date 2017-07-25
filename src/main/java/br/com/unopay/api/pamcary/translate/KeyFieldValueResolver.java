@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class KeyFieldValueResolver {
 
+    private KeyFieldValueResolver(){}
+
     public static String getFieldValue(Field field, Object object){
         try {
             field.setAccessible(true);

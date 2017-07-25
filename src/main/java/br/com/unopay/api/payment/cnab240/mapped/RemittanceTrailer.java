@@ -21,15 +21,14 @@ public class RemittanceTrailer {
     public RemittanceTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance) {
-        return new FilledRecord(getRemittanceTrailer()) {{
-            defaultFill(BANCO_COMPENSACAO);
-            defaultFill(LOTE_SERVICO);
-            defaultFill(TIPO_REGISTRO);
-            defaultFill(INICIO_FEBRABAN);
-            fill(QUANTIDADE_LOTES,"1");
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS);
-            defaultFill(QUANTIDADE_CONTAS);
+        return new FilledRecord(getRemittanceTrailer()).
+            defaultFill(BANCO_COMPENSACAO).
+            defaultFill(LOTE_SERVICO).
+            defaultFill(TIPO_REGISTRO).
+            defaultFill(INICIO_FEBRABAN).
+            fill(QUANTIDADE_LOTES,"1").
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS).
+            defaultFill(QUANTIDADE_CONTAS).
             defaultFill(FIM_FEBRABAN);
-        }};
     }
 }

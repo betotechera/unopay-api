@@ -56,36 +56,35 @@ public class SegmentA {
         Establishment establishment = remittanceItem.getEstablishment();
         BankAccount bankAccount = establishment.getBankAccount();
         Person person = establishment.getPerson();
-        return new FilledRecord(getBatchSegmentA()) {{
-            defaultFill(BANCO_COMPENSACAO);
-            fill(LOTE_SERVICO, position);
-            defaultFill(TIPO_REGISTRO);
-            fill(NUMERO_REGISTRO, position);
-            defaultFill(SEGMENTO);
-            defaultFill(TIPO_MOVIMENTO);
-            defaultFill(INSTITUICAO_MOVIMENTO);
-            defaultFill(CAMARA_CENTRALIZADORA);
-            fill(BANCO_FAVORECIDO, bankAccount.getBacenCode());
-            fill(AGENCIA, bankAccount.agentDvFirstDigit());
-            fill(DIGITO_AGENCIA, bankAccount.agentDvLastDigit());
-            fill(NUMERO_CONTA, bankAccount.getAccountNumber());
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit());
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit());
-            fill(NOME_FAVORECIDO, person.getName());
-            fill(DOCUMENTO_ATRIBUIDO_EMPRESA, person.getDocument().getNumber());
-            fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
-            defaultFill(TIPO_MOEDA);
-            defaultFill(QUANTIDADE_MOEDA);
-            fill(VALOR_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue()));
-            defaultFill(DOCUMENTO_ATRIBUIDO_BANCO);
-            defaultFill(DATA_REAL_PAGAMENTO);
-            fill(VALOR_REAL_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue()));
-            defaultFill(INFORMACAO);
-            defaultFill(FINALIDADE_DOC);
-            defaultFill(FINALIDADE_TED);
-            defaultFill(FIM_FEBRABAN);
-            defaultFill(AVISO);
+        return new FilledRecord(getBatchSegmentA()).
+            defaultFill(BANCO_COMPENSACAO).
+            fill(LOTE_SERVICO, position).
+            defaultFill(TIPO_REGISTRO).
+            fill(NUMERO_REGISTRO, position).
+            defaultFill(SEGMENTO).
+            defaultFill(TIPO_MOVIMENTO).
+            defaultFill(INSTITUICAO_MOVIMENTO).
+            defaultFill(CAMARA_CENTRALIZADORA).
+            fill(BANCO_FAVORECIDO, bankAccount.getBacenCode()).
+            fill(AGENCIA, bankAccount.agentDvFirstDigit()).
+            fill(DIGITO_AGENCIA, bankAccount.agentDvLastDigit()).
+            fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
+            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
+            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
+            fill(NOME_FAVORECIDO, person.getName()).
+            fill(DOCUMENTO_ATRIBUIDO_EMPRESA, person.getDocument().getNumber()).
+            fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).
+            defaultFill(TIPO_MOEDA).
+            defaultFill(QUANTIDADE_MOEDA).
+            fill(VALOR_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue())).
+            defaultFill(DOCUMENTO_ATRIBUIDO_BANCO).
+            defaultFill(DATA_REAL_PAGAMENTO).
+            fill(VALOR_REAL_PAGAMENTO, Rounder.roundToString(remittanceItem.getValue())).
+            defaultFill(INFORMACAO).
+            defaultFill(FINALIDADE_DOC).
+            defaultFill(FINALIDADE_TED).
+            defaultFill(FIM_FEBRABAN).
+            defaultFill(AVISO).
             defaultFill(OCORRENCIAS);
-        }};
     }
 }

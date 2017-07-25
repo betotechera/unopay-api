@@ -2,6 +2,8 @@ package br.com.unopay.api.payment.cnab240.filler;
 
 public class RemittanceLayoutKeys {
 
+    private RemittanceLayoutKeys(){}
+
     public static final String BANCO_COMPENSACAO = "bancoCompensacao";
     public static final String LOTE_SERVICO = "loteServico";
     public static final String TIPO_REGISTRO = "tipoRegistro";

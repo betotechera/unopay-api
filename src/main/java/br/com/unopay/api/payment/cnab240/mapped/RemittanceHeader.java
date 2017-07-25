@@ -49,31 +49,30 @@ public class RemittanceHeader {
     public FilledRecord create(final PaymentRemittance remittance) {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();
-        return new FilledRecord(getRemittanceHeader()) {{
-            defaultFill(BANCO_COMPENSACAO);
-            defaultFill(LOTE_SERVICO);
-            defaultFill(TIPO_REGISTRO);
-            defaultFill(INICIO_FEBRABAN);
-            defaultFill(TIPO_INSCRICAO);
-            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber());
-            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber());
-            fill(AGENCIA, bankAccount.getAgency());
-            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit());
-            fill(NUMERO_CONTA, bankAccount.getAccountNumber());
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit());
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit());
-            fill(NOME_EMPRESA, person.getName());
-            fill(NOME_BANCO, bankAccount.getBank().getName());
-            defaultFill(MEIO_FEBRABAN);
-            defaultFill(CODIGO_REMESSA);
-            fill(DATA_GERACAO_ARQUIVO, new SimpleDateFormat(DATE_FORMAT).format(currentDate));
-            fill(HORA_GERACAO_ARQUIVO, new SimpleDateFormat(HOUR_FORMAT).format(currentDate));
-            fill(SEQUENCIAL_ARQUIVO, remittance.getNumber());
-            defaultFill(LAYOUT_ARQUIVO);
-            defaultFill(DENSIDADE_GRAVACAO);
-            defaultFill(RESERVADO_BANCO);
-            defaultFill(RESERVADO_EMPRESA);
+        return new FilledRecord(getRemittanceHeader()).
+            defaultFill(BANCO_COMPENSACAO).
+            defaultFill(LOTE_SERVICO).
+            defaultFill(TIPO_REGISTRO).
+            defaultFill(INICIO_FEBRABAN).
+            defaultFill(TIPO_INSCRICAO).
+            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber()).
+            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber()).
+            fill(AGENCIA, bankAccount.getAgency()).
+            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit()).
+            fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
+            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
+            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
+            fill(NOME_EMPRESA, person.getName()).
+            fill(NOME_BANCO, bankAccount.getBank().getName()).
+            defaultFill(MEIO_FEBRABAN).
+            defaultFill(CODIGO_REMESSA).
+            fill(DATA_GERACAO_ARQUIVO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).
+            fill(HORA_GERACAO_ARQUIVO, new SimpleDateFormat(HOUR_FORMAT).format(currentDate)).
+            fill(SEQUENCIAL_ARQUIVO, remittance.getNumber()).
+            defaultFill(LAYOUT_ARQUIVO).
+            defaultFill(DENSIDADE_GRAVACAO).
+            defaultFill(RESERVADO_BANCO).
+            defaultFill(RESERVADO_EMPRESA).
             defaultFill(FIM_FEBRABAN);
-        }};
     }
 }

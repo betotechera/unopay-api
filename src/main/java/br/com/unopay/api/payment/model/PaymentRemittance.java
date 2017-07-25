@@ -45,6 +45,7 @@ import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 public class PaymentRemittance implements Serializable {
 
     public static final long serialVersionUID = 1L;
+    public static final int NUMBER_SIZE = 6;
 
     public PaymentRemittance(){}
 
@@ -166,7 +167,7 @@ public class PaymentRemittance implements Serializable {
     }
 
     private String numberAsString() {
-        return StringUtils.leftPad(number,6, "0");
+        return StringUtils.leftPad(number, NUMBER_SIZE, "0");
     }
 
     private String documentNumber(){

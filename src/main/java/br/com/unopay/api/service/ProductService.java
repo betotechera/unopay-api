@@ -45,7 +45,7 @@ public class ProductService {
             validateReferences(product);
             return repository.save(product);
         }catch (DataIntegrityViolationException e){
-            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode());
+            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }
@@ -57,7 +57,7 @@ public class ProductService {
         try {
             repository.save(current);
         }catch (DataIntegrityViolationException e){
-            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode());
+            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }

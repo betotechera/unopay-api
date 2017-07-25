@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ReflectionHelper {
 
+    private ReflectionHelper(){}
+
     public static Stream<Field> getDeclaredFields(Object object) {
         return Stream.of(object.getClass().getDeclaredFields());
     }

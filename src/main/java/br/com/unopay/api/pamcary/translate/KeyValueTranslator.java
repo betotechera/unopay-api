@@ -37,10 +37,6 @@ public class KeyValueTranslator {
                 .collect(Collectors.toList());
     }
 
-    public <T> T populate(Class<T> clazz, List<FieldTO> fieldTOS){
-        Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
-        return populate(clazz, map);
-    }
 
     public Map<String, Object> extract(Object objectWithKeyAnnotation)  {
         return ReflectionHelper.getDeclaredFields(objectWithKeyAnnotation)
@@ -50,6 +46,12 @@ public class KeyValueTranslator {
                 .filter(entry -> entry.getValue() != null)
                 .collect(Collectors.toMap(Entry::getKey,Entry::getValue));
     }
+
+    public <T> T populate(Class<T> clazz, List<FieldTO> fieldTOS){
+        Map<String, String> map = fieldTOS.stream().collect(Collectors.toMap(FieldTO::getKey, FieldTO::getValue));
+        return populate(clazz, map);
+    }
+
 
     @SneakyThrows
     public <T> T populate(Class<T> clazz, Map<String, String> map){

@@ -40,6 +40,14 @@ public class UnopayScheduler {
         schedule(job, trigger);
     }
 
+    @SneakyThrows
+    private void schedule(JobDetail job, Trigger trigger) {
+        if (scheduler.checkExists(job.getKey())) {
+            scheduler.deleteJob(job.getKey());
+        }
+        scheduler.scheduleJob(job, trigger);
+    }
+
     private  <JOB extends Job> JobDetail detail(String id, Class<JOB> jobClass) {
         return newJob(jobClass)
                 .withIdentity(id, jobClass.getSimpleName())
@@ -60,11 +68,4 @@ public class UnopayScheduler {
                 .build();
     }
 
-    @SneakyThrows
-    private void schedule(JobDetail job, Trigger trigger) {
-        if (scheduler.checkExists(job.getKey())) {
-            scheduler.deleteJob(job.getKey());
-        }
-        scheduler.scheduleJob(job, trigger);
-    }
 }

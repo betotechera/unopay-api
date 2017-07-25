@@ -57,7 +57,7 @@ public class ContractService {
             contract.checkFields();
             return repository.save(contract);
         }catch (DataIntegrityViolationException e){
-            log.info("Contract with code={} already exists",  contract.getCode());
+            log.info("Contract with code={} already exists",  contract.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
         }
     }
@@ -72,7 +72,7 @@ public class ContractService {
         try {
             repository.save(current);
         }catch (DataIntegrityViolationException e){
-            log.info("Product code={} already exists", contract.getCode());
+            log.info("Product code={} already exists", contract.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
         }
     }

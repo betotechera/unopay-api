@@ -44,34 +44,33 @@ public class BatchHeader {
         BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
         Person person = remittance.getIssuer().getPerson();
         Address address = person.getAddress();
-        return new FilledRecord(getBatchHeader()) {{
-            defaultFill(BANCO_COMPENSACAO);
-            fill(LOTE_SERVICO, position);
-            defaultFill(TIPO_REGISTRO);
-            fill(TIPO_OPERACAO, remittance.getOperationType().getCode());
-            fill(TIPO_SERVICO, remittance.getPaymentServiceType().getCode());
-            fill(FORMA_LANCAMENTO,item.getTransferOption().getCode());
-            defaultFill(LAYOUT_ARQUIVO);
-            defaultFill(INICIO_FEBRABAN);
-            defaultFill(TIPO_INSCRICAO);
-            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber());
-            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber());
-            fill(AGENCIA, bankAccount.getAgency());
-            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit());
-            fill(NUMERO_CONTA, bankAccount.getAccountNumber());
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit());
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit());
-            fill(NOME_EMPRESA, person.getName());
-            defaultFill(MENSAGEM);
-            fill(LOGRADOURO, address.getStreetName());
-            fill(NUMERO, address.getNumber());
-            fill(COMPLEMENTO, address.getComplement());
-            fill(CIDADE, address.getCity());
-            fill(CEP, address.firstZipCode());
-            fill(COMPLEMENTO_CEP,address.lastZipeCode());
-            fill(ESTADO, address.getState().name());
-            defaultFill(FIM_FEBRABAN);
+        return new FilledRecord(getBatchHeader()).
+            defaultFill(BANCO_COMPENSACAO).
+            fill(LOTE_SERVICO, position).
+            defaultFill(TIPO_REGISTRO).
+            fill(TIPO_OPERACAO, remittance.getOperationType().getCode()).
+            fill(TIPO_SERVICO, remittance.getPaymentServiceType().getCode()).
+            fill(FORMA_LANCAMENTO, item.getTransferOption().getCode()).
+            defaultFill(LAYOUT_ARQUIVO).
+            defaultFill(INICIO_FEBRABAN).
+            defaultFill(TIPO_INSCRICAO).
+            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber()).
+            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber()).
+            fill(AGENCIA, bankAccount.getAgency()).
+            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit()).
+            fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
+            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
+            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
+            fill(NOME_EMPRESA, person.getName()).
+            defaultFill(MENSAGEM).
+            fill(LOGRADOURO, address.getStreetName()).
+            fill(NUMERO, address.getNumber()).
+            fill(COMPLEMENTO, address.getComplement()).
+            fill(CIDADE, address.getCity()).
+            fill(CEP, address.firstZipCode()).
+            fill(COMPLEMENTO_CEP, address.lastZipeCode()).
+            fill(ESTADO, address.getState().name()).
+            defaultFill(FIM_FEBRABAN).
             defaultFill(OCORRENCIAS);
-        }};
     }
 }

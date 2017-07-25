@@ -25,6 +25,7 @@ import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 @Service
 public class PamcaryService {
 
+    public static final int NSU_SIZE = 999999999;
     private WSTransacional binding;
     private KeyValueTranslator translator;
 
@@ -115,7 +116,7 @@ public class PamcaryService {
     }
 
     private String getNsu(){
-        return String.valueOf(new java.security.SecureRandom().nextInt(999999999));
+        return String.valueOf(new java.security.SecureRandom().nextInt(NSU_SIZE));
     }
 
     private boolean isErrorMessage(FieldTO field) {

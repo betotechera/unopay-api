@@ -20,17 +20,20 @@ public class FilledRecord implements RemittanceRecord {
         this.columns = new ArrayList<>();
     }
 
-    public void fill(String ruleKey, String value) {
+    public FilledRecord fill(String ruleKey, String value) {
         RecordColumnRule columnRule = layout.get(ruleKey);
         columns.add(new RecordColumn(columnRule,value));
+        return this;
     }
 
-    public void fill(String ruleKey, Integer value) {
+    public FilledRecord fill(String ruleKey, Integer value) {
         fill(ruleKey, String.valueOf(value));
+        return this;
     }
 
-    public void defaultFill(String ruleKey) {
+    public FilledRecord defaultFill(String ruleKey) {
         columns.add(new RecordColumn(layout.get(ruleKey)));
+        return this;
     }
 
     public String build() {

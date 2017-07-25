@@ -79,10 +79,6 @@ public class BatchClosingService {
         create(establishmentId, today());
     }
 
-    public void scheduleBatchClosing(BatchClosing batchClosing){
-        scheduler.schedule(batchClosing.establishmentId(),batchClosing.getClosingDateTime(), BatchClosingJob.class);
-    }
-
     @Transactional
     public BatchClosing create(String establishmentId, Date at) {
         checkAlreadyRunning(establishmentId);
@@ -93,6 +89,11 @@ public class BatchClosingService {
             return batchClosing.stream().findFirst().orElse(null);
         }
     }
+
+    public void scheduleBatchClosing(BatchClosing batchClosing){
+        scheduler.schedule(batchClosing.establishmentId(),batchClosing.getClosingDateTime(), BatchClosingJob.class);
+    }
+
 
     private void checkAlreadyRunning(String establishmentId) {
         Optional<BatchClosing> processingBatch = repository

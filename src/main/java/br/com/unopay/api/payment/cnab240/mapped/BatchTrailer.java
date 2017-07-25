@@ -23,17 +23,16 @@ public class BatchTrailer {
     public BatchTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance, Integer position) {
-        return new FilledRecord(getBatchTrailer()) {{
-            defaultFill(BANCO_COMPENSACAO);
-            fill(LOTE_SERVICO, position);
-            defaultFill(TIPO_REGISTRO);
-            defaultFill(INICIO_FEBRABAN);
-            fill(SOMATORIA_VALORES, Rounder.roundToString(remittance.total()));
-            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total()));
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS);
-            defaultFill(NUMERO_AVISO_DEBITO);
-            defaultFill(FIM_FEBRABAN);
+        return new FilledRecord(getBatchTrailer()).
+            defaultFill(BANCO_COMPENSACAO).
+            fill(LOTE_SERVICO, position).
+            defaultFill(TIPO_REGISTRO).
+            defaultFill(INICIO_FEBRABAN).
+            fill(SOMATORIA_VALORES, Rounder.roundToString(remittance.total())).
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total())).
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS).
+            defaultFill(NUMERO_AVISO_DEBITO).
+            defaultFill(FIM_FEBRABAN).
             defaultFill(OCORRENCIAS);
-        }};
     }
 }

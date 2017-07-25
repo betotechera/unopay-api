@@ -54,6 +54,7 @@ import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 public class BatchClosing implements Serializable {
 
     public static final long serialVersionUID = 1L;
+    public static final int NUMBER_SIZE = 12;
 
     public BatchClosing(){}
 
@@ -75,7 +76,7 @@ public class BatchClosing implements Serializable {
     private String generateBatchNumber(Long total) {
         String batchNumber = String.valueOf(establishment.getType().ordinal()) + String.valueOf(total) +
                         String.valueOf(this.closingDateTime.getTime());
-        return batchNumber.substring(0, Math.min(batchNumber.length(), 12));
+        return batchNumber.substring(0, Math.min(batchNumber.length(), NUMBER_SIZE));
     }
 
     @Id

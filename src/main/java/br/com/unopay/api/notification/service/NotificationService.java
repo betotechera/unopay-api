@@ -47,15 +47,15 @@ public class NotificationService {
         log.info("reset password message sent to the queue for {}", user);
     }
 
+    public void sendNewPassword(UserDetail user) {
+        sendNewPassword(user, CREATE_PASSWORD);
+    }
+
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
         Email email = new Email(emailAsText);
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("batch", batchClosing); }};
         Notification notification = new Notification(email, null, EventType.BATCH_CLOSED, payload);
         notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
-    }
-
-    public void sendNewPassword(UserDetail user) {
-        sendNewPassword(user, CREATE_PASSWORD);
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {

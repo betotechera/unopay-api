@@ -10,15 +10,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GenericEnumSerializer <T extends DescriptableEnum> extends JsonSerializer<T>{
 
+
     @Override
     @SneakyThrows
-    public void serialize(T value, JsonGenerator gen, SerializerProvider serializers){
+    public void serializeWithType(T value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) {
         serialize(value, gen);
     }
 
     @Override
     @SneakyThrows
-    public void serializeWithType(T value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) {
+    public void serialize(T value, JsonGenerator gen, SerializerProvider serializers){
         serialize(value, gen);
     }
 
@@ -32,5 +33,7 @@ public class GenericEnumSerializer <T extends DescriptableEnum> extends JsonSeri
             log.error("cannot serialise value={}", value, e);
         }
     }
+
+
 
 }

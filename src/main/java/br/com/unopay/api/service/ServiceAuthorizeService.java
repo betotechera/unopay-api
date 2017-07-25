@@ -42,6 +42,7 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 @Service
 public class ServiceAuthorizeService {
 
+    public static final int NUMBER_SIZE = 12;
     private ServiceAuthorizeRepository repository;
     private ContractorInstrumentCreditService instrumentCreditService;
     private EventService eventService;
@@ -106,7 +107,7 @@ public class ServiceAuthorizeService {
         String authorizationNumber =
                 String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(count) +
                         String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
-        return authorizationNumber.substring(0, Math.min(authorizationNumber.length(), 12));
+        return authorizationNumber.substring(0, Math.min(authorizationNumber.length(), NUMBER_SIZE));
     }
 
     private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
