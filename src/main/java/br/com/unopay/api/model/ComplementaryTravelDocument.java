@@ -19,6 +19,7 @@ import javax.persistence.Version;
 import javax.validation.Valid;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static javax.persistence.EnumType.STRING;
@@ -90,5 +91,13 @@ public class ComplementaryTravelDocument  implements Serializable, Updatable {
     public void markAsDelivered(){
         situation = TravelDocumentSituation.DIGITIZED;
         deliveryDateTime = new Date();
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
     }
 }

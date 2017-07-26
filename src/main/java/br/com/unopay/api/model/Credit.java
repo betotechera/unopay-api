@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.model.CreditInsertionType.DIRECT_DEBIT;
@@ -238,5 +239,13 @@ public class Credit implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_ALREADY_CANCELED);
         }
         this.situation = CreditSituation.CANCELED;
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
     }
 }

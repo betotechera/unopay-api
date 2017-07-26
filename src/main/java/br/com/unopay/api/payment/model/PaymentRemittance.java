@@ -162,6 +162,18 @@ public class PaymentRemittance implements Serializable {
         this.createdDateTime = ObjectUtils.clone(dateTime);
     }
 
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
+    }
+
+    public Date getSubmissionDateTime(){
+        return ObjectUtils.clone(this.submissionDateTime);
+    }
+
+    public Date getSubmissionReturnDateTime(){
+        return ObjectUtils.clone(this.submissionReturnDateTime);
+    }
+
     private String createTimeFormatted() {
         return new SimpleDateFormat(DATE_FORMAT).format(createdDateTime);
     }

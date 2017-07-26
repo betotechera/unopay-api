@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static javax.persistence.EnumType.STRING;
@@ -120,5 +121,13 @@ public class TravelDocument  implements Serializable, Updatable {
     }
     public boolean negativeCargoWeight(){
         return getCargoWeight() == null || getCargoWeight() <= 0;
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
     }
 }

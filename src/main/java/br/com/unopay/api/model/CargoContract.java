@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.model.CargoProfile.DRY_CARGO;
@@ -211,5 +212,13 @@ public class CargoContract implements Serializable, Updatable {
                 .forEach(d -> d.updateMe(cargoContract.travelDocumentByNumber(d.getDocumentNumber())));
         getComplementaryTravelDocuments()
                 .forEach(d -> d.updateMe(cargoContract.complementaryDocumentByNumber(d.getDocumentNumber())));
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
     }
 }
