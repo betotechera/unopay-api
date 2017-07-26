@@ -16,7 +16,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "physical_person_detail")
 public class PhysicalPersonDetail implements Serializable{
 

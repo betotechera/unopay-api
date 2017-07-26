@@ -29,7 +29,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @KeyBase(key = "viagem.favorecido")
 @Table(name = "contractor")
 public class Contractor implements Serializable {

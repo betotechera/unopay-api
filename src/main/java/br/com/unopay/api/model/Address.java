@@ -22,7 +22,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "address")
 public class Address implements Serializable {
 

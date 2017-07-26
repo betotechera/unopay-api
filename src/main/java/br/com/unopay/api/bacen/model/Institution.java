@@ -22,7 +22,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "institution")
 public class Institution implements Serializable {
 

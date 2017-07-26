@@ -26,7 +26,6 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "event")
 public class Event implements Serializable {
 

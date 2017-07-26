@@ -17,7 +17,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "contact")
 public class Contact  implements Serializable {
 

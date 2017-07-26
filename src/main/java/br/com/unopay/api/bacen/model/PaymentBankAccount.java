@@ -24,7 +24,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "payment_bank_account")
 public class PaymentBankAccount implements Serializable{
 
