@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -285,5 +286,21 @@ public class Contract implements Serializable {
         if(!containsContractor(contractor)){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }
+    }
+
+    public void setBegin(Date dateTime){
+        this.begin = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getBegin(){
+        return ObjectUtils.clone(this.begin);
+    }
+
+    public void setEnd(Date dateTime){
+        this.end = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getEnd(){
+        return ObjectUtils.clone(this.end);
     }
 }

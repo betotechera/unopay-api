@@ -26,6 +26,7 @@ import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_REQUIRED_WHEN_SUBTRACT_BALANCE;
@@ -225,5 +226,29 @@ public class CreditPaymentAccount implements Serializable, Updatable {
 
     public void giveBack(BigDecimal value) {
         this.availableBalance = this.availableBalance.add(value);
+    }
+
+    public void setTransactionCreatedDateTime(Date dateTime){
+        this.transactionCreatedDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getTransactionCreatedDateTime(){
+        return ObjectUtils.clone(this.transactionCreatedDateTime);
+    }
+
+    public void setInsertionCreatedDateTime(Date dateTime){
+        this.insertionCreatedDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getInsertionCreatedDateTime(){
+        return ObjectUtils.clone(this.insertionCreatedDateTime);
+    }
+
+    public void setSolicitationDateTime(Date dateTime){
+        this.solicitationDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getSolicitationDateTime(){
+        return ObjectUtils.clone(this.solicitationDateTime);
     }
 }

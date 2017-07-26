@@ -342,7 +342,6 @@ public class ServiceAuthorize implements Serializable {
         this.batchClosingDateTime = ObjectUtils.clone(dateTime);
     }
 
-
     public Date getAuthorizationDateTime(){
         return ObjectUtils.clone(this.authorizationDateTime);
     }

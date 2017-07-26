@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
@@ -299,6 +300,22 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             return getContract().getProduct().getId();
         }
         return null;
+    }
+
+    public Date getCreatedDateTime(){
+        return ObjectUtils.clone(this.createdDateTime);
+    }
+
+    public void setCreatedDateTime(Date dateTime){
+        this.createdDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getExpirationDateTime(){
+        return ObjectUtils.clone(this.expirationDateTime);
+    }
+
+    public void setExpirationDateTime(Date dateTime){
+        this.expirationDateTime = ObjectUtils.clone(dateTime);
     }
 
 }
