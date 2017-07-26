@@ -39,7 +39,7 @@ public class Execute implements Equals2, HashCode2
         if (this.equals(object)) {
             return true;
         }
-        final Execute that = ((Execute) object);
+        final Execute that = (Execute) object;
         RequestTO lhsArg0;
         lhsArg0 = this.getArg0();
         RequestTO rhsArg0;

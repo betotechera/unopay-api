@@ -35,6 +35,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -327,6 +328,35 @@ public class ServiceAuthorize implements Serializable {
 
     public void setAuthorizationDateTime(Date dateTime){
         this.authorizationDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setSolicitationDateTime(Date dateTime){
+        this.solicitationDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setCancellationDateTime(Date dateTime){
+        this.cancellationDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public void setBatchClosingDateTime(Date dateTime){
+        this.batchClosingDateTime = ObjectUtils.clone(dateTime);
+    }
+
+
+    public Date getAuthorizationDateTime(){
+        return ObjectUtils.clone(this.authorizationDateTime);
+    }
+
+    public Date getSolicitationDateTime(){
+        return ObjectUtils.clone(this.solicitationDateTime);
+    }
+
+    public Date getCancellationDateTime(){
+        return ObjectUtils.clone(this.cancellationDateTime);
+    }
+
+    public Date getBatchClosingDateTime(){
+        return ObjectUtils.clone(this.batchClosingDateTime);
     }
 
 }

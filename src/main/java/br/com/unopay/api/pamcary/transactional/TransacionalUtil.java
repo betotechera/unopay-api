@@ -24,7 +24,7 @@ public class TransacionalUtil {
         if (this.equals(object)) {
             return true;
         }
-        final RequestTO that = ((RequestTO) object);
+        final RequestTO that = (RequestTO) object;
         String lhsContext;
         lhsContext = this.context;
         String rhsContext;

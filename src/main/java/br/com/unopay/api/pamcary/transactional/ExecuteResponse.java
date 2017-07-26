@@ -39,7 +39,7 @@ public class ExecuteResponse implements Equals2, HashCode2
         if (this.equals(object)) {
             return true;
         }
-        final ExecuteResponse that = ((ExecuteResponse) object);
+        final ExecuteResponse that = (ExecuteResponse) object;
         ResponseTO lhsReturn;
         lhsReturn = this.getReturn();
         ResponseTO rhsReturn;

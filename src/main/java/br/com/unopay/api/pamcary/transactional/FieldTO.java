@@ -53,7 +53,7 @@ public class FieldTO implements Equals2, HashCode2
         if (this.equals(object)) {
             return true;
         }
-        final FieldTO that = ((FieldTO) object);
+        final FieldTO that = (FieldTO) object;
         String lhsKey;
         lhsKey = this.getKey();
         String rhsKey;
