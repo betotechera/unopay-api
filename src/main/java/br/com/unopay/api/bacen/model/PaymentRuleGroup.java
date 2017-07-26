@@ -30,7 +30,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "payment_rule_group")
 public class PaymentRuleGroup implements Serializable, Updatable {
 

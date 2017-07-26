@@ -18,7 +18,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "user_type")
 @Data
-@EqualsAndHashCode
 public class UserType implements Serializable {
 
     public static final long serialVersionUID = 1L;

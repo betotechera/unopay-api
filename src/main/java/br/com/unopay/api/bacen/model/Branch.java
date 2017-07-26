@@ -34,7 +34,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "branch")
 public class Branch implements Serializable {
 

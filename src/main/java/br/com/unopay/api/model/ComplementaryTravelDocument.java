@@ -26,7 +26,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @KeyBase(key = "viagem.documento.complementar")
 @Table(name = "complementary_travel_document")
 public class ComplementaryTravelDocument  implements Serializable, Updatable {

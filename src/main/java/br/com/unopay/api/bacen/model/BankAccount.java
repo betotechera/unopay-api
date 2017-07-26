@@ -30,7 +30,6 @@ import static br.com.unopay.api.uaa.exception.Errors.TYPE_REQUIRED;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "bank_account")
 public class BankAccount implements Serializable{
 

@@ -26,7 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "batch_closing_item")
 public class BatchClosingItem implements Serializable, Updatable {
 

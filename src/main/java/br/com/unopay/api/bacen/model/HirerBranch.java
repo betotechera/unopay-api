@@ -22,7 +22,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "hirer_branch")
 public class HirerBranch implements Serializable {
 

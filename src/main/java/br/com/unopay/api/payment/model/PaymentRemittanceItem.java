@@ -30,7 +30,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @ToString(exclude = { "paymentRemittance", "establishment" })
-@EqualsAndHashCode
 @Table(name = "payment_remittance_item")
 public class PaymentRemittanceItem  implements Serializable {
 

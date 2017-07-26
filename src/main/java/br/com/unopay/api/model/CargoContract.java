@@ -41,7 +41,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @KeyBase(key = "viagem")
 @Table(name = "cargo_contract")
 public class CargoContract implements Serializable, Updatable {

@@ -14,7 +14,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode
 @Table(name = "brand_flag")
 public class BrandFlag  implements Serializable {
 
