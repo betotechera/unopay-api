@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.StringUtils;
 
@@ -121,6 +122,22 @@ public class PaymentInstrument implements Serializable, Updatable {
             return getContractor().getId();
         }
         return null;
+    }
+
+    public void setCreatedDate(Date dateTime){
+        this.createdDate = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreatedDate(){
+        return ObjectUtils.clone(this.createdDate);
+    }
+
+    public void setExpirationDate(Date dateTime){
+        this.expirationDate = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getExpirationDate(){
+        return ObjectUtils.clone(this.expirationDate);
     }
 
 }

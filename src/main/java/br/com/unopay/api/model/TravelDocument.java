@@ -130,4 +130,12 @@ public class TravelDocument  implements Serializable, Updatable {
     public Date getCreatedDateTime(){
         return ObjectUtils.clone(this.createdDateTime);
     }
+
+    public void setDeliveryDateTime(Date dateTime){
+        this.deliveryDateTime = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getDeliveryDateTime(){
+        return ObjectUtils.clone(this.deliveryDateTime);
+    }
 }

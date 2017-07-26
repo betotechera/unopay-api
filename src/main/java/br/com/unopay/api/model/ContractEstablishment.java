@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
@@ -78,5 +79,13 @@ public class ContractEstablishment implements Serializable {
         this.contract = contract;
         origin = (origin == null) ? UNOPAY : origin;
 
+    }
+
+    public void setCreation(Date dateTime){
+        this.creation = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreation(){
+        return ObjectUtils.clone(this.creation);
     }
 }

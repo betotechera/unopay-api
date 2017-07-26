@@ -22,6 +22,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static javax.persistence.EnumType.STRING;
@@ -106,5 +107,13 @@ public class LegalPersonDetail implements Serializable{
     }
     public void updateForHirer(LegalPersonDetail legalPersonDetail) {
         this.responsibleEmail = legalPersonDetail.getResponsibleEmail();
+    }
+
+    public void setCreation(Date dateTime){
+        this.creation = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getCreation(){
+        return ObjectUtils.clone(this.creation);
     }
 }

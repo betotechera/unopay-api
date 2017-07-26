@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
@@ -41,5 +42,13 @@ public class PhysicalPersonDetail implements Serializable{
 
     public void updateForHirer(PhysicalPersonDetail detail) {
         this.email = detail.getEmail();
+    }
+
+    public void setBirthDate(Date dateTime){
+        this.birthDate = ObjectUtils.clone(dateTime);
+    }
+
+    public Date getBirthDate(){
+        return ObjectUtils.clone(this.birthDate);
     }
 }

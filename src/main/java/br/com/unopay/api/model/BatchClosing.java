@@ -247,4 +247,16 @@ public class BatchClosing implements Serializable {
     public void setClosingDateTime(Date dateTime){
         this.closingDateTime = ObjectUtils.clone(dateTime);
     }
+
+    public Date getPaymentDateTime(){
+        return ObjectUtils.clone(this.paymentDateTime);
+    }
+
+    public Date getPaymentReleaseDateTime(){
+        return ObjectUtils.clone(this.paymentReleaseDateTime);
+    }
+
+    public Date getClosingDateTime(){
+        return ObjectUtils.clone(this.closingDateTime);
+    }
 }
