@@ -18,4 +18,10 @@ public interface Views {
         interface Detail {}
         interface List {}
     }
+
+    interface PaymentRemittance {
+        interface Detail {}
+        interface List {}
+    }
+
 }

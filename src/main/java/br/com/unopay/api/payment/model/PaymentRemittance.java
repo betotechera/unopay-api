@@ -62,64 +62,69 @@ public class PaymentRemittance implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     private Issuer issuer;
 
     @Column(name = "issuer_bank_code")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private Integer issuerBankCode;
 
     @Column(name = "remittance_number")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
     @NotNull(groups = {Create.class})
     private String number;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_type")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private PaymentServiceType paymentServiceType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "operation_type")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private PaymentOperationType operationType;
 
     @Column(name = "occurrence_code")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private String occurrenceCode;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
     @NotNull(groups = {Create.class})
     private Date createdDateTime;
 
     @Column(name = "submission_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private Date submissionDateTime;
 
+    @Column(name = "cnab_uri")
+    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
+    private String cnabUri;
+
     @Column(name = "situation")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;
 
     @Column(name = "submission_return_date_time")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @NotNull(groups = {Create.class})
     private Date submissionReturnDateTime;
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonView({Views.PaymentRemittance.Detail.class})
     @JoinColumn(name = "payment_remittance_id")
     private Set<PaymentRemittanceItem> remittanceItems;
 
