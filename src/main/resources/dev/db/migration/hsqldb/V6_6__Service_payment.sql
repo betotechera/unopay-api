@@ -9,6 +9,7 @@ create table payment_remittance (
     created_date_time TIMESTAMP not null,
     submission_date_time TIMESTAMP,
     situation varchar(150) not null,
+    cnab_uri varchar(255),
     submission_return_date_time TIMESTAMP,
     version integer,
     constraint fk_remittance_bank foreign key(issuer_bank_code) references bank(bacen_code),
