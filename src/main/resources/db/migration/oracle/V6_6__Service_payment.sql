@@ -63,3 +63,4 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_PAY
 
 ALTER TABLE batch_closing ADD CONSTRAINT fk_batch_payment FOREIGN KEY(payment_id) REFERENCES payment_remittance_item(id);
 alter table payment_bank_account add bank_agreement_number varchar(20) default '0000000000' not null;
+alter table legal_person_detail add state_inscription_number varchar(150) null;

@@ -74,6 +74,10 @@ public class LegalPersonDetail implements Serializable{
     @JsonView({Views.Public.class})
     private String responsibleEmail;
 
+    @Column(name="state_inscription_number")
+    @JsonView({Views.Public.class})
+    private String stateInscriptionNumber;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "type", column = @Column(name = "responsible_document_type")) ,

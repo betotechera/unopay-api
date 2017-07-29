@@ -6,6 +6,7 @@ create table legal_person_detail (
   responsible_document_type VARCHAR(50),
   responsible_document_number VARCHAR(50),
   responsible_registry_entity VARCHAR(50),
+  state_inscription_number varchar(150),
   version integer
 );
 
