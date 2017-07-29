@@ -9,17 +9,24 @@ import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +56,7 @@ public class PaymentRemittanceService {
     @Setter private Cnab240Generator cnab240Generator;
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
+    private UserDetailService userDetailService;
 
     public PaymentRemittanceService(){}
 
@@ -59,7 +67,8 @@ public class PaymentRemittanceService {
                                     IssuerService issuerService,
                                     Cnab240Generator cnab240Generator,
                                     FileUploaderService fileUploaderService,
-                                    LayoutExtractorSelector layoutExtractorSelector) {
+                                    LayoutExtractorSelector layoutExtractorSelector,
+                                    UserDetailService userDetailService) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
@@ -67,6 +76,7 @@ public class PaymentRemittanceService {
         this.cnab240Generator = cnab240Generator;
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
+        this.userDetailService = userDetailService;
     }
 
     public PaymentRemittance findById(String id) {
@@ -105,7 +115,8 @@ public class PaymentRemittanceService {
         Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         String generate = cnab240Generator.generate(remittance, new Date());
-        fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
+        String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
+        remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);
     }
 
@@ -192,6 +203,32 @@ public class PaymentRemittanceService {
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
         return items.stream().filter(item -> item.establishmentDocumentIs(document)).findFirst();
+    }
+
+    public Page<PaymentRemittance> findMyByFilter(String userEmail, PaymentRemittanceFilter filter,
+                                             UnovationPageRequest pageable) {
+        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
+    }
+
+    private PaymentRemittanceFilter buildFilterBy(PaymentRemittanceFilter filter, UserDetail currentUser) {
+        if(currentUser.isEstablishmentType()) {
+            filter.setEstablishment(currentUser.establishmentId());
+        }
+        if(currentUser.isIssuerType()) {
+            filter.setIssuer(currentUser.issuerId());
+        }
+        if(currentUser.isAccreditedNetworkType()) {
+            filter.setAccreditedNetwork(currentUser.accreditedNetworkId());
+        }
+        return filter;
+    }
+
+    private UserDetail getUserByEmail(String userEmail) {
+        return userDetailService.getByEmail(userEmail);
+    }
+
+    public Page<PaymentRemittance> findByFilter(PaymentRemittanceFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     private String getNumberWithoutLeftPad(String remittanceNumber) {

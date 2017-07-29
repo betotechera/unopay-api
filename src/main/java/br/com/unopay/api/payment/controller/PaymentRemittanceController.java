@@ -1,4 +1,62 @@
 package br.com.unopay.api.payment.controller;
 
+import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
+import br.com.unopay.api.payment.service.PaymentRemittanceService;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
+import br.com.unopay.bootcommons.jsoncollections.Results;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import static org.springframework.http.HttpStatus.OK;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RestController
+@Timed(prefix = "api")
 public class PaymentRemittanceController {
+
+    @Value("${unopay.api}")
+    private String api;
+
+    private PaymentRemittanceService service;
+
+    @Autowired
+    public PaymentRemittanceController(PaymentRemittanceService service) {
+        this.service = service;
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.PaymentRemittance.Detail.class)
+    @PreAuthorize("hasRole('ROLE_LIST_PAYMENT_REMITTANCE')")
+    @RequestMapping(value = "/payment-remittances/{id}", method = GET)
+    public PaymentRemittance get(@PathVariable String id) {
+        log.info("get batchClosing={}", id);
+        return service.findById(id);
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.List.class)
+    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_PAYMENT_REMITTANCE')")
+    @RequestMapping(value = "/payment-remittances/my", method = GET)
+    public Results<PaymentRemittance> findMyByFilter(OAuth2Authentication authentication,
+                                                     PaymentRemittanceFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search PaymentRemittance with filter={}", filter);
+        Page<PaymentRemittance> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-remittances/my", api));
+    }
+
 }

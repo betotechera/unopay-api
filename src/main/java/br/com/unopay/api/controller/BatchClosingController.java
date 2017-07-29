@@ -95,14 +95,15 @@ public class BatchClosingController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(List.class)
+    @JsonView({Views.BatchClosing.List.class})
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/my", method = GET)
-    public Results<BatchClosing> findMyByFilter(OAuth2Authentication authentication,BatchClosingFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<BatchClosing> findMyByFilter(OAuth2Authentication authentication,BatchClosingFilter filter,
+                                                @Validated UnovationPageRequest pageable) {
         log.info("search batchClosing with filter={}", filter);
         Page<BatchClosing> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/batch-closings", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/batch-closings/my", api));
     }
 
 }
