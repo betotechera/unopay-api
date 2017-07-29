@@ -67,10 +67,10 @@ public class FileUploaderService extends AbstractUploadService {
     }
 
     @SneakyThrows
-    public void uploadCnab240(String generate, String fileUri) {
+    public String uploadCnab240(String generate, String fileUri) {
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Stream.of(generate.split(SEPARATOR)).forEach(line -> write(outputStream, line));
-            uploadBytes(fileUri, outputStream.toByteArray());
+            return uploadBytes(fileUri, outputStream.toByteArray());
         }
     }
 
