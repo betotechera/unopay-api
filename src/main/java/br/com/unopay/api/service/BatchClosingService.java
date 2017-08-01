@@ -6,7 +6,6 @@ import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
 import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
-import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -101,11 +100,13 @@ public class BatchClosingService {
         notifier.notify(Queues.UNOPAY_BATCH_CLOSING, batchClosing);
     }
 
+    @Transactional
     @RabbitListener(queues = Queues.UNOPAY_BATCH_CLOSING)
-    void batchReceiptNotify(String objectAsString) {
+    public void batchReceiptNotify(String objectAsString) {
         BatchClosing batchClosing = genericObjectMapper.getAsObject(objectAsString, BatchClosing.class);
         log.info("processing batch closing for establishment={}", batchClosing.establishmentId());
         process(batchClosing.establishmentId(), batchClosing.getClosingDateTime());
+        log.info("processed batch closing for establishment={}", batchClosing.establishmentId());
     }
 
     private void checkAlreadyRunning(String establishmentId) {
