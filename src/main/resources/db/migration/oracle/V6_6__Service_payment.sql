@@ -17,7 +17,7 @@ create table remittance_payer (
     city VARCHAR(50),
     state VARCHAR(50),
     version integer,
-    constraint fk_remittance_payer_bank foreign key(bank_code) references bank(bacen_code),
+    constraint fk_remittance_payer_bank foreign key(bank_code) references bank(bacen_code)
 );
 
 COMMENT ON TABLE remittance_payer IS 'Pagador da remessa ';
