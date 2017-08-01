@@ -16,6 +16,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -120,7 +121,7 @@ public class PaymentRemittanceService {
         updateSituation(remittanceItems, remittance);
     }
 
-    public Set<PaymentRemittance> findByPayerDocument(String payerDocument){
+    public List<PaymentRemittance> findByPayerDocument(String payerDocument){
         return repository.findByPayerDocumentNumber(payerDocument);
     }
 
