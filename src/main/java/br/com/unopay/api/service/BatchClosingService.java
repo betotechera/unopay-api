@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -109,7 +108,7 @@ public class BatchClosingService {
         Set<BatchClosing> batchClosings = updateBatchItems(batchClosingItems);
         UserDetail currentUser = getUserByEmail(userEmail);
         batchClosings.forEach(batchClosing -> checkUserQualifiedForBatch(currentUser, batchClosing));
-        updateBatchSituation(batchClosings);
+        updateBatchesSituation(batchClosings);
     }
 
     @Transactional
@@ -165,12 +164,16 @@ public class BatchClosingService {
         return repository.count();
     }
 
-    private void updateBatchSituation(Set<BatchClosing> batchClosings) {
+    private void updateBatchesSituation(Set<BatchClosing> batchClosings) {
         batchClosings.forEach(batchClosing -> {
-            validateBatchClosing(batchClosing);
-            batchClosing.setSituation(DOCUMENT_RECEIVED);
-            repository.save(batchClosing);
+            updateBatchSituation(batchClosing,DOCUMENT_RECEIVED);
         });
+    }
+
+    public void updateBatchSituation(BatchClosing batchClosing, BatchClosingSituation situation) {
+        validateBatchClosing(batchClosing);
+        batchClosing.setSituation(situation);
+        repository.save(batchClosing);
     }
 
     private Set<BatchClosing> updateBatchItems(List<BatchClosingItem> batchClosingItems) {
