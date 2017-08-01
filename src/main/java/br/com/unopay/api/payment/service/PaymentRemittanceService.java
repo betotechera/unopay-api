@@ -122,7 +122,7 @@ public class PaymentRemittanceService {
     }
 
     public List<PaymentRemittance> findByPayerDocument(String payerDocument){
-        return repository.findByPayerDocumentNumber(payerDocument);
+        return repository.findByPayerDocumentNumberOrderByCreatedDateTime(payerDocument);
     }
 
     private void checkAlreadyRunning(String issuerDoc) {
