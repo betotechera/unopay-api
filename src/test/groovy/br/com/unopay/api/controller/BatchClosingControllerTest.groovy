@@ -32,19 +32,6 @@ class BatchClosingControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isCreated())
     }
 
-    void 'known batchClosing should be deleted'() {
-        given:
-        String accessToken = getUserAccessToken()
-        BatchClosing batchClosing = fixtureCreator.createBatchClosing()
-
-        def id = batchClosing.id
-        when:
-        def result = this.mvc.perform(delete('/batch-closings/{id}?access_token={access_token}',id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isNoContent())
-    }
-
     void 'known batchClosings should be found'() {
         given:
         String accessToken = getUserAccessToken()

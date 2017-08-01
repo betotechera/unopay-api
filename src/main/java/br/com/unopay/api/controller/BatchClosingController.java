@@ -3,6 +3,7 @@ package br.com.unopay.api.controller;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.BatchClosingService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -72,15 +73,27 @@ public class BatchClosingController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/{id}", method = RequestMethod.DELETE)
-    public void remove(@PathVariable  String id) {
-        log.info("removing batchClosing id={}", id);
+    public void cancel(@PathVariable  String id,OAuth2Authentication authentication) {
+        log.info("canceling batchClosing id={}", id);
+        service.cancel(authentication.getName(),id);
     }
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
     @RequestMapping(value = "/batch-closings/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @RequestBody BatchClosing batchClosing) {
-        log.info("removing batchClosing id={}", id);
+    public void update(@PathVariable  String id, @RequestBody @Validated(Update.class)
+            BatchClosing batchClosing,OAuth2Authentication authentication) {
+        log.info("updating batchClosing id={}", id);
+        service.updateBatchSituation(batchClosing,batchClosing.getSituation());
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BATCH_CLOSING')")
+    @RequestMapping(value = "/batch-closings/{id}/items", method = RequestMethod.PUT)
+    public void updateItems(@PathVariable  String id,
+                            @RequestBody BatchClosing batchClosing,OAuth2Authentication authentication) {
+        log.info("updating batchClosing id={}", id);
+        service.updateInvoiceInformation(authentication.getName(),batchClosing.getBatchClosingItems());
     }
 
     @ResponseStatus(OK)
