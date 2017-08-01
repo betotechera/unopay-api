@@ -113,7 +113,7 @@ public class BatchClosing implements Serializable {
     private Hirer hirer;
 
     @JoinColumn(name="issue_invoice")
-    @JsonView({Views.BatchClosing.Detail.class})
+    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
     private Boolean issueInvoice;
 
     @Column(name = "closing_date_time")
