@@ -7,7 +7,9 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.config.Queues
 import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.BatchClosingSituation
@@ -35,9 +37,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     FixtureCreator fixtureCreator
 
     NotificationService notificationServiceMock = Mock(NotificationService)
+    Notifier notifierMock = Mock(Notifier)
 
     void setup(){
         service.notificationService = notificationServiceMock
+        service.notifier = notifierMock
     }
 
     def 'should return all batch closing with payment date before today and finalized'(){
@@ -76,17 +80,34 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         given:
         List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
         Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("situation", BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH)
+            add("establishment", establishment)
+        }})
         createServiceAuthorizations(contracts, establishment, 1)
-        def created = service.create(establishment.id, instant("now"))
-        created.situation = BatchClosingSituation.PROCESSING_AUTOMATIC_BATCH
-        service.save(created)
-
         when:
-        service.create(establishment.id, instant("1 day ago"))
+        service.create(new BatchClosing(){{
+            setEstablishment(establishment)
+            setClosingDateTime(instant("1 day ago"))
+        }})
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'BATCH_ALREADY_RUNNING'
+    }
+
+    def 'when create should queue'(){
+        given:
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        createServiceAuthorizations(contracts, establishment, 1)
+        BatchClosing closing = new BatchClosing().with { closingDateTime = instant("1 day ago"); it }
+
+        when:
+        service.create(closing)
+
+        then:
+        1 * notifierMock.notify(Queues.UNOPAY_BATCH_CLOSING, closing)
     }
 
     def 'should ever create new batch closing when processed'(){
@@ -94,11 +115,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
         Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         def totalByHirer = createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
-        service.create(establishment.id, instant("1 day ago"))
+        service.process(establishment.id, instant("1 day ago"))
         serviceAuthorizeService.findAll().each { it.batchClosingDateTime = null; serviceAuthorizeService.save(it)}
 
         when:
-        service.create(establishment.id, instant("1 day ago"))
+        service.process(establishment.id, instant("1 day ago"))
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -114,11 +135,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             add("issueInvoice", true)
         }})
         def totalByHirer = createServiceAuthorizationsAt(contracts, user.establishment, "2 day ago")
-        def created = service.create(user.establishment.id, instant("1 day ago"))
+        def created = service.process(user.establishment.id, instant("1 day ago"))
         service.cancel(user.email, created.id)
 
         when:
-        service.create(user.establishment.id, instant("1 day ago"))
+        service.process(user.establishment.id, instant("1 day ago"))
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(user.establishment.id)
 
         then:
@@ -134,11 +155,11 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             add("issueInvoice", false)
         }})
         def totalByHirer = createServiceAuthorizationsAt(contracts, user.establishment, "2 day ago")
-        service.create(user.establishment.id, instant("1 day ago"))
+        service.process(user.establishment.id, instant("1 day ago"))
         serviceAuthorizeService.findAll().each { it.batchClosingDateTime = null; serviceAuthorizeService.save(it)}
 
         when:
-        service.create(user.establishment.id, instant("1 day ago"))
+        service.process(user.establishment.id, instant("1 day ago"))
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(user.establishment.id)
 
         then:
@@ -155,7 +176,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
 
         when:
-        service.create(establishment.id, instant("1 day ago"))
+        service.process(establishment.id, instant("1 day ago"))
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -169,7 +190,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizationsAt(contracts, establishment, "2 day ago")
 
         when:
-        service.create(establishment.id, instant("2 day ago"))
+        service.process(establishment.id, instant("2 day ago"))
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -505,7 +526,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
 
         then:
         1 * notificationServiceMock.sendBatchClosedMail(_, _)
@@ -520,8 +541,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishmentsB,3)
 
         when:
-        service.create(establishmentA.id)
-        service.create(establishmentsB.id)
+        service.process(establishmentA.id)
+        service.process(establishmentsB.id)
         Set<BatchClosing> bachClosingsA = service.findByEstablishmentId(establishmentA.id)
         Set<BatchClosing> bachClosingsB = service.findByEstablishmentId(establishmentsB.id)
 
@@ -539,7 +560,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -557,7 +578,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizationsAt(contracts, establishment, "1 day ago")
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -571,7 +592,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizationsAt(contracts, establishment, "today")
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -585,8 +606,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment, 2)
 
         when:
-        service.create(establishment.id)
-        service.create(establishment.id)
+        service.process(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> batchClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -604,7 +625,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment, 2)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> batchClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -621,7 +642,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment, 2)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> batchClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -636,7 +657,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Map totalByHirer = createServiceAuthorizations(contracts, establishment, 3)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -650,7 +671,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Map totalByHirer = createServiceAuthorizations(contracts, establishment, 3)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:
@@ -665,8 +686,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Map totalByHirer = createServiceAuthorizations(contracts, establishments, 3)
 
         when:
-        service.create(establishments.find().id)
-        service.create(establishments.last().id)
+        service.process(establishments.find().id)
+        service.process(establishments.last().id)
         Set<BatchClosing> bachClosingsA = service.findByEstablishmentId(establishments.find().id)
         Set<BatchClosing> bachClosingsB = service.findByEstablishmentId(establishments.last().id)
 
@@ -682,7 +703,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         Map totalByHirer = createServiceAuthorizations(contracts, establishments, 3)
 
         when:
-        service.create(establishments.find().id)
+        service.process(establishments.find().id)
         Set<BatchClosing> bachClosingsA = service.findByEstablishmentId(establishments.find().id)
         Set<BatchClosing> bachClosingsB = service.findByEstablishmentId(establishments.last().id)
 
@@ -698,7 +719,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         createServiceAuthorizations(contracts, establishment, 2)
 
         when:
-        service.create(establishment.id)
+        service.process(establishment.id)
         Set<BatchClosing> bachClosings = service.findByEstablishmentId(establishment.id)
 
         then:

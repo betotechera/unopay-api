@@ -1,17 +1,19 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.job.BatchClosingJob;
-import br.com.unopay.api.job.UnopayScheduler;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
 import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
+import br.com.unopay.api.model.FreightReceipt;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -24,6 +26,7 @@ import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,21 +50,26 @@ public class BatchClosingService {
     private BatchClosingItemService batchClosingItemService;
     private UserDetailService userDetailService;
     @Setter private NotificationService notificationService;
+    @Setter private Notifier notifier;
+    private GenericObjectMapper genericObjectMapper;
 
-    private UnopayScheduler scheduler;
+    public BatchClosingService(){}
 
     @Autowired
     public BatchClosingService(BatchClosingRepository repository,
                                ServiceAuthorizeService authorizeService,
                                BatchClosingItemService batchClosingItemService,
                                UserDetailService userDetailService,
-                               NotificationService notificationService, UnopayScheduler scheduler) {
+                               NotificationService notificationService,
+                               Notifier notifier,
+                               GenericObjectMapper genericObjectMapper) {
         this.repository = repository;
         this.authorizeService = authorizeService;
         this.batchClosingItemService = batchClosingItemService;
         this.userDetailService = userDetailService;
         this.notificationService = notificationService;
-        this.scheduler = scheduler;
+        this.notifier = notifier;
+        this.genericObjectMapper = genericObjectMapper;
     }
 
     public BatchClosing save(BatchClosing batchClosing) {
@@ -74,13 +82,12 @@ public class BatchClosingService {
     }
 
     @Transactional
-    public void create(String establishmentId){
-        create(establishmentId, today());
+    public void process(String establishmentId){
+        process(establishmentId, today());
     }
 
     @Transactional
-    public BatchClosing create(String establishmentId, Date at) {
-        checkAlreadyRunning(establishmentId);
+    public BatchClosing process(String establishmentId, Date at) {
         try (Stream<ServiceAuthorize> stream = authorizeService.findByEstablishmentAndCreatedAt(establishmentId, at)){
             Set<BatchClosing> batchClosing = stream.map(BatchClosingItem::new)
                     .map(this::processBatchClosingItem).collect(Collectors.toSet());
@@ -89,10 +96,17 @@ public class BatchClosingService {
         }
     }
 
-    public void scheduleBatchClosing(BatchClosing batchClosing){
-        scheduler.schedule(batchClosing.establishmentId(),batchClosing.getClosingDateTime(), BatchClosingJob.class);
+    public void create(BatchClosing batchClosing) {
+        checkAlreadyRunning(batchClosing.establishmentId());
+        notifier.notify(Queues.UNOPAY_BATCH_CLOSING, batchClosing);
     }
 
+    @RabbitListener(queues = Queues.UNOPAY_BATCH_CLOSING)
+    void batchReceiptNotify(String objectAsString) {
+        BatchClosing batchClosing = genericObjectMapper.getAsObject(objectAsString, BatchClosing.class);
+        log.info("processing batch closing for establishment={}", batchClosing.establishmentId());
+        process(batchClosing.establishmentId(), batchClosing.getClosingDateTime());
+    }
 
     private void checkAlreadyRunning(String establishmentId) {
         Optional<BatchClosing> processingBatch = repository
@@ -240,4 +254,5 @@ public class BatchClosingService {
     private UserDetail getUserByEmail(String userEmail) {
         return userDetailService.getByEmail(userEmail);
     }
+
 }

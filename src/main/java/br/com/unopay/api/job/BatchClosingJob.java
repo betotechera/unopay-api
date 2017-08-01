@@ -13,7 +13,7 @@ public class BatchClosingJob extends Job {
     void execute(JobDetail jobDetail) {
         String establishmentId = jobDetail.getKey().getName();
         log.info("running batch closing job for establishment={}", establishmentId);
-        getBean(BatchClosingService.class).create(establishmentId);
+        getBean(BatchClosingService.class).process(establishmentId);
         log.info("finished batch closing job for establishment={}", establishmentId);
     }
 }
