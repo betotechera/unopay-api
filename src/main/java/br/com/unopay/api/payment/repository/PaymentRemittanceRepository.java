@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface PaymentRemittanceRepository
                             extends UnovationFilterRepository<PaymentRemittance,String, PaymentRemittanceFilter> {
-    List<PaymentRemittance> findByPayerDocumentNumber(String payerDocument);
+    List<PaymentRemittance> findByPayerDocumentNumberOrderByCreatedDateTime(String payerDocument);
     Optional<PaymentRemittance> findByPayerDocumentNumberAndSituation(String documentNumber,
                                                                       RemittanceSituation situation);
     Optional<PaymentRemittance> findByNumber(String number);
