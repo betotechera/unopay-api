@@ -103,8 +103,8 @@ public class PaymentRemittanceService {
 
     @Transactional
     public void create(String issuer) {
-        checkAlreadyRunning(issuer);
         Issuer currentIssuer = issuerService.findById(issuer);
+        checkAlreadyRunning(currentIssuer.documentNumber());
         Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
         if(!batchByEstablishment.isEmpty()) {
             createRemittanceAndItems(currentIssuer, batchByEstablishment);
@@ -120,12 +120,12 @@ public class PaymentRemittanceService {
         updateSituation(remittanceItems, remittance);
     }
 
-    public Set<PaymentRemittance> findByIssuer(String issuerId){
-        return repository.findByIssuerId(issuerId);
+    public Set<PaymentRemittance> findByPayerDocument(String payerDocument){
+        return repository.findByPayerDocumentNumber(payerDocument);
     }
 
-    private void checkAlreadyRunning(String issuer) {
-        Optional<PaymentRemittance> current = repository.findByIssuerIdAndSituation(issuer, PROCESSING);
+    private void checkAlreadyRunning(String issuerDoc) {
+        Optional<PaymentRemittance> current = repository.findByPayerDocumentNumberAndSituation(issuerDoc, PROCESSING);
         current.ifPresent((ThrowingConsumer)-> { throw unprocessableEntity().withErrors(REMITTANCE_ALREADY_RUNNING);});
     }
 
@@ -146,7 +146,7 @@ public class PaymentRemittanceService {
 
     private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {
         return batchByEstablishment.stream().map(batchClosing -> {
-                PaymentRemittanceItem currentItem = getCurrentItem(batchClosing.establishmentId(), batchClosing);
+                PaymentRemittanceItem currentItem = getCurrentItem(batchClosing.establishmentDocument(), batchClosing);
                 currentItem.updateValue(batchClosing.getValue());
                 return paymentRemittanceItemService.save(currentItem);
             }).collect(Collectors.toSet());
@@ -192,7 +192,7 @@ public class PaymentRemittanceService {
         RemittanceExtractor remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
         String document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
         String agreementNumber = remittanceHeader.extractOnFirstLine(CONVEIO_BANCO);
-        if(!remittance.issuerDocumentNumberIs(document) || !remittance.issuerBankAgreementNumberIs(agreementNumber)){
+        if(!remittance.payerDocumentNumberIs(document) || !remittance.payerBankAgreementNumberIs(agreementNumber)){
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_WITH_INVALID_DATA);
         }
     }
@@ -202,7 +202,7 @@ public class PaymentRemittanceService {
     }
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
-        return items.stream().filter(item -> item.establishmentDocumentIs(document)).findFirst();
+        return items.stream().filter(item -> item.payeeDocumentIs(document)).findFirst();
     }
 
     public Page<PaymentRemittance> findMyByFilter(String userEmail, PaymentRemittanceFilter filter,

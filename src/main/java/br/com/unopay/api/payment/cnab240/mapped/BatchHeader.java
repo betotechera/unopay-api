@@ -1,11 +1,9 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.model.Address;
-import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.RemittancePayer;
 
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchHeader;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
@@ -41,9 +39,7 @@ public class BatchHeader {
     public BatchHeader(){}
 
     public FilledRecord create(final PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
-        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
-        Person person = remittance.getIssuer().getPerson();
-        Address address = person.getAddress();
+        RemittancePayer bankAccount = remittance.getPayer();
         return new FilledRecord(getBatchHeader()).
             defaultFill(BANCO_COMPENSACAO).
             fill(LOTE_SERVICO, position).
@@ -54,22 +50,22 @@ public class BatchHeader {
             defaultFill(LAYOUT_ARQUIVO).
             defaultFill(INICIO_FEBRABAN).
             defaultFill(TIPO_INSCRICAO).
-            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber()).
-            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber()).
+            fill(NUMERO_INSCRICAO_EMPRESA, bankAccount.getDocumentNumber()).
+            fill(CONVEIO_BANCO, remittance.getPayer().getBankAgreementNumber()).
             fill(AGENCIA, bankAccount.getAgency()).
             fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit()).
             fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
             fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
             fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
-            fill(NOME_EMPRESA, person.getName()).
+            fill(NOME_EMPRESA, bankAccount.getName()).
             defaultFill(MENSAGEM).
-            fill(LOGRADOURO, address.getStreetName()).
-            fill(NUMERO, address.getNumber()).
-            fill(COMPLEMENTO, address.getComplement()).
-            fill(CIDADE, address.getCity()).
-            fill(CEP, address.firstZipCode()).
-            fill(COMPLEMENTO_CEP, address.lastZipeCode()).
-            fill(ESTADO, address.getState().name()).
+            fill(LOGRADOURO, bankAccount.getStreetName()).
+            fill(NUMERO, bankAccount.getNumber()).
+            fill(COMPLEMENTO, bankAccount.getComplement()).
+            fill(CIDADE, bankAccount.getCity()).
+            fill(CEP, bankAccount.firstZipCode()).
+            fill(COMPLEMENTO_CEP, bankAccount.lastZipeCode()).
+            fill(ESTADO, bankAccount.getState().name()).
             defaultFill(FIM_FEBRABAN).
             defaultFill(OCORRENCIAS);
     }

@@ -1,9 +1,8 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.payment.model.RemittancePayer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.ObjectUtils;
@@ -47,23 +46,22 @@ public class RemittanceHeader {
     }
 
     public FilledRecord create(final PaymentRemittance remittance) {
-        BankAccount bankAccount = remittance.getIssuer().getPaymentAccount().getBankAccount();
-        Person person = remittance.getIssuer().getPerson();
+        RemittancePayer payer = remittance.getPayer();
         return new FilledRecord(getRemittanceHeader()).
             defaultFill(BANCO_COMPENSACAO).
             defaultFill(LOTE_SERVICO).
             defaultFill(TIPO_REGISTRO).
             defaultFill(INICIO_FEBRABAN).
             defaultFill(TIPO_INSCRICAO).
-            fill(NUMERO_INSCRICAO_EMPRESA, person.getDocument().getNumber()).
-            fill(CONVEIO_BANCO, remittance.getIssuer().getPaymentAccount().getBankAgreementNumber()).
-            fill(AGENCIA, bankAccount.getAgency()).
-            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit()).
-            fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
-            fill(NOME_EMPRESA, person.getName()).
-            fill(NOME_BANCO, bankAccount.getBank().getName()).
+            fill(NUMERO_INSCRICAO_EMPRESA, payer.getDocumentNumber()).
+            fill(CONVEIO_BANCO, payer.getBankAgreementNumber()).
+            fill(AGENCIA, payer.getAgency()).
+            fill(DIGITO_AGENCIA, payer.agentDvFirstDigit()).
+            fill(NUMERO_CONTA, payer.getAccountNumber()).
+            fill(DIGITO_CONTA, payer.accountDvFirstDigit()).
+            fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit()).
+            fill(NOME_EMPRESA, payer.getName()).
+            fill(NOME_BANCO, payer.getBankName()).
             defaultFill(MEIO_FEBRABAN).
             defaultFill(CODIGO_REMESSA).
             fill(DATA_GERACAO_ARQUIVO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).

@@ -1,5 +1,7 @@
 create table remittance_payer (
     id VARCHAR(256) PRIMARY KEY,
+    bank_code integer not null,
+    bank_agreement_number varchar(256) not null,
     document_number varchar(256),
     agency varchar(20) not null,
     agency_digit varchar(10),
@@ -14,12 +16,15 @@ create table remittance_payer (
     district VARCHAR(50),
     city VARCHAR(50),
     state VARCHAR(50),
-    version integer
+    version integer,
+    constraint fk_remittance_payer_bank foreign key(bank_code) references bank(bacen_code),
 );
 
 COMMENT ON TABLE remittance_payer IS 'Pagador da remessa ';
 COMMENT ON COLUMN remittance_payer.id IS 'Chave Identificação do Registro';
+COMMENT ON COLUMN remittance_payer.bank_code IS 'Código do banco da conta pagamento';
 COMMENT ON COLUMN remittance_payer.document_number IS 'documento de identificacao do pagador';
+COMMENT ON COLUMN remittance_payer.bank_agreement_number IS 'codigo de conveio com o banco';
 COMMENT ON COLUMN remittance_payer.agency IS 'agencia do pagador';
 COMMENT ON COLUMN remittance_payer.agency_digit IS 'digito da agencia do pagador';
 COMMENT ON COLUMN remittance_payer.account_number IS 'numero da conta do pagador';
@@ -38,8 +43,6 @@ COMMENT ON COLUMN remittance_payer.version IS 'Versao atual do registro';
 create table payment_remittance (
     id VARCHAR(256) PRIMARY KEY,
     payer_id varchar(256) not null,
-    payer_bank_code integer not null,
-    bank_agreement_number varchar(256) not null,
     remittance_number varchar(256) not null,
     service_type varchar(256) not null,
     operation_type varchar(150) not null,
@@ -50,14 +53,12 @@ create table payment_remittance (
     cnab_uri varchar(255),
     submission_return_date_time TIMESTAMP,
     version integer,
-    constraint fk_remittance_bank foreign key(payer_bank_code) references bank(bacen_code),
     constraint fk_remittance_payer foreign key(payer_id) references remittance_payer(id)
 );
 
 COMMENT ON TABLE payment_remittance IS 'Remessa de Pagamento';
 COMMENT ON COLUMN payment_remittance.id IS 'Chave Identificação do Registro';
 COMMENT ON COLUMN payment_remittance.payer_id IS 'Chave Identificação do pagador';
-COMMENT ON COLUMN payment_remittance.payer_bank_code IS 'Código do banco da conta pagamento';
 COMMENT ON COLUMN payment_remittance.remittance_number IS 'Número sequencial único da remessa';
 COMMENT ON COLUMN payment_remittance.service_type IS 'Tipo de Serviço FEBRABAN';
 COMMENT ON COLUMN payment_remittance.operation_type IS ' Tipo de operação FEBRABAN';
@@ -71,6 +72,8 @@ COMMENT ON COLUMN payment_remittance.version IS 'Versao atual do registro';
 create table remittance_payee (
     id VARCHAR(256) PRIMARY KEY,
     agency varchar(20) not null,
+    bank_code integer not null,
+    payer_bank_code integer not null,
     agency_digit varchar(10),
     account_number varchar(50) not null,
     account_number_digit varchar(10),
@@ -83,11 +86,15 @@ create table remittance_payee (
     district VARCHAR(50),
     city VARCHAR(50),
     state VARCHAR(50),
-    version integer
+    version integer,
+     constraint fk_remitt_payer_payee_bank foreign key(payer_bank_code) references bank(bacen_code),
+     constraint fk_remitt_payee_bank foreign key(bank_code) references bank(bacen_code)
 );
 
 COMMENT ON TABLE remittance_payee IS 'recebedor da remessa ';
 COMMENT ON COLUMN remittance_payee.id IS 'Chave Identificação do Registro';
+COMMENT ON COLUMN remittance_payee.payer_bank_code IS 'Código do banco da conta pagamento';
+COMMENT ON COLUMN remittance_payee.bank_code IS 'Código do banco da conta bancária do recebedor';
 COMMENT ON COLUMN remittance_payee.agency IS 'agencia do recebedor';
 COMMENT ON COLUMN remittance_payee.agency_digit IS 'digito da agencia do recebedor';
 COMMENT ON COLUMN remittance_payee.account_number IS 'numero da conta do recebedor';
@@ -108,14 +115,12 @@ create table payment_remittance_item (
     payment_remittance_id varchar(256),
     payee_id varchar(256) not null,
     transfer_option varchar(150) not null,
-    payee_bank_code integer not null,
     value decimal(20,2) not null,
     situation varchar(150) not null,
     occurrence_code varchar(100),
     version integer,
     constraint fk_remittance_item foreign key(payment_remittance_id) references payment_remittance(id),
-    constraint fk_remittance_item_payee foreign key(payee_id) references remittance_payee(id),
-    constraint fk_remittance_Item_bank foreign key(payee_bank_code) references bank(bacen_code)
+    constraint fk_remittance_item_payee foreign key(payee_id) references remittance_payee(id)
 );
 
 COMMENT ON TABLE payment_remittance_item IS 'Item de Remessa de Pagamento';
@@ -123,7 +128,6 @@ COMMENT ON COLUMN payment_remittance_item.id IS 'ID Item de Remessa de pagamento
 COMMENT ON COLUMN payment_remittance_item.transfer_option IS 'Forma de Lançamento FEBRABAN';
 COMMENT ON COLUMN payment_remittance_item.payment_remittance_id IS 'Chave Identificação da Remessa de pagamento';
 COMMENT ON COLUMN payment_remittance_item.payee_id IS 'Chave Identificação do recebedor';
-COMMENT ON COLUMN payment_remittance_item.payee_bank_code IS 'Código do banco da conta bancária do recebedor';
 COMMENT ON COLUMN payment_remittance_item.value IS 'Valor Total do item de remessa , soma dos valores dos lotes encontrados';
 COMMENT ON COLUMN payment_remittance_item.situation IS 'Situação da remessa';
 COMMENT ON COLUMN payment_remittance_item.occurrence_code IS 'Código de ocorrência do banco';

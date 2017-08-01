@@ -1,10 +1,8 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.RemittancePayee;
 import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,9 +51,7 @@ public class SegmentA {
     }
 
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
-        Establishment establishment = remittanceItem.getEstablishment();
-        BankAccount bankAccount = establishment.getBankAccount();
-        Person person = establishment.getPerson();
+        RemittancePayee payee = remittanceItem.getPayee();
         return new FilledRecord(getBatchSegmentA()).
             defaultFill(BANCO_COMPENSACAO).
             fill(LOTE_SERVICO, position).
@@ -65,14 +61,14 @@ public class SegmentA {
             defaultFill(TIPO_MOVIMENTO).
             defaultFill(INSTITUICAO_MOVIMENTO).
             defaultFill(CAMARA_CENTRALIZADORA).
-            fill(BANCO_FAVORECIDO, bankAccount.getBacenCode()).
-            fill(AGENCIA, bankAccount.agentDvFirstDigit()).
-            fill(DIGITO_AGENCIA, bankAccount.agentDvLastDigit()).
-            fill(NUMERO_CONTA, bankAccount.getAccountNumber()).
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit()).
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit()).
-            fill(NOME_FAVORECIDO, person.getName()).
-            fill(DOCUMENTO_ATRIBUIDO_EMPRESA, person.getDocument().getNumber()).
+            fill(BANCO_FAVORECIDO, payee.getBankCode()).
+            fill(AGENCIA, payee.agentDvFirstDigit()).
+            fill(DIGITO_AGENCIA, payee.agentDvLastDigit()).
+            fill(NUMERO_CONTA, payee.getAccountNumber()).
+            fill(DIGITO_CONTA, payee.accountDvFirstDigit()).
+            fill(DIGITO_AGENCIA_CONTA, payee.accountDvLastDigit()).
+            fill(NOME_FAVORECIDO, payee.getName()).
+            fill(DOCUMENTO_ATRIBUIDO_EMPRESA, payee.getDocumentNumber()).
             fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).
             defaultFill(TIPO_MOEDA).
             defaultFill(QUANTIDADE_MOEDA).

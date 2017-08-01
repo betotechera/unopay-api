@@ -27,7 +27,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
         String extracted = remittanceFile.extractOnLine(NUMERO_INSCRICAO_EMPRESA, 1)
 
         then:
-        extracted.contains(remittance.issuer.person.document.number)
+        extracted.contains(remittance.payer.documentNumber)
     }
 
     def 'given a cnab240 should return batch header bank'(){

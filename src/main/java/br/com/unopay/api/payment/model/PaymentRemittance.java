@@ -39,8 +39,8 @@ import static br.com.unopay.api.payment.cnab240.Cnab240Generator.DATE_FORMAT;
 
 @Data
 @Entity
-@ToString(exclude = "issuer")
-@EqualsAndHashCode(of = {"id", "number"})
+@ToString(exclude = "payer")
+@EqualsAndHashCode(of = {"id", "number", "createdDateTime"})
 @Table(name = "payment_remittance")
 public class PaymentRemittance implements Serializable {
 
@@ -49,14 +49,14 @@ public class PaymentRemittance implements Serializable {
 
     public PaymentRemittance(){}
 
+    public PaymentRemittance(RemittancePayer payer, Long total){
+        this.payer = payer;
+        setupMeUp(total);
+    }
+
     public PaymentRemittance(Issuer issuer, Long total){
-        this.issuer = issuer;
-        this.issuerBankCode = issuer.getPaymentAccount().getBankAccount().getBacenCode();
-        this.situation = RemittanceSituation.PROCESSING;
-        this.operationType = PaymentOperationType.CREDIT;
-        this.paymentServiceType = PaymentServiceType.SUPPLIER_PAYMENT;
-        this.createdDateTime = new Date();
-        this.number = String.valueOf(total + 1);
+        this.payer = new RemittancePayer(issuer);
+        setupMeUp(total);
     }
 
     @Id
@@ -66,15 +66,10 @@ public class PaymentRemittance implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name="issuer_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="payer_id")
     @JsonView({Views.PaymentRemittance.Detail.class})
-    private Issuer issuer;
-
-    @Column(name = "issuer_bank_code")
-    @JsonView({Views.PaymentRemittance.Detail.class})
-    @NotNull(groups = {Create.class})
-    private Integer issuerBankCode;
+    private RemittancePayer payer;
 
     @Column(name = "remittance_number")
     @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
@@ -147,12 +142,12 @@ public class PaymentRemittance implements Serializable {
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
     }
 
-    public boolean issuerDocumentNumberIs(String document){
-        return document != null && Objects.equals(getIssuer().documentNumber(), document);
+    public boolean payerDocumentNumberIs(String document){
+        return document != null && Objects.equals(getPayer().getDocumentNumber(), document);
     }
 
-    public boolean issuerBankAgreementNumberIs(String number){
-        return number != null && Objects.equals(getIssuer().getPaymentAccount().getBankAgreementNumber(), number);
+    public boolean payerBankAgreementNumberIs(String number){
+        return number != null && Objects.equals(getPayer().getBankAgreementNumber(), number);
     }
 
     public void setSubmissionDateTime(Date dateTime){
@@ -188,7 +183,15 @@ public class PaymentRemittance implements Serializable {
     }
 
     private String documentNumber(){
-        return this.issuer.getPerson().getDocument().getNumber();
+        return this.payer.getDocumentNumber();
+    }
+
+    private void setupMeUp(Long total) {
+        this.situation = RemittanceSituation.PROCESSING;
+        this.operationType = PaymentOperationType.CREDIT;
+        this.paymentServiceType = PaymentServiceType.SUPPLIER_PAYMENT;
+        this.createdDateTime = new Date();
+        this.number = String.valueOf(total + 1);
     }
 
 }

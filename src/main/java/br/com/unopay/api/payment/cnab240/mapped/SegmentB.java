@@ -1,9 +1,8 @@
 package br.com.unopay.api.payment.cnab240.mapped;
 
-import br.com.unopay.api.model.Address;
-import br.com.unopay.api.model.Person;
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.RemittancePayee;
 import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,8 +46,7 @@ public class SegmentB {
     }
 
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
-        Person person = remittanceItem.getEstablishment().getPerson();
-        Address address = person.getAddress();
+        RemittancePayee person = remittanceItem.getPayee();
         return new FilledRecord(getBatchSegmentB()).
             defaultFill(BANCO_COMPENSACAO).
             fill(LOTE_SERVICO, position).
@@ -57,22 +55,22 @@ public class SegmentB {
             defaultFill(SEGMENTO).
             defaultFill(INICIO_FEBRABAN).
             defaultFill(TIPO_INSCRICAO_FAVORECIDO).
-            fill(NUMERO_INSCRICAO_FAVORECIDO,person.getDocument().getNumber()).
-            fill(LOGRADOURO, address.getStreetName()).
-            fill(NUMERO, address.getNumber()).
-            fill(COMPLEMENTO, address.getComplement()).
-            fill(BAIRRO, address.getDistrict()).
-            fill(CIDADE, address.getCity()).
-            fill(CEP, address.firstZipCode()).
-            fill(COMPLEMENTO_CEP, address.lastZipeCode()).
-            fill(ESTADO, address.getState().name()).
+            fill(NUMERO_INSCRICAO_FAVORECIDO,person.getDocumentNumber()).
+            fill(LOGRADOURO, person.getStreetName()).
+            fill(NUMERO, person.getNumber()).
+            fill(COMPLEMENTO, person.getComplement()).
+            fill(BAIRRO, person.getDistrict()).
+            fill(CIDADE, person.getCity()).
+            fill(CEP, person.firstZipCode()).
+            fill(COMPLEMENTO_CEP, person.lastZipeCode()).
+            fill(ESTADO, person.getState().name()).
             fill(DATA_VENCIMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).
             fill(VALOR_DOCUMENTO, Rounder.roundToString(remittanceItem.getValue())).
             defaultFill(VALOR_ABATIMENTO).
             defaultFill(VALOR_DESCONTO).
             defaultFill(VALOR_MORA).
             defaultFill(VALOR_MULTA).
-            fill(CODIGO_DOCUMENTO_FAVORECIDO, person.getDocument().getNumber()).
+            fill(CODIGO_DOCUMENTO_FAVORECIDO, person.getDocumentNumber()).
             defaultFill(FIM_FEBRABAN);
     }
 }

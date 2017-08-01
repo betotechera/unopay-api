@@ -13,10 +13,23 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
 
         when:
         def paymentRemittance = new PaymentRemittance(issuer, 10)
-
+        def payer = paymentRemittance.payer
         then:
-        paymentRemittance.issuer == issuer
-        paymentRemittance.issuerBankCode == issuer.paymentAccount.bankAccount.bacenCode
+        payer
+        payer.bankAgreementNumber == issuer.paymentAccount.bankAgreementNumber
+        payer.agency == issuer.paymentAccount.bankAccount.agency
+        payer.agencyDigit == issuer.paymentAccount.bankAccount.agencyDigit
+        payer.accountNumber == issuer.paymentAccount.bankAccount.accountNumber
+        payer.accountNumberDigit == issuer.paymentAccount.bankAccount.accountNumberDigit
+        payer.streetName == issuer.person.address.streetName
+        payer.number == issuer.person.address.number
+        payer.complement == issuer.person.address.complement
+        payer.district == issuer.person.address.district
+        payer.city == issuer.person.address.city
+        payer.state == issuer.person.address.state
+        payer.documentNumber == issuer.documentNumber()
+        payer.bankCode == issuer.getPaymentAccount().getBankAccount().bacenCode
+        payer.bankName == issuer.getPaymentAccount().getBankAccount().bank.name
         paymentRemittance.number
     }
 

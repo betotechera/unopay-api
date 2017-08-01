@@ -1,6 +1,5 @@
 package br.com.unopay.api.payment.model;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
@@ -10,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,14 +22,13 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 
 @Data
 @Entity
-@ToString(exclude = { "paymentRemittance", "establishment" })
+@ToString(exclude = { "paymentRemittance", "payee" })
 @Table(name = "payment_remittance_item")
 public class PaymentRemittanceItem  implements Serializable {
 
@@ -39,11 +38,14 @@ public class PaymentRemittanceItem  implements Serializable {
 
     public PaymentRemittanceItem(){}
 
+    public PaymentRemittanceItem(RemittancePayee payee){
+        this.payee = payee;
+        setMeUp(payee.getPayerBankCode());
+    }
+
     public PaymentRemittanceItem(BatchClosing batchClosing){
-        this.establishment = batchClosing.getEstablishment();
-        this.establishmentBankCode = batchClosing.getEstablishment().getBankAccount().getBacenCode();
-        this.situation = RemittanceSituation.PROCESSING;
-        defineTransferOption(batchClosing.getIssuer().paymentBankCode());
+        this.payee = new RemittancePayee(batchClosing.getEstablishment(), batchClosing.paymentAccountBank());
+        setMeUp(batchClosing.paymentAccountBank());
     }
 
     @Id
@@ -59,16 +61,11 @@ public class PaymentRemittanceItem  implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private PaymentRemittance paymentRemittance;
 
-    @ManyToOne
-    @JoinColumn(name="establishment_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="payee_id")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Public.class,Views.List.class})
-    private Establishment establishment;
-
-    @Column(name = "establishment_bank_code")
-    @JsonView({Views.Public.class})
-    @NotNull(groups = {Create.class})
-    private Integer establishmentBankCode;
+    private RemittancePayee payee;
 
     @Column(name = "value")
     @JsonView({Views.Public.class})
@@ -103,8 +100,8 @@ public class PaymentRemittanceItem  implements Serializable {
         this.value = this.value.add(value);
     }
 
-    public boolean establishmentDocumentIs(String document){
-        return Objects.equals(getEstablishment().documentNumber(), document);
+    public boolean payeeDocumentIs(String document){
+        return Objects.equals(getPayee().getDocumentNumber(), document);
     }
 
     public void updateOccurrenceFields(String occurrenceCode){
@@ -117,10 +114,15 @@ public class PaymentRemittanceItem  implements Serializable {
     }
 
     private void defineTransferOption(Integer bankCode) {
-        if(Objects.equals(bankCode, this.establishment.getBankAccount().getBacenCode())){
+        if(Objects.equals(bankCode, this.payee.getBankCode())){
             this.transferOption = PaymentTransferOption.CURRENT_ACCOUNT_CREDIT;
             return;
         }
         this.transferOption = PaymentTransferOption.DOC_TED;
+    }
+
+    private void setMeUp(Integer payerBankCode) {
+        this.situation = RemittanceSituation.PROCESSING;
+        defineTransferOption(payerBankCode);
     }
 }

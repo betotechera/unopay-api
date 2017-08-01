@@ -9,7 +9,8 @@ import java.util.Set;
 
 public interface PaymentRemittanceRepository
                             extends UnovationFilterRepository<PaymentRemittance,String, PaymentRemittanceFilter> {
-    Set<PaymentRemittance> findByIssuerId(String issuerId);
-    Optional<PaymentRemittance> findByIssuerIdAndSituation(String issuerId, RemittanceSituation situation);
+    Set<PaymentRemittance> findByPayerDocumentNumber(String payerDocument);
+    Optional<PaymentRemittance> findByPayerDocumentNumberAndSituation(String documentNumber,
+                                                                      RemittanceSituation situation);
     Optional<PaymentRemittance> findByNumber(String number);
 }

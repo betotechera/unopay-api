@@ -15,19 +15,19 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
     PaymentRemittanceItemService service
 
     @Autowired
+    PaymentRemittanceService remittanceService
+
+    @Autowired
     FixtureCreator fixtureCreator
 
     def 'payment remittance item should be created'(){
         given:
-        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor)
-                                                                                            .gimme("valid", new Rule(){{
-            add("issuer", fixtureCreator.createIssuer())
-        }})
+        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        remittanceService.save(paymentRemittance)
 
         PaymentRemittanceItem paymentRemittanceItem = Fixture.from(PaymentRemittanceItem.class)
                                                                                             .gimme("valid", new Rule(){{
             add("paymentRemittance", paymentRemittance)
-            add("establishment", fixtureCreator.createEstablishment())
         }})
 
         when:
@@ -39,28 +39,24 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
     }
 
     def 'given a payment remittance item with processing situation should be found'(){
+
         given:
-        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).uses(jpaProcessor)
-                                                                                            .gimme("valid", new Rule(){{
-            add("issuer", fixtureCreator.createIssuer())
-        }})
-        def establishment = fixtureCreator.createEstablishment()
-        PaymentRemittanceItem item = Fixture.from(PaymentRemittanceItem.class).uses(jpaProcessor)
-                                                                                            .gimme("valid", new Rule() {
+        PaymentRemittance paymentRemittance = Fixture.from(PaymentRemittance.class).gimme("valid")
+        remittanceService.save(paymentRemittance)
+        PaymentRemittanceItem item = Fixture.from(PaymentRemittanceItem.class).gimme("valid", new Rule() {
             {
                 add("paymentRemittance", paymentRemittance)
-                add("establishment", establishment)
                 add("situation", RemittanceSituation.PROCESSING)
             }
         })
+        service.save(item)
 
         when:
-        Optional<PaymentRemittanceItem> result = service.findProcessingByEstablishment(establishment.id)
+        Optional<PaymentRemittanceItem> result = service.findProcessingByEstablishment(item.payee.documentNumber)
 
         then:
         result.get().id == item.id
         result.get().situation == RemittanceSituation.PROCESSING
-
     }
 
 }

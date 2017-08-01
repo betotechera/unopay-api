@@ -18,6 +18,7 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatch
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentTransferOption
+import br.com.unopay.api.payment.model.RemittancePayer
 import br.com.unopay.api.payment.model.RemittanceSituation
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
@@ -52,7 +53,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
         given:
         def remittancePersisted = createRemittance()
-        def wrongRemittance = remittancePersisted.with { issuer.paymentAccount.bankAgreementNumber = 'AAAAA'; it }
+        def wrongRemittance = remittancePersisted.with { payer.bankAgreementNumber = 'AAAAA'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
@@ -67,7 +68,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when process cnab then the issuer document field should be equals persisted remittance'(){
         given:
         def remittancePersisted = createRemittance()
-        def wrongRemittance = remittancePersisted.with { issuer.person.document.number = 'AAAAA'; it }
+        def wrongRemittance = remittancePersisted.with { payer.documentNumber = 'AAAAA'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
@@ -87,7 +88,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
         when:
         service.processReturn(file)
-        def result = service.findByIssuer(remittance.issuer.id).find()
+        def result = service.findByPayerDocument(remittance.payer.documentNumber).find()
 
         then:
         result.submissionReturnDateTime < instant("1 second from now")
@@ -104,7 +105,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.processReturn(file)
 
         then:
-        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        def documents = result.remittanceItems.collect { it.payee.documentNumber }
         documents.every {
             itemService.findByEstablishmentDocument(it)?.situation == RemittanceSituation.RETURN_PROCESSED_SUCCESSFULLY
         }
@@ -120,7 +121,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.processReturn(file)
 
         then:
-        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        def documents = result.remittanceItems.collect { it.payee.documentNumber }
         documents.every {
             itemService.findByEstablishmentDocument(it)?.situation == RemittanceSituation.RETURN_PROCESSED_WITH_ERROR
         }
@@ -136,7 +137,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.processReturn(file)
 
         then:
-        def documents = result.remittanceItems.collect { it.establishment.documentNumber() }
+        def documents = result.remittanceItems.collect { it.payee.documentNumber }
         documents.every {
             itemService.findByEstablishmentDocument(it)?.occurrenceCode == '00'
         }
@@ -150,7 +151,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that result, hasSize(1)
@@ -161,10 +162,14 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when try create remittance when has running should return error'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        from(PaymentRemittance.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("situation", RemittanceSituation.PROCESSING)
-            add("issuer", issuer)
+        def payer = from(RemittancePayer.class).gimme("valid", new Rule(){{
+            add("documentNumber", issuer.documentNumber())
         }})
+        PaymentRemittance remittance = from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("situation", RemittanceSituation.PROCESSING)
+            add("payer", payer)
+        }})
+        service.save(remittance)
 
         when:
         service.create(issuer.id)
@@ -184,7 +189,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         when:
         createBatchForBank(issuerBanK, issuer)
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that result, hasSize(2)
@@ -211,16 +216,16 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that result, hasSize(1)
         result.find { it.remittanceItems
-                .findAll { it.establishment.bankAccount.bacenCode == issuerBanK }
+                .findAll { it.payee.bankCode == issuerBanK }
                 .every{ it.transferOption == PaymentTransferOption.CURRENT_ACCOUNT_CREDIT}
         }
         result.find { it.remittanceItems
-                .findAll { it.establishment.bankAccount.bacenCode in [473,477] }
+                .findAll { it.payee.bankCode in [473, 477] }
                 .every { it.transferOption == PaymentTransferOption.DOC_TED}
         }
     }
@@ -231,7 +236,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         result.isEmpty()
@@ -261,10 +266,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'payment remittance should be created'(){
         given:
-        Issuer issuer = fixtureCreator.createIssuer()
-        PaymentRemittance paymentRemittance = from(PaymentRemittance.class).gimme("valid", new Rule(){{
-            add("issuer",issuer)
-        }})
+        PaymentRemittance paymentRemittance = from(PaymentRemittance.class).gimme("valid")
 
         when:
         PaymentRemittance created = service.save(paymentRemittance)
@@ -290,7 +292,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             add("paymentReleaseDateTime", instant("1 day ago"))
         }})
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         result.find().number == '1'
@@ -303,11 +305,11 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def result = service.findByIssuer(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
-        result.find().issuer.id == issuer.id
-        result.find().issuerBankCode == issuer.paymentAccount.bankAccount.bacenCode
+        result.find().payer.documentNumber == issuer.documentNumber()
+        result.find().payer.bankCode == issuer.paymentAccount.bankAccount.bacenCode
     }
 
     def 'should create payment remittance by Issuer'(){
@@ -321,7 +323,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def all = service.findByIssuer(issuer.id)
+        def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that all, hasSize(1)
@@ -349,15 +351,15 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def all = service.findByIssuer(issuer.id)
+        def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that all, hasSize(1)
         that all.find().remittanceItems, hasSize(2)
         all.find().remittanceItems.find {
-            batchClosingA.establishmentId() == it.establishment.id }.value == batchClosingA.value
+            batchClosingA.establishmentDocument() == it.payee.documentNumber }.value == batchClosingA.value
         all.find().remittanceItems.find {
-            batchClosingB.establishmentId() == it.establishment.id }.value == batchClosingB.value
+            batchClosingB.establishmentDocument() == it.payee.documentNumber }.value == batchClosingB.value
     }
 
     def 'remittance item value should be a sum of batch closing value of establishment'(){
@@ -374,7 +376,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         when:
         service.create(issuer.id)
-        def all = service.findByIssuer(issuer.id)
+        def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
         that all, hasSize(1)
@@ -420,7 +422,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
         createBatchForBank(issuerBanK, issuer)
         service.create(issuer.id)
-        return service.findByIssuer(issuer.id).find()
+        return service.findByPayerDocument(issuer.documentNumber()).find()
     }
 
     private MockMultipartFile createCnabFile(PaymentRemittance remittance, Date currentDate) {

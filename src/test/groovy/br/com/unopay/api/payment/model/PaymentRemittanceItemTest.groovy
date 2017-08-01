@@ -39,8 +39,8 @@ class PaymentRemittanceItemTest extends FixtureApplicationTest{
         def paymentRemittanceItem = new PaymentRemittanceItem(batchClosing)
 
         then:
-        paymentRemittanceItem.establishment == batchClosing.establishment
-        paymentRemittanceItem.establishmentBankCode == batchClosing.establishment.bankAccount.bacenCode
+        paymentRemittanceItem.payee.documentNumber == batchClosing.establishment.documentNumber()
+        paymentRemittanceItem.payee.bankCode == batchClosing.establishment.bankAccount.bacenCode
     }
 
     def 'should create from batch closed with processing situation'(){

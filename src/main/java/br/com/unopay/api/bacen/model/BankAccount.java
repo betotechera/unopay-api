@@ -110,20 +110,4 @@ public class BankAccount implements Serializable{
         return null;
     }
 
-    public String agentDvFirstDigit(){
-        return StringUtils.left(agencyDigit, 1);
-    }
-
-    public String agentDvLastDigit(){
-        return StringUtils.right(agencyDigit, 1);
-    }
-
-    public String accountDvFirstDigit(){
-        return StringUtils.left(accountNumberDigit, 1);
-    }
-
-    public String accountDvLastDigit(){
-        return StringUtils.right(accountNumberDigit, 1);
-    }
-
 }

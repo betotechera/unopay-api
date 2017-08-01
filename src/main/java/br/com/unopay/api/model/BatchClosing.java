@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.models.auth.In;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -224,8 +225,16 @@ public class BatchClosing implements Serializable {
         }
     }
 
+    public Integer paymentAccountBank(){
+        return getIssuer().getPaymentAccount().getBankAccount().getBacenCode();
+    }
+
     public String establishmentId() {
         return establishment != null ? establishment.getId() : null;
+    }
+
+    public String establishmentDocument() {
+        return establishment != null ? establishment.documentNumber() : null;
     }
 
     public boolean establishmentBankCodeIs(Integer bacenCode){

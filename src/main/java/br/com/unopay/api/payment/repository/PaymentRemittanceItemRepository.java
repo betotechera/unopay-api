@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PaymentRemittanceItemRepository extends CrudRepository<PaymentRemittanceItem,String> {
 
-    Optional<PaymentRemittanceItem> findByEstablishmentIdAndSituation(String establishmentId,
-                                                                      RemittanceSituation situation);
-    Optional<PaymentRemittanceItem> findByEstablishmentPersonDocumentNumber(String document);
+    Optional<PaymentRemittanceItem> findByPayeeDocumentNumberAndSituation(String establishmentId,
+                                                                          RemittanceSituation situation);
+    Optional<PaymentRemittanceItem> findByPayeeDocumentNumber(String document);
 }

@@ -79,18 +79,4 @@ public class Address implements Serializable {
     @JsonView({Views.Public.class})
     private Double longitude;
 
-    public String firstZipCode(){
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d{5})(\\d{3})");
-        Matcher matcher = pattern.matcher(zipCode);
-        matcher.find();
-        return matcher.group(1);
-    }
-
-    public String lastZipeCode(){
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d{5})(\\d{3})");
-        Matcher matcher = pattern.matcher(zipCode);
-        matcher.find();
-        return matcher.group(2);
-    }
-
 }

@@ -98,23 +98,22 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def bankAccount = remittance.issuer.paymentAccount.bankAccount
-        def person = remittance.issuer.person
+        def payer = remittance.payer
         def record = new FilledRecord(remittanceHeader) {{
                 defaultFill(BANCO_COMPENSACAO)
                 defaultFill(LOTE_SERVICO)
                 defaultFill(TIPO_REGISTRO)
                 defaultFill(INICIO_FEBRABAN)
                 defaultFill(TIPO_INSCRICAO)
-                fill(NUMERO_INSCRICAO_EMPRESA, person.document.number)
-                fill(CONVEIO_BANCO, remittance.issuer.paymentAccount.bankAgreementNumber)
-                fill(AGENCIA, bankAccount.agency)
-                fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit())
-                fill(NUMERO_CONTA, bankAccount.accountNumber)
-                fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit())
-                fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit())
-                fill(NOME_EMPRESA, person.name)
-                fill(NOME_BANCO, bankAccount.bank.name)
+                fill(NUMERO_INSCRICAO_EMPRESA, payer.documentNumber)
+                fill(CONVEIO_BANCO, payer.bankAgreementNumber)
+                fill(AGENCIA, payer.agency)
+                fill(DIGITO_AGENCIA, payer.agentDvFirstDigit())
+                fill(NUMERO_CONTA, payer.accountNumber)
+                fill(DIGITO_CONTA, payer.accountDvFirstDigit())
+                fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
+                fill(NOME_EMPRESA, payer.name)
+                fill(NOME_BANCO, payer.getBankName())
                 defaultFill(MEIO_FEBRABAN)
                 defaultFill(CODIGO_REMESSA)
                 fill(DATA_GERACAO_ARQUIVO, currentDate.format("ddMMyyyy"))
@@ -165,9 +164,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def bankAccount = remittance.issuer.paymentAccount.bankAccount
-        def address = remittance.issuer.person.address
-        def person = remittance.issuer.person
+        def payer = remittance.payer
         def record = new FilledRecord(batchHeader) {{
             defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
@@ -178,22 +175,22 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(LAYOUT_ARQUIVO)
             defaultFill(INICIO_FEBRABAN)
             defaultFill(TIPO_INSCRICAO)
-            fill(NUMERO_INSCRICAO_EMPRESA, person.document.number)
-            fill(CONVEIO_BANCO, remittance.issuer.paymentAccount.bankAgreementNumber)
-            fill(AGENCIA, bankAccount.agency)
-            fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit())
-            fill(NUMERO_CONTA, bankAccount.accountNumber)
-            fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit())
-            fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit())
-            fill(NOME_EMPRESA, person.name)
+            fill(NUMERO_INSCRICAO_EMPRESA, payer.documentNumber)
+            fill(CONVEIO_BANCO, payer.bankAgreementNumber)
+            fill(AGENCIA, payer.agency)
+            fill(DIGITO_AGENCIA, payer.agentDvFirstDigit())
+            fill(NUMERO_CONTA, payer.accountNumber)
+            fill(DIGITO_CONTA, payer.accountDvFirstDigit())
+            fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
+            fill(NOME_EMPRESA, payer.name)
             defaultFill(MENSAGEM)
-            fill(LOGRADOURO, address.streetName)
-            fill(NUMERO, address.number)
-            fill(COMPLEMENTO, address.complement)
-            fill(CIDADE, address.city)
-            fill(CEP, address.firstZipCode())
-            fill(COMPLEMENTO_CEP,address.lastZipeCode())
-            fill(ESTADO, address.state.name())
+            fill(LOGRADOURO, payer.streetName)
+            fill(NUMERO, payer.number)
+            fill(COMPLEMENTO, payer.complement)
+            fill(CIDADE, payer.city)
+            fill(CEP, payer.firstZipCode())
+            fill(COMPLEMENTO_CEP,payer.lastZipeCode())
+            fill(ESTADO, payer.state.name())
             defaultFill(FIM_FEBRABAN)
             defaultFill(OCORRENCIAS)
         }}
@@ -269,9 +266,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     private FilledRecord createSegmentA(Date currentDate, PaymentRemittanceItem item, Integer index) {
         def headers = 2
-        def establishment = item.establishment
-        def bankAccount = establishment.bankAccount
-        def person = establishment.person
+        def payee = item.payee
         new FilledRecord(batchSegmentA) {
             {
                 defaultFill(BANCO_COMPENSACAO)
@@ -282,14 +277,14 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 defaultFill(TIPO_MOVIMENTO)
                 defaultFill(INSTITUICAO_MOVIMENTO)
                 defaultFill(CAMARA_CENTRALIZADORA)
-                fill(BANCO_FAVORECIDO, bankAccount.getBacenCode())
-                fill(AGENCIA, bankAccount.agentDvFirstDigit())
-                fill(DIGITO_AGENCIA, bankAccount.agentDvLastDigit())
-                fill(NUMERO_CONTA, bankAccount.getAccountNumber())
-                fill(DIGITO_CONTA, bankAccount.accountDvFirstDigit())
-                fill(DIGITO_AGENCIA_CONTA, bankAccount.accountDvLastDigit())
-                fill(NOME_FAVORECIDO, person.name)
-                fill(DOCUMENTO_ATRIBUIDO_EMPRESA, person.document.number)
+                fill(BANCO_FAVORECIDO, payee.getBankCode())
+                fill(AGENCIA, payee.agentDvFirstDigit())
+                fill(DIGITO_AGENCIA, payee.agentDvLastDigit())
+                fill(NUMERO_CONTA, payee.getAccountNumber())
+                fill(DIGITO_CONTA, payee.accountDvFirstDigit())
+                fill(DIGITO_AGENCIA_CONTA, payee.accountDvLastDigit())
+                fill(NOME_FAVORECIDO, payee.name)
+                fill(DOCUMENTO_ATRIBUIDO_EMPRESA, payee.documentNumber)
                 fill(DATA_PAGAMENTO, currentDate.format("ddMMyyyy"))
                 defaultFill(TIPO_MOEDA)
                 defaultFill(QUANTIDADE_MOEDA)
@@ -309,9 +304,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
 
     private FilledRecord createSegmentB(Date currentDate, PaymentRemittanceItem item, Integer index) {
         def latest = 3
-        def establishment = item.establishment
-        def address = establishment.person.address
-        def person = establishment.person
+        def payee = item.payee
         new FilledRecord(batchSegmentB) {
             {
                 defaultFill(BANCO_COMPENSACAO)
@@ -321,22 +314,22 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 defaultFill(SEGMENTO)
                 defaultFill(INICIO_FEBRABAN)
                 defaultFill(TIPO_INSCRICAO_FAVORECIDO)
-                fill(NUMERO_INSCRICAO_FAVORECIDO, person.getDocument().getNumber())
-                fill(LOGRADOURO, address.getStreetName())
-                fill(NUMERO, address.getNumber())
-                fill(COMPLEMENTO, address.getComplement())
-                fill(BAIRRO, address.getDistrict())
-                fill(CIDADE, address.getCity())
-                fill(CEP, address.firstZipCode())
-                fill(COMPLEMENTO_CEP, address.lastZipeCode())
-                fill(ESTADO, address.getState().name())
+                fill(NUMERO_INSCRICAO_FAVORECIDO, payee.documentNumber)
+                fill(LOGRADOURO, payee.getStreetName())
+                fill(NUMERO, payee.getNumber())
+                fill(COMPLEMENTO, payee.getComplement())
+                fill(BAIRRO, payee.getDistrict())
+                fill(CIDADE, payee.getCity())
+                fill(CEP, payee.firstZipCode())
+                fill(COMPLEMENTO_CEP, payee.lastZipeCode())
+                fill(ESTADO, payee.state.name())
                 fill(DATA_VENCIMENTO, currentDate.format("ddMMyyyy"))
                 fill(VALOR_DOCUMENTO, Rounder.roundToString(item.getValue()))
                 defaultFill(VALOR_ABATIMENTO)
                 defaultFill(VALOR_DESCONTO)
                 defaultFill(VALOR_MORA)
                 defaultFill(VALOR_MULTA)
-                fill(CODIGO_DOCUMENTO_FAVORECIDO, person.getDocument().getNumber())
+                fill(CODIGO_DOCUMENTO_FAVORECIDO, payee.documentNumber)
                 defaultFill(FIM_FEBRABAN)
             }
         }

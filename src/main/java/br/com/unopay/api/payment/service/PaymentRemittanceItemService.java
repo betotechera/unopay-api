@@ -23,8 +23,8 @@ public class PaymentRemittanceItemService {
         return repository.save(paymentRemittance);
     }
 
-    public Optional<PaymentRemittanceItem> findProcessingByEstablishment(String establishmentId){
-        return repository.findByEstablishmentIdAndSituation(establishmentId, RemittanceSituation.PROCESSING);
+    public Optional<PaymentRemittanceItem> findProcessingByEstablishment(String documentNumber){
+        return repository.findByPayeeDocumentNumberAndSituation(documentNumber, RemittanceSituation.PROCESSING);
     }
 
     public PaymentRemittanceItem findById(String id) {
@@ -32,7 +32,7 @@ public class PaymentRemittanceItemService {
     }
 
     public PaymentRemittanceItem findByEstablishmentDocument(String document){
-        Optional<PaymentRemittanceItem> byEstablishment = repository.findByEstablishmentPersonDocumentNumber(document);
+        Optional<PaymentRemittanceItem> byEstablishment = repository.findByPayeeDocumentNumber(document);
         return byEstablishment.orElse(null);
     }
 }
