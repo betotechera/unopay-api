@@ -68,7 +68,6 @@ public class ServiceAuthorize implements Serializable {
 
     @KeyField(baseField = "abastecimento.consumo.autorizacao.numero")
     @Column(name = "authorization_number")
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
     private String authorizationNumber;
 
     @Column(name = "authorization_date_time")
