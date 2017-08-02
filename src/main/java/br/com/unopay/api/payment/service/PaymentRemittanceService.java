@@ -2,7 +2,9 @@ package br.com.unopay.api.payment.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
@@ -10,10 +12,12 @@ import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
+import br.com.unopay.api.payment.model.filter.RemittanceFilter;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +29,9 @@ import javax.transaction.Transactional;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +53,7 @@ import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_WITH_INVALID_DATA;
 import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessableEntity;
 
+@Slf4j
 @Service
 public class PaymentRemittanceService {
 
@@ -58,6 +66,8 @@ public class PaymentRemittanceService {
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     private UserDetailService userDetailService;
+    @Setter private Notifier notifier;
+    private GenericObjectMapper genericObjectMapper;
 
     public PaymentRemittanceService(){}
 
@@ -69,7 +79,8 @@ public class PaymentRemittanceService {
                                     Cnab240Generator cnab240Generator,
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
-                                    UserDetailService userDetailService) {
+                                    UserDetailService userDetailService, Notifier notifier,
+                                    GenericObjectMapper genericObjectMapper) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
@@ -78,6 +89,8 @@ public class PaymentRemittanceService {
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.userDetailService = userDetailService;
+        this.notifier = notifier;
+        this.genericObjectMapper = genericObjectMapper;
     }
 
     public PaymentRemittance findById(String id) {
@@ -104,12 +117,31 @@ public class PaymentRemittanceService {
 
     @Transactional
     public void create(String issuer) {
+        create(issuer, today());
+    }
+
+    @Transactional
+    public void create(String issuer, Date at) {
         Issuer currentIssuer = issuerService.findById(issuer);
-        checkAlreadyRunning(currentIssuer.documentNumber());
-        Set<BatchClosing> batchByEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBeforeToday(issuer);
-        if(!batchByEstablishment.isEmpty()) {
-            createRemittanceAndItems(currentIssuer, batchByEstablishment);
+        Set<BatchClosing> byEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBefore(issuer, at);
+        if(!byEstablishment.isEmpty()) {
+            createRemittanceAndItems(currentIssuer, byEstablishment);
         }
+    }
+
+    public void execute(RemittanceFilter filter) {
+        Issuer currentIssuer = issuerService.findById(filter.getId());
+        checkAlreadyRunning(currentIssuer.documentNumber());
+        notifier.notify(Queues.UNOPAY_PAYMENT_REMITTANCE, filter);
+    }
+
+    @Transactional
+    @RabbitListener(queues = Queues.UNOPAY_PAYMENT_REMITTANCE)
+    public void remittanceReceiptNotify(String objectAsString) {
+        RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
+        log.info("processing remittance for issuer={}", filter.getId());
+        create(filter.getId(), filter.getAt());
+        log.info("processed remittance for issuer={}", filter.getId());
     }
 
     private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
@@ -235,4 +267,9 @@ public class PaymentRemittanceService {
     private String getNumberWithoutLeftPad(String remittanceNumber) {
         return Integer.valueOf(remittanceNumber).toString();
     }
+
+    private Date today() {
+        return new DateTime().withMillisOfDay(0).toDate();
+    }
+
 }

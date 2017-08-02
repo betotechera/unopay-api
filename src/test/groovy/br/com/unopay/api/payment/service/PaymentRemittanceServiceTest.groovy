@@ -7,10 +7,13 @@ import br.com.unopay.api.bacen.model.BankAccount
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.config.Queues
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor
@@ -20,6 +23,7 @@ import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentTransferOption
 import br.com.unopay.api.payment.model.RemittancePayer
 import br.com.unopay.api.payment.model.RemittanceSituation
+import br.com.unopay.api.payment.model.filter.RemittanceFilter
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,11 +45,13 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
+    Notifier notifierMock = Mock(Notifier)
 
     void setup() {
         service.cnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
+        service.notifier = notifierMock
         cnab240GeneratorMock.generate(_,_) >> '005;006'
         extractorSelectorMock.define(getBatchSegmentA(),_) >> extractorMock
     }
@@ -172,11 +178,25 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.save(remittance)
 
         when:
-        service.create(issuer.id)
+        service.execute(new RemittanceFilter(){{
+            setId(issuer.id)
+        }})
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'REMITTANCE_ALREADY_RUNNING'
+    }
+
+    def 'when create should queue'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def filter = new RemittanceFilter(){{ setId(issuer.id)}}
+
+        when:
+        service.execute(filter)
+
+        then:
+        1 * notifierMock.notify(Queues.UNOPAY_PAYMENT_REMITTANCE, filter)
     }
 
     def 'should ever create a new remittance when execute'(){

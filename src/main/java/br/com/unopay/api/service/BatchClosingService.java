@@ -243,9 +243,14 @@ public class BatchClosingService {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
 
+    public Set<BatchClosing> findFinalizedByIssuerAndPaymentBefore(String issuerId, Date at){
+        return repository.findByIssuerIdAndSituationAndPaymentReleaseDateTimeBeforeOrderByEstablishment(issuerId,
+                                                                            BatchClosingSituation.FINALIZED, at);
+    }
+
     public Set<BatchClosing> findFinalizedByIssuerAndPaymentBeforeToday(String issuerId){
         return repository.findByIssuerIdAndSituationAndPaymentReleaseDateTimeBeforeOrderByEstablishment(issuerId,
-                                                                            BatchClosingSituation.FINALIZED, today());
+                BatchClosingSituation.FINALIZED, today());
     }
 
     public List<BatchClosing> findAll(){
