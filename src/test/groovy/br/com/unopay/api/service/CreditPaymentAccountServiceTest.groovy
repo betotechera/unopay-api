@@ -1,6 +1,7 @@
 package br.com.unopay.api.service
 
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import br.com.unopay.api.bacen.util.FixtureCreator
@@ -151,12 +152,13 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     void 'should update balance grouped by product and service'(){
         given:
-        fixtureCreator.createPaymentRuleGroupDefault()
+        def paymentRuleGroupUnderTest = fixtureCreator.createPaymentRuleGroup()
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         Credit credit = fixtureCreator.createCredit(null)
                 .with {
                         creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
                         serviceType = ELECTRONIC_TOLL
+                        paymentRuleGroup = paymentRuleGroupUnderTest
                 it }
         when:
         creditService.insert(credit)
