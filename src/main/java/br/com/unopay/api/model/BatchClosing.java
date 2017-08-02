@@ -193,11 +193,8 @@ public class BatchClosing implements Serializable {
         return null;
     }
 
-    public boolean myEstablishmentIs(Establishment establishment){
-        if(this.establishment != null && establishment != null) {
-            return Objects.equals(establishment.getId(), this.establishment.getId());
-        }
-        return false;
+    public boolean myEstablishmentIs(Establishment establishment) {
+        return this.establishment != null && establishment != null && Objects.equals(establishment.getId(), this.establishment.getId());
     }
 
     @JsonIgnore
@@ -267,5 +264,9 @@ public class BatchClosing implements Serializable {
 
     public Date getClosingDateTime(){
         return ObjectUtils.clone(this.closingDateTime);
+    }
+
+    public boolean myIssuerIs(Issuer issuer) {
+        return this.issuer != null && issuer != null && Objects.equals(issuer.getId(), this.issuer.getId());
     }
 }

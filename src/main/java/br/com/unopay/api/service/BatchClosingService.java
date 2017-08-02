@@ -10,6 +10,7 @@ import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.BatchClosingFilter;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.repository.BatchClosingRepository;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.GenericObjectMapper;
@@ -209,8 +210,13 @@ public class BatchClosingService {
     }
 
     private void checkUserQualifiedForBatch(UserDetail currentUser, BatchClosing batchClosing) {
-        if(!batchClosing.myEstablishmentIs(currentUser.getEstablishment())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
+        if(currentUser.isIssuerType() && !batchClosing.myIssuerIs(currentUser.getIssuer())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH);
+        }
+        else {
+            if(!batchClosing.myEstablishmentIs(currentUser.getEstablishment())){
+                throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
+            }
         }
     }
 

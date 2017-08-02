@@ -367,14 +367,28 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         fixtureCreator.createBatchItems(batchClosing)
 
         when:
-        service.cancel(fixtureCreator.createUser().email, batchClosing.id)
+        service.cancel(fixtureCreator.createEstablishmentUser().email, batchClosing.id)
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH'
     }
 
+    def 'given a known batch closing from other issuer should not be canceled'(){
+        given:
+        def user = fixtureCreator.createIssuerUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issuer", user.issuer)
+        }})
+        fixtureCreator.createBatchItems(batchClosing)
 
+        when:
+        service.cancel(fixtureCreator.createIssuerUser().email, batchClosing.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH'
+    }
 
     def 'given a known batch closing with issue invoice situation should update only invoice item fields'(){
         given:
@@ -499,11 +513,34 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         }
 
         when:
-        service.updateInvoiceInformation(fixtureCreator.createUser().email, batchClosingItems)
+        service.updateInvoiceInformation(fixtureCreator.createEstablishmentUser().email, batchClosingItems)
 
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH'
+    }
+
+    def 'given a known batch closing from other issuer should return error'(){
+        given:
+        def user = fixtureCreator.createIssuerUser()
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issueInvoice", true)
+            add("issuer", user.issuer)
+        }})
+        List<BatchClosingItem> batchClosingItems = fixtureCreator.createBatchItems(batchClosing)
+
+        batchClosingItems.each {
+            it.invoiceNumber = "54654687646798"
+            it.invoiceDocumentUri = "file://teste.temp"
+            it.invoiceDocumentSituation = DocumentSituation.PENDING
+        }
+
+        when:
+        service.updateInvoiceInformation(fixtureCreator.createIssuerUser().email, batchClosingItems)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH'
     }
 
 

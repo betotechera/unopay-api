@@ -5,7 +5,6 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 public final class Errors {
 
 
-
     private Errors() {
         throw new IllegalAccessError("Utility class");
     }
@@ -452,6 +451,9 @@ public final class Errors {
     public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH =
             new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH",
                     "Establishment not qualified for this batch");
+    public static final UnovationError ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH =
+            new UnovationError("ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH",
+                    "Issuer not qualified for this batch");
     public static final UnovationError BATCH_FINALIZED =
             new UnovationError("BATCH_FINALIZED", "Batch already finalized");
     public static final UnovationError BATCH_CANCELED =
