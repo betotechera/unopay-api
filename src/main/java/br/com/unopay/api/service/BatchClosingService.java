@@ -261,7 +261,4 @@ public class BatchClosingService {
         return userDetailService.getByEmail(userEmail);
     }
 
-    public void updateBatchSituationById(String id, BatchClosingSituation situation) {
-        updateBatchSituation(findById(id),situation);
-    }
 }
