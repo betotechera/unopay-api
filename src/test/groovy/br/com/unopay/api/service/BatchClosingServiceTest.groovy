@@ -452,7 +452,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing without issue invoice situation should not be received'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
             add("issueInvoice", false)
             add("establishment", user.establishment)
         }})
@@ -476,7 +477,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing but unknown batch item should return error'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
             add("issueInvoice", true)
             add("establishment", user.establishment)
         }})
@@ -500,7 +502,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing from other establishment should return error'(){
         given:
         def user = fixtureCreator.createEstablishmentUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
             add("issueInvoice", true)
             add("establishment", user.establishment)
         }})
@@ -523,7 +526,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
     def 'given a known batch closing from other issuer should return error'(){
         given:
         def user = fixtureCreator.createIssuerUser()
-        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        BatchClosing batchClosing = Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new
+                Rule(){{
             add("issueInvoice", true)
             add("issuer", user.issuer)
         }})

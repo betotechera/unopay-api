@@ -194,7 +194,8 @@ public class BatchClosing implements Serializable {
     }
 
     public boolean myEstablishmentIs(Establishment establishment) {
-        return this.establishment != null && establishment != null && Objects.equals(establishment.getId(), this.establishment.getId());
+        return this.establishment != null && establishment != null && Objects.equals(establishment.getId(),
+                this.establishment.getId());
     }
 
     @JsonIgnore
