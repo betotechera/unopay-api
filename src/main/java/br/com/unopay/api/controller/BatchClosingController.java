@@ -84,7 +84,7 @@ public class BatchClosingController {
     public void update(@PathVariable  String id, @RequestBody @Validated(Update.class)
             BatchClosing batchClosing,OAuth2Authentication authentication) {
         log.info("updating batchClosing id={}", id);
-        service.updateBatchSituationById(id,batchClosing.getSituation());
+        service.review(id,batchClosing.getSituation());
     }
 
     @ResponseStatus(NO_CONTENT)
