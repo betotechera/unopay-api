@@ -62,6 +62,18 @@ public class UploadController {
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/docs", method = RequestMethod.POST,
+            consumes = "multipart/form-data", produces = "text/plain")
+    public String uploadDoc(@RequestParam MultipartFile file, @RequestParam String docPath) {
+        String fileName = file.getOriginalFilename();
+        LOGGER.info("uploading file {}", fileName);
+        if (!DOC_PATTERN.matcher(fileName).matches()) {
+            throw new BadRequestException("File extension not supported");
+        }
+        return fileUploaderService.uploadFile(file, docPath);
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/images", method = RequestMethod.POST,
             consumes = "multipart/form-data", produces = "text/plain")
     public String uploadImage(@RequestParam MultipartFile file, @RequestParam String imagePath) {
