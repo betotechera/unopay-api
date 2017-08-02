@@ -15,7 +15,6 @@ server:
   port: 7070
 unopay:
   credit:
-    defaultPaymentRuleGroup: '01'
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'
   api: 10.10.0.193:7070
   resetPassword:

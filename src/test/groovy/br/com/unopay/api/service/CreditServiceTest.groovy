@@ -163,7 +163,7 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     @Unroll
-    "given a credit with #insertionType insertion type should be inserted with processing situation"(){
+    "given a credit with #insertionType insertion type should be inserted with confirmed situation"(){
         given:
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
@@ -191,7 +191,7 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'when insert credits with #insertionType available balance should be updated'(){
+    void 'when insert credits with #insertionType then the available balance should be updated'(){
         given:
         def knownProduct = fixtureCreator.createProduct().with { creditInsertionTypes = [insertionType]; it }
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
@@ -212,7 +212,7 @@ class CreditServiceTest extends SpockApplicationTests {
         CreditInsertionType.PAMCARD_SYSTEM | _
     }
 
-    void 'when insert credits with direct debit, available balance should be zero'(){
+    void 'when insert credits with direct debit then the available balance should be zero'(){
         given:
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
@@ -228,7 +228,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     }
 
-    void 'given more one credit when insert credits available balance should be updated'(){
+    void 'given more of one credit when insert credits the available balance should be updated'(){
         given:
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
@@ -245,7 +245,7 @@ class CreditServiceTest extends SpockApplicationTests {
         result.availableValue == Rounder.round(creditC.value)
     }
 
-    void 'when insert credits with direct debit, block balance should be updated'(){
+    void 'when insert credits with direct debit the block balance should be updated'(){
         given:
         def knownProduct = fixtureCreator.createProduct()
                 .with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
@@ -262,7 +262,7 @@ class CreditServiceTest extends SpockApplicationTests {
     }
 
     @Unroll
-    void 'when insert credits with #insertionType, block balance should be zero'(){
+    void 'when insert credits with #insertionType then the block balance should be zero'(){
         given:
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([insertionType])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
@@ -351,10 +351,12 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'credit without product should be inserted with default credit insert type'(){
         given:
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         fixtureCreator.createPaymentRuleGroupDefault()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndCreditInsertionType", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroup)
         }})
 
         when:
@@ -365,12 +367,13 @@ class CreditServiceTest extends SpockApplicationTests {
         result.creditInsertionType == CreditInsertionType.PAMCARD_SYSTEM
     }
 
-    void 'given a credit without product should be inserted with default payment rule group'(){
+    void 'given a credit without product should be inserted with payment rule group'(){
         given:
-        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroupDefault()
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroup)
         }})
 
         when:
@@ -384,6 +387,38 @@ class CreditServiceTest extends SpockApplicationTests {
         result.getPaymentRuleGroup().name == paymentRuleGroup.name
         result.getPaymentRuleGroup().purpose == paymentRuleGroup.purpose
         result.getPaymentRuleGroup().scope == paymentRuleGroup.scope
+    }
+
+    void 'given a credit without product should not be inserted without payment rule group'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", null)
+        }})
+
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_REQUIRED'
+    }
+
+    void 'given a credit without product should not be inserted with unknown payment rule group'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", new PaymentRuleGroup())
+        }})
+
+        when:
+        service.insert(credit)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
     }
 
     void 'given a credit with known hirer document should be inserted'(){
@@ -414,10 +449,11 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a credit without payment rule group and product should be inserted'(){
         given:
-        fixtureCreator.createPaymentRuleGroupDefault()
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroup)
         }})
 
         when:

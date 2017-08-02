@@ -20,8 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
-import static br.com.unopay.api.uaa.exception.Errors.DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_REQUIRED;
 
 @Slf4j
 @Service
@@ -33,9 +33,6 @@ public class CreditService {
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter
     private CreditPaymentAccountService creditPaymentAccountService;
-
-    @Value("${unopay.credit.defaultPaymentRuleGroup:}")
-    private String defaultPaymentRuleGroup;
 
     @Value("${unopay.credit.defaultCreditInsertionType:}")
     private String defaultCreditInsertionType;
@@ -67,7 +64,7 @@ public class CreditService {
     private void defineDefaultValues(Credit credit) {
         if(!credit.withProduct()){
             defineDefaultCreditInsertionType(credit);
-            defineDefaultPaymentRuleGroup(credit);
+            definePaymentRuleGroup(credit);
         }
         credit.setupMyCreate();
         incrementCreditNumber(credit);
@@ -91,12 +88,12 @@ public class CreditService {
         credit.defineCreditInsertionType(defaultCreditInsertionType);
     }
 
-    private void defineDefaultPaymentRuleGroup(Credit credit) {
-        if(StringUtils.isEmpty(defaultPaymentRuleGroup)){
-            throw UnovationExceptions.unprocessableEntity().withErrors(DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED);
+    private void definePaymentRuleGroup(Credit credit) {
+        if(credit.getPaymentRuleGroup() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
         }
-        PaymentRuleGroup defaultPaymentRuleGroupResult = paymentRuleGroupService.getByCode(defaultPaymentRuleGroup);
-        credit.setPaymentRuleGroup(defaultPaymentRuleGroupResult);
+        PaymentRuleGroup paymentRuleGroup = paymentRuleGroupService.getByCode(credit.getPaymentRuleGroup().getCode());
+        credit.setPaymentRuleGroup(paymentRuleGroup);
     }
 
     private void validateReferences(Credit credit) {

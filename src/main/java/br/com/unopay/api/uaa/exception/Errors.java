@@ -340,14 +340,14 @@ public final class Errors {
             new UnovationError("MAXIMUM_PRODUCT_VALUE_NOT_MET","Maximum product value not met.");
     public static final UnovationError MINIMUM_CREDIT_VALUE_NOT_MET =
             new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
-    public static final UnovationError DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED =
-            new UnovationError("DEFAULT_PAYMENT_RULE_GROUP_NOT_CONFIGURED","Default payment rule group not configured");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_NOT_FOUND =
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_NOT_FOUND","Credit payment account not found.");
     public static final UnovationError HIRER_CREDIT_NOT_FOUND =
             new UnovationError("HIRER_CREDIT_NOT_FOUND","Hirer credit not found.");
     public static final UnovationError CREDIT_ALREADY_CANCELED =
             new UnovationError("CREDIT_ALREADY_CANCELED","Credit already canceled.");
+    public static final UnovationError PAYMENT_RULE_GROUP_REQUIRED =
+            new UnovationError("PAYMENT_RULE_GROUP_REQUIRED","Payment rule group required.");
 
 
     /* credit payment account */

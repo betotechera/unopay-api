@@ -11,7 +11,6 @@ soap:
       trust-store-password: 'changeit'
 unopay:
   credit:
-    defaultPaymentRuleGroup: '01'
     defaultCreditInsertionType: 'PAMCARD_SYSTEM'
   api: localhost:8080
   resetPassword:
