@@ -117,13 +117,6 @@ public class Product implements Serializable, Updatable {
     @CollectionTable(name = "product_credit_insertion_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<CreditInsertionType> creditInsertionTypes;
 
-    @Column(name = "minimum_credit_insertion")
-    @JsonView({Views.Public.class,Views.List.class})
-    private BigDecimal minimumCreditInsertion;
-    @Column(name = "maximum_credit_insertion")
-    @JsonView({Views.Public.class,Views.List.class})
-    private BigDecimal maximumCreditInsertion;
-
     @Column(name = "payment_instrument_valid_days")
     @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})

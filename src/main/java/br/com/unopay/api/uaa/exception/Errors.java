@@ -334,10 +334,10 @@ public final class Errors {
     /* credit */
     public static final UnovationError CREDIT_INSERT_TYPE_NOT_CONFIGURED =
             new UnovationError("CREDIT_INSERT_TYPE_NOT_CONFIGURED","Credit insert type not configured");
-    public static final UnovationError MINIMUM_PRODUCT_VALUE_NOT_MET =
-            new UnovationError("MINIMUM_PRODUCT_VALUE_NOT_MET","Minimum product value not met.");
-    public static final UnovationError MAXIMUM_PRODUCT_VALUE_NOT_MET =
-            new UnovationError("MAXIMUM_PRODUCT_VALUE_NOT_MET","Maximum product value not met.");
+    public static final UnovationError MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET =
+            new UnovationError("MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET","Minimum payment rule group value not met.");
+    public static final UnovationError MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET =
+            new UnovationError("MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET","Maximum payment rule group value not met.");
     public static final UnovationError MINIMUM_CREDIT_VALUE_NOT_MET =
             new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_NOT_FOUND =

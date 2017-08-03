@@ -7,6 +7,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -30,6 +31,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
+@EqualsAndHashCode(of = {"code", "id", "name"})
 @Table(name = "payment_rule_group")
 public class PaymentRuleGroup implements Serializable, Updatable {
 
@@ -79,6 +81,15 @@ public class PaymentRuleGroup implements Serializable, Updatable {
     @JoinColumn(name="institution_id")
     @JsonView({Views.Public.class})
     private Institution institution;
+
+    @Column(name = "minimum_credit_insertion")
+    @JsonView({Views.Public.class,Views.List.class})
+    private BigDecimal minimumCreditInsertion;
+
+    @Column(name = "maximum_credit_insertion")
+    @JsonView({Views.Public.class,Views.List.class})
+    private BigDecimal maximumCreditInsertion;
+
 
     public void validate(){
         if (getName() == null) {

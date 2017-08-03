@@ -47,6 +47,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("institution", one(Institution.class, "persisted"));
             add("purpose", uniqueRandom(Purpose.class));
             add("scope", uniqueRandom(Scope.class));
+            add("minimumCreditInsertion", random(BigDecimal.class, range(0.0, 0.1)));
+            add("maximumCreditInsertion", random(BigDecimal.class, range(900, 9000000.00)));
             add("userRelationship", uniqueRandom(UserRelationship.class));
         }});
 

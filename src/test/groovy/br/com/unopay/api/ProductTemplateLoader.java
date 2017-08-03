@@ -33,8 +33,6 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
             add("paymentInstrumentTypes", has(1).of(PaymentInstrumentType.class));
-            add("minimumCreditInsertion", random(BigDecimal.class, range(0.0, 0.1)));
-            add("maximumCreditInsertion", random(BigDecimal.class, range(900, 9000000.00)));
             add("paymentInstrumentValidDays", random(Integer.class));
             add("situation", random(ProductSituation.class));
             add("membershipFee", random(BigDecimal.class));

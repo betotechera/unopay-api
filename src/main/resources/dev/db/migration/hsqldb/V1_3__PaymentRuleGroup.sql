@@ -4,6 +4,8 @@ create table payment_rule_group (
      code VARCHAR(256),
      purpose VARCHAR(50),
      scope VARCHAR(50),
+     minimum_credit_insertion decimal(20,2),
+     maximum_credit_insertion decimal(20,2),
      user_relationship VARCHAR(50),
      version integer
 );

@@ -27,8 +27,6 @@ class ProductTest  extends FixtureApplicationTest {
         a.serviceTypes.findAll { it in b.serviceTypes}
         a.serviceTypes.size() == b.serviceTypes.size()
         a.creditInsertionTypes == b.creditInsertionTypes
-        a.minimumCreditInsertion == b.minimumCreditInsertion
-        a.maximumCreditInsertion == b.maximumCreditInsertion
         a.paymentInstrumentValidDays == b.paymentInstrumentValidDays
         a.situation == b.situation
         a.membershipFee == b.membershipFee
@@ -55,8 +53,6 @@ class ProductTest  extends FixtureApplicationTest {
         a.accreditedNetwork != b.accreditedNetwork
         a.paymentInstrumentTypes != b.paymentInstrumentTypes
         a.creditInsertionTypes != b.creditInsertionTypes
-        a.minimumCreditInsertion != b.minimumCreditInsertion
-        a.maximumCreditInsertion != b.maximumCreditInsertion
         a.paymentInstrumentValidDays != b.paymentInstrumentValidDays
         a.situation != b.situation
         a.membershipFee != b.membershipFee
@@ -88,8 +84,6 @@ class ProductTest  extends FixtureApplicationTest {
         a.serviceTypes.findAll { it in b.serviceTypes}
         a.serviceTypes.size() == b.serviceTypes.size()
         a.creditInsertionTypes == b.creditInsertionTypes
-        a.minimumCreditInsertion == b.minimumCreditInsertion
-        a.maximumCreditInsertion == b.maximumCreditInsertion
         a.paymentInstrumentValidDays == b.paymentInstrumentValidDays
         a.situation == b.situation
         a.membershipFee == b.membershipFee

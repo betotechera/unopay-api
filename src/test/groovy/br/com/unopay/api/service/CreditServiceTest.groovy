@@ -297,14 +297,14 @@ class CreditServiceTest extends SpockApplicationTests {
         knownProduct.creditInsertionTypes.contains(result.creditInsertionType)
     }
 
-    void 'credit with product should not be inserted when do not match product minimum value restriction'(){
+    void 'should not be inserted when do not match payment rule group minimum value restriction'(){
         given:
-        def knownProduct = fixtureCreator.createProduct()
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
-            add("product", knownProduct)
-            add("value", knownProduct.minimumCreditInsertion - 1)
+            add("paymentRuleGroup", paymentRuleGroup)
+            add("value", paymentRuleGroup.minimumCreditInsertion - 1)
         }})
 
         when:
@@ -312,17 +312,17 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'MINIMUM_PRODUCT_VALUE_NOT_MET'
+        assert ex.errors.first().logref == 'MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET'
     }
 
-    void 'credit with product should not be inserted when do not match product maximum value restriction'(){
+    void 'should not be inserted when do not match payment rule group maximum value restriction'(){
         given:
-        def knownProduct = fixtureCreator.createProduct()
+        def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
-            add("product", knownProduct)
-            add("value", knownProduct.maximumCreditInsertion+1)
+            add("paymentRuleGroup", paymentRuleGroup)
+            add("value", paymentRuleGroup.maximumCreditInsertion+1)
         }})
 
         when:
@@ -330,7 +330,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'MAXIMUM_PRODUCT_VALUE_NOT_MET'
+        assert ex.errors.first().logref == 'MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET'
     }
 
     void 'credit without product should not be inserted when value is not greater than zero'(){
