@@ -138,7 +138,7 @@ public class PaymentRemittance implements Serializable {
     }
 
     public String getFileUri() {
-        val toFormat = "remittance/%s/Pagamento%s%s.REM";
+        val toFormat = "remittance/%s/PG%s%s.REM";
         return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
     }
 
