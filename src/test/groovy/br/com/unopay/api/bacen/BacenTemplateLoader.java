@@ -123,6 +123,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("fee", random(Double.class));
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
+            add("financierMailForRemittance", "financeiro@gmail.com");
         }});
 
         Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
@@ -166,7 +167,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("depositPeriod", random(RecurrencePeriod.class));
             add("postPaidPaymentDays", random(Integer.class,range(1,31)));
             add("prePaidPaymentDays", random(Integer.class,range(1,31)));
-            add("bankAgreementNumber", regex("\\d{20}"));
+            add("bankAgreementNumberForCredit", regex("\\d{20}"));
+            add("bankAgreementNumberForDebit", regex("\\d{20}"));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

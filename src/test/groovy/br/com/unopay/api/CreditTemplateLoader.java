@@ -53,6 +53,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("product", one(Product.class, "valid"));
             add("paymentRuleGroup",one(PaymentRuleGroup.class, "valid"));
             add("hirerDocument",cnpj());
+            add("issuerDocument",cnpj());
             add("serviceType", random(ServiceType.class));
             add("creditInsertionType",random(CreditInsertionType.class));
             add("creditNumber", random(Long.class));

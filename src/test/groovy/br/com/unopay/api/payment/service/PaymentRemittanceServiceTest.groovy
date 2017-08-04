@@ -13,7 +13,6 @@ import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor
@@ -59,7 +58,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
         given:
         def remittancePersisted = createRemittance()
-        def wrongRemittance = remittancePersisted.with { payer.bankAgreementNumber = 'AAAAA'; it }
+        def wrongRemittance = remittancePersisted.with { payer.bankAgreementNumberForCredit = 'AAAAA'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'

@@ -1,7 +1,8 @@
 create table remittance_payer (
     id VARCHAR(256) PRIMARY KEY,
     bank_code integer not null,
-    bank_agreement_number varchar(256) not null,
+    bank_agreement_number_for_credit varchar(20) not null,
+    bank_agreement_number_for_debit varchar(20) not null,
     document_number varchar(256),
     agency varchar(20) not null,
     agency_digit varchar(10),
@@ -24,7 +25,7 @@ COMMENT ON TABLE remittance_payer IS 'Pagador da remessa ';
 COMMENT ON COLUMN remittance_payer.id IS 'Chave Identificação do Registro';
 COMMENT ON COLUMN remittance_payer.bank_code IS 'Código do banco da conta pagamento';
 COMMENT ON COLUMN remittance_payer.document_number IS 'documento de identificacao do pagador';
-COMMENT ON COLUMN remittance_payer.bank_agreement_number IS 'codigo de conveio com o banco';
+COMMENT ON COLUMN remittance_payer.bank_agreement_number_for_credit IS 'codigo de conveio com o banco';
 COMMENT ON COLUMN remittance_payer.agency IS 'agencia do pagador';
 COMMENT ON COLUMN remittance_payer.agency_digit IS 'digito da agencia do pagador';
 COMMENT ON COLUMN remittance_payer.account_number IS 'numero da conta do pagador';

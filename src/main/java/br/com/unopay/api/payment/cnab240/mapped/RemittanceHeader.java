@@ -54,7 +54,7 @@ public class RemittanceHeader {
             defaultFill(INICIO_FEBRABAN).
             defaultFill(TIPO_INSCRICAO).
             fill(NUMERO_INSCRICAO_EMPRESA, payer.getDocumentNumber()).
-            fill(CONVEIO_BANCO, payer.getBankAgreementNumber()).
+            fill(CONVEIO_BANCO, payer.getBankAgreementNumberForCredit()).
             fill(AGENCIA, payer.getAgency()).
             fill(DIGITO_AGENCIA, payer.agentDvFirstDigit()).
             fill(NUMERO_CONTA, payer.getAccountNumber()).

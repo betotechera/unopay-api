@@ -22,7 +22,8 @@ create table payment_bank_account (
  deposit_period varchar(50) not null,
  post_paid_payment_days integer not null,
  pre_paid_payment_days integer not null,
- bank_agreement_number varchar(20) not null,
+ bank_agreement_number_for_credit varchar(20) not null,
+ bank_agreement_number_for_debit varchar(20) not null,
  constraint fk_payment_bank_account foreign key(bank_account_id) REFERENCES bank_account(id)
 );
 
@@ -32,6 +33,7 @@ create table issuer (
     fee decimal(3,2),
     payment_account_id varchar(256) not null,
     movement_account_id varchar(256) not null,
+    financier_mail_for_remittance varchar(256) not null,
     version integer,
     CONSTRAINT issuer_pers_id UNIQUE (person_id),
     constraint fk_issuer_pers foreign key(person_id) references person(id),

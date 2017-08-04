@@ -78,6 +78,11 @@ public class LegalPersonDetail implements Serializable{
     @JsonView({Views.Public.class})
     private String stateInscriptionNumber;
 
+    @Column(name="municipal_inscription_number")
+    @JsonView({Views.Public.class})
+    private String municipalInscriptionNumber;
+
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "type", column = @Column(name = "responsible_document_type")) ,

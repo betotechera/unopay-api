@@ -16,7 +16,8 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
         def payer = paymentRemittance.payer
         then:
         payer
-        payer.bankAgreementNumber == issuer.paymentAccount.bankAgreementNumber
+        payer.bankAgreementNumberForCredit == issuer.paymentAccount.bankAgreementNumberForCredit
+        payer.bankAgreementNumberForDebit == issuer.paymentAccount.bankAgreementNumberForDebit
         payer.agency == issuer.paymentAccount.bankAccount.agency
         payer.agencyDigit == issuer.paymentAccount.bankAccount.agencyDigit
         payer.accountNumber == issuer.paymentAccount.bankAccount.accountNumber

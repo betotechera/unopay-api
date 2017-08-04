@@ -33,7 +33,8 @@ public class RemittancePayer  implements Serializable {
     public RemittancePayer() {}
 
     public RemittancePayer(Issuer issuer) {
-        this.bankAgreementNumber = issuer.getPaymentAccount().getBankAgreementNumber();
+        this.bankAgreementNumberForCredit = issuer.getPaymentAccount().getBankAgreementNumberForCredit();
+        this.bankAgreementNumberForDebit = issuer.getPaymentAccount().getBankAgreementNumberForDebit();
         this.documentNumber = issuer.documentNumber();
         this.agency = issuer.getPaymentAccount().getBankAccount().getAgency();
         this.agencyDigit = issuer.getPaymentAccount().getBankAccount().getAgencyDigit();
@@ -131,10 +132,17 @@ public class RemittancePayer  implements Serializable {
     @JsonView({Views.Public.class, Views.List.class})
     private State state;
 
-    @Column(name = "bank_agreement_number")
+    @Column(name = "bank_agreement_number_for_credit")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
-    private String bankAgreementNumber;
+    private String bankAgreementNumberForCredit;
+
+
+    @Column(name = "bank_agreement_number_for_debit")
+    @JsonView({Views.Public.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String bankAgreementNumberForDebit;
+
 
     public String agentDvFirstDigit(){
         return StringUtils.left(agencyDigit, 1);

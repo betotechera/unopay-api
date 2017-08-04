@@ -51,7 +51,7 @@ public class BatchHeader {
             defaultFill(INICIO_FEBRABAN).
             defaultFill(TIPO_INSCRICAO).
             fill(NUMERO_INSCRICAO_EMPRESA, bankAccount.getDocumentNumber()).
-            fill(CONVEIO_BANCO, remittance.getPayer().getBankAgreementNumber()).
+            fill(CONVEIO_BANCO, remittance.getPayer().getBankAgreementNumberForCredit()).
             fill(AGENCIA, bankAccount.getAgency()).
             fill(DIGITO_AGENCIA, bankAccount.agentDvFirstDigit()).
             fill(NUMERO_CONTA, bankAccount.getAccountNumber()).

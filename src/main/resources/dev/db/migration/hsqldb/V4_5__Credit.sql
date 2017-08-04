@@ -3,6 +3,7 @@ create table credit (
     product_id varchar(256),
     payment_rule_group_id varchar(256) not null,
     hirer_document varchar(20) not null,
+    issuer_document varchar(20) not null,
     service_type varchar(100),
     credit_insertion_type varchar(100) not null,
     credit_number bigint not null,

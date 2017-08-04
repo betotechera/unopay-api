@@ -56,7 +56,8 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("district", "ADDCA");
             add("city", "dadad");
             add("state", SP);
-            add("bankAgreementNumber", regex("\\d{8}"));
+            add("bankAgreementNumberForCredit", regex("\\d{8}"));
+            add("bankAgreementNumberForDebit", regex("\\d{8}"));
             add("documentNumber", regex("\\d{14}"));
             add("bankCode", uniqueRandom(341, 318, 33));
             add("name", firstName());

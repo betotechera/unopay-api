@@ -147,7 +147,7 @@ public class PaymentRemittance implements Serializable {
     }
 
     public boolean payerBankAgreementNumberIs(String number){
-        return number != null && Objects.equals(getPayer().getBankAgreementNumber(), number);
+        return number != null && Objects.equals(getPayer().getBankAgreementNumberForCredit(), number);
     }
 
     public void setSubmissionDateTime(Date dateTime){

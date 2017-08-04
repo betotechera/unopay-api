@@ -87,6 +87,11 @@ public class Issuer implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount movementAccount;
 
+    @Column(name = "financier_mail_for_remittance")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private String financierMailForRemittance;
+
     @Version
     @JsonIgnore
     Long version;

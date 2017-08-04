@@ -73,6 +73,11 @@ public class Credit implements Serializable, Updatable {
     @JsonView({Views.Public.class,Views.List.class})
     private String hirerDocument;
 
+    @Column(name = "issuer_document")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private String issuerDocument;
+
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})

@@ -27,6 +27,8 @@ class RemittancePayerTest  extends FixtureApplicationTest {
         payer.zipCode == issuer.person.address.zipCode
         payer.bankCode == issuer.paymentAccount.bankAccount.bacenCode
         payer.name == issuer.person.name
+        payer.bankAgreementNumberForCredit == issuer.paymentAccount.bankAgreementNumberForCredit
+        payer.bankAgreementNumberForDebit == issuer.paymentAccount.bankAgreementNumberForDebit
     }
 
 
