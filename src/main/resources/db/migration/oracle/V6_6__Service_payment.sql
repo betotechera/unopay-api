@@ -1,7 +1,7 @@
 create table remittance_payer (
     id VARCHAR(256) PRIMARY KEY,
     bank_code integer not null,
-    bank_agreement_number_for_credit varchar(256) not null,
+    bank_agreement_number_credit varchar(20) not null,
     document_number varchar(256),
     agency varchar(20) not null,
     agency_digit varchar(10),
@@ -24,7 +24,7 @@ COMMENT ON TABLE remittance_payer IS 'Pagador da remessa ';
 COMMENT ON COLUMN remittance_payer.id IS 'Chave Identificação do Registro';
 COMMENT ON COLUMN remittance_payer.bank_code IS 'Código do banco da conta pagamento';
 COMMENT ON COLUMN remittance_payer.document_number IS 'documento de identificacao do pagador';
-COMMENT ON COLUMN remittance_payer.bank_agreement_number_for_credit IS 'codigo de conveio com o banco para credito';
+COMMENT ON COLUMN remittance_payer.bank_agreement_number_credit IS 'codigo de conveio com o banco para credito';
 COMMENT ON COLUMN remittance_payer.agency IS 'agencia do pagador';
 COMMENT ON COLUMN remittance_payer.agency_digit IS 'digito da agencia do pagador';
 COMMENT ON COLUMN remittance_payer.account_number IS 'numero da conta do pagador';
@@ -140,5 +140,5 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_PAYME
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_PAYMENT_REMITTANCE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
 ALTER TABLE batch_closing ADD CONSTRAINT fk_batch_payment FOREIGN KEY(payment_id) REFERENCES payment_remittance_item(id);
-alter table payment_bank_account add bank_agreement_number_for_credit varchar(20) default '0000000000' not null;
+alter table payment_bank_account add bank_agreement_number_credit varchar(20) default '0000000000' not null;
 alter table legal_person_detail add state_inscription_number varchar(150) null;

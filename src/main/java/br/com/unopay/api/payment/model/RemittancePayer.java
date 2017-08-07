@@ -132,13 +132,13 @@ public class RemittancePayer  implements Serializable {
     @JsonView({Views.Public.class, Views.List.class})
     private State state;
 
-    @Column(name = "bank_agreement_number_for_credit")
+    @Column(name = "bank_agreement_number_credit")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForCredit;
 
 
-    @Column(name = "bank_agreement_number_for_debit")
+    @Column(name = "bank_agreement_number_debit")
     @JsonView({Views.Public.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
