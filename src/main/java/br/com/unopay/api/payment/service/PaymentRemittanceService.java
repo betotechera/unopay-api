@@ -18,6 +18,7 @@ import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.payment.model.filter.RemittanceFilter;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
 import br.com.unopay.api.service.BatchClosingService;
+import br.com.unopay.api.service.CreditService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.GenericObjectMapper;
@@ -72,6 +73,7 @@ public class PaymentRemittanceService {
     @Setter private Notifier notifier;
     private GenericObjectMapper genericObjectMapper;
     private HirerService hirerService;
+    private CreditService creditService;
 
     public PaymentRemittanceService(){}
 
@@ -85,7 +87,8 @@ public class PaymentRemittanceService {
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
                                     GenericObjectMapper genericObjectMapper,
-                                    HirerService hirerService) {
+                                    HirerService hirerService,
+                                    CreditService creditService) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
@@ -97,6 +100,7 @@ public class PaymentRemittanceService {
         this.notifier = notifier;
         this.genericObjectMapper = genericObjectMapper;
         this.hirerService = hirerService;
+        this.creditService = creditService;
     }
 
     public PaymentRemittance findById(String id) {
@@ -122,12 +126,12 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    public void create(String issuer) {
-        create(issuer, today());
+    public void createFortBatch(String issuer) {
+        createFortBatch(issuer, today());
     }
 
     @Transactional
-    public void create(String issuer, Date at) {
+    public void createFortBatch(String issuer, Date at) {
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> byEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBefore(issuer, at);
         if(!byEstablishment.isEmpty()) {
@@ -142,11 +146,18 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
+    public void createForCredit(String issuerDocument) {
+        Issuer currentIssuer = issuerService.findByDocument(issuerDocument);
+        Set<Credit> credits = creditService.findByIssuerDocument(issuerDocument);
+        createFromCredit(currentIssuer, credits);
+    }
+
+    @Transactional
     @RabbitListener(queues = Queues.UNOPAY_PAYMENT_REMITTANCE)
     public void remittanceReceiptNotify(String objectAsString) {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
         log.info("processing remittance for issuer={}", filter.getId());
-        create(filter.getId(), filter.getAt());
+        createFortBatch(filter.getId(), filter.getAt());
         log.info("processed remittance for issuer={}", filter.getId());
     }
 
@@ -297,5 +308,6 @@ public class PaymentRemittanceService {
     private Date today() {
         return new DateTime().withMillisOfDay(0).toDate();
     }
+
 
 }

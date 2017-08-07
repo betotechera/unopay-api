@@ -8,6 +8,7 @@ import br.com.unopay.api.repository.CreditRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
+import java.util.Set;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,10 @@ public class CreditService {
     public Credit  findById(String id) {
         Optional<Credit> credit = repository.findById(id);
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
+    }
+
+    public Set<Credit> findByIssuerDocument(String issuerDocument) {
+        return repository.findByIssuerDocument(issuerDocument);
     }
 
     private void defineDefaultCreditInsertionType(Credit credit) {

@@ -75,6 +75,11 @@ public class IssuerService {
         return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
     }
 
+    public Issuer findByDocument(String document) {
+        Optional<Issuer> issuer = repository.findByPersonDocumentNumber(document);
+        return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
+    }
+
     @Transactional
     public Issuer update(String id, Issuer issuer) {
         issuer.validate();

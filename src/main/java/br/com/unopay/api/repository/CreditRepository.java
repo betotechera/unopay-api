@@ -4,10 +4,13 @@ import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CreditRepository extends UnovationFilterRepository<Credit,String, CreditFilter> {
 
     Optional<Credit> findFirstByOrderByCreatedDateTimeDesc();
 
     Optional<Credit> findById(String id);
+
+    Set<Credit> findByIssuerDocument(String document);
 }
