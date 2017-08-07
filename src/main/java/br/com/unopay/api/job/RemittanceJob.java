@@ -14,6 +14,7 @@ public class RemittanceJob extends Job {
         String issuerId = jobDetail.getKey().getName();
         log.info("running remittance job for issuer={}", issuerId);
         getBean(PaymentRemittanceService.class).createFortBatch(issuerId);
+        getBean(PaymentRemittanceService.class).createForCredit(issuerId);
         log.info("finished remittance job for issuer={}", issuerId);
     }
 }

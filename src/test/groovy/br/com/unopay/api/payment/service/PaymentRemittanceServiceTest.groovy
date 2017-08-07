@@ -210,7 +210,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             }})
 
         when:
-        service.createForCredit(issuer.documentNumber())
+        service.createForCredit(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -229,7 +229,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         })
         BigDecimal total = credits.collect { it.value }.sum()
         when:
-        service.createForCredit(issuer.documentNumber())
+        service.createForCredit(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
