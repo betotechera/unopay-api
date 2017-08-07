@@ -160,6 +160,7 @@ public class PaymentRemittanceService {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
         log.info("processing remittance for issuer={}", filter.getId());
         createFortBatch(filter.getId(), filter.getAt());
+        createForCredit(filter.getId());
         log.info("processed remittance for issuer={}", filter.getId());
     }
 
