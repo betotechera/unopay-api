@@ -43,9 +43,9 @@ public class PaymentRemittanceItem  implements Serializable {
         setMeUp(payee.getPayerBankCode());
     }
 
-    public PaymentRemittanceItem(BatchClosing batchClosing){
-        this.payee = new RemittancePayee(batchClosing.getEstablishment(), batchClosing.paymentAccountBank());
-        setMeUp(batchClosing.paymentAccountBank());
+    public PaymentRemittanceItem(BatchClosing closing){
+        this.payee = new RemittancePayee(closing.getEstablishment(), closing.paymentAccountBank(), closing.getValue());
+        setMeUp(closing.paymentAccountBank());
     }
 
     @Id

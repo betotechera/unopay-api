@@ -87,6 +87,7 @@ create table remittance_payee (
     district VARCHAR(50),
     city VARCHAR(50),
     state VARCHAR(50),
+    receivable decimal(20,2) not null,
     version integer,
      constraint fk_remitt_payer_payee_bank foreign key(payer_bank_code) references bank(bacen_code),
      constraint fk_remitt_payee_bank foreign key(bank_code) references bank(bacen_code)

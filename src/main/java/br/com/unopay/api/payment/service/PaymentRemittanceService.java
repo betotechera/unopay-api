@@ -1,16 +1,19 @@
 package br.com.unopay.api.payment.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
+import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.payment.model.RemittancePayee;
 import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.payment.model.filter.RemittanceFilter;
 import br.com.unopay.api.payment.repository.PaymentRemittanceRepository;
@@ -68,6 +71,7 @@ public class PaymentRemittanceService {
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
     private GenericObjectMapper genericObjectMapper;
+    private HirerService hirerService;
 
     public PaymentRemittanceService(){}
 
@@ -80,7 +84,8 @@ public class PaymentRemittanceService {
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
-                                    GenericObjectMapper genericObjectMapper) {
+                                    GenericObjectMapper genericObjectMapper,
+                                    HirerService hirerService) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
@@ -91,6 +96,7 @@ public class PaymentRemittanceService {
         this.userDetailService = userDetailService;
         this.notifier = notifier;
         this.genericObjectMapper = genericObjectMapper;
+        this.hirerService = hirerService;
     }
 
     public PaymentRemittance findById(String id) {
@@ -125,7 +131,7 @@ public class PaymentRemittanceService {
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> byEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBefore(issuer, at);
         if(!byEstablishment.isEmpty()) {
-            createRemittanceAndItems(currentIssuer, byEstablishment);
+            createFromBatchClosing(currentIssuer, byEstablishment);
         }
     }
 
@@ -144,7 +150,27 @@ public class PaymentRemittanceService {
         log.info("processed remittance for issuer={}", filter.getId());
     }
 
-    private void createRemittanceAndItems(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment) {
+    private void createFromBatchClosing(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment){
+        Set<RemittancePayee> payees = batchByEstablishment.stream()
+                .map(batch ->
+                        new RemittancePayee(batch.getEstablishment(),
+                        currentIssuer.paymentBankCode(),
+                        batch.getValue()))
+                .collect(Collectors.toSet());
+        createRemittanceAndItems(currentIssuer, payees);
+    }
+
+    private void createFromCredit(Issuer currentIssuer, Set<Credit> credits){
+        Set<RemittancePayee> payees = credits.stream()
+                .map(credit ->
+                        new RemittancePayee(hirerService.findByDocumentNumber(credit.getHirerDocument()),
+                                currentIssuer.paymentBankCode(),
+                                credit.getValue()))
+                .collect(Collectors.toSet());
+        createRemittanceAndItems(currentIssuer, payees);
+    }
+
+    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> batchByEstablishment) {
         Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         String generate = cnab240Generator.generate(remittance, new Date());
@@ -177,10 +203,10 @@ public class PaymentRemittanceService {
         return save(paymentRemittance);
     }
 
-    private Set<PaymentRemittanceItem> processItems(Set<BatchClosing> batchByEstablishment) {
-        return batchByEstablishment.stream().map(batchClosing -> {
-                PaymentRemittanceItem currentItem = getCurrentItem(batchClosing.establishmentDocument(), batchClosing);
-                currentItem.updateValue(batchClosing.getValue());
+    private Set<PaymentRemittanceItem> processItems(Set<RemittancePayee> payees) {
+        return payees.stream().map(payee -> {
+                PaymentRemittanceItem currentItem = getCurrentItem(payee.getDocumentNumber(), payee);
+                currentItem.updateValue(payee.getReceivable());
                 return paymentRemittanceItemService.save(currentItem);
             }).collect(Collectors.toSet());
     }
@@ -189,9 +215,9 @@ public class PaymentRemittanceService {
         return repository.count();
     }
 
-    private PaymentRemittanceItem getCurrentItem(String id,BatchClosing batchClosing){
+    private PaymentRemittanceItem getCurrentItem(String id,RemittancePayee payee){
         Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(id);
-        return current.orElse(new PaymentRemittanceItem(batchClosing));
+        return current.orElse(new PaymentRemittanceItem(payee));
     }
 
     private void updateItemsSituation(String cnab240, Set<PaymentRemittanceItem> items){

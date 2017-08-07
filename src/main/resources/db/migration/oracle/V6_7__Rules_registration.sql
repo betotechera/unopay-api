@@ -7,6 +7,9 @@ alter table legal_person_detail add municipal_inscription_number varchar(150) nu
 alter table issuer add financier_mail_for_remittance varchar(256) default 'financeiro@roadcard.com.br' not null;
 alter table payment_bank_account add bank_agreement_number_for_debit varchar(20) default '0000000000' not null;
 alter table remittance_payer add bank_agreement_number_for_debit varchar(20) default '0000000000' not null;
+alter table remittance_payer add receivable decimal(*,2) default 0.0 not null;
+
+
 
 COMMENT ON COLUMN payment_rule_group.maximum_credit_insertion IS 'valor maximo de credito para os produtos do arranjo de pagamento';
 COMMENT ON COLUMN payment_rule_group.minimum_credit_insertion IS 'valor minimo de credito para os produtos do arranjo de pagamento';
@@ -17,4 +20,5 @@ COMMENT ON COLUMN payment_bank_account.bank_agreement_number_for_credit IS 'codi
 COMMENT ON COLUMN payment_bank_account.bank_agreement_number_for_debit IS 'codigo de convenio com o banco para debito';
 COMMENT ON COLUMN remittance_payer.bank_agreement_number_for_debit IS 'codigo de convenio com o banco para debito';
 COMMENT ON COLUMN issuer.financier_mail_for_remittance IS 'email financeiro para receber as notificaçoes de fechamento de remessa';
+COMMENT ON COLUMN remittance_payer.receivable IS 'valor a receber';
 

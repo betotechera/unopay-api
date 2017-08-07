@@ -79,6 +79,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("city", "dadad");
             add("state", SP);
             add("name", firstName());
+            add("receivable", random(BigDecimal.class, range(1D,200D)));
         }});
 
     }

@@ -1,12 +1,14 @@
 package br.com.unopay.api.payment.model;
 
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.model.State;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -32,7 +35,7 @@ public class RemittancePayee implements Serializable {
 
     public RemittancePayee() {}
 
-    public RemittancePayee(Establishment establishment, Integer payerBankCode) {
+    public RemittancePayee(Establishment establishment, Integer payerBankCode, BigDecimal receivable) {
         this.documentNumber = establishment.documentNumber();
         this.bankCode = establishment.getBankAccount().getBacenCode();
         this.agency = establishment.getBankAccount().getAgency();
@@ -48,6 +51,26 @@ public class RemittancePayee implements Serializable {
         this.zipCode = establishment.getPerson().getAddress().getZipCode();
         this.payerBankCode = payerBankCode;
         this.name = establishment.getPerson().getName();
+        this.receivable = receivable;
+    }
+
+    public RemittancePayee(Hirer hirer, Integer payerBankCode, BigDecimal receivable) {
+        this.documentNumber = hirer.getDocumentNumber();
+        this.bankCode = hirer.getBankAccount().getBacenCode();
+        this.agency = hirer.getBankAccount().getAgency();
+        this.agencyDigit = hirer.getBankAccount().getAgencyDigit();
+        this.accountNumber = hirer.getBankAccount().getAccountNumber();
+        this.accountNumberDigit = hirer.getBankAccount().getAccountNumberDigit();
+        this.streetName = hirer.getPerson().getAddress().getStreetName();
+        this.number = hirer.getPerson().getAddress().getNumber();
+        this.complement = hirer.getPerson().getAddress().getComplement();
+        this.district = hirer.getPerson().getAddress().getDistrict();
+        this.city = hirer.getPerson().getAddress().getCity();
+        this.state = hirer.getPerson().getAddress().getState();
+        this.zipCode = hirer.getPerson().getAddress().getZipCode();
+        this.payerBankCode = payerBankCode;
+        this.name = hirer.getPerson().getName();
+        this.receivable = receivable;
     }
 
     @Id
@@ -129,6 +152,12 @@ public class RemittancePayee implements Serializable {
     @Column(name = "state")
     @JsonView({Views.Public.class, Views.List.class})
     private State state;
+
+    @Column(name = "receivable")
+    @JsonView({Views.Public.class, Views.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    @Min(value = 1, groups = {Create.class, Update.class})
+    private BigDecimal receivable;
 
     public String agentDvFirstDigit(){
         return StringUtils.left(agencyDigit, 1);
