@@ -148,8 +148,10 @@ public class PaymentRemittanceService {
     @Transactional
     public void createForCredit(String issuerId) {
         Issuer currentIssuer = issuerService.findById(issuerId);
-        Set<Credit> credits = creditService.findByIssuerDocument(currentIssuer.documentNumber());
-        createFromCredit(currentIssuer, credits);
+        Set<Credit> credits = creditService.findProcessingByIssuerDocument(currentIssuer.documentNumber());
+        if(!credits.isEmpty()) {
+            createFromCredit(currentIssuer, credits);
+        }
     }
 
     @Transactional

@@ -14,6 +14,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor
@@ -28,6 +29,7 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mock.web.MockMultipartFile
+import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentRemittanceServiceTest extends SpockApplicationTests {
@@ -207,7 +209,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
                 add("issuerDocument", issuer.documentNumber())
                 add("hirerDocument",  hirer.documentNumber)
-            }})
+                add("situation", CreditSituation.PROCESSING)
+        }})
 
         when:
         service.createForCredit(issuer.id)
@@ -221,12 +224,11 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def hirer = fixtureCreator.createHirer()
-        Set<Credit> credits = from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {
-            {
+        Set<Credit> credits = from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
                 add("issuerDocument", issuer.documentNumber())
                 add("hirerDocument", hirer.documentNumber)
-            }
-        })
+                add("situation", CreditSituation.PROCESSING)
+        }})
         BigDecimal total = credits.collect { it.value }.sum()
         when:
         service.createForCredit(issuer.id)
@@ -235,6 +237,34 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         then:
         that result, hasSize(1)
         result.find().total() == total
+    }
+
+    @Unroll
+    'should not create a remittance with #situation credit situation'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def hirer = fixtureCreator.createHirer()
+        def creditSituation = situation
+        from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
+                add("issuerDocument", issuer.documentNumber())
+                add("hirerDocument", hirer.documentNumber)
+                add("situation", creditSituation)
+        }})
+
+        when:
+        service.createForCredit(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
+
+        then:
+        that result, hasSize(0)
+
+        where:
+        _ | situation
+        _ | CreditSituation.AVAILABLE
+        _ | CreditSituation.CANCELED
+        _ | CreditSituation.CONFIRMED
+        _ | CreditSituation.EXPIRED
+        _ | CreditSituation.TO_COLLECT
     }
 
     def 'should ever create a new remittance when execute'(){
