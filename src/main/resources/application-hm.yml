@@ -35,6 +35,8 @@ unopay:
         folder: avatar
       ciot:
         folder: ciot
+      receipt:
+        folder: nfe
 amazon:
   s3:
     bucketName: unopay-files
