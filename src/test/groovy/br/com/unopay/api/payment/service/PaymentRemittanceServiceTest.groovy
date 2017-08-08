@@ -14,6 +14,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
@@ -210,6 +211,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
                 add("issuerDocument", issuer.documentNumber())
                 add("hirerDocument",  hirer.documentNumber)
                 add("situation", CreditSituation.PROCESSING)
+                add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
 
         when:
@@ -228,6 +230,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
                 add("issuerDocument", issuer.documentNumber())
                 add("hirerDocument", hirer.documentNumber)
                 add("situation", CreditSituation.PROCESSING)
+                add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
         BigDecimal total = credits.collect { it.value }.sum()
         when:
@@ -249,6 +252,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
                 add("issuerDocument", issuer.documentNumber())
                 add("hirerDocument", hirer.documentNumber)
                 add("situation", creditSituation)
+                add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
 
         when:
@@ -265,6 +269,33 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         _ | CreditSituation.CONFIRMED
         _ | CreditSituation.EXPIRED
         _ | CreditSituation.TO_COLLECT
+    }
+
+    @Unroll
+    'should not create a remittance with #insertion credit insertion type'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def hirer = fixtureCreator.createHirer()
+        def insertionType = insertion
+        from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
+            add("issuerDocument", issuer.documentNumber())
+            add("hirerDocument", hirer.documentNumber)
+            add("situation", CreditSituation.PROCESSING)
+            add("creditInsertionType", insertionType)
+        }})
+
+        when:
+        service.createForCredit(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
+
+        then:
+        that result, hasSize(0)
+
+        where:
+        _ | insertion
+        _ | CreditInsertionType.BOLETO
+        _ | CreditInsertionType.CREDIT_CARD
+        _ | CreditInsertionType.PAMCARD_SYSTEM
     }
 
     def 'should ever create a new remittance when execute'(){

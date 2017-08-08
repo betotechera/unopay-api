@@ -3,6 +3,7 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.CreditSituation;
 import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.repository.CreditRepository;
@@ -80,8 +81,9 @@ public class CreditService {
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
-    public Set<Credit> findProcessingByIssuerDocument(String issuerDocument) {
-        return repository.findByIssuerDocumentAndSituation(issuerDocument, CreditSituation.PROCESSING);
+    public Set<Credit> findDirectDebitProcessingByIssuerDocument(String issuerDocument) {
+        return repository.findByIssuerDocumentAndSituationAndCreditInsertionType(issuerDocument,
+                CreditSituation.PROCESSING, CreditInsertionType.DIRECT_DEBIT);
     }
 
     private void defineDefaultCreditInsertionType(Credit credit) {
