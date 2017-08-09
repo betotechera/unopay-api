@@ -31,6 +31,8 @@ unopay:
         folder: avatar
       ciot:
         folder: ciot
+via-cep:
+  url: https://viacep.com.br/ws/
 amazon:
   s3:
     bucketName: unopay-files

@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.viacep.model.CEP;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -16,6 +17,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.EnumUtils;
+import static org.apache.commons.lang3.EnumUtils.getEnum;
 import org.hibernate.annotations.GenericGenerator;
 
 import static javax.persistence.EnumType.STRING;
@@ -79,4 +82,11 @@ public class Address implements Serializable {
     @JsonView({Views.Public.class})
     private Double longitude;
 
+    public Address(CEP cep) {
+        this.zipCode = cep.unformattedCep();
+        this.city = cep.getLocalidade();
+        this.complement = cep.getComplemento();
+        this.district = cep.getBairro();
+        this.state = getEnum(State.class,cep.getUf());
+    }
 }

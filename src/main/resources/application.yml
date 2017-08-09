@@ -8,6 +8,8 @@ flyway:
 health:
   config:
     enabled: false
+via-cep:
+  url: https://viacep.com.br/ws/
 management:
   security:
     enabled: false
