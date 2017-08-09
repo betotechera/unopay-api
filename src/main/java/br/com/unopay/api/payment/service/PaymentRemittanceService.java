@@ -23,17 +23,17 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.joda.time.DateTime;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,6 +259,10 @@ public class PaymentRemittanceService {
         String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
         item.updateOccurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
+        if(!item.processedWithError()) {
+            ImmutablePair pair = new ImmutablePair<>(item.payerDocumentNumber(), item.getValue());
+            notifier.notify(Queues.UNOPAY_CREDIT_PROCESSED, pair);
+        }
     }
 
     private void checkRemittanceInformation(String cnab240, PaymentRemittance remittance) {

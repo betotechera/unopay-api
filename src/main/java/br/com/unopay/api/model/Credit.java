@@ -148,13 +148,17 @@ public class Credit implements Serializable, Updatable {
                 throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
             }
         }else
-        if(value.compareTo(new BigDecimal(0)) == 0){
+        if(value.compareTo(BigDecimal.ZERO) == 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_CREDIT_VALUE_NOT_MET);
         }
         if(getPaymentRuleGroup() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
         }
 
+    }
+
+    public boolean valueIs(BigDecimal other){
+        return value.compareTo(other) == 0;
     }
 
     public void setupMyCreate(){
@@ -185,7 +189,7 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void defineAvailableValue(){
-        if(isDirectDebit()){
+        if(isDirectDebit() && !confirmedSituation()){
             availableValue = BigDecimal.ZERO;
             return;
         }
@@ -193,11 +197,15 @@ public class Credit implements Serializable, Updatable {
     }
 
     public void defineBlockedValue(){
-        if(creditInsertionType.isPaymentProcessedByClient()){
+        if(creditInsertionType.isPaymentProcessedByClient() || confirmedSituation()){
             blockedValue = BigDecimal.ZERO;
             return;
         }
         blockedValue = this.value;
+    }
+
+    private boolean confirmedSituation() {
+        return CreditSituation.CONFIRMED.equals(situation);
     }
 
     public BigDecimal getAvailableValue(){

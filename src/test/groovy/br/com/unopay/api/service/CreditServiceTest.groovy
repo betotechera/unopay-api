@@ -13,6 +13,7 @@ import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
+import org.apache.commons.lang3.tuple.ImmutablePair
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -28,6 +29,80 @@ class CreditServiceTest extends SpockApplicationTests {
     void setup(){
         service.creditPaymentAccountService = paymentAccountServiceMock
         Integer.mixin(TimeCategory)
+    }
+
+    void 'given a invalid value the payment account should not be created'(){
+        given:
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
+        service.insert(credit)
+        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, 0.0)
+
+        when:
+        service.unblockCredit(pair)
+
+        then:
+        0 * paymentAccountServiceMock.register(_)
+    }
+
+    void 'when unlock direct debit credit the payment account should be created'(){
+        given:
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
+        service.insert(credit)
+        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+
+        when:
+        service.unblockCredit(pair)
+
+        then:
+        1 * paymentAccountServiceMock.register(_)
+    }
+
+
+    void 'when unlock direct debit credit the credit situation should be confirmed'(){
+        given:
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
+        def inserted  = service.insert(credit)
+        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+
+        when:
+        service.unblockCredit(pair)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.situation == CreditSituation.CONFIRMED
+    }
+
+    void 'when unlock direct debit credit the credit should be available'(){
+        given:
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
+        def inserted  = service.insert(credit)
+        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+
+        when:
+        service.unblockCredit(pair)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.availableValue == credit.value
+    }
+
+    void 'when unlock direct debit credit the blocked credit should be zero'(){
+        given:
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        Credit credit = fixtureCreator.createCredit(knownProduct)
+        def inserted  = service.insert(credit)
+        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+
+        when:
+        service.unblockCredit(pair)
+        def result = service.findById(inserted.id)
+
+        then:
+        result.blockedValue == BigDecimal.ZERO
     }
 
     void 'credit with product should be inserted with product payment rule group'(){

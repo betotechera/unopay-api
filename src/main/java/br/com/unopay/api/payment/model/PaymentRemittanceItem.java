@@ -113,6 +113,14 @@ public class PaymentRemittanceItem  implements Serializable {
         setSituation(RemittanceSituation.RETURN_PROCESSED_WITH_ERROR);
     }
 
+    public boolean processedWithError(){
+        return RemittanceSituation.RETURN_PROCESSED_WITH_ERROR.equals(situation);
+    }
+
+    public String payerDocumentNumber(){
+        return getPaymentRemittance().getPayer().getDocumentNumber();
+    }
+
     private void defineTransferOption(Integer bankCode) {
         if(Objects.equals(bankCode, this.payee.getBankCode())){
             this.transferOption = PaymentTransferOption.CURRENT_ACCOUNT_CREDIT;

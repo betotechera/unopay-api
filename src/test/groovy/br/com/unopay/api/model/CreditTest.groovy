@@ -1,6 +1,7 @@
 package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 
 class CreditTest  extends FixtureApplicationTest {
@@ -52,6 +53,62 @@ class CreditTest  extends FixtureApplicationTest {
         a.creditSource != b.creditSource
         a.cnabId != b.cnabId
         a.blockedValue != b.blockedValue
+    }
+
+    def 'given a processing situation the available credit should be zero'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("situation", CreditSituation.PROCESSING)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+
+        when:
+        credit.defineAvailableValue()
+
+        then:
+        credit.availableValue == BigDecimal.ZERO
+    }
+
+    def 'given a confirmed situation the credit should be available'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("situation", CreditSituation.CONFIRMED)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+
+        when:
+        credit.defineAvailableValue()
+
+        then:
+        credit.availableValue == credit.value
+    }
+
+    def 'given a processing situation the credit should be blocked'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("situation", CreditSituation.PROCESSING)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+
+        when:
+        credit.defineBlockedValue()
+
+        then:
+        credit.blockedValue == credit.value
+    }
+
+    def 'given a confirmed situation the blocked credit should be zero'(){
+        given:
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
+            add("situation", CreditSituation.CONFIRMED)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+
+        when:
+        credit.defineBlockedValue()
+
+        then:
+        credit.blockedValue == BigDecimal.ZERO
     }
 
     def 'should be equals'(){

@@ -21,6 +21,7 @@ import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
+import br.com.unopay.api.payment.model.PaymentOperationType
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentTransferOption
 import br.com.unopay.api.payment.model.RemittancePayer
@@ -59,9 +60,37 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         extractorSelectorMock.define(getBatchSegmentA(),_) >> extractorMock
     }
 
+    def 'when process debit cnab should notify credit'(){
+        given:
+        def remittancePersisted = createRemittanceFoCredit()
+        def wrongRemittance = remittancePersisted.with { operationType = PaymentOperationType.DEBIT; it  }
+        def currentDate = instant("now")
+        MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+
+        then:
+        remittancePersisted.remittanceItems.size() * notifierMock.notify(Queues.UNOPAY_CREDIT_PROCESSED, _)
+    }
+
+    def 'given a debit cnab with ocurrences should not notify credit'(){
+        given:
+        def remittancePersisted = createRemittanceFoCredit()
+        def wrongRemittance = remittancePersisted.with { operationType = PaymentOperationType.DEBIT; it  }
+        def currentDate = instant("now")
+        MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '01'
+        when:
+        service.processReturn(file)
+
+        then:
+        0 * notifierMock.notify(Queues.UNOPAY_CREDIT_PROCESSED, _)
+    }
+
     def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
         given:
-        def remittancePersisted = createRemittance()
+        def remittancePersisted = createRemittanceForBatch()
         def wrongRemittance = remittancePersisted.with { payer.bankAgreementNumberForCredit = 'AAAAA'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
@@ -76,7 +105,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'when process cnab then the issuer document field should be equals persisted remittance'(){
         given:
-        def remittancePersisted = createRemittance()
+        def remittancePersisted = createRemittanceForBatch()
         def wrongRemittance = remittancePersisted.with { payer.documentNumber = 'AAAAA'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
@@ -91,7 +120,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'when process return should update return date'(){
         given:
-        def remittance = createRemittance()
+        def remittance = createRemittanceForBatch()
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(remittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
@@ -106,7 +135,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'given a cnab with right debit should have successfully situation'(){
         given:
-        def result = createRemittance()
+        def result = createRemittanceForBatch()
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
@@ -122,7 +151,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'given a cnab without right debit should have error situation'(){
         given:
-        def result = createRemittance()
+        def result = createRemittanceForBatch()
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '01'
@@ -138,7 +167,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     def 'given valid cnab file should update occurrence code'(){
         given:
-        def result = createRemittance()
+        def result = createRemittanceForBatch()
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(result, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
@@ -536,13 +565,28 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         })
     }
 
-    private PaymentRemittance createRemittance(){
+    private PaymentRemittance createRemittanceForBatch(){
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
         createBatchForBank(issuerBanK, issuer)
         service.createFortBatch(issuer.id)
         return service.findByPayerDocument(issuer.documentNumber()).find()
     }
+
+    private PaymentRemittance createRemittanceFoCredit(){
+        Issuer issuer = fixtureCreator.createIssuer()
+        def hirer = fixtureCreator.createHirer()
+        from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
+            add("issuerDocument", issuer.documentNumber())
+            add("hirerDocument",  hirer.documentNumber)
+            add("situation", CreditSituation.PROCESSING)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+        service.createForCredit(issuer.id)
+       return service.findByPayerDocument(issuer.documentNumber()).find()
+    }
+
+
 
     private MockMultipartFile createCnabFile(PaymentRemittance remittance, Date currentDate) {
         String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
