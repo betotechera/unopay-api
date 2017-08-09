@@ -82,7 +82,7 @@ public class Address implements Serializable {
     public Address(CEP cep) {
         this.zipCode = cep.unformattedCep();
         this.city = cep.getLocalidade();
-        this.complement = cep.getComplemento();
+        this.streetName = cep.getLogradouro();
         this.district = cep.getBairro();
         this.state = getEnum(State.class,cep.getUf());
     }

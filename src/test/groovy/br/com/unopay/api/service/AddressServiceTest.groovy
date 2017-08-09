@@ -17,6 +17,7 @@ class AddressServiceTest extends SpockApplicationTests {
         then:
         address.city == 'São Paulo'
         address.district == 'Vila Leopoldina'
+        address.streetName == 'Avenida Imperatriz Leopoldina'
         address.zipCode == '05305011'
         address.state == State.SP
     }
