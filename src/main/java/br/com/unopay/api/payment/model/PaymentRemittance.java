@@ -138,8 +138,9 @@ public class PaymentRemittance implements Serializable {
     }
 
     public String getFileUri() {
-        val toFormat = "remittance/%s/PG%s%s.REM";
-        return String.format(toFormat, documentNumber(), createTimeFormatted(), numberAsString());
+        String prefix = PaymentOperationType.CREDIT.equals(operationType) ? "PG" : "DB";
+        val toFormat = "remittance/%s/%s%s%s.REM";
+        return String.format(toFormat, documentNumber(),prefix, createTimeFormatted(), numberAsString());
     }
 
     public boolean payerDocumentNumberIs(String document){

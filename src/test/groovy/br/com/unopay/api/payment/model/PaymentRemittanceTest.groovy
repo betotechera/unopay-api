@@ -34,6 +34,32 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
         paymentRemittance.number
     }
 
+    def 'given a credit remittance should return return file uri with PG prefix'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("operationType", PaymentOperationType.CREDIT)
+        }})
+
+        when:
+        def fileUri = remittance.fileUri.split("/")[2]
+
+        then:
+        "PG" == fileUri.subSequence(0,2)
+    }
+
+    def 'given a debit remittance should return return file uri with DB prefix'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("valid", new Rule(){{
+            add("operationType", PaymentOperationType.DEBIT)
+        }})
+
+        when:
+        def fileUri = remittance.fileUri.split("/")[2]
+
+        then:
+        "DB" == fileUri.subSequence(0,2)
+    }
+
     def 'should return sum of all payments'(){
         given:
         List<PaymentRemittanceItem> items = Fixture.from(PaymentRemittanceItem.class).gimme(3,"valid")
