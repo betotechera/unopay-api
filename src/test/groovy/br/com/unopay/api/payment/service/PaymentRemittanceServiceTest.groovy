@@ -16,6 +16,7 @@ import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.model.Credit
 import br.com.unopay.api.model.CreditInsertionType
 import br.com.unopay.api.model.CreditSituation
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.payment.cnab240.Cnab240Generator
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor
@@ -50,11 +51,13 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
     Notifier notifierMock = Mock(Notifier)
+    NotificationService notificationServiceMock = Mock(NotificationService)
 
     void setup() {
         service.cnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
+        service.notificationService = notificationServiceMock
         service.notifier = notifierMock
         cnab240GeneratorMock.generate(_,_) >> '005;006'
         extractorSelectorMock.define(getBatchSegmentA(),_) >> extractorMock
@@ -197,6 +200,19 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         result.every { it.situation == RemittanceSituation.REMITTANCE_FILE_GENERATED }
     }
 
+    def 'should send email when a new batch remittance is created'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        createBatchForBank(issuerBanK, issuer)
+
+        when:
+        service.createFortBatch(issuer.id)
+
+        then:
+        1 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
+    }
+
     def 'when try create remittance when has running should return error'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
@@ -229,6 +245,24 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         then:
         1 * notifierMock.notify(Queues.UNOPAY_PAYMENT_REMITTANCE, filter)
+    }
+
+    def 'should send email when a new credit remittance is created'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def hirer = fixtureCreator.createHirer()
+        from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
+            add("issuerDocument", issuer.documentNumber())
+            add("hirerDocument",  hirer.documentNumber)
+            add("situation", CreditSituation.PROCESSING)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+        }})
+
+        when:
+        service.createForCredit(issuer.id)
+
+        then:
+        1 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
     }
 
 

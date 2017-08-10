@@ -8,6 +8,7 @@ import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.Credit;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
@@ -74,6 +75,7 @@ public class PaymentRemittanceService {
     private GenericObjectMapper genericObjectMapper;
     private HirerService hirerService;
     private CreditService creditService;
+    @Setter private NotificationService notificationService;
 
     public PaymentRemittanceService(){}
 
@@ -88,7 +90,8 @@ public class PaymentRemittanceService {
                                     UserDetailService userDetailService, Notifier notifier,
                                     GenericObjectMapper genericObjectMapper,
                                     HirerService hirerService,
-                                    CreditService creditService) {
+                                    CreditService creditService,
+                                    NotificationService notificationService) {
         this.repository = repository;
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
@@ -101,6 +104,7 @@ public class PaymentRemittanceService {
         this.genericObjectMapper = genericObjectMapper;
         this.hirerService = hirerService;
         this.creditService = creditService;
+        this.notificationService = notificationService;
     }
 
     public PaymentRemittance findById(String id) {
@@ -191,6 +195,7 @@ public class PaymentRemittanceService {
         String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
         remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);
+        notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
     }
 
     public List<PaymentRemittance> findByPayerDocument(String payerDocument){
