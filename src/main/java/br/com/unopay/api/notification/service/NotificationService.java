@@ -6,6 +6,7 @@ import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
+import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;
@@ -52,10 +53,13 @@ public class NotificationService {
     }
 
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
-        Email email = new Email(emailAsText);
-        Map<String,Object> payload = new HashMap<String, Object>() {{ put("batch", batchClosing); }};
-        Notification notification = new Notification(email, null, EventType.BATCH_CLOSED, payload);
-        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
+        HashMap<String, Object> payload = new HashMap<String, Object>() {{ put("batch", batchClosing);  }};
+        sendEmailToQueue(emailAsText, payload, EventType.BATCH_CLOSED);
+    }
+
+    public void sendRemittanceCreatedMail(String emailAsText, PaymentRemittance remittance){
+        Map<String,Object> payload = new HashMap<String, Object>() {{ put("remittance", remittance); }};
+        sendEmailToQueue(emailAsText, payload, EventType.REMITTANCE_CREATED);
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {
@@ -64,5 +68,11 @@ public class NotificationService {
         payload.put("link",url);
         payload.put("token",token);
         return payload;
+    }
+
+    private void sendEmailToQueue(String emailAsText, final Map<String,Object>  payload, EventType eventType) {
+        Email email = new Email(emailAsText);
+        Notification notification = new Notification(email, null, eventType, payload);
+        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
     }
 }
