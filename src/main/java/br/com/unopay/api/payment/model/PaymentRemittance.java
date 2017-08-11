@@ -199,4 +199,7 @@ public class PaymentRemittance implements Serializable {
         this.number = String.valueOf(total + 1);
     }
 
+    public boolean forDebit() {
+        return PaymentOperationType.DEBIT.equals(operationType);
+    }
 }

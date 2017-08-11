@@ -12,6 +12,7 @@ import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.payment.cnab240.Cnab240Generator;
 import br.com.unopay.api.payment.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.payment.cnab240.RemittanceExtractor;
+import br.com.unopay.api.payment.model.PaymentOperationType;
 import br.com.unopay.api.payment.model.PaymentRemittance;
 import br.com.unopay.api.payment.model.PaymentRemittanceItem;
 import br.com.unopay.api.payment.model.RemittancePayee;
@@ -175,7 +176,7 @@ public class PaymentRemittanceService {
                         currentIssuer.paymentBankCode(),
                         batch.getValue()))
                 .collect(Collectors.toSet());
-        createRemittanceAndItems(currentIssuer, payees);
+        createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.CREDIT);
     }
 
     private void createFromCredit(Issuer currentIssuer, Set<Credit> credits){
@@ -185,17 +186,21 @@ public class PaymentRemittanceService {
                                 currentIssuer.paymentBankCode(),
                                 credit.getValue()))
                 .collect(Collectors.toSet());
-        createRemittanceAndItems(currentIssuer, payees);
+        createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.DEBIT);
     }
 
-    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> batchByEstablishment) {
+    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> batchByEstablishment,
+                                          PaymentOperationType operationType) {
         Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
+        remittance.setOperationType(operationType);
         String generate = cnab240Generator.generate(remittance, new Date());
         String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
         remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);
-        notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
+        if(remittance.forDebit()) {
+            notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
+        }
     }
 
     public List<PaymentRemittance> findByPayerDocument(String payerDocument){

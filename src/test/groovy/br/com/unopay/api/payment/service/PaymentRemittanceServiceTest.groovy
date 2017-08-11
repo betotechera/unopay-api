@@ -200,7 +200,34 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         result.every { it.situation == RemittanceSituation.REMITTANCE_FILE_GENERATED }
     }
 
-    def 'should send email when a new batch remittance is created'(){
+    def 'a credit remittance should have debit operation type'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        createCredit(issuer)
+
+        when:
+        service.createForCredit(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
+
+        then:
+        result.find().operationType == PaymentOperationType.DEBIT
+    }
+
+    def 'a batch remittance should have credit operation type'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        createBatchForBank(issuerBanK, issuer)
+
+        when:
+        service.createFortBatch(issuer.id)
+        def result = service.findByPayerDocument(issuer.documentNumber())
+
+        then:
+        result.find().operationType == PaymentOperationType.CREDIT
+    }
+
+    def 'should not send email when a new batch remittance is created'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
@@ -210,7 +237,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.createFortBatch(issuer.id)
 
         then:
-        1 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
+        0 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
     }
 
     def 'when try create remittance when has running should return error'(){
@@ -609,17 +636,22 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     private PaymentRemittance createRemittanceFoCredit(){
         Issuer issuer = fixtureCreator.createIssuer()
-        def hirer = fixtureCreator.createHirer()
-        from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
-            add("issuerDocument", issuer.documentNumber())
-            add("hirerDocument",  hirer.documentNumber)
-            add("situation", CreditSituation.PROCESSING)
-            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
-        }})
+        createCredit(issuer)
         service.createForCredit(issuer.id)
        return service.findByPayerDocument(issuer.documentNumber()).find()
     }
 
+    private void createCredit(issuer) {
+        def hirer = fixtureCreator.createHirer()
+        from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {
+            {
+                add("issuerDocument", issuer.documentNumber())
+                add("hirerDocument", hirer.documentNumber)
+                add("situation", CreditSituation.PROCESSING)
+                add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+            }
+        })
+    }
 
 
     private MockMultipartFile createCnabFile(PaymentRemittance remittance, Date currentDate) {
