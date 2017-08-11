@@ -137,6 +137,13 @@ public class PaymentRemittance implements Serializable {
         return BigDecimal.ZERO;
     }
 
+    public String getBankAgreementNumberByOperation(){
+        if(forDebit()){
+            return getPayer().getBankAgreementNumberForDebit();
+        }
+        return getPayer().getBankAgreementNumberForCredit();
+    }
+
     public String getFileUri() {
         String prefix = PaymentOperationType.CREDIT.equals(operationType) ? "PG" : "DB";
         val toFormat = "remittance/%s/%s%s%s.REM";

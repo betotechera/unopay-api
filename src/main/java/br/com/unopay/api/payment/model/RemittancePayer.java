@@ -143,7 +143,6 @@ public class RemittancePayer  implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
 
-
     public String agentDvFirstDigit(){
         return StringUtils.left(agencyDigit, 1);
     }

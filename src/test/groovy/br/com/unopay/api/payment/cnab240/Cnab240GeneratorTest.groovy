@@ -1,6 +1,7 @@
 package br.com.unopay.api.payment.cnab240
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.payment.cnab240.filler.FilledRecord
@@ -82,15 +83,21 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALOR_PAGAMENTO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR
+import br.com.unopay.api.payment.model.PaymentOperationType
 import br.com.unopay.api.payment.model.PaymentRemittance
 import br.com.unopay.api.payment.model.PaymentRemittanceItem
 import br.com.unopay.api.util.Rounder
+import spock.lang.Unroll
 
 class Cnab240GeneratorTest extends FixtureApplicationTest{
 
-    def 'should create remittance header'(){
+    @Unroll
+    'should create remittance header for #operation operation'(){
         given:
-        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def operationType = operation
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems", new Rule(){{
+            add("operationType", operationType)
+        }})
         def currentDate = instant("now")
         def generator = new Cnab240Generator()
 
@@ -106,7 +113,12 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
                 defaultFill(INICIO_FEBRABAN)
                 defaultFill(TIPO_INSCRICAO)
                 fill(NUMERO_INSCRICAO_EMPRESA, payer.documentNumber)
-                fill(CONVEIO_BANCO, payer.bankAgreementNumberForCredit)
+                if(!remittance.forDebit()) {
+                    fill(CONVEIO_BANCO, payer.bankAgreementNumberForCredit)
+                }
+                if(remittance.forDebit()) {
+                    fill(CONVEIO_BANCO, payer.bankAgreementNumberForDebit)
+                }
                 fill(AGENCIA, payer.agency)
                 fill(DIGITO_AGENCIA, payer.agentDvFirstDigit())
                 fill(NUMERO_CONTA, payer.accountNumber)
@@ -127,6 +139,11 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             }}
 
         cnab240.split(SEPARATOR).first() == record.build()
+
+        where:
+        _ | operation
+        _ | PaymentOperationType.CREDIT
+        _ | PaymentOperationType.DEBIT
     }
 
     def 'should create remittance trailer'(){
