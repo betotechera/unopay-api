@@ -158,8 +158,8 @@ public class PaymentRemittance implements Serializable {
         return document != null && Objects.equals(getPayer().getDocumentNumber(), document);
     }
 
-    public boolean payerBankAgreementNumberIs(String number){
-        return number != null && Objects.equals(getPayer().getBankAgreementNumberForCredit(), number);
+    public boolean payerAgency(String agency){
+        return agency != null &&  agency.contains(getPayer().getAgency());
     }
 
     public void setSubmissionDateTime(Date dateTime){
@@ -208,5 +208,9 @@ public class PaymentRemittance implements Serializable {
 
     public boolean forDebit() {
         return PaymentOperationType.DEBIT.equals(operationType);
+    }
+
+    public boolean payerAccountNumber(String number) {
+        return number != null && number.contains(payer.getAccountNumber());
     }
 }

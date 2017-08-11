@@ -94,7 +94,22 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
         given:
         def remittancePersisted = createRemittanceForBatch()
-        def wrongRemittance = remittancePersisted.with { payer.bankAgreementNumberForCredit = 'AAAAA'; it }
+        def wrongRemittance = remittancePersisted.with { payer.accountNumber = 'AAAAA'; it }
+        def currentDate = instant("now")
+        MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
+        extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
+        when:
+        service.processReturn(file)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'REMITTANCE_WITH_INVALID_DATA'
+    }
+
+    def 'when process cnab then the issuer bank code field should be equals persisted remittance'(){
+        given:
+        def remittancePersisted = createRemittanceForBatch()
+        def wrongRemittance = remittancePersisted.with { payer.agency = 'BBBB'; it }
         def currentDate = instant("now")
         MockMultipartFile file = createCnabFile(wrongRemittance, currentDate)
         extractorMock.extractOnLine(OCORRENCIAS, _) >> '00'
