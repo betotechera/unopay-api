@@ -47,7 +47,9 @@ import org.springframework.web.multipart.MultipartFile;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentB;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceHeader;
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.CONVEIO_BANCO;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
+import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS;
@@ -278,8 +280,10 @@ public class PaymentRemittanceService {
     private void checkRemittanceInformation(String cnab240, PaymentRemittance remittance) {
         RemittanceExtractor remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
         String document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
-        String agreementNumber = remittanceHeader.extractOnFirstLine(CONVEIO_BANCO);
-        if(!remittance.payerDocumentNumberIs(document) || !remittance.payerBankAgreementNumberIs(agreementNumber)){
+        String agency = remittanceHeader.extractOnFirstLine(AGENCIA);
+        String accountNumber = remittanceHeader.extractOnFirstLine(NUMERO_CONTA);
+        if(!remittance.payerDocumentNumberIs(document) || !remittance.payerAgency(agency) ||
+                !remittance.payerAccountNumber(accountNumber)){
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_WITH_INVALID_DATA);
         }
     }
