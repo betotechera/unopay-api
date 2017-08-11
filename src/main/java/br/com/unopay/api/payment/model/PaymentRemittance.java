@@ -127,7 +127,7 @@ public class PaymentRemittance implements Serializable {
     @Version
     private Integer version;
 
-    public BigDecimal total() {
+    public BigDecimal getTotal() {
         if (this.remittanceItems != null) {
             return this.remittanceItems.stream()
                     .map(PaymentRemittanceItem::getValue)
@@ -141,6 +141,10 @@ public class PaymentRemittance implements Serializable {
         String prefix = PaymentOperationType.CREDIT.equals(operationType) ? "PG" : "DB";
         val toFormat = "remittance/%s/%s%s%s.REM";
         return String.format(toFormat, documentNumber(),prefix, createTimeFormatted(), numberAsString());
+    }
+
+    public String getFileName(){
+        return getFileUri().split("/")[2];
     }
 
     public boolean payerDocumentNumberIs(String document){

@@ -414,31 +414,25 @@
                                             <td align="center">
                                                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td>Banco - Ag&ecirc;ncia - Conta</td><td>{{ "%s - %s - %s" | format(remittance.payer.bankName, remittance.payer.agency, remittance.payer.accountNumber) }}</td>
+                                                        <td>Banco</td><td>{{ remittance.payer.bankName }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Nome do Arquivo</td><td>{{ remittance.fileUri }}</td>
+                                                        <td>Ag&ecirc;ncia</td><td>{{ "%s-%s" | format(remittance.payer.agency, remittance.payer.agencyDigit) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Conta</td><td>{{ remittance.payer.accountNumber }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nome do Arquivo</td><td>{{ remittance.fileName }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Nro da Remessa</td><td>{{ remittance.number }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Data e Hora do Processamento</td><td>{{ remittance.createdDateTime | dateformat('dd/MM/yyyy hh:mm') }}</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
-                                        <tr>
-                                            <td align="center">
-
-                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                    <tr>
-                                                        <td>Opera&ccedil;&atilde;o</td> <td>Valor</td> <td>Quantidade</td>
+                                                        <td>Processamento</td><td>{{ remittance.createdDateTime | dateformat('dd/MM/yyyy hh:mm') }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td></td><td></td> <td></td><td></td>
+                                                        <td>Total</td><td>{{ "R$: %s " | format(remittance.total) }}</td>
                                                     </tr>
                                                 </table>
                                             </td>

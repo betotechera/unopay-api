@@ -68,7 +68,7 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
         }})
 
         when:
-        BigDecimal total = remittance.total()
+        BigDecimal total = remittance.getTotal()
 
         then:
         total == remittance.remittanceItems.sum { it.value }

@@ -253,8 +253,8 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             fill(LOTE_SERVICO, "8")
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.total()))
-            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total()))
+            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal()))
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.getTotal()))
             defaultFill(NUMERO_AVISO_DEBITO)
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS);
             defaultFill(FIM_FEBRABAN)

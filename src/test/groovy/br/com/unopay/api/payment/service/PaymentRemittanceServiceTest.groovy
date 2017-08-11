@@ -302,7 +302,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(1)
-        result.find().total() == total
+        result.find().getTotal() == total
     }
 
     @Unroll

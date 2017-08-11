@@ -28,8 +28,8 @@ public class BatchTrailer {
             fill(LOTE_SERVICO, position).
             defaultFill(TIPO_REGISTRO).
             defaultFill(INICIO_FEBRABAN).
-            fill(SOMATORIA_VALORES, Rounder.roundToString(remittance.total())).
-            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.total())).
+            fill(SOMATORIA_VALORES, Rounder.roundToString(remittance.getTotal())).
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.getTotal())).
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * SEGMENTS + HEADERS_AND_TRAILERS).
             defaultFill(NUMERO_AVISO_DEBITO).
             defaultFill(FIM_FEBRABAN).
