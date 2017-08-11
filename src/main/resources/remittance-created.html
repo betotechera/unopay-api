@@ -414,16 +414,16 @@
                                             <td align="center">
                                                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td>Banco - Ag&ecirc;ncia - Conta</td><td></td>
+                                                        <td>Banco - Ag&ecirc;ncia - Conta</td><td>{{ "%s - %s - %s" | format(remittance.payer.bankName, remittance.payer.agency, remittance.payer.accountNumber) }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Nome do Arquivo</td><td></td>
+                                                        <td>Nome do Arquivo</td><td>{{ remittance.fileUri }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Nro da Remessa</td><td></td>
+                                                        <td>Nro da Remessa</td><td>{{ remittance.number }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Data e Hora do Processamento</td><td></td>
+                                                        <td>Data e Hora do Processamento</td><td>{{ remittance.createdDateTime | dateformat('dd/MM/yyyy hh:mm') }}</td>
                                                     </tr>
                                                 </table>
                                             </td>

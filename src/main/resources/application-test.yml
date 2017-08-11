@@ -22,6 +22,7 @@ unopay:
       'CREATE_PASSWORD' : "Crie sua nova senha"
       'USER_CREATED' : "Seu usuario foi criado"
       'BATCH_CLOSED' : "Lote fechado."
+      'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
     defaultMail:
       from: 'no-reply@roadcard.com.br'
       personalFrom: 'RoadCard'
@@ -49,10 +50,10 @@ spring:
     host: redis.unvlocal.com.br
     port: 6379
   rabbitmq:
-      host: rabbit.unvlocal.com.br
-      port: 5672
-      username: user
-      password: user
+    host: rabbit.unvlocal.com.br
+    port: 5672
+    username: unopay
+    password: unopay
   mail:
     default-encoding: UTF-8
     host: localhost

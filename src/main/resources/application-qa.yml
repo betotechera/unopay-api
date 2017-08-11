@@ -20,6 +20,7 @@ unopay:
       'CREATE_PASSWORD' : "Crie sua nova senha"
       'USER_CREATED' : "Seu usuario foi criado"
       'BATCH_CLOSED' : "Lote fechado."
+      'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
     defaultMail:
       from: 'no-reply@roadcard.com.br'
       personalFrom: 'RoadCard'
