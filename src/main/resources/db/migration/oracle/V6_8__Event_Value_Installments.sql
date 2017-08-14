@@ -1,4 +1,4 @@
-alter table person add short_name varchar(50) default '' not null;
+alter table person add short_name varchar(50) default 'Nome curto' not null;
 alter table product add contract_validity_days integer default 99999 not null;
 alter table product add annuity decimal(*,2) default 100.50 not null;
 alter table product add payment_installments integer default 10 not null;
