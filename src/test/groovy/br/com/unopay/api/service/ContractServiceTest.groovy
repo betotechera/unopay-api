@@ -66,7 +66,7 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
         assert result.documentNumberInvoice == hirerUnderTest.documentNumber
         assert result.situation == ContractSituation.ACTIVE
-        assert result.origin == ContractOrigin.UNOPAY
+        assert result.origin == ContractOrigin.APPLICATION
     }
 
     void 'given contract with same code should not be created'(){
@@ -319,7 +319,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def result = contract.contractEstablishments.first()
         assert result.id != null
         assert result.contract.id == contract.id
-        assert result.origin == ContractOrigin.UNOPAY
+        assert result.origin == ContractOrigin.APPLICATION
     }
 
     void 'should return contracts by establishment'(){

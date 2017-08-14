@@ -44,7 +44,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
+import static br.com.unopay.api.model.ContractOrigin.APPLICATION;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
@@ -149,7 +149,7 @@ public class Contract implements Serializable {
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class})
-    private ContractOrigin origin = UNOPAY;
+    private ContractOrigin origin =  APPLICATION;
 
     @Column(name="rntrc")
     @NotNull(groups = {Create.class,Update.class})
@@ -202,7 +202,7 @@ public class Contract implements Serializable {
 
     public void checkFields() {
         documentNumberInvoice = (documentNumberInvoice == null) ? hirer.getDocumentNumber(): documentNumberInvoice;
-        origin = (origin == null) ? UNOPAY : origin;
+        origin = (origin == null) ? APPLICATION : origin;
         situation = (situation == null) ? ACTIVE : situation;
     }
 
