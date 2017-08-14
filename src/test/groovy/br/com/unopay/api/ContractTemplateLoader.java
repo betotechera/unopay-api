@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
+import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
@@ -45,6 +46,14 @@ public class ContractTemplateLoader implements TemplateLoader {
 
         Fixture.of(ContractEstablishment.class).addTemplate("valid", new Rule() {{
             add("creation", instant("now"));
+        }});
+
+        Fixture.of(ContractInstallment.class).addTemplate("valid", new Rule(){{
+            add("installmentNumber", random(Integer.class, range(1,12)));
+            add("expiration", instant("1 day from now"));
+            add("value", random(BigDecimal.class, range(10, 80)));
+            add("paymentValue", random(BigDecimal.class, range(10, 80)));
+            add("paymentDateTime", instant("2 day from now"));
         }});
 
     }

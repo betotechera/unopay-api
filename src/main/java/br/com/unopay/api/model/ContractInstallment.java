@@ -1,9 +1,6 @@
-package br.com.unopay.api.bacen.model;
+package br.com.unopay.api.model;
 
-import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
-import br.com.unopay.api.model.validation.group.Reference;
-import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -20,47 +17,58 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@Table(name = "establishment_event")
-public class EstablishmentEvent implements Updatable, Serializable {
+@ToString
+@Table(name = "contract_installment")
+public class ContractInstallment implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
-    public EstablishmentEvent(){}
+    public ContractInstallment(){}
 
     @Id
     @Column(name="id")
-    @NotNull(groups = {Reference.class})
+    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
 
     @ManyToOne
-    @JoinColumn(name="event_id")
-    @NotNull(groups = {Create.class, Update.class})
-    private Event event;
+    @JoinColumn(name="contract_id")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Public.class})
+    private Contract contract;
 
-    @ManyToOne
-    @JoinColumn(name="establishment_id")
-    @NotNull(groups = {Create.class, Update.class})
-    private Establishment establishment;
+    @Column(name = "installment_number")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Public.class})
+    private Integer installmentNumber;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Public.class})
     private BigDecimal value;
 
-
     @Column(name = "expiration")
+    @NotNull(groups = {Create.class})
     @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Date expiration;
 
-    @JsonIgnore
+    @Column(name = "payment_date_time")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Date paymentDateTime;
+
+    @Column(name = "payment_value")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Public.class})
+    private BigDecimal paymentValue;
+
     @Version
+    @JsonIgnore
     private Integer version;
 
 }
