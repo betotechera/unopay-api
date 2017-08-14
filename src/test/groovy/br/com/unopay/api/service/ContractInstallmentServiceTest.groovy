@@ -87,8 +87,8 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         int nextMonth = 0
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            nextMonth++
-            it.expiration > instant("$nextMonth month from now at 0:59 am") &&
+            nextMonth++;
+            it.expiration > instant("$nextMonth month from now at 00:01 am") &&
                     it.expiration < instant("$nextMonth month from now at 23:59 pm")
         }
     }
@@ -105,6 +105,20 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+    def 'should delete all by contract'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme(3,"valid", new Rule(){{
+            add("contract", contract)
+        }})
+        when:
+        service.deleteByContract(contract.id)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result.isEmpty()
     }
 
     def 'a valid contract installment should be updated'(){

@@ -28,14 +28,14 @@ public class ContractInstallmentService {
     @Transactional
     public void create(Contract contract) {
         ContractInstallment first = save(new ContractInstallment(contract));
-        final Date[] previousDate = {first.getExpiration()};
-        final int[] previousNumber = {first.getInstallmentNumber()};
-        IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
+        final Date[] previousDate = { first.getExpiration() };
+        final int[] previousNumber = { first.getInstallmentNumber() };
+        IntStream.rangeClosed(1, contract.getPaymentInstallments()).forEach(n->{
             ContractInstallment installment = new ContractInstallment(contract);
             installment.plusExpiration(previousDate[0]);
             installment.incrementNumber(previousNumber[0]);
             save(installment);
-            previousDate[0] = installment.getPaymentDateTime();
+            previousDate[0] = installment.getExpiration();
             previousNumber[0] = installment.getInstallmentNumber();
         });
     }
@@ -63,5 +63,10 @@ public class ContractInstallmentService {
 
     public Set<ContractInstallment> findByContractId(String contractId) {
         return repository.findByContractId(contractId);
+    }
+
+    public void deleteByContract(String contractId) {
+        Set<ContractInstallment> byContractId = findByContractId(contractId);
+        repository.delete(byContractId);
     }
 }
