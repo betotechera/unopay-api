@@ -26,8 +26,6 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.model.ContractOrigin.UNOPAY;
-
 @Data
 @Entity
 @ToString
@@ -65,7 +63,7 @@ public class ContractEstablishment implements Serializable {
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Public.class,Views.List.class})
-    private ContractOrigin origin = UNOPAY;
+    private ContractOrigin origin = ContractOrigin.APPLICATION;
 
     @Version
     @JsonIgnore
@@ -77,7 +75,7 @@ public class ContractEstablishment implements Serializable {
 
     public void setMeUpBy(Contract contract) {
         this.contract = contract;
-        origin = (origin == null) ? UNOPAY : origin;
+        origin = (origin == null) ? ContractOrigin.APPLICATION : origin;
 
     }
 
