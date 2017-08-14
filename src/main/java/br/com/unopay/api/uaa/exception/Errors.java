@@ -242,12 +242,14 @@ public final class Errors {
             new UnovationError("ESTABLISHMENT_NOT_FOUND","Establishment not found.");
     public static final UnovationError ESTABLISHMENT_WITH_BRANCH =
             new UnovationError("ESTABLISHMENT_WITH_BRANCH","Establishment with branch.");
+    public static final UnovationError ESTABLISHMENT_WITH_EVENT_VALUE =
+            new UnovationError("ESTABLISHMENT_WITH_EVENT_VALUE","Establishment with event value.");
     public static final UnovationError ACCREDITED_NETWORK_REQUIRED =
             new UnovationError("ACCREDITED_NETWORK_REQUIRED","Accredited network is required.");
     public static final UnovationError ACCREDITED_NETWORK_ID_REQUIRED =
             new UnovationError("ACCREDITED_NETWORK_ID_REQUIRED","Accredited network id is required.");
-    public static final UnovationError BRAND_FLAG_REQUIRED =
-            new UnovationError("BRAND_FLAG_REQUIRED","Brand flag is required.");
+    public static final UnovationError ESTABLISHMENT_EVENT_NOT_FOUND =
+            new UnovationError("ESTABLISHMENT_EVENT_NOT_FOUND","Establishment event not found.");
     public static final UnovationError CONTACT_REQUIRED =
             new UnovationError("CONTACT_REQUIRED","Contact is required.");
     public static final UnovationError BANK_ACCOUNT_REQUIRED =

@@ -1,9 +1,10 @@
 package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.SpockApplicationTests
 
-class HirerTest  extends SpockApplicationTests {
+class HirerTest  extends FixtureApplicationTest {
 
     def 'should be equals'(){
         given:

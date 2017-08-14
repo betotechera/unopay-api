@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -60,10 +61,10 @@ public class LegalPersonDetail implements Serializable{
     @JsonView({Views.Public.class,Views.List.class})
     private CompanyType type;
 
-
     @Column(name="fantasy_name")
     @JsonView({Views.Public.class,Views.List.class})
     @Size(max = 150, groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class, Update.class})
     private String fantasyName;
 
     @Column(name="responsible_name")

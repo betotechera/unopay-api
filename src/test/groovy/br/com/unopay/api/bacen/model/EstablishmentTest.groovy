@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 
 class EstablishmentTest extends FixtureApplicationTest {
@@ -8,8 +9,12 @@ class EstablishmentTest extends FixtureApplicationTest {
 
     def 'should update all fields'(){
         given:
-        Establishment establishmentA = Fixture.from(Establishment.class).gimme("valid")
-        Establishment establishmentB = Fixture.from(Establishment.class).gimme("valid")
+        Establishment establishmentA = Fixture.from(Establishment.class).gimme("valid", new Rule(){{
+            add("person.id", '1')
+        }})
+        Establishment establishmentB = Fixture.from(Establishment.class).gimme("valid", new Rule(){{
+            add("person.id", '1')
+        }})
 
         when:
         establishmentA.updateMe(establishmentB)
@@ -19,7 +24,6 @@ class EstablishmentTest extends FixtureApplicationTest {
         establishmentA.alternativeMail == establishmentB.alternativeMail
         establishmentA.bachShipmentMail == establishmentB.bachShipmentMail
         establishmentA.bankAccount == establishmentB.bankAccount
-        establishmentA.brandFlag == establishmentB.brandFlag
         establishmentA.checkout == establishmentB.checkout
         establishmentA.contactMail == establishmentB.contactMail
         establishmentA.contractUri == establishmentB.contractUri
@@ -28,6 +32,7 @@ class EstablishmentTest extends FixtureApplicationTest {
         establishmentA.financierContact == establishmentB.financierContact
         establishmentA.invoiceMail == establishmentB.invoiceMail
         establishmentA.logoUri == establishmentB.logoUri
+        establishmentA.person.cellPhone == establishmentB.person.cellPhone
         establishmentA.person.name == establishmentB.person.name
         establishmentA.fee == establishmentB.fee
         establishmentA.network.id == establishmentB.network.id

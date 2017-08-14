@@ -67,6 +67,11 @@ public class Event implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private String quantityUnity;
 
+    @Column(name ="request_value")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private boolean requestValue;
+
     public void updateMe(Event other){
         setName(other.getName());
         setNcmCode(other.getNcmCode());

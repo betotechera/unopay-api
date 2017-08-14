@@ -6,6 +6,7 @@ import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.DocumentType;
+import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.LegalPersonDetail;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.PersonType;
@@ -20,30 +21,31 @@ public class PersonTemplateLoader implements TemplateLoader {
     @Override
     public void load() {
 
-        Fixture.of(Person.class).addTemplate("physical", new Rule(){{
-            add("name", "Teste");
-            add("type", PersonType.PHYSICAL);
-            add("document", one(Document.class, "valid-cpf"));
+
+        Fixture.of(Person.class).addTemplate("base", new Rule(){{
+            add("name", firstName());
+            add("shortName", firstName());
             add("address", one(Address.class, "address"));
             add("telephone", "11999999999");
-            add("physicalPersonDetail", one(PhysicalPersonDetail.class, "physical-person"));
+        }});
 
+        Fixture.of(Person.class).addTemplate("physical").inherits("base", new Rule(){{
+            add("type", PersonType.PHYSICAL);
+            add("document", one(Document.class, "valid-cpf"));
+            add("physicalPersonDetail", one(PhysicalPersonDetail.class, "physical-person"));
+        }});
+
+        Fixture.of(Person.class).addTemplate("legal").inherits("base", new Rule(){{
+            add("type", PersonType.LEGAL);
+            add("document", one(Document.class, "valid-cnpj"));
+            add("legalPersonDetail", one(LegalPersonDetail.class, "legal-person"));
         }});
 
 
         Fixture.of(PhysicalPersonDetail.class).addTemplate("physical-person", new Rule(){{
             add("email", uniqueRandom("user@company.com", "user2@uol.com.br"));
             add("birthDate", instant("18 years ago"));
-        }});
-
-
-        Fixture.of(Person.class).addTemplate("legal", new Rule(){{
-            add("name", "Teste");
-            add("type", PersonType.LEGAL);
-            add("document", one(Document.class, "valid-cnpj"));
-            add("legalPersonDetail", one(LegalPersonDetail.class, "legal-person"));
-            add("address", one(Address.class, "address"));
-            add("telephone", "11999999999");
+            add("gender", random(Gender.class));
         }});
 
 

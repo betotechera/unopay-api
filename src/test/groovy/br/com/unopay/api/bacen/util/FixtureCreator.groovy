@@ -229,7 +229,7 @@ class FixtureCreator {
         Fixture.from(Contractor.class).uses(jpaProcessor).gimme(label)
     }
 
-    Event createEvent(ServiceType serviceType) {
+    Event createEvent(ServiceType serviceType = ServiceType.FUEL_ALLOWANCE) {
         Service serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
         }})

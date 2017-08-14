@@ -1,18 +1,24 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
+
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
@@ -36,8 +42,15 @@ public class PhysicalPersonDetail implements Serializable{
     private String email;
 
     @Column(name="birth_date")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private Date birthDate;
+
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(STRING)
+    @Column(name="gender")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Gender gender;
 
     public void updateForHirer(PhysicalPersonDetail detail) {
         this.email = detail.getEmail();

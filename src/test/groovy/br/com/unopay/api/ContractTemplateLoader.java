@@ -12,6 +12,7 @@ import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class ContractTemplateLoader implements TemplateLoader {
@@ -32,6 +33,9 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("situation", ContractSituation.ACTIVE);
             add("rntrc", regex("\\d{4}\\w{6}"));
             add("documentNumberInvoice", regex("\\d{4}\\w{15}"));
+            add("annuity", random(BigDecimal.class, range(100,300)));
+            add("membershipFee", random(BigDecimal.class, range(50,150)));
+            add("paymentInstallments", random(Integer.class, range(1, 12)));
         }});
 
         Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule() {{

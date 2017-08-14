@@ -157,6 +157,20 @@ public class Contract implements Serializable {
     @Size(max = 20, groups = {Create.class, Update.class})
     private String rntrc;
 
+    @Column(name = "annuity")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private BigDecimal annuity;
+
+    @Column(name = "membership_fee")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private BigDecimal membershipFee;
+
+    @Column(name = "payment_installments")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Integer paymentInstallments;
+
     @JsonIgnore
     @Version
     private Integer version;
