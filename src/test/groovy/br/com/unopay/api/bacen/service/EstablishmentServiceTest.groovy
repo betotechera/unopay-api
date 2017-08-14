@@ -6,7 +6,9 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.RecurrencePeriod
+import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.BatchClosingJob
 import br.com.unopay.api.job.UnopayScheduler
@@ -257,32 +259,6 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'BANK_ACCOUNT_NOT_FOUND'
     }
 
-    def 'a valid establishment with unknown brand flag should not be created'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                        .gimme("valid").with { network = networkUnderTest; it }
-        establishment.brandFlag.id = ''
-        when:
-        service.create(establishment)
-
-        then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'BRAND_FLAG_NOT_FOUND'
-    }
-
-    def 'a valid establishment without brand flag id should not be created'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                            .gimme("valid").with { network = networkUnderTest; it }
-        establishment.brandFlag.id = null
-        when:
-        service.create(establishment)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'BRAND_FLAG_ID_REQUIRED'
-    }
-
     def 'a valid establishment with unknown operational contact should not be created'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
@@ -362,19 +338,6 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
 
         then:
         result != null
-    }
-
-    def 'a valid establishment without brand flag should not be created'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                        .gimme("valid").with { network = networkUnderTest; it }
-        establishment.brandFlag = null
-        when:
-        service.create(establishment)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'BRAND_FLAG_REQUIRED'
     }
 
     def 'a valid establishment without administrative contact should not be created'(){
@@ -512,50 +475,6 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'CONTACT_REQUIRED'
     }
 
-
-    def 'a valid establishment with unknown brand flag should not be updated'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                        .gimme("valid").with { network = networkUnderTest; it }
-        def created = service.create(establishment)
-        establishment.brandFlag.id = ''
-        when:
-        service.update(created.id, establishment)
-
-        then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'BRAND_FLAG_NOT_FOUND'
-    }
-
-    def 'a valid establishment without brand flag id should not be updated'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                            .gimme("valid").with { network = networkUnderTest; it }
-        def created = service.create(establishment)
-        establishment.brandFlag.id = null
-        when:
-        service.update(created.id, establishment)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'BRAND_FLAG_ID_REQUIRED'
-    }
-
-    def 'a valid establishment without brand flag should not be updated'(){
-        given:
-        Establishment establishment = Fixture.from(Establishment.class)
-                                            .gimme("valid").with { network = networkUnderTest; it }
-        def created = service.create(establishment)
-        establishment.brandFlag = null
-        when:
-        service.update(created.id, establishment)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'BRAND_FLAG_REQUIRED'
-    }
-
-
     def 'a valid establishment with unknown operational contact should not be updated'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
@@ -692,6 +611,24 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(ConflictException)
         ex.errors.find().logref == 'ESTABLISHMENT_WITH_BRANCH'
+    }
+
+    def 'a known establishment with event should not be deleted'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("network", networkUnderTest)
+        }})
+        Fixture.from(EstablishmentEvent.class).uses(jpaProcessor).gimme("withoutReferences", new Rule(){{
+            add("establishment", establishment)
+            add("event", fixtureCreator.createEvent())
+        }})
+
+        when:
+        service.delete(establishment.id)
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'ESTABLISHMENT_WITH_EVENT_VALUE'
     }
 
     def 'a unknown establishment should not be deleted'(){

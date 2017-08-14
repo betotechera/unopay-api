@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
+import br.com.unopay.api.bacen.repository.EstablishmentEventRepository;
 import br.com.unopay.api.bacen.repository.EstablishmentRepository;
 import br.com.unopay.api.job.BatchClosingJob;
 import br.com.unopay.api.job.UnopayScheduler;
@@ -30,9 +31,9 @@ public class EstablishmentService {
     private ContactService contactService;
     private PersonService personService;
     private AccreditedNetworkService networkService;
-    private BrandFlagService brandFlagService;
     private BankAccountService bankAccountService;
     private UserDetailRepository userDetailRepository;
+    private EstablishmentEventRepository establishmentEventRepository;
     @Setter
     private UnopayScheduler scheduler;
 
@@ -42,18 +43,18 @@ public class EstablishmentService {
                                 ContactService contactService,
                                 PersonService personService,
                                 AccreditedNetworkService networkService,
-                                BrandFlagService brandFlagService,
                                 BankAccountService bankAccountService,
                                 UserDetailRepository userDetailRepository,
+                                EstablishmentEventRepository establishmentEventRepository,
                                 UnopayScheduler scheduler) {
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
         this.personService = personService;
         this.networkService = networkService;
-        this.brandFlagService = brandFlagService;
         this.bankAccountService = bankAccountService;
         this.userDetailRepository = userDetailRepository;
+        this.establishmentEventRepository = establishmentEventRepository;
         this.scheduler = scheduler;
     }
 
@@ -99,6 +100,9 @@ public class EstablishmentService {
         if(hasUsers(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_USERS);
         }
+        if(hasEventValue(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_EVENT_VALUE);
+        }
     }
 
     private boolean hasUsers(String id) {
@@ -107,6 +111,10 @@ public class EstablishmentService {
 
     private boolean hasBranches(String id) {
         return branchRepository.countByHeadOfficeId(id) > 0;
+    }
+
+    private boolean hasEventValue(String id){
+        return establishmentEventRepository.countByEstablishmentId(id) > 0;
     }
 
     private void saveReferences(Establishment establishment) {
@@ -118,7 +126,6 @@ public class EstablishmentService {
     }
 
     private void validateReferences(Establishment establishment) {
-        brandFlagService.findById(establishment.getBrandFlag().getId());
         networkService.getById(establishment.getNetwork().getId());
         contactService.findById(establishment.getOperationalContact().getId());
         contactService.findById(establishment.getFinancierContact().getId());

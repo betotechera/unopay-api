@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -152,6 +153,20 @@ public class Product implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal administrationCreditInsertionFee;
+
+    @Column(name = "annuity")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class,Views.List.class})
+    private BigDecimal annuity;
+
+    @Column(name = "payment_installments")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Integer paymentInstallments;
+
+    @Min(1)
+    @Column(name = "contract_validity_days")
+    @JsonView({Views.Public.class,Views.List.class})
+    private Integer contractValidityDays;
 
     @Version
     @JsonIgnore

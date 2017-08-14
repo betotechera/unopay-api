@@ -42,6 +42,9 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("administrationCreditInsertionFee", random(BigDecimal.class, range(0.00, 1)));
             add("serviceTypes", Arrays.asList(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
             add("creditInsertionTypes", Arrays.asList(CreditInsertionType.values()));
+            add("contractValidityDays", 360);
+            add("paymentInstallments", random(Integer.class, range(1,12)));
+            add("annuity", random(BigDecimal.class, range(100, 250)));
         }});
 
         Fixture.of(Product.class).addTemplate("creditWithoutDirectDebit").inherits("valid", new Rule(){{

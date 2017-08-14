@@ -12,6 +12,7 @@ import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Checkout;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.EstablishmentType;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
@@ -231,7 +232,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("cancellationTolerance", random(Integer.class, range(0, 60)));
             add("fee", random(Double.class, range(0.00, 1)));
             add("network", one(AccreditedNetwork.class, "valid"));
-            add("brandFlag", one(BrandFlag.class, "persisted"));
+            add("facadePhotoUri", "/tmp/path");
             add("logoUri", "/tmp/path");
             add("operationalContact", one(Contact.class, "persisted"));
             add("administrativeContact", one(Contact.class, "persisted"));
@@ -243,6 +244,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
             add("issueInvoiceType", uniqueRandom(IssueInvoiceType.class));
+        }});
+
+        Fixture.of(EstablishmentEvent.class).addTemplate("withoutReferences", new Rule(){{
+            add("value", random(BigDecimal.class, range(1,200)));
+            add("expiration", instant("1 day from now"));
         }});
 
         Fixture.of(Branch.class).addTemplate("valid", new Rule(){{

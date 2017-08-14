@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
@@ -9,6 +8,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Set;
@@ -26,8 +26,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -43,8 +45,6 @@ import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUI
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BRAND_FLAG_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CONTACT_REQUIRED;
 import static javax.persistence.EnumType.STRING;
@@ -114,11 +114,9 @@ public class Establishment implements Serializable, Updatable {
     @JsonView({Public.class,List.class})
     private AccreditedNetwork network;
 
-    @ManyToOne
-    @JoinColumn(name="brand_flag_id")
-    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "facade_photo_uri")
     @JsonView({Public.class,List.class})
-    private BrandFlag brandFlag;
+    private String facadePhotoUri;
 
     @Column(name = "logo_uri")
     @JsonView({Public.class,List.class})
@@ -203,12 +201,6 @@ public class Establishment implements Serializable, Updatable {
         }
         if(getNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
-        }
-        if(getBrandFlag() == null) {
-            throw  UnovationExceptions.unprocessableEntity().withErrors(BRAND_FLAG_REQUIRED);
-        }
-        if(getBrandFlag().getId() == null){
-            throw  UnovationExceptions.unprocessableEntity().withErrors(BRAND_FLAG_ID_REQUIRED);
         }
         if(getAdministrativeContact() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);

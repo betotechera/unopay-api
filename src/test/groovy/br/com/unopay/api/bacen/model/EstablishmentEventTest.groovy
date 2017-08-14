@@ -2,13 +2,13 @@ package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.SpockApplicationTests
+import spock.lang.Specification
 
-class BankAccountTest  extends FixtureApplicationTest {
+class EstablishmentEventTest extends FixtureApplicationTest{
 
     def 'should be equals'(){
         given:
-        BankAccount a = Fixture.from(BankAccount.class).gimme("valid")
+        EstablishmentEvent a = Fixture.from(EstablishmentEvent.class).gimme("withoutReferences")
 
         when:
         def shouldBeEquals = a == a
@@ -19,8 +19,8 @@ class BankAccountTest  extends FixtureApplicationTest {
     }
 
     def 'should not be equals'(){
-        BankAccount a = Fixture.from(BankAccount.class).gimme("valid")
-        BankAccount b = Fixture.from(BankAccount.class).gimme("valid")
+        EstablishmentEvent a = Fixture.from(EstablishmentEvent.class).gimme("withoutReferences")
+        EstablishmentEvent b = Fixture.from(EstablishmentEvent.class).gimme("withoutReferences")
 
         when:
         def shouldBeEquals = a == b
@@ -29,4 +29,5 @@ class BankAccountTest  extends FixtureApplicationTest {
         !shouldBeEquals
 
     }
+
 }

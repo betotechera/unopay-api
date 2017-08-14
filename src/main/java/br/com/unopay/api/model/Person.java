@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,6 +49,11 @@ public class Person implements Serializable{
     @Column(name="name")
     @Size(min=2, max = 150, groups = {Create.class, Update.class})
     private String name;
+
+    @Column(name="short_name")
+    @Size(min=2,max = 50, groups = {Create.class, Update.class})
+    @JsonView({Views.Public.class})
+    private String shortName;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
