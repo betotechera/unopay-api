@@ -18,5 +18,18 @@ create table establishment_event (
     value decimal(*,2) not null,
     expiration Timestamp not null,
     version integer not null,
-    constraint fk_event_value foreign key(event_id) references event(id)
+    constraint fk_event_value foreign key(event_id) references event(id),
+    constraint fk_event_estab foreign key(establishment_id) references establishment(id)
+);
+
+create table contract_installment (
+    id VARCHAR(256) PRIMARY KEY,
+    contract_id varchar(256) not null,
+    installment_number integer not null,
+    value decimal(*,2) not null,
+    expiration Timestamp not null,
+    payment_date_time timestamp,
+    payment_value decimal(*,2),
+    version integer not null,
+    constraint fk_contract_install foreign key(contract_id) references contract(id)
 );
