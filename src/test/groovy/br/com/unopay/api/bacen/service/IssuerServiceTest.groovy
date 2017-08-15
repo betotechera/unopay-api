@@ -8,11 +8,15 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.RecurrencePeriod
 import br.com.unopay.api.job.RemittanceJob
 import br.com.unopay.api.job.UnopayScheduler
+import br.com.unopay.api.payment.model.filter.RemittanceFilter
+import br.com.unopay.api.payment.service.PaymentRemittanceService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+
+import static org.hamcrest.Matchers.is
 import static spock.util.matcher.HamcrestSupport.that
 
 class IssuerServiceTest  extends SpockApplicationTests {
@@ -24,9 +28,12 @@ class IssuerServiceTest  extends SpockApplicationTests {
     PaymentRuleGroupService paymentRuleGroupService
 
     UnopayScheduler schedulerMock = Mock(UnopayScheduler)
+    PaymentRemittanceService remittanceMock = Mock(PaymentRemittanceService)
+
 
     def setup(){
         service.scheduler = schedulerMock
+        service.paymentRemittanceService = remittanceMock
     }
 
     def 'when create issuer should be schedule remittance job'(){
@@ -507,5 +514,19 @@ class IssuerServiceTest  extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'ISSUER_NOT_FOUND'
     }
+
+    def 'should schedule remittance job manually'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid", new Rule(){{
+            add("paymentAccount.depositPeriod", RecurrencePeriod.BIWEEKLY)
+        }})
+        RemittanceFilter filter = new RemittanceFilter(id: issuer.id,at: new Date())
+        when:
+        service.executePaymentRemittance(filter)
+
+        then:
+        1 * remittanceMock.execute(filter)
+    }
+
 
 }

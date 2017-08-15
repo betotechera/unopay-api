@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.payment.model.filter.RemittanceFilter;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,5 +84,15 @@ public class IssuerController {
         Page<Issuer> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers", api));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")
+    @RequestMapping(value = "/issuers/{id}/payment-remittance", method = RequestMethod.POST)
+    public void createPaymentRemittance(@PathVariable  String id, @RequestBody RemittanceFilter filter)
+    {
+        log.info("Executing paymentRemittance for issuerId={} and filter={}", id,filter);
+        filter.setId(id);
+        service.executePaymentRemittance(filter);
     }
 }

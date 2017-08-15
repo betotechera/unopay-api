@@ -4,9 +4,12 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.job.RemittanceJob;
 import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.payment.model.filter.RemittanceFilter;
+import br.com.unopay.api.payment.service.PaymentRemittanceService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -17,6 +20,7 @@ import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +39,7 @@ public class IssuerService {
     private PaymentBankAccountService paymentBankAccountService;
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter private UnopayScheduler scheduler;
+    @Setter private PaymentRemittanceService paymentRemittanceService;
 
     public IssuerService(){}
 
@@ -45,7 +50,7 @@ public class IssuerService {
                          BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
                          PaymentRuleGroupService paymentRuleGroupService,
-                         UnopayScheduler scheduler) {
+                         UnopayScheduler scheduler, @Lazy PaymentRemittanceService paymentRemittanceService) {
         this.repository = repository;
         this.userDetailRepository = userDetailRepository;
         this.personService = personService;
@@ -53,6 +58,7 @@ public class IssuerService {
         this.paymentBankAccountService = paymentBankAccountService;
         this.paymentRuleGroupService = paymentRuleGroupService;
         this.scheduler = scheduler;
+        this.paymentRemittanceService = paymentRemittanceService;
     }
 
     public Issuer create(Issuer issuer) {
@@ -124,4 +130,9 @@ public class IssuerService {
     private void scheduleClosingJob(Issuer created) {
         scheduler.schedule(created.getId(), created.depositPeriodPattern(),RemittanceJob.class);
     }
+
+    public void executePaymentRemittance(RemittanceFilter filter) {
+        paymentRemittanceService.execute(filter);
+    }
+
 }

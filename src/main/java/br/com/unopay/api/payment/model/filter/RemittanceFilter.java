@@ -7,5 +7,7 @@ import lombok.Data;
 public class RemittanceFilter {
 
     private String id;
-    private Date at;
+
+    private Date at = new Date();
+
 }
