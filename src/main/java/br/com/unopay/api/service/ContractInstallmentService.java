@@ -30,7 +30,7 @@ public class ContractInstallmentService {
         ContractInstallment first = save(new ContractInstallment(contract));
         final Date[] previousDate = { first.getExpiration() };
         final int[] previousNumber = { first.getInstallmentNumber() };
-        IntStream.rangeClosed(1, contract.getPaymentInstallments()).forEach(n->{
+        IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
             ContractInstallment installment = new ContractInstallment(contract);
             installment.plusExpiration(previousDate[0]);
             installment.incrementNumber(previousNumber[0]);
