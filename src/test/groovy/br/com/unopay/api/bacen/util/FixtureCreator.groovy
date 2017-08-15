@@ -7,6 +7,7 @@ import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Issuer
@@ -205,6 +206,15 @@ class FixtureCreator {
             add("establishment",establishment)
             add("batchClosingDateTime", new Date())
             add("contractorInstrumentCredit.paymentInstrument.password",credit.paymentInstrument.password)
+        }})
+    }
+
+    EstablishmentEvent createEstablishmentEvent(Establishment establishment = createEstablishment()){
+        def event = createEvent(ServiceType.FUEL_ALLOWANCE)
+        return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
+                .gimme("withoutReferences", new Rule(){{
+            add("event", event)
+            add("establishment", establishment)
         }})
     }
 

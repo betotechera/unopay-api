@@ -258,6 +258,9 @@ public final class Errors {
             new UnovationError("BANK_ACCOUNT_ID_REQUIRED","Bank account id is required");
     public static final UnovationError ESTABLISHMENT_WITH_USERS=
             new UnovationError("ESTABLISHMENT_WITH_USERS","Establishment with users");
+    public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_EVENT =
+            new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_EVENT",
+                    "Establishment not qualified for this event");
 
 
 
