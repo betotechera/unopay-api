@@ -88,7 +88,7 @@ public class IssuerController {
 
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")
-    @RequestMapping(value = "/issuers/{id}/payment-remittance", method = RequestMethod.POST)
+    @RequestMapping(value = "/issuers/{id}/payment-remittances", method = RequestMethod.POST)
     public void createPaymentRemittance(@PathVariable  String id, @RequestBody RemittanceFilter filter)
     {
         log.info("Executing paymentRemittance for issuerId={} and filter={}", id,filter);
