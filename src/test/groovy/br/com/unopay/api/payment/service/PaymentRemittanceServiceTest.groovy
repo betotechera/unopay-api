@@ -206,7 +206,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         createBatchForBank(issuerBanK, issuer)
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -235,7 +235,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         createBatchForBank(issuerBanK, issuer)
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -249,7 +249,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         createBatchForBank(issuerBanK, issuer)
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
 
         then:
         0 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
@@ -408,11 +408,11 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
         createBatchForBank(issuerBanK, issuer)
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
 
         when:
         createBatchForBank(issuerBanK, issuer)
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -439,7 +439,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -459,7 +459,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -471,7 +471,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def issuer = issuerWithBatchClosed()
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
 
         then:
         1 * uploaderServiceMock.uploadCnab240(!null,!null)
@@ -482,7 +482,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def issuer = issuerWithBatchClosed()
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
 
         then:
         1 * cnab240GeneratorMock.generate(!null,!null) >> '005;006'
@@ -509,13 +509,13 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             add("issuer", issuer)
             add("paymentReleaseDateTime", instant("1 day ago"))
         }})
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         from(BatchClosing.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("situation", BatchClosingSituation.FINALIZED)
             add("issuer", issuer)
             add("paymentReleaseDateTime", instant("1 day ago"))
         }})
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -528,7 +528,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def issuer = issuerWithBatchClosed()
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def result = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -546,7 +546,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -574,7 +574,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -599,7 +599,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         def all = service.findByPayerDocument(issuer.documentNumber())
 
         then:
@@ -645,7 +645,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
         createBatchForBank(issuerBanK, issuer)
-        service.createFortBatch(issuer.id)
+        service.createForBatch(issuer.id)
         return service.findByPayerDocument(issuer.documentNumber()).find()
     }
 

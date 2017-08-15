@@ -48,7 +48,6 @@ import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatch
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getBatchSegmentB;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;
 import static br.com.unopay.api.payment.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO;
@@ -133,12 +132,12 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    public void createFortBatch(String issuer) {
-        createFortBatch(issuer, today());
+    public void createForBatch(String issuer) {
+        createForBatch(issuer, today());
     }
 
     @Transactional
-    public void createFortBatch(String issuer, Date at) {
+    public void createForBatch(String issuer, Date at) {
         Issuer currentIssuer = issuerService.findById(issuer);
         Set<BatchClosing> byEstablishment = batchClosingService.findFinalizedByIssuerAndPaymentBefore(issuer, at);
         if(!byEstablishment.isEmpty()) {
@@ -166,7 +165,7 @@ public class PaymentRemittanceService {
     public void remittanceReceiptNotify(String objectAsString) {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
         log.info("processing remittance for issuer={}", filter.getId());
-        createFortBatch(filter.getId(), filter.getAt());
+        createForBatch(filter.getId(), filter.getAt());
         createForCredit(filter.getId());
         log.info("processed remittance for issuer={}", filter.getId());
     }
