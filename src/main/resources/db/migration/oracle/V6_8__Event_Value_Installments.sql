@@ -33,3 +33,9 @@ create table contract_installment (
     version integer not null,
     constraint fk_contract_install foreign key(contract_id) references contract(id)
 );
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_EVENT_VALUE','Permite listar valores de eventos.');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_EVENT_VALUE','Permite gerenciar valores de eventos');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_EVENT_VALUE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_EVENT_VALUE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');

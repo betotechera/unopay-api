@@ -33,7 +33,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     void 'valid establishment should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+                                                                                .with { network = networkUnderTest; it }
 
         when:
         def result = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -46,7 +47,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     void 'known establishment should be updated'() {
         given:
         String accessToken = getClientAccessToken()
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+                                                                    .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(establishment))).andReturn()
@@ -55,7 +57,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/establishments/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(establishment.with { id= extractId(location);  fee = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
+                .content(toJson(establishment.with {
+            id= extractId(location);  fee = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
@@ -64,7 +67,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     void 'known establishment should be deleted'() {
         given:
         String accessToken = getClientAccessToken()
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+                                                                            .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(establishment))).andReturn()
@@ -81,7 +85,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     void 'known establishments should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+                                                                            .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(establishment)))
@@ -100,7 +105,8 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     void 'all establishments should be found'() {
         given:
         String accessToken = getClientAccessToken()
-        Establishment establishment = Fixture.from(Establishment.class).gimme("valid").with { network = networkUnderTest; it }
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+                                                                            .with { network = networkUnderTest; it }
         this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(establishment)))

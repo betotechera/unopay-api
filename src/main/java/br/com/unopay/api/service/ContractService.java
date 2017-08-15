@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,16 +40,19 @@ public class ContractService {
     private ContractorService contractorService;
     private ProductService productService;
     private ContractEstablishmentRepository contractEstablishmentRepository;
+    @Setter private ContractInstallmentService installmentService;
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
                            ContractorService contractorService, ProductService productService,
-                           ContractEstablishmentRepository contractEstablishmentRepository) {
+                           ContractEstablishmentRepository contractEstablishmentRepository,
+                           ContractInstallmentService installmentService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
         this.productService = productService;
         this.contractEstablishmentRepository = contractEstablishmentRepository;
+        this.installmentService = installmentService;
     }
 
     public Contract save(Contract contract) {
@@ -55,7 +60,9 @@ public class ContractService {
             validateReferences(contract);
             contract.validate();
             contract.checkFields();
-            return repository.save(contract);
+            Contract created = repository.save(contract);
+            installmentService.create(created);
+            return created;
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
@@ -89,8 +96,10 @@ public class ContractService {
         return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACTOR_CONTRACT_NOT_FOUND));
     }
 
+    @Transactional
     public void delete(String id) {
         findById(id);
+        installmentService.deleteByContract(id);
         repository.delete(id);
     }
 

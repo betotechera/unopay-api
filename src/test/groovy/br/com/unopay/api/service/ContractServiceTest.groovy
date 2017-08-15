@@ -30,6 +30,7 @@ class ContractServiceTest extends SpockApplicationTests {
     Contractor contractorUnderTest
     Product productUnderTest
     Establishment establishmentUnderTest
+    ContractInstallmentService installmentServiceMock = Mock(ContractInstallmentService)
 
 
     void setup(){
@@ -37,9 +38,21 @@ class ContractServiceTest extends SpockApplicationTests {
         contractorUnderTest = fixtureCreator.createContractor()
         productUnderTest = fixtureCreator.createProduct()
         establishmentUnderTest = fixtureCreator.createHeadOffice()
+        service.installmentService = installmentServiceMock
     }
 
     void 'new contract should be created'(){
+        given:
+        Contract contract = createContract()
+
+        when:
+        service.save(contract)
+
+        then:
+        1 * installmentServiceMock.create(_)
+    }
+
+    void 'when create a new contract the contract installments should be created'(){
         given:
         Contract contract = createContract()
 

@@ -1,9 +1,14 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.IntStream;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +24,23 @@ public class ContractInstallmentService {
         this.repository = repository;
     }
 
-    public ContractInstallment create(ContractInstallment installment) {
+
+    @Transactional
+    public void create(Contract contract) {
+        ContractInstallment first = save(new ContractInstallment(contract));
+        final Date[] previousDate = { first.getExpiration() };
+        final int[] previousNumber = { first.getInstallmentNumber() };
+        IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
+            ContractInstallment installment = new ContractInstallment(contract);
+            installment.plusExpiration(previousDate[0]);
+            installment.incrementNumber(previousNumber[0]);
+            save(installment);
+            previousDate[0] = installment.getExpiration();
+            previousNumber[0] = installment.getInstallmentNumber();
+        });
+    }
+
+    public ContractInstallment save(ContractInstallment installment) {
         return repository.save(installment);
     }
 
@@ -39,4 +60,13 @@ public class ContractInstallmentService {
         repository.delete(id);
     }
 
+
+    public Set<ContractInstallment> findByContractId(String contractId) {
+        return repository.findByContractId(contractId);
+    }
+
+    public void deleteByContract(String contractId) {
+        Set<ContractInstallment> byContractId = findByContractId(contractId);
+        repository.delete(byContractId);
+    }
 }

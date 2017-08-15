@@ -4,9 +4,13 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.ContractInstallment
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
+import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import static spock.util.matcher.HamcrestSupport.that
 
 class ContractInstallmentServiceTest extends SpockApplicationTests {
 
@@ -17,6 +21,78 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    def 'given a valid contract should create installment'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        !result.isEmpty()
+    }
+
+    def 'given a valid contract should create one installment by installment number'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        that result, hasSize(contract.paymentInstallments)
+    }
+
+    def 'given a valid contract should create the installments with annuity by installment number'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def installmentExpected = Rounder.round(contract.annuity / contract.paymentInstallments)
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        !result.isEmpty()
+        result.every { it.value == installmentExpected }
+    }
+
+    def 'given a valid contract should create the installments with sequential number'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        int expectedInstallmentNumber = 0
+        !result.isEmpty()
+        result.sort { it.installmentNumber }.every {
+            expectedInstallmentNumber++
+            it.installmentNumber == expectedInstallmentNumber
+        }
+
+    }
+
+    def 'given a valid contract should create the installments with expiration date with 30 days after the previous'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        int nextMonth = 0
+        !result.isEmpty()
+        result.sort { it.installmentNumber }.every {
+            nextMonth++;
+            it.expiration > instant("$nextMonth month from now at 00:01 am") &&
+                    it.expiration < instant("$nextMonth month from now at 23:59 pm")
+        }
+    }
+
 
     def 'a valid contract installment should be created'(){
         given:
@@ -25,10 +101,24 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
             add("contract", contract)
         }})
         when:
-        ContractInstallment created = service.create(installment)
+        ContractInstallment created = service.save(installment)
 
         then:
         created != null
+    }
+
+    def 'should delete all by contract'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme(3,"valid", new Rule(){{
+            add("contract", contract)
+        }})
+        when:
+        service.deleteByContract(contract.id)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result.isEmpty()
     }
 
     def 'a valid contract installment should be updated'(){

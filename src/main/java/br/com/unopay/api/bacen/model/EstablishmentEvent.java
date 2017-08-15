@@ -45,7 +45,6 @@ public class EstablishmentEvent implements Updatable, Serializable {
 
     @ManyToOne
     @JoinColumn(name="establishment_id")
-    @NotNull(groups = {Create.class, Update.class})
     private Establishment establishment;
 
     @Column(name = "value")

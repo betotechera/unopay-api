@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 
 @Data
 @Entity
@@ -27,8 +29,17 @@ import org.hibernate.annotations.GenericGenerator;
 public class ContractInstallment implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
+    public static final int ONE_INSTALLMENT = 1;
 
     public ContractInstallment(){}
+
+    public ContractInstallment(Contract contract) {
+        this.value = contract.getAnnuity()
+                .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_UP);
+        this.expiration = new DateTime().plusMonths(1).toDate();
+        this.installmentNumber = ONE_INSTALLMENT;
+        this.contract = contract;
+    }
 
     @Id
     @Column(name="id")
@@ -71,4 +82,11 @@ public class ContractInstallment implements Serializable, Updatable {
     @JsonIgnore
     private Integer version;
 
+    public void plusExpiration(Date previousMonth) {
+        this.expiration = new DateTime(previousMonth).plusMonths(1).toDate();
+    }
+
+    public void incrementNumber(Integer previousNumber) {
+        this.installmentNumber = previousNumber + ONE_INSTALLMENT;
+    }
 }
