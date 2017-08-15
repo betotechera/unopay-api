@@ -34,8 +34,12 @@ create table contract_installment (
     constraint fk_contract_install foreign key(contract_id) references contract(id)
 );
 
-insert into AUTHORITY(name, description) values('ROLE_LIST_EVENT_VALUE','Permite listar valores de eventos.');
-insert into AUTHORITY(name, description) values('ROLE_MANAGE_EVENT_VALUE','Permite gerenciar valores de eventos');
+insert into AUTHORITY(name, description) values('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE','Permite listar valores de eventos do estabelecimento.');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE','Permite gerenciar valores de eventos do estabelecimento');
+insert into AUTHORITY(name, description) values('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE','Permite listar valores de eventos de todos os estabelecimentos.');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE','Permite gerenciar valores de eventos de todos os estabelecimentos.');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_EVENT_VALUE', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_EVENT_VALUE', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE', '1');

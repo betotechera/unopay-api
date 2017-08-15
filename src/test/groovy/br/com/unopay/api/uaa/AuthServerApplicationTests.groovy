@@ -26,8 +26,8 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         return getAccessToken(result)
     }
 
-    protected String getUserAccessToken() throws Exception {
-        MvcResult result = passwordFlow('test@test.com','test')
+    protected String getUserAccessToken(String user='test@test.com',String pwd='test') throws Exception {
+        MvcResult result = passwordFlow(user,pwd)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath('$.access_token', is(notNullValue())))
                 .andReturn()
