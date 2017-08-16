@@ -11,7 +11,7 @@ soap:
       trust-store-password: 'changeit'
 unopay:
   credit:
-    defaultCreditInsertionType: 'PAMCARD_SYSTEM'
+    defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unvlocal.com.br:8080
   notification:
     defaultTemplate: "email-templates/%s/%s.html"

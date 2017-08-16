@@ -11,7 +11,7 @@ soap:
       trust-store-password: 'changeit'
 unopay:
   credit:
-    defaultCreditInsertionType: 'PAMCARD_SYSTEM'
+    defaultCreditInsertionType: 'BOLETO'
   api: localhost:8080
   resetPassword:
       url: 'http://unopay.qa.unvlocal.com.br/#/page/password/'

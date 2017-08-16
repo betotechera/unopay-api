@@ -400,7 +400,6 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         _ | insertion
         _ | CreditInsertionType.BOLETO
         _ | CreditInsertionType.CREDIT_CARD
-        _ | CreditInsertionType.PAMCARD_SYSTEM
     }
 
     def 'should ever create a new remittance when execute'(){

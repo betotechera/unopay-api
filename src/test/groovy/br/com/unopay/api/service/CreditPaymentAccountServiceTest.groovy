@@ -122,7 +122,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            creditInsertionType = CreditInsertionType.BOLETO
             serviceType = FREIGHT
             it }
         when:
@@ -139,7 +139,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            creditInsertionType = CreditInsertionType.BOLETO
             serviceType = FREIGHT
             it }
         when:
@@ -156,7 +156,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         Credit credit = fixtureCreator.createCredit(null)
                 .with {
-                        creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+                        creditInsertionType = CreditInsertionType.BOLETO
                         serviceType = ELECTRONIC_TOLL
                         paymentRuleGroup = paymentRuleGroupUnderTest
                 it }
@@ -180,7 +180,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         Credit credit = fixtureCreator.createCredit(knownProduct)
                 .with {
-            creditInsertionType = CreditInsertionType.PAMCARD_SYSTEM
+            creditInsertionType = CreditInsertionType.BOLETO
             serviceType = ELECTRONIC_TOLL
             it }
         when:

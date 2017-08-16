@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public enum PaymentSource implements DescriptableEnum {
 
-    HIRER("Contratante","1"), ESTABLISHMENT("Estabelecimento","2"), PAMCARY("Pamcary","3");
+    HIRER("Contratante","1"), ESTABLISHMENT("Estabelecimento","2");
 
     private String description;
     private String code;

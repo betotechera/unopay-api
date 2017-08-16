@@ -177,7 +177,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit without direct debit payment type then payment account should be created'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.BOLETO])
         Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
@@ -262,7 +262,6 @@ class CreditServiceTest extends SpockApplicationTests {
         insertionType                      | situation
         CreditInsertionType.BOLETO         | CreditSituation.CONFIRMED
         CreditInsertionType.CREDIT_CARD    | CreditSituation.CONFIRMED
-        CreditInsertionType.PAMCARD_SYSTEM | CreditSituation.CONFIRMED
     }
 
     @Unroll
@@ -284,7 +283,6 @@ class CreditServiceTest extends SpockApplicationTests {
         insertionType                      | _
         CreditInsertionType.BOLETO         | _
         CreditInsertionType.CREDIT_CARD    | _
-        CreditInsertionType.PAMCARD_SYSTEM | _
     }
 
     void 'when insert credits with direct debit then the available balance should be zero'(){
@@ -305,7 +303,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given more of one credit when insert credits the available balance should be updated'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.PAMCARD_SYSTEM])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.BOLETO])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
         Credit creditB = fixtureCreator.createCredit(knownProduct)
         Credit creditC =  fixtureCreator.createCredit(knownProduct)
@@ -355,7 +353,6 @@ class CreditServiceTest extends SpockApplicationTests {
         insertionType                      | _
         CreditInsertionType.BOLETO         | _
         CreditInsertionType.CREDIT_CARD    | _
-        CreditInsertionType.PAMCARD_SYSTEM | _
     }
 
     void 'credit with product should be inserted with product credit insertion type'(){
@@ -425,7 +422,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.creditInsertionType == CreditInsertionType.PAMCARD_SYSTEM
+        result.creditInsertionType == CreditInsertionType.BOLETO
     }
 
     void 'given a credit without product should be inserted with payment rule group'(){
