@@ -49,6 +49,7 @@ import static br.com.unopay.api.model.ContractOrigin.APPLICATION;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
 
 @Data
 @Entity
@@ -179,6 +180,9 @@ public class Contract implements Serializable {
     public void validate(){
         if(begin != null && end != null && begin.after(end)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_END_IS_BEFORE_BEGIN);
+        }
+        if(this.product.getId() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_REQUIRED);
         }
         this.product.validateCreditInsertionType(this.creditInsertionType);
 
@@ -317,5 +321,11 @@ public class Contract implements Serializable {
 
     public Date getEnd(){
         return ObjectUtils.clone(this.end);
+    }
+
+    public void setupMeUp() {
+        this.annuity = product.getAnnuity();
+        this.membershipFee = product.getMembershipFee();
+        this.paymentInstallments = product.getPaymentInstallments();
     }
 }

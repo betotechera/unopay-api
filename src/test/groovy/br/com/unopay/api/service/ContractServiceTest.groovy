@@ -14,6 +14,7 @@ import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
@@ -52,6 +53,19 @@ class ContractServiceTest extends SpockApplicationTests {
         1 * installmentServiceMock.create(_)
     }
 
+    void 'given contract without product should not be created'(){
+        given:
+        Contract contract = createContract()
+        contract.getProduct().id = null
+
+        when:
+        service.save(contract)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PRODUCT_REQUIRED'
+    }
+
     void 'new contract should be created'(){
         given:
         Contract contract = createContract()
@@ -61,6 +75,39 @@ class ContractServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'when create a contract the annuity should be the same of product'(){
+        given:
+        Contract contract = createContract()
+
+        when:
+        def result  = service.save(contract)
+
+        then:
+        assert result.annuity == contract.product.annuity
+    }
+
+    void 'when create a contract the paymentInstallments should be the same of product'(){
+        given:
+        Contract contract = createContract()
+
+        when:
+        def result  = service.save(contract)
+
+        then:
+        assert result.paymentInstallments == contract.product.paymentInstallments
+    }
+
+    void 'when create a contract the membershipFee should be the same of product'(){
+        given:
+        Contract contract = createContract()
+
+        when:
+        def result  = service.save(contract)
+
+        then:
+        assert result.membershipFee == contract.product.membershipFee
     }
 
     void 'given contract with null and default values should create with default values'(){

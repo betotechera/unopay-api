@@ -326,9 +326,8 @@ public final class Errors {
             new UnovationError("CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT",
                     "THe informed creditInsertionTypes has values that is not in the informed Product.");
 
-    public static final UnovationError SERVICE_TYPE_NOT_IN_PRODUCT =
-            new UnovationError("SERVICE_TYPE_NOT_IN_PRODUCT", "The informed ServiceType" +
-                    "has values that is not in the informed Product.");
+    public static final UnovationError PRODUCT_REQUIRED =
+            new UnovationError("PRODUCT_REQUIRED", "product required");
 
 
     /* payment instrument */

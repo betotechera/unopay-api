@@ -60,6 +60,7 @@ public class ContractService {
             validateReferences(contract);
             contract.validate();
             contract.checkFields();
+            contract.setupMeUp();
             Contract created = repository.save(contract);
             installmentService.create(created);
             return created;
