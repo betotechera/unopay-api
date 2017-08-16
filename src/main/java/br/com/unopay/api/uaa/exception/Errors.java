@@ -140,6 +140,10 @@ public final class Errors {
             new UnovationError("PAYMENT_RULE_GROUP_ID_REQUIRED","Id is Required");
     public static final UnovationError PAYMENT_RULE_GROUP_ALREADY_EXISTS =
             new UnovationError("PAYMENT_RULE_GROUP_ALREADY_EXISTS","PaymentRuleGroup Already Exists");
+    public static final UnovationError MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED =
+            new UnovationError("MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED","Minimum payment rule group value required.");
+    public static final UnovationError MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED =
+            new UnovationError("MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED","Maximum payment rule group value required.");
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =

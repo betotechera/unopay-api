@@ -44,6 +44,58 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         created != null
     }
 
+    void 'a payment rule group without minimum value should not be create'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        group.minimumCreditInsertion = null
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED'
+    }
+
+    void 'a payment rule group without maximum value should not be create'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        group.maximumCreditInsertion = null
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED'
+    }
+
+    void 'a payment rule group with minimum value equals zero should not be create'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        group.minimumCreditInsertion = 0.0
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED'
+    }
+
+    void 'a payment rule group with maximum value equals zero should not be create'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        group.maximumCreditInsertion = 0.0
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED'
+    }
+
     void 'should not allow create paymentRuleGroups with same codes'(){
         given:
         PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")

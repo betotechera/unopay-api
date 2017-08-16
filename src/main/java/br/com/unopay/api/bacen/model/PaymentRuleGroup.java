@@ -24,6 +24,8 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.LARGE_PAYMENT_RULE_GROUP_NAME;
+import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_CODE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_NAME_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.SHORT_PAYMENT_RULE_GROUP_NAME;
@@ -109,6 +111,12 @@ public class PaymentRuleGroup implements Serializable, Updatable {
         }
         if (getName().length() < MIN) {
             throw UnovationExceptions.unprocessableEntity().withErrors(SHORT_PAYMENT_RULE_GROUP_NAME);
+        }
+        if(minimumCreditInsertion == null || minimumCreditInsertion.compareTo(BigDecimal.ZERO) == 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED);
+        }
+        if(maximumCreditInsertion == null || maximumCreditInsertion.compareTo(BigDecimal.ZERO) == 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED);
         }
     }
 }
