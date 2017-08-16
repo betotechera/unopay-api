@@ -41,7 +41,7 @@ class ContractServiceTest extends SpockApplicationTests {
         service.installmentService = installmentServiceMock
     }
 
-    void 'new contract should be created'(){
+    void 'when create a new contract the contract installments should be created'(){
         given:
         Contract contract = createContract()
 
@@ -52,7 +52,7 @@ class ContractServiceTest extends SpockApplicationTests {
         1 * installmentServiceMock.create(_)
     }
 
-    void 'when create a new contract the contract installments should be created'(){
+    void 'new contract should be created'(){
         given:
         Contract contract = createContract()
 

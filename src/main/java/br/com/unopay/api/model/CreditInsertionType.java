@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public enum CreditInsertionType implements DescriptableEnum {
     BOLETO("Boleto"), DIRECT_DEBIT("Debito em conta."),
-    CREDIT_CARD("Cartao de credito."), PAMCARD_SYSTEM("Systema Pamcard");
+    CREDIT_CARD("Cartao de credito.");
 
     private String description;
 
@@ -18,6 +18,6 @@ public enum CreditInsertionType implements DescriptableEnum {
     }
 
     public boolean isPaymentProcessedByClient() {
-        return Arrays.asList(BOLETO, CREDIT_CARD, PAMCARD_SYSTEM).contains(this);
+        return Arrays.asList(BOLETO, CREDIT_CARD).contains(this);
     }
 }

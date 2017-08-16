@@ -5,7 +5,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.uaa.repository.UserDetailRepository
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -19,12 +18,7 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
     PaymentRuleGroupService service
 
     @Autowired
-    InstitutionService institutionService
-    @Autowired
     PaymentRuleGroupRepository repository
-
-    @Autowired
-    UserDetailRepository userDetailRepository
 
     void 'should create paymentRuleGroup'(){
         given:
@@ -37,9 +31,6 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         then:
         result != null
     }
-
-
-
 
     void 'should create paymentRuleGroup without optional values'(){
         given:
@@ -139,7 +130,7 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         Page<PaymentRuleGroup> groups = service.findByFilter(new PaymentRuleGroupFilter(), page)
 
         then:
-            assert groups.content.size() > 2
+        assert groups.content.size() > 2
     }
 
     void 'should delete PaymentRuleGroup '(){
@@ -169,9 +160,5 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         assert result.code == 'Test Update'
 
     }
-
-
-
-
 
 }

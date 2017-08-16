@@ -380,6 +380,7 @@ class CreditServiceTest extends SpockApplicationTests {
             add("hirerDocument", hirer.getDocumentNumber())
             add("paymentRuleGroup", paymentRuleGroup)
             add("value", paymentRuleGroup.minimumCreditInsertion - 1)
+            add("product", null)
         }})
 
         when:
@@ -397,6 +398,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
             add("paymentRuleGroup", paymentRuleGroup)
+            add("product", null)
             add("value", paymentRuleGroup.maximumCreditInsertion+1)
         }})
 
@@ -406,22 +408,6 @@ class CreditServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET'
-    }
-
-    void 'credit without product should not be inserted when value is not greater than zero'(){
-        given:
-        def hirer = fixtureCreator.createHirer()
-        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
-            add("product", null)
-            add("value", 0.0)
-        }})
-        when:
-        service.insert(credit)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'MINIMUM_CREDIT_VALUE_NOT_MET'
     }
 
     void 'credit without product should be inserted with default credit insert type'(){
@@ -470,6 +456,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
             add("hirerDocument", hirer.getDocumentNumber())
             add("paymentRuleGroup", null)
+            add("product", null)
         }})
 
         when:

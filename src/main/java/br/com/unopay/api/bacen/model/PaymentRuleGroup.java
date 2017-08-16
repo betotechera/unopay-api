@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -82,10 +83,12 @@ public class PaymentRuleGroup implements Serializable, Updatable {
     @JsonView({Views.Public.class})
     private Institution institution;
 
+    @Min(0)
     @Column(name = "minimum_credit_insertion")
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal minimumCreditInsertion;
 
+    @Min(0)
     @Column(name = "maximum_credit_insertion")
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal maximumCreditInsertion;

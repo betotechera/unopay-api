@@ -19,7 +19,6 @@ import java.util.Set;
 
 import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
-import static br.com.unopay.api.model.CreditInsertionType.PAMCARD_SYSTEM;
 
 public class ProductTemplateLoader implements TemplateLoader {
 
@@ -51,7 +50,6 @@ public class ProductTemplateLoader implements TemplateLoader {
             Set<CreditInsertionType> creditInsertionTypes = new HashSet<CreditInsertionType>(){{{
                 add(BOLETO);
                 add(CREDIT_CARD);
-                add(PAMCARD_SYSTEM);
             }}};
             add("creditInsertionTypes", creditInsertionTypes);
         }});

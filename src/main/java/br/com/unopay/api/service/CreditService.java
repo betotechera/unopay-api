@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_INSERT_TYPE_NOT_CONFIGURED;
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_REQUIRED;
 
 @Slf4j
 @Service
@@ -61,9 +62,9 @@ public class CreditService {
     }
 
     public Credit insert(Credit credit) {
-        credit.validateCreditValue();
         defineDefaultValues(credit);
         validateReferences(credit);
+        credit.validateCreditValue();
         Credit inserted =  repository.save(credit);
         if(!inserted.isDirectDebit()){
             creditPaymentAccountService.register(inserted);
@@ -121,6 +122,9 @@ public class CreditService {
         hirerService.findByDocumentNumber(credit.getHirerDocument());
         if(credit.withProduct()) {
             credit.setProduct(productService.findById(credit.getProductId()));
+        }
+        if (!credit.withPaymentRuleGroup()) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
         }
         credit.setPaymentRuleGroup(paymentRuleGroupService.getById(credit.getPaymentRuleGroupId()));
     }

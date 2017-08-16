@@ -345,8 +345,6 @@ public final class Errors {
             new UnovationError("MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET","Minimum payment rule group value not met.");
     public static final UnovationError MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET =
             new UnovationError("MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET","Maximum payment rule group value not met.");
-    public static final UnovationError MINIMUM_CREDIT_VALUE_NOT_MET =
-            new UnovationError("MINIMUM_CREDIT_VALUE_NOT_MET","minimum product value not met.");
     public static final UnovationError CREDIT_PAYMENT_ACCOUNT_NOT_FOUND =
             new UnovationError("CREDIT_PAYMENT_ACCOUNT_NOT_FOUND","Credit payment account not found.");
     public static final UnovationError HIRER_CREDIT_NOT_FOUND =
