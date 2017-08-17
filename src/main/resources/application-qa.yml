@@ -24,8 +24,8 @@ unopay:
       'BATCH_CLOSED' : "Lote fechado."
       'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
     defaultMail:
-      from: 'no-reply@roadcard.com.br'
-      personalFrom: 'RoadCard'
+      from: 'no-reply@unovation.com.br'
+      personalFrom: 'Unopay'
   file-uploader:
     configs:
       avatar:
