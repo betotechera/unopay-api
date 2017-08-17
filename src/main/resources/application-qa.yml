@@ -10,6 +10,8 @@ soap:
       trust-store: classpath:wsdl/cacerts
       trust-store-password: 'changeit'
 unopay:
+  resetPassword:
+        url: 'http://unopay.qa.unovation.com.br/#/page/password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unvlocal.com.br:8080
@@ -42,6 +44,11 @@ amazon:
 multipart:
   max-file-size: 9000Kb
 spring:
+  datasource:
+      url: jdbc:oracle:thin:@172.31.42.109:1521:ORCL
+      username: administrator
+      password: LVTQB5MkBuH0
+      driverClassName: oracle.jdbc.OracleDriver
   encryptor:
     password: vEexq7mVjQj948B7
   jpa:

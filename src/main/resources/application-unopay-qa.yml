@@ -1,9 +1,0 @@
-spring:
-  datasource:
-      url: jdbc:oracle:thin:@172.31.42.109:1521:ORCL
-      username: administrator
-      password: LVTQB5MkBuH0
-      driverClassName: oracle.jdbc.OracleDriver
-unopay:
-  resetPassword:
-        url: 'http://unopay.qa.unovation.com.br/#/page/password/'
