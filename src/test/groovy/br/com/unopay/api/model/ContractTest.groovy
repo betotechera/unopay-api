@@ -55,7 +55,6 @@ class ContractTest extends FixtureApplicationTest {
 
         then:
         a.name == b.name
-        a.rntrc == b.rntrc
         a.situation == b.situation
         a.issueInvoice == b.issueInvoice
     }

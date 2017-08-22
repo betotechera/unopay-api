@@ -57,10 +57,6 @@ public class Contractor implements Serializable {
     @JsonView({Views.Public.class,Views.List.class})
     private BankAccount bankAccount;
 
-    @Column(name="rntrc")
-    @JsonView({Views.Public.class,Views.List.class})
-    private String rntrc;
-
     @Transient
     @KeyField(baseField = "documento.numero", methodResolver = "getDocumentNumber")
     private String documentNumber;
@@ -71,7 +67,6 @@ public class Contractor implements Serializable {
 
     public void updateModel(Contractor hirer) {
         person.update(hirer.getPerson());
-        this.rntrc  = hirer.getRntrc();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 
