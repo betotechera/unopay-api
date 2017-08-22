@@ -32,7 +32,6 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("begin", instant("now"));
             add("end", instant("2 days from now"));
             add("situation", ContractSituation.ACTIVE);
-            add("rntrc", regex("\\d{4}\\w{6}"));
             add("documentNumberInvoice", regex("\\d{4}\\w{15}"));
             add("annuity", random(BigDecimal.class, range(100,300)));
             add("membershipFee", random(BigDecimal.class, range(50,150)));
