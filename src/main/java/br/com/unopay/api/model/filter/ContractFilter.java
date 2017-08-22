@@ -18,7 +18,7 @@ public class ContractFilter  implements Serializable {
     public ContractFilter(){}
 
     @SearchableField
-    private String code;
+    private Integer code;
 
     @SearchableField
     private String name;

@@ -208,5 +208,23 @@ class FilterTest extends SpockApplicationTests {
         'jose'   | _
     }
 
+    def 'should return contracts with integer filter parameter'() {
+        given:
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("name", uniqueRandom("JoSe", "fernanda", "joao"))
+            add("code", 555333222)
+        }})
+
+        def filter = new ContractFilter()
+
+        filter.with { code = 555333222 }
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
+    }
+
 
 }

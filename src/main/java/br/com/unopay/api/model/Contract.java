@@ -153,12 +153,6 @@ public class Contract implements Serializable {
     @JsonView({Views.Public.class})
     private ContractOrigin origin =  APPLICATION;
 
-    @Column(name="rntrc")
-    @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
-    @Size(max = 20, groups = {Create.class, Update.class})
-    private String rntrc;
-
     @Column(name = "annuity")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
@@ -213,7 +207,6 @@ public class Contract implements Serializable {
 
     public void updateMe(Contract contract) {
         name = contract.getName();
-        rntrc = contract.getRntrc();
         situation = contract.getSituation();
         issueInvoice = contract.isIssueInvoice();
         if(contract.getDocumentNumberInvoice() != null) {
