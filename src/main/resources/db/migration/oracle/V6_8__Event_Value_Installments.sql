@@ -43,3 +43,6 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ESTAB
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
+alter table contract drop column rntrc;
+alter table contractor drop column rntrc;

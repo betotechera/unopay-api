@@ -51,6 +51,7 @@ public class Person implements Serializable{
     private String name;
 
     @Column(name="short_name")
+    @NotNull(groups = {Create.class, Update.class})
     @Size(min=2,max = 50, groups = {Create.class, Update.class})
     @JsonView({Views.Public.class})
     private String shortName;
