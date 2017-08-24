@@ -29,22 +29,22 @@ class AddressServiceTest extends SpockApplicationTests {
         def address = service.search(cep)
         then:
         address
+        address.zipCode
         !address.city
         !address.district
-        !address.zipCode
         !address.state
     }
 
-    def "Search invalid cep"() {
+    def "Search cep with error"() {
         given:
         def cep = '999999999'
         when:
         def address = service.search(cep)
         then:
         address
+        address.zipCode
         !address.city
         !address.district
-        !address.zipCode
         !address.state
     }
 

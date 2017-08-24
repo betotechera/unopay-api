@@ -40,7 +40,6 @@ public class BankAccount implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -48,31 +47,31 @@ public class BankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="bank_bacen_code")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private Bank bank;
 
     @Column(name = "agency")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private String agency;
 
     @Column(name = "agency_digit")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private String agencyDigit;
 
     @Column(name = "account_number")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private String accountNumber;
 
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     @Column(name = "account_number_digit")
     private String accountNumberDigit;
 
     @Column(name = "account_type")
     @Enumerated(value = EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccountType type;
 
     public void updateMe(BankAccount other){

@@ -48,7 +48,6 @@ public class PaymentRuleGroup implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -59,7 +58,6 @@ public class PaymentRuleGroup implements Serializable, Updatable {
 
     @Column(name="name")
     @NotNull(groups = Create.class)
-    @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 

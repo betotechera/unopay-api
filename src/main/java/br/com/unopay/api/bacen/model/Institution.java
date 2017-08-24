@@ -31,7 +31,6 @@ public class Institution implements Serializable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
@@ -40,7 +39,6 @@ public class Institution implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="person_id")
     @ManyToOne
-    @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
 

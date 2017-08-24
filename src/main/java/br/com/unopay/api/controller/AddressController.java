@@ -27,10 +27,12 @@ public class AddressController {
     @Autowired
     AddressService service;
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Address.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/addresses", method = RequestMethod.GET)
-    public ResponseEntity<Address> searchAddress(@RequestParam String zipCode) {
+    public ResponseEntity<Address> searchAddress(@RequestParam @Valid
+                                                     @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
+                                                             String zipCode) {
         log.info("find Address with zipCode={}", zipCode);
         return ResponseEntity.ok(service.search(zipCode));
     }

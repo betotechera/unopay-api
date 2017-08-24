@@ -22,20 +22,17 @@ public class Document implements Serializable {
 
     public Document(){}
 
-    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="document_type")
-    @JsonView({Views.Public.class,Views.List.class})
     private DocumentType type;
 
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="document_number")
-    @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String number;
 
     @Enumerated(STRING)
     @Column(name="registry_entity")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private RegistryEntity registryEntity;
 }
