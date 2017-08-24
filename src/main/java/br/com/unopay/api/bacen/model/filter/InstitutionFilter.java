@@ -12,8 +12,8 @@ public class InstitutionFilter implements Serializable {
     @SearchableField(field = "person.document.number")
     private String documentNumber;
 
-    @SearchableField(field = "person.legalPersonDetail.fantasyName")
-    private String fantasyName;
+    @SearchableField(field = "person.name")
+    private String name;
 
     @SearchableField(field = "paymentRuleGroups.name")
     private String paymentRuleGroupName;

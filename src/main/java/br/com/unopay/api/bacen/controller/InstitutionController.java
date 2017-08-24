@@ -41,7 +41,7 @@ public class InstitutionController {
         this.service = service;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/institutions", method = RequestMethod.POST)
     public ResponseEntity<Institution> create(@Validated(Create.class) @RequestBody Institution institution) {
@@ -52,13 +52,14 @@ public class InstitutionController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.GET)
     public Institution get(@PathVariable  String id) {
         log.info("get Institution={}", id);
         return service.getById(id);
     }
+    @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Institution institution) {
@@ -74,7 +75,7 @@ public class InstitutionController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Institution.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/institutions", method = RequestMethod.GET)
     public Results<Institution> getByParams(InstitutionFilter filter, @Validated UnovationPageRequest pageable) {

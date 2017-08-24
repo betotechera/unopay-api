@@ -23,11 +23,9 @@ public class Bank implements Serializable {
 
     @Id
     @Column(name = "bacen_code")
-    @JsonView({Views.Public.class, Views.List.class})
     private Integer bacenCode;
 
     @Column(name = "name")
-    @JsonView({Views.Public.class, Views.List.class})
     private String name;
 
     public String getName(){

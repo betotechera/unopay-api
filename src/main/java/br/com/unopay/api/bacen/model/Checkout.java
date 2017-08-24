@@ -25,20 +25,20 @@ public class Checkout implements Serializable {
 
     @Enumerated(STRING)
     @Column(name="movement_period")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private RecurrencePeriod period;
 
     @Column(name="authorize_transfer")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     private Boolean authorizeTransfer = FALSE;
 
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @Column(name="minimum_deposit_value")
     private Double minimumDepositValue;
 
     @Min(0)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @Column(name="closing_payment_days")
     private Integer closingPaymentDays;
 

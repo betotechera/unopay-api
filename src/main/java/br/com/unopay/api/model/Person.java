@@ -41,7 +41,6 @@ public class Person implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Public.class,List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -53,46 +52,44 @@ public class Person implements Serializable{
     @Column(name="short_name")
     @NotNull(groups = {Create.class, Update.class})
     @Size(min=2,max = 50, groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private String shortName;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Public.class,List.class})
     private PersonType type;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Embedded
-    @JsonView({Public.class,List.class})
     private Document document;
 
     @OneToOne
-    @JsonView({Public.class,List.class})
+    @JsonView({Views.Person.class})
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
     @OneToOne
-    @JsonView({Public.class,List.class})
+    @JsonView({Views.Person.class})
     @JoinColumn(name="physical_person_detail_id")
     private PhysicalPersonDetail physicalPersonDetail;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JsonView({Public.class,List.class})
+    @JsonView({Views.Address.class})
     @JoinColumn(name="address_id")
     private Address address;
 
     @Column(name="telephone")
-    @JsonView({Public.class})
+    @JsonView({Views.Person.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String telephone;
 
     @Column(name="cell_phone")
-    @JsonView({Public.class})
+    @JsonView({Views.Person.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String cellPhone;
 

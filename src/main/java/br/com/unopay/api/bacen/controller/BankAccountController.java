@@ -36,7 +36,7 @@ public class BankAccountController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.BankAccount.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/bankAccounts", method = RequestMethod.POST)
     public ResponseEntity<BankAccount> create(@Validated(Create.class) @RequestBody BankAccount bankAccount) {
@@ -47,7 +47,7 @@ public class BankAccountController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.BankAccount.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/bankAccounts/{id}", method = RequestMethod.GET)
     public BankAccount get(@PathVariable  String id) {

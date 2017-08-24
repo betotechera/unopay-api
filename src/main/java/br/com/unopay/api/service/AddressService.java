@@ -21,10 +21,10 @@ public class AddressService {
     public Address search(String zipCode) {
         try {
             CEP cep = viaCEPService.search(zipCode);
-            return cep.error() ? new Address() : new Address(cep);
+            return cep.error() ? new Address(zipCode) : new Address(cep);
         }catch (Exception e){
             log.warn("Error on getting address",e);
-            return new Address();
+            return new Address(zipCode);
         }
     }
 }

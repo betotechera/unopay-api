@@ -41,7 +41,7 @@ public class AccreditedNetworkController {
         this.service = service;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.POST)
     public ResponseEntity<AccreditedNetwork> create(@Validated(Create.class)
@@ -53,13 +53,14 @@ public class AccreditedNetworkController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.GET)
     public AccreditedNetwork get(@PathVariable  String id) {
         log.info("get AccreditedNetwork={}", id);
         return service.getById(id);
     }
+    @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class)
@@ -69,6 +70,7 @@ public class AccreditedNetworkController {
         service.update(id,accreditedNetwork);
     }
 
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
@@ -76,7 +78,7 @@ public class AccreditedNetworkController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET)
     public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter,

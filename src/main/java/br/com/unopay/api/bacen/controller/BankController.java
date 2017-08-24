@@ -33,7 +33,6 @@ public class BankController {
         this.service = service;
     }
 
-    @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/banks", method = RequestMethod.GET)
     public Results<Bank> getAll(@Validated UnovationPageRequest pageable) {

@@ -33,23 +33,22 @@ public class PhysicalPersonDetail implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Column(name="email")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     private String email;
 
     @Column(name="birth_date")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     private Date birthDate;
 
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="gender")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     private Gender gender;
 
     public void updateForHirer(PhysicalPersonDetail detail) {

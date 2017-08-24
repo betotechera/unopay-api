@@ -40,7 +40,6 @@ public class LegalPersonDetail implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -52,35 +51,35 @@ public class LegalPersonDetail implements Serializable{
     @Valid
     @Enumerated(STRING)
     @Column(name="activity")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     private CompanyActivity activity;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     private CompanyType type;
 
     @Column(name="fantasy_name")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Person.class})
     @Size(max = 150, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String fantasyName;
 
     @Column(name="responsible_name")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private String responsibleName;
 
     @Column(name="responsible_email")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private String responsibleEmail;
 
     @Column(name="state_inscription_number")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private String stateInscriptionNumber;
 
     @Column(name="municipal_inscription_number")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Person.class})
     private String municipalInscriptionNumber;
 
 
@@ -90,7 +89,7 @@ public class LegalPersonDetail implements Serializable{
             @AttributeOverride(name = "number", column = @Column(name = "responsible_document_number")),
             @AttributeOverride(name = "registryEntity", column = @Column(name = "responsible_registry_entity"))
     })
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Institution.Detail.class})
     private Document responsibleDocument;
 
     public void update(LegalPersonDetail legalPersonDetail) {

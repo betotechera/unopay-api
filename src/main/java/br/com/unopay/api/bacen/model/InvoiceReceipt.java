@@ -23,13 +23,13 @@ public class InvoiceReceipt implements Serializable{
 
     @Enumerated(STRING)
     @Column(name="invoice_receipt_type")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private InvoiceReceiptType type;
 
     @Enumerated(STRING)
     @Column(name="invoice_receipt_period")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private RecurrencePeriod period;
 

@@ -9,6 +9,21 @@ public interface Views {
 
     interface GroupUserType {}
 
+    interface Person {}
+
+    interface Address{}
+    interface BankAccount {}
+
+    interface Institution {
+        interface Detail extends Person,Address {}
+        interface List {}
+    }
+
+    interface AccreditedNetwork {
+        interface Detail extends Person,BankAccount,Address {}
+        interface List {}
+    }
+
     interface ServiceAuthorize {
         interface Detail {}
         interface List {}
