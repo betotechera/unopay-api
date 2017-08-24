@@ -154,12 +154,10 @@ public class Contract implements Serializable {
     private ContractOrigin origin =  APPLICATION;
 
     @Column(name = "annuity")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal annuity;
 
     @Column(name = "membership_fee")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Public.class,Views.List.class})
     private BigDecimal membershipFee;
 
