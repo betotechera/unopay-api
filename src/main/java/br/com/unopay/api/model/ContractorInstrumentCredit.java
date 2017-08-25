@@ -58,7 +58,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     @NotNull(groups = {Reference.class})
@@ -67,70 +66,69 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="payment_instrument_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private PaymentInstrument paymentInstrument;
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private Contract contract;
 
     @ManyToOne
     @JoinColumn(name="credit_payment_account_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private CreditPaymentAccount creditPaymentAccount;
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private ServiceType serviceType;
 
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private CreditInsertionType creditInsertionType;
 
     @Column(name = "installment_number")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private Long installmentNumber;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
 
     @Column(name = "expiration_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date expirationDateTime;
 
     @Column(name = "issuer_fee")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private BigDecimal issuerFee;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private CreditSituation situation;
 
     @Column(name = "available_balance")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private BigDecimal availableBalance;
 
     @Column(name = "blocked_balance")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private BigDecimal blockedBalance;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private Date createdDateTime;
 
     @Column(name = "credit_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private ContractorCreditType creditType;
 

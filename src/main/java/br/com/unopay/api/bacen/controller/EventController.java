@@ -43,7 +43,7 @@ public class EventController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Event.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_EVENT')")
     @RequestMapping(value = "/events", method = RequestMethod.POST)
@@ -55,7 +55,7 @@ public class EventController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Event.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_EVENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/events/{id}", method = RequestMethod.GET)
@@ -80,7 +80,7 @@ public class EventController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Event.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_EVENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/events", method = RequestMethod.GET)

@@ -41,7 +41,7 @@ public class PaymentInstrumentController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.PaymentInstrument.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/payment-instruments", method = RequestMethod.POST)
     public ResponseEntity<PaymentInstrument> create(@Validated(Create.class)
@@ -53,7 +53,7 @@ public class PaymentInstrumentController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.PaymentInstrument.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-instruments/{id}", method = RequestMethod.GET)
     public PaymentInstrument get(@PathVariable String id) {
@@ -76,7 +76,7 @@ public class PaymentInstrumentController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getByParams(PaymentInstrumentFilter filter,

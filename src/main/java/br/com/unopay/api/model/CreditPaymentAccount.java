@@ -62,89 +62,89 @@ public class CreditPaymentAccount implements Serializable, Updatable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
 
     @Column(name = "transaction_created_date_time")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private Date transactionCreatedDateTime;
 
     @Valid
     @ManyToOne
     @JoinColumn(name="issuer_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private Issuer issuer;
 
     @Valid
     @ManyToOne
     @JoinColumn(name="product_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private Product product;
 
     @Valid
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private PaymentRuleGroup paymentRuleGroup;
 
     @Column(name = "hirer_document")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private String hirerDocument;
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.List.class})
     private ServiceType serviceType;
 
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private CreditInsertionType creditInsertionType;
 
     @Column(name = "solicitation_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date solicitationDateTime;
 
     @Column(name = "credit_number")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Long creditNumber;
 
     @Column(name = "insertion_created_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date insertionCreatedDateTime;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private CreditSituation situation;
 
     @Column(name = "credit_source")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private String creditSource;
 
     @Column(name = "available_balance")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.CreditPaymentAccount.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal availableBalance;
 
     @Column(name = "payment_account_id")
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     private String paymentAccount;
 
     @Version

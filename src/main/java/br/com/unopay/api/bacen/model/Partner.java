@@ -31,21 +31,18 @@ public class Partner implements Serializable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @JoinColumn(name="person_id")
-    @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     private Person person;
 
     @ManyToOne
     @Valid
     @JoinColumn(name="bank_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccount bankAccount;
 
     public void updateModel(Partner hirer) {

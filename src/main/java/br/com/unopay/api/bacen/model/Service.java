@@ -32,32 +32,31 @@ public class Service implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "system-uuid")
-    @JsonView({Views.Public.class, Views.List.class})
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     @Column(name = "code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.Service.List.class})
     private Integer code;
 
     @Column(name = "name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.Service.List.class})
     private String name;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.Service.Detail.class})
     private ServiceType type;
 
     @Column(name = "fee_val")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.Service.Detail.class})
     private BigDecimal feeVal;
 
     @Column(name = "fee_percent")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.Service.Detail.class})
     private Double feePercent;
 
     public void validate() {

@@ -52,13 +52,11 @@ public class CargoContract implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private Contract contract;
 
@@ -67,7 +65,6 @@ public class CargoContract implements Serializable, Updatable {
     @KeyEnumField
     @KeyField(baseField = "indicador.ressalva")
     @Column(name = "caveat")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private DocumentCaveat caveat;
 
@@ -77,11 +74,9 @@ public class CargoContract implements Serializable, Updatable {
     @KeyEnumField(valueOfMethodName = "from")
     @Column(name = "cargo_profile")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     private CargoProfile cargoProfile;
 
     @Column(name = "receipt_observation")
-    @JsonView({Views.Public.class,Views.List.class})
     private String receiptObservation;
 
     @Valid
@@ -89,7 +84,6 @@ public class CargoContract implements Serializable, Updatable {
     @Column(name = "receipt_step")
     @KeyField(baseField = "digitalizacao.etapa.tipo")
     @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private ReceiptStep receiptStep;
 
@@ -97,7 +91,6 @@ public class CargoContract implements Serializable, Updatable {
     @Enumerated(STRING)
     @Column(name="payment_source")
     @KeyEnumField(valueOfMethodName = "from")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private PaymentSource paymentSource;
 
@@ -105,13 +98,11 @@ public class CargoContract implements Serializable, Updatable {
     @Enumerated(STRING)
     @Column(name="travel_situation")
     @KeyEnumField(valueOfMethodName = "from")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private TravelSituation travelSituation;
 
 
     @Column(name = "created_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
     private Date createdDateTime;
 
     @KeyField(baseField = "id")
@@ -123,7 +114,6 @@ public class CargoContract implements Serializable, Updatable {
     @Column(name="receipt_situation")
     @KeyField(baseField = "quitacao.situacao")
     @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
-    @JsonView({Views.Public.class,Views.List.class})
     private ReceiptSituation receiptSituation;
 
     @Valid
@@ -131,7 +121,6 @@ public class CargoContract implements Serializable, Updatable {
     @Column(name="reason_receipt_situation")
     @KeyField(baseField = "quitacao.situacao.motivo")
     @KeyEnumField(valueOfMethodName = "from", reverseMethodName = "getCode")
-    @JsonView({Views.Public.class,Views.List.class})
     private ReasonReceiptSituation reasonReceiptSituation;
 
     @KeyFieldListReference(listType = TravelDocument.class)

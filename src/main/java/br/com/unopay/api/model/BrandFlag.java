@@ -24,15 +24,12 @@ public class BrandFlag  implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Column(name="name")
-    @JsonView({Views.Public.class,Views.List.class})
     private String name;
 
     @Column(name="description")
-    @JsonView({Views.Public.class})
     private String description;
 }

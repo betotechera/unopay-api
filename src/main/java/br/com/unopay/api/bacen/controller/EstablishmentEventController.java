@@ -45,7 +45,7 @@ public class EstablishmentEventController {
         this.userDetailService = userDetailService;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST)
@@ -60,7 +60,7 @@ public class EstablishmentEventController {
 
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.GET)
@@ -86,7 +86,7 @@ public class EstablishmentEventController {
         service.deleteByEstablishmentIdAndId(establishmentId, id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.GET)
@@ -96,7 +96,7 @@ public class EstablishmentEventController {
         return new Results<>(page);
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST)
@@ -110,7 +110,7 @@ public class EstablishmentEventController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.GET)
@@ -139,7 +139,7 @@ public class EstablishmentEventController {
         service.deleteByEstablishmentIdAndId(currentUser.establishmentId(), id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.GET)

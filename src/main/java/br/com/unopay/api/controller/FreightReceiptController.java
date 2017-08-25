@@ -39,7 +39,6 @@ public class FreightReceiptController {
         this.service = service;
     }
 
-    @JsonView({Views.Public.class})
     @ResponseStatus(CREATED)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/freight-receipts", method = POST)

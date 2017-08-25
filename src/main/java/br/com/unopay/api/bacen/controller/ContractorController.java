@@ -59,7 +59,7 @@ public class ContractorController {
         this.paymentInstrumentService = paymentInstrumentService;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/contractors", method = RequestMethod.POST)
     public ResponseEntity<Contractor> create(@Validated(Create.class) @RequestBody Contractor contractor) {
@@ -70,7 +70,7 @@ public class ContractorController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.GET)
     public Contractor get(@PathVariable  String id) {
@@ -92,7 +92,7 @@ public class ContractorController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Contractor.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors", method = RequestMethod.GET)
     public Results<Contractor> getByParams(ContractorFilter filter, @Validated UnovationPageRequest pageable) {
@@ -102,7 +102,7 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
     public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam(required = false)
@@ -112,7 +112,7 @@ public class ContractorController {
         return new Results<>(contracts);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.ContractorInstrumentCredit.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{contractorDocument}/credits", method = RequestMethod.GET)
     public Results<ContractorInstrumentCredit> getCredits(@PathVariable  String contractorDocument,
@@ -125,7 +125,7 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{contractorDocument}/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getInstruments(@PathVariable String contractorDocument) {

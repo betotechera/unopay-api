@@ -34,7 +34,6 @@ public class CargoContractController {
     }
 
 
-    @JsonView({Views.Public.class})
     @ResponseStatus(OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/cargo-contracts/documents", method = GET)
@@ -45,7 +44,6 @@ public class CargoContractController {
         return cargoContract;
     }
 
-    @JsonView({Views.Public.class})
     @ResponseStatus(OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/cargo-contracts/{id}", method = GET)

@@ -37,7 +37,6 @@ public class Event implements Serializable {
     @Column(name="id")
     @NotNull(groups = {Reference.class})
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -45,31 +44,31 @@ public class Event implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="service_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.List.class})
     private Service service;
 
     @Column(name = "ncm_code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.List.class})
     private String ncmCode;
 
     @Column
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.List.class})
     private String name;
 
     @Column(name ="request_quantity")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.List.class})
     private boolean requestQuantity;
 
     @Column(name ="quantity_unity")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.Detail.class})
     private String quantityUnity;
 
     @Column(name ="request_value")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Event.List.class})
     private boolean requestValue;
 
     public void updateMe(Event other){

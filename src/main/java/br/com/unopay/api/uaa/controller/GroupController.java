@@ -75,7 +75,7 @@ public class GroupController {
     }
 
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Group.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/groups/{id}", method = RequestMethod.GET)
     public Group get(@PathVariable  String id) {
@@ -84,7 +84,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.List.class)
+    @JsonView(Views.Group.List.class)
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     Results<Group> findAllGroups(GroupFilter groupFilter,@Valid UnovationPageRequest pageable) {
         LOGGER.info("getting all groups by filter={}",groupFilter);
@@ -102,7 +102,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Group.Detail.class)
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.GET)
     public Results<UserDetail> getGroupMembers(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
         LOGGER.info("get members to group={}", id);
@@ -121,7 +121,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Group.Detail.class)
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
     public Results<Authority> getGroupAuthorities(@PathVariable("id") String id) {
         LOGGER.info("get authorities to group={}", id);

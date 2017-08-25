@@ -33,7 +33,6 @@ public class PaymentBankAccount implements Serializable{
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -41,36 +40,36 @@ public class PaymentBankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="bank_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccount bankAccount;
 
     @Column(name = "authorize_transfer")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private Boolean authorizeTransfer = Boolean.FALSE;
 
     @Column(name = "deposit_period")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private RecurrencePeriod depositPeriod;
 
     @Min(0)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     @Column(name = "post_paid_payment_days")
     private Integer postPaidPaymentDays;
 
     @Min(0)
     @Column(name = "pre_paid_payment_days")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     private Integer prePaidPaymentDays;
 
     @Column(name = "bank_agreement_number_credit")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForCredit;
 
     @Column(name = "bank_agreement_number_debit")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
 

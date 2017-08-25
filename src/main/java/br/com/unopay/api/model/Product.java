@@ -52,50 +52,49 @@ public class Product implements Serializable, Updatable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
 
     @Column(name="code")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.List.class})
     @Size(min=1, max = 4, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String code;
 
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     @Size(min=2, max = 100, groups = {Create.class, Update.class})
     private String name;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
+    @JsonView({Views.Product.List.class})
     private ProductType type;
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.List.class})
     private Issuer issuer;
 
     @ManyToOne
     @JoinColumn(name="payment_rule_group_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private PaymentRuleGroup paymentRuleGroup;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Product.Detail.class})
     private AccreditedNetwork accreditedNetwork;
 
     @Size(min = 1)
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = PaymentInstrumentType.class)
     @Column(name = "payment_instrument_type", nullable = false)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_payment_instrument_tp", joinColumns = @JoinColumn(name = "product_id"))
     private Set<PaymentInstrumentType> paymentInstrumentTypes;
@@ -104,7 +103,7 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @Column(name = "service_type", nullable = false)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<ServiceType> serviceTypes;
@@ -113,59 +112,59 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER,targetClass = CreditInsertionType.class)
     @Column(name = "credit_insertion_type", nullable = false)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_credit_insertion_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<CreditInsertionType> creditInsertionTypes;
 
     @Column(name = "payment_instrument_valid_days")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Integer paymentInstrumentValidDays;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.List.class})
     private ProductSituation situation;
 
     @Column(name = "membership_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal membershipFee;
 
     @Column(name = "credit_insertion_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal creditInsertionFee;
 
     @Column(name = "pay_inst_emission_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal paymentInstrumentEmissionFee;
 
     @Column(name = "pay_inst_second_copy_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal paymentInstrumentSecondCopyFee;
 
     @Column(name = "adm_credit_insert_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal administrationCreditInsertionFee;
 
     @Column(name = "annuity")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private BigDecimal annuity;
 
     @Column(name = "payment_installments")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private Integer paymentInstallments;
 
     @Min(1)
     @Column(name = "contract_validity_days")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Product.Detail.class})
     private Integer contractValidityDays;
 
     @Version

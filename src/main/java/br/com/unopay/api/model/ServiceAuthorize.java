@@ -72,27 +72,27 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "authorization_date_time")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private Date authorizationDateTime;
 
     @ManyToOne
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private Establishment establishment;
 
     @ManyToOne
     @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contract_id")
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private Contract contract;
 
     @ManyToOne
     @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private Contractor contractor;
 
     @Column(name = "service_type")
@@ -113,7 +113,7 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "event_value")
     @KeyField(baseField = "abastecimento.valor")
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private BigDecimal eventValue;
 
     @Column(name = "value_fee")
@@ -166,7 +166,7 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.ServiceAuthorize.Detail.class,Views.ServiceAuthorize.List.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private TransactionSituation situation;
 
     @Column(name = "batch_closing_date_time")

@@ -44,12 +44,12 @@ public class Hirer implements Serializable {
     @Valid
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     @JoinColumn(name="bank_account_id")
     private BankAccount bankAccount;
 
     @Column(name="document_email")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Hirer.Detail.class})
     private String documentEmail;
 
     public void updateModel(Hirer hirer) {

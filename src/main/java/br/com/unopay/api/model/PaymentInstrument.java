@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.swing.text.View;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
@@ -40,58 +41,56 @@ public class PaymentInstrument implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
-    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     private String id;
 
     @Column(name = "type")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(value = EnumType.STRING)
+    @JsonView({Views.ContractorInstrumentCredit.List.class,Views.PaymentInstrument.List.class})
     private PaymentInstrumentType type;
 
     @Column(name = "payment_number")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     private String number;
 
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class, Views.PaymentInstrument.List.class})
     private Product product;
 
     @ManyToOne
     @JoinColumn(name="contractor_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private Contractor contractor;
 
     @Column(name = "created_date")
-    @JsonView({Views.Public.class,Views.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private Date createdDate;
 
     @Column(name = "expiration_date")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private Date expirationDate;
 
     @Column(name = "password")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private String password;
 
     @Column(name = "situation")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.List.class})
     @Enumerated(value = EnumType.STRING)
     private PaymentInstrumentSituation situation;
 
     @Column(name = "external_number_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private String externalNumberId;
 
     @Column(name = "gateway_token")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentInstrument.Detail.class})
     private String gatewayToken;
 
     @Version

@@ -62,7 +62,6 @@ public class PaymentRemittance implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
@@ -72,7 +71,7 @@ public class PaymentRemittance implements Serializable {
     private RemittancePayer payer;
 
     @Column(name = "remittance_number")
-    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
+    @JsonView(Views.PaymentRemittance.List.class)
     @NotNull(groups = {Create.class})
     private String number;
 
@@ -94,7 +93,7 @@ public class PaymentRemittance implements Serializable {
     private String occurrenceCode;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
+    @JsonView(Views.PaymentRemittance.List.class)
     @NotNull(groups = {Create.class})
     private Date createdDateTime;
 
@@ -104,11 +103,11 @@ public class PaymentRemittance implements Serializable {
     private Date submissionDateTime;
 
     @Column(name = "cnab_uri")
-    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
+    @JsonView(Views.PaymentRemittance.List.class)
     private String cnabUri;
 
     @Column(name = "situation")
-    @JsonView({Views.PaymentRemittance.Detail.class,Views.PaymentRemittance.List.class})
+    @JsonView(Views.PaymentRemittance.List.class)
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;
 

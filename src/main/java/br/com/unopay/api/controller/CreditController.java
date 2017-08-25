@@ -47,7 +47,7 @@ public class CreditController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Credit.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT')")
     @RequestMapping(value = "/hirers/{document}/credits", method = POST)
@@ -62,7 +62,7 @@ public class CreditController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Credit.Detail.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
     @RequestMapping(value = "/hirers/{document}/credits/{id}", method = GET)
     public Credit get(@PathVariable String id) {
@@ -79,7 +79,7 @@ public class CreditController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.List.class)
+    @JsonView(Views.Credit.List.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
     @RequestMapping(value = "/hirers/credits", method = GET)
     public Results<Credit> create(CreditFilter filter,

@@ -69,13 +69,13 @@ public class Contract implements Serializable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Establishment.class})
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "contract")
     private Set<ContractEstablishment> contractEstablishments;
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Establishment.class})
     @JoinTable(name = "contract_establishment",
             joinColumns = { @JoinColumn(name = "contract_id") },
             inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
@@ -88,81 +88,81 @@ public class Contract implements Serializable {
 
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView(Views.Contract.List.class)
     @Size(min=2, max = 100, groups = {Create.class, Update.class})
     private String name;
 
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Product product;
 
     @ManyToOne
     @JoinColumn(name="hirer_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Hirer hirer;
 
     @ManyToOne
     @NotNull(groups = {Create.class})
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Contractor contractor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_instrument_type")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView(Views.Contract.List.class)
     private PaymentInstrumentType paymentInstrumentType;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<ServiceType> serviceType;
 
     @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView(Views.Contract.List.class)
     private CreditInsertionType creditInsertionType;
 
     @Column(name = "begin_date")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Date begin;
 
     @Column(name = "end_date")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Date end;
 
     @Column(name = "issue_invoice")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Detail.class})
     private boolean issueInvoice;
 
     @Column(name = "document_number_invoice")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Detail.class})
     private String documentNumberInvoice;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView(Views.Contract.List.class)
     private ContractSituation situation = ACTIVE;
 
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Detail.class})
     private ContractOrigin origin =  APPLICATION;
 
     @Column(name = "annuity")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private BigDecimal annuity;
 
     @Column(name = "membership_fee")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private BigDecimal membershipFee;
 
     @Column(name = "payment_installments")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Detail.class})
     private Integer paymentInstallments;
 
     @JsonIgnore

@@ -42,18 +42,15 @@ public class TravelDocument  implements Serializable, Updatable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @JoinColumn(name="contract_id")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Update.class})
     private Contract contract;
 
     @Column(name = "quantity")
-    @JsonView({Views.Public.class,Views.List.class})
     private Integer quantity;
 
     @Valid
@@ -62,12 +59,10 @@ public class TravelDocument  implements Serializable, Updatable {
     @KeyField(baseField = "sigla", reverseField = "tipo")
     @Column(name="type")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentType type;
 
     @Column(name="document_number")
     @KeyField(baseField = "numero")
-    @JsonView({Views.Public.class,Views.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private String documentNumber;
 
@@ -75,7 +70,6 @@ public class TravelDocument  implements Serializable, Updatable {
     @Enumerated(STRING)
     @Column(name="situation")
     @KeyEnumField(valueOfMethodName = "from")
-    @JsonView({Views.Public.class,Views.List.class})
     private TravelDocumentSituation situation;
 
     @Valid
@@ -83,27 +77,22 @@ public class TravelDocument  implements Serializable, Updatable {
     @Column(name = "caveat")
     @KeyEnumField
     @KeyField(baseField = "ressalva")
-    @JsonView({Views.Public.class,Views.List.class})
     private DocumentCaveat caveat;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
     @KeyField(baseField = "data")
     @KeyDate(pattern = "dd/MM/yyyy")
     private Date createdDateTime;
 
     @Column(name = "delivery_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
     private Date deliveryDateTime;
 
     @Column(name = "cargo_weight")
     @KeyField(baseField = "peso")
-    @JsonView({Views.Public.class,Views.List.class})
     private Double cargoWeight;
 
     @Column(name = "damaged_items")
     @KeyField(baseField = "itensavariados")
-    @JsonView({Views.Public.class,Views.List.class})
     private Integer damagedItems;
 
     @Version

@@ -27,27 +27,26 @@ public class Contact  implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Column(name="name")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Establishment.Contact.class})
     @NotNull(groups = {Create.class, Update.class})
     private String name;
 
     @Column(name="mail")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Establishment.Contact.class})
     @NotNull(groups = {Create.class, Update.class})
     private String mail;
 
     @Column(name = "cell_phone")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Establishment.Contact.class})
     @NotNull(groups = {Create.class, Update.class})
     private String cellPhone;
 
     @Column(name = "phone")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Establishment.Contact.class})
     @NotNull(groups = {Create.class, Update.class})
     private String phone;
 }

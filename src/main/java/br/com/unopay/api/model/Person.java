@@ -25,8 +25,6 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.model.validation.group.Views.List;
-import static br.com.unopay.api.model.validation.group.Views.Public;
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -79,7 +77,7 @@ public class Person implements Serializable{
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JsonView({Views.Address.class})
+    @JsonView({Views.Address.class,Views.AddressList.class})
     @JoinColumn(name="address_id")
     private Address address;
 

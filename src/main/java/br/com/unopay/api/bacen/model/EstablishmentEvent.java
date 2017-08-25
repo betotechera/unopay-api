@@ -40,21 +40,23 @@ public class EstablishmentEvent implements Updatable, Serializable {
 
     @ManyToOne
     @JoinColumn(name="event_id")
+    @JsonView({Views.EstablishmentEvent.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Event event;
 
     @ManyToOne
     @JoinColumn(name="establishment_id")
+    @JsonView({Views.EstablishmentEvent.List.class})
     private Establishment establishment;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.EstablishmentEvent.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
 
 
     @Column(name = "expiration")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.EstablishmentEvent.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date expiration;
 

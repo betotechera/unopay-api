@@ -47,19 +47,17 @@ public class Group implements Serializable {
     public Group(){}
 
     @Id
-    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @NotNull(groups = Update.class)
     @Column(name="id")
     private String id;
 
-    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
     @NotNull(groups = Create.class)
     @Column(name="group_name", unique = true)
     private String name;
 
-    @JsonView({Views.Public.class,Views.List.class,Views.GroupUserType.class})
+    @JsonView({Views.Group.Detail.class})
     @Column(name="description")
     private String description;
 
@@ -73,13 +71,13 @@ public class Group implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @BatchSize(size = 10)
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Group.Detail.class})
     @JoinTable(name = "oauth_group_authorities",
             joinColumns = { @JoinColumn(name = "group_id") },
             inverseJoinColumns = { @JoinColumn(name = "authority") })
     private Set<Authority> authorities;
 
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Group.List.class})
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="user_type")

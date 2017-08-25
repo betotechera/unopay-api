@@ -41,7 +41,7 @@ public class HirerController {
         this.service = service;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Hirer.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/hirers", method = RequestMethod.POST)
     public ResponseEntity<Hirer> create(@Validated(Create.class) @RequestBody Hirer hirer) {
@@ -52,7 +52,7 @@ public class HirerController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Hirer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/{id}", method = RequestMethod.GET)
     public Hirer get(@PathVariable  String id) {
@@ -74,7 +74,7 @@ public class HirerController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Hirer.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers", method = RequestMethod.GET)
     public Results<Hirer> getByParams(HirerFilter filter, @Validated UnovationPageRequest pageable) {

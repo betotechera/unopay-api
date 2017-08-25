@@ -58,33 +58,33 @@ public class PaymentRemittanceItem  implements Serializable {
     @ManyToOne
     @JoinColumn(name="payment_remittance_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     private PaymentRemittance paymentRemittance;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="payee_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     private RemittancePayee payee;
 
     @Column(name = "value")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     @NotNull(groups = {Create.class})
     private BigDecimal value;
 
     @Column(name = "situation")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transfer_option")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     @NotNull(groups = {Create.class})
     private PaymentTransferOption transferOption;
 
     @Column(name = "occurrence_code")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Item.class})
     @NotNull(groups = {Create.class})
     private String occurrenceCode;
 

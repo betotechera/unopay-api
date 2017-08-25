@@ -40,7 +40,6 @@ public class Contractor implements Serializable {
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
-    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
@@ -48,13 +47,12 @@ public class Contractor implements Serializable {
     @JoinColumn(name="person_id")
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     private Person person;
 
     @ManyToOne
     @Valid
     @JoinColumn(name="bank_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccount bankAccount;
 
     @Transient

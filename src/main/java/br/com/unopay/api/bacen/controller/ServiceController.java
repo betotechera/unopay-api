@@ -41,7 +41,7 @@ public class ServiceController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Service.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/services", method = RequestMethod.POST)
     public ResponseEntity<Service> create(@Validated(Create.class) @RequestBody Service service) {
@@ -52,7 +52,7 @@ public class ServiceController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Service.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
     public Service get(@PathVariable String id) {
@@ -74,7 +74,7 @@ public class ServiceController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Service.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public Results<Service> getByParams(ServiceFilter filter, @Validated UnovationPageRequest pageable) {

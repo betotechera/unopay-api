@@ -41,7 +41,7 @@ public class BranchController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/branches", method = RequestMethod.POST)
     public ResponseEntity<Branch> create(@Validated(Create.class) @RequestBody Branch branch) {
@@ -52,7 +52,7 @@ public class BranchController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.GET)
     public Branch get(@PathVariable  String id) {
@@ -74,7 +74,7 @@ public class BranchController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Branch.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/branches", method = RequestMethod.GET)
     public Results<Branch> getByParams(BranchFilter filter, @Validated UnovationPageRequest pageable) {

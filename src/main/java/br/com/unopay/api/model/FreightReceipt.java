@@ -24,46 +24,35 @@ public class FreightReceipt implements Serializable {
     public FreightReceipt(){}
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private Contract contract;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private Contractor contractor;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private Establishment establishment;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private ServiceType serviceType;
 
     @Valid
     @KeyFieldReference
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private CargoContract cargoContract;
 
-    @JsonView({Views.Public.class})
     private Double fuelSupplyQuantity;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private BigDecimal fuelSupplyValue;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private CreditInsertionType creditInsertionType;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private String instrumentPassword;
 
     @NotNull(groups = {Create.class,Update.class})
-    @JsonView({Views.Public.class})
     private Event fuelEvent;
-
 
 
     @JsonIgnore

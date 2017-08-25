@@ -53,7 +53,6 @@ public class PaymentRuleGroup implements Serializable, Updatable {
 
     @NotNull(groups = Create.class)
     @Column(name="code", unique = true)
-    @JsonView({Views.Public.class,Views.List.class})
     private String code;
 
     @Column(name="name")
@@ -63,34 +62,34 @@ public class PaymentRuleGroup implements Serializable, Updatable {
 
     @Enumerated(STRING)
     @Column(name="purpose")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRuleGroup.Detail.class})
     private Purpose purpose;
 
     @Enumerated(STRING)
     @Column(name="scope")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRuleGroup.Detail.class})
     private Scope scope;
 
     @Enumerated(STRING)
     @NotNull(groups = Create.class)
     @Column(name="user_relationship")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView(Views.PaymentRuleGroup.List.class)
     private UserRelationship userRelationship;
 
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="institution_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRuleGroup.Detail.class})
     private Institution institution;
 
     @Min(0)
     @Column(name = "minimum_credit_insertion")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRuleGroup.Detail.class})
     private BigDecimal minimumCreditInsertion;
 
     @Min(0)
     @Column(name = "maximum_credit_insertion")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.PaymentRuleGroup.Detail.class})
     private BigDecimal maximumCreditInsertion;
 
 

@@ -5,6 +5,7 @@ import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -26,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static br.com.unopay.api.model.validation.group.Views.List;
-import static br.com.unopay.api.model.validation.group.Views.Public;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -51,7 +50,7 @@ public class ContractController {
         this.service = service;
     }
 
-    @JsonView(Public.class)
+    @JsonView(Views.Contract.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts", method = POST)
@@ -64,7 +63,7 @@ public class ContractController {
 
     }
     @ResponseStatus(OK)
-    @JsonView(Public.class)
+    @JsonView(Views.Contract.Detail.class)
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/contracts/{id}", method = GET)
     public Contract get(@PathVariable String id) {
@@ -90,7 +89,7 @@ public class ContractController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(List.class)
+    @JsonView(Views.Contract.List.class)
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/contracts", method = GET)
     public Results<Contract> getByParams(ContractFilter filter, @Validated UnovationPageRequest pageable) {

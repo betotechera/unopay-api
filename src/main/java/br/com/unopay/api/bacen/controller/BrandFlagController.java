@@ -33,7 +33,6 @@ public class BrandFlagController {
         this.service = service;
     }
 
-    @JsonView(Views.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/brand-flags", method = RequestMethod.GET)
     public Results<BrandFlag> getAll(@Validated UnovationPageRequest pageable) {

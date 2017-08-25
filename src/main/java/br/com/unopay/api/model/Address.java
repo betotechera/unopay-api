@@ -61,13 +61,13 @@ public class Address implements Serializable {
     private String district;
 
     @Column(name="city")
-    @JsonView({Views.Address.class})
+    @JsonView({Views.Address.class,Views.AddressList.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String city;
 
     @Enumerated(STRING)
     @Column(name="state")
-    @JsonView({Views.Address.class})
+    @JsonView({Views.Address.class,Views.AddressList.class})
     private State state;
 
     @Column(name="latitude")

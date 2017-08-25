@@ -61,7 +61,7 @@ public class Issuer implements Serializable{
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Issuer.Detail.class})
     @JoinTable(name = "payment_rule_group_issuer",
             joinColumns = { @JoinColumn(name = "issuer_id") },
             inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
@@ -70,13 +70,13 @@ public class Issuer implements Serializable{
 
     @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Issuer.Detail.class})
     private Double fee;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="payment_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     @OneToOne
     private PaymentBankAccount paymentAccount;
 
@@ -84,12 +84,12 @@ public class Issuer implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="movement_account_id")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccount movementAccount;
 
     @Column(name = "financier_mail_for_remittance")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Issuer.Detail.class})
     private String financierMailForRemittance;
 
     @Version

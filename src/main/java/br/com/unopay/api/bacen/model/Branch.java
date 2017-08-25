@@ -43,7 +43,6 @@ public class Branch implements Serializable {
 
     @Id
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
     private String id;
@@ -51,69 +50,72 @@ public class Branch implements Serializable {
     @ManyToOne
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
     @Valid
     private Person person;
 
     @ManyToOne
     @JoinColumn(name="head_office_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     private Establishment headOffice;
 
     @Column(name="contact_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     private String contactMail;
 
     @Column(name="invoice_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     private String invoiceMail;
 
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     @Column(name="alternative_mail")
     private String alternativeMail;
 
     @Column(name="cancellation_tolerance")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
 
     @Column(name = "fee")
+    @JsonView({Views.Branch.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Double fee;
 
+    @JsonView({Views.Branch.Detail.class})
     @Column(name = "technical_contact")
     private String technicalContact;
 
+    @JsonView({Views.Branch.Detail.class})
     @Column(name = "branch_photo_uri")
     private String branchPhotoUri;
 
+    @JsonView({Views.Branch.Detail.class})
     @Column(name = "contract_uri")
     private String contractUri;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="gathering_channel")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Branch.Detail.class})
     private GatheringChannel gatheringChannel;
 
     @Valid
     @ManyToOne
     @JoinColumn(name="movement_account_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.BankAccount.class})
     private BankAccount bankAccount;
 
     @Valid
     @Embedded
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Branch.Detail.class})
     private Checkout checkout;
 
     @Valid
     @Embedded
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Branch.Detail.class})
     private InvoiceReceipt invoiceReceipt;
 
 

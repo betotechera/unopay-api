@@ -41,7 +41,7 @@ public class PaymentRuleGroupController {
         this.paymentRuleGroupService = paymentRuleGroupService;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.PaymentRuleGroup.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/payment-rule-groups", method = RequestMethod.POST)
     public ResponseEntity<PaymentRuleGroup> create(@Validated(Create.class)
@@ -53,7 +53,7 @@ public class PaymentRuleGroupController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.PaymentRuleGroup.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-rule-groups/{id}", method = RequestMethod.GET)
     public PaymentRuleGroup get(@PathVariable  String id) {
@@ -76,7 +76,7 @@ public class PaymentRuleGroupController {
         paymentRuleGroupService.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.PaymentRuleGroup.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-rule-groups", method = RequestMethod.GET)
     public Results<PaymentRuleGroup> getByParams(PaymentRuleGroupFilter filter,

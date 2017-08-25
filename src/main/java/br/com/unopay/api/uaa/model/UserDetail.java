@@ -51,7 +51,6 @@ public class UserDetail implements Serializable {
 
     @Id
     @NotNull(groups = Update.class)
-    @JsonView({Views.Public.class,Views.List.class})
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @Column(name="id")
@@ -59,60 +58,60 @@ public class UserDetail implements Serializable {
 
     @NotNull(groups = Create.class)
     @Column(name="email", unique = true)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.User.List.class})
     @Size(min=5, max = 50, groups = {Create.class, Update.class})
     private String email;
 
 
     @Column(name="name")
     @NotNull(groups = Create.class)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.User.List.class})
     @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 
     @ManyToOne
     @JoinColumn(name="type")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.User.List.class})
     private UserType type;
 
     @ManyToOne
     @JoinColumn(name="institution_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Institution institution;
 
     @ManyToOne
     @JoinColumn(name="accredited_network_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private AccreditedNetwork accreditedNetwork;
 
     @ManyToOne
     @JoinColumn(name="establishment_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Establishment establishment;
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Issuer issuer;
 
     @ManyToOne
     @JoinColumn(name="hirer_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Hirer hirer;
 
     @ManyToOne
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Contractor contractor;
 
     @ManyToOne
     @JoinColumn(name="partner_id")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.User.Detail.class})
     private Partner partner;
 
 
-    @JsonView(Views.Internal.class)
+    @JsonView({Views.User.Detail.class})
     @NotNull(groups = PasswordRequired.class)
     @Column(name="password")
     @Size(min=5, max = 50, groups = {PasswordRequired.class })
@@ -120,7 +119,7 @@ public class UserDetail implements Serializable {
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.User.Detail.class})
     @JoinTable(name = "oauth_group_members",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "group_id") })
@@ -174,7 +173,7 @@ public class UserDetail implements Serializable {
         groups.forEach(this::addToMyGroups);
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.User.Detail.class)
     public List<Authority> getGroupsAuthorities() {
         if(groups == null) {
             return Collections.emptyList();

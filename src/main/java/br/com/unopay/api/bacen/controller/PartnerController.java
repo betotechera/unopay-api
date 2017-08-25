@@ -41,7 +41,7 @@ public class PartnerController {
         this.service = service;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Partner.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/partners", method = RequestMethod.POST)
     public ResponseEntity<Partner> create(@Validated(Create.class) @RequestBody Partner partner) {
@@ -52,13 +52,15 @@ public class PartnerController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+
+    @JsonView(Views.Partner.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/partners/{id}", method = RequestMethod.GET)
     public Partner get(@PathVariable  String id) {
         log.info("get Partner={}", id);
         return service.getById(id);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/partners/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Partner partner) {
@@ -74,7 +76,7 @@ public class PartnerController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Partner.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/partners", method = RequestMethod.GET)
     public Results<Partner> getByParams(PartnerFilter filter, @Validated UnovationPageRequest pageable) {

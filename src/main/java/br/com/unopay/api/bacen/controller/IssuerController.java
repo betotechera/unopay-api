@@ -43,7 +43,7 @@ public class IssuerController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Issuer.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/issuers", method = RequestMethod.POST)
     public ResponseEntity<Issuer> create(@Validated(Create.class) @RequestBody Issuer issuer) {
@@ -54,7 +54,7 @@ public class IssuerController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Issuer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.GET)
     public Issuer get(@PathVariable  String id) {
@@ -76,7 +76,7 @@ public class IssuerController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers", method = RequestMethod.GET)
     public Results<Issuer> getByParams(IssuerFilter filter, @Validated UnovationPageRequest pageable) {

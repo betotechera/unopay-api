@@ -39,7 +39,6 @@ public class ContractEstablishment implements Serializable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -52,17 +51,17 @@ public class ContractEstablishment implements Serializable {
     @ManyToOne
     @JoinColumn(name="establishment_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Establishment.class})
     private Establishment establishment;
 
     @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Establishment.class})
     private Date creation;
 
     @Column(name = "origin")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Establishment.class})
     private ContractOrigin origin = ContractOrigin.APPLICATION;
 
     @Version

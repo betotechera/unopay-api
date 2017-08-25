@@ -83,18 +83,18 @@ public class BatchClosing implements Serializable {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @ManyToOne
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="establishment_id")
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private Establishment establishment;
 
     @Column(name = "batch_number")
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private String number;
 
     @ManyToOne
@@ -113,12 +113,12 @@ public class BatchClosing implements Serializable {
     private Hirer hirer;
 
     @JoinColumn(name="issue_invoice")
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private Boolean issueInvoice;
 
     @Column(name = "closing_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private Date closingDateTime;
 
     @Column(name = "value")
@@ -137,7 +137,7 @@ public class BatchClosing implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "situation")
     @NotNull(groups = {Update.class})
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private BatchClosingSituation situation;
 
     @Column(name = "payment_date_time")
@@ -153,7 +153,7 @@ public class BatchClosing implements Serializable {
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="payment_id")
-    @JsonView({Views.BatchClosing.Detail.class,Views.BatchClosing.List.class})
+    @JsonView({Views.BatchClosing.List.class})
     private PaymentRemittanceItem payment;
 
     @JsonIgnore

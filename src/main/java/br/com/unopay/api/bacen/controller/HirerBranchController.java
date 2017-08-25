@@ -41,7 +41,7 @@ public class HirerBranchController {
         this.service = service;
      }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.HirerBranch.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/hirer-branches", method = RequestMethod.POST)
     public ResponseEntity<HirerBranch> create(@Validated(Create.class) @RequestBody HirerBranch hirerBranch) {
@@ -52,7 +52,7 @@ public class HirerBranchController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.HirerBranch.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirer-branches/{id}", method = RequestMethod.GET)
     public HirerBranch get(@PathVariable  String id) {
@@ -74,7 +74,7 @@ public class HirerBranchController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.HirerBranch.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirer-branches", method = RequestMethod.GET)
     public Results<HirerBranch> getByParams(HirerBranchFilter filter, @Validated UnovationPageRequest pageable) {

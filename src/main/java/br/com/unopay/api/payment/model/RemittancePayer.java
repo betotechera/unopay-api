@@ -55,91 +55,90 @@ public class RemittancePayer  implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "system-uuid")
-    @JsonView({Views.Public.class, Views.List.class})
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     @Column(name = "document_number")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String documentNumber;
 
     @Column(name = "agency")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String agency;
 
     @Column(name = "agency_digit")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String agencyDigit;
 
     @Column(name = "account_number")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String accountNumber;
 
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Column(name = "account_number_digit")
     private String accountNumberDigit;
 
     @Column(name = "name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String name;
 
     @Column(name = "bank_name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private String bankName;
 
     @Column(name = "bank_code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private Integer bankCode;
 
     @Column(name = "zip_code")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
     private String zipCode;
 
     @Column(name = "street_name")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String streetName;
 
     @Column(name = "street_number")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Size(max = 30, groups = {Create.class, Update.class})
     private String number;
 
     @Column(name = "complement")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String complement;
 
     @Column(name = "district")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String district;
 
     @Column(name = "city")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String city;
 
     @Enumerated(STRING)
     @Column(name = "state")
-    @JsonView({Views.Public.class, Views.List.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     private State state;
 
     @Column(name = "bank_agreement_number_credit")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForCredit;
 
 
     @Column(name = "bank_agreement_number_debit")
-    @JsonView({Views.Public.class})
+    @JsonView({Views.PaymentRemittance.Payee.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
 

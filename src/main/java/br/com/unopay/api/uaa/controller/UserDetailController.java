@@ -67,7 +67,7 @@ public class UserDetailController {
         this.groupService = groupService;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.User.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<UserDetail> create(@Validated(Create.class) @RequestBody UserDetail user) {
@@ -93,7 +93,7 @@ public class UserDetailController {
         userDetailService.update(user);
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.User.Detail.class)
     @PreAuthorize("#oauth2.isUser()")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "users/me/profile", method = GET)
@@ -112,7 +112,7 @@ public class UserDetailController {
         accessTokens.forEach(tokenStore::removeAccessToken);
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.User.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/users/{id}", method = GET)
     public UserDetail get(@PathVariable  String id) {
@@ -145,7 +145,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.User.Detail.class)
     @RequestMapping(value = "/users/{id}/groups", method = GET)
     public Results<Group> getGroups(@PathVariable("id") String id) {
         LOGGER.info("get members to group={}", id);
@@ -154,7 +154,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.List.class)
+    @JsonView(Views.User.List.class)
     @RequestMapping(value = "/users", method = GET)
     public Results<UserDetail> getByParams(UserFilter userFilter,@Validated UnovationPageRequest pageable) {
         LOGGER.info("search users by filter with filter={}", userFilter);

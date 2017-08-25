@@ -43,7 +43,6 @@ public class ContractInstallment implements Serializable, Updatable {
 
     @Id
     @Column(name="id")
-    @JsonView({Views.Public.class,Views.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     @GeneratedValue(generator="system-uuid")
     private String id;
@@ -51,31 +50,31 @@ public class ContractInstallment implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="contract_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Installment.class})
     private Contract contract;
 
     @Column(name = "installment_number")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Installment.class})
     private Integer installmentNumber;
 
     @Column(name = "value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Installment.class})
     private BigDecimal value;
 
     @Column(name = "expiration")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Installment.class})
     private Date expiration;
 
     @Column(name = "payment_date_time")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.Contract.Installment.class})
     private Date paymentDateTime;
 
     @Column(name = "payment_value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.Contract.Installment.class})
     private BigDecimal paymentValue;
 
     @Version

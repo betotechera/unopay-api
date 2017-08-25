@@ -42,7 +42,7 @@ public class ProductController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Product.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     public ResponseEntity<Product> create(@Validated(Create.class) @RequestBody Product product) {
@@ -53,7 +53,7 @@ public class ProductController {
                 .body(created);
 
     }
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Product.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     public Product get(@PathVariable String id) {
@@ -75,7 +75,7 @@ public class ProductController {
         service.delete(id);
     }
 
-    @JsonView(Views.List.class)
+    @JsonView(Views.Product.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public Results<Product> getByParams(ProductFilter filter, @Validated UnovationPageRequest pageable) {

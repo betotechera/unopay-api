@@ -31,7 +31,7 @@ public class CreditPaymentAccountController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.Public.class)
+    @JsonView({Views.CreditPaymentAccount.Detail.class})
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
     @RequestMapping(value = "/hirers/{document}/credit-payment-accounts/{id}", method = GET)
     public CreditPaymentAccount get(@PathVariable String id) {
@@ -40,7 +40,7 @@ public class CreditPaymentAccountController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.List.class)
+    @JsonView({Views.CreditPaymentAccount.List.class})
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
     @RequestMapping(value = "/hirers/{document}/credit-payment-accounts", method = GET)
     public Results<CreditPaymentAccount> findByHirerDocument(@PathVariable String document) {

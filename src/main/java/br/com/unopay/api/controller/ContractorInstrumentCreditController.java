@@ -47,7 +47,7 @@ public class ContractorInstrumentCreditController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.ContractorInstrumentCredit.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT_PAYMENT_INSTRUMENT')")
     @RequestMapping(value = "/payment-instruments/{instrumentId}/credits", method = POST)
@@ -63,7 +63,7 @@ public class ContractorInstrumentCreditController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.List.class)
+    @JsonView(Views.ContractorInstrumentCredit.List.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE') ")
     @RequestMapping(value = "/payment-instruments/credits", method = GET)
     public Results<ContractorInstrumentCredit> findAll(ContractorInstrumentCreditFilter filter,
@@ -75,7 +75,7 @@ public class ContractorInstrumentCreditController {
     }
 
     @ResponseStatus(OK)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.ContractorInstrumentCredit.Detail.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT_PAYMENT_INSTRUMENT')")
     @RequestMapping(value = "/payment-instruments/{instrumentId}/credits/{id}", method = GET)
     public ContractorInstrumentCredit get(@PathVariable String instrumentId, @PathVariable String id) {

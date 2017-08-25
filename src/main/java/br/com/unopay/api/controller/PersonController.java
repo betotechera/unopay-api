@@ -21,7 +21,7 @@ public class PersonController {
     @Autowired
     PersonService personService;
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Person.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/persons", method = RequestMethod.GET)
     public ResponseEntity<Person> findPerson( PersonFilter filter) {

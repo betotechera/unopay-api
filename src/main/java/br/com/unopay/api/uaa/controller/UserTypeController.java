@@ -36,7 +36,6 @@ public class UserTypeController {
         this.service = service;
     }
 
-    @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/user-types", method = RequestMethod.GET)
     public Results<UserType> findAll() {
@@ -45,7 +44,7 @@ public class UserTypeController {
         return new Results<>(types);
     }
 
-    @JsonView(Views.GroupUserType.class)
+    @JsonView({Views.Group.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/user-types/{id}/groups", method = RequestMethod.GET)
     public Results<Group> findUserTypeGroups(@PathVariable String id) {

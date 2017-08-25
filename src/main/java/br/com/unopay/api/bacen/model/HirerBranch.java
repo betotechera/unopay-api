@@ -33,30 +33,29 @@ public class HirerBranch implements Serializable {
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
-    @JsonView({Views.Public.class,Views.List.class})
     private String id;
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="person_id")
-    @JsonView({Views.Public.class,Views.List.class})
+
     private Person person;
 
     @ManyToOne
     @JoinColumn(name="head_office_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.HirerBranch.Detail.class})
     private Hirer headOffice;
 
     @Valid
     @JoinColumn(name="bank_account_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Public.class})
+    @JsonView({Views.BankAccount.class})
     @ManyToOne
     private BankAccount bankAccount;
 
     @Column(name="document_email")
-    @JsonView({Views.Public.class,Views.List.class})
+    @JsonView({Views.HirerBranch.Detail.class})
     private String documentEmail;
 
     public void updateMe(HirerBranch hirer) {
