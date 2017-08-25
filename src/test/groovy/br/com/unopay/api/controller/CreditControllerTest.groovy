@@ -2,6 +2,7 @@ package br.com.unopay.api.controller
 
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Credit
+import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -24,7 +25,7 @@ class CreditControllerTest extends AuthServerApplicationTests {
         def result = this.mvc.perform(
                             post('/hirers/{document}/credits/?access_token={access_token}', document, accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJsonWithoutNetworkPaymentRuleGroups(credit)))
+                .content(toJsonWithoutNetworkPaymentRuleGroups(credit, Views.Credit.Detail.class)))
         then:
         result.andExpect(status().isCreated())
     }

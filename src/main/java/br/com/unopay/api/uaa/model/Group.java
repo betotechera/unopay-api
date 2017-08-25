@@ -71,7 +71,7 @@ public class Group implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @BatchSize(size = 10)
-    @JsonView({Views.Group.Detail.class})
+    @JsonView({Views.Group.Detail.class,Views.User.Detail.class})
     @JoinTable(name = "oauth_group_authorities",
             joinColumns = { @JoinColumn(name = "group_id") },
             inverseJoinColumns = { @JoinColumn(name = "authority") })

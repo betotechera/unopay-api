@@ -111,7 +111,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].fee', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
 

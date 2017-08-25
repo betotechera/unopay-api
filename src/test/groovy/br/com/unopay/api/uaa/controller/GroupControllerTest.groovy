@@ -92,7 +92,6 @@ class GroupControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', hasSize(2)))
                 .andExpect(jsonPath('$.total', is(equalTo(2))))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
-                .andExpect(jsonPath('$.items[0].description', is(notNullValue())))
     }
    
     void 'given known group and user should be add member to group'() {
@@ -105,7 +104,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
                 .andExpect(jsonPath('$.total', is(equalTo(2))))
-                .andExpect(jsonPath('$.items[0].email', is(notNullValue())))
+                .andExpect(jsonPath('$.items[0].id', is(notNullValue())))
     }
    
     void 'given known group and authority should be add authority to group'() {

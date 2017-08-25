@@ -127,7 +127,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].contract', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].paymentInstrument', is(notNullValue())))
     }
 
     void 'known contractor instruments should be found when find instruments'() {
@@ -142,7 +142,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].contractor', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].product', is(notNullValue())))
     }
 
     Contractor getContractor() {

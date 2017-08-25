@@ -47,7 +47,7 @@ public interface Views {
     }
 
     interface EstablishmentEvent {
-        interface Detail {}
+        interface Detail extends List {}
         interface List {}
     }
 
@@ -129,7 +129,7 @@ public interface Views {
     }
 
     interface PaymentRemittance {
-        interface Detail  extends List,Payee,Item, Payer{}
+        interface Detail extends List,Payee,Item, Payer{}
         interface List {}
         interface Payee {}
         interface Payer {}
