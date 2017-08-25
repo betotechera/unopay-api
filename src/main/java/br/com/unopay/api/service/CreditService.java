@@ -63,6 +63,7 @@ public class CreditService {
     }
 
     public Credit insert(Credit credit) {
+        validateProductReference(credit);
         defineDefaultValues(credit);
         validateReferences(credit);
         credit.validateCreditValue();
@@ -121,16 +122,17 @@ public class CreditService {
 
     private void validateReferences(Credit credit) {
         hirerService.findByDocumentNumber(credit.getHirerDocument());
-        if(credit.withProduct()) {
-            Product product = productService.findById(credit.getProductId());
-            credit.setProduct(product);
-            credit.setPaymentRuleGroup(product.getPaymentRuleGroup());
-            return;
-        }
         if (!credit.withPaymentRuleGroup()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
         }
         credit.setPaymentRuleGroup(paymentRuleGroupService.getById(credit.getPaymentRuleGroupId()));
+    }
+
+    private void validateProductReference(Credit credit) {
+        if(credit.withProduct()) {
+            Product product = productService.findById(credit.getProductId());
+            credit.setProduct(product);
+        }
     }
 
 
