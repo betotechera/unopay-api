@@ -132,18 +132,17 @@ class CreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
 
-    void 'credit with unknown payment rule groups should not be inserted'(){
+    void 'credit with unknown payment rule groups should  inserted with product paymentRuleGroup'(){
         given:
         PaymentRuleGroup unknownPaymentRuleGroup = fixtureCreator.createPaymentRuleGroup().with { id = ''; it }
         def knownProduct = fixtureCreator.createProduct().with { paymentRuleGroup = unknownPaymentRuleGroup; it }
         Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
-        service.insert(credit)
+        def result = service.insert(credit)
 
         then:
-        def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'PAYMENT_RULE_GROUP_NOT_FOUND'
+            result.paymentRuleGroup.id == credit.product.paymentRuleGroup.id
     }
 
     void 'when insert credit should be generate credit number'() {
