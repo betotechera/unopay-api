@@ -6,6 +6,7 @@ import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.model.Credit;
 import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.CreditSituation;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.CreditFilter;
 import br.com.unopay.api.repository.CreditRepository;
 import br.com.unopay.api.util.GenericObjectMapper;
@@ -121,7 +122,10 @@ public class CreditService {
     private void validateReferences(Credit credit) {
         hirerService.findByDocumentNumber(credit.getHirerDocument());
         if(credit.withProduct()) {
-            credit.setProduct(productService.findById(credit.getProductId()));
+            Product product = productService.findById(credit.getProductId());
+            credit.setProduct(product);
+            credit.setPaymentRuleGroup(product.getPaymentRuleGroup());
+            return;
         }
         if (!credit.withPaymentRuleGroup()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);

@@ -25,7 +25,7 @@ class CreditControllerTest extends AuthServerApplicationTests {
         def result = this.mvc.perform(
                             post('/hirers/{document}/credits/?access_token={access_token}', document, accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJsonWithoutNetworkPaymentRuleGroups(credit, Views.Credit.Detail.class)))
+                .content(toJsonFromView(credit, Views.Credit.Detail.class)))
         then:
         result.andExpect(status().isCreated())
     }

@@ -57,7 +57,6 @@ public class Product implements Serializable, Updatable {
     private String id;
 
     @Column(name="code")
-    @JsonView({Views.Product.List.class})
     @Size(min=1, max = 4, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String code;

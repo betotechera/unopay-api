@@ -31,7 +31,7 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
                             post('/payment-instruments/{instrumentId}/credits?access_token={access_token}',
                                                         instrumentId, accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJsonWithoutNetworkPaymentRuleGroups(credit,Views.ContractorInstrumentCredit.Detail.class)))
+                .content(toJsonFromView(credit,Views.ContractorInstrumentCredit.Detail.class)))
         then:
         result.andExpect(status().isCreated())
     }

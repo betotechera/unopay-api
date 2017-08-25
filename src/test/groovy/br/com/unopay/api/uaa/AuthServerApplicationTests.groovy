@@ -93,7 +93,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         }
     }
 
-    protected String toJsonWithoutNetworkPaymentRuleGroups(Object object,Class view) {
+    protected String toJsonFromView(Object object,Class view) {
         try {
             ObjectMapper objectMapper = new ObjectMapper()
             return objectMapper.writerWithView(view).writeValueAsString(object)
