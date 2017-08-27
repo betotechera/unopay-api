@@ -2,7 +2,8 @@ package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
-import static br.com.unopay.api.bacen.model.Segment.*;
+import static br.com.unopay.api.bacen.model.Segment.HEALTH;
+import static br.com.unopay.api.bacen.model.Segment.TRANSPORT;
 
 public enum ServiceType implements DescriptableEnum {
 

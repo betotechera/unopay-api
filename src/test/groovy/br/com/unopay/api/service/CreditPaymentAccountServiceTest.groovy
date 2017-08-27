@@ -1,7 +1,6 @@
 package br.com.unopay.api.service
 
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import br.com.unopay.api.bacen.util.FixtureCreator

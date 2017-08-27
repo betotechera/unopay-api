@@ -18,8 +18,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.ACCOUNT_NUMBER_REQUIRED;

@@ -15,8 +15,6 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-
-import static org.hamcrest.Matchers.is
 import static spock.util.matcher.HamcrestSupport.that
 
 class IssuerServiceTest  extends SpockApplicationTests {

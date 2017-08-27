@@ -128,12 +128,22 @@ public interface Views {
         interface List {}
     }
 
+    interface Order {
+        interface Detail extends Billing{}
+        interface List {}
+    }
+
     interface PaymentRemittance {
         interface Detail extends List,Payee,Item, Payer{}
         interface List {}
         interface Payee {}
         interface Payer {}
         interface Item {}
+    }
+
+    interface Billing {
+        interface Detail {}
+        interface List{}
     }
 
 }

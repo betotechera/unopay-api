@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.models.auth.In;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;

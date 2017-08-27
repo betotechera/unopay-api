@@ -3,8 +3,6 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
-import br.com.unopay.api.model.validation.group.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +14,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 

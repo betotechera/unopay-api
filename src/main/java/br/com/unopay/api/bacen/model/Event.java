@@ -19,7 +19,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;
@@ -44,7 +43,7 @@ public class Event implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="service_id")
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private Service service;
 
     @Column(name = "ncm_code")
@@ -54,7 +53,7 @@ public class Event implements Serializable {
 
     @Column
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private String name;
 
     @Column(name ="request_quantity")

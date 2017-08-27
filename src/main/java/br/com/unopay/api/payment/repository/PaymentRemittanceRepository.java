@@ -6,7 +6,6 @@ import br.com.unopay.api.payment.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface PaymentRemittanceRepository
                             extends UnovationFilterRepository<PaymentRemittance,String, PaymentRemittanceFilter> {

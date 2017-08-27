@@ -1,11 +1,10 @@
-package br.com.unopay.api.bacen.model;
+package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
- class PaymentRuleGroupTest extends FixtureApplicationTest {
+class PaymentRuleGroupTest extends FixtureApplicationTest {
 
     void 'when validating paymentRuleGroup without userRelationship should return error'() {
         given:

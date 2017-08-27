@@ -2,13 +2,11 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.pamcary.translate.KeyBase;
 import br.com.unopay.api.pamcary.translate.KeyDate;
 import br.com.unopay.api.pamcary.translate.KeyEnumField;
 import br.com.unopay.api.pamcary.translate.KeyField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -23,7 +21,6 @@ import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 

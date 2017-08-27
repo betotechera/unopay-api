@@ -1,7 +1,5 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.model.validation.group.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data

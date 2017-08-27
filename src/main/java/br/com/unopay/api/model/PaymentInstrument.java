@@ -22,7 +22,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
-import javax.swing.text.View;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;

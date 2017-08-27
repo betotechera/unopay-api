@@ -1,12 +1,11 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.Address;
-import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.filter.PersonFilter;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.AddressService;
-import br.com.unopay.api.service.PersonService;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 @Slf4j
 @RestController

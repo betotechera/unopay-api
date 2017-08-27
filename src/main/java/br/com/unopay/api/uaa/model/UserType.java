@@ -2,16 +2,15 @@ package br.com.unopay.api.uaa.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "user_type")
