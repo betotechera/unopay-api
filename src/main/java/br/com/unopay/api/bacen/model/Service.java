@@ -42,7 +42,7 @@ public class Service implements Serializable {
 
     @Column(name = "name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Service.List.class})
+    @JsonView({Views.Service.List.class, Views.EstablishmentEvent.List.class})
     private String name;
 
     @Column(name = "type")

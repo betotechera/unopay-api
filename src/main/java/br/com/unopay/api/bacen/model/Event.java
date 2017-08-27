@@ -44,7 +44,7 @@ public class Event implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="service_id")
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private Service service;
 
     @Column(name = "ncm_code")
@@ -54,7 +54,7 @@ public class Event implements Serializable {
 
     @Column
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private String name;
 
     @Column(name ="request_quantity")
