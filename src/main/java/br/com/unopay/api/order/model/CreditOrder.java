@@ -28,7 +28,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "credit_order")
 @ToString
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -67,12 +67,6 @@ public class CreditOrder {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
-
-    @ManyToOne
-    @NotNull(groups = {Reference.class})
-    @JoinColumn(name="bank_account_id")
-    @JsonView({Views.Order.List.class})
-    private BankAccount bankAccount;
 
     @JsonIgnore
     @Version

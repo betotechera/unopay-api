@@ -21,6 +21,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("createDateTime", instant("now"));
             add("paymentMethod", random(PaymentMethod.class));
             add("amount", one(Amount.class, "valid"));
+            add("orderId", regex("\\d{8}"));
         }});
 
         Fixture.of(Transaction.class).addTemplate("withCard").inherits("valid", new Rule() {{
@@ -41,6 +42,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("email", random("jose@gmail.com", "bento@terra.com.br", "tereza@yahoo.com"));
             add("product", one(Product.class, "valid"));
             add("person", one(Person.class, "physical"));
+            add("number", regex("\\d{10}"));
         }});
     }
 }

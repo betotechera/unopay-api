@@ -14,7 +14,6 @@ class TransactionTest extends FixtureApplicationTest {
 
         then:
         shouldBeEquals
-
     }
 
     def 'should not be equals'() {

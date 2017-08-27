@@ -4,5 +4,5 @@ import br.com.unopay.api.order.model.CreditOrder;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 
-public interface OrderRepository extends UnovationFilterRepository<CreditOrder,String,OrderFilter>{
+public interface CreditOrderRepository extends UnovationFilterRepository<CreditOrder,String,OrderFilter>{
 }
