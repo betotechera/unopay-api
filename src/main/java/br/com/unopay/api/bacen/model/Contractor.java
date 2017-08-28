@@ -44,6 +44,7 @@ public class Contractor implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @Valid
     @JoinColumn(name="person_id")
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})

@@ -35,6 +35,7 @@ public class Partner implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @Valid
     @ManyToOne
     @JoinColumn(name="person_id")
     private Person person;
