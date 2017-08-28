@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
@@ -26,6 +27,7 @@ import org.joda.time.DateTime;
 @Data
 @Entity
 @ToString
+@EqualsAndHashCode(of = { "id", "expiration"})
 @Table(name = "contract_installment")
 public class ContractInstallment implements Serializable, Updatable {
 
