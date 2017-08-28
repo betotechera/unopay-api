@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GenericEnumDeserializer<T extends Enum<T>> extends JsonDeserializer<T> implements
         ContextualDeserializer {
 
@@ -27,9 +29,19 @@ public class GenericEnumDeserializer<T extends Enum<T>> extends JsonDeserializer
         JsonNode node = oc.readTree(jp);
         if(node != null && node.get("code") != null){
             String code = node.get("code").asText();
-            return T.valueOf(targetClass, code);
+            try {
+                return T.valueOf(targetClass, code);
+            }catch (Exception e){
+                log.error("when deserialize={}",targetClass, e);
+                return null;
+            }
         }
-        return node != null ? T.valueOf(targetClass, node.asText()) : null ;
+        try {
+            return T.valueOf(targetClass, node.asText());
+        } catch (Exception e) {
+            log.error("when deserialize={}",targetClass, e);
+            return null;
+        }
     }
 
     @Override
