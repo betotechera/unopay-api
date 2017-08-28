@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -146,6 +147,20 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         result != null
     }
 
+    def 'should return installments by contract'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        create(contract)
+        create(contract)
+
+        when:
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result != null
+        that result, hasSize(2)
+    }
+
     def 'a unknown contract installment should not be found'(){
         when:
         service.findById('')
@@ -176,8 +191,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'CONTRACT_INSTALLMENT_NOT_FOUND'
     }
 
-    private ContractInstallment create(){
-        def contract = fixtureCreator.createPersistedContract()
+    private ContractInstallment create(contract = fixtureCreator.createPersistedContract()){
         return Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", contract)
         }})

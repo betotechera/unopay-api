@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -48,6 +49,7 @@ public class ContractInstallment implements Serializable, Updatable {
     private String id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="contract_id")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Contract.Installment.class})
