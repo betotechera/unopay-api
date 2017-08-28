@@ -119,7 +119,7 @@ public class UserDetail implements Serializable {
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonView({Views.User.Detail.class})
+    @JsonView({Views.User.List.class})
     @JoinTable(name = "oauth_group_members",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "group_id") })
