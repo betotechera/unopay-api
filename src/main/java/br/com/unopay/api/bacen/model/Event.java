@@ -16,10 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_REQUIRED;

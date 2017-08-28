@@ -2,11 +2,9 @@ package br.com.unopay.api.controller;
 
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.model.filter.CargoContractFilter;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.CargoContractService;
 import br.com.unopay.api.service.FreightReceiptService;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

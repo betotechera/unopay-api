@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 
