@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
@@ -25,6 +27,7 @@ import org.joda.time.DateTime;
 @Data
 @Entity
 @ToString
+@EqualsAndHashCode(of = { "id", "expiration"})
 @Table(name = "contract_installment")
 public class ContractInstallment implements Serializable, Updatable {
 
@@ -48,6 +51,7 @@ public class ContractInstallment implements Serializable, Updatable {
     private String id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="contract_id")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Contract.Installment.class})

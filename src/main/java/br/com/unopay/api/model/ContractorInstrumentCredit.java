@@ -96,7 +96,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private Long installmentNumber;
 
     @Column(name = "value")
-    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
 
@@ -111,7 +111,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private CreditSituation situation;
 
     @Column(name = "available_balance")

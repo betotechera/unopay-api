@@ -13,6 +13,7 @@ import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -54,7 +55,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
 @Entity
 @KeyBase(key = "viagem")
 @Table(name = "contract")
-@EqualsAndHashCode(exclude = {"contractEstablishments", "establishments"})
+@EqualsAndHashCode(exclude = {"contractEstablishments", "establishments", "contractInstallments"})
 public class Contract implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -163,6 +164,11 @@ public class Contract implements Serializable {
     @Column(name = "payment_installments")
     @JsonView({Views.Contract.Detail.class})
     private Integer paymentInstallments;
+
+    @JsonManagedReference
+    @JsonView({Views.Contract.Establishment.class})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contract")
+    private Set<ContractInstallment> contractInstallments;
 
     @JsonIgnore
     @Version

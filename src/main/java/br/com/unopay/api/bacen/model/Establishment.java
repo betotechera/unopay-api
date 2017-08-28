@@ -8,21 +8,10 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.CONTACT_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.CONTACT_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
-import static javax.persistence.EnumType.STRING;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -42,8 +31,19 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BANK_ACCOUNT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CONTACT_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CONTACT_REQUIRED;
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity

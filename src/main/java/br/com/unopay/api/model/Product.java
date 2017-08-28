@@ -93,7 +93,7 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = PaymentInstrumentType.class)
     @Column(name = "payment_instrument_type", nullable = false)
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_payment_instrument_tp", joinColumns = @JoinColumn(name = "product_id"))
     private Set<PaymentInstrumentType> paymentInstrumentTypes;
@@ -102,7 +102,7 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @Column(name = "service_type", nullable = false)
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<ServiceType> serviceTypes;
@@ -111,7 +111,7 @@ public class Product implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER,targetClass = CreditInsertionType.class)
     @Column(name = "credit_insertion_type", nullable = false)
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_credit_insertion_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<CreditInsertionType> creditInsertionTypes;

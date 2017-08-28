@@ -103,6 +103,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.contractInstallments', is(notNullValue())))
     }
 
     private String extractId(String location) {

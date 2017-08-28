@@ -35,6 +35,7 @@ public class Hirer implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
+    @Valid
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="person_id")

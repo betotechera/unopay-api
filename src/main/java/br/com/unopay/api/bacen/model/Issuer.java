@@ -76,7 +76,7 @@ public class Issuer implements Serializable{
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @JoinColumn(name="payment_account_id")
-    @JsonView({Views.BankAccount.class})
+    @JsonView({Views.BankAccount.class, Views.Issuer.Detail.class})
     @OneToOne
     private PaymentBankAccount paymentAccount;
 

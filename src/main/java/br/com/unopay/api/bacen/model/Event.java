@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,11 +38,10 @@ public class Event implements Serializable {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
     @JoinColumn(name="service_id")
-    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
+    @JsonView({Views.Event.List.class,Views.Event.Detail.class, Views.EstablishmentEvent.List.class})
     private Service service;
 
     @Column(name = "ncm_code")

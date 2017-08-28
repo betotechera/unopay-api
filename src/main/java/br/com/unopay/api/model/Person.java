@@ -64,11 +64,13 @@ public class Person implements Serializable{
     @Embedded
     private Document document;
 
+    @Valid
     @OneToOne
     @JsonView({Views.Person.class})
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
+    @Valid
     @OneToOne
     @JsonView({Views.Person.class})
     @JoinColumn(name="physical_person_detail_id")
