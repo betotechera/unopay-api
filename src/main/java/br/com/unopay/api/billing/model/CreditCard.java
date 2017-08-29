@@ -1,14 +1,16 @@
 package br.com.unopay.api.billing.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import groovy.transform.ToString;
 import java.io.Serializable;
 import java.util.Date;
 import javax.validation.constraints.Pattern;
+import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.Length;
 
-@ToString(includeNames = true, excludes = {"number", "hash"})
+@Data
+@ToString(exclude = {"number", "hash"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
 

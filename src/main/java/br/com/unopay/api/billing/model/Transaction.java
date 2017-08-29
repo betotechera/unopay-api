@@ -14,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.Valid;
@@ -71,6 +72,10 @@ public class Transaction {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
+
+    @Valid
+    @Transient
+    private CreditCard creditCard;
 
     @JsonIgnore
     @Version
