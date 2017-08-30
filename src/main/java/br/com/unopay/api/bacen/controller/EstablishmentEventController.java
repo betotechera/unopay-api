@@ -55,8 +55,8 @@ public class EstablishmentEventController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST,
-            consumes = "multipart/form-data", produces = "text/plain")
-    public void createFromCsv(@RequestParam MultipartFile file){
+            consumes = "multipart/form-data")
+    public void createFromCsv(@PathVariable  String id, @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading establishment event fee csv file {}", fileName);
         service.createFromCsv(file);
