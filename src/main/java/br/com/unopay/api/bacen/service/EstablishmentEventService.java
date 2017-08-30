@@ -3,14 +3,19 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
 import br.com.unopay.api.bacen.repository.EstablishmentEventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.opencsv.bean.CsvToBeanBuilder;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_EVENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_EVENT;
@@ -81,6 +86,21 @@ public class EstablishmentEventService {
     public void delete(String id) {
         findById(id);
         repository.delete(id);
+    }
+
+
+    @SneakyThrows
+    @Transactional
+    public void createFromCsv(MultipartFile multipartFile) {
+        InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
+        List<EstablishmentEventFeeCsv> csvLines = new CsvToBeanBuilder<EstablishmentEventFeeCsv>(inputStreamReader)
+                .withType(EstablishmentEventFeeCsv.class).build().parse();
+        csvLines.forEach(csvLine ->  {
+            Establishment establishment = establishmentService.findByNameLike(csvLine.getEstablishmentName());
+            Event event = eventService.findByNameLike(csvLine.getEventName());
+            EstablishmentEvent establishmentEvent = csvLine.toEstablishmentEventFee(event);
+            create(establishment.getId(), establishmentEvent);
+        });
     }
 
 }

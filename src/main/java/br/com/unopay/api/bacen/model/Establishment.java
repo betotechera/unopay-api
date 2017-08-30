@@ -10,6 +10,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.opencsv.bean.CsvBindByName;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CollectionTable;
@@ -56,6 +57,7 @@ public class Establishment implements Serializable, Updatable {
 
     public Establishment(){}
 
+    @CsvBindByName
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
