@@ -7,6 +7,9 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByPosition;
+import com.opencsv.bean.CsvDate;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -44,16 +47,17 @@ public class EstablishmentEvent implements Updatable, Serializable {
     @NotNull(groups = {Create.class, Update.class})
     private Event event;
 
+
     @ManyToOne
     @JoinColumn(name="establishment_id")
     @JsonView({Views.EstablishmentEvent.List.class})
     private Establishment establishment;
 
+    @CsvBindByName
     @Column(name = "value")
     @JsonView({Views.EstablishmentEvent.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
-
 
     @Column(name = "expiration")
     @JsonView({Views.EstablishmentEvent.List.class})

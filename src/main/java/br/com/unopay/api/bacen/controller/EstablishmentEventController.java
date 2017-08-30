@@ -7,11 +7,17 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.bootcommons.exception.BadRequestException;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.opencsv.bean.CsvToBeanBuilder;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.List;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +30,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -43,6 +51,15 @@ public class EstablishmentEventController {
                                         UserDetailService userDetailService) {
         this.service = service;
         this.userDetailService = userDetailService;
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST,
+            consumes = "multipart/form-data", produces = "text/plain")
+    public void createFromCsv(@RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading establishment event fee csv file {}", fileName);
+        service.createFromCsv(file);
     }
 
     @JsonView({Views.EstablishmentEvent.Detail.class})

@@ -22,7 +22,7 @@ class FileUploaderServiceTest extends SpockApplicationTests {
 
     def'given a existing file should be uploaded'(){
         given:
-        Resource createPassword  = resourceLoader.getResource("classpath:/create-password.html");
+        Resource createPassword  = resourceLoader.getResource("classpath:/create-password.html")
         MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
 
         when:

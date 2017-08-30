@@ -8,9 +8,16 @@ import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Person
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ResourceLoader
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
+import static spock.util.matcher.HamcrestSupport.that
 
 class EstablishmentEventServiceTest extends SpockApplicationTests {
 
@@ -20,6 +27,61 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    @Autowired
+    ResourceLoader resourceLoader
+
+
+    def'should create establishment event fees from csv'(){
+        given:
+        Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("name", "my event")
+        }})
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
+            add("name", "establishment one")
+        }})
+
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+                add("person", person)
+            }})
+
+        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+
+        when:
+        service.createFromCsv(file)
+        def result = service.findByEstablishmentId(establishment.id)
+
+        then:
+        that result, hasSize(2)
+    }
+
+    def'should create establishment event fees from csv with valid event'(){
+        given:
+        Event event = Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+                add("name", "my event")
+            }})
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
+            add("name", "establishment one")
+        }})
+
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+        }})
+
+        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+
+        when:
+        service.createFromCsv(file)
+        def result = service.findByEstablishmentId(establishment.id)
+
+        then:
+        result.find().event.id == event.id
+        result.last().event.id == event.id
+    }
 
 
     def 'a valid establishment event should be created'(){

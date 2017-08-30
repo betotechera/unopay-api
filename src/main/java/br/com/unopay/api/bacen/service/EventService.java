@@ -80,6 +80,11 @@ public class EventService {
         return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
     }
 
+    public Event findByNameLike(String name) {
+        Optional<Event> event = repository.findByNameIgnoreCaseLike(name);
+        return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
+    }
+
     public void delete(String id) {
         findById(id);
         repository.delete(id);
