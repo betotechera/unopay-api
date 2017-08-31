@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
+import org.joda.time.DateTime
 
 class ContractInstallmentTest extends FixtureApplicationTest {
 
@@ -63,8 +64,8 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         Date expiration = contractInstallment.expiration
         (0..contract.paymentInstallments).every {
             def installment = new ContractInstallment(contract);
-            installment.expiration >= instant("${it +1} month from now at 00:00 am") &&
-            installment.expiration <= instant("${it +1} month from now at 23:59 pm");
+            installment.expiration == new DateTime()
+                    .plusMonths(it + 1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
             installment.plusExpiration(expiration);
             expiration = installment.expiration;
         }
