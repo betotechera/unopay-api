@@ -63,7 +63,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         int nextMonth = 1
         Date expiration = contractInstallment.expiration
         (0..contract.paymentInstallments).every {
-            nextMonth++;
+            nextMonth=nextMonth+1;
             def installment = new ContractInstallment(contract)
             installment.plusExpiration(expiration)
             expiration = installment.expiration
