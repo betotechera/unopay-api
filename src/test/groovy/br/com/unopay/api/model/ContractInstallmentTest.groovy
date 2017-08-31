@@ -67,8 +67,8 @@ class ContractInstallmentTest extends FixtureApplicationTest {
             installment.plusExpiration(expiration)
             nextMonth++
             expiration = installment.expiration
-            installment.expiration > instant("$nextMonth month from now at 00:01 am") &&
-            installment.expiration < instant("$nextMonth month from now at 23:59 pm")
+            installment.expiration >= instant("$nextMonth month from now at 00:00 am") &&
+            installment.expiration <= instant("$nextMonth month from now at 23:59 pm")
         }
     }
 
