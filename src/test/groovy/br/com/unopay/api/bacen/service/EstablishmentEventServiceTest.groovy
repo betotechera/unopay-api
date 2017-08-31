@@ -32,26 +32,51 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
     ResourceLoader resourceLoader
 
 
-    def'should create establishment event fees from csv'(){
+    def'should create establishment event fees from csv with establishments in file'(){
         given:
         Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("name", "my event")
         }})
 
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
-            add("name", "establishment one")
+        List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
+            add("document.number", uniqueRandom("91804308000145", "23383869000168"))
         }})
 
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-                add("person", person)
-            }})
+        Fixture.from(Establishment.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
+            add("person", uniqueRandom(person.find(), person.last()))
+        }})
 
         Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
         MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
 
         when:
-        service.createFromCsv(file)
-        def result = service.findByEstablishmentId(establishment.id)
+        service.createFromCsv(null, file)
+        def result = service.findByEstablishmentDocument("91804308000145")
+
+        then:
+        that result, hasSize(2)
+    }
+
+    def'should create establishment event fees from csv with establishment in param'(){
+        given:
+        Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("name", "my event")
+        }})
+
+        List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
+            add("document.number", uniqueRandom("91804308000145", "23383869000168"))
+        }})
+
+        Fixture.from(Establishment.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
+            add("person", uniqueRandom(person.find(), person.last()))
+        }})
+
+        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+
+        when:
+        service.createFromCsv("91804308000145",file)
+        def result = service.findByEstablishmentDocument("91804308000145")
 
         then:
         that result, hasSize(2)
@@ -64,7 +89,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
             }})
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
-            add("name", "establishment one")
+            add("document.number", "91804308000145")
         }})
 
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {{
@@ -75,7 +100,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
 
         when:
-        service.createFromCsv(file)
+        service.createFromCsv(null, file)
         def result = service.findByEstablishmentId(establishment.id)
 
         then:

@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.model.csv;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
 import com.opencsv.bean.CsvBindByName;
@@ -16,7 +15,7 @@ public class EstablishmentEventFeeCsv {
     private String eventName;
 
     @CsvBindByName(column = "establishment")
-    private String establishmentName;
+    private String establishmentDocument;
 
     @CsvBindByName
     private BigDecimal value;
