@@ -49,8 +49,8 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def installment = new ContractInstallment(contract)
 
         then:
-        installment.expiration > instant("one month from now at 00:01 am")
-        installment.expiration < instant("one month from now at 23:59 pm")
+        installment.expiration == new DateTime()
+                .plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
     }
 
     def 'when increment expiration should be incremented with one month'(){
