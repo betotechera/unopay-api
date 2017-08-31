@@ -35,11 +35,11 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
     def'should create establishment event fees from csv with establishments in file'(){
         given:
         Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("name", "my event")
+            add("ncmCode", "53002")
         }})
 
         List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
-            add("document.number", uniqueRandom("91804308000145", "23383869000168"))
+            add("document.number", uniqueRandom("60840055000131", "23383869000168"))
         }})
 
         Fixture.from(Establishment.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
@@ -51,7 +51,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
         when:
         service.createFromCsv(null, file)
-        def result = service.findByEstablishmentDocument("91804308000145")
+        def result = service.findByEstablishmentDocument("60840055000131")
 
         then:
         that result, hasSize(2)
@@ -60,11 +60,11 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
     def'should create establishment event fees from csv with establishment in param'(){
         given:
         Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("name", "my event")
+            add("ncmCode", "53002")
         }})
 
         List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
-            add("document.number", uniqueRandom("91804308000145", "23383869000168"))
+            add("document.number", uniqueRandom("60840055000131", "23383869000168"))
         }})
 
         Fixture.from(Establishment.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
@@ -75,8 +75,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
 
         when:
-        service.createFromCsv("91804308000145",file)
-        def result = service.findByEstablishmentDocument("91804308000145")
+        service.createFromCsv("60840055000131",file)
+        def result = service.findByEstablishmentDocument("60840055000131")
 
         then:
         that result, hasSize(2)
@@ -85,11 +85,11 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
     def'should create establishment event fees from csv with valid event'(){
         given:
         Event event = Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-                add("name", "my event")
-            }})
+            add("ncmCode", "53002")
+        }})
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
-            add("document.number", "91804308000145")
+            add("document.number", "60840055000131")
         }})
 
         Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule() {{

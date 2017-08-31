@@ -80,8 +80,8 @@ public class EventService {
         return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
     }
 
-    public Event findByNameLike(String name) {
-        Optional<Event> event = repository.findByNameIgnoreCaseLike(name);
+    public Event findByNcmCode(String code) {
+        Optional<Event> event = repository.findByNcmCode(code);
         return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
     }
 

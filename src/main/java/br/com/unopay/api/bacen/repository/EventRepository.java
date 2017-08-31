@@ -19,5 +19,5 @@ public interface EventRepository extends UnovationFilterRepository<Event,String,
 
     Optional<Event> findByIdAndServiceType(String id, ServiceType serviceType);
 
-    Optional<Event> findByNameIgnoreCaseLike(String name);
+    Optional<Event> findByNcmCode(String code);
 }

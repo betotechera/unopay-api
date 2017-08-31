@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -108,7 +107,7 @@ public class EstablishmentEventService {
     }
 
     private void createEventFee(EstablishmentEventFeeCsv csvLine, Establishment establishment) {
-        Event event = eventService.findByNameLike(csvLine.getEventName());
+        Event event = eventService.findByNcmCode(csvLine.getEventName());
         EstablishmentEvent establishmentEvent = csvLine.toEstablishmentEventFee(event);
         create(establishment.getId(), establishmentEvent);
     }
