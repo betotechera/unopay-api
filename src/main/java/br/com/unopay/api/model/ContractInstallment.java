@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 
 @Data
 @Entity
-@ToString
+@ToString(exclude = "contract")
 @EqualsAndHashCode(of = { "id", "expiration"})
 @Table(name = "contract_installment")
 public class ContractInstallment implements Serializable, Updatable {

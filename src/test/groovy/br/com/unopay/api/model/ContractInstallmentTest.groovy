@@ -63,9 +63,9 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         int nextMonth = 1
         Date expiration = contractInstallment.expiration
         (0..contract.paymentInstallments).every {
+            nextMonth++;
             def installment = new ContractInstallment(contract)
             installment.plusExpiration(expiration)
-            nextMonth++;
             expiration = installment.expiration
             installment.expiration >= instant("$nextMonth month from now at 00:00 am") &&
             installment.expiration <= instant("$nextMonth month from now at 23:59 pm")
