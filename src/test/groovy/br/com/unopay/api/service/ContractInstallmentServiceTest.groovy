@@ -85,12 +85,10 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         Set<ContractInstallment> result = service.findByContractId(contract.id)
 
         then:
-        int nextMonth = 0
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            nextMonth++;
-            it.expiration >= instant("$nextMonth month from now at 00:00 am") &&
-                    it.expiration <= instant("$nextMonth month from now at 23:59 pm")
+            it.expiration >= instant("$it.installmentNumber month from now at 00:00 am") &&
+                    it.expiration <= instant("$it.installmentNumber month from now at 23:59 pm")
         }
     }
 
