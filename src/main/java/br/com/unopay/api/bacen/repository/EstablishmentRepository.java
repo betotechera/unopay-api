@@ -9,6 +9,6 @@ public interface EstablishmentRepository
         extends UnovationFilterRepository<Establishment, String, EstablishmentFilter> {
 
     Optional<Establishment> findById(String id);
-    Optional<Establishment> findByPersonDocumentNumber(String documentNumber);
+    Optional<Establishment> findByPersonDocumentNumber(String document);
 
 }

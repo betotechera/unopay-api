@@ -82,8 +82,12 @@ public class EstablishmentService {
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 
-    public Establishment findByDocumentNumber(String documentNumber) {
-        Optional<Establishment> establishment = repository.findByPersonDocumentNumber(documentNumber);
+    public Optional<Establishment> findByIdOptional(String id){
+        return repository.findById(id);
+    }
+
+    public Establishment findByDocumentNumber(String document) {
+        Optional<Establishment> establishment = repository.findByPersonDocumentNumber(document);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 

@@ -10,6 +10,7 @@ import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
@@ -85,12 +86,10 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         Set<ContractInstallment> result = service.findByContractId(contract.id)
 
         then:
-        int nextMonth = 0
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            nextMonth++;
-            it.expiration > instant("$nextMonth month from now at 00:01 am") &&
-                    it.expiration < instant("$nextMonth month from now at 23:59 pm")
+            it.expiration == new DateTime()
+                    .plusMonths(it.installmentNumber).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
         }
     }
 

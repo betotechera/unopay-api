@@ -2,42 +2,55 @@ package br.com.unopay.api.model.validation.group;
 
 public interface Views {
 
-    interface Person {}
-
     interface Address{}
-
-    interface BankAccount {}
 
     interface AddressList {}
 
-    interface Institution {
-        interface Detail extends Person,Address,List {}
+    interface BankAccount {}
+
+    interface Person {}
+
+
+    interface AccreditedNetwork {
+        interface Detail extends Person,BankAccount,Address,List {}
         interface List {}
     }
 
-    interface Partner {
-        interface Detail extends Person,Address,List,BankAccount {}
-        interface List extends AddressList {}
-    }
-
-    interface User {
+    interface BatchClosing {
         interface Detail extends List{}
         interface List {}
     }
 
-    interface Event {
-        interface Detail extends List{}
-        interface List {}
-    }
-
-    interface Group {
-        interface Detail extends List{}
-        interface List {}
-    }
-
-    interface Issuer {
+    interface Branch {
         interface Detail extends Person,Address,BankAccount,List {}
         interface List extends AddressList{}
+    }
+
+    interface Contract {
+        interface Detail extends List,Establishment,Installment {}
+        interface Establishment  {}
+        interface List {}
+        interface Installment {}
+    }
+
+    interface Contractor {
+        interface Detail extends Person,Address,BankAccount,List {}
+        interface List {}
+    }
+
+    interface ContractorInstrumentCredit {
+        interface Detail extends List {}
+        interface List {}
+    }
+
+    interface Credit {
+        interface Detail extends List{}
+        interface List {}
+    }
+
+    interface CreditPaymentAccount {
+        interface Detail extends List{}
+        interface List {}
     }
 
     interface Establishment {
@@ -51,9 +64,14 @@ public interface Views {
         interface List {}
     }
 
-    interface Branch {
-        interface Detail extends Person,Address,BankAccount,List {}
-        interface List extends AddressList{}
+    interface Event {
+        interface Detail extends List{}
+        interface List {}
+    }
+
+    interface Group {
+        interface Detail extends List{}
+        interface List {}
     }
 
     interface Hirer {
@@ -66,70 +84,23 @@ public interface Views {
         interface List {}
     }
 
-    interface Contract {
-        interface Detail extends List,Establishment,Installment {}
-        interface Establishment  {}
-        interface List {}
-        interface Installment {}
-    }
-
-    interface Credit {
-        interface Detail extends List{}
+    interface Institution {
+        interface Detail extends Person,Address,List {}
         interface List {}
     }
 
-    interface CreditPaymentAccount {
-        interface Detail extends List{}
-        interface List {}
-    }
-
-    interface ContractorInstrumentCredit {
-        interface Detail extends List {}
-        interface List {}
-    }
-
-    interface Service {
-        interface Detail extends List {}
-        interface List {}
-    }
-
-    interface Product {
-        interface Detail extends List {}
-        interface List {}
-    }
-
-    interface Contractor {
+    interface Issuer {
         interface Detail extends Person,Address,BankAccount,List {}
-        interface List {}
+        interface List extends AddressList{}
     }
 
-    interface PaymentRuleGroup{
-        interface Detail extends List{}
-        interface List{}
+    interface Partner {
+        interface Detail extends Person,Address,List,BankAccount {}
+        interface List extends AddressList {}
     }
 
     interface PaymentInstrument{
         interface Detail extends List{}
-        interface List {}
-    }
-
-    interface AccreditedNetwork {
-        interface Detail extends Person,BankAccount,Address,List {}
-        interface List {}
-    }
-
-    interface ServiceAuthorize {
-        interface Detail extends List {}
-        interface List {}
-    }
-
-    interface BatchClosing {
-        interface Detail extends List{}
-        interface List {}
-    }
-
-    interface Order {
-        interface Detail extends Billing{}
         interface List {}
     }
 
@@ -139,6 +110,36 @@ public interface Views {
         interface Payee {}
         interface Payer {}
         interface Item {}
+    }
+
+    interface PaymentRuleGroup{
+        interface Detail extends List{}
+        interface List{}
+    }
+
+    interface Product {
+        interface Detail extends List {}
+        interface List {}
+    }
+
+    interface Service {
+        interface Detail extends List {}
+        interface List {}
+    }
+
+    interface ServiceAuthorize {
+        interface Detail extends List {}
+        interface List {}
+    }
+
+    interface User {
+        interface Detail extends List{}
+        interface List {}
+    }
+
+    interface Order {
+        interface Detail extends Billing{}
+        interface List {}
     }
 
     interface Billing {

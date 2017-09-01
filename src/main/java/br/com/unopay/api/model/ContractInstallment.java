@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 
 @Data
 @Entity
-@ToString
+@ToString(exclude = "contract")
 @EqualsAndHashCode(of = { "id", "expiration"})
 @Table(name = "contract_installment")
 public class ContractInstallment implements Serializable, Updatable {
@@ -39,7 +39,7 @@ public class ContractInstallment implements Serializable, Updatable {
     public ContractInstallment(Contract contract) {
         this.value = contract.getAnnuity()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_UP);
-        this.expiration = new DateTime().plusMonths(1).toDate();
+        this.expiration = new DateTime().plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate();
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;
     }
@@ -86,7 +86,8 @@ public class ContractInstallment implements Serializable, Updatable {
     private Integer version;
 
     public void plusExpiration(Date previousMonth) {
-        this.expiration = new DateTime(previousMonth).plusMonths(1).toDate();
+        this.expiration = new DateTime(previousMonth)
+                .plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate();
     }
 
     public void incrementNumber(Integer previousNumber) {

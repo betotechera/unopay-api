@@ -13,11 +13,13 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
 import static java.lang.Boolean.FALSE;
 import static javax.persistence.EnumType.STRING;
 
 @Data
+@ToString(doNotUseGetters = true)
 @Embeddable
 public class Checkout implements Serializable {
 

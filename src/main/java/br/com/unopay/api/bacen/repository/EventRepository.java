@@ -18,4 +18,6 @@ public interface EventRepository extends UnovationFilterRepository<Event,String,
     int countByNcmCode(String ncmCode);
 
     Optional<Event> findByIdAndServiceType(String id, ServiceType serviceType);
+
+    Optional<Event> findByNcmCode(String code);
 }

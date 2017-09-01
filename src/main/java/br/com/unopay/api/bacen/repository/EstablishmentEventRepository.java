@@ -11,6 +11,7 @@ public interface EstablishmentEventRepository
     Optional<EstablishmentEvent> findById(String id);
     Optional<EstablishmentEvent> findByEstablishmentIdAndId(String establishmentId, String id);
     List<EstablishmentEvent> findByEstablishmentId(String establishmentId);
+    List<EstablishmentEvent> findByEstablishmentPersonDocumentNumber(String document);
 
     int countByEstablishmentId(String establishmentId);
 

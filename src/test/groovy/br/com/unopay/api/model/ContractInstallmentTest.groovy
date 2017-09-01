@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
+import org.joda.time.DateTime
 
 class ContractInstallmentTest extends FixtureApplicationTest {
 
@@ -48,8 +49,8 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def installment = new ContractInstallment(contract)
 
         then:
-        installment.expiration > instant("one month from now at 00:01 am")
-        installment.expiration < instant("one month from now at 23:59 pm")
+        installment.expiration == new DateTime()
+                .plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
     }
 
     def 'when increment expiration should be incremented with one month'(){
@@ -60,15 +61,13 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def contractInstallment = new ContractInstallment(contract)
 
         then:
-        int nextMonth = 1
         Date expiration = contractInstallment.expiration
         (0..contract.paymentInstallments).every {
-            def installment = new ContractInstallment(contract)
-            installment.plusExpiration(expiration)
-            nextMonth++
-            expiration = installment.expiration
-            installment.expiration > instant("$nextMonth month from now at 00:01 am") &&
-            installment.expiration < instant("$nextMonth month from now at 23:59 pm")
+            def installment = new ContractInstallment(contract);
+            installment.expiration == new DateTime()
+                    .plusMonths(it + 1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
+            installment.plusExpiration(expiration);
+            expiration = installment.expiration;
         }
     }
 
