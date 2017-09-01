@@ -1,7 +1,5 @@
 package br.com.unopay.api.order.model;
 
-import br.com.unopay.api.bacen.model.BankAccount;
-import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
