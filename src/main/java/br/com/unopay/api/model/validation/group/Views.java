@@ -120,6 +120,7 @@ public interface Views {
     interface Product {
         interface Detail extends List {}
         interface List {}
+        interface Partner {}
     }
 
     interface Service {

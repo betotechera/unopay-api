@@ -42,5 +42,7 @@ public class ProductFilter implements Serializable {
     @SearchableField
     private CreditInsertionType creditInsertionType;
 
+    @SearchableField(field = "partners.id")
+    private String partner;
 
 }
