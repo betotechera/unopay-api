@@ -17,7 +17,7 @@ public class CreditOrderService {
         this.repository = repository;
     }
 
-    public CreditOrder create(CreditOrder creditOrder) {
+    public CreditOrder save(CreditOrder creditOrder) {
         return repository.save(creditOrder);
     }
 

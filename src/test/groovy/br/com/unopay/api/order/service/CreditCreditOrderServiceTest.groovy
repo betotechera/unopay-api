@@ -25,7 +25,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         }})
 
         when:
-        CreditOrder created = service.create(creditOrder)
+        CreditOrder created = service.save(creditOrder)
         CreditOrder result = service.findById(created.id)
 
         then:

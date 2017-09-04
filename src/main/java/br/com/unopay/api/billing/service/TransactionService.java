@@ -16,7 +16,7 @@ public class TransactionService {
         this.repository = repository;
     }
 
-    public Transaction create(Transaction transaction) {
+    public Transaction save(Transaction transaction) {
         return repository.save(transaction);
     }
 
