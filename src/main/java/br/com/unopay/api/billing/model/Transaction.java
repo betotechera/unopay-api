@@ -5,6 +5,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -23,6 +24,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.billing.model.CardBrand.fromCardNumber;
 
 @Data
 @Entity
@@ -80,4 +83,16 @@ public class Transaction {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public long getLongAmountValue() {
+        return getAmount().getValue().multiply(new BigDecimal(100)).longValue();
+    }
+
+    public CardBrand getCardBrand() {
+        return fromCardNumber(getCreditCard().getNumber());
+    }
+
+    public int getAmountCurrencyIsoCode() {
+        return getAmount().getCurrency().getIso();
+    }
 }

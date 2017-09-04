@@ -4,7 +4,7 @@ public enum CardBrand {
 
     VISA("Visa"),
     MASTERCARD("Mastercard"),
-    AMERICAN_EXPRESS("American Express"),
+    AMEX("American Express"),
     DINERS("Diners"),
     UNKNOWN("Unkown");
 
@@ -30,7 +30,7 @@ public enum CardBrand {
         } else if (creditCardNumber.matches(master)) {
             return CardBrand.MASTERCARD;
         } else if (creditCardNumber.matches(americanExpress)) {
-            return CardBrand.AMERICAN_EXPRESS;
+            return CardBrand.AMEX;
         } else if (creditCardNumber.matches(diners)) {
             return CardBrand.DINERS;
         }
