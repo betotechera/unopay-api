@@ -2,18 +2,25 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
+import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -24,25 +31,22 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
-
-import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
-import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "product")
-@EqualsAndHashCode(exclude = {"issuer", "paymentRuleGroup", "accreditedNetwork"})
+@EqualsAndHashCode(exclude = {"issuer", "paymentRuleGroup", "accreditedNetwork","partners"})
+@ToString(exclude = {"partners"})
 public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
@@ -165,6 +169,10 @@ public class Product implements Serializable, Updatable {
     @Column(name = "contract_validity_days")
     @JsonView({Views.Product.Detail.class})
     private Integer contractValidityDays;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "products")
+    private Set<Partner> partners;
 
     @Version
     @JsonIgnore
