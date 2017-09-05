@@ -28,7 +28,6 @@ public class BillingTemplateLoader  implements TemplateLoader {
         }});
 
         Fixture.of(PaymentRequest.class).addTemplate("valid", new Rule() {{
-            add("userId", regex("\\d{5}"));
             add("method", PaymentMethod.CARD);
             add("value", random(BigDecimal.class, range(40,1000)));
             add("orderId", regex("\\d{8}"));

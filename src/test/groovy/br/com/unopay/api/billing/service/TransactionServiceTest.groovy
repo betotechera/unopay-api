@@ -110,7 +110,7 @@ class TransactionServiceTest extends SpockApplicationTests{
         service.create(null)
 
         then:
-        def ex = thrown(ConflictException)
+        def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'PAYMENT_REQUEST_REQUIRED'
     }
 

@@ -1,6 +1,6 @@
 create table credit_order (
     id VARCHAR(256) PRIMARY KEY,
-    number varchar(100) not null,
+    order_number varchar(100) not null,
     product_id varchar(256) not null,
     person_id VARCHAR(256) not null,
     email varchar(256) not null,

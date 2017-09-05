@@ -49,6 +49,7 @@ public class CreditOrderService {
         Optional<Person> person = personService.findByIdOptional(order.getPerson().getId());
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
         CreditOrder created = repository.save(order);
+        order.getPaymentRequest().setOrderId(order.getId());
         notifier.notify(Queues.UNOPAY_ORDER_CREATED, created);
         return created;
     }

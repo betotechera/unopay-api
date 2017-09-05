@@ -60,7 +60,7 @@ public class CreditOrder {
     @JsonView({Views.Order.List.class})
     private String email;
 
-    @Column(name = "number")
+    @Column(name = "order_number")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Order.List.class})
     private String number;
