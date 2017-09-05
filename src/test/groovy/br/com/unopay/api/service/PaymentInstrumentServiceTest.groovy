@@ -1,5 +1,6 @@
 package br.com.unopay.api.service
 
+import br.com.unopay.api.InstrumentNumberGenerator
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
@@ -28,6 +29,25 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         then:
         result != null
     }
+
+    def 'should check Instrument Number generated'(){
+        given:
+        PaymentInstrument instrument1 = fixtureCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument2 = fixtureCreator.createPaymentInstrument("valid")
+
+        def generatorMock = Mock(InstrumentNumberGenerator)
+        service.instrumentNumberGenerator = generatorMock
+        when:
+        service.save(instrument1)
+        PaymentInstrument created = service.save(instrument2)
+        PaymentInstrument result = service.findById(created.id)
+
+        then:
+         3 * generatorMock.generate() >>> ['1000000000000000','1000000000000000','1000000000000001']
+        result != null
+    }
+
+
 
     def 'a Instrument with unknown product id should be created'(){
         given:

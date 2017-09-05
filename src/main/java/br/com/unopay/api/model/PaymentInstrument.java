@@ -50,7 +50,6 @@ public class PaymentInstrument implements Serializable, Updatable {
     private PaymentInstrumentType type;
 
     @Column(name = "payment_number")
-    @NotNull(groups = {Create.class, Update.class})
     private String number;
 
     @ManyToOne
@@ -100,8 +99,9 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonProperty
     private boolean resetPassword;
 
-    public void setMeUp(){
+    public void setMeUp(String number){
         createdDate = new Date();
+        this.number = number;
     }
 
     @JsonIgnore
