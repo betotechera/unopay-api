@@ -4,6 +4,8 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.order.model.CreditOrder
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -20,6 +22,12 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    Notifier notifierMock = Mock(Notifier)
+
+    def setup(){
+        service.notifier = notifierMock
+    }
 
     def 'a with known person order should be created'(){
         given:
@@ -114,5 +122,37 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'PAYMENT_REQUEST_REQUIRED'
+    }
+
+    def 'when create order should notify'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+        }})
+
+        when:
+        CreditOrder created = service.create(creditOrder)
+        CreditOrder result = service.findById(created.id)
+
+        then:
+        result != null
+        1 * notifierMock.notify(Queues.UNOPAY_ORDER_CREATED, _)
+    }
+
+    def 'payment request order should be created order'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+        }})
+
+        when:
+        CreditOrder created = service.create(creditOrder)
+        CreditOrder result = service.findById(created.id)
+
+        then:
+        result != null
+        created.paymentRequest.orderId == created.id
     }
 }

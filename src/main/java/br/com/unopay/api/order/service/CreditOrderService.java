@@ -1,5 +1,7 @@
 package br.com.unopay.api.order.service;
 
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.order.model.CreditOrder;
 import br.com.unopay.api.order.repository.CreditOrderRepository;
@@ -7,6 +9,7 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Optional;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +22,18 @@ public class CreditOrderService {
     private CreditOrderRepository repository;
     private PersonService personService;
     private ProductService productService;
+    @Setter private Notifier notifier;
+
     public CreditOrderService(){}
 
     @Autowired
     public CreditOrderService(CreditOrderRepository repository,
                               PersonService personService,
-                              ProductService productService){
+                              ProductService productService, Notifier notifier){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
+        this.notifier = notifier;
     }
 
     public CreditOrder save(CreditOrder creditOrder) {
@@ -42,7 +48,9 @@ public class CreditOrderService {
         validateReferences(order);
         Optional<Person> person = personService.findByIdOptional(order.getPerson().getId());
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
-        return repository.save(order);
+        CreditOrder created = repository.save(order);
+        notifier.notify(Queues.UNOPAY_ORDER_CREATED, created);
+        return created;
     }
 
     private void validateReferences(CreditOrder order) {

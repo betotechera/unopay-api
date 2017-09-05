@@ -104,6 +104,16 @@ class TransactionServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'ORDER_REQUIRED'
     }
 
+    def 'a transaction without payment request should not be created'(){
+        given:
+        when:
+        service.create(null)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'PAYMENT_REQUEST_REQUIRED'
+    }
+
     @Unroll
     'given a transaction with #invalidValue value should not be processed'(){
         given:
