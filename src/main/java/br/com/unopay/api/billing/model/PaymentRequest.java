@@ -1,17 +1,15 @@
 package br.com.unopay.api.billing.model;
 
 import java.math.BigDecimal;
-import lombok.Data;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class PaymentRequest {
 
     @NotNull
     private PaymentMethod method;
-    private String userId;
     private String orderId;
 
     @Valid
