@@ -92,6 +92,10 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class})
     private String financierMailForRemittance;
 
+    @Column(name = "bin")
+    @JsonView({Views.Issuer.Detail.class})
+    private String bin;
+
     @Version
     @JsonIgnore
     Long version;
