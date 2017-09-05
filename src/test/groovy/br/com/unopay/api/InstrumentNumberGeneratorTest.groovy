@@ -8,14 +8,13 @@ class InstrumentNumberGeneratorTest extends SpockApplicationTests {
     InstrumentNumberGenerator generator
 
     void setup() {
-        generator.bin = '5000'
         generator.length = 20
     }
 
 
     def "should generate a instrument number from bin and length"() {
         when:
-            String result = generator.generate()
+            String result = generator.generate('5000')
         then:
             result.startsWith('5000')
             result.length() == 20

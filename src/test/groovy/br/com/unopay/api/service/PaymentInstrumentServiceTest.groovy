@@ -35,7 +35,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         PaymentInstrument result = service.findById(created.id)
 
         then:
-        3 * generatorMock.generate() >>> ['1000000000000000','1000000000000000','1000000000000001']
+        3 * generatorMock.generate(_) >>> ['1000000000000000','1000000000000000','1000000000000001']
         result != null
     }
 

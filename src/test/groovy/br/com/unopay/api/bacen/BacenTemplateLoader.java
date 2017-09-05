@@ -124,6 +124,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
             add("movementAccount", one(BankAccount.class, "persisted"));
             add("financierMailForRemittance", "financeiro@gmail.com");
+            add("bin", regex("\\d{4}"));
+
         }});
 
         Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
