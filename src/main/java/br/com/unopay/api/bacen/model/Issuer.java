@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -92,8 +94,10 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class})
     private String financierMailForRemittance;
 
+    @Size(max = 6)
     @Column(name = "bin")
     @JsonView({Views.Issuer.Detail.class})
+    @NotNull(groups = {Create.class, Update.class})
     private String bin;
 
     @Version
