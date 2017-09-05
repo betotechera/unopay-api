@@ -30,12 +30,8 @@ public class CreditCard implements Serializable {
     @CreditCardNumber
     private String number;
 
-    private String variant;
-
     @Length(min=2, max=4)
     private String securityCode;
-
-    private Date createdAt;
 
     private String cardReference;
 }

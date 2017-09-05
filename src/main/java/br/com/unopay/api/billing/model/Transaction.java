@@ -80,6 +80,16 @@ public class Transaction {
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
 
+    @Column(name = "captured_requested_at")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Billing.List.class})
+    private Date capturedRequestedAt;
+
+    @Column(name = "cancellation_requested_at")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Billing.List.class})
+    private Date cancellationRequestedAt;
+
     @Valid
     @Transient
     private CreditCard creditCard;

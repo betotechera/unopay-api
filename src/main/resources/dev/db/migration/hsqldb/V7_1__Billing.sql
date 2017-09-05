@@ -19,5 +19,7 @@ create table transaction (
     value decimal(20,2) not null,
     installments integer not null,
     create_date_time Timestamp not null,
+    captured_requested_at Timestamp,
+    cancellation_requested_at Timestamp,
     version integer
 );

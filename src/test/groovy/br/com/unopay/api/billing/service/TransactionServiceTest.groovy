@@ -1,11 +1,16 @@
 package br.com.unopay.api.billing.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.billing.model.Gateway
 import br.com.unopay.api.billing.model.PaymentRequest
 import br.com.unopay.api.billing.model.Transaction
+import br.com.unopay.api.billing.model.TransactionStatus
+import br.com.unopay.bootcommons.exception.ConflictException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 
 class TransactionServiceTest extends SpockApplicationTests{
 
@@ -51,5 +56,58 @@ class TransactionServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
+
+    def 'given a order with pending transaction should not be created again'(){
+        given:
+        Transaction transaction = Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("status", TransactionStatus.PENDING)
+        }})
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+            add("orderId", transaction.orderId)
+        }})
+        when:
+        service.create(paymentRequest)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'ORDER_WITH_PENDING_TRANSACTION'
+    }
+
+    def 'given a order with processed transaction should not be created again'(){
+        given:
+        Transaction transaction = Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("status", TransactionStatus.AUTHORIZED)
+        }})
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+            add("orderId", transaction.orderId)
+        }})
+        when:
+        service.create(paymentRequest)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'ORDER_WITH_PROCESSED_TRANSACTION'
+    }
+
+    @Unroll
+    'given a transaction with #invalidValue value should not be processed'(){
+        given:
+        def value = invalidValue
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+            add("value", value)
+        }})
+        when:
+        service.create(paymentRequest)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVALID_PAYMENT_VALUE'
+
+        where:
+        _ | invalidValue
+        _ | 0.0
+        _ | null
+        _ | -1.0
     }
 }

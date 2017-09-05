@@ -494,6 +494,17 @@ public final class Errors {
     public static final UnovationError REMITTANCE_WITH_INVALID_DATA =
             new UnovationError("REMITTANCE_WITH_INVALID_DATA", "Remittance with invalid data.");
 
+    /* Billing */
+    public static final UnovationError ORDER_WITH_PENDING_TRANSACTION =
+            new UnovationError("ORDER_WITH_PENDING_TRANSACTION","order with pending transaction.");
+    public static final UnovationError ORDER_WITH_PROCESSED_TRANSACTION =
+            new UnovationError("ORDER_WITH_PROCESSED_TRANSACTION","order with processed transaction.");
+    public static final UnovationError INVALID_PAYMENT_VALUE =
+            new UnovationError("INVALID_PAYMENT_VALUE","Invalid payment value.");
+
+
+
+
 
 
 
