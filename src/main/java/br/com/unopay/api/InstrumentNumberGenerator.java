@@ -10,13 +10,10 @@ import java.util.Random;
 @Component
 public class InstrumentNumberGenerator {
 
-    @Value("${unopay.payment-instrument.bin}")
-    private String bin;
-
     @Value("${unopay.payment-instrument.length}")
     private Integer length;
 
-    public String generate() {
+    public String generate(String bin) {
         Random random = new Random(System.currentTimeMillis());
         int randomNumberLength = length - (bin.length() + 1);
         StringBuilder builder = new StringBuilder(bin);

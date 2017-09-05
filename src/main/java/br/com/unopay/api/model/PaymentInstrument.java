@@ -142,4 +142,7 @@ public class PaymentInstrument implements Serializable, Updatable {
         return ObjectUtils.clone(this.expirationDate);
     }
 
+    public String issuerBin() {
+        return product.issuerBin();
+    }
 }

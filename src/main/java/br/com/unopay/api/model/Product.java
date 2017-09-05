@@ -199,4 +199,7 @@ public class Product implements Serializable, Updatable {
         }
     }
 
+    public String issuerBin() {
+        return issuer.getBin() != null ? issuer.getBin() : "";
+    }
 }

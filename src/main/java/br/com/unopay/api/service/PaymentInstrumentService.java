@@ -51,7 +51,7 @@ public class PaymentInstrumentService {
     public PaymentInstrument save(PaymentInstrument instrument) {
         try {
             validateReference(instrument);
-            instrument.setMeUp(generateNumber());
+            instrument.setMeUp(generateNumber(instrument));
             if(instrument.hasPassword()){
                 String encodedPassword = passwordEncoder.encode(instrument.getPassword());
                 instrument.setPassword(encodedPassword);
@@ -64,9 +64,9 @@ public class PaymentInstrumentService {
         }
     }
 
-    private String generateNumber() {
-        String instrumentNumber = instrumentNumberGenerator.generate();
-        return containsNumber(instrumentNumber)? generateNumber() : instrumentNumber;
+    private String generateNumber(PaymentInstrument instrument) {
+        String instrumentNumber = instrumentNumberGenerator.generate(instrument.issuerBin());
+        return containsNumber(instrumentNumber)? generateNumber(instrument) : instrumentNumber;
     }
 
     private boolean containsNumber(String instrumentNumber) {
