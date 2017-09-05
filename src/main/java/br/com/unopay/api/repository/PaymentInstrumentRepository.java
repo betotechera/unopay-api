@@ -13,4 +13,6 @@ public interface PaymentInstrumentRepository
     List<PaymentInstrument> findByContractorId(String contractorId);
 
     List<PaymentInstrument> findByContractorPersonDocumentNumber(String contractorDocumentNumber);
+
+    Integer countByNumber(String instrumentNumber);
 }

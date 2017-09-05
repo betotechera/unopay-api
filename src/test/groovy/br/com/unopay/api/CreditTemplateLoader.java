@@ -28,7 +28,7 @@ public class CreditTemplateLoader implements TemplateLoader {
     public void load() {
         Fixture.of(PaymentInstrument.class).addTemplate("valid", new Rule(){{
             add("type", random(PaymentInstrumentType.class));
-            add("number", regex("\\d{5}\\.\\w{5}"));
+            add("number", regex("\\d{8}\\.\\w{8}"));
             add("product", one(Product.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("createdDate", instant("now"));
