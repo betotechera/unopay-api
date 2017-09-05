@@ -1,5 +1,6 @@
 package br.com.unopay.api.order.model;
 
+import br.com.unopay.api.billing.model.PaymentRequest;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
@@ -17,10 +18,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -65,6 +69,10 @@ public class CreditOrder {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
+
+    @Valid
+    @Transient
+    private PaymentRequest paymentRequest;
 
     @JsonIgnore
     @Version

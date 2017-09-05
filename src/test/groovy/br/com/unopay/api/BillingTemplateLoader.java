@@ -54,6 +54,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("product", one(Product.class, "valid"));
             add("person", one(Person.class, "physical"));
             add("number", regex("\\d{10}"));
+            add("paymentRequest", one(PaymentRequest.class, "valid"));
         }});
 
         Fixture.of(CreditCard.class).addTemplate("payzenCard", new Rule() {{

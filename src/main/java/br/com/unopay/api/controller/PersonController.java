@@ -26,7 +26,7 @@ public class PersonController {
     @RequestMapping(value = "/persons", method = RequestMethod.GET)
     public ResponseEntity<Person> findPerson( PersonFilter filter) {
         log.info("find Person  with filter={}", filter);
-        Person person = personService.findByDocument(filter);
+        Person person = personService.findByFilter(filter);
         return ResponseEntity.ok(person);
     }
 

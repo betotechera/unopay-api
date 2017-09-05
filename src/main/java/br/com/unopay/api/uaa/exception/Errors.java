@@ -501,6 +501,14 @@ public final class Errors {
             new UnovationError("ORDER_WITH_PROCESSED_TRANSACTION","order with processed transaction.");
     public static final UnovationError INVALID_PAYMENT_VALUE =
             new UnovationError("INVALID_PAYMENT_VALUE","Invalid payment value.");
+    public static final UnovationError PAYMENT_REQUEST_REQUIRED =
+            new UnovationError("PAYMENT_REQUEST_REQUIRED","Payment request required.");
+    public static final UnovationError ORDER_REQUIRED =
+            new UnovationError("ORDER_REQUIRED","Order required.");
+
+
+
+
 
 
 

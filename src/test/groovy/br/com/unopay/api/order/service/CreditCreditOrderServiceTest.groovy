@@ -5,12 +5,18 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.service.PersonService
+import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     @Autowired
     CreditOrderService service
+
+    @Autowired
+    PersonService personService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -30,6 +36,83 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
 
+    def 'given a unknown document should create person when create order'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+        }})
+
+        when:
+        CreditOrder created = service.create(creditOrder)
+        CreditOrder result = service.findById(created.id)
+
+        then:
+        result != null
+        result.person != null
+        personService.findById(result.person.id)
+    }
+
+    def 'given a order with known person should not create a new person'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("person", contractor.person)
+        }})
+
+        when:
+        CreditOrder created = service.create(creditOrder)
+        CreditOrder result = service.findById(created.id)
+
+        then:
+        result != null
+        result.person != null
+        result.person == contractor.person
+    }
+
+    def 'a order should not be created with unknown product'(){
+        given:
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid")
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
+    }
+
+    def 'a order should not be created without product'(){
+        given:
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", null)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PRODUCT_REQUIRED'
+    }
+
+    def 'a order without payment request should not be created'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentRequest", null)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PAYMENT_REQUEST_REQUIRED'
     }
 }

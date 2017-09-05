@@ -90,6 +90,20 @@ class TransactionServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'ORDER_WITH_PROCESSED_TRANSACTION'
     }
 
+
+    def 'given a payment request without order id should not be created'(){
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+            add("orderId", null)
+        }})
+        when:
+        service.create(paymentRequest)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'ORDER_REQUIRED'
+    }
+
     @Unroll
     'given a transaction with #invalidValue value should not be processed'(){
         given:
