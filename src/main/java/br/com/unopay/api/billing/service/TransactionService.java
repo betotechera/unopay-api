@@ -1,6 +1,7 @@
 package br.com.unopay.api.billing.service;
 
 import br.com.unopay.api.billing.model.Gateway;
+import br.com.unopay.api.billing.model.PaymentRequest;
 import br.com.unopay.api.billing.model.Transaction;
 import br.com.unopay.api.billing.repository.TransactionRepository;
 import lombok.Setter;
@@ -24,7 +25,6 @@ public class TransactionService {
     }
 
     public Transaction save(Transaction transaction) {
-        log.info("CREDIT CARD NUMBER={}",transaction.getCreditCard().getNumber());
         return repository.save(transaction);
     }
 
@@ -32,9 +32,9 @@ public class TransactionService {
         return repository.findOne(id);
     }
 
-    public Transaction create(Transaction transaction) {
-        Transaction created = save(transaction);
-        gateway.createTransaction(transaction);
+    public Transaction create(PaymentRequest paymentRequest) {
+        Transaction created = save(paymentRequest.toTransaction());
+        gateway.createTransaction(created);
         return created;
     }
 }

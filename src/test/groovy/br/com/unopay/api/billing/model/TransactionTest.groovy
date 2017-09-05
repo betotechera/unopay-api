@@ -3,8 +3,26 @@ package br.com.unopay.api.billing.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.billing.model.CardBrand.fromCardNumber
+import static br.com.unopay.api.function.FixtureFunctions.instant
 
 class TransactionTest extends FixtureApplicationTest {
+
+    def 'when create the create date should be current date'(){
+        when:
+        def transaction = new Transaction()
+
+        then:
+        transaction.createDateTime >= instant("1 second ago")
+        transaction.createDateTime < instant("1 second from now")
+    }
+
+    def 'created transaction should be pending'(){
+        when:
+        def transaction = new Transaction()
+
+        then:
+        transaction.status == TransactionStatus.PENDING
+    }
 
     def 'should return long value'(){
         given:

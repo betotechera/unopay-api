@@ -7,6 +7,7 @@ import br.com.unopay.api.billing.model.Amount;
 import br.com.unopay.api.billing.model.CreditCard;
 import br.com.unopay.api.billing.model.CurrencyCode;
 import br.com.unopay.api.billing.model.PaymentMethod;
+import br.com.unopay.api.billing.model.PaymentRequest;
 import br.com.unopay.api.billing.model.Transaction;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -22,6 +23,14 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("createDateTime", instant("now"));
             add("paymentMethod", random(PaymentMethod.class));
             add("amount", one(Amount.class, "valid"));
+            add("orderId", regex("\\d{8}"));
+            add("creditCard", one(CreditCard.class, "payzenCard"));
+        }});
+
+        Fixture.of(PaymentRequest.class).addTemplate("valid", new Rule() {{
+            add("userId", regex("\\d{5}"));
+            add("method", PaymentMethod.CARD);
+            add("value", random(BigDecimal.class, range(40,1000)));
             add("orderId", regex("\\d{8}"));
             add("creditCard", one(CreditCard.class, "payzenCard"));
         }});

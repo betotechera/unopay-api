@@ -37,6 +37,10 @@ import static br.com.unopay.api.billing.model.CardBrand.fromCardNumber;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction {
 
+    public Transaction(){
+        this.createDateTime = new Date();
+    }
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")

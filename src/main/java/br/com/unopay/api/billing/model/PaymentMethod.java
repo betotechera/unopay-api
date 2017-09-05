@@ -5,7 +5,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 public enum PaymentMethod implements DescriptableEnum{
 
     CARD("Cartao de credito"),
-    TICKET("Boleto");
+    BOLETO("Boleto");
 
     private String description;
 
