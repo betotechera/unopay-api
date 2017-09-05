@@ -91,7 +91,7 @@ dependencies {
 	compile group: 'eu.payzen.sdk', name: 'payzen-ws-sdk', version: '1.0.6'
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.0'
 
-	compileOnly 'org.projectlombok:lombok:1.16.14'
+	compileOnly 'org.projectlombok:lombok:1.16.18'
 
 	testCompile 'com.jayway.jsonpath:json-path'
 	testCompile "org.springframework.boot:spring-boot-starter-test"

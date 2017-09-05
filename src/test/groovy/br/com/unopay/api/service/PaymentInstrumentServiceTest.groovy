@@ -1,5 +1,6 @@
 package br.com.unopay.api.service
 
+import br.com.unopay.api.InstrumentNumberGenerator
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
@@ -17,10 +18,31 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    @Autowired
+    InstrumentNumberGenerator generator
+
+
+    def 'should check Instrument Number generated'(){
+        given:
+        PaymentInstrument instrument1 = fixtureCreator.createPaymentInstrument("valid")
+        PaymentInstrument instrument2 = fixtureCreator.createPaymentInstrument("valid")
+
+        def generatorMock = Mock(InstrumentNumberGenerator)
+        service.instrumentNumberGenerator = generatorMock
+        when:
+        service.save(instrument1)
+        PaymentInstrument created = service.save(instrument2)
+        PaymentInstrument result = service.findById(created.id)
+
+        then:
+        3 * generatorMock.generate(_) >>> ['1000000000000000','1000000000000000','1000000000000001']
+        result != null
+    }
+
     def 'a new Instrument should be created'(){
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
-
+        service.instrumentNumberGenerator = generator
         when:
         PaymentInstrument created = service.save(instrument)
         PaymentInstrument result = service.findById(created.id)
@@ -33,7 +55,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().setId('')
-
+        service.instrumentNumberGenerator = generator
         when:
         service.save(instrument)
 
@@ -46,7 +68,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getContractor().setId('')
-
+        service.instrumentNumberGenerator = generator
         when:
         service.save(instrument)
 
@@ -58,7 +80,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
     def 'a Instrument with same external id should not be created'(){
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
-
+        service.instrumentNumberGenerator = generator
         when:
         service.save(instrument.with { externalNumberId = 'sameNumber' ; it })
         service.save(instrument.with {  externalNumberId = 'sameNumber' ; id = null; it })
@@ -74,7 +96,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         def externalId = 'sameExternalId'
         service.save(instrument.with { externalNumberId = externalId; it })
         PaymentInstrument created = service.save(instrument.with { id = null; externalNumberId = 'id'; it })
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument.with { externalNumberId = externalId; it })
 
@@ -87,7 +109,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument)
         PaymentInstrument result = service.findById(created.id)
@@ -103,7 +125,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument.with { resetPassword = true; it })
         PaymentInstrument result = service.findById(created.id)
@@ -116,7 +138,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = "12345"; it })
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument.with { resetPassword = false; it })
         PaymentInstrument result = service.findById(created.id)
@@ -129,7 +151,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument.with { password = null; it })
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument.with { password = "12345"; it })
         PaymentInstrument result = service.findById(created.id)
@@ -143,7 +165,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
         instrument.getProduct().setId('')
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument)
 
@@ -157,7 +179,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
         instrument.getContractor().setId('')
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update(created.id, instrument)
 
@@ -169,7 +191,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
     def 'a unknown Instrument should not be updated'(){
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
-
+        service.instrumentNumberGenerator = generator
         when:
         service.update('', instrument)
 
@@ -182,7 +204,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
-
+        service.instrumentNumberGenerator = generator
         when:
         PaymentInstrument result = service.findById(created.id)
 
@@ -194,7 +216,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         PaymentInstrument created = service.save(instrument)
-
+        service.instrumentNumberGenerator = generator
         when:
         service.delete(created.id)
         service.findById(created.id)
@@ -217,6 +239,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         service.save(instrument)
+        service.instrumentNumberGenerator = generator
 
         when:
         List<PaymentInstrument> result = service.findByContractorId(instrument.contractorId())
@@ -229,6 +252,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         service.save(instrument)
+        service.instrumentNumberGenerator = generator
 
         when:
         List<PaymentInstrument> result = service.findByContractorDocument(instrument.contractor.getDocumentNumber())

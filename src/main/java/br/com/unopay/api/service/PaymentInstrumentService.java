@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.InstrumentNumberGenerator;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
@@ -8,6 +9,8 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
 import java.util.Optional;
+
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,29 +26,32 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUN
 
 @Service
 @Slf4j
+@Data
 public class PaymentInstrumentService {
 
     private PaymentInstrumentRepository repository;
     private ProductService productService;
     private ContractorService contractorService;
     private PasswordEncoder passwordEncoder;
+    private InstrumentNumberGenerator instrumentNumberGenerator;
 
     @Autowired
     public PaymentInstrumentService(PaymentInstrumentRepository repository,
                                     ProductService productService,
                                     ContractorService contractorService,
-                                    PasswordEncoder passwordEncoder) {
+                                    PasswordEncoder passwordEncoder, InstrumentNumberGenerator instrumentNumberGenerator) {
         this.repository = repository;
         this.productService = productService;
         this.contractorService = contractorService;
         this.passwordEncoder = passwordEncoder;
+        this.instrumentNumberGenerator = instrumentNumberGenerator;
     }
 
     @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
     public PaymentInstrument save(PaymentInstrument instrument) {
         try {
             validateReference(instrument);
-            instrument.setMeUp();
+            instrument.setMeUp(generateNumber(instrument));
             if(instrument.hasPassword()){
                 String encodedPassword = passwordEncoder.encode(instrument.getPassword());
                 instrument.setPassword(encodedPassword);
@@ -56,6 +62,15 @@ public class PaymentInstrumentService {
             log.info("External id={} of Payment Instrument already exists.", instrument.getExternalNumberId(), e);
             throw UnovationExceptions.conflict().withErrors(EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS);
         }
+    }
+
+    private String generateNumber(PaymentInstrument instrument) {
+        String instrumentNumber = instrumentNumberGenerator.generate(instrument.issuerBin());
+        return containsNumber(instrumentNumber)? generateNumber(instrument) : instrumentNumber;
+    }
+
+    private boolean containsNumber(String instrumentNumber) {
+        return repository.countByNumber(instrumentNumber) > 0;
     }
 
     public PaymentInstrument findById(String id) {
