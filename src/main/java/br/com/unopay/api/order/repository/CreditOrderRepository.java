@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface CreditOrderRepository extends UnovationFilterRepository<CreditOrder,String,OrderFilter>{
 
-    List<CreditOrder> findAllByOrderByCreateDateTimeDesc();
+    List<CreditOrder> findAllByOrderByCreateDateTime();
     Optional<CreditOrder> findFirstByOrderByCreateDateTimeDesc();
 }

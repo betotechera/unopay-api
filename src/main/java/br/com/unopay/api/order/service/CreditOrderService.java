@@ -72,6 +72,6 @@ public class CreditOrderService {
     }
 
     public List<CreditOrder> findAll(){
-        return repository.findAllByOrderByCreateDateTimeDesc();
+        return repository.findAllByOrderByCreateDateTime();
     }
 }
