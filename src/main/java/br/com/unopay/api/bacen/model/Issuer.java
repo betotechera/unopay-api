@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -43,7 +42,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 @ToString(exclude = "paymentRuleGroups")
 @EqualsAndHashCode(exclude = "paymentRuleGroups")
 @Table(name = "issuer")
-public class Issuer implements Updatable{
+public class Issuer implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
@@ -105,7 +104,15 @@ public class Issuer implements Updatable{
     @JsonIgnore
     Long version;
 
-
+    public void updateMe(Issuer other){
+        setFee(other.getFee());
+        setMovementAccount(other.getMovementAccount());
+        setPaymentAccount(other.getPaymentAccount());
+        setPaymentRuleGroups(other.getPaymentRuleGroups());
+        this.bin = other.getBin();
+        this.financierMailForRemittance = other.getFinancierMailForRemittance();
+        person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
+    }
 
     public void validate(){
         if(person == null) {
