@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.CreditOrder
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -154,5 +155,27 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         then:
         result != null
         created.paymentRequest.orderId == created.id
+    }
+
+    def 'when create order should increment order number'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        List<Person> persons = Fixture.from(Person.class).gimme(2,"physical", new Rule(){{
+            add("document.number", uniqueRandom("92505722803", "87023146300", "15173351160"))
+        }})
+        List<CreditOrder> orders = Fixture.from(CreditOrder.class).gimme(2,"valid", new Rule(){{
+            add("product", product)
+            add("person", uniqueRandom(persons.find(), persons.last()))
+        }})
+
+        when:
+        service.create(orders.find())
+        service.create(orders.last())
+        def result = service.findAll()
+
+        then:
+        result != null
+        result.find().number == '0000000001'
+        result.last().number == '0000000002'
     }
 }

@@ -4,6 +4,7 @@ create table credit_order (
     product_id varchar(256) not null,
     person_id VARCHAR(256) not null,
     email varchar(256) not null,
+    partner_id varchar(256),
     create_date_time TIMESTAMP not null,
     version integer,
     constraint fk_order_person foreign key(person_id) references person(id),

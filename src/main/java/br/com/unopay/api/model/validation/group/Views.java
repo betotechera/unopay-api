@@ -141,6 +141,7 @@ public interface Views {
     interface Order {
         interface Detail extends Billing{}
         interface List {}
+        interface Private extends Detail {}
     }
 
     interface Billing {

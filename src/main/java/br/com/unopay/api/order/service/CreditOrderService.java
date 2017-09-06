@@ -8,6 +8,7 @@ import br.com.unopay.api.order.repository.CreditOrderRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.List;
 import java.util.Optional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class CreditOrderService {
         validateReferences(order);
         Optional<Person> person = personService.findByIdOptional(order.getPerson().getId());
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
+        incrementNumber(order);
         CreditOrder created = repository.save(order);
         order.getPaymentRequest().setOrderId(order.getId());
         notifier.notify(Queues.UNOPAY_ORDER_CREATED, created);
@@ -62,5 +64,14 @@ public class CreditOrderService {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_REQUEST_REQUIRED);
         }
         order.setProduct(productService.findById(order.getProduct().getId()));
+    }
+
+    private void incrementNumber(CreditOrder creditOrder) {
+        Optional<CreditOrder> last = repository.findFirstByOrderByCreateDateTimeDesc();
+        creditOrder.incrementNumber(last.map(CreditOrder::getNumber).orElse(null));
+    }
+
+    public List<CreditOrder> findAll(){
+        return repository.findAllByOrderByCreateDateTimeDesc();
     }
 }

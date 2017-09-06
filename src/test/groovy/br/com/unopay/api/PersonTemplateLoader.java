@@ -63,7 +63,7 @@ public class PersonTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Document.class).addTemplate("valid-cpf", new Rule(){{
-            add("number", "92505722803");
+            add("number", uniqueRandom("92505722803", "87023146300", "15173351160"));
             add("type", DocumentType.CPF);
             add("registryEntity", RegistryEntity.SSP);
         }});

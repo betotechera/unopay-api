@@ -1,6 +1,7 @@
 package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.billing.model.PaymentRequest;
+import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
@@ -24,8 +25,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
@@ -65,6 +66,10 @@ public class CreditOrder {
     @JsonView({Views.Order.List.class})
     private String number;
 
+    @JsonView({Views.Order.Private.class})
+    @Column(name = "partner_id")
+    private String partnerId;
+
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
@@ -77,4 +82,10 @@ public class CreditOrder {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public void incrementNumber(String lastNumber) {
+        Long number = lastNumber == null ? 0 : Long.valueOf(lastNumber);
+        number++;
+        this.number = StringUtils.leftPad(String.valueOf(number),10,"0");
+    }
 }
