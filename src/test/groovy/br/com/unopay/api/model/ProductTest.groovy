@@ -2,6 +2,7 @@ package br.com.unopay.api.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ProductTest  extends FixtureApplicationTest {
@@ -127,7 +128,7 @@ class ProductTest  extends FixtureApplicationTest {
     def 'should give error on creditInsertionType validation'(){
         given:
         Product a = Fixture.from(Product.class).gimme("valid")
-        a.creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT,CreditInsertionType.BOLETO]
+        a.creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT, CreditInsertionType.BOLETO]
 
         when:
             a.validateCreditInsertionType(CreditInsertionType.CREDIT_CARD)

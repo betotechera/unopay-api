@@ -20,8 +20,8 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.Credit
-import br.com.unopay.api.model.CreditPaymentAccount
+import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product

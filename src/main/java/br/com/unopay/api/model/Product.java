@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;

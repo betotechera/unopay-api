@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
-import br.com.unopay.api.service.ContractorInstrumentCreditService
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan

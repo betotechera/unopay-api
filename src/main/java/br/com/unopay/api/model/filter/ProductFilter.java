@@ -1,7 +1,7 @@
 package br.com.unopay.api.model.filter;
 
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.ProductSituation;
 import br.com.unopay.api.model.ProductType;

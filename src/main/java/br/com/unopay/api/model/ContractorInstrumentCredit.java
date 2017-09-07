@@ -1,6 +1,10 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.ContractorCreditType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditPaymentAccount;
+import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;

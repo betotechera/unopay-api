@@ -15,10 +15,10 @@ import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.CreditSituation
+import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
-import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
+import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException

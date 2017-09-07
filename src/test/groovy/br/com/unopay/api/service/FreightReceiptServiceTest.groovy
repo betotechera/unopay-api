@@ -10,9 +10,9 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.CargoContract
 import br.com.unopay.api.model.ComplementaryTravelDocument
 import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.model.ContractorCreditType
+import br.com.unopay.api.credit.model.ContractorCreditType
 import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.CreditInsertionType
+import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.api.model.DocumentCaveat
 import br.com.unopay.api.model.FreightReceipt
 import br.com.unopay.api.model.PaymentSource
@@ -25,7 +25,7 @@ import br.com.unopay.api.model.TravelDocumentSituation
 import br.com.unopay.api.model.TravelSituation
 import br.com.unopay.api.model.filter.CargoContractFilter
 import br.com.unopay.api.pamcary.service.PamcaryService
-import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
+import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

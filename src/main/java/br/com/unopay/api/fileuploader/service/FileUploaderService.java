@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import static br.com.unopay.api.payment.cnab240.filler.RemittanceRecord.SEPARATOR;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR;
 
 @Slf4j
 @Component

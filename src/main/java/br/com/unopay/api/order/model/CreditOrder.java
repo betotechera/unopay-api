@@ -1,7 +1,6 @@
 package br.com.unopay.api.order.model;
 
-import br.com.unopay.api.billing.model.PaymentRequest;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;

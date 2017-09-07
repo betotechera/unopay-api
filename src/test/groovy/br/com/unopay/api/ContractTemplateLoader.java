@@ -10,7 +10,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import java.math.BigDecimal;

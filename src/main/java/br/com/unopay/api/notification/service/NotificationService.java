@@ -6,7 +6,7 @@ import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
-import br.com.unopay.api.payment.model.PaymentRemittance;
+import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;

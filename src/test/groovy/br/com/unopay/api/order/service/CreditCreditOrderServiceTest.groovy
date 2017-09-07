@@ -175,7 +175,8 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
-        result.find().number == '0000000001'
-        result.last().number == '0000000002'
+        result.find().number != null
+        result.last().number != null
+        result.last().number != result.find().number
     }
 }
