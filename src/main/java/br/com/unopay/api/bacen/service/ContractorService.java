@@ -3,6 +3,9 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
+import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -26,8 +29,10 @@ public class ContractorService {
     private BankAccountService bankAccountService;
 
     @Autowired
-    public ContractorService(ContractorRepository repository, PersonService personService,
-                             UserDetailRepository userDetailRepository, BankAccountService bankAccountService) {
+    public ContractorService(ContractorRepository repository,
+                             PersonService personService,
+                             UserDetailRepository userDetailRepository,
+                             BankAccountService bankAccountService) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailRepository = userDetailRepository;
@@ -36,7 +41,9 @@ public class ContractorService {
 
     public Contractor create(Contractor contractor) {
         try {
-            bankAccountService.create(contractor.getBankAccount());
+            if(contractor.withBankAccount()) {
+                bankAccountService.create(contractor.getBankAccount());
+            }
             personService.save(contractor.getPerson());
             return repository.save(contractor);
         } catch (DataIntegrityViolationException e){
@@ -73,6 +80,5 @@ public class ContractorService {
     public Page<Contractor> findByFilter(ContractorFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
-
 
 }

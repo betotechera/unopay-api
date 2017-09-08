@@ -71,6 +71,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
             add("product", product)
             add("person", contractor.person)
+            add("value", BigDecimal.ONE)
         }})
 
         when:

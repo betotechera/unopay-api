@@ -127,4 +127,29 @@ public class CreditOrder {
         this.status = OrderStatus.WAITING_PAYMENT;
 
     }
+
+    public boolean paid() {
+        return OrderStatus.PAID.equals(status);
+    }
+
+    public String documentNumber(){
+        if(this.person != null){
+            return person.getDocument().getNumber();
+        }
+        return null;
+    }
+
+    public String productId(){
+        if(this.product != null){
+            return product.getId();
+        }
+        return null;
+    }
+
+    public String productCode(){
+        if(this.product != null){
+            return product.getCode();
+        }
+        return null;
+    }
 }

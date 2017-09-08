@@ -1,17 +1,25 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractSituation;
+import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +39,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 
+@Timed
 @Slf4j
 @Service
 public class ContractService {
@@ -40,22 +49,28 @@ public class ContractService {
     private ContractorService contractorService;
     private ProductService productService;
     private ContractEstablishmentRepository contractEstablishmentRepository;
+    private PaymentInstrumentService paymentInstrumentService;
+    private UserDetailService userDetailService;
     @Setter private ContractInstallmentService installmentService;
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
                            ContractorService contractorService, ProductService productService,
                            ContractEstablishmentRepository contractEstablishmentRepository,
+                           PaymentInstrumentService paymentInstrumentService,
+                           UserDetailService userDetailService,
                            ContractInstallmentService installmentService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
         this.productService = productService;
         this.contractEstablishmentRepository = contractEstablishmentRepository;
+        this.paymentInstrumentService = paymentInstrumentService;
+        this.userDetailService = userDetailService;
         this.installmentService = installmentService;
     }
 
-    public Contract save(Contract contract) {
+    public Contract create(Contract contract) {
         try {
             validateReferences(contract);
             contract.validate();
@@ -68,6 +83,19 @@ public class ContractService {
             log.info("Contract with code={} already exists",  contract.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
         }
+    }
+
+    @Transactional
+    public Contract dealClose(Person person, String productCode){
+        Product product = productService.findByCode(productCode);
+        Contractor contractor = contractorService.create(new Contractor(person));
+        Hirer hirer = hirerService.findByDocumentNumber(product.getIssuer().documentNumber());
+        Contract contract = new Contract(product);
+        contract.setHirer(hirer);
+        contract.setContractor(contractor);
+        paymentInstrumentService.save(new PaymentInstrument(contractor, product));
+        userDetailService.create(new UserDetail(contractor));
+        return create(contract);
     }
 
     public void update(String id, Contract contract) {
@@ -178,6 +206,7 @@ public class ContractService {
         ContractFilter contractFilter = createContractActiveFilter(contractorId,serviceType);
         return findByFilter(contractFilter, new UnovationPageRequest());
     }
+
 
     private ContractFilter createContractActiveFilter(String contractorId, Set<ServiceType> serviceType) {
         ContractFilter contractFilter = new ContractFilter();

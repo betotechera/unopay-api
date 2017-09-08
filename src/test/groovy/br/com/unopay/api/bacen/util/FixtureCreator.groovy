@@ -136,6 +136,16 @@ class FixtureCreator {
         }})
     }
 
+    CreditPaymentAccount createCreditPaymentAccount(String hirerDocument, Product product = createProduct()) {
+        Fixture.from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", product)
+            add("issuer", product.issuer)
+            add("hirerDocument", hirerDocument)
+            add("paymentRuleGroup", product.paymentRuleGroup)
+            add("serviceType", product.serviceTypes.find())
+        }})
+    }
+
     ContractorInstrumentCredit instrumentCredit(Contractor contractor = createContractor(), Contract contract = null){
         contract = contract ?: createPersistedContract(contractor)
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contract)

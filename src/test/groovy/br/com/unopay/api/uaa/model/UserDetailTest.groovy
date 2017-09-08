@@ -1,10 +1,47 @@
 package br.com.unopay.api.uaa.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.order.model.CreditOrder
 import org.apache.commons.lang3.RandomStringUtils
 import spock.lang.Specification
 
-class UserDetailTest extends Specification {
+class UserDetailTest extends FixtureApplicationTest {
+
+    def 'when create from contractor should define contractor'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
+
+        when:
+        def userDetail = new UserDetail(contractor)
+
+        then:
+        userDetail.contractor == contractor
+    }
+
+    def 'when create from contractor should define name'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
+
+        when:
+        def userDetail = new UserDetail(contractor)
+
+        then:
+        userDetail.name == contractor.person.name
+    }
+
+    def 'when create from contractor should define email'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
+
+        when:
+        def userDetail = new UserDetail(contractor)
+
+        then:
+        userDetail.email == contractor.person.physicalPersonDetail.email
+    }
+
     def 'given id, email and password when initializing then should set properties'() {
         given:
             String id = UUID.randomUUID().toString()

@@ -1,7 +1,6 @@
 package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorCreditType;
@@ -17,7 +16,6 @@ import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.credit.model.CreditSituation.PROCESSING;
+import static br.com.unopay.api.model.PaymentInstrumentType.*;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
@@ -63,26 +62,29 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit processOrder(CreditOrder creditOrder) {
-        Optional<Contract> optional = contractService.findByContractorAndProductOptional(creditOrder.getPerson().documentNumber(), creditOrder.getProduct().getId());
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService.findByHirerDocument(optional.map(Contract::hirerDocumentNumber).orElse(null));
-        List<PaymentInstrument> instrumentList = paymentInstrumentService.findByContractorDocument(creditOrder.getPerson().documentNumber());
-        Contract contract = optional.orElse(null);
-        PaymentInstrument paymentInstrument = instrumentList.stream().findFirst().orElse(null);
-        CreditPaymentAccount creditPaymentAccount = creditPaymentAccounts.stream().findFirst().orElse(null);
-        ServiceType serviceType = contract.getProduct().getServiceTypes().stream().findFirst().orElse(null);
-        ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
-        instrumentCredit.setPaymentInstrument(paymentInstrument);
-        instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
-        instrumentCredit.setServiceType(serviceType);
-        instrumentCredit.setValue(creditOrder.getValue());
-        instrumentCredit.setContract(contract);
-        instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
-        instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
-        instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
-        return insert(instrumentList.get(0).getId(), instrumentCredit);
+        if(creditOrder.paid()) {
+            Optional<Contract> optional=contractService.findByContractorAndProductOptional(creditOrder.documentNumber(),
+                                                                                            creditOrder.productId());
+            Contract contract = optional
+                    .orElseGet(()-> contractService.dealClose(creditOrder.getPerson(), creditOrder.productCode()));
+            List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
+                                                                   .findByHirerDocument(contract.hirerDocumentNumber());
+            PaymentInstrument paymentInstrument = getDigitalWallet(creditOrder);
+            CreditPaymentAccount creditPaymentAccount = creditPaymentAccounts.stream().findFirst().orElse(null);
+            ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+            instrumentCredit.setValue(creditOrder.getValue());
+            return insert(paymentInstrument.getId(), instrumentCredit);
+        }
+        return null;
     }
 
-    @Transactional
+    private PaymentInstrument getDigitalWallet(CreditOrder creditOrder) {
+        List<PaymentInstrument> instrumentList = paymentInstrumentService
+                                                                .findByContractorDocument(creditOrder.documentNumber());
+        return instrumentList.stream().filter(inst -> inst.is(DIGITAL_WALLET))
+                .findFirst().orElse(instrumentList.stream().findFirst().orElse(null));
+    }
+
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
         instrumentCredit.validateMe(contract);
@@ -212,6 +214,20 @@ public class ContractorInstrumentCreditService {
                                                                                     UnovationPageRequest pageable) {
         return repository.findByContractIdAndContractContractorPersonDocumentNumber(contractId, contractorDocument,
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
+                                                              CreditPaymentAccount creditPaymentAccount) {
+        ServiceType serviceType = contract.getProduct().getServiceTypes().stream().findFirst().orElse(null);//TODO: poder utilizar credito com qualquer serviço
+        ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
+        instrumentCredit.setPaymentInstrument(paymentInstrument);
+        instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
+        instrumentCredit.setServiceType(serviceType);
+        instrumentCredit.setContract(contract);
+        instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
+        instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
+        instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
+        return instrumentCredit;
     }
 
 }

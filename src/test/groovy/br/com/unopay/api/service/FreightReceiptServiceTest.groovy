@@ -273,7 +273,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
             begin = 2.day.ago
             end = 1.day.ago
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
 
         freightReceipt.with { contract.id = anotherContract.id }
 
@@ -296,7 +296,7 @@ class FreightReceiptServiceTest extends SpockApplicationTests {
             begin = 1.day.from.now
             end = 2.day.from.now
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
 
         freightReceipt.with { contract.id = anotherContract.id }
 

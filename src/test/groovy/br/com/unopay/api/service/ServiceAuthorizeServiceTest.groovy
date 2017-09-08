@@ -526,7 +526,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             begin = 2.day.ago
             end = 1.day.ago
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with { contract.id = anotherContract.id }
 
@@ -548,7 +548,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             begin = 1.day.from.now
             end = 2.day.from.now
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with { contract.id = anotherContract.id }
 
@@ -896,7 +896,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     private Contract addPhysicalContractorToContract(Contract contract) {
         Contractor contractor = fixtureCreator.createContractor("physical")
         contract.contractor = contractor
-        contractService.save(contract)
+        contractService.create(contract)
     }
 
     private ServiceAuthorize physicalContractorWithoutPassword(Contract contractParam, userEstablishment) {

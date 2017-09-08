@@ -18,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +44,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
@@ -62,6 +65,15 @@ public class Contract implements Serializable {
     public static final long serialVersionUID = 1L;
 
     public Contract(){}
+
+    public Contract(Product product){
+        this.product = product;
+        this.creditInsertionType = product.getCreditInsertionTypes().stream().findFirst().orElse(null);
+        this.code = Long.valueOf(RandomStringUtils.randomNumeric(10));
+        this.name = product.getName();
+        this.paymentInstrumentType = PaymentInstrumentType.DIGITAL_WALLET;
+        this.serviceType = Collections.unmodifiableSet(product.getServiceTypes());
+    }
 
     @Id
     @Column(name="id")
@@ -85,7 +97,7 @@ public class Contract implements Serializable {
     @Column(name="code")
     @KeyField(baseField = "id")
     @NotNull(groups = {Create.class, Update.class})
-    private Integer code;
+    private Long code;
 
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
@@ -298,7 +310,7 @@ public class Contract implements Serializable {
         }
     }
 
-    private void validateContractor(Contractor contractor){
+    public void validateContractor(Contractor contractor){
         if(!containsContractor(contractor)){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }

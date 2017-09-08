@@ -212,7 +212,7 @@ class FilterTest extends SpockApplicationTests {
         given:
         Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
             add("name", uniqueRandom("JoSe", "fernanda", "joao"))
-            add("code", 555333222)
+            add("code", 555333222l)
         }})
 
         def filter = new ContractFilter()

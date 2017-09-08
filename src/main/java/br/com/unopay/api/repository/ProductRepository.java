@@ -9,4 +9,6 @@ public interface ProductRepository  extends UnovationFilterRepository<Product,St
 
     Optional<Product> findById(String id);
 
+    Optional<Product> findByCode(String code);
+
 }

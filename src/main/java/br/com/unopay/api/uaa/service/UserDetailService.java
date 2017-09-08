@@ -49,6 +49,7 @@ import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 @Slf4j
 public class UserDetailService implements UserDetailsService {
 
+    public static final String CONTRACTOR = "CONTRATADO";
     @Autowired
     private UserDetailRepository userDetailRepository;
 
@@ -82,6 +83,10 @@ public class UserDetailService implements UserDetailsService {
         try {
             if(user.getPassword() != null) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            UserType userType = userTypeRepository.findByName(CONTRACTOR);
+            if(user.getType() == null) {
+                user.setType(userType);
             }
             validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);

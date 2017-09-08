@@ -186,16 +186,15 @@ class UserDetailServiceTests extends SpockApplicationTests {
         assert created.type != null
     }
 
-    void 'when create user without user type should return error'() {
+    void 'when create user without user type should create with default type'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         user.type = null
         when:
-        service.create(user)
+        def created = service.create(user)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find()?.logref == 'USER_TYPE_REQUIRED'
+        assert created.type != null
     }
     void 'when create user with type INSTITUIDOR should have a INSTITUTION'() {
         given:
