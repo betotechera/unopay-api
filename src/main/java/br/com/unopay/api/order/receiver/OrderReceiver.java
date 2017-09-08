@@ -37,6 +37,6 @@ public class OrderReceiver {
                 order.getPaymentRequest().getValue());
         Transaction transaction = transactionService.create(order.getPaymentRequest());
         order.defineStatus(transaction.getStatus());
-        instrumentCreditService.unlockCredit(order);
+        instrumentCreditService.processOrder(order);
     }
 }

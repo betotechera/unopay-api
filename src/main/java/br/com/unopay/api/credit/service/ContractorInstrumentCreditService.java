@@ -58,6 +58,10 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
+    public void processOrder(CreditOrder creditOrder) {
+
+    }
+
     @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
@@ -69,6 +73,35 @@ public class ContractorInstrumentCreditService {
         incrementInstallmentNumber(instrumentCredit);
         subtractPaymentAccountBalance(instrumentCredit);
         return repository.save(instrumentCredit);
+    }
+
+    @Transactional
+    public void cancel(String instrumentId, String id) {
+        ContractorInstrumentCredit instrumentCredit = findById(id);
+        cancelInstrumentCredit(instrumentCredit);
+    }
+
+    @Transactional
+    public void cancel(String contractId) {
+        contractService.findById(contractId);
+        Set<ContractorInstrumentCredit> contractorInstrumentCredits = repository.findByContractId(contractId);
+        if(contractorInstrumentCredits.isEmpty()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_WITHOUT_CREDITS);
+        }
+        contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
+    }
+
+    public void subtract(String id, BigDecimal value) {
+        ContractorInstrumentCredit instrumentCredit = findById(id);
+        instrumentCredit.subtract(value);
+        if(instrumentCredit.isDepleted()){
+            instrumentCredit.setSituation(PROCESSING);
+        }
+        else {
+            instrumentCredit.subtractValue(value);
+            createProcessingCredit(value, instrumentCredit);
+        }
+        repository.save(instrumentCredit);
     }
 
     private Contract getReliableContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -119,35 +152,6 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setCreditPaymentAccount(account);
     }
 
-    @Transactional
-    public void cancel(String instrumentId, String id) {
-        ContractorInstrumentCredit instrumentCredit = findById(id);
-        cancelInstrumentCredit(instrumentCredit);
-    }
-
-    @Transactional
-    public void cancel(String contractId) {
-        contractService.findById(contractId);
-        Set<ContractorInstrumentCredit> contractorInstrumentCredits = repository.findByContractId(contractId);
-        if(contractorInstrumentCredits.isEmpty()){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_WITHOUT_CREDITS);
-        }
-        contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
-    }
-
-    public void subtract(String id, BigDecimal value) {
-        ContractorInstrumentCredit instrumentCredit = findById(id);
-        instrumentCredit.subtract(value);
-        if(instrumentCredit.isDepleted()){
-            instrumentCredit.setSituation(PROCESSING);
-        }
-        else {
-            instrumentCredit.subtractValue(value);
-            createProcessingCredit(value, instrumentCredit);
-        }
-        repository.save(instrumentCredit);
-    }
-
     private void createProcessingCredit(BigDecimal value, ContractorInstrumentCredit instrumentCredit) {
         repository.save(instrumentCredit.createProcessingCredit(value));
     }
@@ -188,7 +192,4 @@ public class ContractorInstrumentCreditService {
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    public void unlockCredit(CreditOrder creditOrder) {
-
-    }
 }

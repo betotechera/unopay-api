@@ -45,6 +45,6 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         1 * transactionalServiceMock.create(_) >> new Transaction()
 
         then:
-        1 * instrumentCreditServiceMock.unlockCredit(creditOrder)
+        1 * instrumentCreditServiceMock.processOrder(creditOrder)
     }
 }
