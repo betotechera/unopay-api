@@ -1,11 +1,13 @@
 package br.com.unopay.api.credit.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.credit.model.InstrumentCreditSource
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.credit.service.CreditPaymentAccountService
 import br.com.unopay.api.model.Contract
@@ -13,6 +15,8 @@ import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.order.model.OrderStatus
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.util.Rounder
@@ -60,6 +64,24 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Integer.mixin(TimeCategory)
     }
 
+    def 'given a paid order for known client with contract and payment instrument should insert credit'(){
+        given:
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractUnderTest.contractor.person)
+            add("product", contractUnderTest.product)
+            add("status", OrderStatus.PAID)
+        }})
+
+        when:
+        ContractorInstrumentCredit created = service.processOrder(creditOrder)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.availableBalance == creditOrder.getValue()
+        result.contract.id == contractUnderTest.id
+        result.situation == CreditSituation.AVAILABLE
+    }
+
     def 'given a valid instrument credit should be inserted'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -95,6 +117,20 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         result.id != null
         result.value == result.availableBalance
+    }
+
+    def 'given a credit without credit source should define hirer credit source'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.creditSource = null
+
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.creditSource == InstrumentCreditSource.HIRER
     }
 
     def 'when insert instrument credit then block balance should be zero'(){

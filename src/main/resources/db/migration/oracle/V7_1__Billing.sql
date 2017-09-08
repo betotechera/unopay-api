@@ -6,6 +6,7 @@ create table credit_order (
     email varchar(256) not null,
     create_date_time TIMESTAMP not null,
     status varchar(150) not null,
+    value decimal(*,2) not null,
     partner_id varchar(256),
     version integer,
     constraint fk_order_person foreign key(person_id) references person(id),
@@ -25,3 +26,6 @@ create table transaction (
     cancellation_requested_at Timestamp,
     version integer
 );
+
+alter table contractor_instrument_credit drop column credit_insertion_type;
+alter table contractor_instrument_credit add credit_source varchar(100) default 'HIRER' not null;

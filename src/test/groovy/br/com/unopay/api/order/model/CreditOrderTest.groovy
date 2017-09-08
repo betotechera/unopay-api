@@ -3,6 +3,7 @@ package br.com.unopay.api.order.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
+import static java.math.BigDecimal.*
 import spock.lang.Unroll
 
 class CreditOrderTest extends FixtureApplicationTest {
@@ -10,6 +11,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     @Unroll
     'given a #status status the order status should be waiting payment'(){
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.defineStatus(status)
@@ -28,6 +30,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     @Unroll
     'given a #status status the order status should be paid'(){
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.defineStatus(status)
@@ -44,6 +47,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     @Unroll
     'given a #status status the order status should be canceled'(){
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.defineStatus(status)
@@ -60,6 +64,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     def 'given a denied status the order status should be payment denied'() {
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.defineStatus(TransactionStatus.DENIED)
@@ -72,6 +77,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     def 'given a previous number should increment number'(){
         given:
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.incrementNumber("0000000001")
@@ -83,6 +89,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     def 'should create order with pending status'(){
         when:
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         then:
         order.status == OrderStatus.WAITING_PAYMENT
@@ -91,6 +98,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     def 'should increment number without previous number'(){
         given:
         def order = new CreditOrder()
+        order.setValue(ONE)
 
         when:
         order.incrementNumber(null)

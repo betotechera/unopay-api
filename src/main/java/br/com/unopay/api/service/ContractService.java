@@ -155,6 +155,12 @@ public class ContractService {
         }
         return contracts;
     }
+
+    public Optional<Contract> findByContractorAndProductOptional(String document, String productId) {
+        return repository.findByContractorPersonDocumentNumberAndProductId(document, productId);
+    }
+
+
     public List<Contract> getContractorValidContracts(String contractorId, String establishmentId,
                                                       Set<ServiceType> serviceType) {
         contractorService.getById(contractorId);

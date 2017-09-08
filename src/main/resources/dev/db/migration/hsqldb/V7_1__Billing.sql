@@ -7,6 +7,7 @@ create table credit_order (
     partner_id varchar(256),
     create_date_time TIMESTAMP not null,
     status varchar(150) not null,
+    value decimal(20,2) not null,
     version integer,
     constraint fk_order_person foreign key(person_id) references person(id),
     constraint fk_order_product foreign key(product_id) references product(id)

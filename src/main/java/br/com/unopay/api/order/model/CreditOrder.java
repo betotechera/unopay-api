@@ -11,6 +11,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import javax.persistence.Column;
@@ -25,9 +26,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,6 +44,8 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditOrder {
+
+    public CreditOrder(){}
 
     @Id
     @Column(name="id")
@@ -80,6 +85,12 @@ public class CreditOrder {
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class})
     private OrderStatus status = OrderStatus.WAITING_PAYMENT;
+
+    @Min(1)
+    @NonNull
+    @Column(name = "value")
+    @JsonView({Views.Order.Detail.class})
+    private BigDecimal value;
 
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})

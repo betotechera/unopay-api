@@ -1,6 +1,8 @@
 package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
@@ -15,10 +17,12 @@ import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,8 +62,24 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
-    public void processOrder(CreditOrder creditOrder) {
-
+    public ContractorInstrumentCredit processOrder(CreditOrder creditOrder) {
+        Optional<Contract> optional = contractService.findByContractorAndProductOptional(creditOrder.getPerson().documentNumber(), creditOrder.getProduct().getId());
+        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService.findByHirerDocument(optional.map(Contract::hirerDocumentNumber).orElse(null));
+        List<PaymentInstrument> instrumentList = paymentInstrumentService.findByContractorDocument(creditOrder.getPerson().documentNumber());
+        Contract contract = optional.orElse(null);
+        PaymentInstrument paymentInstrument = instrumentList.stream().findFirst().orElse(null);
+        CreditPaymentAccount creditPaymentAccount = creditPaymentAccounts.stream().findFirst().orElse(null);
+        ServiceType serviceType = contract.getProduct().getServiceTypes().stream().findFirst().orElse(null);
+        ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
+        instrumentCredit.setPaymentInstrument(paymentInstrument);
+        instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
+        instrumentCredit.setServiceType(serviceType);
+        instrumentCredit.setValue(creditOrder.getValue());
+        instrumentCredit.setContract(contract);
+        instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
+        instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
+        instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
+        return insert(instrumentList.get(0).getId(), instrumentCredit);
     }
 
     @Transactional
@@ -68,10 +88,12 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.validateMe(contract);
         setReferences(instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
-        instrumentCredit.validateValue();
         instrumentCredit.setupMyCreate(contract);
+        instrumentCredit.validateValue();
         incrementInstallmentNumber(instrumentCredit);
-        subtractPaymentAccountBalance(instrumentCredit);
+        if(instrumentCredit.creditSourceIsHirer()) {
+            subtractPaymentAccountBalance(instrumentCredit);
+        }
         return repository.save(instrumentCredit);
     }
 

@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
@@ -112,7 +113,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("contract",one(Contract.class, "valid"));
             add("serviceType", random(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
-            add("creditInsertionType",random(CreditInsertionType.class));
+            add("creditSource",InstrumentCreditSource.HIRER);
             add("installmentNumber",random(Long.class));
             add("value",random(BigDecimal.class, range(21, 200)));
             add("expirationDateTime",instant("1 day from now"));
