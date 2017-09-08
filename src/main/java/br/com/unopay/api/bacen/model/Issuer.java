@@ -109,6 +109,8 @@ public class Issuer implements Serializable{
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
+        this.bin = other.getBin();
+        this.financierMailForRemittance = other.getFinancierMailForRemittance();
         person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
     }
 
