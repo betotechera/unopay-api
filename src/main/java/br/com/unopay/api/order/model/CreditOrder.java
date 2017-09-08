@@ -1,6 +1,7 @@
 package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
+import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
@@ -10,9 +11,12 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.Arrays;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,6 +31,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
 
 @Data
 @Entity
@@ -69,6 +75,12 @@ public class CreditOrder {
     @Column(name = "partner_id")
     private String partnerId;
 
+    @Column(name = "status")
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(EnumType.STRING)
+    @JsonView({Views.Order.Detail.class})
+    private OrderStatus status = OrderStatus.WAITING_PAYMENT;
+
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
@@ -86,5 +98,22 @@ public class CreditOrder {
         Long number = lastNumber == null ? 0 : Long.valueOf(lastNumber);
         number++;
         this.number = StringUtils.leftPad(String.valueOf(number),10,"0");
+    }
+
+    public void defineStatus(TransactionStatus transactionStatus) {
+        if(Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)){
+            this.status = OrderStatus.CANCELED;
+            return;
+        }
+        if(Arrays.asList(CAPTURED, CAPTURE_RECEIVED).contains(transactionStatus)){
+            this.status = OrderStatus.PAID;
+            return;
+        }
+        if(DENIED.equals(transactionStatus)){
+            this.status = OrderStatus.PAYMENT_DENIED;
+            return;
+        }
+        this.status = OrderStatus.WAITING_PAYMENT;
+
     }
 }

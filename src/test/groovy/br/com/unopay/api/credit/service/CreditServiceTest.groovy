@@ -5,17 +5,18 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.credit.service.CreditPaymentAccountService
-import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditInsertionType
+import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO
+import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD
+import static br.com.unopay.api.credit.model.CreditInsertionType.DIRECT_DEBIT
+import br.com.unopay.api.credit.model.CreditProcessed
 import br.com.unopay.api.credit.model.CreditSituation
+import static br.com.unopay.api.credit.model.CreditTarget.HIRER
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
-import org.apache.commons.lang3.tuple.ImmutablePair
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -35,13 +36,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given a invalid value the payment account should not be created'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         service.insert(credit)
-        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, 0.0)
+        def pair = new CreditProcessed(credit.issuerDocument, 0.0, DIRECT_DEBIT, HIRER)
 
         when:
-        service.unblockCredit(pair,CreditInsertionType.DIRECT_DEBIT)
+        service.unblockCredit(pair)
 
         then:
         0 * paymentAccountServiceMock.register(_)
@@ -49,13 +50,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when unlock direct debit credit the payment account should be created'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         service.insert(credit)
-        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
 
         when:
-        service.unblockCredit(pair,CreditInsertionType.DIRECT_DEBIT)
+        service.unblockCredit(pair)
 
         then:
         1 * paymentAccountServiceMock.register(_)
@@ -64,13 +65,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when unlock direct debit credit the credit situation should be confirmed'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         def inserted  = service.insert(credit)
-        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
 
         when:
-        service.unblockCredit(pair,CreditInsertionType.DIRECT_DEBIT)
+        service.unblockCredit(pair)
         def result = service.findById(inserted.id)
 
         then:
@@ -79,13 +80,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when unlock direct debit credit the credit should be available'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         def inserted  = service.insert(credit)
-        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
 
         when:
-        service.unblockCredit(pair,CreditInsertionType.DIRECT_DEBIT)
+        service.unblockCredit(pair)
         def result = service.findById(inserted.id)
 
         then:
@@ -94,13 +95,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when unlock direct debit credit the blocked credit should be zero'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         def inserted  = service.insert(credit)
-        def pair = new ImmutablePair<String, BigDecimal>(credit.issuerDocument, credit.value)
+        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
 
         when:
-        service.unblockCredit(pair,CreditInsertionType.DIRECT_DEBIT)
+        service.unblockCredit(pair)
         def result = service.findById(inserted.id)
 
         then:
@@ -178,7 +179,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit without direct debit payment type then payment account should be created'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.BOLETO])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([BOLETO])
         Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
@@ -190,7 +191,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'when insert credit with direct debit payment type then payment account should not be created'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
 
         when:
@@ -226,7 +227,7 @@ class CreditServiceTest extends SpockApplicationTests {
             add("hirerDocument", hirer.getDocumentNumber())
             add("product", knownProduct)
             add("situation", CreditSituation.CONFIRMED)
-            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+            add("creditInsertionType", DIRECT_DEBIT)
         }})
 
         when:
@@ -261,8 +262,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
         where:
         insertionType                      | situation
-        CreditInsertionType.BOLETO         | CreditSituation.CONFIRMED
-        CreditInsertionType.CREDIT_CARD    | CreditSituation.CONFIRMED
+        BOLETO         | CreditSituation.CONFIRMED
+        CREDIT_CARD    | CreditSituation.CONFIRMED
     }
 
     @Unroll
@@ -282,13 +283,13 @@ class CreditServiceTest extends SpockApplicationTests {
 
         where:
         insertionType                      | _
-        CreditInsertionType.BOLETO         | _
-        CreditInsertionType.CREDIT_CARD    | _
+        BOLETO         | _
+        CREDIT_CARD    | _
     }
 
     void 'when insert credits with direct debit then the available balance should be zero'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.DIRECT_DEBIT])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
         Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
@@ -304,7 +305,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
     void 'given more of one credit when insert credits the available balance should be updated'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([CreditInsertionType.BOLETO])
+        def knownProduct = fixtureCreator.createProductWithCreditInsertionType([BOLETO])
         Credit creditA =  fixtureCreator.createCredit(knownProduct)
         Credit creditB = fixtureCreator.createCredit(knownProduct)
         Credit creditC =  fixtureCreator.createCredit(knownProduct)
@@ -322,7 +323,7 @@ class CreditServiceTest extends SpockApplicationTests {
     void 'when insert credits with direct debit the block balance should be updated'(){
         given:
         def knownProduct = fixtureCreator.createProduct()
-                .with { creditInsertionTypes = [CreditInsertionType.DIRECT_DEBIT]; it }
+                .with { creditInsertionTypes = [DIRECT_DEBIT]; it }
         Credit creditA = fixtureCreator.createCredit(knownProduct)
         Credit creditB =  fixtureCreator.createCredit(knownProduct)
 
@@ -352,8 +353,8 @@ class CreditServiceTest extends SpockApplicationTests {
 
         where:
         insertionType                      | _
-        CreditInsertionType.BOLETO         | _
-        CreditInsertionType.CREDIT_CARD    | _
+        BOLETO         | _
+        CREDIT_CARD    | _
     }
 
     void 'credit with product should be inserted with product credit insertion type'(){
@@ -423,7 +424,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def result = service.findById(inserted.id)
 
         then:
-        result.creditInsertionType == CreditInsertionType.BOLETO
+        result.creditInsertionType == BOLETO
     }
 
     void 'given a credit without product should be inserted with payment rule group'(){

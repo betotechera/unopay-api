@@ -12,6 +12,7 @@ import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.CreditOrder;
+import br.com.unopay.api.order.model.OrderStatus;
 import java.math.BigDecimal;
 
 public class BillingTemplateLoader  implements TemplateLoader {
@@ -54,6 +55,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("person", one(Person.class, "physical"));
             add("number", regex("\\d{10}"));
             add("paymentRequest", one(PaymentRequest.class, "valid"));
+            add("status", random(OrderStatus.class));
         }});
 
         Fixture.of(CreditCard.class).addTemplate("payzenCard", new Rule() {{

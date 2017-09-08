@@ -9,6 +9,7 @@ import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
+import br.com.unopay.api.order.model.CreditOrder;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -185,5 +186,9 @@ public class ContractorInstrumentCreditService {
                                                                                     UnovationPageRequest pageable) {
         return repository.findByContractIdAndContractContractorPersonDocumentNumber(contractId, contractorDocument,
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public void unlockCredit(CreditOrder creditOrder) {
+
     }
 }

@@ -60,15 +60,6 @@ public class TransactionService {
         return created;
     }
 
-    @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_ORDER_CREATED)
-    public void transactionNotify(String objectAsString) {
-        CreditOrder order = genericObjectMapper.getAsObject(objectAsString, CreditOrder.class);
-        log.info("creating payment transaction for order={} of value={}", order.getId(),
-                order.getPaymentRequest().getValue());
-        create(order.getPaymentRequest());
-    }
-
     private void validate(Transaction transaction) {
         if(transaction.getOrderId() == null){
             throw UnovationExceptions.conflict().withErrors(ORDER_REQUIRED);

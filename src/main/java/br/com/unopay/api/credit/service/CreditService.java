@@ -2,27 +2,23 @@ package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
-import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditProcessed;
 import br.com.unopay.api.credit.model.CreditSituation;
-import br.com.unopay.api.model.Product;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.repository.CreditRepository;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -77,17 +73,18 @@ public class CreditService {
     }
 
     @Transactional
-    public void unblockCredit(Pair<String, BigDecimal> pair, CreditInsertionType insertionType) {
-        Set<Credit> credits = findProcessingByIssuerDocumentAndInsertionType(pair.getLeft(),  insertionType);
+    public void unblockCredit(CreditProcessed processed) {
+        Set<Credit> credits = findProcessingByIssuerDocumentAndInsertionType(processed.getDocument(),
+                                                                                processed.getInsertionType());
         credits.stream()
-                .filter(credit -> credit.valueIs(pair.getRight()))
+                .filter(credit -> credit.valueIs(processed.getValue()))
                 .findFirst().ifPresent(credit -> {
                     credit.setSituation(CreditSituation.CONFIRMED);
                     credit.defineAvailableValue();
                     credit.defineBlockedValue();
                     repository.save(credit);
                     creditPaymentAccountService.register(credit);
-            log.info("unblock credit for issuer={} of value={} processed", pair.getLeft(), pair.getRight());
+            log.info("unblock credit for issuer={} of value={} processed",processed.getDocument(),processed.getValue());
         });
     }
 
@@ -137,21 +134,12 @@ public class CreditService {
         }
     }
 
-
     @Transactional
     public void cancel(String id) {
         Credit credit = findById(id);
         credit.cancel();
         creditPaymentAccountService.subtract(credit);
         repository.save(credit);
-    }
-
-    @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_CREDIT_PROCESSED)
-    public void creditReceiptNotify(String objectAsString) {
-        ImmutablePair pair = genericObjectMapper.getAsObject(objectAsString, ImmutablePair.class);
-        log.info("credit notification for issuer={} of value={} received", pair.getLeft(), pair.getRight());
-        unblockCredit(pair, CreditInsertionType.DIRECT_DEBIT);
     }
 
     public Page<Credit> findByFilter(CreditFilter filter, UnovationPageRequest pageable) {

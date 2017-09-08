@@ -4,6 +4,8 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.credit.model.CreditProcessed;
+import br.com.unopay.api.credit.model.CreditTarget;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
@@ -35,7 +37,6 @@ import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.joda.time.DateTime;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceReco
 import static br.com.unopay.api.billing.remittance.model.RemittanceSituation.PROCESSING;
 import static br.com.unopay.api.billing.remittance.model.RemittanceSituation.REMITTANCE_FILE_GENERATED;
 import static br.com.unopay.api.credit.model.CreditInsertionType.*;
+import static br.com.unopay.api.credit.model.CreditTarget.*;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_WITH_INVALID_DATA;
 import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessableEntity;
@@ -273,8 +275,9 @@ public class PaymentRemittanceService {
         item.updateOccurrenceFields(occurrenceCode);
         paymentRemittanceItemService.save(item);
         if(!item.processedWithError()) {
-            ImmutablePair pair = new ImmutablePair<>(item.payerDocumentNumber(), item.getValue());
-            notifier.notify(Queues.UNOPAY_CREDIT_PROCESSED, pair);
+            CreditProcessed processed = new CreditProcessed(item.payerDocumentNumber(),
+                                                            item.getValue(), DIRECT_DEBIT, HIRER);
+            notifier.notify(Queues.UNOPAY_CREDIT_PROCESSED, processed);
         }
     }
 
