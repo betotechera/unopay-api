@@ -7,6 +7,7 @@ import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.billing.creditcard.service.TransactionService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.order.service.CreditOrderService
 import br.com.unopay.api.util.GenericObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -16,10 +17,11 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     GenericObjectMapper genericObjectMapper = new GenericObjectMapper(objectMapper)
     TransactionService transactionalServiceMock = Mock(TransactionService)
     ContractorInstrumentCreditService instrumentCreditServiceMock = Mock(ContractorInstrumentCreditService)
+    CreditOrderService orderServiceMock = Mock(CreditOrderService)
 
     def 'when receive order should call transaction service'(){
         given:
-        def receiver = new OrderReceiver(transactionalServiceMock, genericObjectMapper, instrumentCreditServiceMock)
+        def receiver = createOrderReceiver()
         CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
             add("product", null)
         }})
@@ -31,9 +33,10 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         1 * transactionalServiceMock.create(_)  >> new Transaction()
     }
 
-    def 'when process transaction should call credit service'(){
+
+    def 'when process transaction should save order and call credit service'(){
         given:
-        def receiver = new OrderReceiver(transactionalServiceMock, genericObjectMapper, instrumentCreditServiceMock)
+        def receiver = createOrderReceiver()
         CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
             add("product", null)
         }})
@@ -45,6 +48,13 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         1 * transactionalServiceMock.create(_) >> new Transaction()
 
         then:
+        1 * orderServiceMock.save(creditOrder)
+
+        then:
         1 * instrumentCreditServiceMock.processOrder(creditOrder)
+    }
+
+    private OrderReceiver createOrderReceiver() {
+        new OrderReceiver(transactionalServiceMock, genericObjectMapper, instrumentCreditServiceMock, orderServiceMock)
     }
 }

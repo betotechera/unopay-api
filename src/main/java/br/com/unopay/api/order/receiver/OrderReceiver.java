@@ -5,6 +5,7 @@ import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.order.model.CreditOrder;
+import br.com.unopay.api.order.service.CreditOrderService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +20,17 @@ public class OrderReceiver {
     private TransactionService transactionService;
     private GenericObjectMapper genericObjectMapper;
     private ContractorInstrumentCreditService instrumentCreditService;
+    private CreditOrderService orderService;
 
     @Autowired
     public OrderReceiver(TransactionService transactionService,
                          GenericObjectMapper genericObjectMapper,
-                         ContractorInstrumentCreditService instrumentCreditService){
+                         ContractorInstrumentCreditService instrumentCreditService,
+                         CreditOrderService orderService){
         this.transactionService = transactionService;
         this.genericObjectMapper = genericObjectMapper;
         this.instrumentCreditService = instrumentCreditService;
+        this.orderService = orderService;
     }
 
     @Transactional
@@ -37,6 +41,7 @@ public class OrderReceiver {
                 order.getPaymentRequest().getValue());
         Transaction transaction = transactionService.create(order.getPaymentRequest());
         order.defineStatus(transaction.getStatus());
+        orderService.save(order);
         instrumentCreditService.processOrder(order);
     }
 }
