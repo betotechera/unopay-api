@@ -81,6 +81,18 @@ public class AccreditedNetwork implements Serializable {
     @JsonView({Detail.class})
     private InvoiceReceipt invoiceReceipt;
 
+    @Column(name = "logo_uri")
+    @JsonView({Views.AccreditedNetwork.Detail.class})
+    private String logoUri;
+
+    @Column(name = "background_color")
+    @JsonView({Views.AccreditedNetwork.Detail.class})
+    private String backgroundColor;
+
+    @Column(name = "text_color")
+    @JsonView({Views.AccreditedNetwork.Detail.class})
+    private String textColor;
+
     @Valid
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
