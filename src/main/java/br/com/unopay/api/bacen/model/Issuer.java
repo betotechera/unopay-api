@@ -100,6 +100,18 @@ public class Issuer implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     private String bin;
 
+    @Column(name = "logo_uri")
+    @JsonView({Views.Issuer.Detail.class})
+    private String logoUri;
+
+    @Column(name = "background_color")
+    @JsonView({Views.Issuer.Detail.class})
+    private String backgroundColor;
+
+    @Column(name = "text_color")
+    @JsonView({Views.Issuer.Detail.class})
+    private String textColor;
+
     @Version
     @JsonIgnore
     Long version;
