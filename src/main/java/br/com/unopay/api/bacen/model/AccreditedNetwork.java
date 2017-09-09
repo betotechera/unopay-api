@@ -66,12 +66,6 @@ public class AccreditedNetwork implements Serializable {
     private Double merchantDiscountRate;
 
     @Valid
-    @Enumerated(STRING)
-    @Column(name="type")
-    @JsonView({Detail.class})
-    private AccreditedNetworkType type;
-
-    @Valid
     @Embedded
     @JsonView({Detail.class})
     private Checkout checkout;
@@ -114,5 +108,9 @@ public class AccreditedNetwork implements Serializable {
         this.merchantDiscountRate = accreditedNetwork.getMerchantDiscountRate();
         this.bankAccount = accreditedNetwork.getBankAccount();
         this.checkout.updateModel(this.getCheckout());
+        this.logoUri = accreditedNetwork.logoUri;
+        this.backgroundColor = accreditedNetwork.backgroundColor;
+        this.textColor = accreditedNetwork.textColor;
+
     }
 }

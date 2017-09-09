@@ -123,6 +123,9 @@ public class Issuer implements Serializable{
         setPaymentRuleGroups(other.getPaymentRuleGroups());
         this.bin = other.getBin();
         this.financierMailForRemittance = other.getFinancierMailForRemittance();
+        this.logoUri = other.logoUri;
+        this.backgroundColor = other.backgroundColor;
+        this.textColor = other.textColor;
         person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
     }
 
