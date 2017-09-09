@@ -144,10 +144,6 @@ public class Establishment implements Serializable, Updatable {
     private String technicalContact;
 
     @JsonView({Views.Establishment.Detail.class})
-    @Column(name = "establishment_photo_uri")
-    private String establishmentPhotoUri;
-
-    @JsonView({Views.Establishment.Detail.class})
     @Column(name = "contract_uri")
     private String contractUri;
 

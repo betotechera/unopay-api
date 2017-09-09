@@ -11,7 +11,7 @@ import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.ProductSituation;
-import br.com.unopay.api.model.ProductType;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +27,6 @@ public class ProductTemplateLoader implements TemplateLoader {
         Fixture.of(Product.class).addTemplate("valid", new Rule(){{
             add("code", regex("\\w{2}\\d{2}"));
             add("name",  regex("\\w{15}"));
-            add("type", uniqueRandom(ProductType.class));
             add("issuer", one(Issuer.class, "valid"));
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));

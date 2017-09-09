@@ -70,11 +70,6 @@ public class Product implements Serializable, Updatable {
     @Size(min=2, max = 100, groups = {Create.class, Update.class})
     private String name;
 
-    @Column(name = "type")
-    @Enumerated(EnumType.STRING)
-    @JsonView({Views.Product.List.class})
-    private ProductType type;
-
     @ManyToOne
     @JoinColumn(name="issuer_id")
     @NotNull(groups = {Create.class, Update.class})

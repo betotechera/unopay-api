@@ -2,7 +2,6 @@ create table product (
     id VARCHAR(256) PRIMARY KEY,
     code varchar(4) not null,
     name varchar(50) not  null,
-    type varchar(9) not null,
     issuer_id varchar(256) not null,
     payment_rule_group_id varchar(256) not null,
     accredited_network_id varchar(256) not null,

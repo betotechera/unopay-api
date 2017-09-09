@@ -4,16 +4,18 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.model.validation.group.Views.AccreditedNetwork.Detail;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,13 +25,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-
-import static javax.persistence.EnumType.STRING;
+import java.io.Serializable;
+import java.util.Set;
 
 @Data
 @Entity
@@ -48,7 +45,7 @@ public class AccreditedNetwork implements Serializable {
 
     @ManyToMany
     @BatchSize(size = 10)
-    @JsonView({Detail.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     @JoinTable(name = "accredited_payment_rules",
             joinColumns = { @JoinColumn(name = "accredited_network_id") },
             inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
@@ -62,17 +59,17 @@ public class AccreditedNetwork implements Serializable {
 
     @Column(name = "merchant_discount_rate")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Detail.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     private Double merchantDiscountRate;
 
     @Valid
     @Embedded
-    @JsonView({Detail.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     private Checkout checkout;
 
     @Valid
     @Embedded
-    @JsonView({Detail.class})
+    @JsonView({Views.AccreditedNetwork.Detail.class})
     private InvoiceReceipt invoiceReceipt;
 
     @Column(name = "logo_uri")

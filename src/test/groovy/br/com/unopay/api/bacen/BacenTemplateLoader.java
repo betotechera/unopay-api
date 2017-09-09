@@ -237,7 +237,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("administrativeContact", one(Contact.class, "persisted"));
             add("financierContact", one(Contact.class, "persisted"));
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("establishmentPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");
             add("gatheringChannels", has(2).of(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));

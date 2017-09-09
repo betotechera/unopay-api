@@ -19,7 +19,6 @@ class ProductTest  extends FixtureApplicationTest {
         then:
         a.code == b.code
         a.name == b.name
-        a.type == b.type
         a.issuer == b.issuer
         a.paymentRuleGroup == b.paymentRuleGroup
         a.accreditedNetwork == b.accreditedNetwork
@@ -47,7 +46,6 @@ class ProductTest  extends FixtureApplicationTest {
         then:
         a.code != b.code
         a.name != b.name
-        a.type != b.type
         a.issuer != b.issuer
         a.paymentRuleGroup != b.paymentRuleGroup
         a.accreditedNetwork != b.accreditedNetwork
@@ -76,7 +74,6 @@ class ProductTest  extends FixtureApplicationTest {
         then:
         a.code == b.code
         a.name == b.name
-        a.type == b.type
         a.issuer != b.issuer
         a.paymentRuleGroup != b.paymentRuleGroup
         a.accreditedNetwork != b.accreditedNetwork
