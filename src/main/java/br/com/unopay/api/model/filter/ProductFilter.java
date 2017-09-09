@@ -4,7 +4,6 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.ProductSituation;
-import br.com.unopay.api.model.ProductType;
 import br.com.unopay.api.repository.filter.SearchableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -24,8 +23,8 @@ public class ProductFilter implements Serializable {
     @SearchableField
     private String name;
 
-    @SearchableField(field = "issuer.name")
-    private String issuerName;
+    @SearchableField(field = "issuer.person.document.number")
+    private String issuerDocument;
 
     @SearchableField
     private ServiceType serviceType;
@@ -35,9 +34,6 @@ public class ProductFilter implements Serializable {
 
     @SearchableField
     private PaymentInstrumentType paymentInstrumentType;
-
-    @SearchableField
-    private ProductType type;
 
     @SearchableField
     private CreditInsertionType creditInsertionType;

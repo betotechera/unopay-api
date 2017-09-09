@@ -27,7 +27,7 @@ class EstablishmentTest extends FixtureApplicationTest {
         establishmentA.checkout == establishmentB.checkout
         establishmentA.contactMail == establishmentB.contactMail
         establishmentA.contractUri == establishmentB.contractUri
-        establishmentA.establishmentPhotoUri == establishmentB.establishmentPhotoUri
+        establishmentA.facadePhotoUri == establishmentB.facadePhotoUri
         establishmentA.cancellationTolerance == establishmentB.cancellationTolerance
         establishmentA.financierContact == establishmentB.financierContact
         establishmentA.invoiceMail == establishmentB.invoiceMail
