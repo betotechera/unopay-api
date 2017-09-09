@@ -3,7 +3,6 @@ create table accredited_network (
     id VARCHAR(256) PRIMARY KEY,
     person_id VARCHAR(256),
     merchant_discount_rate decimal(3,2),
-    type VARCHAR(10),
     movement_period VARCHAR(16),
     authorize_transfer boolean,
     closing_payment_days integer,
