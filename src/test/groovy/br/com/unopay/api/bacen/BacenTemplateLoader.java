@@ -4,7 +4,6 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.AccreditedNetworkType;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.BankAccountType;
@@ -133,7 +132,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
             add("merchantDiscountRate", random(Double.class,range(0D,1.0D)));
             add("bankAccount", one(BankAccount.class, "persisted"));
-            add("type", random((AccreditedNetworkType.class)));
             add("checkout", one(Checkout.class,"valid"));
             add("invoiceReceipt", one(InvoiceReceipt.class,"valid"));
         }});
@@ -239,7 +237,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("administrativeContact", one(Contact.class, "persisted"));
             add("financierContact", one(Contact.class, "persisted"));
             add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("establishmentPhotoUri", "/tmp/path");
             add("contractUri", "/tmp/path");
             add("gatheringChannels", has(2).of(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));
