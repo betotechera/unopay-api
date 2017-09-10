@@ -74,6 +74,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
             add("status", OrderStatus.PAID)
+            add("paymentInstrument", paymentInstrumentUnderTest)
         }})
 
         when:
@@ -84,6 +85,24 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.availableBalance == creditOrder.getValue()
         result.contract.id == contractUnderTest.id
         result.situation == CreditSituation.AVAILABLE
+    }
+
+    def 'given a paid order for known client with contract and more one instrument should insert credit on order instrument'(){
+        given:
+        fixtureCreator.createInstrumentToProduct(contractUnderTest.product, contractorUnderTest)
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractUnderTest.contractor.person)
+            add("product", contractUnderTest.product)
+            add("status", OrderStatus.PAID)
+            add("paymentInstrument", paymentInstrumentUnderTest)
+        }})
+
+        when:
+        ContractorInstrumentCredit created = service.processOrder(creditOrder)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.paymentInstrument == paymentInstrumentUnderTest
     }
 
     @Unroll
@@ -122,11 +141,13 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             add("issuer", issuer)
         }})
         fixtureCreator.createCreditPaymentAccount(hirer.documentNumber, product)
+
         def person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
             add("status", OrderStatus.PAID)
+            add("paymentInstrument", null)
         }})
 
         when:

@@ -184,7 +184,7 @@ public class ContractService {
         return contracts;
     }
 
-    public Optional<Contract> findByContractorAndProductOptional(String document, String productId) {
+    public Optional<Contract> findByContractorAndProduct(String document, String productId) {
         return repository.findByContractorPersonDocumentNumberAndProductId(document, productId);
     }
 

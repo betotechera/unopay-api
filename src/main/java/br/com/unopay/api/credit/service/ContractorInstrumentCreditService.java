@@ -27,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.credit.model.CreditSituation.PROCESSING;
-import static br.com.unopay.api.model.PaymentInstrumentType.*;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
@@ -63,26 +62,21 @@ public class ContractorInstrumentCreditService {
 
     public ContractorInstrumentCredit processOrder(CreditOrder creditOrder) {
         if(creditOrder.paid()) {
-            Optional<Contract> optional=contractService.findByContractorAndProductOptional(creditOrder.documentNumber(),
-                                                                                            creditOrder.productId());
-            Contract contract = optional
-                    .orElseGet(()-> contractService.dealClose(creditOrder.getPerson(), creditOrder.productCode()));
-            List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                                                                   .findByHirerDocument(contract.hirerDocumentNumber());
-            PaymentInstrument paymentInstrument = getDigitalWallet(creditOrder);
-            CreditPaymentAccount creditPaymentAccount = creditPaymentAccounts.stream().findFirst().orElse(null);
-            ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
-            instrumentCredit.setValue(creditOrder.getValue());
-            return insert(paymentInstrument.getId(), instrumentCredit);
+            Contract contract = getContract(creditOrder);
+            PaymentInstrument paymentInstrument = getContractorPaymentInstrument(creditOrder);
+            CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract);
+            ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
+            credit.setValue(creditOrder.getValue());
+            return insert(paymentInstrument.getId(), credit);
         }
         return null;
     }
 
-    private PaymentInstrument getDigitalWallet(CreditOrder creditOrder) {
-        List<PaymentInstrument> instrumentList = paymentInstrumentService
-                                                                .findByContractorDocument(creditOrder.documentNumber());
-        return instrumentList.stream().filter(inst -> inst.is(DIGITAL_WALLET))
-                .findFirst().orElse(instrumentList.stream().findFirst().orElse(null));
+
+    private PaymentInstrument getContractorPaymentInstrument(CreditOrder creditOrder) {
+        Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(creditOrder.instrumentId());
+        return instrument.orElseGet(() -> paymentInstrumentService
+                .findDigitalWalletByContractorDocument(creditOrder.documentNumber()).orElse(null));
     }
 
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -228,6 +222,18 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
         instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
         return instrumentCredit;
+    }
+
+    private Contract getContract(CreditOrder creditOrder) {
+        Optional<Contract> existing = contractService.findByContractorAndProduct(creditOrder.documentNumber(),
+                                                                                 creditOrder.productId());
+        return existing.orElseGet(()-> contractService.dealClose(creditOrder.getPerson(), creditOrder.productCode()));
+    }
+
+    private CreditPaymentAccount getCreditPaymentAccount(Contract contract) {
+        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
+                .findByHirerDocument(contract.hirerDocumentNumber());
+        return creditPaymentAccounts.stream().findFirst().orElse(null);
     }
 
 }
