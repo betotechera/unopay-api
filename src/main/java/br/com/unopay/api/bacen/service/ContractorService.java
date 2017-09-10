@@ -58,6 +58,10 @@ public class ContractorService {
         return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
     }
 
+    public Optional<Contractor> getByDocument(String document) {
+        return repository.findByPersonDocumentNumber(document);
+    }
+
     public void update(String id, Contractor contractor) {
         Contractor current = repository.findOne(id);
         current.updateModel(contractor);

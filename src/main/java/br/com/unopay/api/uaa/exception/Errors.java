@@ -506,6 +506,23 @@ public final class Errors {
     public static final UnovationError ORDER_REQUIRED =
             new UnovationError("ORDER_REQUIRED","Order required.");
 
+    /* Order */
+    public static final UnovationError INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR =
+            new UnovationError("INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR",
+                    "Payment instrument does not belongs to contractor.");
+    public static final UnovationError INSTRUMENT_IS_NOT_FOR_PRODUCT =
+            new UnovationError("INSTRUMENT_IS_NOT_FOR_PRODUCT",
+                    "The instrument is not for this product.");
+    public static final UnovationError PAYMENT_INSTRUMENT_REQUIRED =
+            new UnovationError("PAYMENT_INSTRUMENT_REQUIRED",
+                    "Payment instrument required.");
+
+
+
+
+
+
+
 
 
 

@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
@@ -31,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 @Data
 @Entity
+@EqualsAndHashCode(of = {"id", "number"})
 @Table(name = "payment_instrument")
 public class PaymentInstrument implements Serializable, Updatable {
 

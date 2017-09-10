@@ -9,6 +9,7 @@ import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.CreditOrder;
@@ -50,7 +51,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
 
         Fixture.of(CreditOrder.class).addTemplate("valid", new Rule() {{
             add("createDateTime", instant("now"));
-            add("email", random("jose@gmail.com", "bento@terra.com.br", "tereza@yahoo.com"));
+            add("paymentInstrument", one(PaymentInstrument.class, "valid"));
             add("product", one(Product.class, "valid"));
             add("person", one(Person.class, "physical"));
             add("number", regex("\\d{10}"));

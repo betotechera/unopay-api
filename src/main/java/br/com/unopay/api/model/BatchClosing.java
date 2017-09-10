@@ -223,7 +223,7 @@ public class BatchClosing implements Serializable {
     }
 
     public Integer paymentAccountBank(){
-        return getIssuer().getPaymentAccount().getBankAccount().getBacenCode();
+        return getIssuer().getPaymentAccount().getBankAccount().bacenCode();
     }
 
     public String establishmentId() {
@@ -235,11 +235,11 @@ public class BatchClosing implements Serializable {
     }
 
     public boolean establishmentBankCodeIs(Integer bacenCode){
-        return Objects.equals(this.getEstablishment().getBankAccount().getBacenCode(), bacenCode);
+        return Objects.equals(this.getEstablishment().getBankAccount().bacenCode(), bacenCode);
     }
 
     public Integer establishmentBankCode(){
-        return this.getEstablishment().getBankAccount().getBacenCode();
+        return this.getEstablishment().getBankAccount().bacenCode();
     }
 
     public void setPaymentDateTime(Date dateTime){

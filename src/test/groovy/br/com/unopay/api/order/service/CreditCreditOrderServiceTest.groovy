@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.CreditOrder
 import br.com.unopay.api.service.PersonService
@@ -32,12 +33,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     def 'a with known person order should be created'(){
         given:
-        def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
-            add("person", contractor.person)
-            add("product", product)
-        }})
+        def creditOrder = createOrder()
 
         when:
         CreditOrder created = service.save(creditOrder)
@@ -45,6 +41,73 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
+
+    def 'given a known contractor and order without payment instrument should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        fixtureCreator.createInstrumentToProduct(product, contractor)
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("paymentInstrument", null)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_REQUIRED'
+    }
+
+    def 'given a unknown contractor and order without payment instrument should be created'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentInstrument", null)
+        }})
+
+        when:
+        def created = service.create(creditOrder)
+        CreditOrder result = service.findById(created.id)
+
+        then:
+        result != null
+    }
+
+    def 'given a known contractor and order with instrument of other contractor should return error'(){
+        given:
+        def creditOrder = createOrder()
+        def instrument = fixtureCreator.createPaymentInstrument()
+        creditOrder.setPaymentInstrument(instrument)
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR'
+    }
+
+    def 'given a known contractor and order with instrument of other product should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", fixtureCreator.createProduct())
+            add("paymentInstrument", instrument)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INSTRUMENT_IS_NOT_FOR_PRODUCT'
     }
 
     def 'given a unknown document should create person when create order'(){
@@ -66,13 +129,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     def 'given a order with known person should not create a new person'(){
         given:
-        def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
-            add("product", product)
-            add("person", contractor.person)
-            add("value", BigDecimal.ONE)
-        }})
+        def creditOrder = createOrder()
 
         when:
         CreditOrder created = service.create(creditOrder)
@@ -81,7 +138,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         then:
         result != null
         result.person != null
-        result.person == contractor.person
+        result.person == creditOrder.person
     }
 
     def 'a order should not be created with unknown product'(){
@@ -128,10 +185,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     def 'when create order should notify'(){
         given:
-        def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
-            add("product", product)
-        }})
+        def creditOrder = createOrder()
 
         when:
         CreditOrder created = service.create(creditOrder)
@@ -142,12 +196,9 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         1 * notifierMock.notify(Queues.UNOPAY_ORDER_CREATED, _)
     }
 
-    def 'payment request order should be created order'(){
+    def 'payment request order should be created with order id'(){
         given:
-        def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
-            add("product", product)
-        }})
+        def creditOrder = createOrder()
 
         when:
         CreditOrder created = service.create(creditOrder)
@@ -179,5 +230,17 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         result.find().number != null
         result.last().number != null
         result.last().number != result.find().number
+    }
+
+    private CreditOrder createOrder(){
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        return Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+        }})
     }
 }

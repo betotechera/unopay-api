@@ -3,14 +3,15 @@ create table credit_order (
     order_number varchar(100) not null,
     product_id varchar(256) not null,
     person_id VARCHAR(256) not null,
-    email varchar(256) not null,
+    payment_instrument_id varchar(256),
     create_date_time TIMESTAMP not null,
     status varchar(150) not null,
     value decimal(*,2) not null,
     partner_id varchar(256),
     version integer,
     constraint fk_order_person foreign key(person_id) references person(id),
-    constraint fk_order_product foreign key(product_id) references product(id)
+    constraint fk_order_product foreign key(product_id) references product(id),
+    constraint fk_instrument_order foreign key(payment_instrument_id) references payment_instrument(id)
 );
 
 create table transaction (

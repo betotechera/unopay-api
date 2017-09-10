@@ -46,7 +46,7 @@ public class RemittancePayer  implements Serializable {
         this.district = issuer.getPerson().getAddress().getDistrict();
         this.city = issuer.getPerson().getAddress().getCity();
         this.state = issuer.getPerson().getAddress().getState();
-        this.bankCode = issuer.getPaymentAccount().getBankAccount().getBacenCode();
+        this.bankCode = issuer.getPaymentAccount().getBankAccount().bacenCode();
         this.bankName = issuer.getPaymentAccount().getBankAccount().getBank().getName();
         this.zipCode = issuer.getPerson().getAddress().getZipCode();
         this.name = issuer.getPerson().getName();

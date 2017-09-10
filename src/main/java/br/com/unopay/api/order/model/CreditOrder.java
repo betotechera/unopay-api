@@ -2,6 +2,7 @@ package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
@@ -66,10 +67,10 @@ public class CreditOrder {
     @NotNull(groups = {Create.class, Update.class})
     private Person person;
 
-    @Column(name = "email")
-    @NotNull(groups = {Create.class})
-    @JsonView({Views.Order.List.class})
-    private String email;
+    @ManyToOne
+    @JoinColumn(name="payment_instrument_id")
+    @JsonView({Views.Order.Detail.class})
+    private PaymentInstrument paymentInstrument;
 
     @Column(name = "order_number")
     @NotNull(groups = {Create.class})
@@ -149,6 +150,13 @@ public class CreditOrder {
     public String productCode(){
         if(this.product != null){
             return product.getCode();
+        }
+        return null;
+    }
+
+    public String instrumentId(){
+        if(this.getPaymentInstrument() != null){
+            return this.getPaymentInstrument().getId();
         }
         return null;
     }

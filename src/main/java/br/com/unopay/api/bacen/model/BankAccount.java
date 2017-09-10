@@ -100,7 +100,7 @@ public class BankAccount implements Serializable{
 
     }
 
-    public Integer getBacenCode(){
+    public Integer bacenCode(){
         if(getBank() != null && getBank().getBacenCode() != null){
             return getBank().getBacenCode();
         }

@@ -72,12 +72,12 @@ public class PersonService {
         if(id == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         }
-        Optional<Person> person = findByIdOptional(id);
+        Optional<Person> person =  repository.findById(id);
         return person.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id)));
     }
 
-    public Optional<Person> findByIdOptional(String id) {
-        return repository.findById(id);
+    public Optional<Person> findByDocument(String document) {
+        return repository.findByDocumentNumber(document);
     }
 
     private PageRequest singlePageRequest() {

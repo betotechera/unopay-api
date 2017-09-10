@@ -37,7 +37,7 @@ public class RemittancePayee implements Serializable {
 
     public RemittancePayee(Establishment establishment, Integer payerBankCode, BigDecimal receivable) {
         this.documentNumber = establishment.documentNumber();
-        this.bankCode = establishment.getBankAccount().getBacenCode();
+        this.bankCode = establishment.getBankAccount().bacenCode();
         this.agency = establishment.getBankAccount().getAgency();
         this.agencyDigit = establishment.getBankAccount().getAgencyDigit();
         this.accountNumber = establishment.getBankAccount().getAccountNumber();
@@ -56,7 +56,7 @@ public class RemittancePayee implements Serializable {
 
     public RemittancePayee(Hirer hirer, Integer payerBankCode, BigDecimal receivable) {
         this.documentNumber = hirer.getDocumentNumber();
-        this.bankCode = hirer.getBankAccount().getBacenCode();
+        this.bankCode = hirer.getBankAccount().bacenCode();
         this.agency = hirer.getBankAccount().getAgency();
         this.agencyDigit = hirer.getBankAccount().getAgencyDigit();
         this.accountNumber = hirer.getBankAccount().getAccountNumber();

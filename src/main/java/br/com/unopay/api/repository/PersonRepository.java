@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface PersonRepository extends UnovationFilterRepository<Person,String, PersonFilter> {
 
     Optional<Person> findById(String id);
+
+    Optional<Person> findByDocumentNumber(String document);
 }
 

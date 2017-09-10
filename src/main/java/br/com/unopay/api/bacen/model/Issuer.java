@@ -155,7 +155,7 @@ public class Issuer implements Serializable{
     }
 
     public Integer paymentBankCode(){
-        return  this.paymentAccount.getBankAccount().getBacenCode();
+        return  this.paymentAccount.getBankAccount().bacenCode();
     }
 
     @JsonIgnore
