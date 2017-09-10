@@ -202,7 +202,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'a created remittance should have remittance file generated situation'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         createBatchForBank(issuerBanK, issuer)
 
         when:
@@ -231,7 +231,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'a batch remittance should have credit operation type'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         createBatchForBank(issuerBanK, issuer)
 
         when:
@@ -245,7 +245,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'should not send email when a new batch remittance is created'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         createBatchForBank(issuerBanK, issuer)
 
         when:
@@ -405,7 +405,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'should ever create a new remittance when execute'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         createBatchForBank(issuerBanK, issuer)
         service.createForBatch(issuer.id)
 
@@ -421,7 +421,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'a remittanceItem to the same bank of the issuer and remittanceItem of other banks should have different transfer option'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         def(BankAccount bankAccountA, BankAccount bankAccountB, BankAccount bankAccountC) = from(BankAccount.class)
                                                                     .uses(jpaProcessor).gimme(3, "valid", new Rule(){{
             add("bank.bacenCode", uniqueRandom(473, 477, issuerBanK))
@@ -532,7 +532,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
         then:
         result.find().payer.documentNumber == issuer.documentNumber()
-        result.find().payer.bankCode == issuer.paymentAccount.bankAccount.bacenCode
+        result.find().payer.bankCode == issuer.paymentAccount.bankAccount.bacenCode()
     }
 
     def 'should create payment remittance by Issuer'(){
@@ -556,7 +556,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     def 'remittance item value should be a sum of batch closing value by establishment'(){
         given:
         def issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         BankAccount bankAccount = from(BankAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("bank.bacenCode", issuerBanK)
         }})
@@ -642,7 +642,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     private PaymentRemittance createRemittanceForBatch(){
         Issuer issuer = fixtureCreator.createIssuer()
-        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
         createBatchForBank(issuerBanK, issuer)
         service.createForBatch(issuer.id)
         return service.findByPayerDocument(issuer.documentNumber()).find()

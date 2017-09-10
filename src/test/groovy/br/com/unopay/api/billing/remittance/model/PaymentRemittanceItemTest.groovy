@@ -40,7 +40,7 @@ class PaymentRemittanceItemTest extends FixtureApplicationTest{
 
         then:
         paymentRemittanceItem.payee.documentNumber == batchClosing.establishment.documentNumber()
-        paymentRemittanceItem.payee.bankCode == batchClosing.establishment.bankAccount.bacenCode
+        paymentRemittanceItem.payee.bankCode == batchClosing.establishment.bankAccount.bacenCode()
     }
 
     def 'should create from batch closed with processing situation'(){

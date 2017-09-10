@@ -29,7 +29,7 @@ class RemittancePayeeTest  extends FixtureApplicationTest{
         payee.district == establishment.person.address.district
         payee.city == establishment.person.address.city
         payee.state == establishment.person.address.state
-        payee.bankCode == establishment.bankAccount.bacenCode
+        payee.bankCode == establishment.bankAccount.bacenCode()
         payee.payerBankCode == paymentAccountBank
         payee.name == establishment.person.name
         payee.receivable == receivable
@@ -57,7 +57,7 @@ class RemittancePayeeTest  extends FixtureApplicationTest{
         payee.district == hirer.person.address.district
         payee.city == hirer.person.address.city
         payee.state == hirer.person.address.state
-        payee.bankCode == hirer.bankAccount.bacenCode
+        payee.bankCode == hirer.bankAccount.bacenCode()
         payee.payerBankCode == paymentAccountBank
         payee.name == hirer.person.name
         payee.receivable == receivable

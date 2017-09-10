@@ -29,7 +29,7 @@ class PaymentRemittanceTest extends FixtureApplicationTest{
         payer.city == issuer.person.address.city
         payer.state == issuer.person.address.state
         payer.documentNumber == issuer.documentNumber()
-        payer.bankCode == issuer.getPaymentAccount().getBankAccount().bacenCode
+        payer.bankCode == issuer.getPaymentAccount().getBankAccount().bacenCode()
         payer.bankName == issuer.getPaymentAccount().getBankAccount().bank.name
         paymentRemittance.number
     }
