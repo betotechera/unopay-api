@@ -139,7 +139,7 @@ public interface Views {
     }
 
     interface Order {
-        interface Detail extends Billing{}
+        interface Detail extends Billing, List{}
         interface List {}
         interface Private extends Detail {}
     }
