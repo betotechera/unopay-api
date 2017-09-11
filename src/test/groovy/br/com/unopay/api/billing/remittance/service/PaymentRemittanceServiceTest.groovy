@@ -351,13 +351,15 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     'should not create a remittance with #situation credit situation'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
+        def product = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
         def creditSituation = situation
         from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
-                add("issuerDocument", issuer.documentNumber())
-                add("hirerDocument", hirer.documentNumber)
-                add("situation", creditSituation)
-                add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+            add("issuerDocument", issuer.documentNumber())
+            add("hirerDocument", hirer.documentNumber)
+            add("situation", creditSituation)
+            add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
+            add("product", product)
         }})
 
         when:
