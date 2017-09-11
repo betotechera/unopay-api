@@ -43,8 +43,7 @@ public class OrderReceiver {
     @RabbitListener(queues = Queues.UNOPAY_ORDER_CREATED)
     public void transactionNotify(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
-        log.info("creating payment transaction for order={} of value={}", order.getId(),
-                order.getPaymentRequest().getValue());
+        log.info("creating payment transaction for order={} of value={}", order.getId(), order.getValue());
         if(order.is(PaymentMethod.CARD)) {
             Transaction transaction = transactionService.create(order.getPaymentRequest());
             order.defineStatus(transaction.getStatus());
