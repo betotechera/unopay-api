@@ -24,6 +24,7 @@ import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import org.apache.commons.lang3.ObjectUtils
 import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -159,12 +160,18 @@ class ContractServiceTest extends SpockApplicationTests {
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
+        Order initialOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+        }})
+
         Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("person", person)
             add("product", product)
             add("type", OrderType.INSTALLMENT_PAYMENT)
         }})
-        service.markInstallmentAsPaidFrom(order.with { type = OrderType.ADHESION; it })
+        service.markInstallmentAsPaidFrom(initialOrder)
 
         when:
         service.markInstallmentAsPaidFrom(order)
