@@ -16,6 +16,8 @@ import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
@@ -44,11 +46,13 @@ class ContractServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    @Autowired
+    ContractInstallmentService installmentService
+
     Hirer hirerUnderTest
     Contractor contractorUnderTest
     Product productUnderTest
     Establishment establishmentUnderTest
-    ContractInstallmentService installmentServiceMock = Mock(ContractInstallmentService)
 
 
     void setup(){
@@ -56,7 +60,6 @@ class ContractServiceTest extends SpockApplicationTests {
         contractorUnderTest = fixtureCreator.createContractor()
         productUnderTest = fixtureCreator.createProduct()
         establishmentUnderTest = fixtureCreator.createHeadOffice()
-        service.installmentService = installmentServiceMock
     }
 
     void 'when create a new contract the contract installments should be created'(){
@@ -65,9 +68,10 @@ class ContractServiceTest extends SpockApplicationTests {
 
         when:
         service.create(contract)
+        def installments = installmentService.findByContractId(contract.id)
 
         then:
-        1 * installmentServiceMock.create(_)
+        !installments.isEmpty()
     }
 
     void 'given contract without product should not be created'(){
@@ -96,17 +100,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should create from person and product'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         def result  = service.dealClose(person, product.code)
@@ -115,19 +110,99 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    def 'given a adhesion order should deal close'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+        }})
+
+        when:
+        service.markInstallmentAsPaidFrom(order)
+        def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
+
+        then:
+        result.isPresent()
+    }
+
+
+    def 'given a adhesion order should mark first contract installment as paid'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+        }})
+
+        when:
+        service.markInstallmentAsPaidFrom(order)
+        def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
+
+        then:
+        result.get().contractInstallments.find {
+            it.installmentNumber == 1
+        }.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+    }
+
+    def 'given a installment payment order should mark next contract installment as paid'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+        }})
+        service.markInstallmentAsPaidFrom(order.with { type = OrderType.ADHESION; it })
+
+        when:
+        service.markInstallmentAsPaidFrom(order)
+        def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
+
+        then:
+        result.get().contractInstallments.find {
+            it.installmentNumber == 2
+        }.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+    }
+
+    def 'given a installment payment order with unknown contract should return error'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+        }})
+
+        when:
+        service.markInstallmentAsPaidFrom(order)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+    }
+
+
+
+
     void 'when deal close should create contract'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         Contract contract =  service.dealClose(person, product.code)
@@ -139,18 +214,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create user'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
-
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         Contract contract =  service.dealClose(person, product.code)
@@ -162,17 +227,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contract with product'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         Contract contract =  service.dealClose(person, product.code)
@@ -184,17 +240,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contract contractor'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         Contract contract =  service.dealClose(person, product.code)
@@ -206,17 +253,8 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contractor payment instrument'(){
         given:
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
+        def product = crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
 
         when:
         Contract contract =  service.dealClose(person, product.code)
@@ -582,5 +620,20 @@ class ContractServiceTest extends SpockApplicationTests {
             it
         }
         contract
+    }
+
+    private Product crateProductWithSameIssuerOfHirer(){
+        def hirer = fixtureCreator.createHirer()
+        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+            add("document.number", hirer.documentNumber)
+        }})
+        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", issuerPerson)
+        }})
+        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issuer", issuer)
+        }})
+        fixtureCreator.createCreditPaymentAccount(hirer.documentNumber, product)
+        product
     }
 }

@@ -13,6 +13,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -52,7 +53,7 @@ public class ContractService {
     private ContractEstablishmentRepository contractEstablishmentRepository;
     private PaymentInstrumentService paymentInstrumentService;
     private UserDetailService userDetailService;
-    @Setter private ContractInstallmentService installmentService;
+    private ContractInstallmentService installmentService;
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
@@ -218,6 +219,15 @@ public class ContractService {
     }
 
     public void markInstallmentAsPaidFrom(Order order) {
+        Contract contract = getContract(order);
+        installmentService.markAsPaid(contract.getId(),order.getValue());
+    }
 
+    private Contract getContract(Order order) {
+        if (order.isType(OrderType.ADHESION)) {
+            return dealClose(order.getPerson(), order.productCode());
+        }
+        Optional<Contract> contract = findByContractorAndProduct(order.documentNumber(), order.productId());
+        return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 }
