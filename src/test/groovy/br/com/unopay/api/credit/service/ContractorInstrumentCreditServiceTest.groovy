@@ -525,6 +525,21 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'SERVICE_NOT_ACCEPTED'
     }
 
+    def 'given a payment instrument credit without service type should be inserted'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.with {
+            serviceType = null
+        }
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result != null
+        !result.serviceType
+    }
+
     def 'given an hirer product code different of payment instrument product code should not be inserted'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()

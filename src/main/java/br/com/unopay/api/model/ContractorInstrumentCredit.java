@@ -87,7 +87,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private ServiceType serviceType;
 
@@ -143,7 +142,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     public void validateMe(Contract contract){
         validateProduct(contract);
-        if(!contract.containsService(serviceType)){
+        if(serviceType != null && !contract.containsService(serviceType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
         }
         if(expirationDateTime.before(new Date())){

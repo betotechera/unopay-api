@@ -212,11 +212,9 @@ public class ContractorInstrumentCreditService {
 
     private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
                                                               CreditPaymentAccount creditPaymentAccount) {
-        ServiceType serviceType = contract.getProduct().getServiceTypes().stream().findFirst().orElse(null);//TODO: poder utilizar credito com qualquer serviço
         ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
-        instrumentCredit.setServiceType(serviceType);
         instrumentCredit.setContract(contract);
         instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
         instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);

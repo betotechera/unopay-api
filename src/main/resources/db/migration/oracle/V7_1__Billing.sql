@@ -30,3 +30,4 @@ create table transaction (
 
 alter table contractor_instrument_credit drop column credit_insertion_type;
 alter table contractor_instrument_credit add credit_source varchar(100) default 'HIRER' not null;
+alter table contractor_instrument_credit modify service_type varchar(150) null;

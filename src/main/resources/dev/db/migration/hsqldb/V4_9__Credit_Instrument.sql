@@ -2,7 +2,7 @@ create table contractor_instrument_credit (
     id VARCHAR(256) PRIMARY KEY,
     payment_instrument_id varchar(256) not null,
     contract_id varchar(256) not null,
-    service_type varchar(100) not null,
+    service_type varchar(150),
     credit_source varchar(100) not null,
     credit_type varchar(100) not null,
     installment_number bigint not null,
