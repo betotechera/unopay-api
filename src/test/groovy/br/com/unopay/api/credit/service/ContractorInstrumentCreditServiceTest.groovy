@@ -9,8 +9,6 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.InstrumentCreditSource
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
-import br.com.unopay.api.credit.service.CreditPaymentAccountService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
@@ -18,7 +16,7 @@ import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
-import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PaymentInstrumentService
@@ -31,7 +29,6 @@ import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import spock.lang.Unroll
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
@@ -70,7 +67,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a paid order for known client with contract and payment instrument should insert credit'(){
         given:
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
             add("status", OrderStatus.PAID)
@@ -90,7 +87,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     def 'given a paid order for known client with contract and more one instrument should insert credit on order instrument'(){
         given:
         fixtureCreator.createInstrumentToProduct(contractUnderTest.product, contractorUnderTest)
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
             add("status", OrderStatus.PAID)
@@ -105,30 +102,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.paymentInstrument == paymentInstrumentUnderTest
     }
 
-    @Unroll
-    'given a #status order for known client with contract and payment instrument should not insert credit'(){
-        given:
-        def orderStatus = status
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", contractUnderTest.contractor.person)
-            add("product", contractUnderTest.product)
-            add("status", orderStatus)
-        }})
-
-        when:
-        ContractorInstrumentCredit created = service.processOrder(creditOrder)
-
-        then:
-        created == null
-
-        where:
-        _ | status
-        _ | OrderStatus.WAITING_PAYMENT
-        _ | OrderStatus.CANCELED
-        _ | OrderStatus.PAYMENT_DENIED
-    }
-
-    def 'given a paid order for unknown client should insert credit'(){
+    def 'given a paid order for unknown client should not insert credit'(){
         given:
         def hirer = fixtureCreator.createHirer()
         Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
@@ -143,7 +117,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         fixtureCreator.createCreditPaymentAccount(hirer.documentNumber, product)
 
         def person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
             add("status", OrderStatus.PAID)
@@ -151,13 +125,11 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        ContractorInstrumentCredit created = service.processOrder(creditOrder)
-        ContractorInstrumentCredit result = service.findById(created.id)
+        service.processOrder(creditOrder)
 
         then:
-        result.availableBalance == creditOrder.getValue()
-        result.contract.id != null
-        result.situation == CreditSituation.AVAILABLE
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
     def 'given a valid instrument credit should be inserted'(){

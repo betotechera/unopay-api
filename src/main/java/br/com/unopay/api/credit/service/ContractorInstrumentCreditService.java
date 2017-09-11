@@ -10,7 +10,7 @@ import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
-import br.com.unopay.api.order.model.CreditOrder;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -27,7 +27,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.credit.model.CreditSituation.PROCESSING;
+import static br.com.unopay.api.uaa.exception.Errors.CONTACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
@@ -60,23 +62,20 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
-    public ContractorInstrumentCredit processOrder(CreditOrder creditOrder) {
-        if(creditOrder.paid()) {
-            Contract contract = getContract(creditOrder);
-            PaymentInstrument paymentInstrument = getContractorPaymentInstrument(creditOrder);
-            CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract);
-            ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
-            credit.setValue(creditOrder.getValue());
-            return insert(paymentInstrument.getId(), credit);
-        }
-        return null;
+    public ContractorInstrumentCredit processOrder(Order order) {
+        Contract contract = getContract(order);
+        PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract);
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
+        credit.setValue(order.getValue());
+        return insert(paymentInstrument.getId(), credit);
     }
 
 
-    private PaymentInstrument getContractorPaymentInstrument(CreditOrder creditOrder) {
-        Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(creditOrder.instrumentId());
+    private PaymentInstrument getContractorPaymentInstrument(Order order) {
+        Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
-                .findDigitalWalletByContractorDocument(creditOrder.documentNumber()).orElse(null));
+                .findDigitalWalletByContractorDocument(order.documentNumber()).orElse(null));
     }
 
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -222,10 +221,10 @@ public class ContractorInstrumentCreditService {
         return instrumentCredit;
     }
 
-    private Contract getContract(CreditOrder creditOrder) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(creditOrder.documentNumber(),
-                                                                                 creditOrder.productId());
-        return existing.orElseGet(()-> contractService.dealClose(creditOrder.getPerson(), creditOrder.productCode()));
+    private Contract getContract(Order order) {
+        Optional<Contract> existing = contractService.findByContractorAndProduct(order.documentNumber(),
+                                                                                 order.productId());
+        return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
     private CreditPaymentAccount getCreditPaymentAccount(Contract contract) {

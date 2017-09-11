@@ -5,16 +5,12 @@ import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.billing.creditcard.repository.TransactionRepository;
-import br.com.unopay.api.config.Queues;
-import br.com.unopay.api.order.model.CreditOrder;
 import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.math.BigDecimal;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

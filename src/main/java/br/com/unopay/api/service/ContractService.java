@@ -12,6 +12,7 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -216,4 +217,7 @@ public class ContractService {
         return contractFilter;
     }
 
+    public void markInstallmentAsPaidFrom(Order order) {
+
+    }
 }

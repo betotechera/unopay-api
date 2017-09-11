@@ -1,5 +1,6 @@
 package br.com.unopay.api.order.model;
 
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -40,13 +41,13 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
 
 @Data
 @Entity
-@Table(name = "credit_order")
+@Table(name = "\"order\"")
 @ToString
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreditOrder {
+public class Order {
 
-    public CreditOrder(){}
+    public Order(){}
 
     @Id
     @Column(name="id")
@@ -97,6 +98,12 @@ public class CreditOrder {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
+
+    @Column(name = "type")
+    @NotNull(groups = {Create.class, Update.class})
+    @Enumerated(EnumType.STRING)
+    @JsonView({Views.Order.Detail.class})
+    private OrderType type;
 
     @Valid
     @Transient
@@ -159,5 +166,13 @@ public class CreditOrder {
             return this.getPaymentInstrument().getId();
         }
         return null;
+    }
+
+    public boolean is(PaymentMethod method) {
+        return paymentRequest.getMethod().equals(method);
+    }
+
+    public boolean isType(OrderType type) {
+        return this.type.equals(type);
     }
 }

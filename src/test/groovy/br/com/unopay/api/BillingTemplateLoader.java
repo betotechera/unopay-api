@@ -12,7 +12,8 @@ import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
-import br.com.unopay.api.order.model.CreditOrder;
+import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.OrderStatus;
 import java.math.BigDecimal;
 
@@ -49,13 +50,14 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("value", random(BigDecimal.class, range(30, 500)));
         }});
 
-        Fixture.of(CreditOrder.class).addTemplate("valid", new Rule() {{
+        Fixture.of(Order.class).addTemplate("valid", new Rule() {{
             add("createDateTime", instant("now"));
             add("paymentInstrument", one(PaymentInstrument.class, "valid"));
             add("product", one(Product.class, "valid"));
             add("person", one(Person.class, "physical"));
             add("number", regex("\\d{10}"));
             add("paymentRequest", one(PaymentRequest.class, "valid"));
+            add("type", random(OrderType.class));
             add("status", random(OrderStatus.class));
             add("value", random(BigDecimal.class, range(0.1, 500)));
         }});

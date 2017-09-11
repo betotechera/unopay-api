@@ -3,8 +3,8 @@ package br.com.unopay.api.order.controller;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.order.model.CreditOrder;
-import br.com.unopay.api.order.service.CreditOrderService;
+import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
@@ -33,19 +33,19 @@ public class CreditOrderController {
     @Value("${unopay.api}")
     private String api;
 
-    private CreditOrderService service;
+    private OrderService service;
 
     @Autowired
-    public CreditOrderController(CreditOrderService service) {
+    public CreditOrderController(OrderService service) {
         this.service = service;
     }
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/credit-orders", method = POST)
-    public ResponseEntity<CreditOrder> create(@Validated(Create.class) @RequestBody CreditOrder creditOrder) {
-        log.info("creating creditOrder {}", creditOrder);
-        CreditOrder created = service.create(creditOrder);
+    public ResponseEntity<Order> create(@Validated(Create.class) @RequestBody Order order) {
+        log.info("creating order {}", order);
+        Order created = service.create(order);
         return
                 created(URI.create("/credit-orders/"+created.getId()))
                         .body(created);
@@ -55,7 +55,7 @@ public class CreditOrderController {
     @ResponseStatus(OK)
     @JsonView(Views.Order.Detail.class)
     @RequestMapping(value = "/credit-orders/{id}", method = GET)
-    public CreditOrder get(@PathVariable String id) {
+    public Order get(@PathVariable String id) {
         log.info("get creditOrder={}", id);
         return service.findById(id);
     }

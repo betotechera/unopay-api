@@ -3,9 +3,7 @@ package br.com.unopay.api.uaa.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.order.model.CreditOrder
 import org.apache.commons.lang3.RandomStringUtils
-import spock.lang.Specification
 
 class UserDetailTest extends FixtureApplicationTest {
 

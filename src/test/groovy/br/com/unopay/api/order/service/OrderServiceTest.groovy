@@ -6,18 +6,17 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
-import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
-class CreditCreditOrderServiceTest extends SpockApplicationTests{
+class OrderServiceTest extends SpockApplicationTests{
 
     @Autowired
-    CreditOrderService service
+    OrderService service
 
     @Autowired
     PersonService personService
@@ -36,8 +35,8 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def creditOrder = createOrder()
 
         when:
-        CreditOrder created = service.save(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order created = service.save(creditOrder)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -48,7 +47,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         fixtureCreator.createInstrumentToProduct(product, contractor)
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", product)
             add("paymentInstrument", null)
@@ -65,14 +64,14 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
     def 'given a unknown contractor and order without payment instrument should be created'(){
         given:
         def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("paymentInstrument", null)
         }})
 
         when:
         def created = service.create(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -96,7 +95,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", fixtureCreator.createProduct())
             add("paymentInstrument", instrument)
@@ -113,13 +112,13 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
     def 'given a unknown document should create person when create order'(){
         given:
         def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
         }})
 
         when:
-        CreditOrder created = service.create(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order created = service.create(creditOrder)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -132,8 +131,8 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def creditOrder = createOrder()
 
         when:
-        CreditOrder created = service.create(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order created = service.create(creditOrder)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -143,7 +142,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     def 'a order should not be created with unknown product'(){
         given:
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid")
+        Order creditOrder = Fixture.from(Order.class).gimme("valid")
 
         when:
         service.create(creditOrder)
@@ -155,7 +154,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
 
     def 'a order should not be created without product'(){
         given:
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", null)
         }})
 
@@ -170,7 +169,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
     def 'a order without payment request should not be created'(){
         given:
         def product = fixtureCreator.createProduct()
-        CreditOrder creditOrder = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("paymentRequest", null)
         }})
@@ -188,8 +187,8 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def creditOrder = createOrder()
 
         when:
-        CreditOrder created = service.create(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order created = service.create(creditOrder)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -201,8 +200,8 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         def creditOrder = createOrder()
 
         when:
-        CreditOrder created = service.create(creditOrder)
-        CreditOrder result = service.findById(created.id)
+        Order created = service.create(creditOrder)
+        Order result = service.findById(created.id)
 
         then:
         result != null
@@ -215,7 +214,7 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         List<Person> persons = Fixture.from(Person.class).gimme(2,"physical", new Rule(){{
             add("document.number", uniqueRandom("92505722803", "87023146300", "15173351160"))
         }})
-        List<CreditOrder> orders = Fixture.from(CreditOrder.class).gimme(2,"valid", new Rule(){{
+        List<Order> orders = Fixture.from(Order.class).gimme(2,"valid", new Rule(){{
             add("product", product)
             add("person", uniqueRandom(persons.find(), persons.last()))
         }})
@@ -232,11 +231,11 @@ class CreditCreditOrderServiceTest extends SpockApplicationTests{
         result.last().number != result.find().number
     }
 
-    private CreditOrder createOrder(){
+    private Order createOrder(){
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        return Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        return Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", product)
             add("paymentInstrument", instrument)

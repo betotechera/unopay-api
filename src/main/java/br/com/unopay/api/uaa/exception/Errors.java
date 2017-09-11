@@ -281,6 +281,8 @@ public final class Errors {
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
     public static final UnovationError CONTRACT_INSTALLMENT_NOT_FOUND =
             new UnovationError("CONTRACT_INSTALLMENT_NOT_FOUND","Contact installment not found.");
+    public static final UnovationError CONTRACT_INSTALLMENTS_NOT_FOUND =
+            new UnovationError("CONTRACT_INSTALLMENTS_NOT_FOUND","Contact installments not found.");
     public static final UnovationError CONTRACT_NOT_ACTIVATED =
             new UnovationError("CONTRACT_NOT_ACTIVATED","Contact not activated.");
     public static final UnovationError CONTRACT_NOT_IN_PROGRESS =

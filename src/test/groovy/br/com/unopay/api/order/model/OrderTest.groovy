@@ -6,11 +6,11 @@ import br.com.unopay.api.billing.creditcard.model.TransactionStatus
 import static java.math.BigDecimal.*
 import spock.lang.Unroll
 
-class CreditOrderTest extends FixtureApplicationTest {
+class OrderTest extends FixtureApplicationTest {
 
     @Unroll
     'given a #status status the order status should be waiting payment'(){
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -29,7 +29,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     @Unroll
     'given a #status status the order status should be paid'(){
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -46,7 +46,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     @Unroll
     'given a #status status the order status should be canceled'(){
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -63,7 +63,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     }
 
     def 'given a denied status the order status should be payment denied'() {
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -76,7 +76,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     def 'given a previous number should increment number'(){
         given:
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -88,7 +88,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     def 'should create order with pending status'(){
         when:
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         then:
@@ -97,7 +97,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     def 'should increment number without previous number'(){
         given:
-        def order = new CreditOrder()
+        def order = new Order()
         order.setValue(ONE)
 
         when:
@@ -109,7 +109,7 @@ class CreditOrderTest extends FixtureApplicationTest {
 
     def 'should be equals'(){
         given:
-        CreditOrder a = Fixture.from(CreditOrder.class).gimme("valid")
+        Order a = Fixture.from(Order.class).gimme("valid")
 
         when:
         def shouldBeEquals = a == a
@@ -119,7 +119,7 @@ class CreditOrderTest extends FixtureApplicationTest {
     }
 
     def 'should not be equals'() {
-        List list = Fixture.from(CreditOrder.class).gimme(2, "valid")
+        List list = Fixture.from(Order.class).gimme(2, "valid")
 
         when:
         def shouldBeEquals = list.head() == list.tail()

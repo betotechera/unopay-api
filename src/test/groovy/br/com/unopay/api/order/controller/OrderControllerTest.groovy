@@ -3,7 +3,7 @@ package br.com.unopay.api.order.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.order.model.CreditOrder
+import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class CreditOrderControllerTest extends AuthServerApplicationTests {
+class OrderControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -23,7 +23,7 @@ class CreditOrderControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getUserAccessToken()
         def product = fixtureCreator.createProduct()
-        CreditOrder order = Fixture.from(CreditOrder.class).gimme("valid", new Rule(){{
+        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
         }})
 
@@ -38,7 +38,7 @@ class CreditOrderControllerTest extends AuthServerApplicationTests {
     void 'known orders should be found'() {
         given:
         String accessToken = getUserAccessToken()
-        CreditOrder order = Fixture.from(CreditOrder.class).uses(jpaProcessor).gimme("valid")
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
         def id = order.id
 
         when:

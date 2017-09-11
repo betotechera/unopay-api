@@ -18,12 +18,12 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
@@ -114,7 +114,6 @@ class ContractServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
     }
-
 
     void 'when deal close should create contract'(){
         given:
