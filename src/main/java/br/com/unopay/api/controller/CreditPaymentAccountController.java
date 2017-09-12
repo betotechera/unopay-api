@@ -1,8 +1,8 @@
 package br.com.unopay.api.controller;
 
-import br.com.unopay.api.model.CreditPaymentAccount;
+import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.service.CreditPaymentAccountService;
+import br.com.unopay.api.credit.service.CreditPaymentAccountService;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;

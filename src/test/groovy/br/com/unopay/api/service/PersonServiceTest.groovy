@@ -65,7 +65,7 @@ class PersonServiceTest extends SpockApplicationTests {
         when:
         service.save(person)
         def filter = new PersonFilter(documentType: person.document.type, documentNumber: person.document.number)
-        def result = service.findByDocument(filter)
+        def result = service.findByFilter(filter)
 
         then:
         assert result.id == person.id
@@ -79,7 +79,7 @@ class PersonServiceTest extends SpockApplicationTests {
         when:
         service.save(person)
         def filter = new PersonFilter(documentType: DocumentType.CNH, documentNumber: person.document.number)
-         service.findByDocument(filter)
+         service.findByFilter(filter)
 
         then:
         def ex = thrown(NotFoundException)

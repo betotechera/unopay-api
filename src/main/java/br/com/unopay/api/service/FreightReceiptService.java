@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.EventService;
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.CargoContract;
 import br.com.unopay.api.model.Contract;

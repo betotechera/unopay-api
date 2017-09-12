@@ -2,16 +2,21 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
+import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 import javax.transaction.Transactional;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FOUND;
 
 @Service
@@ -62,11 +67,24 @@ public class ContractInstallmentService {
 
 
     public Set<ContractInstallment> findByContractId(String contractId) {
-        return repository.findByContractId(contractId);
+        Set<ContractInstallment> installments = repository.findByContractId(contractId);
+        if(installments.isEmpty()){
+            throw UnovationExceptions.notFound().withErrors(CONTRACT_INSTALLMENTS_NOT_FOUND);
+        }
+        return installments;
     }
 
     public void deleteByContract(String contractId) {
         Set<ContractInstallment> byContractId = findByContractId(contractId);
         repository.delete(byContractId);
+    }
+
+    public void markAsPaid(String contractId, BigDecimal paid) {
+        Set<ContractInstallment> installments = findByContractId(contractId);
+        ContractInstallment installment = installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
+                .findFirst().orElseThrow(UnovationExceptions::unprocessableEntity);
+        installment.setPaymentValue(paid);
+        installment.setPaymentDateTime(new DateTime().withMillisOfDay(0).toDate());
+        update(installment.getId(), installment);
     }
 }

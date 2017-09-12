@@ -15,10 +15,10 @@ import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.CreditSituation
+import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
-import br.com.unopay.api.repository.ContractorInstrumentCreditRepository
+import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -526,7 +526,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             begin = 2.day.ago
             end = 1.day.ago
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with { contract.id = anotherContract.id }
 
@@ -548,7 +548,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
             begin = 1.day.from.now
             end = 2.day.from.now
         }
-        contractService.save(anotherContract)
+        contractService.create(anotherContract)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with { contract.id = anotherContract.id }
 
@@ -896,7 +896,7 @@ class ServiceAuthorizeServiceTest  extends SpockApplicationTests {
     private Contract addPhysicalContractorToContract(Contract contract) {
         Contractor contractor = fixtureCreator.createContractor("physical")
         contract.contractor = contractor
-        contractService.save(contract)
+        contractService.create(contract)
     }
 
     private ServiceAuthorize physicalContractorWithoutPassword(Contract contractParam, userEstablishment) {

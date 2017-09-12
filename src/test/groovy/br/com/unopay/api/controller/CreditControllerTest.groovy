@@ -1,7 +1,7 @@
 package br.com.unopay.api.controller
 
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.model.Credit
+import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired

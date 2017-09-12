@@ -8,6 +8,7 @@ import br.com.unopay.api.repository.PersonRepository;
 import br.com.unopay.api.repository.PhysicalPersonDetailRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -59,7 +60,7 @@ public class PersonService {
         }
     }
 
-    public Person findByDocument(PersonFilter personFilter){
+    public Person findByFilter(PersonFilter personFilter){
         Page<Person> person = repository.findAll(personFilter, singlePageRequest());
         if(person.hasContent()) {
             return person.getContent().get(0);
@@ -71,11 +72,12 @@ public class PersonService {
         if(id == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         }
-        Person person = repository.findOne(id);
-        if(person == null) {
-            throw UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id));
-        }
-        return  person;
+        Optional<Person> person =  repository.findById(id);
+        return person.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id)));
+    }
+
+    public Optional<Person> findByDocument(String document) {
+        return repository.findByDocumentNumber(document);
     }
 
     private PageRequest singlePageRequest() {

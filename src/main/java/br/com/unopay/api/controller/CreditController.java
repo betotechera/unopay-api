@@ -1,10 +1,10 @@
 package br.com.unopay.api.controller;
 
-import br.com.unopay.api.model.Credit;
-import br.com.unopay.api.model.filter.CreditFilter;
+import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.service.CreditService;
+import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;

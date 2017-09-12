@@ -1,6 +1,11 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.ContractorCreditType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditPaymentAccount;
+import br.com.unopay.api.credit.model.CreditSituation;
+import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
@@ -82,14 +87,13 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private ServiceType serviceType;
 
-    @Column(name = "credit_insertion_type")
+    @Column(name = "credit_source")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.ContractorInstrumentCredit.Detail.class})
-    private CreditInsertionType creditInsertionType;
+    private InstrumentCreditSource creditSource;
 
     @Column(name = "installment_number")
     @JsonView({Views.ContractorInstrumentCredit.Detail.class})
@@ -138,7 +142,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     public void validateMe(Contract contract){
         validateProduct(contract);
-        if(!contract.containsService(serviceType)){
+        if(serviceType != null && !contract.containsService(serviceType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTED);
         }
         if(expirationDateTime.before(new Date())){
@@ -150,7 +154,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         if(ZERO.compareTo(value) == 0 || ZERO.compareTo(value) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(creditPaymentAccount.getAvailableBalance().compareTo(value) == -1){
+        if(creditSourceIsHirer() && creditPaymentAccount.getAvailableBalance().compareTo(value) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_BALANCE);
         }
     }
@@ -171,6 +175,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.blockedBalance = ZERO;
         this.situation = CreditSituation.AVAILABLE;
         this.issuerFee = contract.productInstrumentIssuerFee();
+        this.creditSource = this.creditSource == null? InstrumentCreditSource.HIRER : this.creditSource;
     }
 
     public String getPaymentInstrumentId() {
@@ -274,7 +279,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         instrumentCredit.setContract(this.contract);
         instrumentCredit.setCreatedDateTime(new Date());
         instrumentCredit.setExpirationDateTime(this.expirationDateTime);
-        instrumentCredit.setCreditInsertionType(this.creditInsertionType);
+        instrumentCredit.setCreditSource(this.creditSource);
         instrumentCredit.setInstallmentNumber(this.installmentNumber);
         instrumentCredit.setIssuerFee(this.issuerFee);
         instrumentCredit.setPaymentInstrument(this.paymentInstrument);
@@ -316,4 +321,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.expirationDateTime = ObjectUtils.clone(dateTime);
     }
 
+    public boolean creditSourceIsHirer() {
+        return InstrumentCreditSource.HIRER.equals(creditSource);
+    }
 }

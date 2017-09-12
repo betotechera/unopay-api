@@ -24,18 +24,29 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
 @Data
 @Entity
+@EqualsAndHashCode(of = {"id", "number"})
 @Table(name = "payment_instrument")
 public class PaymentInstrument implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
     public PaymentInstrument(){}
+
+    public PaymentInstrument(Contractor contractor, Product product){
+        this.contractor = contractor;
+        this.product = product;
+        this.type = PaymentInstrumentType.DIGITAL_WALLET;
+        this.situation = PaymentInstrumentSituation.ACTIVE;
+        this.expirationDate = new DateTime().plusYears(5).withMillisOfDay(0).toDate();
+    }
 
     @Id
     @Column(name="id")
@@ -144,5 +155,12 @@ public class PaymentInstrument implements Serializable, Updatable {
 
     public String issuerBin() {
         return product.issuerBin();
+    }
+
+    public boolean is(PaymentInstrumentType type){
+        if(this.type != null){
+            return this.type.equals(type);
+        }
+        return false;
     }
 }

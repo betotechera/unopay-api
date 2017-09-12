@@ -1,6 +1,6 @@
 create table contract (
     id VARCHAR(256) PRIMARY KEY,
-    code integer not null,
+    code bigint not null,
     name varchar(50) not  null,
     payment_instrument_type varchar(100) not null,
     begin_date DATE,

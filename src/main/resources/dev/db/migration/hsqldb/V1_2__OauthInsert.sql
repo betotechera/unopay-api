@@ -45,6 +45,8 @@ values('3', 'TEST', 'Test', 0);
 insert into user_type(id, name, description, version)
 values('4', 'CREDENCIADORA', 'Credenciadora', 0);
 
+insert into user_type(id, name, description, version) values('865b362c-fc31-4a35-b118-6da78147559f', 'CONTRATADO', 'Contratado', 0);
+
 insert into authority(name, description) values('ROLE_ADMIN', 'Permite acesso completo ao sistema');
 insert into authority(name, description) values('ROLE_USER', 'Permite acesso ao sistema');
 Insert into AUTHORITY(name, description) values('ROLE_LIST_GROUPS','Permite listar Perfis de Acesso');

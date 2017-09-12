@@ -8,7 +8,6 @@ import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.RecurrencePeriod
-import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.BatchClosingJob
 import br.com.unopay.api.job.UnopayScheduler

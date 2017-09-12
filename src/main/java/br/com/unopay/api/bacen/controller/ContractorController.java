@@ -11,7 +11,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.ContractService;
-import br.com.unopay.api.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;

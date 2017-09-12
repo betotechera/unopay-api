@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_INSTRUMENTS;
+import static br.com.unopay.api.model.PaymentInstrumentType.DIGITAL_WALLET;
 import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 
@@ -74,18 +75,24 @@ public class PaymentInstrumentService {
     }
 
     public PaymentInstrument findById(String id) {
-        Optional<PaymentInstrument> instrument = repository.findById(id);
+        Optional<PaymentInstrument> instrument = getById(id);
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
+    public Optional<PaymentInstrument> getById(String id) {
+        return repository.findById(id);
+    }
+
     public List<PaymentInstrument> findByContractorId(String contractorId) {
-        List<PaymentInstrument> contracts = repository.findByContractorId(contractorId);
-        return contracts;
+        return repository.findByContractorId(contractorId);
     }
 
     public List<PaymentInstrument> findByContractorDocument(String contractorDocumentNumber) {
-        List<PaymentInstrument> contracts = repository.findByContractorPersonDocumentNumber(contractorDocumentNumber);
-        return contracts;
+        return repository.findByContractorPersonDocumentNumber(contractorDocumentNumber);
+    }
+
+    public Optional<PaymentInstrument> findDigitalWalletByContractorDocument(String documentNumber) {
+        return repository.findFirstByContractorPersonDocumentNumberAndType(documentNumber, DIGITAL_WALLET);
     }
 
     @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
