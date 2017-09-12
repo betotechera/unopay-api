@@ -10,7 +10,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ public class ContractTemplateLoader implements TemplateLoader {
     @Override
     public void load() {
         Fixture.of(Contract.class).addTemplate("valid", new Rule(){{
-            add("code", uniqueRandom(1,200,400,5000,3000,201001,  88888, 556666));
+            add("code", uniqueRandom(1l,200l,400l,5000l,3000l,201001l,  88888l, 556666l));
             add("name", firstName());
             add("product", one(Product.class, "valid"));
             add("hirer", one(Hirer.class, "valid"));

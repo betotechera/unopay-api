@@ -36,6 +36,10 @@ public class Contractor implements Serializable {
 
     public Contractor(){}
 
+    public Contractor(Person person){
+        this.person = person;
+    }
+
     @Id
     @Column(name="id")
     @NotNull(groups = {Reference.class})
@@ -107,4 +111,7 @@ public class Contractor implements Serializable {
         return PersonType.PHYSICAL.equals(getPerson().getType());
     }
 
+    public boolean withBankAccount() {
+        return this.bankAccount != null;
+    }
 }

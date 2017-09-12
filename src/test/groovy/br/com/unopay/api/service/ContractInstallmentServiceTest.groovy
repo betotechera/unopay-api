@@ -4,8 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
-import static br.com.unopay.api.function.FixtureFunctions.instant
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -22,6 +20,53 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+
+    def 'given a contract with installments should mark as paid'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        service.create(contract)
+        BigDecimal paid = 500.00
+
+        when:
+        service.markAsPaid(contract.id, paid)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        def installment = result.sort { it.installmentNumber }.find()
+        installment.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        installment.paymentValue == paid
+    }
+
+    def 'given a contract with previous installment paid should mark next as paid'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        service.create(contract)
+        BigDecimal paid = 500.00
+        service.markAsPaid(contract.id, paid)
+
+        when:
+        service.markAsPaid(contract.id, paid)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        def installment = result.find { it.installmentNumber == 2 }
+        installment.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        installment.paymentValue == paid
+    }
+
+
+    def 'when try mark as paid a unknown contract should return error'(){
+        given:
+        BigDecimal paid = 500.00
+
+        when:
+        service.markAsPaid('', paid)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'CONTRACT_INSTALLMENTS_NOT_FOUND'
+    }
 
     def 'given a valid contract should create installment'(){
         given:
@@ -113,12 +158,15 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme(3,"valid", new Rule(){{
             add("contract", contract)
         }})
+        def installments = service.findByContractId(contract.id)
         when:
         service.deleteByContract(contract.id)
-        def result = service.findByContractId(contract.id)
+        service.findByContractId(contract.id)
 
         then:
-        result.isEmpty()
+        that installments, hasSize(3)
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'CONTRACT_INSTALLMENTS_NOT_FOUND'
     }
 
     def 'a valid contract installment should be updated'(){

@@ -22,7 +22,7 @@ class UserTypeControllerTest extends AuthServerApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(jsonPath('$.items', hasSize(4)))
+                .andExpect(jsonPath('$.items', hasSize(5)))
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
                 .andExpect(jsonPath('$.items[0].description', is(notNullValue())))
     }

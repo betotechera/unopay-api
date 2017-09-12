@@ -9,7 +9,7 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.uaa.model.UserDetail;

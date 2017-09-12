@@ -1,3 +1,11 @@
+payment:
+  gateway:
+    config:
+      shopId: 21985337
+      shopKey: 4876228797067177
+      mode: TEST
+      endpointHost: secure.payzen.com.br
+
 soap:
   pamcary:
     partner-number: '24122925000173'

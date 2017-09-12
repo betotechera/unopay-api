@@ -138,4 +138,15 @@ public interface Views {
         interface List {}
     }
 
+    interface Order {
+        interface Detail extends Billing, List{}
+        interface List {}
+        interface Private extends Detail {}
+    }
+
+    interface Billing {
+        interface Detail {}
+        interface List{}
+    }
+
 }

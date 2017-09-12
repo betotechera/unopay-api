@@ -9,4 +9,6 @@ public interface UserTypeRepository extends CrudRepository<UserType, String>{
     UserType findById(String id);
 
     List<UserType> findAll();
+
+    UserType findByName(String name);
 }

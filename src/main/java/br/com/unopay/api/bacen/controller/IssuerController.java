@@ -6,7 +6,7 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.payment.model.filter.RemittanceFilter;
+import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;

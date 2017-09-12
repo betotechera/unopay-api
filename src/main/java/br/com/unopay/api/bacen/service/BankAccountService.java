@@ -61,7 +61,7 @@ public class BankAccountService {
     }
 
     private void addKnownBank(BankAccount account) {
-        Bank bank = bankService.findBacenCode(account.getBacenCode());
+        Bank bank = bankService.findBacenCode(account.bacenCode());
         account.setBank(bank);
     }
 }

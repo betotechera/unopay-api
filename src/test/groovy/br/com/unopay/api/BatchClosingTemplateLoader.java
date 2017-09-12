@@ -14,7 +14,7 @@ import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import java.math.BigDecimal;
 
 public class BatchClosingTemplateLoader  implements TemplateLoader {

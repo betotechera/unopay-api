@@ -67,6 +67,11 @@ public class ProductService {
         return product.orElseThrow(() -> UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND));
     }
 
+    public Product findByCode(String code) {
+        Optional<Product> product = repository.findByCode(code);
+        return product.orElseThrow(() -> UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND));
+    }
+
     public void delete(String id) {
         findById(id);
         repository.delete(id);

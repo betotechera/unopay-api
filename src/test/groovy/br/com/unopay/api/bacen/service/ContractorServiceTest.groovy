@@ -1,10 +1,17 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.filter.ContractorFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Person
+import br.com.unopay.api.model.Product
+import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -15,12 +22,27 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     @Autowired
     ContractorService service
+
     @Autowired
     PaymentRuleGroupRepository repository
 
     void 'should create Contractor'(){
         given:
         Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+
+        when:
+        contractor =  service.create(contractor)
+        Contractor result  = service.getById(contractor.getId())
+
+        then:
+        result != null
+    }
+
+    void 'should create Contractor without bank account'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("valid", new Rule(){{
+            add("bankAccount", null)
+        }})
 
         when:
         contractor =  service.create(contractor)

@@ -56,7 +56,7 @@ public class ContractController {
     @RequestMapping(value = "/contracts", method = POST)
     public ResponseEntity<Contract> create(@Validated(Create.class) @RequestBody Contract contract) {
         log.info("creating contract {}", contract);
-        Contract created = service.save(contract);
+        Contract created = service.create(contract);
         return
                 created(URI.create("/contracts/"+created.getId()))
                 .body(created);

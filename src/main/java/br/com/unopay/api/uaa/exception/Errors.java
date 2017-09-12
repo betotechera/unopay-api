@@ -281,6 +281,8 @@ public final class Errors {
             new UnovationError("CONTACT_NOT_FOUND","Contact not found.");
     public static final UnovationError CONTRACT_INSTALLMENT_NOT_FOUND =
             new UnovationError("CONTRACT_INSTALLMENT_NOT_FOUND","Contact installment not found.");
+    public static final UnovationError CONTRACT_INSTALLMENTS_NOT_FOUND =
+            new UnovationError("CONTRACT_INSTALLMENTS_NOT_FOUND","Contact installments not found.");
     public static final UnovationError CONTRACT_NOT_ACTIVATED =
             new UnovationError("CONTRACT_NOT_ACTIVATED","Contact not activated.");
     public static final UnovationError CONTRACT_NOT_IN_PROGRESS =
@@ -493,6 +495,44 @@ public final class Errors {
             new UnovationError("REMITTANCE_ALREADY_RUNNING", "Remittance already running.");
     public static final UnovationError REMITTANCE_WITH_INVALID_DATA =
             new UnovationError("REMITTANCE_WITH_INVALID_DATA", "Remittance with invalid data.");
+
+    /* Billing */
+    public static final UnovationError ORDER_WITH_PENDING_TRANSACTION =
+            new UnovationError("ORDER_WITH_PENDING_TRANSACTION","order with pending transaction.");
+    public static final UnovationError ORDER_WITH_PROCESSED_TRANSACTION =
+            new UnovationError("ORDER_WITH_PROCESSED_TRANSACTION","order with processed transaction.");
+    public static final UnovationError INVALID_PAYMENT_VALUE =
+            new UnovationError("INVALID_PAYMENT_VALUE","Invalid payment value.");
+    public static final UnovationError PAYMENT_REQUEST_REQUIRED =
+            new UnovationError("PAYMENT_REQUEST_REQUIRED","Payment request required.");
+    public static final UnovationError ORDER_REQUIRED =
+            new UnovationError("ORDER_REQUIRED","Order required.");
+
+    /* Order */
+    public static final UnovationError INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR =
+            new UnovationError("INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR",
+                    "Payment instrument does not belongs to contractor.");
+    public static final UnovationError INSTRUMENT_IS_NOT_FOR_PRODUCT =
+            new UnovationError("INSTRUMENT_IS_NOT_FOR_PRODUCT",
+                    "The instrument is not for this product.");
+    public static final UnovationError PAYMENT_INSTRUMENT_REQUIRED =
+            new UnovationError("PAYMENT_INSTRUMENT_REQUIRED",
+                    "Payment instrument required.");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

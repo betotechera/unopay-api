@@ -7,7 +7,7 @@ import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.model.CreditInsertionType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.ProductSituation;
@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.unopay.api.model.CreditInsertionType.BOLETO;
-import static br.com.unopay.api.model.CreditInsertionType.CREDIT_CARD;
+import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO;
+import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD;
 
 public class ProductTemplateLoader implements TemplateLoader {
 

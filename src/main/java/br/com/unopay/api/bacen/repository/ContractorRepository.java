@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ContractorRepository extends UnovationFilterRepository<Contractor,String, ContractorFilter> {
 
     Optional<Contractor> findById(String id);
+
+    Optional<Contractor> findByPersonDocumentNumber(String document);
 }

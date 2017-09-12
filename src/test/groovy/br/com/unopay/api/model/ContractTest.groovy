@@ -14,6 +14,72 @@ class ContractTest extends FixtureApplicationTest {
         Integer.mixin(TimeCategory)
     }
 
+    def 'should create contract from product'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.product == product
+    }
+
+    def 'when create from product should define credit insertion type'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.creditInsertionType == product.creditInsertionTypes.find()
+    }
+
+    def 'when create from product should define code insertion type'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.code != null
+    }
+
+    def 'when create from product should define name from product name'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.name == product.name
+    }
+
+    def 'when create from product should define service types from product'(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.serviceType.any { it in product.serviceTypes }
+    }
+
+    def 'when create from product should define DIGITAL_WALLET payment instrument type '(){
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+
+        when:
+        def contract = new Contract(product)
+
+        then:
+        contract.paymentInstrumentType == PaymentInstrumentType.DIGITAL_WALLET
+    }
+
 
     void 'should be in progress'(){
         given:

@@ -8,15 +8,13 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.RecurrencePeriod
 import br.com.unopay.api.job.RemittanceJob
 import br.com.unopay.api.job.UnopayScheduler
-import br.com.unopay.api.payment.model.filter.RemittanceFilter
-import br.com.unopay.api.payment.service.PaymentRemittanceService
+import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter
+import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-
-import static org.hamcrest.Matchers.is
 import static spock.util.matcher.HamcrestSupport.that
 
 class IssuerServiceTest  extends SpockApplicationTests {

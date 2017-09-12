@@ -1,6 +1,7 @@
 package br.com.unopay.api.repository;
 
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import java.util.List;
@@ -11,8 +12,10 @@ public interface PaymentInstrumentRepository
     Optional<PaymentInstrument> findById(String id);
 
     List<PaymentInstrument> findByContractorId(String contractorId);
-
     List<PaymentInstrument> findByContractorPersonDocumentNumber(String contractorDocumentNumber);
+
+    Optional<PaymentInstrument> findFirstByContractorPersonDocumentNumberAndType(String contractorDocumentNumber,
+                                                                             PaymentInstrumentType type);
 
     Integer countByNumber(String instrumentNumber);
 }

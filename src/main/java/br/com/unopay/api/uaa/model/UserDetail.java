@@ -49,6 +49,12 @@ public class UserDetail implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public UserDetail(Contractor contractor){
+        this.contractor = contractor;
+        this.name = contractor.getPerson().getName();
+        this.email = contractor.getPerson().getPhysicalPersonDetail().getEmail();
+    }
+
     @Id
     @NotNull(groups = Update.class)
     @GeneratedValue(generator="system-uuid")

@@ -20,8 +20,8 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
-import br.com.unopay.api.model.Credit
-import br.com.unopay.api.model.CreditPaymentAccount
+import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
@@ -133,6 +133,16 @@ class FixtureCreator {
             add("hirerDocument", contract.hirer.documentNumber)
             add("paymentRuleGroup", contract.product.paymentRuleGroup)
             add("serviceType", contract.serviceType.find())
+        }})
+    }
+
+    CreditPaymentAccount createCreditPaymentAccount(String hirerDocument, Product product = createProduct()) {
+        Fixture.from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", product)
+            add("issuer", product.issuer)
+            add("hirerDocument", hirerDocument)
+            add("paymentRuleGroup", product.paymentRuleGroup)
+            add("serviceType", product.serviceTypes.find())
         }})
     }
 

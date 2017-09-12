@@ -1,6 +1,6 @@
 package br.com.unopay.api.job;
 
-import br.com.unopay.api.payment.service.PaymentRemittanceService;
+import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDetail;

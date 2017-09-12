@@ -9,7 +9,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.payment.model.PaymentRemittanceItem;
+import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -223,7 +223,7 @@ public class BatchClosing implements Serializable {
     }
 
     public Integer paymentAccountBank(){
-        return getIssuer().getPaymentAccount().getBankAccount().getBacenCode();
+        return getIssuer().getPaymentAccount().getBankAccount().bacenCode();
     }
 
     public String establishmentId() {
@@ -235,11 +235,11 @@ public class BatchClosing implements Serializable {
     }
 
     public boolean establishmentBankCodeIs(Integer bacenCode){
-        return Objects.equals(this.getEstablishment().getBankAccount().getBacenCode(), bacenCode);
+        return Objects.equals(this.getEstablishment().getBankAccount().bacenCode(), bacenCode);
     }
 
     public Integer establishmentBankCode(){
-        return this.getEstablishment().getBankAccount().getBacenCode();
+        return this.getEstablishment().getBankAccount().bacenCode();
     }
 
     public void setPaymentDateTime(Date dateTime){
