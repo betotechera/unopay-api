@@ -5,7 +5,6 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.CreditProcessed;
-import br.com.unopay.api.credit.model.CreditTarget;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
@@ -155,16 +154,6 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    public void createForCredit(String issuerId) {
-        Issuer currentIssuer = issuerService.findById(issuerId);
-        Set<Credit> credits = creditService
-                .findProcessingByIssuerDocumentAndInsertionType(currentIssuer.documentNumber(), DIRECT_DEBIT);
-        if(!credits.isEmpty()) {
-            createFromCredit(currentIssuer, credits);
-        }
-    }
-
-    @Transactional
     @RabbitListener(queues = Queues.UNOPAY_PAYMENT_REMITTANCE)
     public void remittanceReceiptNotify(String objectAsString) {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
@@ -172,6 +161,16 @@ public class PaymentRemittanceService {
         createForBatch(filter.getId(), filter.getAt());
         createForCredit(filter.getId());
         log.info("processed remittance for issuer={}", filter.getId());
+    }
+
+    @Transactional
+    public void createForCredit(String issuerId) {
+        Issuer currentIssuer = issuerService.findById(issuerId);
+        Set<Credit> credits = creditService
+                .findProcessingByIssuerDocumentAndInsertionType(currentIssuer.documentNumber(), DIRECT_DEBIT);
+        if(!credits.isEmpty()) {
+            createFromCredit(currentIssuer, credits);
+        }
     }
 
     private void createFromBatchClosing(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment){
@@ -254,7 +253,7 @@ public class PaymentRemittanceService {
             String establishmentDocument = getEstablishmentDocumentNumber(cnab240, currentLine);
             Optional<PaymentRemittanceItem> remittanceItem = remittanceItemByDocument(items, establishmentDocument);
             final int previousLine = currentLine - 1;
-            remittanceItem.ifPresent(item -> updateItemSituation(cnab240, previousLine, item));
+            remittanceItem.ifPresent(item -> updateItemSituationAndSave(cnab240, previousLine, item));
         }
     }
 
@@ -269,7 +268,7 @@ public class PaymentRemittanceService {
         return getNumberWithoutLeftPad(remittanceNumber);
     }
 
-    private void updateItemSituation(String cnab240, int line, PaymentRemittanceItem item) {
+    private void updateItemSituationAndSave(String cnab240, int line, PaymentRemittanceItem item) {
         RemittanceExtractor segmentA = getRemittanceExtractor(cnab240);
         String occurrenceCode = segmentA.extractOnLine(OCORRENCIAS, line);
         item.updateOccurrenceFields(occurrenceCode);

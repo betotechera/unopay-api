@@ -4,7 +4,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum OrderType implements DescriptableEnum{
 
-    ADHESION("Adesao"), INSTALLMENT_PAYMENT("Pagamento de parcela"), CREDIT("Credito");
+    ADHESION("Adesao"), INSTALLMENT_PAYMENT("Pagamento de parcela"), CREDIT("Inserçao de credito");
 
     private String description;
 

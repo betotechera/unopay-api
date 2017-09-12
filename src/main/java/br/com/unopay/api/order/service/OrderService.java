@@ -6,16 +6,22 @@ import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
 import java.util.Optional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
@@ -103,6 +109,10 @@ public class OrderService {
     private void incrementNumber(Order order) {
         Optional<Order> last = repository.findFirstByOrderByCreateDateTimeDesc();
         order.incrementNumber(last.map(Order::getNumber).orElse(null));
+    }
+
+    public Page<Order> findByFilter(OrderFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     public List<Order> findAll(){

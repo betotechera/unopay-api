@@ -28,7 +28,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
         }})
 
         when:
-        def result = this.mvc.perform(post('/credit-orders?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(post('/orders?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(order)))
         then:
@@ -42,7 +42,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
         def id = order.id
 
         when:
-        def result = this.mvc.perform(get('/credit-orders/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(get('/orders/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())

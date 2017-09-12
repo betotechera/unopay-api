@@ -28,3 +28,9 @@ create table transaction (
     cancellation_requested_at Timestamp,
     version integer
 );
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_ORDERS','Permite listar pedidos.');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_ORDERS','Permite gerenciar pedidos');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ORDERS', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ORDERS', '1');
