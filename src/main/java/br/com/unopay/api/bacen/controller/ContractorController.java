@@ -106,9 +106,10 @@ public class ContractorController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
     public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam(required = false)
-            String establishmentId,@RequestParam(required = false) Set<ServiceType> serviceType) {
+            String establishmentId,@RequestParam(required = false) Set<ServiceType> serviceType,
+            @RequestParam(required = false) String productCode) {
         log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
-        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType);
+        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType,productCode);
         return new Results<>(contracts);
     }
 
