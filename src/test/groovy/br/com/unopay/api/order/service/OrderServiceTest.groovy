@@ -242,7 +242,7 @@ class OrderServiceTest extends SpockApplicationTests{
         Order result = service.findById(created.id)
 
         then:
-        result != null
+        result.createDateTime != null
     }
 
     def 'given a known contractor and order with instrument of other contractor should return error'(){
