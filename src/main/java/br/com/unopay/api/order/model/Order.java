@@ -84,11 +84,11 @@ public class Order {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Order.Detail.class})
+    @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderStatus status = OrderStatus.WAITING_PAYMENT;
 
     @Column(name = "value")
-    @JsonView({Views.Order.Detail.class})
+    @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private BigDecimal value;
 
     @ManyToOne

@@ -2,6 +2,7 @@ package br.com.unopay.api.billing.creditcard.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.ToString;
@@ -17,9 +18,11 @@ public class CreditCard implements Serializable {
 
     boolean cseEncrypted = false;
 
+    @NotNull
     @Pattern(message = "invalid expiration month format", regexp = "\\d{1,2}")
     private String expiryMonth;
 
+    @NotNull
     @Pattern(message = "invalid expiration year format", regexp = "\\d{4}")
     private String expiryYear;
 

@@ -15,7 +15,6 @@ public class PaymentRequest {
     @Valid
     private CreditCard creditCard;
 
-    @NotNull
     private BigDecimal value;
     private Integer installments = 1;
     private Boolean storeCard;
