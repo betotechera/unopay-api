@@ -75,7 +75,6 @@ public class Order {
     private PaymentInstrument paymentInstrument;
 
     @Column(name = "order_number")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.Order.List.class})
     private String number;
 
@@ -84,7 +83,6 @@ public class Order {
     private String partnerId;
 
     @Column(name = "status")
-    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class})
     private OrderStatus status = OrderStatus.WAITING_PAYMENT;
@@ -99,7 +97,6 @@ public class Order {
     private Contract contract;
 
     @Column(name = "create_date_time")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.Billing.List.class})
     private Date createDateTime;
 
