@@ -5,17 +5,6 @@ payment:
       shopKey: 4876228797067177
       mode: TEST
       endpointHost: secure.payzen.com.br
-soap:
-  pamcary:
-    partner-number: '24122925000173'
-  client:
-    wsdl-location: classpath:wsdl/WSTransacional-wsdl.xml
-    transacional-service: "http://webservice.pamcard.jee.pamcary.com.br"
-    ssl:
-      key-store: classpath:wsdl/unovation.p12
-      key-store-password: 'UFK#@01a'
-      trust-store: classpath:wsdl/cacerts
-      trust-store-password: 'changeit'
 logging:
   file: /var/unopay/unpay-api.log
 server:

@@ -55,8 +55,6 @@ class AmqpConfig {
             declareQueue(amqpAdmin, Queues.UNOPAY_PAYMENT_REMITTANCE, Queues.UNOPAY_PAYMENT_REMITTANCE);
             declareQueue(amqpAdmin, Queues.UNOPAY_CREDIT_PROCESSED, Queues.UNOPAY_CREDIT_PROCESSED);
             declareQueue(amqpAdmin, Queues.UNOPAY_ORDER_CREATED, Queues.UNOPAY_ORDER_CREATED);
-            declareQueue(amqpAdmin, Queues.PAMCARY_TRAVEL_DOCUMENTS, Queues.PAMCARY_TRAVEL_DOCUMENTS);
-            declareQueue(amqpAdmin, Queues.PAMCARY_AUTHORIZATION_SUPPLY, Queues.PAMCARY_AUTHORIZATION_SUPPLY);
         };
     }
 

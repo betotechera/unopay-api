@@ -7,8 +7,6 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.pamcary.translate.KeyBase;
-import br.com.unopay.api.pamcary.translate.KeyField;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,7 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@KeyBase(key = "viagem.favorecido")
 @Table(name = "contractor")
 public class Contractor implements Serializable {
 
@@ -60,11 +57,9 @@ public class Contractor implements Serializable {
     private BankAccount bankAccount;
 
     @Transient
-    @KeyField(baseField = "documento.numero", methodResolver = "getDocumentNumber")
     private String documentNumber;
 
     @Transient
-    @KeyField(baseField = "documento.tipo", methodResolver = "getDocumentType")
     private String documentType;
 
     public void updateModel(Contractor hirer) {

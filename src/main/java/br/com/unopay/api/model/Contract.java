@@ -5,26 +5,27 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
+import static br.com.unopay.api.model.ContractOrigin.APPLICATION;
+import static br.com.unopay.api.model.ContractSituation.ACTIVE;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.pamcary.translate.KeyBase;
-import br.com.unopay.api.pamcary.translate.KeyField;
 import br.com.unopay.api.uaa.exception.Errors;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -42,22 +43,17 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-
-import static br.com.unopay.api.model.ContractOrigin.APPLICATION;
-import static br.com.unopay.api.model.ContractSituation.ACTIVE;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
-import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 @Entity
-@KeyBase(key = "viagem")
 @Table(name = "contract")
 @EqualsAndHashCode(exclude = {"contractEstablishments", "establishments", "contractInstallments"})
 public class Contract implements Serializable {
@@ -95,7 +91,6 @@ public class Contract implements Serializable {
     private List<Establishment> establishments;
 
     @Column(name="code")
-    @KeyField(baseField = "id")
     @NotNull(groups = {Create.class, Update.class})
     private Long code;
 
