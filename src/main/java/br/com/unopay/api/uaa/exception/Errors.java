@@ -518,6 +518,13 @@ public final class Errors {
     public static final UnovationError PAYMENT_INSTRUMENT_REQUIRED =
             new UnovationError("PAYMENT_INSTRUMENT_REQUIRED",
                     "Payment instrument required.");
+    public static final UnovationError CONTRACT_REQUIRED =
+            new UnovationError("CONTRACT_REQUIRED","Contract required.");
+    public static final UnovationError VALUE_REQUIRED =
+            new UnovationError("VALUE_REQUIRED","Value required.");
+
+
+
 
 
 

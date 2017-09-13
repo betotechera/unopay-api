@@ -4,13 +4,14 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.Product;
-import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
@@ -24,11 +25,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.VALUE_REQUIRED;
 
 @Service
 public class OrderService {
@@ -37,6 +40,7 @@ public class OrderService {
     private PersonService personService;
     private ProductService productService;
     private ContractorService contractorService;
+    private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
     @Setter private Notifier notifier;
 
@@ -47,12 +51,14 @@ public class OrderService {
                         PersonService personService,
                         ProductService productService,
                         ContractorService contractorService,
+                        ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         Notifier notifier){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
         this.contractorService = contractorService;
+        this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.notifier = notifier;
     }
@@ -71,28 +77,53 @@ public class OrderService {
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
         incrementNumber(order);
         checkPaymentInstrument(order);
+        processAdhesionWhenRequired(order);
+        processContractRuleWhenRequired(order);
         Order created = repository.save(order);
         order.getPaymentRequest().setOrderId(order.getId());
         notifier.notify(Queues.UNOPAY_ORDER_CREATED, created);
         return created;
     }
 
+    private void processContractRuleWhenRequired(Order order) {
+        if(!order.isType(OrderType.ADHESION)){
+            Contract contract = contractService.findById(order.contractId());
+            if(order.isType(OrderType.INSTALLMENT_PAYMENT)) {
+                order.setValue(contract.installmentValue());
+            }
+        }
+    }
+
+    private void processAdhesionWhenRequired(Order order) {
+        if(order.isType(OrderType.ADHESION)) {
+            order.setContract(null);
+            order.setValue(order.productInstallmentValue());
+        }
+    }
+
     private void checkPaymentInstrument(Order order) {
         Optional<Contractor> contractor = contractorService.getByDocument(order.documentNumber());
         List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.documentNumber());
-        if(!contractor.isPresent()) {
+        if (!contractor.isPresent()) {
             order.setPaymentInstrument(null);
         }
-        if(contractor.isPresent()){
-            if(order.getPaymentInstrument() == null){
-                throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
-            }
-            if(instruments.stream().noneMatch(instrument -> instrument.equals(order.getPaymentInstrument()))){
-                throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
-            }
-            if(instruments.stream().noneMatch(instrument -> instrument.getProduct().equals(order.getProduct()))){
-                throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_IS_NOT_FOR_PRODUCT);
-            }
+        if(order.isType(OrderType.CREDIT)) {
+            contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
+        }
+    }
+
+    private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {
+        if(order.getValue() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_REQUIRED);
+        }
+        if (order.getPaymentInstrument() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
+        }
+        if (instruments.stream().noneMatch(instrument -> instrument.equals(order.getPaymentInstrument()))) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
+        }
+        if (instruments.stream().noneMatch(instrument -> instrument.getProduct().equals(order.getProduct()))) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_IS_NOT_FOR_PRODUCT);
         }
     }
 
@@ -102,6 +133,11 @@ public class OrderService {
         }
         if(order.getPaymentRequest() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_REQUEST_REQUIRED);
+        }
+        if((order.isType(OrderType.INSTALLMENT_PAYMENT) ||
+                order.isType(OrderType.CREDIT)) &&
+                order.getContract() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_REQUIRED);
         }
         order.setProduct(productService.findById(order.getProduct().getId()));
     }

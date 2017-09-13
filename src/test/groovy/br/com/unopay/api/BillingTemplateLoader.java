@@ -9,6 +9,7 @@ import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -60,6 +61,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("type", random(OrderType.class));
             add("status", random(OrderStatus.class));
             add("value", random(BigDecimal.class, range(0.1, 500)));
+            add("contract", one(Contract.class, "valid"));
         }});
 
         Fixture.of(CreditCard.class).addTemplate("payzenCard", new Rule() {{

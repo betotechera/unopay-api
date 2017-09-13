@@ -337,4 +337,9 @@ public class Contract implements Serializable {
         this.membershipFee = product.getMembershipFee();
         this.paymentInstallments = product.getPaymentInstallments();
     }
+
+    public BigDecimal installmentValue(){
+        return getContractInstallments().stream()
+                .findFirst().map(ContractInstallment::getValue).orElse(null);
+    }
 }

@@ -6,13 +6,15 @@ create table "order" (
     payment_instrument_id varchar(256),
     partner_id varchar(256),
     create_date_time TIMESTAMP not null,
+    contract_id varchar(256),
     status varchar(150) not null,
     value decimal(20,2) not null,
     type varchar(150) not null,
     version integer,
     constraint fk_order_person foreign key(person_id) references person(id),
     constraint fk_order_product foreign key(product_id) references product(id),
-    constraint fk_instrument_order foreign key(payment_instrument_id) references payment_instrument(id)
+    constraint fk_instrument_order foreign key(payment_instrument_id) references payment_instrument(id),
+    constraint fk_contract_order foreign key(contract_id) references contract(id)
 );
 
 create table transaction (

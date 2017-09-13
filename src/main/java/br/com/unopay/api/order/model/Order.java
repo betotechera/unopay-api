@@ -3,6 +3,7 @@ package br.com.unopay.api.order.model;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -88,11 +89,14 @@ public class Order {
     @JsonView({Views.Order.Detail.class})
     private OrderStatus status = OrderStatus.WAITING_PAYMENT;
 
-    @Min(1)
-    @NonNull
     @Column(name = "value")
     @JsonView({Views.Order.Detail.class})
     private BigDecimal value;
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id")
+    @JsonView({Views.Order.Detail.class})
+    private Contract contract;
 
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
@@ -154,6 +158,13 @@ public class Order {
         return null;
     }
 
+    public String contractId(){
+        if(this.contract != null){
+            return contract.getId();
+        }
+        return null;
+    }
+
     public String productCode(){
         if(this.product != null){
             return product.getCode();
@@ -174,5 +185,12 @@ public class Order {
 
     public boolean isType(OrderType type) {
         return this.type.equals(type);
+    }
+
+    public BigDecimal productInstallmentValue(){
+        if(getProduct() != null){
+            return getProduct().installmentValue();
+        }
+        return null;
     }
 }

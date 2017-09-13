@@ -10,6 +10,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -197,5 +198,9 @@ public class Product implements Serializable, Updatable {
 
     public String issuerBin() {
         return issuer.getBin() != null ? issuer.getBin() : "";
+    }
+
+    public BigDecimal installmentValue(){
+        return Rounder.round(new BigDecimal(getAnnuity().doubleValue() / getPaymentInstallments()));
     }
 }
