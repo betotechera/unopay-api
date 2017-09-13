@@ -2,24 +2,28 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
-import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.pamcary.translate.KeyBase;
-import br.com.unopay.api.pamcary.translate.KeyDate;
-import br.com.unopay.api.pamcary.translate.KeyField;
-import br.com.unopay.api.pamcary.translate.KeyFieldReference;
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,23 +38,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.GenericGenerator;
-
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
 
 @Slf4j
 @Data
 @Entity
-@KeyBase(key = "viagem")
 @EqualsAndHashCode(exclude = {"contract"})
 @Table(name = "service_authorize")
 public class ServiceAuthorize implements Serializable {
@@ -66,7 +61,6 @@ public class ServiceAuthorize implements Serializable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @KeyField(baseField = "abastecimento.consumo.autorizacao.numero")
     @Column(name = "authorization_number")
     private String authorizationNumber;
 
@@ -82,37 +76,37 @@ public class ServiceAuthorize implements Serializable {
     private Establishment establishment;
 
     @ManyToOne
-    @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contract_id")
     @JsonView({Views.ServiceAuthorize.List.class})
     private Contract contract;
 
     @ManyToOne
-    @KeyFieldReference
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="contractor_id")
     @JsonView({Views.ServiceAuthorize.List.class})
     private Contractor contractor;
 
-    @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class})
+    @Column(name = "service_type")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private ServiceType serviceType;
 
     @ManyToOne
-    @NotNull(groups = {Reference.class})
     @JoinColumn(name="event_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Event event;
+
+    @Transient
+    @NotNull(groups = {Reference.class})
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private EstablishmentEvent establishmentEvent;
 
     @Column(name = "event_quantity")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Double eventQuantity;
 
     @Column(name = "event_value")
-    @KeyField(baseField = "abastecimento.valor")
     @JsonView({Views.ServiceAuthorize.List.class})
     private BigDecimal eventValue;
 
@@ -122,8 +116,6 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "solicitation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
-    @KeyDate(pattern = "dd/MM/yyyy hh:mm:ss")
-    @KeyField(baseField = "abastecimento.consumo.datahora")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Date solicitationDateTime;
 
@@ -183,7 +175,6 @@ public class ServiceAuthorize implements Serializable {
 
     @Transient
     @JsonIgnore
-    @KeyField(baseField = "abastecimento.operacao")
     private String operation = "1";
 
     public String contractId(){
@@ -262,12 +253,12 @@ public class ServiceAuthorize implements Serializable {
         if(event != null && event.isRequestQuantity() && (eventQuantity == null || eventQuantity <= 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) == -1 ||
+        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) < 0 ||
                 eventValue.compareTo(BigDecimal.ZERO) == 0){
             log.info("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED {}", eventValue);
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) == -1){
+        if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) < 0){
             log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
                     getContractorInstrumentCredit().getAvailableBalance(), eventValue);
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
@@ -282,18 +273,12 @@ public class ServiceAuthorize implements Serializable {
         situation = TransactionSituation.AUTHORIZED;
     }
 
-    public ServiceAuthorize toFuelSupply(FreightReceipt freightReceipt) {
-        setContract(freightReceipt.getContract());
-        setContractor(freightReceipt.getContractor());
-        setEstablishment(freightReceipt.getEstablishment());
-        setEventQuantity(freightReceipt.getFuelSupplyQuantity());
-        setEventValue(freightReceipt.getFuelSupplyValue());
-        setCreditInsertionType(freightReceipt.getCreditInsertionType());
-        setContractorInstrumentCredit(freightReceipt.getInstrumentCredit());
-        instrumentPassword(freightReceipt.getInstrumentPassword());
-        setEvent(freightReceipt.getFuelEvent());
-        serviceType = ServiceType.FUEL_ALLOWANCE;
-        return this;
+    public void setEventValues(EstablishmentEvent establishmentEvent) {
+        this.setEvent(establishmentEvent.getEvent());
+        this.setServiceType(establishmentEvent.serviceType());
+        this.setEventValue(establishmentEvent.getValue());
+        this.validateEvent(establishmentEvent.getEvent());
+        this.setValueFee(event.serviceFeeVal());
     }
 
     public ServiceAuthorize defineBatchClosingDate(){
@@ -355,6 +340,10 @@ public class ServiceAuthorize implements Serializable {
 
     public Date getBatchClosingDateTime(){
         return ObjectUtils.clone(this.batchClosingDateTime);
+    }
+
+    public String establishmentEventId() {
+        return establishmentEvent != null ? establishmentEvent.getId() : "";
     }
 
 }

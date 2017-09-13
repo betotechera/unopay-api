@@ -8,11 +8,9 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByPosition;
-import com.opencsv.bean.CsvDate;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,8 +20,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @Entity
@@ -68,4 +67,11 @@ public class EstablishmentEvent implements Updatable, Serializable {
     @Version
     private Integer version;
 
+    public boolean toEstablishmentId(String establishmentId) {
+        return establishment.getId().equals(establishmentId);
+    }
+
+    public ServiceType serviceType() {
+        return event.serviceType();
+    }
 }

@@ -1,11 +1,9 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.bacen.model.EstablishmentEvent;
+import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
-import br.com.unopay.api.bacen.service.EventService;
-import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.infra.UnopayEncryptor;
@@ -14,15 +12,15 @@ import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
+import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
+import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,12 +30,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_NOT_ACCEPTED;
-import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
-import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
+import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -46,34 +43,30 @@ public class ServiceAuthorizeService {
     public static final int NUMBER_SIZE = 12;
     private ServiceAuthorizeRepository repository;
     private ContractorInstrumentCreditService instrumentCreditService;
-    private EventService eventService;
     private UserDetailService userDetailService;
     private EstablishmentService establishmentService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
     private UnopayEncryptor encryptor;
-    @Setter
-    private Notifier notifier;
-
+    private EstablishmentEventService establishmentEventService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
                                    ContractorInstrumentCreditService instrumentCreditService,
-                                   EventService eventService,
                                    UserDetailService userDetailService,
                                    EstablishmentService establishmentService,
                                    ContractService contractService,
                                    PaymentInstrumentService paymentInstrumentService,
-                                   UnopayEncryptor encryptor, Notifier notifier) {
+                                   UnopayEncryptor encryptor,
+                                   EstablishmentEventService establishmentEventService) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
-        this.eventService = eventService;
         this.userDetailService = userDetailService;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.encryptor = encryptor;
-        this.notifier = notifier;
+        this.establishmentEventService = establishmentEventService;
     }
 
     @Transactional
@@ -89,18 +82,11 @@ public class ServiceAuthorizeService {
         instrumentCreditService.subtract(instrumentCredit.getId(), authorize.getEventValue());
         authorize.setAuthorizationNumber(generateAuthorizationNumber(authorize));
         ServiceAuthorize authorized = repository.save(authorize);
-        notifySupplyWhenRequired(authorize, authorized);
         return authorized;
     }
 
     private UserDetail getUserByEmail(String userEmail) {
         return userDetailService.getByEmail(userEmail);
-    }
-
-    private void notifySupplyWhenRequired(ServiceAuthorize serviceAuthorize, ServiceAuthorize authorized) {
-        if(ServiceType.FUEL_ALLOWANCE.equals(serviceAuthorize.getServiceType())) {
-            notifier.notify(Queues.PAMCARY_AUTHORIZATION_SUPPLY, authorized);
-        }
     }
 
     private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
@@ -121,17 +107,10 @@ public class ServiceAuthorizeService {
     }
 
     private void validateEvent(ServiceAuthorize serviceAuthorize) {
-        Event event = getAcceptableEvent(serviceAuthorize);
-        serviceAuthorize.validateEvent(event);
-        serviceAuthorize.setValueFee(event.getService().getFeeVal());
-    }
-
-    private Event getAcceptableEvent(ServiceAuthorize serviceAuthorize) {
-        Event event = eventService.findById(serviceAuthorize.getEvent().getId());
-        if(!event.toServiceType(serviceAuthorize.getServiceType())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_NOT_ACCEPTED);
-        }
-        return event;
+        EstablishmentEvent establishmentEvent =
+                establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
+                        serviceAuthorize.establishmentEventId());
+        serviceAuthorize.setEventValues(establishmentEvent);
     }
 
     private ContractorInstrumentCredit getValidContractorInstrumentCredit(ServiceAuthorize serviceAuthorize) {

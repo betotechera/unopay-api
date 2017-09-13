@@ -189,9 +189,11 @@ class FixtureCreator {
     ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                             Establishment establishment = createEstablishment(), String dateAsText = "1 day ago"){
         Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
+            def establishmentEvent = createEstablishmentEvent(establishment)
             add("contract",credit.contract)
             add("contractor",credit.contract.contractor)
-            add("event",createEvent(ServiceType.FUEL_ALLOWANCE))
+            add("establishmentEvent",establishmentEvent)
+            add("event",establishmentEvent.event)
             add("serviceType",ServiceType.FUEL_ALLOWANCE)
             add("eventValue",0.1)
             add("user",createUser())
@@ -219,11 +221,14 @@ class FixtureCreator {
         }})
     }
 
-    EstablishmentEvent createEstablishmentEvent(Establishment establishment = createEstablishment()){
-        def event = createEvent(ServiceType.FUEL_ALLOWANCE)
+    EstablishmentEvent createEstablishmentEvent(Establishment establishment = createEstablishment(),
+                                                BigDecimal eventValue = null,
+                                                Event event = createEvent(ServiceType.FUEL_ALLOWANCE)){
         return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
                 .gimme("withoutReferences", new Rule(){{
             add("event", event)
+            if(eventValue)
+                add("value",eventValue)
             add("establishment", establishment)
         }})
     }
