@@ -72,7 +72,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="contractor_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.PaymentInstrument.Detail.class})
+    @JsonView({Views.PaymentInstrument.List.class})
     private Contractor contractor;
 
     @Column(name = "created_date")

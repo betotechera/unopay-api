@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-import lombok.Setter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -192,9 +192,9 @@ public class ContractService {
 
 
     public List<Contract> getContractorValidContracts(String contractorId, String establishmentId,
-                                                      Set<ServiceType> serviceType) {
+                                                      Set<ServiceType> serviceType, String productCode) {
         contractorService.getById(contractorId);
-        Page<Contract> contractPage = getActiveContracts(contractorId,serviceType);
+        Page<Contract> contractPage = getActiveContracts(contractorId,serviceType,productCode);
         List<Contract> contracts = contractPage.getContent();
         if(establishmentId !=null) {
             return contracts.stream()
@@ -204,17 +204,18 @@ public class ContractService {
         return contracts;
     }
 
-    private Page<Contract> getActiveContracts(String contractorId, Set<ServiceType> serviceType) {
-        ContractFilter contractFilter = createContractActiveFilter(contractorId,serviceType);
+    private Page<Contract> getActiveContracts(String contractorId, Set<ServiceType> serviceType, String productCode) {
+        ContractFilter contractFilter = createContractActiveFilter(contractorId,serviceType,productCode);
         return findByFilter(contractFilter, new UnovationPageRequest());
     }
 
 
-    private ContractFilter createContractActiveFilter(String contractorId, Set<ServiceType> serviceType) {
+    private ContractFilter createContractActiveFilter(String contractorId, Set<ServiceType> serviceType, String productCode) {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
         contractFilter.setContractor(contractorId);
         contractFilter.setServiceType(serviceType);
+        contractFilter.setProduct(productCode);
         return contractFilter;
     }
 

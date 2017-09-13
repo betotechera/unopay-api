@@ -72,6 +72,7 @@ public class Service implements Serializable {
     public void updateModel(Service service) {
         this.name = service.getName();
         this.code = service.getCode();
+        this.type = service.getType();
         this.feePercent = service.getFeePercent();
         this.feeVal = service.getFeeVal();
     }
