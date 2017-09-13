@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
@@ -25,6 +26,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
         def product = fixtureCreator.createProduct()
         Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
+            add("type", OrderType.ADHESION)
         }})
 
         when:
