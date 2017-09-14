@@ -87,7 +87,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private ServiceType serviceType;
 
     @Column(name = "credit_source")

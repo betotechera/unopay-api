@@ -103,7 +103,7 @@ public class Order {
     @Column(name = "type")
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.Order.Detail.class})
+    @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
 
     @Valid

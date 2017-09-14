@@ -44,7 +44,8 @@ public class OrderReceiver {
     @RabbitListener(queues = Queues.UNOPAY_ORDER_CREATED)
     public void transactionNotify(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
-        log.info("creating payment transaction for order={} of value={}", order.getId(), order.getValue());
+        log.info("creating payment transaction for order={} type={} of value={}",
+                order.getId(),order.getType(), order.getValue());
         Order current = orderService.findById(order.getId());
         if(order.is(PaymentMethod.CARD)) {
             Transaction transaction = transactionService.create(order.getPaymentRequest());
@@ -54,11 +55,14 @@ public class OrderReceiver {
         if(current.paid()) {
             if(order.isType(CREDIT)) {
                 instrumentCreditService.processOrder(order);
+                log.info("credit processed for order={} type={} of value={}",
+                        order.getId(),order.getType(), order.getValue());
                 return;
             }
             if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
                 contractService.markInstallmentAsPaidFrom(order);
-                return;
+                log.info("contract paid for order={} type={} of value={}",
+                        order.getId(),order.getType(), order.getValue());
             }
         }
     }

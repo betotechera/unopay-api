@@ -32,9 +32,9 @@ public class ContractInstallmentService {
 
     @Transactional
     public void create(Contract contract) {
-        ContractInstallment first = save(new ContractInstallment(contract));
-        final Date[] previousDate = { first.getExpiration() };
-        final int[] previousNumber = { first.getInstallmentNumber() };
+        ContractInstallment firstInstallment = save(new ContractInstallment(contract));
+        final Date[] previousDate = { firstInstallment.getExpiration() };
+        final int[] previousNumber = { firstInstallment.getInstallmentNumber() };
         IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
             ContractInstallment installment = new ContractInstallment(contract);
             installment.plusExpiration(previousDate[0]);

@@ -72,7 +72,7 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_LIST_ORDERS')")
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public Results<Order> getByParams(OrderFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search product with filter={}", filter);
+        log.info("search order with filter={}", filter);
         Page<Order> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/orders", api));

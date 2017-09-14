@@ -129,12 +129,15 @@ public class OrderService {
         if (order.getPaymentInstrument() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
         }
-        if (instruments.stream().noneMatch(instrument -> instrument.equals(order.getPaymentInstrument()))) {
+        Optional<PaymentInstrument> instrumentOptional = instruments.stream()
+                                    .filter(instrument -> instrument.equals(order.getPaymentInstrument())).findFirst();
+        if (!instrumentOptional.isPresent()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
         if (instruments.stream().noneMatch(instrument -> instrument.getProduct().equals(order.getProduct()))) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_IS_NOT_FOR_PRODUCT);
         }
+        instrumentOptional.ifPresent(order::setPaymentInstrument);
     }
 
     private void validateReferences(Order order) {
