@@ -47,12 +47,10 @@ public class Event implements Serializable {
 
     @Column(name = "ncm_code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class,Views.EstablishmentEvent.List.class})
     private String ncmCode;
 
     @Column
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private String name;
 
     @Column(name ="request_quantity")
