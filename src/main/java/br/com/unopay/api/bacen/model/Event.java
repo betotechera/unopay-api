@@ -8,6 +8,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class Event implements Serializable {
 
     @Column(name = "ncm_code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class,Views.EstablishmentEvent.List.class})
     private String ncmCode;
 
     @Column
@@ -97,5 +98,13 @@ public class Event implements Serializable {
             return Objects.equals(getService().getType(), serviceType);
         }
         return false;
+    }
+
+    public ServiceType serviceType() {
+        return service.getType();
+    }
+
+    public BigDecimal serviceFeeVal() {
+        return service.getFeeVal();
     }
 }

@@ -136,52 +136,6 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
         notThrown(UnprocessableEntityException)
     }
 
-    def 'should create from freight receipt the fuel supply authorized'(){
-        given:
-        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
-        def freightReceipt = new FreightReceipt(){{
-            setContract(serviceAuthorize.getContract())
-            setContractor(serviceAuthorize.getContractor())
-            setEstablishment(serviceAuthorize.getEstablishment())
-            setFuelSupplyQuantity(serviceAuthorize.getEventQuantity())
-            setFuelSupplyValue(serviceAuthorize.getEventValue())
-            setCreditInsertionType(serviceAuthorize.getCreditInsertionType())
-            setInstrumentPassword(serviceAuthorize.instrumentPassword())
-            setInstrumentCredit(serviceAuthorize.getContractorInstrumentCredit())
-            setFuelEvent(serviceAuthorize.getEvent())
-        }}
-
-        when:
-        def authorize = new ServiceAuthorize().toFuelSupply(freightReceipt)
-
-        then:
-        authorize.contract.id == freightReceipt.contract.id
-        authorize.contractor.id == freightReceipt.contractor.id
-        authorize.establishment.id == freightReceipt.establishment.id
-        authorize.eventValue == freightReceipt.fuelSupplyValue
-        authorize.eventQuantity == freightReceipt.fuelSupplyQuantity
-        authorize.creditInsertionType == freightReceipt.creditInsertionType
-        authorize.instrumentPassword() == freightReceipt.instrumentPassword
-        authorize.contractorInstrumentCredit == freightReceipt.instrumentCredit
-        authorize.event == freightReceipt.fuelEvent
-    }
-
-    def 'should create authorize with fuel supply type'(){
-        given:
-        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid")
-        def freightReceipt = new FreightReceipt(){{
-            setContract(serviceAuthorize.getContract())
-            setContractor(serviceAuthorize.getContractor())
-            setEstablishment(serviceAuthorize.getEstablishment())
-        }}
-
-        when:
-        def authorize = new ServiceAuthorize().toFuelSupply(freightReceipt)
-
-        then:
-        authorize.serviceType == ServiceType.FUEL_ALLOWANCE
-    }
-
     def 'should be equals'(){
         given:
         ServiceAuthorize a = Fixture.from(ServiceAuthorize.class).gimme("valid")
