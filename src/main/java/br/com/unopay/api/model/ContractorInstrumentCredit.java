@@ -119,7 +119,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private CreditSituation situation;
 
     @Column(name = "available_balance")
-    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
     private BigDecimal availableBalance;
 
     @Column(name = "blocked_balance")
