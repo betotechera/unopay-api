@@ -140,10 +140,12 @@ public class ContractorInstrumentCreditService {
         if(isCreditPaymentAccountFromAnotherHirer(contract.hirerDocumentNumber(), instrumentCredit)){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER);
         }
-        if(!contract.isProductCodeEquals(instrumentCredit.getCreditPaymentAccountProductCode())){
+        if(instrumentCredit.getCreditPaymentAccountProductCode()!= null &&
+                !contract.isProductCodeEquals(instrumentCredit.getCreditPaymentAccountProductCode())){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT);
         }
-        if(!contract.containsService(instrumentCredit.getCreditPaymentAccountServiceType())){
+        if(instrumentCredit.getCreditPaymentAccountServiceType()!= null &&
+                !contract.containsService(instrumentCredit.getCreditPaymentAccountServiceType())){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE);
         }
     }

@@ -57,11 +57,11 @@ public class Event implements Serializable {
 
     @Column(name ="request_quantity")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Event.List.class})
+    @JsonView({Views.Event.List.class, Views.EstablishmentEvent.List.class})
     private boolean requestQuantity;
 
     @Column(name ="quantity_unity")
-    @JsonView({Views.Event.Detail.class})
+    @JsonView({Views.Event.Detail.class, Views.EstablishmentEvent.List.class})
     private String quantityUnity;
 
     @Column(name ="request_value")

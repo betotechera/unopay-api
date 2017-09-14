@@ -124,7 +124,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("#oauth2.isUser() ")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST)
     public ResponseEntity<EstablishmentEvent> createMy(OAuth2Authentication authentication, @Validated(Create.class)
     @RequestBody EstablishmentEvent establishment) {
@@ -138,15 +138,16 @@ public class EstablishmentEventController {
     }
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.GET)
     public EstablishmentEvent getMy(OAuth2Authentication authentication, @PathVariable  String id) {
         UserDetail currentUser = getCurrentUser(authentication);
         log.info("get establishment event={}", id);
         return service.findByEstablishmentIdAndId(currentUser.establishmentId(), id);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("#oauth2.isUser() ")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.PUT)
     public void updateMy(OAuth2Authentication authentication, @PathVariable  String id,
                        @Validated(Update.class) @RequestBody EstablishmentEvent establishment) {
@@ -157,7 +158,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.DELETE)
     public void removeMy(OAuth2Authentication authentication, @PathVariable  String id) {
         log.info("removing establishment event id={}", id);
@@ -167,7 +168,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.GET)
     public Results<EstablishmentEvent> getMyByParams(OAuth2Authentication authentication) {
         log.info("find establishment events of establishment={}", authentication.getName());
