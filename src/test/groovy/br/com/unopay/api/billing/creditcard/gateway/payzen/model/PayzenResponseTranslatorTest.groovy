@@ -21,7 +21,7 @@ class PayzenResponseTranslatorTest extends FixtureApplicationTest {
         def status = new PayzenResponseTranslator().translate(result)
 
         then:
-        status == TransactionStatus.AUTHORIZED
+        status == TransactionStatus.CAPTURED
 
         where:
         _ | expedcodeCode
