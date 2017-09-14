@@ -74,7 +74,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentInstrument.List.class})
     private Contractor contractor;
-
+f
     @Column(name = "created_date")
     @JsonView({Views.PaymentInstrument.Detail.class})
     private Date createdDate;
@@ -85,7 +85,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     private Date expirationDate;
 
     @Column(name = "password")
-    @JsonView({Views.PaymentInstrument.Detail.class})
+    @JsonView({Views.PaymentInstrument.List.class})
     private String password;
 
     @Column(name = "situation")

@@ -105,7 +105,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private BigDecimal value;
 
     @Column(name = "expiration_date_time")
-    @JsonView({Views.ContractorInstrumentCredit.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class,Views.ServiceAuthorize.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date expirationDateTime;
 
@@ -119,7 +119,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     private CreditSituation situation;
 
     @Column(name = "available_balance")
-    @JsonView({Views.ContractorInstrumentCredit.List.class})
+    @JsonView({Views.ContractorInstrumentCredit.List.class,Views.ServiceAuthorize.Detail.class})
     private BigDecimal availableBalance;
 
     @Column(name = "blocked_balance")
