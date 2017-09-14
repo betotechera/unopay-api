@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class PaymentRequest {
 
+    public static final int DEFAULT_INSTALLMENT = 1;
     @NotNull
     private PaymentMethod method;
     private String orderId;
@@ -16,7 +17,7 @@ public class PaymentRequest {
     private CreditCard creditCard;
 
     private BigDecimal value;
-    private Integer installments = 1;
+    private Integer installments = DEFAULT_INSTALLMENT;
     private Boolean storeCard;
     private Boolean oneClickPayment;
 
@@ -24,7 +25,7 @@ public class PaymentRequest {
         Transaction transaction = new Transaction();
         transaction.setCreditCard(creditCard);
         transaction.setOrderId(orderId);
-        transaction.setInstallments(installments);
+        transaction.setInstallments(DEFAULT_INSTALLMENT);
         transaction.setPaymentMethod(method);
         transaction.setAmount(new Amount(CurrencyCode.BRL, value));
         return transaction;
