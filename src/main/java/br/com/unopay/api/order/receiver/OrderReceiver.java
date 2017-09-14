@@ -8,6 +8,7 @@ import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
+import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +45,13 @@ public class OrderReceiver {
     public void transactionNotify(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
         log.info("creating payment transaction for order={} of value={}", order.getId(), order.getValue());
+        Order current = orderService.findById(order.getId());
         if(order.is(PaymentMethod.CARD)) {
             Transaction transaction = transactionService.create(order.getPaymentRequest());
-            order.defineStatus(transaction.getStatus());
-            orderService.save(order);
+            current.defineStatus(transaction.getStatus());
+            orderService.save(current);
         }
-        if(order.paid()) {
+        if(current.paid()) {
             if(order.isType(CREDIT)) {
                 instrumentCreditService.processOrder(order);
                 return;

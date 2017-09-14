@@ -25,17 +25,14 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 public class TransactionService {
 
     private TransactionRepository repository;
-    private GenericObjectMapper genericObjectMapper;
     @Setter private Gateway gateway;
 
     public TransactionService(){}
 
     @Autowired
     public TransactionService(TransactionRepository repository,
-                              GenericObjectMapper genericObjectMapper,
                               Gateway gateway){
         this.repository = repository;
-        this.genericObjectMapper = genericObjectMapper;
         this.gateway = gateway;
     }
 

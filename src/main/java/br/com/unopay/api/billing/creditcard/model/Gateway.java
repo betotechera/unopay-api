@@ -11,9 +11,9 @@ public interface Gateway {
 
     Set<CreditCard> getCards(String userId);
 
-    Transaction createTransaction(Transaction transaction);
-
     Transaction cancelTransaction(Transaction transaction, Amount amount);
+
+    Transaction createTransaction(Transaction transaction);
 
     Transaction captureTransaction(Transaction transaction);
 

@@ -11,7 +11,7 @@ public class PayzenResponseTranslator {
     public TransactionStatus translate(ServiceResult serviceResult) {
         Integer responseCode = serviceResult.getCommonResponse().getResponseCode();
         if(responseCode == 0) {
-            return TransactionStatus.AUTHORIZED;
+            return TransactionStatus.CAPTURED;
         }
         if(Arrays.asList(1,42,43,26).contains(responseCode)){
             return TransactionStatus.DENIED;

@@ -12,6 +12,7 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.ProductService
 import br.com.unopay.api.util.GenericObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Unroll
@@ -24,6 +25,10 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     ContractorInstrumentCreditService instrumentCreditServiceMock = Mock(ContractorInstrumentCreditService)
     OrderService orderServiceMock = Mock(OrderService)
     ContractService contractServiceMock = Mock(ContractService)
+
+    def setup(){
+        orderServiceMock.findById(_) >> Fixture.from(Order.class).gimme("valid")
+    }
 
     def 'when receive credit card order should call transaction service'(){
         given:

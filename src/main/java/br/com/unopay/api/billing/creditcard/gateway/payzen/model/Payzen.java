@@ -8,6 +8,11 @@ import eu.payzen.webservices.sdk.builder.request.CardRequestBuilder;
 import eu.payzen.webservices.sdk.builder.request.OrderRequestBuilder;
 import eu.payzen.webservices.sdk.builder.request.PaymentRequestBuilder;
 import static eu.payzen.webservices.sdk.Payment.create;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +31,7 @@ public class Payzen {
         PaymentRequestBuilder paymentRequestBuilder
                 = PaymentRequestBuilder
                 .create()
+                .expectedCaptureDate(new Date())
                 .amount(transaction.getLongAmountValue())
                 .currency(transaction.getAmountCurrencyIsoCode());
 
@@ -43,6 +49,6 @@ public class Payzen {
                         .order(orderRequestBuilder.build())
                         .payment(paymentRequestBuilder.build())
                         .card(cardRequestBuilder.build())
-                        .buildCreate(), payzenConfig.getConfig());
+                        .buildCreate(), new HashMap<>(payzenConfig.getConfig()));
     }
 }
