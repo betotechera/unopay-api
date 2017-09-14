@@ -8,12 +8,14 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
+import static br.com.unopay.api.model.Person.*
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.util.Rounder
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,6 +57,26 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
+
+    def 'given a known contractor and adhesion order should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        fixtureCreator.createInstrumentToProduct(product, contractor)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("paymentInstrument", null)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'EXISTING_CONTRACTOR'
     }
 
     def 'given a known contractor and Credit order without payment instrument should return error'(){
@@ -126,17 +148,15 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'VALUE_REQUIRED'
     }
 
-    @Unroll
-    'given a known contractor and #type order without payment instrument should be created'(){
+    def 'given a known contractor and INSTALLMENT_PAYMENT order without payment instrument should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
-        def orderType = type
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", product)
-            add("type", orderType)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
             add("contract", contractUnderTest)
             add("paymentInstrument", null)
         }})
@@ -146,26 +166,56 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value != null
-
-        where:
-        _ | type
-        _ | OrderType.ADHESION
-        _ | OrderType.INSTALLMENT_PAYMENT
-
     }
 
-    @Unroll
-    'given a known contractor and #type order without value should be created'(){
+    def 'given a unknown contractor and ADHESION order without payment instrument should be created'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProduct()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", null)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.value != null
+    }
+
+    def 'given a unknown contractor and ADHESION order without value should be created'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProduct()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+            add("value", null)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result != null
+    }
+
+    def 'given a known contractor and INSTALLMENT_PAYMENT order without value should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        def orderType = type
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", product)
-            add("type", orderType)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
             add("contract", contractUnderTest)
             add("paymentInstrument", instrument)
             add("value", null)
@@ -176,13 +226,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
-
-        where:
-        _ | type
-        _ | OrderType.ADHESION
-        _ | OrderType.INSTALLMENT_PAYMENT
     }
-
 
     def 'given a known contractor and installment payment order the order value should be equals contract installment'(){
         given:
@@ -206,18 +250,16 @@ class OrderServiceTest extends SpockApplicationTests{
         result.value == installmentUnderTest.value
     }
 
-    def 'given a known contractor and adhesion order the order value should be equals product installment'(){
+    def 'given a unknown contractor and adhesion order the order value should be equals product installment'(){
         given:
-        def contractor = contractUnderTest.contractor
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def product = contractUnderTest.product
-        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("person", contractor.person)
+            add("person", person)
             add("product", product)
             add("type", OrderType.ADHESION)
             add("contract", contractUnderTest)
-            add("paymentInstrument", instrument)
+            add("paymentInstrument", null)
             add("value", null)
         }})
         when:

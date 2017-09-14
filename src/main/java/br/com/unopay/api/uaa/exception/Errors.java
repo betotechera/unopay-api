@@ -522,6 +522,10 @@ public final class Errors {
             new UnovationError("CONTRACT_REQUIRED","Contract required.");
     public static final UnovationError VALUE_REQUIRED =
             new UnovationError("VALUE_REQUIRED","Value required.");
+    public static final UnovationError EXISTING_CONTRACTOR =
+            new UnovationError("EXISTING_CONTRACTOR","Existing contractor.");
+
+
 
 
 

@@ -21,13 +21,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.Setter;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_REQUIRED;
@@ -78,7 +78,7 @@ public class OrderService {
         Optional<Person> person = personService.findByDocument(order.documentNumber());
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
         incrementNumber(order);
-        checkPaymentInstrument(order);
+        checkContractorRules(order);
         processAdhesionWhenRequired(order);
         processContractRuleWhenRequired(order);
         order.setCreateDateTime(new Date());
@@ -105,8 +105,11 @@ public class OrderService {
         }
     }
 
-    private void checkPaymentInstrument(Order order) {
+    private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getByDocument(order.documentNumber());
+        if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
+            throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
+        }
         List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.documentNumber());
         if (!contractor.isPresent()) {
             order.setPaymentInstrument(null);

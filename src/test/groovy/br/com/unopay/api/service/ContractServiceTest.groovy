@@ -131,6 +131,24 @@ class ContractServiceTest extends SpockApplicationTests {
         result.isPresent()
     }
 
+    def 'given a adhesion order for known contractor should return error'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+        def contractor = fixtureCreator.createContractor()
+        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", contractor.person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+        }})
+
+        when:
+        service.markInstallmentAsPaidFrom(order)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'EXISTING_CONTRACTOR'
+    }
+
 
     def 'given a adhesion order should mark first contract installment as paid'(){
         given:

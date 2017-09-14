@@ -40,6 +40,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOU
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 
 @Timed
 @Slf4j
@@ -226,6 +227,8 @@ public class ContractService {
 
     private Contract getContract(Order order) {
         if (order.isType(OrderType.ADHESION)) {
+            Optional<Contractor> contractor = contractorService.getByDocument(order.documentNumber());
+            contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
             return dealClose(order.getPerson(), order.productCode());
         }
         Optional<Contract> contract = findByContractorAndProduct(order.documentNumber(), order.productId());
