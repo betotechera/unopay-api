@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
@@ -107,6 +108,7 @@ public class OrderService {
 
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getByDocument(order.documentNumber());
+        contractService.findByContractorAndProduct(order.documentNumber(),order.productCode());
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
             throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
         }
@@ -117,6 +119,7 @@ public class OrderService {
         if(order.isType(OrderType.CREDIT)) {
             contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
         }
+        contractor.ifPresent(c -> order.setContract(contractService.findById(order.contractId())));
     }
 
     private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {
