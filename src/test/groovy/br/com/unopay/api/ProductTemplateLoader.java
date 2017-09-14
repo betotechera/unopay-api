@@ -26,7 +26,7 @@ public class ProductTemplateLoader implements TemplateLoader {
     public void load() {
         Fixture.of(Product.class).addTemplate("valid", new Rule(){{
             add("code", regex("\\w{2}\\d{2}"));
-            add("name",  firstName());
+            add("name",  regex("\\w{15}"));
             add("issuer", one(Issuer.class, "valid"));
             add("paymentRuleGroup", one(PaymentRuleGroup.class, "valid"));
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
