@@ -37,7 +37,7 @@ public interface Views {
     }
 
     interface Contractor {
-        interface Detail extends Person,Address,BankAccount,List {}
+        interface Detail extends Person.Detail,Address,BankAccount,List {}
         interface List {}
     }
 

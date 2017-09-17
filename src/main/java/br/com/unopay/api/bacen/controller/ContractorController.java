@@ -78,6 +78,14 @@ public class ContractorController {
         return service.getById(id);
     }
 
+    @JsonView({Views.Contractor.Detail.class})
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors", method = RequestMethod.GET, params = {"documentNumber","useOnlyDocument"})
+    public Contractor getByDocument(@RequestParam String documentNumber, @RequestParam String useOnlyDocument){
+        log.info("get Contractor document={}", documentNumber);
+        return service.getByDocument(documentNumber);
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contractor contractor) {
