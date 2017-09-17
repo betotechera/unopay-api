@@ -77,6 +77,7 @@ public class ContractorController {
         log.info("get Contractor={}", id);
         return service.getById(id);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contractor contractor) {

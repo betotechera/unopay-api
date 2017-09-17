@@ -8,7 +8,10 @@ public interface Views {
 
     interface BankAccount {}
 
-    interface Person {}
+    interface Person {
+        interface Detail extends Address, List {}
+        interface List {}
+    }
 
 
     interface AccreditedNetwork {

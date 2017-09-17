@@ -36,18 +36,18 @@ public class PhysicalPersonDetail implements Serializable{
     private String id;
 
     @Column(name="email")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private String email;
 
     @Column(name="birth_date")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private Date birthDate;
 
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="gender")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private Gender gender;
 
     public void updateForHirer(PhysicalPersonDetail detail) {

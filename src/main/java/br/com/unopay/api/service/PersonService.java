@@ -76,7 +76,13 @@ public class PersonService {
         return person.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id)));
     }
 
-    public Optional<Person> findByDocument(String document) {
+    public Person findByDocument(String document) {
+        Optional<Person> person = repository.findByDocumentNumber(document);
+        return person.orElseThrow(()-> UnovationExceptions.notFound()
+                .withErrors(PERSON_NOT_FOUND.withArguments(document)));
+    }
+
+    public Optional<Person> findOptionalByDocument(String document) {
         return repository.findByDocumentNumber(document);
     }
 

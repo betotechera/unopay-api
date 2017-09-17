@@ -65,13 +65,13 @@ public class Person implements Serializable{
 
     @Valid
     @OneToOne
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @JoinColumn(name="legal_person_detail_id")
     private LegalPersonDetail legalPersonDetail;
 
     @Valid
     @OneToOne
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @JoinColumn(name="physical_person_detail_id")
     private PhysicalPersonDetail physicalPersonDetail;
 
@@ -83,12 +83,12 @@ public class Person implements Serializable{
     private Address address;
 
     @Column(name="telephone")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String telephone;
 
     @Column(name="cell_phone")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @Pattern(regexp = "^\\d{10,13}$")
     private String cellPhone;
 
