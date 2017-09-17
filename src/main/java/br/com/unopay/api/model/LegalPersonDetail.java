@@ -50,35 +50,35 @@ public class LegalPersonDetail implements Serializable{
     @Valid
     @Enumerated(STRING)
     @Column(name="activity")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private CompanyActivity activity;
 
     @Valid
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private CompanyType type;
 
     @Column(name="fantasy_name")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @Size(max = 150, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String fantasyName;
 
     @Column(name="responsible_name")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private String responsibleName;
 
     @Column(name="responsible_email")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private String responsibleEmail;
 
     @Column(name="state_inscription_number")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private String stateInscriptionNumber;
 
     @Column(name="municipal_inscription_number")
-    @JsonView({Views.Person.class})
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
     private String municipalInscriptionNumber;
 
 

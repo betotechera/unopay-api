@@ -54,11 +54,16 @@ public class ContractorService {
     }
 
     public Contractor getById(String id) {
-        Optional<Contractor> hirer = repository.findById(id);
-        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
+        Optional<Contractor> contractor = repository.findById(id);
+        return contractor.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
     }
 
-    public Optional<Contractor> getByDocument(String document) {
+    public Contractor getByDocument(String document) {
+        Optional<Contractor> contractor = repository.findByPersonDocumentNumber(document);
+        return contractor.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
+    }
+
+    public Optional<Contractor> getOptionalByDocument(String document) {
         return repository.findByPersonDocumentNumber(document);
     }
 

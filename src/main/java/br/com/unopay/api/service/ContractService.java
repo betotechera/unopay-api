@@ -227,7 +227,7 @@ public class ContractService {
 
     private Contract getContract(Order order) {
         if (order.isType(OrderType.ADHESION)) {
-            Optional<Contractor> contractor = contractorService.getByDocument(order.documentNumber());
+            Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
             contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
             return dealClose(order.getPerson(), order.productCode());
         }

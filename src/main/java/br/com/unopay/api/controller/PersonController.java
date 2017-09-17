@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,9 +25,18 @@ public class PersonController {
     @JsonView(Views.Person.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/persons", method = RequestMethod.GET)
-    public ResponseEntity<Person> findPerson( PersonFilter filter) {
+    public ResponseEntity<Person> findPerson(PersonFilter filter) {
         log.info("find Person  with filter={}", filter);
         Person person = personService.findByFilter(filter);
+        return ResponseEntity.ok(person);
+    }
+
+    @JsonView(Views.Person.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/persons/{documentNumber}", method = RequestMethod.GET)
+    public ResponseEntity<Person> findPersonByDocument(@PathVariable String documentNumber) {
+        log.info("find Person  by document={}", documentNumber);
+        Person person = personService.findByDocument(documentNumber);
         return ResponseEntity.ok(person);
     }
 
