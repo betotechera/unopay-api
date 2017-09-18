@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.joda.time.DateTime;
 
 @Data
 @Entity
@@ -69,6 +70,8 @@ public class Contract implements Serializable {
         this.name = product.getName();
         this.paymentInstrumentType = PaymentInstrumentType.DIGITAL_WALLET;
         this.serviceType = Collections.unmodifiableSet(product.getServiceTypes());
+        this.begin = new DateTime().withMillisOfDay(0).toDate();
+        this.end = new DateTime().plusYears(1).withMillisOfDay(0).toDate();
     }
 
     @Id

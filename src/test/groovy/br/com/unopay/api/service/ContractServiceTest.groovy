@@ -237,6 +237,20 @@ class ContractServiceTest extends SpockApplicationTests {
         result != null
     }
 
+    void 'when deal close the contract period should be of one year'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        Contract contract =  service.dealClose(person, product.code)
+        Contract result  = service.findById(contract.getId())
+
+        then:
+        result.begin == new DateTime().withMillisOfDay(0).toDate()
+        result.end == new DateTime().plusYears(1).withMillisOfDay(0).toDate()
+    }
+
     void 'when deal close should create user'(){
         given:
         def product = crateProductWithSameIssuerOfHirer()
