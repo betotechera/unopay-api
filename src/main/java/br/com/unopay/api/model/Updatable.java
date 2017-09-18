@@ -26,7 +26,7 @@ public interface Updatable {
     }
 
     @JsonIgnore
-    default String[] otherFields(String[] filterFields){
+    default String[] allOtherFieldsExcept(String[] filterFields){
         Field[] attributes =  getClass().getDeclaredFields();
         Stream.of(attributes).forEach(f -> f.setAccessible(true));
         return Stream.of(attributes)
@@ -66,7 +66,7 @@ public interface Updatable {
         BeanUtils.copyProperties(source, this, ArrayUtils.addAll(ignoreFields, IGNORED_FIELD));
     }
     default void updateOnly(Updatable source, String... updatableFields){
-        String[] ignoreFields = ArrayUtils.addAll(source.myNullFields(), otherFields(updatableFields));
+        String[] ignoreFields = ArrayUtils.addAll(source.myNullFields(), allOtherFieldsExcept(updatableFields));
         BeanUtils.copyProperties(source, this, ArrayUtils.addAll(ignoreFields, IGNORED_FIELD));
     }
 }

@@ -90,6 +90,7 @@ dependencies {
 	compile 'org.quartz-scheduler:quartz-jobs:2.2.1'
 	compile group: 'eu.payzen.sdk', name: 'payzen-ws-sdk', version: '1.0.6'
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.0'
+	compile group: 'br.com.caelum.stella', name: 'caelum-stella-bean-validation', version: '2.1.2'
 
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 
@@ -106,9 +107,6 @@ dependencies {
 	testRuntime 'com.athaydes:spock-reports:1.2.7'
 
 
-    // enable extension support for wsdl2java
-    wsdl2java 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.11.0'
-    wsdl2java 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.0'
 }
 
 
@@ -178,10 +176,3 @@ sonarqube {
 		property 'sonar.exclusions', '**/*.html'
     }
 }
-
-/*wsdl2java{
-    wsdlsToGenerate = [
-            ['-xjc-Xequals', '-xjc-XhashCode', 'src/main/resources/wsdl/WSTransacional-wsdl.xml?wsdl']
-    ]
-    generatedWsdlDir = file("$projectDir/generated")
-}*/
