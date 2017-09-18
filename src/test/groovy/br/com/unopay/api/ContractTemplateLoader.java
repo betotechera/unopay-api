@@ -35,7 +35,7 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("documentNumberInvoice", regex("\\d{4}\\w{15}"));
             add("annuity", random(BigDecimal.class, range(100,300)));
             add("membershipFee", random(BigDecimal.class, range(50,150)));
-            add("paymentInstallments", random(Integer.class, range(1, 12)));
+            add("paymentInstallments", random(Integer.class, range(2, 12)));
         }});
 
         Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule() {{
