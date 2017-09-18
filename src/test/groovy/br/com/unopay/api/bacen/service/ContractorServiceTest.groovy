@@ -119,4 +119,22 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     }
 
+    void 'given a contractor without bank account should updated'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+
+        def created = service.create(contractor)
+        contractor.bankAccount = null
+
+        when:
+        contractor.person.name = 'Updated'
+        contractor.person.legalPersonDetail.fantasyName = 'Test Update'
+        service.update(created.id,contractor)
+        def result = service.getById(created.id)
+        then:
+        result.person.name == 'Updated'
+        result.person.legalPersonDetail.fantasyName == 'Test Update'
+        result.bankAccount != null
+    }
+
 }
