@@ -6,6 +6,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -25,6 +26,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
@@ -109,14 +111,13 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonProperty
     private boolean resetPassword;
 
+    @Transient
+    private boolean hasPassword;
+
+
     public void setMeUp(String number){
         createdDate = new Date();
         this.number = number;
-    }
-
-    @JsonIgnore
-    public String getPassword(){
-        return this.password;
     }
 
     public void validate(){
