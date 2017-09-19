@@ -83,8 +83,8 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.PaymentInstrument.Detail.class})
     private Date expirationDate;
 
+    @JsonIgnore
     @Column(name = "password")
-    @JsonView({Views.PaymentInstrument.Detail.class,Views.ContractorInstrumentCredit.List.class})
     private String password;
 
     @Column(name = "situation")
@@ -125,6 +125,7 @@ public class PaymentInstrument implements Serializable, Updatable {
         }
     }
 
+    @JsonProperty
     public boolean hasPassword(){
         return !StringUtils.isEmpty(password);
     }
