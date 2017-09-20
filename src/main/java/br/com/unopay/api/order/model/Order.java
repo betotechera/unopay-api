@@ -53,7 +53,7 @@ public class Order {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Order.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
