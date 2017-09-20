@@ -85,8 +85,8 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.PaymentInstrument.Detail.class})
     private Date expirationDate;
 
-    @JsonIgnore
     @Column(name = "password")
+    @JsonView({Views.PaymentInstrument.Private.class})
     private String password;
 
     @Column(name = "situation")
