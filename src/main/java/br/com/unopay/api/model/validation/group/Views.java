@@ -105,6 +105,7 @@ public interface Views {
     interface PaymentInstrument{
         interface Detail extends List{}
         interface List {}
+        interface Private extends Detail {}
     }
 
     interface PaymentRemittance {
