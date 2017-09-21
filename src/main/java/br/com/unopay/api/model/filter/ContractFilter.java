@@ -39,7 +39,7 @@ public class ContractFilter  implements Serializable {
     private String contractorDocumentNumber;
 
     @SearchableField
-    private Set<ServiceType> serviceType;
+    private Set<ServiceType> serviceTypes;
 
     @SearchableField
     private ContractSituation situation;

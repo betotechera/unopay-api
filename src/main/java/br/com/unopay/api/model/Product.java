@@ -190,6 +190,12 @@ public class Product implements Serializable, Updatable {
         }
     }
 
+    void validateCreditInsertionType(Set<CreditInsertionType> creditInsertionTypes){
+        if(!this.creditInsertionTypes.containsAll(creditInsertionTypes)){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
+        }
+    }
+
     public void validateCreditInsertionType(CreditInsertionType creditInsertionType){
         if(!this.creditInsertionTypes.contains(creditInsertionType)){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
