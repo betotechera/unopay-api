@@ -143,7 +143,7 @@ public interface Views {
     }
 
     interface Order {
-        interface Detail extends Billing, List{}
+        interface Detail extends Billing, List, Person.Detail {}
         interface List {}
         interface Private extends Detail {}
     }

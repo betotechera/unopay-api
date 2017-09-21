@@ -97,7 +97,7 @@ public class Order {
     private Contract contract;
 
     @Column(name = "create_date_time")
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Order.List.class})
     private Date createDateTime;
 
     @Column(name = "type")
