@@ -33,7 +33,7 @@ class ContractTest extends FixtureApplicationTest {
         def contract = new Contract(product)
 
         then:
-        contract.creditInsertionType == product.creditInsertionTypes.find()
+        contract.creditInsertionTypes.contains(product.creditInsertionTypes.find())
     }
 
     def 'when create from product should define code insertion type'(){
@@ -66,7 +66,7 @@ class ContractTest extends FixtureApplicationTest {
         def contract = new Contract(product)
 
         then:
-        contract.serviceType.any { it in product.serviceTypes }
+        contract.serviceTypes.any { it in product.serviceTypes }
     }
 
     def 'when create from product should define DIGITAL_WALLET payment instrument type '(){

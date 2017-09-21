@@ -291,8 +291,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a instrument credit with different service then installment number should not be incremented'(){
         given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
-        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
+        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceTypes.last())
         service.insert(paymentInstrumentUnderTest.id, anotherCredit)
         creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
 
@@ -307,8 +307,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a instrument credit with same service but with pitfall then installment number should be incremented'(){
         given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
-        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceType.last())
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
+        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceTypes.last())
         insertCreditAndRollback(instrumentCredit)
         insertCreditAndRollback(anotherCredit)
 
@@ -323,7 +323,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'given a instrument credit with same service but with other contract then installment number should not be incremented'(){
         given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceType.first())
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
         def otherContract = fixtureCreator.createPersistedContract(contractUnderTest.contractor, contractUnderTest.product)
         def account = fixtureCreator.createCreditPaymentAccountFromContract(otherContract)
         ContractorInstrumentCredit creditOtherContract = BeanUtils.cloneBean(instrumentCredit).with {
@@ -468,7 +468,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         def paymentAccount = creditPaymentAccounts.find()?.with {
-            serviceType = ServiceType.values().find { !(it in myContract.serviceType) }
+            serviceType = ServiceType.values().find { !(it in myContract.serviceTypes) }
             it
         }
         creditPaymentAccountService.save(paymentAccount)
@@ -487,7 +487,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         instrumentCredit.with {
-            serviceType = ServiceType.values().find { !(it in contractUnderTest.serviceType) }
+            serviceType = ServiceType.values().find { !(it in contractUnderTest.serviceTypes) }
         }
         when:
         service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
@@ -681,7 +681,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         that credits.getContent(), hasSize(0)
     }
 
-    private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceType.find(),
+    private ContractorInstrumentCredit createInstrumentCredit(ServiceType svt = contractUnderTest.serviceTypes.find(),
                                                               Contract contractTest = contractUnderTest) {
         ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist")
         instrumentCredit.with {

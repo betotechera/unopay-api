@@ -65,11 +65,11 @@ public class Contract implements Serializable {
 
     public Contract(Product product){
         this.product = product;
-        this.creditInsertionType = product.getCreditInsertionTypes().stream().findFirst().orElse(null);
+        this.creditInsertionTypes = Collections.unmodifiableSet(product.getCreditInsertionTypes());
         this.code = Long.valueOf(RandomStringUtils.randomNumeric(10));
         this.name = product.getName();
         this.paymentInstrumentType = PaymentInstrumentType.DIGITAL_WALLET;
-        this.serviceType = Collections.unmodifiableSet(product.getServiceTypes());
+        this.serviceTypes = Collections.unmodifiableSet(product.getServiceTypes());
         this.begin = new DateTime().withMillisOfDay(0).toDate();
         this.end = new DateTime().plusYears(1).withMillisOfDay(0).toDate();
     }
@@ -128,14 +128,20 @@ public class Contract implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
+    @Column(name = "service_type", nullable = false)
     @JsonView({Views.Contract.Detail.class})
+    @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
-    private Set<ServiceType> serviceType;
+    private Set<ServiceType> serviceTypes;
 
-    @Column(name = "credit_insertion_type")
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Contract.List.class)
-    private CreditInsertionType creditInsertionType;
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = CreditInsertionType.class)
+    @Column(name = "credit_insertion_type", nullable = false)
+    @JsonView({Views.Contract.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    @CollectionTable(name = "contract_credit_insertion_type", joinColumns = @JoinColumn(name = "contract_id"))
+    private Set<CreditInsertionType> creditInsertionTypes;
+
 
     @Column(name = "begin_date")
     @JsonView({Views.Contract.Detail.class})
@@ -192,7 +198,7 @@ public class Contract implements Serializable {
         if(this.product.getId() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_REQUIRED);
         }
-        this.product.validateCreditInsertionType(this.creditInsertionType);
+        this.product.validateCreditInsertionType(this.creditInsertionTypes);
 
     }
 
@@ -263,7 +269,7 @@ public class Contract implements Serializable {
     }
 
     public boolean containsService(ServiceType serviceType){
-        return getServiceType().stream().anyMatch(t -> t == serviceType);
+        return serviceTypes.stream().anyMatch(t -> t == serviceType);
     }
 
     public BigDecimal productInstrumentIssuerFee(){

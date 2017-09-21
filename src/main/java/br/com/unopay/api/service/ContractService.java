@@ -215,7 +215,7 @@ public class ContractService {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
         contractFilter.setContractor(contractorId);
-        contractFilter.setServiceType(serviceType);
+        contractFilter.setServiceTypes(serviceType);
         contractFilter.setProduct(productCode);
         return contractFilter;
     }

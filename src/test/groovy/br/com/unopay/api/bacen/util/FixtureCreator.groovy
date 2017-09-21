@@ -101,7 +101,7 @@ class FixtureCreator {
             add("hirer", hirerUnderTest)
             add("contractor", contractorUnderTest)
             add("product", productUnderTest)
-            add("serviceType",productUnderTest.serviceTypes)
+            add("serviceTypes",productUnderTest.serviceTypes)
         }})
     }
 
@@ -111,7 +111,7 @@ class FixtureCreator {
             add("hirer", hirer)
             add("contractor", contractor)
             add("product", product)
-            add("serviceType",product.serviceTypes)
+            add("serviceTypes",product.serviceTypes)
             add("situation", situation)
         }})
     }
@@ -132,7 +132,7 @@ class FixtureCreator {
             add("issuer", contract.product.issuer)
             add("hirerDocument", contract.hirer.documentNumber)
             add("paymentRuleGroup", contract.product.paymentRuleGroup)
-            add("serviceType", contract.serviceType.find())
+            add("serviceType", contract.serviceTypes.find())
         }})
     }
 
@@ -152,7 +152,7 @@ class FixtureCreator {
         Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist", new Rule(){{
             add("paymentInstrument",createInstrumentToProduct(contract.product, contractor))
             add("creditPaymentAccount",creditPaymentAccountUnderTest)
-            add("serviceType",contract.serviceType.find())
+            add("serviceType",contract.serviceTypes.find())
             add("value",creditPaymentAccountUnderTest.availableBalance)
             add("contract",contract)
         }})
@@ -180,7 +180,7 @@ class FixtureCreator {
         Fixture.from(ContractorInstrumentCredit.class).uses(jpaProcessor).gimme("toPersist", new Rule(){{
             add("paymentInstrument",createInstrumentToProduct(contractUnderTest.product, contractUnderTest.contractor))
             add("creditPaymentAccount",creditPaymentAccountUnderTest)
-            add("serviceType",contractUnderTest.serviceType.find())
+            add("serviceType",contractUnderTest.serviceTypes.find())
             add("value",creditPaymentAccountUnderTest.availableBalance)
             add("contract",contractUnderTest)
         }})

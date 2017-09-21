@@ -49,7 +49,7 @@ class FilterTest extends SpockApplicationTests {
             add("hirer",hirerUnderTest)
             add("contractor",contractorUnderTest)
             add("product",productUnderTest)
-            add("serviceType",productUnderTest.serviceTypes)
+            add("serviceTypes",productUnderTest.serviceTypes)
         }})
     }
 
@@ -121,12 +121,12 @@ class FilterTest extends SpockApplicationTests {
     def 'should return contracts in list'() {
         given:
         Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
-            add("serviceType",
+            add("serviceTypes",
                     uniqueRandom([FUEL_ALLOWANCE,FREIGHT], [FREIGHT_RECEIPT,FREIGHT], [FUEL_ALLOWANCE,FREIGHT_RECEIPT]))
         }})
         def filter = new ContractFilter()
 
-        filter.with { serviceType = [FUEL_ALLOWANCE] }
+        filter.with { serviceTypes = [FUEL_ALLOWANCE] }
 
         when:
         def result = repository.findAll(filter)

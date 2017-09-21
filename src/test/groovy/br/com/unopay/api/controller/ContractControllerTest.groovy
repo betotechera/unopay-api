@@ -117,7 +117,7 @@ class ContractControllerTest extends AuthServerApplicationTests {
             contractor = contractorUnderTest
             hirer = hirerUnderTest
             product = productUnderTest
-            serviceType = productUnderTest.serviceTypes
+            serviceTypes = productUnderTest.serviceTypes
             it
         }
         contract

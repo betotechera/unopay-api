@@ -633,7 +633,7 @@ class ContractServiceTest extends SpockApplicationTests {
         service.addEstablishments(contract.id,contractEstablishment)
         def contractorId=contract.contractor.id
         def establishmentId = contractEstablishment.establishment.id
-        def services = [contract.serviceType.find()] as Set
+        def services = [contract.serviceTypes.find()] as Set
         def productCode = contract.product.code
         List<Contract> contracts = service.getContractorValidContracts(contractorId, establishmentId, services, productCode)
 
@@ -656,7 +656,7 @@ class ContractServiceTest extends SpockApplicationTests {
             hirer = hirerUnderTest
             contractor = contractorUnderTest
             product = productUnderTest
-            serviceType = productUnderTest.serviceTypes
+            serviceTypes = productUnderTest.serviceTypes
             it
         }
         contract
