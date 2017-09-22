@@ -130,7 +130,6 @@ public class Contract implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @Column(name = "service_type", nullable = false)
     @JsonView({Views.Contract.Detail.class})
-    @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "contract_service_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<ServiceType> serviceTypes;
 
@@ -138,7 +137,6 @@ public class Contract implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER, targetClass = CreditInsertionType.class)
     @Column(name = "credit_insertion_type", nullable = false)
     @JsonView({Views.Contract.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "contract_credit_insertion_type", joinColumns = @JoinColumn(name = "contract_id"))
     private Set<CreditInsertionType> creditInsertionTypes;
 

@@ -31,21 +31,17 @@ public class Contact  implements Serializable {
 
     @Column(name="name")
     @JsonView({Views.Establishment.Contact.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String name;
 
     @Column(name="mail")
     @JsonView({Views.Establishment.Contact.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String mail;
 
     @Column(name = "cell_phone")
     @JsonView({Views.Establishment.Contact.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String cellPhone;
 
     @Column(name = "phone")
     @JsonView({Views.Establishment.Contact.class})
-    @NotNull(groups = {Create.class, Update.class})
     private String phone;
 }
