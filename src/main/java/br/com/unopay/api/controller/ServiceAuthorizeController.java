@@ -83,7 +83,7 @@ public class ServiceAuthorizeController {
 
     @ResponseStatus(OK)
     @JsonView(Views.ServiceAuthorize.List.class)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_SERVICE_AUTHORIZE')")
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/service-authorizations/my", method = GET)
     public Results<ServiceAuthorize> findMyByFilter(OAuth2Authentication authentication,ServiceAuthorizeFilter filter,
                                                     @Validated UnovationPageRequest pageable) {
