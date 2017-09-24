@@ -34,8 +34,6 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("lastInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("currentInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("cancellationDateTime",instant("one day from now"));
-            add("transactionLogCode",random(Integer.class, range(1, 200)));
-            add("transactionLog",firstName());
             add("authorizationNumber", regex("\\w{15}"));
             add("valueFee", random(BigDecimal.class, range(1, 3)));
             add("situation", random(TransactionSituation.class));

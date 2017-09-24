@@ -89,7 +89,7 @@ public class ServiceAuthorize implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_type")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
+    @JsonView({Views.ServiceAuthorize.Detail.class, Views.ServiceAuthorize.List.class})
     private ServiceType serviceType;
 
     @ManyToOne
@@ -142,14 +142,6 @@ public class ServiceAuthorize implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Date cancellationDateTime;
-
-    @Column(name = "transaction_log_code")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private Integer transactionLogCode;
-
-    @Column(name = "transaction_log")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private String transactionLog;
 
     @ManyToOne
     @JoinColumn(name="user_id")
