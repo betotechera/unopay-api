@@ -94,7 +94,7 @@ public class ServiceAuthorize implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="event_id")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
+    @JsonView({Views.ServiceAuthorize.Detail.class, Views.ServiceAuthorize.List.class})
     private Event event;
 
     @Transient
