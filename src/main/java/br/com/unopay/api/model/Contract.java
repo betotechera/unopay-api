@@ -106,7 +106,7 @@ public class Contract implements Serializable {
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Contract.List.class})
+    @JsonView({Views.Contract.List.class, Views.ServiceAuthorize.List.class})
     private Product product;
 
     @ManyToOne
