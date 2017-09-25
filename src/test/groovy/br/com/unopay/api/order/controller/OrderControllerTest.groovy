@@ -37,6 +37,23 @@ class OrderControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isCreated())
     }
 
+    void 'valid adhesion order should be created'() {
+        given:
+        String accessToken = getClientAccessToken()
+        def product = fixtureCreator.createProduct()
+        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("type", OrderType.ADHESION)
+        }})
+
+        when:
+        def result = this.mvc.perform(post('/orders?access_token={access_token}&type=ADHESION', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(order)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
     void 'known orders should be found'() {
         given:
         String accessToken = getUserAccessToken()

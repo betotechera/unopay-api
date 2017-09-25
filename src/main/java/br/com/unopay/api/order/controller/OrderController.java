@@ -4,6 +4,7 @@ package br.com.unopay.api.order.controller;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -54,6 +55,16 @@ public class OrderController {
     @RequestMapping(value = "/orders", method = POST)
     public ResponseEntity<Order> create(@Validated(Create.class) @RequestBody Order order) {
         log.info("creating order {}", order);
+        Order created = service.create(order);
+        return created(URI.create("/credit-orders/"+created.getId())).body(created);
+    }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/orders", method = POST, params = "type=ADHESION")
+    public ResponseEntity<Order> createAdhesion(@Validated(Create.class) @RequestBody Order order) {
+        log.info("creating adhesion order {}", order);
+        order.setType(OrderType.ADHESION);
         Order created = service.create(order);
         return created(URI.create("/credit-orders/"+created.getId())).body(created);
     }
