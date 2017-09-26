@@ -107,7 +107,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         service.create(closing)
 
         then:
-        1 * notifierMock.notify(Queues.UNOPAY_BATCH_CLOSING, closing)
+        1 * notifierMock.notify(Queues.BATCH_CLOSING, closing)
     }
 
     def 'should ever create new batch closing when processed'(){

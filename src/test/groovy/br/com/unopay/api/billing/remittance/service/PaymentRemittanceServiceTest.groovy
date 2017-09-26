@@ -74,7 +74,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.processReturn(file)
 
         then:
-        remittancePersisted.remittanceItems.size() * notifierMock.notify(Queues.UNOPAY_CREDIT_PROCESSED, _)
+        remittancePersisted.remittanceItems.size() * notifierMock.notify(Queues.CREDIT_PROCESSED, _)
     }
 
     def 'given a debit cnab with ocurrences should not notify credit'(){
@@ -88,7 +88,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.processReturn(file)
 
         then:
-        0 * notifierMock.notify(Queues.UNOPAY_CREDIT_PROCESSED, _)
+        0 * notifierMock.notify(Queues.CREDIT_PROCESSED, _)
     }
 
     def 'when process cnab then the issuer bank agreement number field should be equals persisted remittance'(){
@@ -286,7 +286,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.execute(filter)
 
         then:
-        1 * notifierMock.notify(Queues.UNOPAY_PAYMENT_REMITTANCE, filter)
+        1 * notifierMock.notify(Queues.PAYMENT_REMITTANCE, filter)
     }
 
     def 'should send email when a new credit remittance is created'(){

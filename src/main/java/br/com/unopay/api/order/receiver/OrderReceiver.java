@@ -8,7 +8,6 @@ import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
-import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +40,7 @@ public class OrderReceiver {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_ORDER_CREATED)
+    @RabbitListener(queues = Queues.ORDER_CREATED)
     public void transactionNotify(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
         log.info("creating payment transaction for order={} type={} of value={}",

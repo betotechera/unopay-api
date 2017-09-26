@@ -44,7 +44,7 @@ public class NotificationService {
         String token = passwordTokenService.createToken(user);
         Map<String, Object> payload = buildPayload(user, token);
         Notification notification = new Notification(email, null, eventType, payload);
-        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
+        notifier.notify(Queues.NOTIFICATION, notification);
         log.info("reset password message sent to the queue for {}", user);
     }
 
@@ -73,6 +73,6 @@ public class NotificationService {
     private void sendEmailToQueue(String emailAsText, final Map<String,Object>  payload, EventType eventType) {
         Email email = new Email(emailAsText);
         Notification notification = new Notification(email, null, eventType, payload);
-        notifier.notify(Queues.UNOPAY_NOTIFICAITON, notification);
+        notifier.notify(Queues.NOTIFICATION, notification);
     }
 }

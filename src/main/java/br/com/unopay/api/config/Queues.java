@@ -2,10 +2,15 @@ package br.com.unopay.api.config;
 
 public class Queues {
 
-    public static final String UNOPAY_NOTIFICAITON = "unopay.notification";
-    public static final String UNOPAY_BATCH_CLOSING = "unopay.batch.closing";
-    public static final String UNOPAY_PAYMENT_REMITTANCE = "unopay.payment.remittance";
-    public static final String UNOPAY_CREDIT_PROCESSED = "unopay.credit.processed";
-    public static final String UNOPAY_ORDER_CREATED = "unopay.order.created";
+    public static final String NOTIFICATION = "unopay.notification";
+    public static final String BATCH_CLOSING = "unopay.batch.closing";
+    public static final String PAYMENT_REMITTANCE = "unopay.payment.remittance";
+    public static final String CREDIT_PROCESSED = "unopay.credit.processed";
+    public static final String ORDER_CREATED = "unopay.order.created";
+    public static final String DLQ_NOTIFICATION = "dlq.unopay.notification";
+    public static final String DLQ_BATCH_CLOSING = "dlq.unopay.batch.closing";
+    public static final String DLQ_PAYMENT_REMITTANCE = "dlq.unopay.payment.remittance";
+    public static final String DLQ_CREDIT_PROCESSED = "dlq.unopay.credit.processed";
+    public static final String DLQ_ORDER_CREATED = "dlq.unopay.order.created";
 
 }
