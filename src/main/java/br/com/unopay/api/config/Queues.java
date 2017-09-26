@@ -13,4 +13,7 @@ public class Queues {
     public static final String DLQ_CREDIT_PROCESSED = "dlq.unopay.credit.processed";
     public static final String DLQ_ORDER_CREATED = "dlq.unopay.order.created";
 
+
+    public static final String DURABLE_CONTAINER = "durableRabbitListenerContainerFactory";
+
 }

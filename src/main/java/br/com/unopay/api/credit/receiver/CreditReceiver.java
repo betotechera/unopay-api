@@ -26,7 +26,7 @@ public class CreditReceiver {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.CREDIT_PROCESSED)
+    @RabbitListener(queues = Queues.CREDIT_PROCESSED, containerFactory = Queues.DURABLE_CONTAINER)
     public void creditReceiptNotify(String objectAsString) {
         CreditProcessed credit = genericObjectMapper.getAsObject(objectAsString, CreditProcessed.class);
         log.info("credit for {}={} of value={} received",credit.getTarget(),credit.getDocument(),credit.getValue());

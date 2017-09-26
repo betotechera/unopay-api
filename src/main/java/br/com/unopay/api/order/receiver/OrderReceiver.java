@@ -40,7 +40,7 @@ public class OrderReceiver {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.ORDER_CREATED)
+    @RabbitListener(queues = Queues.ORDER_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void transactionNotify(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
         log.info("creating payment transaction for order={} type={} of value={}",

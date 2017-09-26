@@ -23,7 +23,7 @@ class NotificationReceiver {
         this.unopayMailSender = unopayMailSender;
     }
 
-    @RabbitListener(queues = Queues.NOTIFICATION)
+    @RabbitListener(queues = Queues.NOTIFICATION, containerFactory = Queues.DURABLE_CONTAINER)
     void notifyCustomer(String notificationAsString) {
         Notification notification = getAsNotification(notificationAsString);
         log.info("notification received to event={}", notification.getEventType());

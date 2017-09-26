@@ -154,7 +154,7 @@ public class PaymentRemittanceService {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.PAYMENT_REMITTANCE)
+    @RabbitListener(queues = Queues.PAYMENT_REMITTANCE, containerFactory = Queues.DURABLE_CONTAINER)
     public void remittanceReceiptNotify(String objectAsString) {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
         log.info("processing remittance for issuer={}", filter.getId());

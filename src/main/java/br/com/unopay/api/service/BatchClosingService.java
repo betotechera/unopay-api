@@ -102,7 +102,7 @@ public class BatchClosingService {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.BATCH_CLOSING)
+    @RabbitListener(queues = Queues.BATCH_CLOSING, containerFactory = Queues.DURABLE_CONTAINER)
     public void batchReceiptNotify(String objectAsString) {
         BatchClosing batchClosing = genericObjectMapper.getAsObject(objectAsString, BatchClosing.class);
         log.info("processing batch closing for establishment={}", batchClosing.establishmentId());
