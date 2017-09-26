@@ -87,7 +87,7 @@ public class OrderService {
         Order created = repository.save(order);
         order.getPaymentRequest().setOrderId(order.getId());
         order.getPaymentRequest().setValue(order.getValue());
-        notifier.notify(Queues.UNOPAY_ORDER_CREATED, created);
+        notifier.notify(Queues.ORDER_CREATED, created);
         return created;
     }
 

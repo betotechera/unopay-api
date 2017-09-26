@@ -2,7 +2,6 @@ package br.com.unopay.api.credit.receiver;
 
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.CreditProcessed;
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.util.GenericObjectMapper;
 import javax.transaction.Transactional;
@@ -27,7 +26,7 @@ public class CreditReceiver {
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_CREDIT_PROCESSED)
+    @RabbitListener(queues = Queues.CREDIT_PROCESSED)
     public void creditReceiptNotify(String objectAsString) {
         CreditProcessed credit = genericObjectMapper.getAsObject(objectAsString, CreditProcessed.class);
         log.info("credit for {}={} of value={} received",credit.getTarget(),credit.getDocument(),credit.getValue());

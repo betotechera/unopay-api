@@ -98,11 +98,11 @@ public class BatchClosingService {
 
     public void create(BatchClosing batchClosing) {
         checkAlreadyRunning(batchClosing.establishmentId());
-        notifier.notify(Queues.UNOPAY_BATCH_CLOSING, batchClosing);
+        notifier.notify(Queues.BATCH_CLOSING, batchClosing);
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_BATCH_CLOSING)
+    @RabbitListener(queues = Queues.BATCH_CLOSING)
     public void batchReceiptNotify(String objectAsString) {
         BatchClosing batchClosing = genericObjectMapper.getAsObject(objectAsString, BatchClosing.class);
         log.info("processing batch closing for establishment={}", batchClosing.establishmentId());

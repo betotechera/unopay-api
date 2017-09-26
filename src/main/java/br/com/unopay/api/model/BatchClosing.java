@@ -39,6 +39,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
@@ -47,6 +48,7 @@ import static br.com.unopay.api.uaa.exception.Errors.BATCH_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.BATCH_FINALIZED;
 
 @Data
+@Slf4j
 @Entity
 @ToString(exclude = "batchClosingItems")
 @EqualsAndHashCode(of = {"id", "number"})
@@ -59,6 +61,7 @@ public class BatchClosing implements Serializable {
     public BatchClosing(){}
 
     public BatchClosing(ServiceAuthorize serviceAuthorize,Long total){
+        log.info("###### establishmentClosingPaymentDays={}",serviceAuthorize.establishmentClosingPaymentDays());
         Date closingPaymentDays = new DateTime().plusDays(serviceAuthorize.establishmentClosingPaymentDays()).
                                                                         withMillisOfDay(0).toDate();
         this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();

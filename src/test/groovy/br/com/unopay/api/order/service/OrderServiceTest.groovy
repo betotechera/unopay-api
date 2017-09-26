@@ -8,7 +8,6 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
-import static br.com.unopay.api.model.Person.*
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus
@@ -441,7 +440,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
-        1 * notifierMock.notify(Queues.UNOPAY_ORDER_CREATED, _)
+        1 * notifierMock.notify(Queues.ORDER_CREATED, _)
     }
 
     def 'payment request order should be created with order id'(){

@@ -150,11 +150,11 @@ public class PaymentRemittanceService {
     public void execute(RemittanceFilter filter) {
         Issuer currentIssuer = issuerService.findById(filter.getId());
         checkAlreadyRunning(currentIssuer.documentNumber());
-        notifier.notify(Queues.UNOPAY_PAYMENT_REMITTANCE, filter);
+        notifier.notify(Queues.PAYMENT_REMITTANCE, filter);
     }
 
     @Transactional
-    @RabbitListener(queues = Queues.UNOPAY_PAYMENT_REMITTANCE)
+    @RabbitListener(queues = Queues.PAYMENT_REMITTANCE)
     public void remittanceReceiptNotify(String objectAsString) {
         RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
         log.info("processing remittance for issuer={}", filter.getId());
@@ -276,7 +276,7 @@ public class PaymentRemittanceService {
         if(!item.processedWithError()) {
             CreditProcessed processed = new CreditProcessed(item.payerDocumentNumber(),
                                                             item.getValue(), DIRECT_DEBIT, HIRER);
-            notifier.notify(Queues.UNOPAY_CREDIT_PROCESSED, processed);
+            notifier.notify(Queues.CREDIT_PROCESSED, processed);
         }
     }
 
