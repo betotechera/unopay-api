@@ -1,9 +1,11 @@
 package br.com.unopay.api.order.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
-import static java.math.BigDecimal.*
+import static java.math.BigDecimal.ONE
+import org.apache.commons.beanutils.BeanUtils
 import spock.lang.Unroll
 
 class OrderTest extends FixtureApplicationTest {
@@ -105,6 +107,27 @@ class OrderTest extends FixtureApplicationTest {
 
         then:
         order.number == '0000000001'
+    }
+
+    def 'when update me should update only status'(){
+        given:
+        Order orderA = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("status", OrderStatus.WAITING_PAYMENT)
+        }})
+
+        Order cloned = BeanUtils.cloneBean(orderA)
+
+        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("status", OrderStatus.PAID)
+        }})
+
+        when:
+        orderA.updateOnly(orderB, "status")
+
+        then:
+        orderA.status == orderB.status
+        orderA.number == cloned.number
+        orderA.type == cloned.type
     }
 
     def 'should be equals'(){

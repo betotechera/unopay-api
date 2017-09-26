@@ -30,6 +30,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR;
+import static br.com.unopay.api.uaa.exception.Errors.ORDER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
@@ -70,7 +71,8 @@ public class OrderService {
     }
 
     public Order findById(String id) {
-        return repository.findOne(id);
+        Optional<Order> order = repository.findById(id);
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
     public Order create(Order order) {
@@ -165,5 +167,11 @@ public class OrderService {
 
     public List<Order> findAll(){
         return repository.findAllByOrderByCreateDateTimeDesc();
+    }
+
+    public void update(String id, Order order) {
+        Order current = findById(id);
+        current.updateOnly(order,"status");
+        repository.save(current);
     }
 }

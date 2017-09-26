@@ -524,6 +524,9 @@ public final class Errors {
             new UnovationError("VALUE_REQUIRED","Value required.");
     public static final UnovationError EXISTING_CONTRACTOR =
             new UnovationError("EXISTING_CONTRACTOR","Existing contractor.");
+    public static final UnovationError ORDER_NOT_FOUND =
+            new UnovationError("ORDER_NOT_FOUND","Order not found.");
+
 
 
 

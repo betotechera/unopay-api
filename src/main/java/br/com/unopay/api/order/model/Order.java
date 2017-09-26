@@ -7,6 +7,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
@@ -46,7 +47,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
 @ToString
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order {
+public class Order implements Updatable{
 
     public Order(){}
 
@@ -190,4 +191,6 @@ public class Order {
         }
         return null;
     }
+
+
 }
