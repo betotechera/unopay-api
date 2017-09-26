@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
 	compile 'br.com.unopay:unopay-common-dependencies:0.0.5'
-	compile 'br.com.unopay:unopay-boot-commons:0.0.19'
+	compile 'br.com.unopay:unopay-boot-commons:0.0.22'
 	compile 'io.springfox:springfox-swagger2:2.4.0'
 
 	compile 'org.springframework.boot:spring-boot-starter-security'
@@ -94,7 +94,7 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 
-	testCompile 'com.jayway.jsonpath:json-path'
+	testCompile 'com.jayway.jsonpath:json-path:2.4.0'
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:4.0'
 	testCompile "org.codehaus.groovy:groovy:2.4.7"
