@@ -51,7 +51,7 @@ public class BatchClosingService {
     private UserDetailService userDetailService;
     @Setter private NotificationService notificationService;
     @Setter private Notifier notifier;
-    private GenericObjectMapper genericObjectMapper;
+
 
     public BatchClosingService(){}
 
@@ -61,15 +61,13 @@ public class BatchClosingService {
                                BatchClosingItemService batchClosingItemService,
                                UserDetailService userDetailService,
                                NotificationService notificationService,
-                               Notifier notifier,
-                               GenericObjectMapper genericObjectMapper) {
+                               Notifier notifier) {
         this.repository = repository;
         this.authorizeService = authorizeService;
         this.batchClosingItemService = batchClosingItemService;
         this.userDetailService = userDetailService;
         this.notificationService = notificationService;
         this.notifier = notifier;
-        this.genericObjectMapper = genericObjectMapper;
     }
 
     public BatchClosing save(BatchClosing batchClosing) {
@@ -99,15 +97,6 @@ public class BatchClosingService {
     public void create(BatchClosing batchClosing) {
         checkAlreadyRunning(batchClosing.establishmentId());
         notifier.notify(Queues.BATCH_CLOSING, batchClosing);
-    }
-
-    @Transactional
-    @RabbitListener(queues = Queues.BATCH_CLOSING, containerFactory = Queues.DURABLE_CONTAINER)
-    public void batchReceiptNotify(String objectAsString) {
-        BatchClosing batchClosing = genericObjectMapper.getAsObject(objectAsString, BatchClosing.class);
-        log.info("processing batch closing for establishment={}", batchClosing.establishmentId());
-        process(batchClosing.establishmentId(), batchClosing.getClosingDateTime());
-        log.info("processed batch closing for establishment={}", batchClosing.establishmentId());
     }
 
     private void checkAlreadyRunning(String establishmentId) {

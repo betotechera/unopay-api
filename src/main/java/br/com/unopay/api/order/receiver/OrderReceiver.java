@@ -13,10 +13,12 @@ import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import static br.com.unopay.api.order.model.OrderType.*;
 
+@Profile("!test")
 @Slf4j
 @Component
 public class OrderReceiver {
