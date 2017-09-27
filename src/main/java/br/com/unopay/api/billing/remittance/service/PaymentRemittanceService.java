@@ -3,13 +3,6 @@ package br.com.unopay.api.billing.remittance.service;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
-import br.com.unopay.api.config.Queues;
-import br.com.unopay.api.credit.model.CreditProcessed;
-import br.com.unopay.api.fileuploader.service.FileUploaderService;
-import br.com.unopay.api.infra.Notifier;
-import br.com.unopay.api.model.BatchClosing;
-import br.com.unopay.api.credit.model.Credit;
-import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
@@ -20,11 +13,17 @@ import br.com.unopay.api.billing.remittance.model.RemittancePayee;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.repository.PaymentRemittanceRepository;
-import br.com.unopay.api.service.BatchClosingService;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.model.CreditProcessed;
 import br.com.unopay.api.credit.service.CreditService;
+import br.com.unopay.api.fileuploader.service.FileUploaderService;
+import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.model.BatchClosing;
+import br.com.unopay.api.notification.service.NotificationService;
+import br.com.unopay.api.service.BatchClosingService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
-import br.com.unopay.api.util.GenericObjectMapper;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -37,7 +36,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,8 +54,8 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR;
 import static br.com.unopay.api.billing.remittance.model.RemittanceSituation.PROCESSING;
 import static br.com.unopay.api.billing.remittance.model.RemittanceSituation.REMITTANCE_FILE_GENERATED;
-import static br.com.unopay.api.credit.model.CreditInsertionType.*;
-import static br.com.unopay.api.credit.model.CreditTarget.*;
+import static br.com.unopay.api.credit.model.CreditInsertionType.DIRECT_DEBIT;
+import static br.com.unopay.api.credit.model.CreditTarget.HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_ALREADY_RUNNING;
 import static br.com.unopay.api.uaa.exception.Errors.REMITTANCE_WITH_INVALID_DATA;
 import static br.com.unopay.bootcommons.exception.UnovationExceptions.unprocessableEntity;
@@ -76,7 +74,6 @@ public class PaymentRemittanceService {
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
-    private GenericObjectMapper genericObjectMapper;
     private HirerService hirerService;
     private CreditService creditService;
     @Setter private NotificationService notificationService;
@@ -92,7 +89,6 @@ public class PaymentRemittanceService {
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
-                                    GenericObjectMapper genericObjectMapper,
                                     HirerService hirerService,
                                     CreditService creditService,
                                     NotificationService notificationService) {
@@ -105,7 +101,6 @@ public class PaymentRemittanceService {
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
-        this.genericObjectMapper = genericObjectMapper;
         this.hirerService = hirerService;
         this.creditService = creditService;
         this.notificationService = notificationService;
@@ -151,16 +146,6 @@ public class PaymentRemittanceService {
         Issuer currentIssuer = issuerService.findById(filter.getId());
         checkAlreadyRunning(currentIssuer.documentNumber());
         notifier.notify(Queues.PAYMENT_REMITTANCE, filter);
-    }
-
-    @Transactional
-    @RabbitListener(queues = Queues.PAYMENT_REMITTANCE, containerFactory = Queues.DURABLE_CONTAINER)
-    public void remittanceReceiptNotify(String objectAsString) {
-        RemittanceFilter filter = genericObjectMapper.getAsObject(objectAsString, RemittanceFilter.class);
-        log.info("processing remittance for issuer={}", filter.getId());
-        createForBatch(filter.getId(), filter.getAt());
-        createForCredit(filter.getId());
-        log.info("processed remittance for issuer={}", filter.getId());
     }
 
     @Transactional
