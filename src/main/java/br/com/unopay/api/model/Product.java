@@ -130,41 +130,41 @@ public class Product implements Serializable, Updatable {
 
     @Column(name = "membership_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal membershipFee;
 
     @Column(name = "credit_insertion_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal creditInsertionFee;
 
     @Column(name = "pay_inst_emission_fee")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal paymentInstrumentEmissionFee;
 
     @Column(name = "pay_inst_second_copy_fee")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class, Update.class, Views.Product.List.class})
     @JsonView({Views.Product.Detail.class})
     private BigDecimal paymentInstrumentSecondCopyFee;
 
     @Column(name = "adm_credit_insert_fee")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class, Update.class, Views.Product.List.class})
     @JsonView({Views.Product.Detail.class})
     private BigDecimal administrationCreditInsertionFee;
 
     @Column(name = "annuity")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal annuity;
 
     @Column(name = "payment_installments")
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private Integer paymentInstallments;
 
     @Min(1)
     @Column(name = "contract_validity_days")
-    @JsonView({Views.Product.Detail.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private Integer contractValidityDays;
 
     @JsonIgnore
