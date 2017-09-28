@@ -29,10 +29,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -76,6 +78,14 @@ public class OrderController {
     public Order get(@PathVariable String id) {
         log.info("get order={}", id);
         return service.findById(id);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ORDERS')")
+    @RequestMapping(value = "/orders/{id}", method = PUT)
+    public void update(@PathVariable String id, @RequestBody Order order) {
+        log.info("update order={}", id);
+        service.update(id, order);
     }
 
     @JsonView(Views.Order.List.class)
