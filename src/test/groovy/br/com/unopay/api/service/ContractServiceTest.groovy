@@ -264,6 +264,19 @@ class ContractServiceTest extends SpockApplicationTests {
         result != null
     }
 
+    def 'when deal close should create user with contractor user type'(){
+        given:
+        def product = crateProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        Contract contract =  service.dealClose(person, product.code)
+        UserDetail result  = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
+
+        then:
+        result.type.name == 'CONTRATADO'
+    }
+
     void 'when deal close should create contract with product'(){
         given:
         def product = crateProductWithSameIssuerOfHirer()
