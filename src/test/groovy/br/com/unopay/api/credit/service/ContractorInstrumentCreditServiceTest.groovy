@@ -122,7 +122,6 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.creditPaymentAccount.id == creditPaymentAccountUnderTest.id
     }
 
-    @Ignore
     def 'given an order with hirer without payment account should create and insert credit in payment account with same product order'(){
         given:
         Hirer hirer = fixtureCreator.createHirer()
@@ -134,6 +133,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
             add("person", contractor.person)
             add("product", contract.product)
             add("status", OrderStatus.PAID)
+            add("contract", contract)
             add("paymentInstrument", instrumentToProduct)
         }})
 
