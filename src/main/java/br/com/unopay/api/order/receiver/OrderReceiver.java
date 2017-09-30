@@ -48,6 +48,6 @@ public class OrderReceiver {
             current.defineStatus(transaction.getStatus());
             orderService.save(current);
         }
-        orderService.process(order);
+        orderService.process(current);
     }
 }
