@@ -20,6 +20,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
 import lombok.Getter;
@@ -107,10 +108,9 @@ public class UserDetailService implements UserDetailsService {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UsernameNotFoundException("bad credentials");
         }
-        UserDetail user = this.userDetailRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("bad credentials");
-        }
+        Optional<UserDetail> userOptional = getByEmailOptional(username);
+        UserDetail user = userOptional.orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
+
         List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
         AuthUserContextHolder.setAuthUserId(user.getId());
         return new User(username, user.getPassword(), authorities);
@@ -143,11 +143,12 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public UserDetail getByEmail(String email) {
-        UserDetail user = this.userDetailRepository.findByEmail(email);
-        if (user == null) {
-            throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
-        }
-        return user;
+        Optional<UserDetail> user = getByEmailOptional(email);
+         return user.orElseThrow(()-> UnovationExceptions.notFound().withErrors(USER_NOT_FOUND));
+    }
+
+    public Optional<UserDetail> getByEmailOptional(String email) {
+        return this.userDetailRepository.findByEmail(email);
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {

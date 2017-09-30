@@ -65,7 +65,7 @@ public class ContractorInstrumentCreditService {
     public ContractorInstrumentCredit processOrder(Order order) {
         Contract contract = getContract(order);
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
-        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
         ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
@@ -229,10 +229,14 @@ public class ContractorInstrumentCreditService {
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    private CreditPaymentAccount getCreditPaymentAccount(Contract contract) {
+    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, Order order) {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(contract.hirerDocumentNumber());
-        return creditPaymentAccounts.stream().findFirst().orElse(null);
+        Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
+                contract.isProductCodeEquals(account.getProductCode()))
+                .findFirst();
+        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(order)));
+
     }
 
 }

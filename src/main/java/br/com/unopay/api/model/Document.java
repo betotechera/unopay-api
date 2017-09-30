@@ -23,6 +23,7 @@ public class Document implements Serializable {
     public Document(){}
 
     @Enumerated(STRING)
+    @NotNull(groups = {Create.class, Update.class})
     @Column(name="document_type")
     private DocumentType type;
 

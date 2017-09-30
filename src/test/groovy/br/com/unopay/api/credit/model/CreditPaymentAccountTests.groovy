@@ -1,9 +1,11 @@
 package br.com.unopay.api.credit.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
+import br.com.unopay.api.order.model.Order
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class CreditPaymentAccountTests extends FixtureApplicationTest {
@@ -88,7 +90,9 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
 
     def 'should create Credit Payment Account from credit without product'(){
         given:
-        Credit credit = Fixture.from(Credit.class).gimme("allFields").with { product = null; it }
+        Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule() {{
+            add("product", null)
+        }})
 
         when:
         CreditPaymentAccount paymentAccount = new CreditPaymentAccount(credit)
@@ -106,6 +110,28 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.situation == credit.situation
         paymentAccount.creditSource == credit.creditSource
         paymentAccount.availableBalance == credit.availableValue
+    }
+
+
+    def 'should create Credit Payment Account from order'(){
+        given:
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(order)
+
+        then:
+        paymentAccount.transactionCreatedDateTime != order.createDateTime
+        paymentAccount.issuer == order.getProduct().getIssuer()
+        paymentAccount.product == order.getProduct()
+        paymentAccount.paymentRuleGroup == order.getProduct().getPaymentRuleGroup()
+        paymentAccount.hirerDocument == order.getContract().getHirer().documentNumber
+        paymentAccount.creditInsertionType == CreditInsertionType.DIRECT_DEBIT
+        paymentAccount.creditNumber != null
+        paymentAccount.value == order.value
+        paymentAccount.situation == CreditSituation.AVAILABLE
+        paymentAccount.creditSource == InstrumentCreditSource.CLIENT.name()
+        paymentAccount.availableBalance == order.value
     }
 
     def 'should not create Credit Payment Account from null credit'(){

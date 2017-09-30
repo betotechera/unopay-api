@@ -323,6 +323,26 @@ class OrderServiceTest extends SpockApplicationTests{
         result.createDateTime != null
     }
 
+    def 'given a adhesion order for an unknown contractor with known email should return error'(){
+        given:
+        def user = fixtureCreator.createUser()
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", user.getEmail())
+        }})
+        def creditOrder = createOrder()
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'USER_ALREADY_EXISTS'
+    }
+
+
     def 'given a known contractor and order with instrument of other contractor should return error'(){
         given:
         def creditOrder = createOrder()
@@ -481,7 +501,7 @@ class OrderServiceTest extends SpockApplicationTests{
     }
 
     private Order createOrder(){
-        def contractor = fixtureCreator.createContractor()
+        def contractor = fixtureCreator.createContractor("physical")
         def product = fixtureCreator.createProduct()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
         return Fixture.from(Order.class).gimme("valid", new Rule(){{

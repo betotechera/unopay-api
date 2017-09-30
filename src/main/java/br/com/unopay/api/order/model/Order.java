@@ -64,6 +64,7 @@ public class Order implements Updatable{
     @JsonView({Views.Order.List.class})
     private Product product;
 
+    @Valid
     @ManyToOne
     @JoinColumn(name="person_id")
     @JsonView({Views.Order.List.class})
@@ -193,4 +194,16 @@ public class Order implements Updatable{
     }
 
 
+    public String getPersonEmail() {
+        if(this.person != null && this.person.getPhysicalPersonDetail() != null){
+            return this.person.getPhysicalPersonDetail().getEmail();
+        }
+        return null;
+    }
+
+    public void normalize() {
+        if(this.person != null){
+            this.person.normalize();
+        }
+    }
 }

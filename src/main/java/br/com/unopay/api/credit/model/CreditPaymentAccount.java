@@ -8,6 +8,7 @@ import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,6 +60,22 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             this.situation = credit.getSituation();
             this.creditSource = credit.getCreditSource();
             this.availableBalance = credit.getAvailableValue();
+        }
+    }
+
+    public CreditPaymentAccount(Order order){
+        if(order != null) {
+            this.transactionCreatedDateTime = new Date();
+            this.issuer = order.getProduct().getIssuer();
+            this.product = order.getProduct();
+            this.paymentRuleGroup = order.getProduct().getPaymentRuleGroup();
+            this.hirerDocument = order.getContract().getHirer().getDocumentNumber();
+            this.creditInsertionType = CreditInsertionType.DIRECT_DEBIT;
+            this.creditNumber = 999999999L;
+            this.value = order.getValue();
+            this.situation = CreditSituation.AVAILABLE;
+            this.creditSource = InstrumentCreditSource.CLIENT.name();
+            this.availableBalance = order.getValue();
         }
     }
 

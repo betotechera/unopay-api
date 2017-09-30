@@ -33,6 +33,7 @@ import static javax.persistence.EnumType.STRING;
 public class Person implements Serializable{
 
     public static final long serialVersionUID = 1L;
+    public static final String NOT_NUMBER = "[^\\d]";
 
     public Person(){}
 
@@ -84,12 +85,12 @@ public class Person implements Serializable{
 
     @Column(name="telephone")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
-    @Pattern(regexp = "^\\d{10,13}$")
+    @Pattern(regexp = "^[-() 0-9]+$", groups = {Create.class, Update.class})
     private String telephone;
 
     @Column(name="cell_phone")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
-    @Pattern(regexp = "^\\d{10,13}$")
+    @Pattern(regexp = "^[-() 0-9]+$", groups = {Create.class, Update.class})
     private String cellPhone;
 
     public void validate() {
@@ -130,5 +131,18 @@ public class Person implements Serializable{
     @JsonIgnore
     public boolean isPhysical() {
         return PersonType.PHYSICAL.equals(this.type) && physicalPersonDetail != null;
+    }
+
+    public void normalize() {
+        if(this.cellPhone != null) {
+            this.cellPhone = this.cellPhone.replaceAll(NOT_NUMBER, "");
+        }
+        if(this.telephone != null) {
+            this.telephone = this.telephone.replaceAll(NOT_NUMBER, "");
+        }
+        if(this.documentNumber() != null){
+            String documentNumberOnly = this.documentNumber().replaceAll(NOT_NUMBER, "");
+            this.getDocument().setNumber(documentNumberOnly);
+        }
     }
 }

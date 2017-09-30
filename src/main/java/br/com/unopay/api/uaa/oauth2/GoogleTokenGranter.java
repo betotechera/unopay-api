@@ -4,10 +4,14 @@ import br.com.unopay.api.uaa.google.GoogleProfile;
 import br.com.unopay.api.uaa.google.GoogleService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.service.GroupService;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -26,6 +30,7 @@ public class GoogleTokenGranter extends AbstractTokenGranter {
 
     private GoogleService googleService;
     private UserDetailRepository userDetailRepository;
+    private GroupService groupService;
 
     public GoogleTokenGranter(GoogleService googleService,
                                  UserDetailRepository userDetailRepository,
@@ -52,14 +57,17 @@ public class GoogleTokenGranter extends AbstractTokenGranter {
             throw new InvalidClientException("missing organization identifier for client");
         }
 
-        UserDetail user = userDetailRepository.findByEmail(profile.getEmail());
-        if (user == null) {
-            throw new BadCredentialsException(String.format("could not find user with google account %s", profile.toString()));
-        }
+        Optional<UserDetail> optional = userDetailRepository.findByEmail(profile.getEmail());
+        UserDetail user =  optional.orElseThrow(()->
+                new BadCredentialsException(
+                        String.format("could not find user with google account %s",
+                        profile.toString())));
+
+        List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
 
         AuthUserContextHolder.setAuthUserId(user.getId());
 
-        Authentication userAuth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, null); //TODO: get authorities from user group
+        Authentication userAuth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
         OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
         return new OAuth2Authentication(storedOAuth2Request, userAuth);
     }

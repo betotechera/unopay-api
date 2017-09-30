@@ -526,6 +526,8 @@ public final class Errors {
             new UnovationError("EXISTING_CONTRACTOR","Existing contractor.");
     public static final UnovationError ORDER_NOT_FOUND =
             new UnovationError("ORDER_NOT_FOUND","Order not found.");
+    public static final UnovationError USER_ALREADY_EXISTS =
+            new UnovationError("USER_ALREADY_EXISTS","User already exists.");
 
 
 

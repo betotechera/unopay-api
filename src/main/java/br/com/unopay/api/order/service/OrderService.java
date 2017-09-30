@@ -15,6 +15,8 @@ import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -34,6 +36,7 @@ import static br.com.unopay.api.uaa.exception.Errors.ORDER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.USER_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_REQUIRED;
 
 @Service
@@ -45,6 +48,7 @@ public class OrderService {
     private ContractorService contractorService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
+    private UserDetailService userDetailService;
     @Setter private Notifier notifier;
 
     public OrderService(){}
@@ -56,13 +60,14 @@ public class OrderService {
                         ContractorService contractorService,
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
-                        Notifier notifier){
+                        UserDetailService userDetailService, Notifier notifier){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
         this.contractorService = contractorService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.userDetailService = userDetailService;
         this.notifier = notifier;
     }
 
@@ -77,6 +82,7 @@ public class OrderService {
 
     public Order create(Order order) {
         validateReferences(order);
+        order.normalize();
         Optional<Person> person = personService.findOptionalByDocument(order.documentNumber());
         order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
         incrementNumber(order);
@@ -109,7 +115,11 @@ public class OrderService {
 
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getPersonEmail());
         contractService.findByContractorAndProduct(order.documentNumber(),order.productCode());
+        if(existingUser.isPresent()){
+            throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
+        }
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
             throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
         }

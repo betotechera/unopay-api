@@ -29,6 +29,7 @@ import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import spock.lang.Ignore
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
@@ -100,6 +101,48 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.paymentInstrument == paymentInstrumentUnderTest
+    }
+
+    def 'given an order with more one payment account should insert credit in payment account with same product order'(){
+        given:
+        fixtureCreator.createInstrumentToProduct(contractUnderTest.product, contractorUnderTest)
+        Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractUnderTest.contractor.person)
+            add("product", contractUnderTest.product)
+            add("status", OrderStatus.PAID)
+            add("paymentInstrument", paymentInstrumentUnderTest)
+        }})
+        fixtureCreator.createCreditPaymentAccount(hirerUnderTest.documentNumber)
+
+        when:
+        ContractorInstrumentCredit created = service.processOrder(creditOrder)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.creditPaymentAccount.id == creditPaymentAccountUnderTest.id
+    }
+
+    @Ignore
+    def 'given an order with hirer without payment account should create and insert credit in payment account with same product order'(){
+        given:
+        Hirer hirer = fixtureCreator.createHirer()
+        def contractor = fixtureCreator.createContractor()
+        def contract = fixtureCreator
+                .createPersistedContract(contractor, fixtureCreator.createProduct(), hirer)
+        def instrumentToProduct = fixtureCreator.createInstrumentToProduct(contract.product, contractor)
+        Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", contract.product)
+            add("status", OrderStatus.PAID)
+            add("paymentInstrument", instrumentToProduct)
+        }})
+
+        when:
+        ContractorInstrumentCredit created = service.processOrder(creditOrder)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        contract.isProductCodeEquals(result.creditPaymentAccount.productCode)
     }
 
     def 'given a paid order for unknown client should not insert credit'(){

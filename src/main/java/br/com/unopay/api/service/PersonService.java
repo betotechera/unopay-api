@@ -45,6 +45,7 @@ public class PersonService {
     public Person save(Person person){
         try {
             person.validate();
+            person.normalize();
             addressRepository.save(person.getAddress());
             if(person.isLegal()) {
                 legalPersonDetailRepository.save(person.getLegalPersonDetail());

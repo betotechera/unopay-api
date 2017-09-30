@@ -2,6 +2,7 @@ package br.com.unopay.api;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
+import br.com.six2six.fixturefactory.function.impl.CpfFunction;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Document;
@@ -63,13 +64,7 @@ public class PersonTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Document.class).addTemplate("valid-cpf", new Rule(){{
-            add("number", uniqueRandom("92505722803", "87023146300", "15173351160"));
-            add("type", DocumentType.CPF);
-            add("registryEntity", RegistryEntity.SSP);
-        }});
-
-        Fixture.of(Document.class).addTemplate("valid-cpf", new Rule(){{
-            add("number", "92505722803");
+            add("number", new CpfFunction());
             add("type", DocumentType.CPF);
             add("registryEntity", RegistryEntity.SSP);
         }});
