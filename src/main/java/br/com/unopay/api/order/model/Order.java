@@ -194,7 +194,7 @@ public class Order implements Updatable{
     }
 
 
-    public String getPersonEmail() {
+    public String personEmail() {
         if(this.person != null && this.person.getPhysicalPersonDetail() != null){
             return this.person.getPhysicalPersonDetail().getEmail();
         }

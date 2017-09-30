@@ -115,7 +115,7 @@ public class OrderService {
 
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getPersonEmail());
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.personEmail());
         contractService.findByContractorAndProduct(order.documentNumber(),order.productCode());
         if(existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);

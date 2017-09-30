@@ -136,7 +136,7 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
 
     def 'should not create Credit Payment Account from null credit'(){
         when:
-        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(null)
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount()
 
         then:
         paymentAccount.transactionCreatedDateTime == null
