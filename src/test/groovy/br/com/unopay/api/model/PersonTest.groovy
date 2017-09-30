@@ -98,6 +98,26 @@ class PersonTest extends FixtureApplicationTest {
         '011-41559988'     | '01141559988'
     }
 
+
+    void 'given zipCode without pattern should be normalized'(){
+        given:
+        def numberSent = sent
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("address.zipCode", numberSent)
+        }})
+
+        when:
+        person.normalize()
+
+        then:
+        person.address.zipCode == expected
+
+        where:
+        sent               | expected
+        '06522-080' | '06522080'
+        '0+65-88;09,0'     | '06588090'
+    }
+
     def 'should be equals'(){
         given:
         Person a = Fixture.from(Person.class).gimme("legal")

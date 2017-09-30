@@ -144,5 +144,9 @@ public class Person implements Serializable{
             String documentNumberOnly = this.documentNumber().replaceAll(NOT_NUMBER, "");
             this.getDocument().setNumber(documentNumberOnly);
         }
+        if(this.getAddress() != null && this.getAddress().getZipCode() != null){
+            String zipCodeNumberOnly = this.getAddress().getZipCode().replaceAll(NOT_NUMBER, "");
+            this.getAddress().setZipCode(zipCodeNumberOnly);
+        }
     }
 }
