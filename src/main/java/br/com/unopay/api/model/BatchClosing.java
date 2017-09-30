@@ -61,9 +61,11 @@ public class BatchClosing implements Serializable {
     public BatchClosing(){}
 
     public BatchClosing(ServiceAuthorize serviceAuthorize,Long total){
-        log.info("###### establishmentClosingPaymentDays={}",serviceAuthorize.establishmentClosingPaymentDays());
         Date closingPaymentDays = new DateTime().plusDays(serviceAuthorize.establishmentClosingPaymentDays()).
-                                                                        withMillisOfDay(0).toDate();
+                                                withHourOfDay(1)
+                                                .withMinuteOfHour(0)
+                                                .withSecondOfMinute(0)
+                                                .withMillisOfSecond(0).toDate();
         this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();
         this.establishment = serviceAuthorize.getEstablishment();
         this.hirer = serviceAuthorize.getContract().getHirer();

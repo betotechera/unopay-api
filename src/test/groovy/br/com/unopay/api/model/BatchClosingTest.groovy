@@ -36,7 +36,11 @@ class BatchClosingTest extends FixtureApplicationTest {
 
         then:
         def closingPaymentDays = serviceAuthorize.establishment.checkout.closingPaymentDays
-        batchClosing.paymentReleaseDateTime == new DateTime().plusDays(closingPaymentDays).withMillisOfDay(0).toDate()
+        batchClosing.paymentReleaseDateTime == new DateTime().plusDays(closingPaymentDays).
+                                            withHourOfDay(1)
+                                            .withMinuteOfHour(0)
+                                            .withSecondOfMinute(0)
+                                            .withMillisOfSecond(0).toDate()
     }
 
     def 'should create from service authorize with right finished situation'(){
