@@ -205,5 +205,8 @@ public class Order implements Updatable{
         if(this.person != null){
             this.person.normalize();
         }
+        if(this.paymentRequest != null && this.paymentRequest.getCreditCard() != null){
+            this.paymentRequest.getCreditCard().normalize();
+        }
     }
 }

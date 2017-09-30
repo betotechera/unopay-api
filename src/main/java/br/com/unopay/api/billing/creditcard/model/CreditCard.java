@@ -12,6 +12,8 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.Length;
 
+import static br.com.unopay.api.model.Person.NOT_NUMBER;
+
 @Data
 @ToString(exclude = {"number", "hash"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -39,4 +41,10 @@ public class CreditCard implements Serializable {
     private String securityCode;
 
     private String cardReference;
+
+    public void normalize() {
+        if(this.number != null) {
+            this.number = this.number.replaceAll(NOT_NUMBER, "");
+        }
+    }
 }

@@ -23,6 +23,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,11 +90,11 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    @Transactional
     public Order create(Order order) {
         validateReferences(order);
         order.normalize();
-        Optional<Person> person = personService.findOptionalByDocument(order.documentNumber());
-        order.setPerson(person.orElseGet(()-> personService.save(order.getPerson())));
+        order.setPerson(getOrCreatePerson(order));
         incrementNumber(order);
         checkContractorRules(order);
         processAdhesionWhenRequired(order);
@@ -119,6 +120,8 @@ public class OrderService {
                 log.info("contract paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
             }
+        }else{
+            throw new RuntimeException();
         }
     }
 
@@ -193,6 +196,11 @@ public class OrderService {
     private void incrementNumber(Order order) {
         Optional<Order> last = repository.findFirstByOrderByCreateDateTimeDesc();
         order.incrementNumber(last.map(Order::getNumber).orElse(null));
+    }
+
+    private Person getOrCreatePerson(Order order) {
+        Optional<Person> person = personService.findOptionalByDocument(order.documentNumber());
+        return person.orElseGet(()-> personService.save(order.getPerson()));
     }
 
     public Page<Order> findByFilter(OrderFilter filter, UnovationPageRequest pageable) {
