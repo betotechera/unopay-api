@@ -23,9 +23,7 @@ public interface ContractorInstrumentCreditRepository
 
     Set<ContractorInstrumentCredit> findByContractId(String contractId);
 
-    Optional<ContractorInstrumentCredit>
-    findFirstByContractIdAndServiceTypeAndSituationAndCreditType(String contractId, ServiceType serviceType,
-                                                                 CreditSituation situation, ContractorCreditType type);
+    Optional<ContractorInstrumentCredit> findByPaymentInstrumentContractorId(String contractorId);
 
     Page<ContractorInstrumentCredit> findByContractIdAndContractContractorPersonDocumentNumber(String contractId,
                                                                                                String contractorId,

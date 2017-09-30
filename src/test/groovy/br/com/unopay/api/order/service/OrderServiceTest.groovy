@@ -3,8 +3,13 @@ package br.com.unopay.api.order.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod
+import br.com.unopay.api.billing.creditcard.model.Transaction
+import br.com.unopay.api.billing.creditcard.model.TransactionStatus
 import br.com.unopay.api.config.Queues
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
@@ -13,6 +18,7 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
+import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.ConflictException
@@ -31,6 +37,12 @@ class OrderServiceTest extends SpockApplicationTests{
 
     @Autowired
     ContractInstallmentService installmentService
+
+    @Autowired
+    ContractService contractService
+
+    @Autowired
+    ContractorInstrumentCreditService instrumentCreditService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -57,6 +69,47 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
+
+    def 'given a credit order with paid status and credit type should call credit service'(){
+        given:
+        Contractor contractor = fixtureCreator.createContractor("physical")
+        def paid = createPersistedPaidOrder(contractor)
+
+        when:
+        service.process(paid)
+
+        then:
+        def result = instrumentCreditService.findByContractorId(contractor.id)
+        result.availableBalance == paid.value
+    }
+
+    def 'given a adhesion order with paid status should create contract and mark installment as paid'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = createPersistedAdhesionOrder(person)
+
+        when:
+        service.process(paid)
+
+        then:
+        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId())
+        contract.isPresent()
+        def result = installmentService.findByContractId(contract.get().id)
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+    }
+
+    def 'given a installment payment order with paid status should mark installment as paid'(){
+        given:
+        Contractor contractor = fixtureCreator.createContractor("physical")
+        def paid = createPersistedPaidOrder(contractor, OrderType.INSTALLMENT_PAYMENT)
+
+        when:
+        service.process(paid)
+
+        then:
+        def result = installmentService.findByContractId(paid.contractId())
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
     }
 
     def 'given a known order with status waiting payment should update to paid status'(){
@@ -511,6 +564,35 @@ class OrderServiceTest extends SpockApplicationTests{
             add("type", OrderType.CREDIT)
             add("paymentInstrument", instrument)
             add("value", BigDecimal.ONE)
+        }})
+    }
+
+    private Order createPersistedPaidOrder(Contractor contractor = fixtureCreator.createContractor("physical"),
+                                           OrderType type = OrderType.CREDIT){
+        def product = fixtureCreator.createProduct()
+        def contract = fixtureCreator.createPersistedContract(contractor, product)
+        installmentService.create(contract)
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("contract", contract)
+            add("type", type)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+            add("status", OrderStatus.PAID)
+        }})
+    }
+
+
+    private Order createPersistedAdhesionOrder(Person person){
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("value", BigDecimal.ONE)
+            add("status", OrderStatus.PAID)
         }})
     }
 }

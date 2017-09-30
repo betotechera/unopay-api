@@ -82,31 +82,6 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         0 * contractServiceMock.markInstallmentAsPaidFrom(creditOrder)
     }
 
-    @Unroll
-    'given a #type order with paid status should call installment service'(){
-        given:
-        def orderType = type
-        def receiver = createOrderReceiver()
-        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("paymentRequest.method", PaymentMethod.CARD)
-            add("type", orderType)
-        }})
-        transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.CAPTURED)}}
-        def valueAsString = objectMapper.writeValueAsString(creditOrder)
-
-        when:
-        receiver.transactionNotify(valueAsString)
-
-        then:
-        1 * contractServiceMock.markInstallmentAsPaidFrom(creditOrder)
-
-        where:
-        _ | type
-        _ | OrderType.INSTALLMENT_PAYMENT
-        _ | OrderType.ADHESION
-    }
-
-
     def 'given a credit order without paid status should not call credit service'(){
         given:
         def receiver = createOrderReceiver()
@@ -123,7 +98,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         0 * instrumentCreditServiceMock.processOrder(creditOrder)
     }
 
-    def 'given a credit order with paid status and credit type should call credit service'(){
+    def 'given a credit order with paid status and credit type should call order service'(){
         given:
         def receiver = createOrderReceiver()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -138,7 +113,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         1 * transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.CAPTURED)}}
 
         then:
-        1 * instrumentCreditServiceMock.processOrder(creditOrder)
+        1 * orderServiceMock.process(creditOrder)
     }
 
     @Unroll
@@ -191,7 +166,6 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     }
 
     private OrderReceiver createOrderReceiver() {
-        new OrderReceiver(transactionalServiceMock, genericObjectMapper,
-                instrumentCreditServiceMock, contractServiceMock, orderServiceMock)
+        new OrderReceiver(transactionalServiceMock, genericObjectMapper, orderServiceMock)
     }
 }

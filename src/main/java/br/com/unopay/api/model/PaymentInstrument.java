@@ -76,6 +76,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentInstrument.List.class})
     private Contractor contractor;
+
     @Column(name = "created_date")
     @JsonView({Views.PaymentInstrument.Detail.class})
     private Date createdDate;

@@ -1,12 +1,10 @@
 package br.com.unopay.api.credit.service;
 
-import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
-import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
@@ -27,14 +25,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.credit.model.CreditSituation.PROCESSING;
-import static br.com.unopay.api.uaa.exception.Errors.CONTACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
-import static br.com.unopay.api.uaa.exception.Errors.FINAL_SUPPLY_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_VALID;
 
 @Service
@@ -181,6 +177,12 @@ public class ContractorInstrumentCreditService {
         repository.save(instrumentCredit);
     }
 
+    public ContractorInstrumentCredit findByContractorId(String contractorId){
+        Optional<ContractorInstrumentCredit> credit = repository.findByPaymentInstrumentContractorId(contractorId);
+        return credit.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
+    }
+
 
     public Page<ContractorInstrumentCredit> findByFilter(ContractorInstrumentCreditFilter filter,
                                                          UnovationPageRequest pageable) {
@@ -195,14 +197,6 @@ public class ContractorInstrumentCreditService {
     private void giveBackPaymentAccountBalance(ContractorInstrumentCredit instrumentCredit) {
         creditPaymentAccountService
                 .giveBack(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
-    }
-
-    public ContractorInstrumentCredit findByContractIdAndServiceType(String contractId, ServiceType serviceType){
-        Optional<ContractorInstrumentCredit> credit =  repository
-                .findFirstByContractIdAndServiceTypeAndSituationAndCreditType(contractId, serviceType,
-                                                                            CreditSituation.AVAILABLE,
-                                                                                ContractorCreditType.FINAL_PAYMENT);
-        return credit.orElseThrow(()->UnovationExceptions.notFound().withErrors(FINAL_SUPPLY_CREDIT_NOT_FOUND));
     }
 
     public Page<ContractorInstrumentCredit> findContractorCredits(String contractId, String contractorDocument,

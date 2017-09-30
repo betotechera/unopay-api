@@ -3,6 +3,7 @@ package br.com.unopay.api.order.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -23,11 +24,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.order.model.OrderType.ADHESION;
+import static br.com.unopay.api.order.model.OrderType.CREDIT;
+import static br.com.unopay.api.order.model.OrderType.INSTALLMENT_PAYMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
@@ -39,6 +44,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.USER_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_REQUIRED;
 
+@Slf4j
 @Service
 public class OrderService {
 
@@ -48,6 +54,7 @@ public class OrderService {
     private ContractorService contractorService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
+    private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
 
@@ -60,6 +67,7 @@ public class OrderService {
                         ContractorService contractorService,
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
+                        ContractorInstrumentCreditService instrumentCreditService,
                         UserDetailService userDetailService, Notifier notifier){
         this.repository = repository;
         this.personService = personService;
@@ -67,6 +75,7 @@ public class OrderService {
         this.contractorService = contractorService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
     }
@@ -95,6 +104,22 @@ public class OrderService {
         order.getPaymentRequest().setValue(order.getValue());
         notifier.notify(Queues.ORDER_CREATED, created);
         return created;
+    }
+
+    public void process(Order order){
+        if(order.paid()) {
+            if(order.isType(CREDIT)) {
+                instrumentCreditService.processOrder(order);
+                log.info("credit processed for order={} type={} of value={}",
+                        order.getId(),order.getType(), order.getValue());
+                return;
+            }
+            if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
+                contractService.markInstallmentAsPaidFrom(order);
+                log.info("contract paid for order={} type={} of value={}",
+                        order.getId(),order.getType(), order.getValue());
+            }
+        }
     }
 
     private void processContractRuleWhenRequired(Order order) {

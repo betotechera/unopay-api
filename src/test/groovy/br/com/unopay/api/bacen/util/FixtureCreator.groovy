@@ -24,6 +24,7 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.model.UserDetail
@@ -254,6 +255,12 @@ class FixtureCreator {
         Fixture.from(Contractor.class).uses(jpaProcessor).gimme(label)
     }
 
+    Contractor createContractorWithPerson(Person person, String label = "valid") {
+        Fixture.from(Contractor.class).uses(jpaProcessor).gimme(label, new Rule(){{
+            add("person", person)
+        }})
+    }
+
     Event createEvent(ServiceType serviceType = ServiceType.FUEL_ALLOWANCE) {
         Service serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
@@ -266,6 +273,21 @@ class FixtureCreator {
         Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("paymentRuleGroup", paymentRuleGroupUnderTest)
         }})
+    }
+
+    Product crateProductWithSameIssuerOfHirer(){
+        def hirer = createHirer()
+        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+            add("document.number", hirer.documentNumber)
+        }})
+        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", issuerPerson)
+        }})
+        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issuer", issuer)
+        }})
+        createCreditPaymentAccount(hirer.documentNumber, product)
+        product
     }
 
     Product createProductWithCreditInsertionType(creditTypes) {

@@ -101,7 +101,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'should create from person and product'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -113,7 +113,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'given a adhesion order should deal close'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -133,7 +133,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'given a adhesion order for known contractor should return error'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         def contractor = fixtureCreator.createContractor()
         Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("person", contractor.person)
@@ -152,7 +152,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'given a adhesion order should mark first contract installment as paid'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -174,7 +174,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'given a installment payment order should mark next contract installment as paid'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -203,7 +203,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'given a installment payment order with unknown contract should return error'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -226,7 +226,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contract'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -239,7 +239,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close the contract period should be of one year'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -253,7 +253,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create user'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -266,7 +266,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     def 'when deal close should create user with contractor user type'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -279,7 +279,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contract with product'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -292,7 +292,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contract contractor'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -305,7 +305,7 @@ class ContractServiceTest extends SpockApplicationTests {
 
     void 'when deal close should create contractor payment instrument'(){
         given:
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
@@ -675,18 +675,4 @@ class ContractServiceTest extends SpockApplicationTests {
         contract
     }
 
-    private Product crateProductWithSameIssuerOfHirer(){
-        def hirer = fixtureCreator.createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
-            add("document.number", hirer.documentNumber)
-        }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", issuerPerson)
-        }})
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("issuer", issuer)
-        }})
-        fixtureCreator.createCreditPaymentAccount(hirer.documentNumber, product)
-        product
-    }
 }

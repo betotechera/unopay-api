@@ -25,19 +25,14 @@ public class OrderReceiver {
 
     private TransactionService transactionService;
     private GenericObjectMapper genericObjectMapper;
-    private ContractorInstrumentCreditService instrumentCreditService;
-    private ContractService contractService;
     private OrderService orderService;
 
     @Autowired
     public OrderReceiver(TransactionService transactionService,
                          GenericObjectMapper genericObjectMapper,
-                         ContractorInstrumentCreditService instrumentCreditService,
-                         ContractService contractService, OrderService orderService){
+                         OrderService orderService){
         this.transactionService = transactionService;
         this.genericObjectMapper = genericObjectMapper;
-        this.instrumentCreditService = instrumentCreditService;
-        this.contractService = contractService;
         this.orderService = orderService;
     }
 
@@ -53,18 +48,6 @@ public class OrderReceiver {
             current.defineStatus(transaction.getStatus());
             orderService.save(current);
         }
-        if(current.paid()) {
-            if(order.isType(CREDIT)) {
-                instrumentCreditService.processOrder(order);
-                log.info("credit processed for order={} type={} of value={}",
-                        order.getId(),order.getType(), order.getValue());
-                return;
-            }
-            if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
-                contractService.markInstallmentAsPaidFrom(order);
-                log.info("contract paid for order={} type={} of value={}",
-                        order.getId(),order.getType(), order.getValue());
-            }
-        }
+        orderService.process(order);
     }
 }
