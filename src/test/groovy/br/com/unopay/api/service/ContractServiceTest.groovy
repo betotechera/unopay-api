@@ -24,7 +24,7 @@ import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-
+import groovy.transform.CompileStatic
 import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -220,9 +220,6 @@ class ContractServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
-
-
-
 
     void 'when deal close should create contract'(){
         given:
@@ -645,10 +642,8 @@ class ContractServiceTest extends SpockApplicationTests {
         contractEstablishment = contractEstablishment.with {establishment = establishmentUnderTest; it}
         service.addEstablishments(contract.id,contractEstablishment)
         def contractorId=contract.contractor.id
-        def establishmentId = contractEstablishment.establishment.id
-        def services = [contract.serviceTypes.find()] as Set
         def productCode = contract.product.code
-        List<Contract> contracts = service.getContractorValidContracts(contractorId, establishmentId, services, productCode)
+        List<Contract> contracts = service.getContractorValidContracts(contractorId, productCode)
 
         then:
         that contracts, hasSize(1)
