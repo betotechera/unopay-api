@@ -8,8 +8,8 @@ flyway:
 health:
   config:
     enabled: false
-via-cep:
-  url: https://viacep.com.br/ws/
+addressSearch:
+  url: http://api.postmon.com.br/v1/cep/
 management:
   security:
     enabled: false

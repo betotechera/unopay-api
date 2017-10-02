@@ -3,7 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.viacep.model.CEP;
+import br.com.unopay.api.address.model.AddressSearch;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -78,12 +78,12 @@ public class Address implements Serializable {
     @JsonView({Views.Address.class})
     private Double longitude;
 
-    public Address(CEP cep) {
-        this.zipCode = cep.unformattedCep();
-        this.city = cep.getLocalidade();
-        this.streetName = cep.getLogradouro();
-        this.district = cep.getBairro();
-        this.state = getEnum(State.class,cep.getUf());
+    public Address(AddressSearch addressSearch) {
+        this.zipCode = addressSearch.getCep();
+        this.city = addressSearch.getCidade();
+        this.streetName = addressSearch.getLogradouro();
+        this.district = addressSearch.getBairro();
+        this.state = getEnum(State.class, addressSearch.getEstado());
     }
 
     public Address(String zipCode) {
