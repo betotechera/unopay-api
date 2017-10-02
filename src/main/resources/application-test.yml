@@ -29,8 +29,8 @@ unopay:
         folder: avatar
       ciot:
         folder: ciot
-via-cep:
-  url: https://viacep.com.br/ws/
+addressSearch:
+  url: http://api.postmon.com.br/v1/cep/
 amazon:
   s3:
     bucketName: unopay-files
