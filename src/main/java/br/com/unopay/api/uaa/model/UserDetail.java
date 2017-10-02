@@ -117,7 +117,7 @@ public class UserDetail implements Serializable {
     private Partner partner;
 
 
-    @JsonView({Views.User.Detail.class})
+    @JsonView({Views.User.Private.class})
     @NotNull(groups = PasswordRequired.class)
     @Column(name="password")
     @Size(min=5, max = 50, groups = {PasswordRequired.class })

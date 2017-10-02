@@ -140,6 +140,7 @@ public interface Views {
     interface User {
         interface Detail extends List{}
         interface List {}
+        interface Private extends Detail {}
     }
 
     interface Order {
