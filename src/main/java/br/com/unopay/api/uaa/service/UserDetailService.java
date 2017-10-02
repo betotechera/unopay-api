@@ -19,6 +19,9 @@ import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +54,7 @@ import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 public class UserDetailService implements UserDetailsService {
 
     public static final String CONTRACTOR = "CONTRATADO";
+    public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
     @Autowired
     private UserDetailRepository userDetailRepository;
 
@@ -112,6 +116,9 @@ public class UserDetailService implements UserDetailsService {
         UserDetail user = userOptional.orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
 
         List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
+        if(authorities.isEmpty()){
+            authorities = Collections.singletonList(new SimpleGrantedAuthority(CONTRACTOR_ROLE));
+        }
         AuthUserContextHolder.setAuthUserId(user.getId());
         return new User(username, user.getPassword(), authorities);
     }
