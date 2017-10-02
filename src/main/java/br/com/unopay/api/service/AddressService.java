@@ -1,28 +1,29 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.Address;
-import br.com.unopay.api.viacep.model.CEP;
-import br.com.unopay.api.viacep.service.ViaCEPService;
+import br.com.unopay.api.address.model.AddressSearch;
+import br.com.unopay.api.address.service.AddressSearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Service
 public class AddressService {
 
-    private ViaCEPService viaCEPService;
+    private AddressSearchService addressSearchService;
 
     @Autowired
-    public AddressService(ViaCEPService viaCEPService) {
-        this.viaCEPService = viaCEPService;
+    public AddressService(AddressSearchService addressSearchService) {
+        this.addressSearchService = addressSearchService;
     }
 
     public Address search(String zipCode) {
         try {
-            CEP cep = viaCEPService.search(zipCode);
-            return cep.error() ? new Address(zipCode) : new Address(cep);
-        }catch (Exception e){
+            AddressSearch addressSearch = addressSearchService.search(zipCode);
+            return  new Address(addressSearch);
+        }catch (HttpClientErrorException e){
             log.warn("Error on getting address",e);
             return new Address(zipCode);
         }

@@ -1,14 +1,15 @@
 package br.com.unopay.api.viacep.service
 
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.address.service.AddressSearchService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.HttpClientErrorException
 
 
-class ViaCEPServiceIntegrationTest extends SpockApplicationTests{
+class AddressSearchServiceIntegrationTest extends SpockApplicationTests{
 
     @Autowired
-    ViaCEPService service
+    AddressSearchService service
 
     def "Search valid cep"() {
         given:
@@ -16,11 +17,10 @@ class ViaCEPServiceIntegrationTest extends SpockApplicationTests{
         when:
             def address = service.search(cep)
         then:
-            address.localidade == 'São Paulo'
+            address.cidade == 'São Paulo'
             address.bairro == 'Vila Leopoldina'
-            address.cep == '05305-011'
-            address.uf == 'SP'
-            !address.erro
+            address.cep == '05305011'
+            address.estado == 'SP'
     }
 
     def "Search unknown cep"() {
@@ -29,11 +29,7 @@ class ViaCEPServiceIntegrationTest extends SpockApplicationTests{
         when:
         def address = service.search(cep)
         then:
-        !address.localidade
-        !address.bairro
-        !address.cep
-        !address.uf
-        address.erro
+        thrown(HttpClientErrorException)
     }
     def "Search invalid cep"() {
         given:
