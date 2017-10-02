@@ -4,6 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
+import br.com.unopay.bootcommons.exception.ConflictException
+import br.com.unopay.bootcommons.exception.UnauthorizedException
+
 import static java.math.BigDecimal.ONE
 import org.apache.commons.beanutils.BeanUtils
 import spock.lang.Unroll
@@ -128,6 +131,21 @@ class OrderTest extends FixtureApplicationTest {
         orderA.status == orderB.status
         orderA.number == cloned.number
         orderA.type == cloned.type
+    }
+
+    def 'given a known order with status canceled when trying to validate update should return error' (){
+        given:
+        Order order = Fixture.from(Order.class)gimme("valid", new Rule() {{
+            add("status", OrderStatus.CANCELED)
+        }})
+
+        when:
+        order.validateUpdate()
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        ex.errors.first().logref == 'UNABLE_TO_UPDATE_ORDER_STATUS'
+
     }
 
     def 'should be equals'(){
