@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @Timed(prefix = "api")
+@PreAuthorize("#oauth2.isUser()")
 public class ContractorController {
 
     private ContractorService service;
@@ -114,11 +117,20 @@ public class ContractorController {
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
-    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam(required = false)
-            String establishmentId,@RequestParam(required = false) Set<ServiceType> serviceType,
-            @RequestParam(required = false) String productCode) {
-        log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
-        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType,productCode);
+    public Results<Contract> getValidContracts(@PathVariable  String id,
+                                               @RequestParam(required = false) String productCode) {
+        log.info("search Contractor Contracts id={} productCode={}", id, productCode);
+        List<Contract> contracts = contractService.getContractorValidContracts(id, productCode);
+        return new Results<>(contracts);
+    }
+
+    @JsonView(Views.Contract.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
+    public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
+                                            OAuth2Authentication authentication) {
+        log.info("search Contractor={} Contracts with productCode={}",authentication.getName(), productCode);
+        List<Contract> contracts = contractService.getMeValidContracts(authentication.getName(), productCode);
         return new Results<>(contracts);
     }
 
@@ -131,6 +143,19 @@ public class ContractorController {
         log.info("search Contractor credits document={}", contractorDocument);
         Page<ContractorInstrumentCredit> page = contractorInstrumentCreditService
                                                     .findContractorCredits(contractId, contractorDocument, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
+    }
+
+    @JsonView(Views.ContractorInstrumentCredit.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/credits", method = RequestMethod.GET)
+    public Results<ContractorInstrumentCredit> getMyCredits(OAuth2Authentication authentication,
+                                                          @RequestParam(required = false) String contractId,
+                                                          @Validated UnovationPageRequest pageable) {
+        log.info("search Contractor credits email={}", authentication.getName());
+        Page<ContractorInstrumentCredit> page = contractorInstrumentCreditService
+                .findLogedContractorCredits(contractId, authentication.getName(), pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }

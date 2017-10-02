@@ -262,4 +262,8 @@ public class UserDetail implements Serializable {
     public String contractorId() {
         return isContractorType() ? contractor.getId() : null;
     }
+
+    public String contractorDocument() {
+        return isContractorType() ? contractor.getDocumentNumber() : null;
+    }
 }

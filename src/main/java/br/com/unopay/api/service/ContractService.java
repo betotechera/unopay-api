@@ -191,31 +191,30 @@ public class ContractService {
         return repository.findByContractorPersonDocumentNumberAndProductId(document, productId);
     }
 
-
-    public List<Contract> getContractorValidContracts(String contractorId, String establishmentId,
-                                                      Set<ServiceType> serviceType, String productCode) {
-        contractorService.getById(contractorId);
-        Page<Contract> contractPage = getActiveContracts(contractorId,serviceType,productCode);
-        List<Contract> contracts = contractPage.getContent();
-        if(establishmentId !=null) {
-            return contracts.stream()
-                    .filter(contract -> contract.validToEstablishment(establishmentId))
-                    .collect(Collectors.toList());
-        }
-        return contracts;
+    public List<Contract> getMeValidContracts(String userEmail, String productCode) {
+        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        return getContractorValidContracts(currentUser.contractorId(), productCode);
     }
 
-    private Page<Contract> getActiveContracts(String contractorId, Set<ServiceType> serviceType, String productCode) {
-        ContractFilter contractFilter = createContractActiveFilter(contractorId,serviceType,productCode);
+    public List<Contract> getContractorValidContracts(String contractorId, String productCode) {
+        contractorService.getById(contractorId);
+        Page<Contract> contractPage = getActiveContracts(contractorId,productCode);
+        List<Contract> contracts = contractPage.getContent();
+        return contracts.stream()
+                    .filter(Contract::valid)
+                    .collect(Collectors.toList());
+    }
+
+    private Page<Contract> getActiveContracts(String contractorId, String productCode) {
+        ContractFilter contractFilter = createContractActiveFilter(contractorId,productCode);
         return findByFilter(contractFilter, new UnovationPageRequest());
     }
 
 
-    private ContractFilter createContractActiveFilter(String contractorId, Set<ServiceType> serviceType, String productCode) {
+    private ContractFilter createContractActiveFilter(String contractorId, String productCode) {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
         contractFilter.setContractor(contractorId);
-        contractFilter.setServiceTypes(serviceType);
         contractFilter.setProduct(productCode);
         return contractFilter;
     }

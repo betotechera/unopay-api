@@ -11,6 +11,8 @@ import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
@@ -40,16 +42,19 @@ public class ContractorInstrumentCreditService {
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
     private CreditPaymentAccountService creditPaymentAccountService;
+    private UserDetailService userDetailService;
 
     @Autowired
     public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository,
                                              ContractService contractService,
                                              PaymentInstrumentService paymentInstrumentService,
-                                             CreditPaymentAccountService creditPaymentAccountService) {
+                                             CreditPaymentAccountService creditPaymentAccountService,
+                                             UserDetailService userDetailService) {
         this.repository = repository;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.creditPaymentAccountService = creditPaymentAccountService;
+        this.userDetailService = userDetailService;
     }
 
     public ContractorInstrumentCredit findById(String id) {
@@ -197,6 +202,12 @@ public class ContractorInstrumentCreditService {
     private void giveBackPaymentAccountBalance(ContractorInstrumentCredit instrumentCredit) {
         creditPaymentAccountService
                 .giveBack(instrumentCredit.getCreditPaymentAccountId(), instrumentCredit.getAvailableBalance());
+    }
+
+    public Page<ContractorInstrumentCredit> findLogedContractorCredits(String contractId, String userEmail,
+                                                                  UnovationPageRequest pageable) {
+        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        return findContractorCredits(contractId, currentUser.contractorDocument(),pageable);
     }
 
     public Page<ContractorInstrumentCredit> findContractorCredits(String contractId, String contractorDocument,
