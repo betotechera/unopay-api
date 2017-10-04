@@ -23,6 +23,7 @@ import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
@@ -128,6 +129,22 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.status == OrderStatus.PAID
+    }
+    def 'given a known order with status canceled when trying to update should return error'(){
+        given:
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("status", OrderStatus.CANCELED)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.update(knownOrder.id, order)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        ex.errors.first().logref == 'UNABLE_TO_UPDATE_ORDER_STATUS'
+
     }
 
     def 'given a unknown order with status waiting payment should return error'(){

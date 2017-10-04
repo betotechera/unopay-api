@@ -219,6 +219,7 @@ public class OrderService {
 
     public void update(String id, Order order) {
         Order current = findById(id);
+        current.validateUpdate();
         current.updateOnly(order,"status");
         repository.save(current);
     }
