@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -41,6 +42,7 @@ public class PhysicalPersonDetail implements Serializable{
 
     @Column(name="birth_date")
     @NotNull(groups = {Create.class, Update.class})
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
     private Date birthDate;
 

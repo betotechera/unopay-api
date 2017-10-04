@@ -9,6 +9,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,7 +96,10 @@ public class PaymentInstrumentService {
 
     public List<PaymentInstrument> findMyInstruments(String email){
         UserDetail currentUser = userDetailService.getByEmail(email);
-        return findByContractorDocument(currentUser.getContractor().getDocumentNumber());
+        if(currentUser.isContractorType()) {
+            return findByContractorDocument(currentUser.getContractor().getDocumentNumber());
+        }
+        return Collections.emptyList();
     }
 
     public List<PaymentInstrument> findByContractorDocument(String contractorDocumentNumber) {
