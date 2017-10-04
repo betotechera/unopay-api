@@ -90,6 +90,12 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    public Order create(String userEmail, Order order){
+        UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        order.setPerson(currentUser.getContractor().getPerson());
+        return create(order);
+    }
+
     @Transactional
     public Order create(Order order) {
         validateReferences(order);

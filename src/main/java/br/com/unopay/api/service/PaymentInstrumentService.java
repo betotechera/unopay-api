@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.PaymentInstrumentRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
@@ -35,17 +37,21 @@ public class PaymentInstrumentService {
     private ContractorService contractorService;
     private PasswordEncoder passwordEncoder;
     private InstrumentNumberGenerator instrumentNumberGenerator;
+    private UserDetailService userDetailService;
 
     @Autowired
     public PaymentInstrumentService(PaymentInstrumentRepository repository,
                                     ProductService productService,
                                     ContractorService contractorService,
-                                    PasswordEncoder passwordEncoder, InstrumentNumberGenerator instrumentNumberGenerator) {
+                                    PasswordEncoder passwordEncoder,
+                                    InstrumentNumberGenerator instrumentNumberGenerator,
+                                    UserDetailService userDetailService) {
         this.repository = repository;
         this.productService = productService;
         this.contractorService = contractorService;
         this.passwordEncoder = passwordEncoder;
         this.instrumentNumberGenerator = instrumentNumberGenerator;
+        this.userDetailService = userDetailService;
     }
 
     @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
@@ -85,6 +91,11 @@ public class PaymentInstrumentService {
 
     public List<PaymentInstrument> findByContractorId(String contractorId) {
         return repository.findByContractorId(contractorId);
+    }
+
+    public List<PaymentInstrument> findMyInstruments(String email){
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        return findByContractorDocument(currentUser.getContractor().getDocumentNumber());
     }
 
     public List<PaymentInstrument> findByContractorDocument(String contractorDocumentNumber) {
