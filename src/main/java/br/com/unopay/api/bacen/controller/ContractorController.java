@@ -1,15 +1,17 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -20,13 +22,14 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,13 +39,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Slf4j
 @RestController
 @Timed(prefix = "api")
+@PreAuthorize("#oauth2.isUser()")
 public class ContractorController {
 
     private ContractorService service;
     private ContractService contractService;
+    private OrderService orderService;
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
     private PaymentInstrumentService paymentInstrumentService;
 
@@ -51,10 +60,12 @@ public class ContractorController {
 
     @Autowired
     public ContractorController(ContractorService service, ContractService contractService,
-                                ContractorInstrumentCreditService contractorInstrumentCreditService,
+                                OrderService orderService, ContractorInstrumentCreditService
+                                            contractorInstrumentCreditService,
                                 PaymentInstrumentService paymentInstrumentService) {
         this.service = service;
         this.contractService = contractService;
+        this.orderService = orderService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
         this.paymentInstrumentService = paymentInstrumentService;
     }
@@ -114,11 +125,20 @@ public class ContractorController {
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
-    public Results<Contract> getValidContracts(@PathVariable  String id, @RequestParam(required = false)
-            String establishmentId,@RequestParam(required = false) Set<ServiceType> serviceType,
-            @RequestParam(required = false) String productCode) {
-        log.info("search Contractor Contracts id={} establishmentId={}", id,establishmentId);
-        List<Contract> contracts = contractService.getContractorValidContracts(id, establishmentId,serviceType,productCode);
+    public Results<Contract> getValidContracts(@PathVariable  String id,
+                                               @RequestParam(required = false) String productCode) {
+        log.info("search Contractor Contracts id={} productCode={}", id, productCode);
+        List<Contract> contracts = contractService.getContractorValidContracts(id, productCode);
+        return new Results<>(contracts);
+    }
+
+    @JsonView(Views.Contract.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
+    public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
+                                            OAuth2Authentication authentication) {
+        log.info("search Contractor={} Contracts with productCode={}",authentication.getName(), productCode);
+        List<Contract> contracts = contractService.getMeValidContracts(authentication.getName(), productCode);
         return new Results<>(contracts);
     }
 
@@ -135,6 +155,19 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
     }
 
+    @JsonView(Views.ContractorInstrumentCredit.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/credits", method = RequestMethod.GET)
+    public Results<ContractorInstrumentCredit> getMyCredits(OAuth2Authentication authentication,
+                                                          @RequestParam(required = false) String contractId,
+                                                          @Validated UnovationPageRequest pageable) {
+        log.info("search Contractor credits email={}", authentication.getName());
+        Page<ContractorInstrumentCredit> page = contractorInstrumentCreditService
+                .findLogedContractorCredits(contractId, authentication.getName(), pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors", api));
+    }
+
     @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{contractorDocument}/payment-instruments", method = RequestMethod.GET)
@@ -143,5 +176,25 @@ public class ContractorController {
         List<PaymentInstrument> contracts = paymentInstrumentService.findByContractorDocument(contractorDocument);
         return new Results<>(contracts);
     }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/contractors/me/orders", method = POST)
+    public ResponseEntity<Order> create(OAuth2Authentication authentication,
+                                        @Validated(Create.class) @RequestBody Order order) {
+        log.info("creating order {}", order);
+        Order created = orderService.create(authentication.getName(), order);
+        return created(URI.create("/credit-orders/"+created.getId())).body(created);
+    }
+
+    @JsonView(Views.PaymentInstrument.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/payment-instruments", method = RequestMethod.GET)
+    public Results<PaymentInstrument> getMyInstruments(OAuth2Authentication authentication) {
+        log.info("get Contractor instruments for={}", authentication.getName());
+        List<PaymentInstrument> contracts = paymentInstrumentService.findMyInstruments(authentication.getName());
+        return new Results<>(contracts);
+    }
+
 
 }

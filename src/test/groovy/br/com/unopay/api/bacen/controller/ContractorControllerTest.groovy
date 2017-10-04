@@ -36,7 +36,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'should create contractor'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(postHired(accessToken, getContractor()))
         then:
@@ -49,7 +49,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postHired(accessToken, getContractor())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -61,7 +61,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postHired(accessToken, getContractor())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -83,7 +83,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor should be found'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             Contractor contractor = getContractor()
             def mvcResult = this.mvc.perform(postHired(accessToken, contractor)).andReturn()
             def location = getLocationHeader(mvcResult)
@@ -98,7 +98,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor should be found when find all'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(postHired(accessToken, getContractor()))
 
             this.mvc.perform(post(CONTRACTOR_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +114,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor credits should be found when find credits'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def instrumentCredit = fixtureCreator.instrumentCredit()
         contractorInstrumentCreditService.insert(instrumentCredit.paymentInstrumentId, instrumentCredit)
         def document = instrumentCredit.contract.contractor.documentNumber
@@ -132,7 +132,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     void 'known contractor instruments should be found when find instruments'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         PaymentInstrument instrumentCredit =  Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid")
         def document = instrumentCredit.contractor.documentNumber
 

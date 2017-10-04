@@ -26,6 +26,6 @@ public interface ContractorInstrumentCreditRepository
     Optional<ContractorInstrumentCredit> findByPaymentInstrumentContractorId(String contractorId);
 
     Page<ContractorInstrumentCredit> findByContractIdAndContractContractorPersonDocumentNumber(String contractId,
-                                                                                               String contractorId,
+                                                                                               String document,
                                                                                                Pageable pageable);
 }

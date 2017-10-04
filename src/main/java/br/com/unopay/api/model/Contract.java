@@ -286,8 +286,8 @@ public class Contract implements Serializable {
         return Objects.equals(this.contractor.getId(), contractor.getId());
     }
 
-    public boolean validToEstablishment(String establishmentId){
-        return meetsEstablishmentRestrictions(establishmentId) && inProgress() && active();
+    public boolean valid(){
+        return inProgress() && active();
     }
 
     public boolean meetsEstablishmentRestrictions(String establishmentId) {
