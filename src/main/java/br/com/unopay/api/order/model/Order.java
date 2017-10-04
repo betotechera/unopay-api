@@ -30,11 +30,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -59,7 +57,7 @@ public class Order implements Updatable{
     private String id;
 
     @ManyToOne
-    @NotNull(groups = {Reference.class})
+    @NotNull(groups = {Reference.class, Create.Order.Adhesion.class})
     @JoinColumn(name="product_id")
     @JsonView({Views.Order.List.class})
     private Product product;
@@ -68,7 +66,7 @@ public class Order implements Updatable{
     @ManyToOne
     @JoinColumn(name="person_id")
     @JsonView({Views.Order.List.class})
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.Order.Adhesion.class, Update.class})
     private Person person;
 
     @ManyToOne
@@ -103,7 +101,7 @@ public class Order implements Updatable{
     private Date createDateTime;
 
     @Column(name = "type")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.Order.class, Update.class})
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;

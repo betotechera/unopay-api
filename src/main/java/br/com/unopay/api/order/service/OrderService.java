@@ -150,7 +150,7 @@ public class OrderService {
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
         Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.personEmail());
-        if(existingUser.isPresent()){
+        if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
         }
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
