@@ -7,7 +7,7 @@ payment:
       endpointHost: secure.payzen.com.br
 unopay:
   resetPassword:
-        url: 'http://unopay.qa.unovation.com.br/#/page/password/'
+        url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unvlocal.com.br:8080
