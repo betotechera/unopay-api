@@ -9,6 +9,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
@@ -223,6 +224,10 @@ public class OrderService {
         Order current = findById(id);
         current.validateUpdate();
         current.updateOnly(order,"status");
+
+        if (current.paid())
+            process(current);
+
         repository.save(current);
     }
 }

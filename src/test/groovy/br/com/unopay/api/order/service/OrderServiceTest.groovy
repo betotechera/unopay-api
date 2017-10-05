@@ -5,9 +5,6 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod
-import br.com.unopay.api.billing.creditcard.model.Transaction
-import br.com.unopay.api.billing.creditcard.model.TransactionStatus
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
@@ -75,7 +72,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a credit order with paid status and credit type should call credit service'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedPaidOrder(contractor)
+        def paid = createPersistedOrder(contractor, OrderType.CREDIT, OrderStatus.PAID)
 
         when:
         service.process(paid)
@@ -103,7 +100,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a installment payment order with paid status should mark installment as paid'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedPaidOrder(contractor, OrderType.INSTALLMENT_PAYMENT)
+        def paid = createPersistedOrder(contractor, OrderType.INSTALLMENT_PAYMENT, OrderStatus.PAID)
 
         when:
         service.process(paid)
@@ -113,23 +110,45 @@ class OrderServiceTest extends SpockApplicationTests{
         result.sort{ it.installmentNumber }.find().paymentValue == paid.value
     }
 
-    def 'given a known order with status waiting payment should update to paid status'(){
+    def 'given a known credit order with status waiting payment should update to paid status'(){
         given:
-        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("status", OrderStatus.WAITING_PAYMENT)
-        }})
+        Contractor contractor = fixtureCreator.createContractor("physical")
+        def orderA = createPersistedOrder(contractor, OrderType.CREDIT, OrderStatus.WAITING_PAYMENT)
 
-        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
+        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
             add("status", OrderStatus.PAID)
+            add("contract", orderA.contract)
         }})
 
         when:
-        service.update(knownOrder.id, order)
-        def result = service.findById(knownOrder.id)
+        service.update(orderA.id, orderB)
+        def result = service.findById(orderA.id)
 
         then:
         result.status == OrderStatus.PAID
     }
+
+    def 'given a known credit order with status waiting payment when update status to paid should insert credit to payment instrument'() {
+        given:
+        Contractor contractor = fixtureCreator.createContractor("physical")
+
+        def orderA = createPersistedOrder(contractor, OrderType.CREDIT, OrderStatus.WAITING_PAYMENT)
+
+        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
+            add("status", OrderStatus.PAID)
+            add("contract", orderA.contract)
+        }})
+
+        when:
+
+        service.update(orderA.id, orderB)
+        def credit = instrumentCreditService.findByContractorId(contractor.id)
+
+        then:
+        orderA.value == credit.value
+
+    }
+
     def 'given a known order with status canceled when trying to update should return error'(){
         given:
         Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
@@ -584,8 +603,8 @@ class OrderServiceTest extends SpockApplicationTests{
         }})
     }
 
-    private Order createPersistedPaidOrder(Contractor contractor = fixtureCreator.createContractor("physical"),
-                                           OrderType type = OrderType.CREDIT){
+    private Order createPersistedOrder(Contractor contractor = fixtureCreator.createContractor("physical"),
+                                       OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
         def product = fixtureCreator.createProduct()
         def contract = fixtureCreator.createPersistedContract(contractor, product)
         installmentService.create(contract)
@@ -597,10 +616,9 @@ class OrderServiceTest extends SpockApplicationTests{
             add("type", type)
             add("paymentInstrument", instrument)
             add("value", BigDecimal.ONE)
-            add("status", OrderStatus.PAID)
+            add("status", status)
         }})
     }
-
 
     private Order createPersistedAdhesionOrder(Person person){
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
