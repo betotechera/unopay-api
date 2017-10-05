@@ -101,15 +101,15 @@ public class Issuer implements Serializable{
     private String bin;
 
     @Column(name = "logo_uri")
-    @JsonView({Views.Issuer.Detail.class})
+    @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String logoUri;
 
     @Column(name = "background_color")
-    @JsonView({Views.Issuer.Detail.class})
+    @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String backgroundColor;
 
     @Column(name = "text_color")
-    @JsonView({Views.Issuer.Detail.class})
+    @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String textColor;
 
     @Version
