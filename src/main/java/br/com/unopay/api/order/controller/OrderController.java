@@ -55,7 +55,7 @@ public class OrderController {
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_ORDERS')")
     @RequestMapping(value = "/orders", method = POST)
-    public ResponseEntity<Order> create(@Validated(Create.class) @RequestBody Order order) {
+    public ResponseEntity<Order> create(@Validated(Create.Order.Adhesion.class) @RequestBody Order order) {
         log.info("creating order {}", order);
         Order created = service.create(order);
         return created(URI.create("/credit-orders/"+created.getId())).body(created);
@@ -64,7 +64,7 @@ public class OrderController {
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/orders", method = POST, params = "type=ADHESION")
-    public ResponseEntity<Order> createAdhesion(@Validated(Create.class) @RequestBody Order order) {
+    public ResponseEntity<Order> createAdhesion(@Validated(Create.Order.Adhesion.class) @RequestBody Order order) {
         log.info("creating adhesion order {}", order);
         order.setType(OrderType.ADHESION);
         Order created = service.create(order);

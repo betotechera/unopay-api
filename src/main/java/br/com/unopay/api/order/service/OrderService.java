@@ -150,7 +150,7 @@ public class OrderService {
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
         Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.personEmail());
-        if(existingUser.isPresent()){
+        if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
         }
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
@@ -174,7 +174,9 @@ public class OrderService {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
         }
         Optional<PaymentInstrument> instrumentOptional = instruments.stream()
-                                    .filter(instrument -> instrument.equals(order.getPaymentInstrument())).findFirst();
+                                    .filter(instrument ->
+                                            instrument.getId()
+                                                    .equals(order.getPaymentInstrument().getId())).findFirst();
         if (!instrumentOptional.isPresent()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }

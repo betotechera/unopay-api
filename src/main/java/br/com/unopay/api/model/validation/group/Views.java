@@ -32,7 +32,7 @@ public interface Views {
     interface Contract {
         interface Detail extends List,Establishment,Installment {}
         interface Establishment  {}
-        interface List {}
+        interface List extends Product.List {}
         interface Installment {}
     }
 

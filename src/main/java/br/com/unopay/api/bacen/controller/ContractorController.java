@@ -181,7 +181,7 @@ public class ContractorController {
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/contractors/me/orders", method = POST)
     public ResponseEntity<Order> create(OAuth2Authentication authentication,
-                                        @Validated(Create.class) @RequestBody Order order) {
+                                        @Validated(Create.Order.class) @RequestBody Order order) {
         log.info("creating order {}", order);
         Order created = orderService.create(authentication.getName(), order);
         return created(URI.create("/credit-orders/"+created.getId())).body(created);
