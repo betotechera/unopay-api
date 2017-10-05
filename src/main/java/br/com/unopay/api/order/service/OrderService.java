@@ -174,7 +174,9 @@ public class OrderService {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
         }
         Optional<PaymentInstrument> instrumentOptional = instruments.stream()
-                                    .filter(instrument -> instrument.equals(order.getPaymentInstrument())).findFirst();
+                                    .filter(instrument ->
+                                            instrument.getId()
+                                                    .equals(order.getPaymentInstrument().getId())).findFirst();
         if (!instrumentOptional.isPresent()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
