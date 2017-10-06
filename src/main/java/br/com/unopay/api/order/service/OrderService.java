@@ -124,23 +124,18 @@ public class OrderService {
                 instrumentCreditService.processOrder(order);
                 log.info("credit processed for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
-                notify(order.personEmail(),  EventType.PAYMENT_APPROVED);
+                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
                 return;
             }
             if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
                 contractService.markInstallmentAsPaidFrom(order);
                 log.info("contract paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
-                notify(order.personEmail(),  EventType.PAYMENT_APPROVED);
+                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
                 return;
             }
         }
-        notify(order.personEmail(),  EventType.PAYMENT_DENIED);
-    }
-
-    private void notify(String email, EventType eventType) {
-        UserDetail user = userDetailService.getByEmail(email);
-        notificationService.sendPaymentEmail(user, eventType);
+        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_DENIED);
     }
 
     private void processContractRuleWhenRequired(Order order) {
