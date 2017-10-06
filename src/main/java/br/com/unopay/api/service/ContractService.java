@@ -221,7 +221,7 @@ public class ContractService {
 
     public void markInstallmentAsPaidFrom(Order order) {
         Contract contract = getContract(order);
-        installmentService.markAsPaid(contract.getId(),order.getValue());
+        installmentService.markAsPaid(contract.getId(),order.productInstallmentValue());
     }
 
     private Contract getContract(Order order) {

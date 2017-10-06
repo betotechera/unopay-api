@@ -88,7 +88,20 @@ class OrderServiceTest extends SpockApplicationTests{
         result.availableBalance == paid.value
     }
 
-    def 'given a adhesion order with paid status should create contract and mark installment as paid'(){
+    def 'given a adhesion order with paid status should create contract'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = createPersistedAdhesionOrder(person)
+
+        when:
+        service.process(paid)
+        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId())
+
+        then:
+        contract.isPresent()
+    }
+
+    def 'given a adhesion order with paid status should mark installment as paid with product installment value'(){
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def paid = createPersistedAdhesionOrder(person)
@@ -100,7 +113,7 @@ class OrderServiceTest extends SpockApplicationTests{
         Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId())
         contract.isPresent()
         def result = installmentService.findByContractId(contract.get().id)
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue()
     }
 
     def 'given a installment payment order with paid status should mark installment as paid'(){
@@ -113,7 +126,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         def result = installmentService.findByContractId(paid.contractId())
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue()
     }
 
     def 'given a credit order with paid status should send payment approved email'(){
