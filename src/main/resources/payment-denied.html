@@ -395,8 +395,12 @@
           <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td class="email-masthead">
-                <a href="https://example.com" class="email-masthead_name">
-                  <img  src="http://unopay.qa.unovation.com.br/app/img/logo_unopay.svg"  width="60%" height="80%"/>
+                <a href="#" class="email-masthead_name">
+                  {% if order.product && order.product.issuer && order.product.issuer.logoUri %}
+                    <img  src="{{order.product.issuer.logoUri}}"  width="60%" height="80%"/>
+                  {% else %}
+                    <img  src="http://backoffice.qa.unovation.com.br/app/img/logo_unopay.svg"  width="60%" height="80%"/>
+                  {% endif %}
                 </a>
               </td>
             </tr>
@@ -408,7 +412,7 @@
                   <tr>
                     <td class="content-cell">
                       <h1>Ol&aacute; {{order.person.shortName}},</h1>
-                      <p>Infelizmente seu pagamento n&atilde;o foi aprovado. Tente efetuar o pedido novamente com outra meio de pagamento.</p>
+                      <p>Infelizmente o pagamento do seu pedido {{order.number}} no valor de {{ "R$: %s " | format(order.value) }} n&atilde;o foi aprovado. Tente efetuar o pedido novamente com outra meio de pagamento.</p>
 
                       <p>Voce pode acessar o sistema por <a href="http://unopay.qa.unvlocal.com.br">aqui</a> se desejar.</p>
                       <!-- Sub copy -->

@@ -1,5 +1,6 @@
 package br.com.unopay.api.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class GenericObjectMapper {
 
     public <T> T getAsObject(String notificationAsString, Class<T> klass) {
         try {
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             return objectMapper.readValue(notificationAsString,klass);
         } catch (IOException e) {
             log.error("unable to parse class={}",klass.getSimpleName(), e);
