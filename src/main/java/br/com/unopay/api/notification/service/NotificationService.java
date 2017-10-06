@@ -65,7 +65,7 @@ public class NotificationService {
 
     public void sendPaymentEmail(Order order, EventType eventType){
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("order", order); }};
-        sendEmailToQueue(order.personEmail(), payload, eventType);
+        sendEmailToQueue(order.getPersonEmail(), payload, eventType);
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {

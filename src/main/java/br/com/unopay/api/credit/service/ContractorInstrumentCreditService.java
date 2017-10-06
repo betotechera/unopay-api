@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -77,7 +76,7 @@ public class ContractorInstrumentCreditService {
     private PaymentInstrument getContractorPaymentInstrument(Order order) {
         Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
-                .findDigitalWalletByContractorDocument(order.documentNumber()).orElse(null));
+                .findDigitalWalletByContractorDocument(order.getDocumentNumber()).orElse(null));
     }
 
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -230,8 +229,8 @@ public class ContractorInstrumentCreditService {
     }
 
     private Contract getContract(Order order) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(order.documentNumber(),
-                                                                                 order.productId());
+        Optional<Contract> existing = contractService.findByContractorAndProduct(order.getDocumentNumber(),
+                                                                                 order.getProductId());
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 

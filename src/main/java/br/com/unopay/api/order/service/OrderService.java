@@ -140,7 +140,7 @@ public class OrderService {
 
     private void processContractRuleWhenRequired(Order order) {
         if(!order.isType(OrderType.ADHESION)){
-            Contract contract = contractService.findById(order.contractId());
+            Contract contract = contractService.findById(order.getContractId());
             if(order.isType(OrderType.INSTALLMENT_PAYMENT)) {
                 order.setValue(contract.installmentValue());
             }
@@ -150,27 +150,27 @@ public class OrderService {
     private void processAdhesionWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
             order.setContract(null);
-            order.setValue(order.productInstallmentValue());
+            order.setValue(order.getProductInstallmentValue());
         }
     }
 
     private void checkContractorRules(Order order) {
-        Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.personEmail());
+        Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getPersonEmail());
         if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
         }
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
             throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
         }
-        List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.documentNumber());
+        List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.getDocumentNumber());
         if (!contractor.isPresent()) {
             order.setPaymentInstrument(null);
         }
         if(order.isType(OrderType.CREDIT)) {
             contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
         }
-        contractor.ifPresent(c -> order.setContract(contractService.findById(order.contractId())));
+        contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
     }
 
     private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {
@@ -214,7 +214,7 @@ public class OrderService {
     }
 
     private Person getOrCreatePerson(Order order) {
-        Optional<Person> person = personService.findOptionalByDocument(order.documentNumber());
+        Optional<Person> person = personService.findOptionalByDocument(order.getDocumentNumber());
         return person.orElseGet(()-> personService.save(order.getPerson()));
     }
 

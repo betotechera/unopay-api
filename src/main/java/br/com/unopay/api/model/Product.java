@@ -13,6 +13,9 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -47,6 +50,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUI
 @Data
 @Entity
 @Table(name = "product")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(of = {"id", "code", "name"})
 @ToString(exclude = {"partners"})
 public class Product implements Serializable, Updatable {
@@ -206,7 +210,8 @@ public class Product implements Serializable, Updatable {
         return issuer.getBin() != null ? issuer.getBin() : "";
     }
 
-    public BigDecimal installmentValue(){
+    @JsonProperty
+    public BigDecimal getInstallmentValue(){
         return Rounder.round(new BigDecimal(getAnnuity().doubleValue() / getPaymentInstallments()));
     }
 }

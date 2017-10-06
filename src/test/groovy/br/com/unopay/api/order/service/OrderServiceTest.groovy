@@ -5,9 +5,6 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod
-import br.com.unopay.api.billing.creditcard.model.Transaction
-import br.com.unopay.api.billing.creditcard.model.TransactionStatus
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
@@ -95,7 +92,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
         when:
         service.process(paid)
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId())
+        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
 
         then:
         contract.isPresent()
@@ -110,10 +107,10 @@ class OrderServiceTest extends SpockApplicationTests{
         service.process(paid)
 
         then:
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId())
+        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
         contract.isPresent()
         def result = installmentService.findByContractId(contract.get().id)
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue()
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.getProductInstallmentValue()
     }
 
     def 'given a installment payment order with paid status should mark installment as paid'(){
@@ -125,8 +122,8 @@ class OrderServiceTest extends SpockApplicationTests{
         service.process(paid)
 
         then:
-        def result = installmentService.findByContractId(paid.contractId())
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue()
+        def result = installmentService.findByContractId(paid.getContractId())
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.getProductInstallmentValue()
     }
 
     def 'given a credit order with paid status should send payment approved email'(){
