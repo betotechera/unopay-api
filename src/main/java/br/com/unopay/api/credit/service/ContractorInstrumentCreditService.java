@@ -13,6 +13,7 @@ import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
@@ -224,7 +225,7 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setContract(contract);
         instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
         instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
-        instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
+        instrumentCredit.setExpirationDateTime(Time.createDateTime().plusYears(5).toDate());
         return instrumentCredit;
     }
 

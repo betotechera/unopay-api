@@ -10,6 +10,7 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,11 +62,7 @@ public class BatchClosing implements Serializable {
     public BatchClosing(){}
 
     public BatchClosing(ServiceAuthorize serviceAuthorize,Long total){
-        Date closingPaymentDays = new DateTime().plusDays(serviceAuthorize.establishmentClosingPaymentDays()).
-                                                withHourOfDay(1)
-                                                .withMinuteOfHour(0)
-                                                .withSecondOfMinute(0)
-                                                .withMillisOfSecond(0).toDate();
+        Date closingPaymentDays = Time.create(serviceAuthorize.establishmentClosingPaymentDays());
         this.accreditedNetwork = serviceAuthorize.getContract().getProduct().getAccreditedNetwork();
         this.establishment = serviceAuthorize.getEstablishment();
         this.hirer = serviceAuthorize.getContract().getHirer();

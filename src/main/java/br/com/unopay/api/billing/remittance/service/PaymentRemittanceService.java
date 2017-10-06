@@ -24,6 +24,7 @@ import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.service.BatchClosingService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -315,7 +316,7 @@ public class PaymentRemittanceService {
     }
 
     private Date today() {
-        return new DateTime().withMillisOfDay(0).toDate();
+        return Time.create();
     }
 
 

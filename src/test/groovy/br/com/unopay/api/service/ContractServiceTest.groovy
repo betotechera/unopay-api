@@ -21,6 +21,7 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
+import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -169,7 +170,7 @@ class ContractServiceTest extends SpockApplicationTests {
         then:
         result.get().contractInstallments.find {
             it.installmentNumber == 1
-        }.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        }.paymentDateTime == Time.create()
     }
 
     def 'given a installment payment order should mark next contract installment as paid'(){
@@ -198,7 +199,7 @@ class ContractServiceTest extends SpockApplicationTests {
         then:
         result.get().contractInstallments.find {
             it.installmentNumber == 2
-        }.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        }.paymentDateTime == Time.create()
     }
 
     def 'given a installment payment order with unknown contract should return error'(){
@@ -244,8 +245,8 @@ class ContractServiceTest extends SpockApplicationTests {
         Contract result  = service.findById(contract.getId())
 
         then:
-        result.begin == new DateTime().withMillisOfDay(0).toDate()
-        result.end == new DateTime().plusYears(1).withMillisOfDay(0).toDate()
+        result.begin == Time.create()
+        result.end == Time.createDateTime().plusYears(1).toDate()
     }
 
     void 'when deal close should create user'(){

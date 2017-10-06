@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.util.Time;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -39,7 +40,7 @@ public class ContractInstallment implements Serializable, Updatable {
     public ContractInstallment(Contract contract) {
         this.value = contract.getAnnuity()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_UP);
-        this.expiration = new DateTime().plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate();
+        this.expiration = Time.createDateTime().plusMonths(1).dayOfMonth().withMaximumValue().toDate();
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;
     }
@@ -86,8 +87,8 @@ public class ContractInstallment implements Serializable, Updatable {
     private Integer version;
 
     public void plusExpiration(Date previousMonth) {
-        this.expiration = new DateTime(previousMonth)
-                .plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate();
+        this.expiration = Time.createDateTime(previousMonth)
+                .plusMonths(1).dayOfMonth().withMaximumValue().toDate();
     }
 
     public void incrementNumber(Integer previousNumber) {
