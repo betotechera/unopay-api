@@ -15,6 +15,8 @@ import br.com.unopay.api.uaa.exception.Errors;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
+
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -70,8 +72,8 @@ public class Contract implements Serializable {
         this.name = product.getName();
         this.paymentInstrumentType = PaymentInstrumentType.DIGITAL_WALLET;
         this.serviceTypes = Collections.unmodifiableSet(product.getServiceTypes());
-        this.begin = new DateTime().withMillisOfDay(0).toDate();
-        this.end = new DateTime().plusYears(1).withMillisOfDay(0).toDate();
+        this.begin = Time.create();
+        this.end = Time.createDateTime().plusYears(1).toDate();
     }
 
     @Id
@@ -316,22 +318,6 @@ public class Contract implements Serializable {
         if(!containsContractor(contractor)){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_CONTRACTOR);
         }
-    }
-
-    public void setBegin(Date dateTime){
-        this.begin = ObjectUtils.clone(dateTime);
-    }
-
-    public Date getBegin(){
-        return ObjectUtils.clone(this.begin);
-    }
-
-    public void setEnd(Date dateTime){
-        this.end = ObjectUtils.clone(dateTime);
-    }
-
-    public Date getEnd(){
-        return ObjectUtils.clone(this.end);
     }
 
     public void setupMeUp() {

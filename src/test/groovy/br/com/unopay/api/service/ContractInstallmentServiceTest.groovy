@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.util.Rounder
+import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
@@ -34,7 +35,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
         then:
         def installment = result.sort { it.installmentNumber }.find()
-        installment.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        installment.paymentDateTime == Time.create()
         installment.paymentValue == paid
     }
 
@@ -51,7 +52,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
         then:
         def installment = result.find { it.installmentNumber == 2 }
-        installment.paymentDateTime == new DateTime().withMillisOfDay(0).toDate()
+        installment.paymentDateTime == Time.create()
         installment.paymentValue == paid
     }
 
@@ -133,8 +134,8 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         then:
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            it.expiration == new DateTime()
-                    .plusMonths(it.installmentNumber).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
+            it.expiration == Time.createDateTime()
+                    .plusMonths(it.installmentNumber).dayOfMonth().withMaximumValue().toDate()
         }
     }
 

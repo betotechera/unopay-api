@@ -14,6 +14,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.GenericObjectMapper;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -230,7 +231,7 @@ public class BatchClosingService {
         return filter;
     }
     private Date today() {
-        return new DateTime().withMillisOfDay(0).toDate();
+        return Time.create();
     }
 
     public Page<BatchClosing> findMyByFilter(String userEmail, BatchClosingFilter filter,

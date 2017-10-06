@@ -5,8 +5,10 @@ import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -82,9 +84,10 @@ public class ContractInstallmentService {
     public void markAsPaid(String contractId, BigDecimal paid) {
         Set<ContractInstallment> installments = findByContractId(contractId);
         ContractInstallment installment = installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
+                .sorted(Comparator.comparing(ContractInstallment::getInstallmentNumber))
                 .findFirst().orElseThrow(UnovationExceptions::unprocessableEntity);
         installment.setPaymentValue(paid);
-        installment.setPaymentDateTime(new DateTime().withMillisOfDay(0).toDate());
+        installment.setPaymentDateTime(Time.create());
         update(installment.getId(), installment);
     }
 }

@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.util.Time
 import org.joda.time.DateTime
 
 class BatchClosingTest extends FixtureApplicationTest {
@@ -36,11 +37,7 @@ class BatchClosingTest extends FixtureApplicationTest {
 
         then:
         def closingPaymentDays = serviceAuthorize.establishment.checkout.closingPaymentDays
-        batchClosing.paymentReleaseDateTime == new DateTime().plusDays(closingPaymentDays).
-                                            withHourOfDay(1)
-                                            .withMinuteOfHour(0)
-                                            .withSecondOfMinute(0)
-                                            .withMillisOfSecond(0).toDate()
+        batchClosing.paymentReleaseDateTime == Time.create(closingPaymentDays)
     }
 
     def 'should create from service authorize with right finished situation'(){
