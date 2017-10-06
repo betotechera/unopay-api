@@ -14,6 +14,8 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.Person
+import br.com.unopay.api.notification.model.EventType
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus
 import br.com.unopay.api.order.model.OrderType
@@ -50,6 +52,7 @@ class OrderServiceTest extends SpockApplicationTests{
     Contract contractUnderTest
     ContractInstallment installmentUnderTest
 
+    NotificationService notificationServiceMock = Mock(NotificationService)
     Notifier notifierMock = Mock(Notifier)
 
     def setup(){
@@ -57,6 +60,7 @@ class OrderServiceTest extends SpockApplicationTests{
         installmentService.create(contractUnderTest)
         installmentUnderTest = installmentService.findByContractId(contractUnderTest.id).find()
         service.notifier = notifierMock
+        service.notificationService = notificationServiceMock
     }
 
     def 'a valid order with known person should be created'(){
@@ -110,6 +114,30 @@ class OrderServiceTest extends SpockApplicationTests{
         then:
         def result = installmentService.findByContractId(paid.contractId())
         result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+    }
+
+    def 'given a credit order with paid status should send payment approved email'(){
+        given:
+        def paid = createPersistedOrderWithStatus(OrderStatus.PAID)
+
+        when:
+        service.process(paid)
+
+        then:
+        1 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_APPROVED)
+        0 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_DENIED)
+    }
+
+    def 'given a credit order with payment denied status should send payment denied email'(){
+        given:
+        def paid = createPersistedOrderWithStatus(OrderStatus.PAYMENT_DENIED)
+
+        when:
+        service.process(paid)
+
+        then:
+        1 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_DENIED)
+        0 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_APPROVED)
     }
 
     def 'given a known order with status waiting payment should update to paid status'(){
@@ -556,9 +584,11 @@ class OrderServiceTest extends SpockApplicationTests{
     private Order createOrder(){
         def contractor = fixtureCreator.createContractor("physical")
         def product = fixtureCreator.createProduct()
+        def user = fixtureCreator.createUser()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
         return Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
+            add("person.physicalPersonDetail.email", user.email)
             add("product", product)
             add("contract", contractUnderTest)
             add("type", OrderType.CREDIT)
@@ -567,20 +597,27 @@ class OrderServiceTest extends SpockApplicationTests{
         }})
     }
 
+    private Order createPersistedOrderWithStatus(OrderStatus status, OrderType type = OrderType.CREDIT,
+                                                 Contractor contractor = fixtureCreator.createContractor("physical")){
+        return createPersistedPaidOrder(contractor, type, status)
+    }
+
     private Order createPersistedPaidOrder(Contractor contractor = fixtureCreator.createContractor("physical"),
-                                           OrderType type = OrderType.CREDIT){
+                                           OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
         def product = fixtureCreator.createProduct()
+        def user = fixtureCreator.createUser()
         def contract = fixtureCreator.createPersistedContract(contractor, product)
         installmentService.create(contract)
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
         return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractor.person)
+            add("person.physicalPersonDetail.email", user.email)
             add("product", product)
             add("contract", contract)
             add("type", type)
             add("paymentInstrument", instrument)
             add("value", BigDecimal.ONE)
-            add("status", OrderStatus.PAID)
+            add("status", status)
         }})
     }
 

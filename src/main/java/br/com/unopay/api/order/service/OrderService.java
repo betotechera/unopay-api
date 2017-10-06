@@ -8,6 +8,8 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.notification.model.EventType;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
@@ -58,6 +60,7 @@ public class OrderService {
     private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
+    @Setter private NotificationService notificationService;
 
     public OrderService(){}
 
@@ -69,7 +72,8 @@ public class OrderService {
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
-                        UserDetailService userDetailService, Notifier notifier){
+                        UserDetailService userDetailService, Notifier notifier,
+                        NotificationService notificationService){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
@@ -79,6 +83,7 @@ public class OrderService {
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
+        this.notificationService = notificationService;
     }
 
     public Order save(Order order) {
@@ -119,16 +124,23 @@ public class OrderService {
                 instrumentCreditService.processOrder(order);
                 log.info("credit processed for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
+                notify(order.personEmail(),  EventType.PAYMENT_APPROVED);
                 return;
             }
             if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
                 contractService.markInstallmentAsPaidFrom(order);
                 log.info("contract paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
+                notify(order.personEmail(),  EventType.PAYMENT_APPROVED);
+                return;
             }
-        }else{
-            throw new RuntimeException();
         }
+        notify(order.personEmail(),  EventType.PAYMENT_DENIED);
+    }
+
+    private void notify(String email, EventType eventType) {
+        UserDetail user = userDetailService.getByEmail(email);
+        notificationService.sendPaymentEmail(user, eventType);
     }
 
     private void processContractRuleWhenRequired(Order order) {

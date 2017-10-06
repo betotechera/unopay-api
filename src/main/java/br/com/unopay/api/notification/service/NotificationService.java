@@ -62,6 +62,11 @@ public class NotificationService {
         sendEmailToQueue(emailAsText, payload, EventType.REMITTANCE_CREATED);
     }
 
+    public void sendPaymentEmail(UserDetail user, EventType eventType){
+        Map<String,Object> payload = new HashMap<String, Object>() {{ put("user", user); }};
+        sendEmailToQueue(user.getEmail(), payload, eventType);
+    }
+
     private Map<String, Object> buildPayload(UserDetail user, String token) {
         Map<String,Object> payload = new HashMap<>();
         payload.put("user",user);
