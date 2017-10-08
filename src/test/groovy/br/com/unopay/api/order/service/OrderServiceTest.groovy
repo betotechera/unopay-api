@@ -110,7 +110,7 @@ class OrderServiceTest extends SpockApplicationTests{
         Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
         contract.isPresent()
         def result = installmentService.findByContractId(contract.get().id)
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.getProductInstallmentValue()
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
     }
 
     def 'given a installment payment order with paid status should mark installment as paid'(){
@@ -123,7 +123,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         def result = installmentService.findByContractId(paid.getContractId())
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.getProductInstallmentValue()
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
     }
 
     def 'given a credit order with paid status should send payment approved email'(){
@@ -293,6 +293,45 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value != null
+    }
+
+    def 'given a known contractor and installment payment order then the payment value should be contract installment value'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        fixtureCreator.createInstrumentToProduct(product, contractor)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", null)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.value == creditOrder.contract.installmentValue()
+    }
+
+
+    def 'given a adhesion order then the payment value should be product installment value'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProduct()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.value == creditOrder.product.installmentValue
     }
 
     def 'given a unknown contractor and ADHESION order without payment instrument should be created'(){

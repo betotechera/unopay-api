@@ -108,14 +108,18 @@ public class OrderService {
         order.setPerson(getOrCreatePerson(order));
         incrementNumber(order);
         checkContractorRules(order);
-        processAdhesionWhenRequired(order);
-        processContractRuleWhenRequired(order);
+        definePaymentValueWhenRequired(order);
         order.setCreateDateTime(new Date());
         Order created = repository.save(order);
         order.getPaymentRequest().setOrderId(order.getId());
         order.getPaymentRequest().setValue(order.getValue());
         notifier.notify(Queues.ORDER_CREATED, created);
         return created;
+    }
+
+    private void definePaymentValueWhenRequired(Order order) {
+        processAdhesionWhenRequired(order);
+        processContractRuleWhenRequired(order);
     }
 
     public void process(Order order){

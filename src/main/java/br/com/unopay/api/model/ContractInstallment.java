@@ -40,7 +40,7 @@ public class ContractInstallment implements Serializable, Updatable {
     public ContractInstallment(Contract contract) {
         this.value = contract.getAnnuity()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_UP);
-        this.expiration = Time.createDateTime().plusMonths(1).dayOfMonth().withMaximumValue().toDate();
+        this.expiration = Time.createDateTime().dayOfMonth().withMaximumValue().toDate();
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;
     }
