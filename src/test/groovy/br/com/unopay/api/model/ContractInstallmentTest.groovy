@@ -42,7 +42,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         installment.installmentNumber == 1
     }
 
-    def 'when create from contract the expiration should be after one month'(){
+    def 'when create from contract the expiration should be now'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
@@ -50,8 +50,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def installment = new ContractInstallment(contract)
 
         then:
-        installment.expiration == Time.createDateTime()
-                .plusMonths(1).dayOfMonth().withMaximumValue().toDate()
+        installment.expiration == Time.createDateTime().dayOfMonth().withMaximumValue().toDate()
     }
 
     def 'when increment expiration should be incremented with one month'(){
