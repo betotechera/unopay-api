@@ -1,13 +1,12 @@
 package br.com.unopay.api.credit.service;
 
-import br.com.unopay.api.credit.model.InstrumentCreditSource;
-import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.credit.model.ContractorCreditType;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
-import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -86,7 +85,6 @@ public class ContractorInstrumentCreditService {
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateValue();
-        incrementInstallmentNumber(instrumentCredit);
         if(instrumentCredit.creditSourceIsHirer()) {
             subtractPaymentAccountBalance(instrumentCredit);
         }
@@ -128,13 +126,6 @@ public class ContractorInstrumentCreditService {
                               .getByIdAndContractorId(instrumentCredit.contractId(), paymentInstrument.contractorId());
         verifyInstrumentBelongsToContractor(paymentInstrument.contractorId(), instrumentCredit);
         return contract;
-    }
-
-    private void incrementInstallmentNumber(ContractorInstrumentCredit instrumentCredit) {
-        ContractorInstrumentCredit last = repository
-                .findFirstByServiceTypeAndContractIdOrderByCreatedDateTimeDesc(instrumentCredit.getServiceType(),
-                                                                                        instrumentCredit.contractId());
-        instrumentCredit.incrementInstallmentNumber(last);
     }
 
     private void validateCreditPaymentAccount(ContractorInstrumentCredit instrumentCredit, Contract contract) {
@@ -222,7 +213,6 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
         instrumentCredit.setContract(contract);
-        instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
         instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
         instrumentCredit.setExpirationDateTime(Time.createDateTime().plusYears(5).toDate());
         return instrumentCredit;

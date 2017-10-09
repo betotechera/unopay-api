@@ -9,7 +9,6 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.credit.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
@@ -114,7 +113,6 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("contract",one(Contract.class, "valid"));
             add("serviceType", random(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
             add("creditSource",InstrumentCreditSource.HIRER);
-            add("installmentNumber",random(Long.class));
             add("value",random(BigDecimal.class, range(21, 200)));
             add("expirationDateTime",instant("1 day from now"));
             add("issuerFee",random(BigDecimal.class, range(1, 200)));
@@ -123,7 +121,6 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("availableBalance", random(BigDecimal.class, range(201, 400)));
             add("blockedBalance",random(BigDecimal.class));
             add("createdDateTime", instant("1 second from now"));
-            add("creditType", random(ContractorCreditType.class));
         }});
 
         Fixture.of(ContractorInstrumentCredit.class).addTemplate("toPersist")

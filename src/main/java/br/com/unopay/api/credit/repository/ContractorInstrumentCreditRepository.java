@@ -1,9 +1,7 @@
 package br.com.unopay.api.credit.repository;
 
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.ContractorCreditType;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
-import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import java.util.Optional;

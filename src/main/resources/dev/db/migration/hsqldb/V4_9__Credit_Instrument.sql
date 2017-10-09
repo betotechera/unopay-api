@@ -4,8 +4,6 @@ create table contractor_instrument_credit (
     contract_id varchar(256) not null,
     service_type varchar(150),
     credit_source varchar(100) not null,
-    credit_type varchar(100) not null,
-    installment_number bigint not null,
     value decimal(20,2) not null,
     expiration_date_time TIMESTAMP not null,
     issuer_fee decimal(20,2) not null,
