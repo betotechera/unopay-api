@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.remittance.cnab240.mapped;
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.billing.remittance.model.RemittancePayee;
+import br.com.unopay.api.billing.remittance.model.RemittancePayer;
 import br.com.unopay.api.util.Rounder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,8 +53,9 @@ public class SegmentA {
 
     public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
         RemittancePayee payee = remittanceItem.getPayee();
+        RemittancePayer payer = remittanceItem.getPaymentRemittance().getPayer();
         return new FilledRecord(getBatchSegmentA()).
-            defaultFill(BANCO_COMPENSACAO).
+            fill(BANCO_COMPENSACAO, payer.getBankCode()).
             fill(LOTE_SERVICO, position).
             defaultFill(TIPO_REGISTRO).
             fill(NUMERO_REGISTRO, position).
