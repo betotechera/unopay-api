@@ -250,7 +250,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.situation == CreditSituation.AVAILABLE
     }
 
-    def 'when insert instrument credit then emission fee should be equals product payment instrument emission fee'(){
+    def 'when insert instrument credit then emission fee should be equals product credit insertion fee'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
@@ -259,7 +259,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
-        result.issuerFee == result.contract.product.paymentInstrumentEmissionFee
+        result.issuerFee == result.contract.product.creditInsertionFee
     }
 
     def 'given a credit payment account balance with balance less than instrument credit value should not be inserted'(){
