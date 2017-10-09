@@ -160,7 +160,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.availableBalance = this.value;
         this.blockedBalance = ZERO;
         this.situation = CreditSituation.AVAILABLE;
-        this.issuerFee = contract.productInstrumentIssuerFee();
+        this.issuerFee = contract.productCreditInsertFee();
         this.creditSource = this.creditSource == null? InstrumentCreditSource.HIRER : this.creditSource;
     }
 

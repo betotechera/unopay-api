@@ -279,6 +279,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public BigDecimal productCreditInsertFee(){
+        if(getProduct() !=null){
+            return getProduct().getCreditInsertionFee();
+        }
+        return null;
+    }
+
     public boolean withEstablishmentRestriction(){
         return getEstablishments() != null && !getEstablishments().isEmpty();
     }
