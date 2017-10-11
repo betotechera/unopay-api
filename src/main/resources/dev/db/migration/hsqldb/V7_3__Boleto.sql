@@ -8,6 +8,7 @@ create table boleto (
     value decimal(20,2) not null,
     payment_penalty_value decimal(20,2),
     interest decimal(3,2),
+    uri varchar(256) not null,
     create_date_time Timestamp not null,
     version integer
 );
