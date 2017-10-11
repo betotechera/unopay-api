@@ -7,6 +7,7 @@ import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;
@@ -60,6 +61,11 @@ public class NotificationService {
     public void sendRemittanceCreatedMail(String emailAsText, PaymentRemittance remittance){
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("remittance", remittance); }};
         sendEmailToQueue(emailAsText, payload, EventType.REMITTANCE_CREATED);
+    }
+
+    public void sendPaymentEmail(Order order, EventType eventType){
+        Map<String,Object> payload = new HashMap<String, Object>() {{ put("order", order); }};
+        sendEmailToQueue(order.getPersonEmail(), payload, eventType);
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {

@@ -2,7 +2,6 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
@@ -25,7 +24,6 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
@@ -226,11 +224,11 @@ public class ContractService {
 
     private Contract getContract(Order order) {
         if (order.isType(OrderType.ADHESION)) {
-            Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
+            Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
             contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
-            return dealClose(order.getPerson(), order.productCode());
+            return dealClose(order.getPerson(), order.getProductCode());
         }
-        Optional<Contract> contract = findByContractorAndProduct(order.documentNumber(), order.productId());
+        Optional<Contract> contract = findByContractorAndProduct(order.getDocumentNumber(), order.getProductId());
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 }

@@ -41,7 +41,7 @@ public class BatchHeader {
     public FilledRecord create(final PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
         RemittancePayer bankAccount = remittance.getPayer();
         return new FilledRecord(getBatchHeader()).
-            defaultFill(BANCO_COMPENSACAO).
+            fill(BANCO_COMPENSACAO, remittance.getPayer().getBankCode()).
             fill(LOTE_SERVICO, position).
             defaultFill(TIPO_REGISTRO).
             fill(TIPO_OPERACAO, remittance.getOperationType().getCode()).
@@ -64,7 +64,7 @@ public class BatchHeader {
             fill(COMPLEMENTO, bankAccount.getComplement()).
             fill(CIDADE, bankAccount.getCity()).
             fill(CEP, bankAccount.firstZipCode()).
-            fill(COMPLEMENTO_CEP, bankAccount.lastZipeCode()).
+            fill(COMPLEMENTO_CEP, bankAccount.lastZipCode()).
             fill(ESTADO, bankAccount.getState().name()).
             defaultFill(FIM_FEBRABAN).
             defaultFill(OCORRENCIAS);

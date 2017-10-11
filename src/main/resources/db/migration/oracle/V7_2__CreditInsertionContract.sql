@@ -6,4 +6,6 @@ create table contract_credit_insertion_type (
 
 alter table contract
     drop column credit_insertion_type;
+alter table contractor_instrument_credit drop column installment_number;
+alter table contractor_instrument_credit drop column credit_type;
 

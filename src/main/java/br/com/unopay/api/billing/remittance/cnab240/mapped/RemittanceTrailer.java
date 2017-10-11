@@ -22,7 +22,7 @@ public class RemittanceTrailer {
 
     public FilledRecord create(final PaymentRemittance remittance) {
         return new FilledRecord(getRemittanceTrailer()).
-            defaultFill(BANCO_COMPENSACAO).
+            fill(BANCO_COMPENSACAO, remittance.getPayer().getBankCode()).
             defaultFill(LOTE_SERVICO).
             defaultFill(TIPO_REGISTRO).
             defaultFill(INICIO_FEBRABAN).

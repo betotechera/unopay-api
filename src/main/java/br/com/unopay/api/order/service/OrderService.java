@@ -8,6 +8,8 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.notification.model.EventType;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.order.model.OrderType;
@@ -59,6 +61,7 @@ public class OrderService {
     private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
+    @Setter private NotificationService notificationService;
 
     public OrderService(){}
 
@@ -70,7 +73,8 @@ public class OrderService {
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
-                        UserDetailService userDetailService, Notifier notifier){
+                        UserDetailService userDetailService, Notifier notifier,
+                        NotificationService notificationService){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
@@ -80,6 +84,7 @@ public class OrderService {
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
+        this.notificationService = notificationService;
     }
 
     public Order save(Order order) {
@@ -104,8 +109,7 @@ public class OrderService {
         order.setPerson(getOrCreatePerson(order));
         incrementNumber(order);
         checkContractorRules(order);
-        processAdhesionWhenRequired(order);
-        processContractRuleWhenRequired(order);
+        definePaymentValueWhenRequired(order);
         order.setCreateDateTime(new Date());
         Order created = repository.save(order);
         order.getPaymentRequest().setOrderId(order.getId());
@@ -114,27 +118,34 @@ public class OrderService {
         return created;
     }
 
+    private void definePaymentValueWhenRequired(Order order) {
+        processAdhesionWhenRequired(order);
+        processContractRuleWhenRequired(order);
+    }
+
     public void process(Order order){
         if(order.paid()) {
             if(order.isType(CREDIT)) {
                 instrumentCreditService.processOrder(order);
                 log.info("credit processed for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
+                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
                 return;
             }
             if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
                 contractService.markInstallmentAsPaidFrom(order);
                 log.info("contract paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
+                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+                return;
             }
-        }else{
-            throw new RuntimeException();
         }
+        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_DENIED);
     }
 
     private void processContractRuleWhenRequired(Order order) {
         if(!order.isType(OrderType.ADHESION)){
-            Contract contract = contractService.findById(order.contractId());
+            Contract contract = contractService.findById(order.getContractId());
             if(order.isType(OrderType.INSTALLMENT_PAYMENT)) {
                 order.setValue(contract.installmentValue());
             }
@@ -144,27 +155,27 @@ public class OrderService {
     private void processAdhesionWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
             order.setContract(null);
-            order.setValue(order.productInstallmentValue());
+            order.setValue(order.getProductInstallmentValue());
         }
     }
 
     private void checkContractorRules(Order order) {
-        Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.documentNumber());
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.personEmail());
+        Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getPersonEmail());
         if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
         }
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
             throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
         }
-        List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.documentNumber());
+        List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.getDocumentNumber());
         if (!contractor.isPresent()) {
             order.setPaymentInstrument(null);
         }
         if(order.isType(OrderType.CREDIT)) {
             contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
         }
-        contractor.ifPresent(c -> order.setContract(contractService.findById(order.contractId())));
+        contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
     }
 
     private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {
@@ -208,7 +219,7 @@ public class OrderService {
     }
 
     private Person getOrCreatePerson(Order order) {
-        Optional<Person> person = personService.findOptionalByDocument(order.documentNumber());
+        Optional<Person> person = personService.findOptionalByDocument(order.getDocumentNumber());
         return person.orElseGet(()-> personService.save(order.getPerson()));
     }
 

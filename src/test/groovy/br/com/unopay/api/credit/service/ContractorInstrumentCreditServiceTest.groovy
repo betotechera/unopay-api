@@ -250,7 +250,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.situation == CreditSituation.AVAILABLE
     }
 
-    def 'when insert instrument credit then emission fee should be equals product payment instrument emission fee'(){
+    def 'when insert instrument credit then emission fee should be equals product credit insertion fee'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
         when:
@@ -259,7 +259,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
-        result.issuerFee == result.contract.product.paymentInstrumentEmissionFee
+        result.issuerFee == result.contract.product.creditInsertionFee
     }
 
     def 'given a credit payment account balance with balance less than instrument credit value should not be inserted'(){
@@ -316,76 +316,6 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         _ | valueUnderTest
         _ | 0
         _ | -1
-    }
-
-    def 'given a instrument credit with same product and service then installment number should be incremented'(){
-        given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
-        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
-        creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
-
-        when:
-        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
-        ContractorInstrumentCredit result = service.findById(created.id)
-
-        then:
-        result.installmentNumber == 2L
-    }
-
-    def 'given a instrument credit with different service then installment number should not be incremented'(){
-        given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
-        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceTypes.last())
-        service.insert(paymentInstrumentUnderTest.id, anotherCredit)
-        creditPaymentAccountService.giveBack(instrumentCredit.creditPaymentAccountId, instrumentCredit.value)
-
-        when:
-        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
-
-        ContractorInstrumentCredit result = service.findById(created.id)
-
-        then:
-        result.installmentNumber == 1L
-    }
-
-    def 'given a instrument credit with same service but with pitfall then installment number should be incremented'(){
-        given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
-        ContractorInstrumentCredit anotherCredit = createInstrumentCredit(contractUnderTest.serviceTypes.last())
-        insertCreditAndRollback(instrumentCredit)
-        insertCreditAndRollback(anotherCredit)
-
-        when:
-        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
-
-        ContractorInstrumentCredit result = service.findById(created.id)
-
-        then:
-        result.installmentNumber == 2L
-    }
-
-    def 'given a instrument credit with same service but with other contract then installment number should not be incremented'(){
-        given:
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contractUnderTest.serviceTypes.first())
-        def otherContract = fixtureCreator.createPersistedContract(contractUnderTest.contractor, contractUnderTest.product)
-        def account = fixtureCreator.createCreditPaymentAccountFromContract(otherContract)
-        ContractorInstrumentCredit creditOtherContract = BeanUtils.cloneBean(instrumentCredit).with {
-            id = null
-            contract = otherContract
-            creditPaymentAccount = account
-            value = account.availableBalance - 0.01
-
-            it
-        }
-        insertCreditAndRollback(creditOtherContract)
-
-        when:
-        def created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it})
-
-        ContractorInstrumentCredit result = service.findById(created.id)
-
-        then:
-        result.installmentNumber == 1L
     }
 
     def 'should create instrument credit with contractor contract'(){

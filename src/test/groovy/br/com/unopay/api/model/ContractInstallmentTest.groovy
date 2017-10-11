@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
+import br.com.unopay.api.util.Time
 import org.joda.time.DateTime
 
 class ContractInstallmentTest extends FixtureApplicationTest {
@@ -41,7 +42,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         installment.installmentNumber == 1
     }
 
-    def 'when create from contract the expiration should be after one month'(){
+    def 'when create from contract the expiration should be now'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
@@ -49,8 +50,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def installment = new ContractInstallment(contract)
 
         then:
-        installment.expiration == new DateTime()
-                .plusMonths(1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
+        installment.expiration == Time.createDateTime().dayOfMonth().withMaximumValue().toDate()
     }
 
     def 'when increment expiration should be incremented with one month'(){
@@ -63,11 +63,11 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         then:
         Date expiration = contractInstallment.expiration
         (0..contract.paymentInstallments).every {
-            def installment = new ContractInstallment(contract);
-            installment.expiration == new DateTime()
-                    .plusMonths(it + 1).dayOfMonth().withMaximumValue().withMillisOfDay(0).toDate()
-            installment.plusExpiration(expiration);
-            expiration = installment.expiration;
+            def installment = new ContractInstallment(contract)
+            installment.expiration == Time.createDateTime()
+                    .plusMonths(it + 1).dayOfMonth().withMaximumValue().toDate()
+            installment.plusExpiration(expiration)
+            expiration = installment.expiration
         }
     }
 

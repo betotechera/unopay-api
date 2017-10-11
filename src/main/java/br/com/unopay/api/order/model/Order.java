@@ -16,7 +16,10 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnauthorizedException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -47,6 +50,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
 @Table(name = "\"order\"")
 @ToString
 @EqualsAndHashCode(of = {"id"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Order implements Updatable{
 
@@ -149,28 +153,32 @@ public class Order implements Updatable{
         return OrderStatus.PAID.equals(status);
     }
 
-    public String documentNumber(){
+    @JsonIgnore
+    public String getDocumentNumber(){
         if(this.person != null){
             return person.getDocument().getNumber();
         }
         return null;
     }
 
-    public String productId(){
+    @JsonIgnore
+    public String getProductId(){
         if(this.product != null){
             return product.getId();
         }
         return null;
     }
 
-    public String contractId(){
+    @JsonIgnore
+    public String getContractId(){
         if(this.contract != null){
             return contract.getId();
         }
         return null;
     }
 
-    public String productCode(){
+    @JsonIgnore
+    public String getProductCode(){
         if(this.product != null){
             return product.getCode();
         }
@@ -192,15 +200,17 @@ public class Order implements Updatable{
         return this.type.equals(type);
     }
 
-    public BigDecimal productInstallmentValue(){
+    @JsonProperty
+    public BigDecimal getProductInstallmentValue(){
         if(getProduct() != null){
-            return getProduct().installmentValue();
+            return getProduct().getInstallmentValue();
         }
         return null;
     }
 
 
-    public String personEmail() {
+    @JsonIgnore
+    public String getPersonEmail() {
         if(this.person != null && this.person.getPhysicalPersonDetail() != null){
             return this.person.getPhysicalPersonDetail().getEmail();
         }

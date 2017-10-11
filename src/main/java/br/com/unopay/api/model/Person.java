@@ -124,6 +124,14 @@ public class Person implements Serializable{
         update(person);
     }
 
+    @JsonIgnore
+    public String getStateInscriptionNumber(){
+        if(this.getLegalPersonDetail() != null) {
+            return getLegalPersonDetail().getStateInscriptionNumber();
+        }
+        return null;
+    }
+
     public String documentNumber(){
         return getDocument().getNumber();
     }

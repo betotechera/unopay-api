@@ -290,9 +290,9 @@ class FixtureCreator {
         product
     }
 
-    Product createProductWithCreditInsertionType(creditTypes) {
+    Product createProductWithCreditInsertionType(creditInsertionTypes) {
         Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("creditInsertionTypes",creditTypes)
+            add("creditInsertionTypes",creditInsertionTypes)
         }})
     }
 

@@ -5,6 +5,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,7 +48,7 @@ public class PaymentInstrument implements Serializable, Updatable {
         this.product = product;
         this.type = PaymentInstrumentType.DIGITAL_WALLET;
         this.situation = PaymentInstrumentSituation.ACTIVE;
-        this.expirationDate = new DateTime().plusYears(5).withMillisOfDay(0).toDate();
+        this.expirationDate = Time.createDateTime().plusYears(5).toDate();
     }
 
     @Id

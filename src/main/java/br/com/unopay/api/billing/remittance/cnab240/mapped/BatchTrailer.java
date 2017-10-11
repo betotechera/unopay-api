@@ -24,7 +24,7 @@ public class BatchTrailer {
 
     public FilledRecord create(final PaymentRemittance remittance, Integer position) {
         return new FilledRecord(getBatchTrailer()).
-            defaultFill(BANCO_COMPENSACAO).
+            fill(BANCO_COMPENSACAO, remittance.getPayer().getBankCode()).
             fill(LOTE_SERVICO, position).
             defaultFill(TIPO_REGISTRO).
             defaultFill(INICIO_FEBRABAN).

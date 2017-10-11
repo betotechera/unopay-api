@@ -3,6 +3,7 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.joda.time.DateTime
 
@@ -60,7 +61,7 @@ class PaymentInstrumentTest  extends FixtureApplicationTest {
         def instrument = new PaymentInstrument(contractor, product)
 
         then:
-        instrument.expirationDate == new DateTime().plusYears(5).withMillisOfDay(0).toDate()
+        instrument.expirationDate == Time.createDateTime().plusYears(5).toDate()
     }
 
     def 'should update me'(){

@@ -30,7 +30,6 @@ class ContractorInstrumentCreditTest  extends FixtureApplicationTest {
         a.paymentInstrument == b.paymentInstrument
         a.serviceType == b.serviceType
         a.creditSource == b.creditSource
-        a.installmentNumber == b.installmentNumber
         a.createdDateTime == b.createdDateTime
         a.value == b.value
         a.situation == b.situation
@@ -52,7 +51,6 @@ class ContractorInstrumentCreditTest  extends FixtureApplicationTest {
         a.paymentInstrument != b.paymentInstrument
         a.serviceType != b.serviceType
         a.creditSource != b.creditSource
-        a.installmentNumber != b.installmentNumber
         a.createdDateTime != b.createdDateTime
         a.value != b.value
         a.situation != b.situation

@@ -3,12 +3,15 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.billing.boleto.model.Boleto;
 import br.com.unopay.api.billing.creditcard.model.Amount;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.remittance.model.RemittancePayee;
+import br.com.unopay.api.billing.remittance.model.RemittancePayer;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
@@ -64,12 +67,25 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("contract", one(Contract.class, "valid"));
         }});
 
+
+
         Fixture.of(CreditCard.class).addTemplate("payzenCard", new Rule() {{
             add("expiryMonth", random("08", "12", "02"));
             add("expiryYear", random("2025", "2020", "2030"));
             add("holderName", firstName());
             add("number", random("36000000000008", "378282000000008"));
             add("securityCode", regex("\\d{3}"));
+        }});
+
+        Fixture.of(Boleto.class).addTemplate("valid", new Rule() {{
+            add("orderId", regex("\\d{8}"));
+            add("payee", one(RemittancePayee.class, "valid"));
+            add("payer", one(RemittancePayer.class, "valid"));
+            add("expirationDateTime", instant("3 days from now"));
+            add("processedAt", instant("2 days from now"));
+            add("value", random(BigDecimal.class, range(0.1, 500)));
+            add("createDateTime", instant("2 days from now"));
+            add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
         }});
     }
 }

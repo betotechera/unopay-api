@@ -1,8 +1,6 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.ContractorCreditType;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
@@ -18,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -94,10 +91,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private InstrumentCreditSource creditSource;
 
-    @Column(name = "installment_number")
-    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
-    private Long installmentNumber;
-
     @Column(name = "value")
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     @NotNull(groups = {Create.class, Update.class})
@@ -128,12 +121,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @Column(name = "created_date_time")
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private Date createdDateTime;
-
-    @Column(name = "credit_type")
-    @Enumerated(EnumType.STRING)
-    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private ContractorCreditType creditType;
 
     @Version
     @JsonIgnore
@@ -173,7 +160,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.availableBalance = this.value;
         this.blockedBalance = ZERO;
         this.situation = CreditSituation.AVAILABLE;
-        this.issuerFee = contract.productInstrumentIssuerFee();
+        this.issuerFee = contract.productCreditInsertFee();
         this.creditSource = this.creditSource == null? InstrumentCreditSource.HIRER : this.creditSource;
     }
 
@@ -203,16 +190,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             return getCreditPaymentAccount().getServiceType();
         }
         return null;
-    }
-
-    public void incrementInstallmentNumber(ContractorInstrumentCredit last) {
-        Long lastCreditNumber = Optional.ofNullable(last)
-                                        .map(ContractorInstrumentCredit::getInstallmentNumber).orElse(null);
-        if(lastCreditNumber == null || (last == null || last.serviceType != serviceType)){
-            installmentNumber = 1L;
-            return;
-        }
-        installmentNumber = lastCreditNumber + 1;
     }
 
     public boolean myPaymentInstrumentIn(List<PaymentInstrument> paymentInstruments) {
@@ -279,11 +256,9 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         instrumentCredit.setCreatedDateTime(new Date());
         instrumentCredit.setExpirationDateTime(this.expirationDateTime);
         instrumentCredit.setCreditSource(this.creditSource);
-        instrumentCredit.setInstallmentNumber(this.installmentNumber);
         instrumentCredit.setIssuerFee(this.issuerFee);
         instrumentCredit.setPaymentInstrument(this.paymentInstrument);
         instrumentCredit.setServiceType(this.serviceType);
-        instrumentCredit.setCreditType(this.getCreditType());
         instrumentCredit.setValue(value);
         return instrumentCredit;
     }

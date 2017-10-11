@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
 	compile 'br.com.unopay:unopay-common-dependencies:0.0.5'
-	compile 'br.com.unopay:unopay-boot-commons:0.0.22'
+	compile 'br.com.unopay:unopay-boot-commons:0.0.24'
 	compile 'io.springfox:springfox-swagger2:2.4.0'
 
 	compile 'org.springframework.boot:spring-boot-starter-security'
@@ -90,7 +90,10 @@ dependencies {
 	compile 'org.quartz-scheduler:quartz-jobs:2.2.1'
 	compile group: 'eu.payzen.sdk', name: 'payzen-ws-sdk', version: '1.0.6'
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.0'
-	compile group: 'br.com.caelum.stella', name: 'caelum-stella-bean-validation', version: '2.1.2'
+	compile group: 'br.com.caelum.stella', name: 'caelum-stella-boleto', version: '2.1.2'
+	compile group: 'com.lowagie', name: 'itext', version: '2.1.7'
+
+
 
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 

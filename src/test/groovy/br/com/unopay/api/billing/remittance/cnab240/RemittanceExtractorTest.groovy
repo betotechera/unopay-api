@@ -40,7 +40,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
         String extracted = remittanceFile.extractOnLine(BANCO_COMPENSACAO, 2)
 
         then:
-        extracted.contains("237")
+        extracted.contains(String.valueOf(remittance.payer.bankCode))
     }
 
     def 'given a cnab240 should return batch segment A bank agreement number'(){

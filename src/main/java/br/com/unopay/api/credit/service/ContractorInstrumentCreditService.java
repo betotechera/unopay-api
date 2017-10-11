@@ -1,18 +1,18 @@
 package br.com.unopay.api.credit.service;
 
-import br.com.unopay.api.credit.model.InstrumentCreditSource;
-import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.credit.model.ContractorCreditType;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
-import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,7 +75,7 @@ public class ContractorInstrumentCreditService {
     private PaymentInstrument getContractorPaymentInstrument(Order order) {
         Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
-                .findDigitalWalletByContractorDocument(order.documentNumber()).orElse(null));
+                .findDigitalWalletByContractorDocument(order.getDocumentNumber()).orElse(null));
     }
 
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -86,7 +85,6 @@ public class ContractorInstrumentCreditService {
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateValue();
-        incrementInstallmentNumber(instrumentCredit);
         if(instrumentCredit.creditSourceIsHirer()) {
             subtractPaymentAccountBalance(instrumentCredit);
         }
@@ -128,13 +126,6 @@ public class ContractorInstrumentCreditService {
                               .getByIdAndContractorId(instrumentCredit.contractId(), paymentInstrument.contractorId());
         verifyInstrumentBelongsToContractor(paymentInstrument.contractorId(), instrumentCredit);
         return contract;
-    }
-
-    private void incrementInstallmentNumber(ContractorInstrumentCredit instrumentCredit) {
-        ContractorInstrumentCredit last = repository
-                .findFirstByServiceTypeAndContractIdOrderByCreatedDateTimeDesc(instrumentCredit.getServiceType(),
-                                                                                        instrumentCredit.contractId());
-        instrumentCredit.incrementInstallmentNumber(last);
     }
 
     private void validateCreditPaymentAccount(ContractorInstrumentCredit instrumentCredit, Contract contract) {
@@ -222,15 +213,14 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
         instrumentCredit.setContract(contract);
-        instrumentCredit.setCreditType(ContractorCreditType.FINAL_PAYMENT);
         instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
-        instrumentCredit.setExpirationDateTime(new DateTime().plusYears(5).toDate());
+        instrumentCredit.setExpirationDateTime(Time.createDateTime().plusYears(5).toDate());
         return instrumentCredit;
     }
 
     private Contract getContract(Order order) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(order.documentNumber(),
-                                                                                 order.productId());
+        Optional<Contract> existing = contractService.findByContractorAndProduct(order.getDocumentNumber(),
+                                                                                 order.getProductId());
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 

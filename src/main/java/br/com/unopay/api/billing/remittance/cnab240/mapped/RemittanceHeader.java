@@ -48,7 +48,7 @@ public class RemittanceHeader {
     public FilledRecord create(final PaymentRemittance remittance) {
         RemittancePayer payer = remittance.getPayer();
         return new FilledRecord(getRemittanceHeader()).
-            defaultFill(BANCO_COMPENSACAO).
+            fill(BANCO_COMPENSACAO, payer.getBankCode()).
             defaultFill(LOTE_SERVICO).
             defaultFill(TIPO_REGISTRO).
             defaultFill(INICIO_FEBRABAN).

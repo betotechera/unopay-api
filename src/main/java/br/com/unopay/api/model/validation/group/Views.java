@@ -138,7 +138,7 @@ public interface Views {
     }
 
     interface User {
-        interface Detail extends List{}
+        interface Detail extends List, Person.Detail{}
         interface List {}
         interface Private extends Detail {}
     }
