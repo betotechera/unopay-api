@@ -528,6 +528,8 @@ public final class Errors {
             new UnovationError("ORDER_NOT_FOUND","Order not found.");
     public static final UnovationError USER_ALREADY_EXISTS =
             new UnovationError("USER_ALREADY_EXISTS","User already exists.");
+    public static final UnovationError UNABLE_TO_UPDATE_ORDER_STATUS =
+            new UnovationError("UNABLE_TO_UPDATE_ORDER_STATUS", "Unable to update order status.");
 
 
 

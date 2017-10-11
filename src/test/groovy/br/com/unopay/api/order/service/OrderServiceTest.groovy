@@ -22,6 +22,7 @@ import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
@@ -75,7 +76,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a credit order with paid status and credit type should call credit service'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedPaidOrder(contractor)
+        def paid = createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.CREDIT, contractor)
 
         when:
         service.process(paid)
@@ -98,25 +99,10 @@ class OrderServiceTest extends SpockApplicationTests{
         contract.isPresent()
     }
 
-    def 'given a adhesion order with paid status should mark installment as paid with product installment value'(){
-        given:
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def paid = createPersistedAdhesionOrder(person)
-
-        when:
-        service.process(paid)
-
-        then:
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
-        contract.isPresent()
-        def result = installmentService.findByContractId(contract.get().id)
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
-    }
-
     def 'given a installment payment order with paid status should mark installment as paid'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedPaidOrder(contractor, OrderType.INSTALLMENT_PAYMENT)
+        def paid = createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
 
         when:
         service.process(paid)
@@ -124,6 +110,24 @@ class OrderServiceTest extends SpockApplicationTests{
         then:
         def result = installmentService.findByContractId(paid.getContractId())
         result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+    }
+
+    def 'given a known credit order with status waiting payment should update to paid status'(){
+        given:
+        Contractor contractor = fixtureCreator.createContractor("physical")
+        def orderA = createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT,OrderType.CREDIT, contractor)
+
+        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
+            add("status", OrderStatus.PAID)
+            add("contract", orderA.contract)
+        }})
+
+        when:
+        service.update(orderA.id, orderB)
+        def result = service.findById(orderA.id)
+
+        then:
+        result.status == OrderStatus.PAID
     }
 
     def 'given a credit order with paid status should send payment approved email'(){
@@ -150,22 +154,42 @@ class OrderServiceTest extends SpockApplicationTests{
         0 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_APPROVED)
     }
 
-    def 'given a known order with status waiting payment should update to paid status'(){
+    def 'given a known credit order with status waiting payment when update status to paid should insert credit to payment instrument'() {
         given:
-        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("status", OrderStatus.WAITING_PAYMENT)
-        }})
+        Contractor contractor = fixtureCreator.createContractor("physical")
 
-        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
+        def orderA = createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
+
+        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
             add("status", OrderStatus.PAID)
+            add("contract", orderA.contract)
         }})
 
         when:
-        service.update(knownOrder.id, order)
-        def result = service.findById(knownOrder.id)
+
+        service.update(orderA.id, orderB)
+        def credit = instrumentCreditService.findByContractorId(contractor.id)
 
         then:
-        result.status == OrderStatus.PAID
+        orderA.value == credit.value
+
+    }
+
+    def 'given a known order with status canceled when trying to update should return error'(){
+        given:
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("status", OrderStatus.CANCELED)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.update(knownOrder.id, order)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        ex.errors.first().logref == 'UNABLE_TO_UPDATE_ORDER_STATUS'
+
     }
 
     def 'given a unknown order with status waiting payment should return error'(){
@@ -633,11 +657,9 @@ class OrderServiceTest extends SpockApplicationTests{
     private Order createOrder(){
         def contractor = fixtureCreator.createContractor("physical")
         def product = fixtureCreator.createProduct()
-        def user = fixtureCreator.createUser()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
         return Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
-            add("person.physicalPersonDetail.email", user.email)
             add("product", product)
             add("contract", contractUnderTest)
             add("type", OrderType.CREDIT)
@@ -669,7 +691,6 @@ class OrderServiceTest extends SpockApplicationTests{
             add("status", status)
         }})
     }
-
 
     private Order createPersistedAdhesionOrder(Person person){
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()

@@ -2,11 +2,13 @@ package br.com.unopay.api.order.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.service.OrderService
+import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.notNullValue
@@ -26,6 +28,9 @@ class OrderControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     OrderService orderService
+
+    @Autowired
+    ContractInstallmentService installmentService
 
     void 'valid order should be created'() {
         given:
@@ -61,15 +66,11 @@ class OrderControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isCreated())
     }
 
-    def 'given a known order when status is changed should be updated'(){
+    def 'given a known credit order with status waiting payment when status is changed should be updated'(){
         given:
         def expectedStatus = OrderStatus.PAID
         String accessToken = getUserAccessToken()
-        def product = fixtureCreator.createProduct()
-        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("product", product)
-            add("type", OrderType.ADHESION)
-        }})
+        Order order = createPersistedOrder(OrderType.CREDIT, OrderStatus.WAITING_PAYMENT)
         def id = order.id
         Order orderForUpdate = BeanUtils.cloneBean(order)
         orderForUpdate.status = expectedStatus
@@ -100,4 +101,22 @@ class OrderControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.number', is(notNullValue())))
     }
+    private Order createPersistedOrder(OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        def contract = fixtureCreator.createPersistedContract(contractor, product)
+        installmentService.create(contract)
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("contract", contract)
+            add("type", type)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+            add("status", status)
+        }})
+    }
+
 }
+

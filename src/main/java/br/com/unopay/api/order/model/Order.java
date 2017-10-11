@@ -12,6 +12,9 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnauthorizedException;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -117,6 +120,11 @@ public class Order implements Updatable{
     @JsonIgnore
     @Version
     private Integer version;
+
+    public void validateUpdate() {
+        if (this.status == OrderStatus.CANCELED)
+            throw UnovationExceptions.unauthorized().withErrors(Errors.UNABLE_TO_UPDATE_ORDER_STATUS);
+    }
 
     public void incrementNumber(String lastNumber) {
         Long number = lastNumber == null ? 0 : Long.valueOf(lastNumber);
