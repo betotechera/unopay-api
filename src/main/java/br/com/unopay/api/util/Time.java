@@ -6,6 +6,12 @@ import org.joda.time.DateTime;
 
 public class Time {
 
+    private Time(){}
+
+    public static Date create(){
+        return create(null);
+    }
+
     public static Date create(Integer days){
         if(days != null){
             return createDateTime().plusDays(days).toDate();
@@ -25,7 +31,4 @@ public class Time {
         return createDateTime(new Date());
     }
 
-    public static Date create(){
-        return create(null);
-    }
 }
