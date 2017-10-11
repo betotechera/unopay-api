@@ -35,7 +35,7 @@ public class RemittancePayer  implements Serializable {
     public RemittancePayer(Issuer issuer) {
         this.bankAgreementNumberForCredit = issuer.getPaymentAccount().getBankAgreementNumberForCredit();
         this.bankAgreementNumberForDebit = issuer.getPaymentAccount().getBankAgreementNumberForDebit();
-        this.documentNumber = issuer.getPerson().getStateInscriptionNumber();
+        this.documentNumber = issuer.documentNumber();
         this.agency = issuer.getPaymentAccount().getBankAccount().getAgency();
         this.agencyDigit = issuer.getPaymentAccount().getBankAccount().getAgencyDigit();
         this.accountNumber = issuer.getPaymentAccount().getBankAccount().getAccountNumber();
