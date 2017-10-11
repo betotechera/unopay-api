@@ -154,4 +154,9 @@ public interface Views {
         interface List{}
     }
 
+    interface Boleto {
+        interface Detail {}
+        interface List{}
+    }
+
 }

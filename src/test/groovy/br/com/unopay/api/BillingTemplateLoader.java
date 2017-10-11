@@ -86,6 +86,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("value", random(BigDecimal.class, range(0.1, 500)));
             add("createDateTime", instant("2 days from now"));
             add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
+            add("uri", regex("\\w{10}"));
         }});
     }
 }

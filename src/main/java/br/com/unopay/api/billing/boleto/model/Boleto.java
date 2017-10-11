@@ -28,13 +28,13 @@ public class Boleto {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Column(name = "order_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private String orderId;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -51,27 +51,32 @@ public class Boleto {
 
     @Column(name = "expiration_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private Date expirationDateTime;
 
     @Column(name = "processed_at")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private Date processedAt;
 
     @Column(name = "value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private BigDecimal value;
 
     @Column(name = "payment_penalty_value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private BigDecimal paymentPenaltyValue;
+
+    @Column(name = "uri")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.List.class})
+    private String uri;
 
 
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Billing.List.class})
+    @JsonView({Views.Boleto.List.class})
     private Date createDateTime;
 }
