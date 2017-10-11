@@ -37,6 +37,13 @@ unopay:
   payment-instrument:
     bin: 7004
     length: 16
+  boleto:
+    days_for_apply_penality: 2
+    payment_penality_percent: 0.03
+    deadline_in_days: 5
+    title_protest_days: 5
+    title_protest_type: 9
+    days_for_close: 10
 
 quartz:
   delegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate

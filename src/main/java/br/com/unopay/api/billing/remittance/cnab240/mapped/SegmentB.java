@@ -64,7 +64,7 @@ public class SegmentB {
             fill(BAIRRO, person.getDistrict()).
             fill(CIDADE, person.getCity()).
             fill(CEP, person.firstZipCode()).
-            fill(COMPLEMENTO_CEP, person.lastZipeCode()).
+            fill(COMPLEMENTO_CEP, person.lastZipCode()).
             fill(ESTADO, person.getState().name()).
             fill(DATA_VENCIMENTO, new SimpleDateFormat(DATE_FORMAT).format(currentDate)).
             fill(VALOR_DOCUMENTO, Rounder.roundToString(remittanceItem.getValue())).

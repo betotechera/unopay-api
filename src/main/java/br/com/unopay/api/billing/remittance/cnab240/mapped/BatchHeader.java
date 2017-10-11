@@ -64,7 +64,7 @@ public class BatchHeader {
             fill(COMPLEMENTO, bankAccount.getComplement()).
             fill(CIDADE, bankAccount.getCity()).
             fill(CEP, bankAccount.firstZipCode()).
-            fill(COMPLEMENTO_CEP, bankAccount.lastZipeCode()).
+            fill(COMPLEMENTO_CEP, bankAccount.lastZipCode()).
             fill(ESTADO, bankAccount.getState().name()).
             defaultFill(FIM_FEBRABAN).
             defaultFill(OCORRENCIAS);

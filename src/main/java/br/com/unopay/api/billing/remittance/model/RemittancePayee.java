@@ -182,7 +182,7 @@ public class RemittancePayee implements Serializable {
         return matcher.group(1);
     }
 
-    public String lastZipeCode(){
+    public String lastZipCode(){
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d{5})(\\d{3})");
         Matcher matcher = pattern.matcher(zipCode);
         matcher.find();

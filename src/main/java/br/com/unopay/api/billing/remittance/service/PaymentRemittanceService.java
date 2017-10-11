@@ -179,9 +179,9 @@ public class PaymentRemittanceService {
         createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.DEBIT);
     }
 
-    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> batchByEstablishment,
+    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> payees,
                                           PaymentOperationType operationType) {
-        Set<PaymentRemittanceItem> remittanceItems = processItems(batchByEstablishment);
+        Set<PaymentRemittanceItem> remittanceItems = processItems(payees);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         remittance.setOperationType(operationType);
         String generate = cnab240Generator.generate(remittance, new Date());
@@ -229,8 +229,8 @@ public class PaymentRemittanceService {
         return repository.count();
     }
 
-    private PaymentRemittanceItem getCurrentItem(String id,RemittancePayee payee){
-        Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(id);
+    private PaymentRemittanceItem getCurrentItem(String document,RemittancePayee payee){
+        Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(document);
         return current.orElse(new PaymentRemittanceItem(payee));
     }
 
