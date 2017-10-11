@@ -220,14 +220,14 @@ public class OrderService {
         return repository.findAllByOrderByCreateDateTimeDesc();
     }
 
+    @Transactional
     public void update(String id, Order order) {
         Order current = findById(id);
         current.validateUpdate();
         current.updateOnly(order,"status");
-
-        if (current.paid())
+        if (current.paid()) {
             process(current);
-
+        }
         repository.save(current);
     }
 }
