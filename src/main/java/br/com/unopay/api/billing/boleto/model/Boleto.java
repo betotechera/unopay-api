@@ -69,6 +69,12 @@ public class Boleto {
     @JsonView({Views.Boleto.List.class})
     private BigDecimal paymentPenaltyValue;
 
+
+    @Column(name = "interest")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.List.class})
+    private BigDecimal interest;
+
     @Column(name = "uri")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.List.class})
