@@ -79,14 +79,16 @@ public class BillingTemplateLoader  implements TemplateLoader {
 
         Fixture.of(Boleto.class).addTemplate("valid", new Rule() {{
             add("orderId", regex("\\d{8}"));
-            add("payee", one(RemittancePayee.class, "valid"));
-            add("payer", one(RemittancePayer.class, "valid"));
+            add("issuerDocument", cnpj());
+            add("clientDocument", cnpj());
             add("expirationDateTime", instant("3 days from now"));
             add("processedAt", instant("2 days from now"));
             add("value", random(BigDecimal.class, range(0.1, 500)));
             add("createDateTime", instant("2 days from now"));
             add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
             add("uri", regex("\\w{10}"));
+            add("typingCode", regex("\\d{44}"));
+            add("number", regex("\\d{44}"));
         }});
     }
 }

@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Issuer
 
-class RemittancePayerTest  extends FixtureApplicationTest {
+class RemittancePayerTest extends FixtureApplicationTest {
 
     def 'should create from issuer'() {
         given:

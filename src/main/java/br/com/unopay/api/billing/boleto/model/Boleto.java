@@ -1,25 +1,24 @@
 package br.com.unopay.api.billing.boleto.model;
 
 
-import br.com.unopay.api.billing.remittance.model.RemittancePayee;
-import br.com.unopay.api.billing.remittance.model.RemittancePayer;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
+@Slf4j
 @Data
 @Entity
 @Table(name = "boleto")
@@ -34,20 +33,18 @@ public class Boleto {
 
     @Column(name = "order_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Boleto.Detail.class})
     private String orderId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
     @NotNull(groups = {Create.class})
-    @JoinColumn(name="payee_id")
-    @JsonView({Views.Contract.Detail.class})
-    private RemittancePayee payee;
+    @JoinColumn(name="issuer_document")
+    @JsonView({Views.Boleto.Detail.class})
+    private String issuerDocument;
 
-    @ManyToOne(cascade = CascadeType.ALL)
     @NotNull(groups = {Create.class})
-    @JoinColumn(name="payer_id")
-    @JsonView({Views.Contract.Detail.class})
-    private RemittancePayer payer;
+    @JoinColumn(name="client_document")
+    @JsonView({Views.Boleto.Detail.class})
+    private String clientDocument;
 
     @Column(name = "expiration_date_time")
     @NotNull(groups = {Create.class})
@@ -56,7 +53,7 @@ public class Boleto {
 
     @Column(name = "processed_at")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Boleto.Detail.class})
     private Date processedAt;
 
     @Column(name = "value")
@@ -80,9 +77,19 @@ public class Boleto {
     @JsonView({Views.Boleto.List.class})
     private String uri;
 
+    @Column(name = "typing_code")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.List.class})
+    private String typingCode;
+
+    @Column(name = "\"number\"")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.List.class})
+    private String number;
 
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.List.class})
     private Date createDateTime;
+
 }

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -63,15 +64,43 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.BankAccount.class})
     private Integer prePaidPaymentDays;
 
+    @Size(max = 7)
     @Column(name = "bank_agreement_number_credit")
     @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForCredit;
 
+    @Size(max = 7)
     @Column(name = "bank_agreement_number_debit")
     @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
+
+    @Size(max = 7)
+    @Column(name = "our_number")
+    @JsonView({Views.BankAccount.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String ourNumber;
+
+    @Size(max = 3)
+    @Column(name = "wallet_number")
+    @JsonView({Views.BankAccount.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String walletNumber;
+
+    @Size(max = 7)
+    @Column(name = "beneficiary_code")
+    @JsonView({Views.BankAccount.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String beneficiaryCode;
+
+    @Size(max = 3)
+    @Column(name = "beneficiary_digit")
+    @JsonView({Views.BankAccount.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String beneficiaryDigit;
+
+
 
     @JsonIgnore
     public String getBankAccountId() {

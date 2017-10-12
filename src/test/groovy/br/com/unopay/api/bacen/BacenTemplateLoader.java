@@ -167,8 +167,12 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("depositPeriod", random(RecurrencePeriod.class));
             add("postPaidPaymentDays", random(Integer.class,range(1,31)));
             add("prePaidPaymentDays", random(Integer.class,range(1,31)));
-            add("bankAgreementNumberForCredit", regex("\\d{20}"));
-            add("bankAgreementNumberForDebit", regex("\\d{20}"));
+            add("bankAgreementNumberForCredit", regex("\\d{7}"));
+            add("bankAgreementNumberForDebit", regex("\\d{7}"));
+            add("ourNumber", regex("\\d{7}"));
+            add("walletNumber", regex("\\d{3}"));
+            add("beneficiaryCode", regex("\\d{7}"));
+            add("beneficiaryDigit", regex("\\d{3}"));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

@@ -26,7 +26,7 @@ import static javax.persistence.EnumType.STRING;
 @Data
 @Entity
 @Table(name = "remittance_payer")
-public class RemittancePayer  implements Serializable {
+public class RemittancePayer implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
