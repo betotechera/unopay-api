@@ -6,7 +6,6 @@ import com.google.common.base.Strings;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,6 +23,7 @@ import org.hibernate.jpa.criteria.path.SingularAttributePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.CollectionUtils;
 
 public class Filter<T> implements Specification<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Filter.class);
@@ -138,7 +138,11 @@ public class Filter<T> implements Specification<T> {
     private Object getFieldValue(Field field){
         try {
             field.setAccessible(true);
-            return field.get(fields);
+            Object result = field.get(fields);
+            if(field.getType() == List.class && result != null){
+                result = ((Collection)result).isEmpty() ? null : result;
+            }
+            return result;
         } catch (IllegalAccessException e) {
             LOGGER.warn("could not get field value", e);
             return  null;
