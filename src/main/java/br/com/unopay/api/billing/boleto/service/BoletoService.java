@@ -8,7 +8,6 @@ import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
-import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
@@ -27,26 +26,26 @@ public class BoletoService {
 
     private static final String ZERO = "0";
     private static final int SIZE = 8;
-    private static final String EXTENTION_PDF = "%s.pdf";
+    private static final String PDF_PATH = "%s/%s/%s.pdf";
 
     private BoletoRepository repository;
     private OrderService orderService;
-    private UserDetailService userDetailService;
     @Setter private FileUploaderService fileUploaderService;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
+
+    @Value("${unopay.boleto.folder}")
+    private String folder;
 
     public BoletoService(){}
 
     @Autowired
     public BoletoService(BoletoRepository repository,
                          OrderService orderService,
-                         UserDetailService userDetailService,
                          FileUploaderService fileUploaderService) {
         this.repository = repository;
         this.orderService = orderService;
-        this.userDetailService = userDetailService;
         this.fileUploaderService = fileUploaderService;
     }
 
@@ -69,11 +68,10 @@ public class BoletoService {
                 .value(order.getValue())
                 .build();
 
-        createFile(order, boletoStella);
+        Boleto boleto = createBoletoModel(order, boletoStella);
 
-        return save(createBoletoModel(order, boletoStella));
+        return save(boleto);
     }
-
 
     public Page<Boleto> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
@@ -87,21 +85,21 @@ public class BoletoService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private void createFile(Order order, br.com.caelum.stella.boleto.Boleto boletoStella) {
+    private String createFile(Order order, br.com.caelum.stella.boleto.Boleto boletoStella) {
         GeradorDeBoleto geradorDeBoleto = new GeradorDeBoleto(boletoStella);
         byte[] bytes = geradorDeBoleto.geraPDF();
-        final String path = String.format(EXTENTION_PDF, order.getDocumentNumber());
-        fileUploaderService.uploadBytes(path, bytes);
+        final String path = String.format(PDF_PATH, this.folder, order.getDocumentNumber(), order.getNumber());
+        return fileUploaderService.uploadBytes(path, bytes);
     }
 
     private Boleto createBoletoModel(Order order, br.com.caelum.stella.boleto.Boleto boletoStella) {
-        final String path = String.format(EXTENTION_PDF, order.getDocumentNumber());
+        final String path = createFile(order, boletoStella);
         Boleto boleto = new Boleto();
         boleto.setValue(order.getValue());
         boleto.setIssuerDocument(order.getProduct().getIssuer().documentNumber());
         boleto.setClientDocument(order.getDocumentNumber());
         boleto.setOrderId(order.getId());
-        boleto.setUri(fileUploaderService.getRelativePath(path));
+        boleto.setUri(path);
         boleto.setTypingCode(boletoStella.getLinhaDigitavel());
         boleto.setNumber(boletoStella.getNumeroDoDocumento());
         boleto.setCreateDateTime(new Date());

@@ -44,6 +44,7 @@ unopay:
     title_protest_days: 5
     title_protest_type: 9
     days_for_close: 10
+    folder: boletos
 
 quartz:
   delegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate

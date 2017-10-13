@@ -19,7 +19,7 @@ class BoletoServiceTest extends SpockApplicationTests{
     def setup(){
         order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
         path = "${order.person.documentNumber()}.pdf"
-        uploaderServiceMock.getRelativePath(_) >> path
+        uploaderServiceMock.uploadBytes(_,_) >> path
         service.fileUploaderService = uploaderServiceMock
     }
 
@@ -81,7 +81,7 @@ class BoletoServiceTest extends SpockApplicationTests{
         service.create(order.id)
 
         then:
-        1 * uploaderServiceMock.uploadBytes(path, _)
+        1 * uploaderServiceMock.uploadBytes(_, _) >> path
     }
 
     def 'when create with unkown order should error'(){

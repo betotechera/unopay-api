@@ -22,7 +22,7 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BOLET
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BOLETOS', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
 alter table payment_bank_account add our_number varchar(100) default '0000000' not null;
-alter table payment_bank_account add wallet_number varchar(100) default '0000000' not null;
+alter table payment_bank_account add wallet_number varchar(100) default '000' not null;
 alter table payment_bank_account add beneficiary_code varchar(100) default '0000000' not null;
 alter table payment_bank_account add beneficiary_digit varchar(5) default '00' not null;
 
