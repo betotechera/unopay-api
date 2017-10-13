@@ -4,14 +4,21 @@ import br.com.unopay.api.billing.creditcard.model.Gateway;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.repository.TransactionRepository;
-import br.com.unopay.api.util.GenericObjectMapper;
+import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_PAYMENT_VALUE;
@@ -25,14 +32,16 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 public class TransactionService {
 
     private TransactionRepository repository;
+    private OrderService orderService;
     @Setter private Gateway gateway;
 
     public TransactionService(){}
 
     @Autowired
     public TransactionService(TransactionRepository repository,
-                              Gateway gateway){
+                              OrderService orderService, Gateway gateway){
         this.repository = repository;
+        this.orderService = orderService;
         this.gateway = gateway;
     }
 
@@ -51,6 +60,16 @@ public class TransactionService {
         Transaction created = save(transaction);
         gateway.createTransaction(created);
         return created;
+    }
+
+    public Page<Transaction> findMyByFilter(String email, TransactionFilter filter, UnovationPageRequest pageable) {
+        List<String> ids = orderService.findIdsByPersonEmail(email);
+        filter.setOrderId(ids);
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public Page<Transaction> findByFilter(TransactionFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     private void validate(Transaction transaction) {

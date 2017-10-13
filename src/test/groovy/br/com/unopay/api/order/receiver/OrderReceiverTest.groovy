@@ -3,6 +3,7 @@ package br.com.unopay.api.order.receiver
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.billing.boleto.service.BoletoService
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
@@ -12,7 +13,6 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.service.ContractService
-import br.com.unopay.api.service.ProductService
 import br.com.unopay.api.util.GenericObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Unroll
@@ -25,9 +25,25 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     ContractorInstrumentCreditService instrumentCreditServiceMock = Mock(ContractorInstrumentCreditService)
     OrderService orderServiceMock = Mock(OrderService)
     ContractService contractServiceMock = Mock(ContractService)
+    BoletoService boletoServiceMock = Mock(BoletoService)
 
     def setup(){
         orderServiceMock.findById(_) >> Fixture.from(Order.class).gimme("valid")
+    }
+
+    def 'when receive boleto order should call boleto service'(){
+        given:
+        def receiver = createOrderReceiver()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("paymentRequest.method", PaymentMethod.BOLETO)
+        }})
+        def valueAsString = objectMapper.writeValueAsString(creditOrder)
+        when:
+        receiver.transactionNotify(valueAsString)
+
+        then:
+        0 * transactionalServiceMock.create(_)
+        1 * boletoServiceMock.create(_)
     }
 
     def 'when receive credit card order should call transaction service'(){
@@ -166,6 +182,6 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     }
 
     private OrderReceiver createOrderReceiver() {
-        new OrderReceiver(transactionalServiceMock, genericObjectMapper, orderServiceMock)
+        new OrderReceiver(transactionalServiceMock, genericObjectMapper, orderServiceMock, boletoServiceMock)
     }
 }

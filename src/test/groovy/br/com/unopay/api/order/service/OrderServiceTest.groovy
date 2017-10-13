@@ -63,7 +63,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'a valid order with known person should be created'(){
         given:
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
 
         when:
         Order created = service.save(creditOrder)
@@ -76,7 +76,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a credit order with paid status and credit type should call credit service'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.CREDIT, contractor)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.CREDIT, contractor)
 
         when:
         service.process(paid)
@@ -89,7 +89,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a adhesion order with paid status should create contract'(){
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def paid = createPersistedAdhesionOrder(person)
+        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
 
         when:
         service.process(paid)
@@ -102,7 +102,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a installment payment order with paid status should mark installment as paid'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
 
         when:
         service.process(paid)
@@ -115,7 +115,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known credit order with status waiting payment should update to paid status'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def orderA = createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT,OrderType.CREDIT, contractor)
+        def orderA = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT,OrderType.CREDIT, contractor)
 
         Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
             add("status", OrderStatus.PAID)
@@ -132,7 +132,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a credit order with paid status should send payment approved email'(){
         given:
-        def paid = createPersistedOrderWithStatus(OrderStatus.PAID)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID)
 
         when:
         service.process(paid)
@@ -144,7 +144,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a credit order with payment denied status should send payment denied email'(){
         given:
-        def paid = createPersistedOrderWithStatus(OrderStatus.PAYMENT_DENIED)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAYMENT_DENIED)
 
         when:
         service.process(paid)
@@ -158,7 +158,7 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
 
-        def orderA = createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
+        def orderA = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
 
         Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
             add("status", OrderStatus.PAID)
@@ -483,7 +483,7 @@ class OrderServiceTest extends SpockApplicationTests{
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
             add("physicalPersonDetail.email", user.getEmail())
         }})
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
         creditOrder.setPerson(person)
         creditOrder.type = OrderType.ADHESION
 
@@ -499,7 +499,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a known contractor and order with instrument of other contractor should return error'(){
         given:
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
         def instrument = fixtureCreator.createPaymentInstrument()
         creditOrder.setPaymentInstrument(instrument)
         when:
@@ -550,7 +550,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a order with known person should not create a new person'(){
         given:
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
 
         when:
         Order created = service.create(creditOrder)
@@ -606,7 +606,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'when create order should notify'(){
         given:
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
 
         when:
         Order created = service.create(creditOrder)
@@ -619,7 +619,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'payment request order should be created with order id'(){
         given:
-        def creditOrder = createOrder()
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
 
         when:
         Order created = service.create(creditOrder)
@@ -654,52 +654,5 @@ class OrderServiceTest extends SpockApplicationTests{
         result.last().number != result.find().number
     }
 
-    private Order createOrder(){
-        def contractor = fixtureCreator.createContractor("physical")
-        def product = fixtureCreator.createProduct()
-        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        return Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("person", contractor.person)
-            add("product", product)
-            add("contract", contractUnderTest)
-            add("type", OrderType.CREDIT)
-            add("paymentInstrument", instrument)
-            add("value", BigDecimal.ONE)
-        }})
-    }
 
-    private Order createPersistedOrderWithStatus(OrderStatus status, OrderType type = OrderType.CREDIT,
-                                                 Contractor contractor = fixtureCreator.createContractor("physical")){
-        return createPersistedPaidOrder(contractor, type, status)
-    }
-
-    private Order createPersistedPaidOrder(Contractor contractor = fixtureCreator.createContractor("physical"),
-                                           OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
-        def product = fixtureCreator.createProduct()
-        def user = fixtureCreator.createUser()
-        def contract = fixtureCreator.createPersistedContract(contractor, product)
-        installmentService.create(contract)
-        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", contractor.person)
-            add("person.physicalPersonDetail.email", user.email)
-            add("product", product)
-            add("contract", contract)
-            add("type", type)
-            add("paymentInstrument", instrument)
-            add("value", BigDecimal.ONE)
-            add("status", status)
-        }})
-    }
-
-    private Order createPersistedAdhesionOrder(Person person){
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
-        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("person", person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-            add("value", BigDecimal.ONE)
-            add("status", OrderStatus.PAID)
-        }})
-    }
 }

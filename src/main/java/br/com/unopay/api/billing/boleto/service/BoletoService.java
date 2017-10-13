@@ -3,16 +3,22 @@ package br.com.unopay.api.billing.boleto.service;
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
 import br.com.unopay.api.billing.boleto.model.Boleto;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
+import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
+import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +30,7 @@ public class BoletoService {
 
     private BoletoRepository repository;
     private OrderService orderService;
+    private UserDetailService userDetailService;
     @Setter private FileUploaderService fileUploaderService;
 
     @Value("${unopay.boleto.deadline_in_days}")
@@ -34,9 +41,11 @@ public class BoletoService {
     @Autowired
     public BoletoService(BoletoRepository repository,
                          OrderService orderService,
+                         UserDetailService userDetailService,
                          FileUploaderService fileUploaderService) {
         this.repository = repository;
         this.orderService = orderService;
+        this.userDetailService = userDetailService;
         this.fileUploaderService = fileUploaderService;
     }
 
@@ -62,6 +71,17 @@ public class BoletoService {
         createFile(order, boletoStella);
 
         return save(createBoletoModel(order, boletoStella));
+    }
+
+
+    public Page<Boleto> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
+        List<String> ids = orderService.findIdsByPersonEmail(email);
+        filter.setOrderId(ids);
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public Page<Boleto> findByFilter(BoletoFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     private void createFile(Order order, br.com.caelum.stella.boleto.Boleto boletoStella) {

@@ -118,7 +118,7 @@ class FilterTest extends SpockApplicationTests {
         that result, hasSize(2)
     }
 
-    def 'should return contracts in list'() {
+    def 'should return contracts filter with collection attribute by list'() {
         given:
         Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
             add("serviceTypes",
@@ -127,6 +127,23 @@ class FilterTest extends SpockApplicationTests {
         def filter = new ContractFilter()
 
         filter.with { serviceTypes = [FUEL_ALLOWANCE] }
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(2)
+    }
+
+    def 'should return contracts filter single attribute by list'() {
+        given:
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
+            add("code",
+                    uniqueRandom(1L, 2L, 3L))
+        }})
+        def filter = new ContractFilter()
+
+        filter.with { inCodes = [1L,2L] }
 
         when:
         def result = repository.findAll(filter)

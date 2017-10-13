@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,6 +19,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.SneakyThrows;
+import org.hibernate.jpa.criteria.path.PluralAttributePath;
+import org.hibernate.jpa.criteria.path.SingularAttributePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -103,8 +106,14 @@ public class Filter<T> implements Specification<T> {
         if(value instanceof Enum || value instanceof Integer){
             return cb.equal(key, value);
         }
-        if(value instanceof Collection){
+        if(value instanceof Collection && key instanceof PluralAttributePath){
             return cb.isMember(value,key);
+        }
+
+        if(value instanceof Collection && key instanceof SingularAttributePath){
+            List<Predicate> predicates = ((Collection<Object>) value).stream()
+                    .map(v -> cb.equal(key, v)).collect(Collectors.toList());
+            return cb.or(predicates.toArray(new Predicate[] {}));
         }
 
         return cb.like(cb.lower(key), ("%" + value + "%").toLowerCase());

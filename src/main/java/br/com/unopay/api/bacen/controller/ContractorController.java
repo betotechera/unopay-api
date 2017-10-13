@@ -3,10 +3,15 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
+import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
+import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
-import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -54,20 +59,27 @@ public class ContractorController {
     private OrderService orderService;
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
     private PaymentInstrumentService paymentInstrumentService;
+    private TransactionService transactionService;
+    private BoletoService boletoService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    public ContractorController(ContractorService service, ContractService contractService,
-                                OrderService orderService, ContractorInstrumentCreditService
-                                            contractorInstrumentCreditService,
-                                PaymentInstrumentService paymentInstrumentService) {
+    public ContractorController(ContractorService service,
+                                ContractService contractService,
+                                OrderService orderService,
+                                ContractorInstrumentCreditService contractorInstrumentCreditService,
+                                PaymentInstrumentService paymentInstrumentService,
+                                TransactionService transactionService,
+                                BoletoService boletoService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.transactionService = transactionService;
+        this.boletoService = boletoService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -134,6 +146,7 @@ public class ContractorController {
 
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
     public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
                                             OAuth2Authentication authentication) {
@@ -157,6 +170,7 @@ public class ContractorController {
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/credits", method = RequestMethod.GET)
     public Results<ContractorInstrumentCredit> getMyCredits(OAuth2Authentication authentication,
                                                           @RequestParam(required = false) String contractId,
@@ -179,6 +193,7 @@ public class ContractorController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/orders", method = POST)
     public ResponseEntity<Order> create(OAuth2Authentication authentication,
                                         @Validated(Create.Order.class) @RequestBody Order order) {
@@ -189,11 +204,37 @@ public class ContractorController {
 
     @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getMyInstruments(OAuth2Authentication authentication) {
         log.info("get Contractor instruments for={}", authentication.getName());
         List<PaymentInstrument> contracts = paymentInstrumentService.findMyInstruments(authentication.getName());
         return new Results<>(contracts);
+    }
+
+
+    @JsonView(Views.Boleto.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isUser()")
+    @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
+    public Results<Boleto> findBoletos(OAuth2Authentication authentication,
+                                      BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
+        Page<Boleto> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/boletos", api));
+    }
+
+    @JsonView(Views.Billing.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isUser()")
+    @RequestMapping(value = "/contractors/me/transactions", method = RequestMethod.GET)
+    public Results<Transaction> findTransactions(OAuth2Authentication authentication,
+                                           TransactionFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find transactions for={} with filter={}", authentication.getName(), filter);
+        Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/transactions", api));
     }
 
 

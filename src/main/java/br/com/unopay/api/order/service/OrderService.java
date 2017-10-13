@@ -26,6 +26,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +95,16 @@ public class OrderService {
     public Order findById(String id) {
         Optional<Order> order = repository.findById(id);
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+    }
+
+    public Order findByIdAndPersonEmail(String id, String email) {
+        Optional<Order> order = repository.findByIdAndPersonPhysicalPersonDetailEmail(id, email);
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+    }
+
+    public List<String> findIdsByPersonEmail(String email) {
+        List<Order> orders = repository.findByPersonPhysicalPersonDetailEmail(email);
+        return orders.stream().map(Order::getId).collect(Collectors.toList());
     }
 
     public Order create(String userEmail, Order order){

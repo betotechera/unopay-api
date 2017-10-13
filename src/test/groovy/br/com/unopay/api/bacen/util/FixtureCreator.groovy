@@ -18,6 +18,7 @@ import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
+import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.Credit
@@ -27,6 +28,9 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.order.model.OrderStatus
+import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -60,10 +64,15 @@ class FixtureCreator {
 
 
 
-    UserDetail createUser(){
+    UserDetail createUser(String email = null){
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule(){{
             add("password", passwordEncoder.encode(generatePassword))
+            if(!email) {
+                add("email", '${name}@gmail.com')
+            }else{
+                add("email", email)
+            }
         }})
         user.with { password = generatePassword; it }
     }
@@ -305,6 +314,58 @@ class FixtureCreator {
                 add("invoiceDocumentSituation", DocumentSituation.PENDING)
             }
         })
+    }
+
+    Order createOrder(Contract contract = createPersistedContract()){
+        def contractor = createContractor("physical")
+        def product = createProduct()
+        def instrument = createInstrumentToProduct(product, contractor)
+        return Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("contract", contract)
+            add("type", OrderType.CREDIT)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+        }})
+    }
+
+    Order createPersistedOrderWithStatus(OrderStatus status, OrderType type = OrderType.CREDIT,
+                                                 Contractor contractor = createContractor("physical")){
+        return createPersistedPaidOrder(contractor, type, status)
+    }
+
+    Order createPersistedPaidOrder(Contractor contractor = createContractor("physical"),
+                                           OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
+        def product = createProduct()
+        def user = createUser()
+        def contract = createPersistedContract(contractor, product)
+        Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+            add("paymentDateTime", null)
+        }})
+        def instrument = createInstrumentToProduct(product, contractor)
+        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("person.physicalPersonDetail.email", user.email)
+            add("product", product)
+            add("contract", contract)
+            add("type", type)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+            add("status", status)
+        }})
+    }
+
+    Order createPersistedAdhesionOrder(Person person){
+        def product = crateProductWithSameIssuerOfHirer()
+        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("value", BigDecimal.ONE)
+            add("status", OrderStatus.PAID)
+        }})
     }
 
     CreditPaymentAccount createCreditPaymentAccount() {

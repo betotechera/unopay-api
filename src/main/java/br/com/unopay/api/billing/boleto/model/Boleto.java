@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.boleto.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,10 +13,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 @Slf4j
@@ -91,5 +92,9 @@ public class Boleto {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.List.class})
     private Date createDateTime;
+
+    @JsonIgnore
+    @Version
+    private Integer version;
 
 }

@@ -102,6 +102,7 @@ public class Transaction {
         return getAmount().getValue().multiply(new BigDecimal(100)).longValue();
     }
 
+    @JsonIgnore
     public CardBrand getCardBrand() {
         return fromCardNumber(getCreditCard().getNumber());
     }

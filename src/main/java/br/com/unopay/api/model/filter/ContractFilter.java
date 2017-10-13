@@ -5,6 +5,7 @@ import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import lombok.Data;
 import lombok.ToString;
@@ -19,6 +20,9 @@ public class ContractFilter  implements Serializable {
 
     @SearchableField
     private Integer code;
+
+    @SearchableField(field = "code")
+    private List<Long> inCodes;
 
     @SearchableField
     private String name;

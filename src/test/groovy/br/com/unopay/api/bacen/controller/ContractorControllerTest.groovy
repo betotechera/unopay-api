@@ -1,13 +1,21 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
+import br.com.unopay.api.model.Person
+import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
+import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
@@ -128,6 +136,47 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].paymentInstrument', is(notNullValue())))
+    }
+
+    void 'known transactions should be returned'() {
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        Order order = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("orderId", order.id)
+        }})
+
+        when:
+        def result = this.mvc.perform(get('/contractors/me/transactions?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].orderId', is(notNullValue())))
+    }
+
+    void 'known boletos should be returned'() {
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        Order order = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        Fixture.from(Boleto.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("orderId", order.id)
+        }})
+
+        when:
+        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].value', is(notNullValue())))
     }
 
     void 'known contractor instruments should be found when find instruments'() {
