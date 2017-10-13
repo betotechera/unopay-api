@@ -64,6 +64,8 @@ public class TransactionService {
 
     public Page<Transaction> findMyByFilter(String email, TransactionFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
+        List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
+        ids = filter.getOrderId().isEmpty() ? ids : intersection;
         filter.setOrderId(ids);
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }

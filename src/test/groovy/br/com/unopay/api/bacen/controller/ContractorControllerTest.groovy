@@ -6,16 +6,13 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Boleto
 import br.com.unopay.api.billing.creditcard.model.Transaction
-import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
+import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.api.uaa.model.UserDetail
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
-import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
@@ -147,7 +144,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
         Order order = fixtureCreator.createPersistedAdhesionOrder(person)
 
-        Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Fixture.from(Transaction.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
             add("orderId", order.id)
         }})
 
@@ -157,6 +154,33 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].orderId', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].orderId', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
+    }
+
+    void 'should return my transaction by orderId'() {
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        Order orderA = fixtureCreator.createPersistedAdhesionOrder(person)
+        Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        Fixture.from(Transaction.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("orderId", uniqueRandom(orderA.id, orderB.id))
+        }})
+
+        def orderId = orderA.id
+
+        when:
+        def result = this.mvc.perform(get('/contractors/me/transactions?access_token={access_token}&orderId={orderId}',accessToken, orderId)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].orderId', is(equalTo(orderId))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
     }
 
     void 'known boletos should be returned'() {
@@ -167,7 +191,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
         Order order = fixtureCreator.createPersistedAdhesionOrder(person)
 
-        Fixture.from(Boleto.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
             add("orderId", order.id)
         }})
 
@@ -177,6 +201,56 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].value', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].value', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
+    }
+
+    void 'should return my boleto by orderId'() {
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        Order orderA = fixtureCreator.createPersistedAdhesionOrder(person)
+        Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("orderId", uniqueRandom(orderA.id,orderB.id))
+        }})
+
+        def orderId = orderA.id
+
+        when:
+        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={orderId}',accessToken, orderId)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].value', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+    }
+
+    void 'should not return boleto with unkown orderId'() {
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        Order orderA = fixtureCreator.createPersistedAdhesionOrder(person)
+        Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("orderId", uniqueRandom(orderA.id,orderB.id))
+        }})
+
+        def orderId = 'unknown'
+
+        when:
+        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={orderId}',accessToken, orderId)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(0))))
     }
 
     void 'known contractor instruments should be found when find instruments'() {
