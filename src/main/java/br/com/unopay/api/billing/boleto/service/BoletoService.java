@@ -77,7 +77,7 @@ public class BoletoService {
     public Page<Boleto> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
         filter.setOrderId(ids);
-        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+        return findByFilter(filter, pageable);
     }
 
     public Page<Boleto> findByFilter(BoletoFilter filter, UnovationPageRequest pageable) {
