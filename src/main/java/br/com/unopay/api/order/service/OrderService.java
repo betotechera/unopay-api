@@ -11,7 +11,6 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
-import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
@@ -97,13 +96,8 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
-    public Order findByIdAndPersonEmail(String id, String email) {
-        Optional<Order> order = repository.findByIdAndPersonPhysicalPersonDetailEmail(id, email);
-        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
-    }
-
     public List<String> findIdsByPersonEmail(String email) {
-        List<Order> orders = repository.findByPersonPhysicalPersonDetailEmail(email);
+        List<Order> orders = repository.findTop20ByPersonPhysicalPersonDetailEmail(email);
         return orders.stream().map(Order::getId).collect(Collectors.toList());
     }
 
