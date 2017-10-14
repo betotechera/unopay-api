@@ -97,7 +97,7 @@ public class OrderService {
     }
 
     public List<String> findIdsByPersonEmail(String email) {
-        List<Order> orders = repository.findTop20ByPersonPhysicalPersonDetailEmail(email);
+        List<Order> orders = repository.findTop20ByPersonPhysicalPersonDetailEmailOrderByCreateDateTimeDesc(email);
         return orders.stream().map(Order::getId).collect(Collectors.toList());
     }
 
