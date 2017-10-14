@@ -138,11 +138,7 @@ public class Filter<T> implements Specification<T> {
     private Object getFieldValue(Field field){
         try {
             field.setAccessible(true);
-            Object result = field.get(fields);
-            if(field.getType() == List.class && result != null){
-                result = ((Collection)result).isEmpty() ? null : result;
-            }
-            return result;
+            return field.get(fields);
         } catch (IllegalAccessException e) {
             LOGGER.warn("could not get field value", e);
             return  null;

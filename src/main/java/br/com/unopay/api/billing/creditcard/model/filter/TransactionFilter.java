@@ -4,6 +4,7 @@ import br.com.unopay.api.repository.filter.SearchableField;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Data;
 
 @Data
@@ -13,5 +14,11 @@ public class TransactionFilter implements Serializable {
 
 
     @SearchableField
-    private List<String> orderId = new ArrayList<>();
+    private List<String> orderId;
+
+
+    public List<String> getOrderId(){
+        Optional<List<String>> list = Optional.ofNullable(this.orderId);
+        return list.orElse(new ArrayList<>());
+    }
 }
