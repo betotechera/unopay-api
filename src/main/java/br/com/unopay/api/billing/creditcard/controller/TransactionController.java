@@ -37,6 +37,19 @@ public class TransactionController {
     @RequestMapping(value = "/transactions", method = RequestMethod.GET)
     public Results<Transaction> findTransactions(TransactionFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find transactions  with filter={}", filter);
+        return getTransactionResults(filter, pageable);
+    }
+
+    @JsonView(Views.Billing.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/transactions", method = RequestMethod.GET, params = "orderId")
+    public Results<Transaction> findTransactionsOnlyByOrderId(TransactionFilter filter,
+                                                              @Validated UnovationPageRequest pageable) {
+        log.info("find transactions  with filter={}", filter);
+        return getTransactionResults(filter, pageable);
+    }
+
+    private Results<Transaction> getTransactionResults(TransactionFilter filter, @Validated UnovationPageRequest pageable) {
         Page<Transaction> page = service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/transactions", api));

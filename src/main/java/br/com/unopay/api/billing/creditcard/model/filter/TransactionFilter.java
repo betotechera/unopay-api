@@ -1,5 +1,7 @@
 package br.com.unopay.api.billing.creditcard.model.filter;
 
+import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.model.Period;
 import br.com.unopay.api.repository.filter.SearchableField;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +17,12 @@ public class TransactionFilter implements Serializable {
 
     @SearchableField
     private List<String> orderId;
+
+    @SearchableField
+    private Period createDateTime;
+
+    @SearchableField
+    private TransactionStatus status;
 
 
     public List<String> getOrderId(){

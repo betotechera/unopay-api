@@ -37,6 +37,18 @@ public class BoletoController {
     @RequestMapping(value = "/boletos", method = RequestMethod.GET)
     public Results<Boleto> findBoletos(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos  with filter={}", filter);
+        return getBoletoResults(filter, pageable);
+    }
+
+    @JsonView(Views.Boleto.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/boletos", method = RequestMethod.GET, params = "orderId")
+    public Results<Boleto> findBoletosByOrderIdOnly(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find boletos  with filter={}", filter);
+        return getBoletoResults(filter, pageable);
+    }
+
+    private Results<Boleto> getBoletoResults(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         Page<Boleto> page = service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/boletos", api));
