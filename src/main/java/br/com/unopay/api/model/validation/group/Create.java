@@ -2,8 +2,7 @@ package br.com.unopay.api.model.validation.group;
 
 public interface Create {
 
-    interface Order {
-        interface Adhesion extends Order, Create{}
-
+    interface Order extends Create {
+        interface Adhesion extends Order{}
     }
 }

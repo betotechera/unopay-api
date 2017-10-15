@@ -1,6 +1,5 @@
 package br.com.unopay.api.billing.creditcard.model;
 
-import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,11 +23,11 @@ public class CreditCard implements Serializable {
     boolean cseEncrypted = false;
 
     @NotNull
-    @Pattern(message = "invalid expiration month format", regexp = "\\d{1,2}", groups = {Create.class, Update.class})
+    @Pattern(message = "invalid expiration month format", regexp = "^([1-9]|[0-1][0-2])", groups = {Create.class, Update.class})
     private String expiryMonth;
 
     @NotNull
-    @Pattern(message = "invalid expiration year format", regexp = "\\d{4}", groups = {Create.class, Update.class})
+    @Pattern(message = "invalid expiration year format", regexp = "^(20[1-9][0-9])", groups = {Create.class, Update.class})
     private String expiryYear;
 
     @Length(min=3, max=50)

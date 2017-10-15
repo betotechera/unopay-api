@@ -9,11 +9,9 @@ import spock.lang.Unroll
 
 class PayzenResponseTranslatorTest extends FixtureApplicationTest {
 
-    @Unroll
-    'given a code #expedcodeCode should return authorized status'(){
+    def 'given a code AUTHORISED should return authorized status'(){
         given:
-        def code = expedcodeCode
-        def commonResponse = new CommonResponse() {{ setResponseCode(code) }}
+        def commonResponse = new CommonResponse() {{ setTransactionStatusLabel("AUTHORISED") }}
         def paymentResult = new CreatePaymentResponse.CreatePaymentResult() {{ setCommonResponse(commonResponse) }}
         def result = new ServiceResult(paymentResult, null)
 
@@ -22,10 +20,6 @@ class PayzenResponseTranslatorTest extends FixtureApplicationTest {
 
         then:
         status == TransactionStatus.CAPTURED
-
-        where:
-        _ | expedcodeCode
-        _ | 0
     }
 
     @Unroll
@@ -79,11 +73,9 @@ class PayzenResponseTranslatorTest extends FixtureApplicationTest {
         _ | 99
     }
 
-    @Unroll
-    'given a code #expedcodeCode should return denied status'(){
+    def'given a code REFUSED should return denied status'(){
         given:
-        def code = expedcodeCode
-        def commonResponse = new CommonResponse() {{ setResponseCode(code) }}
+        def commonResponse = new CommonResponse() {{ setTransactionStatusLabel("REFUSED") }}
         def paymentResult = new CreatePaymentResponse.CreatePaymentResult() {{ setCommonResponse(commonResponse) }}
         def result = new ServiceResult(paymentResult, null)
 
@@ -93,11 +85,5 @@ class PayzenResponseTranslatorTest extends FixtureApplicationTest {
         then:
         status == TransactionStatus.DENIED
 
-        where:
-        _ | expedcodeCode
-        _ | 1
-        _ | 42
-        _ | 43
-        _ | 26
     }
 }
