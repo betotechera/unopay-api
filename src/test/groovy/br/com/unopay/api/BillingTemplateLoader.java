@@ -70,7 +70,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
 
 
         Fixture.of(CreditCard.class).addTemplate("payzenCard", new Rule() {{
-            add("expiryMonth", random("08", "12", "02"));
+            add("expiryMonth", random("8", "12", "2"));
             add("expiryYear", random("2025", "2020", "2030"));
             add("holderName", firstName());
             add("number", random("36000000000008", "378282000000008"));
