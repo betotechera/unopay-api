@@ -55,7 +55,7 @@ public class ProductService {
     public void update(String id, Product product) {
         Product current = findById(id);
         validateReferences(product);
-        checkNameForUpdate(current, product);
+        checkName(current, product);
         current.updateMe(product);
         try {
             repository.save(current);
@@ -84,7 +84,7 @@ public class ProductService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private void checkNameForUpdate(Product current, Product product) {
+    private void checkName(Product current, Product product) {
         if(!Objects.equals(current.getName(), product.getName())) {
             checkName(product);
         }
