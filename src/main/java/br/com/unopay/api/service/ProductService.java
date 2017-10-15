@@ -8,6 +8,7 @@ import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.repository.ProductRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,11 @@ public class ProductService {
     public Product save(Product product) {
         try {
             product.validate();
+            checkName(product);
             validateReferences(product);
             return repository.save(product);
         }catch (DataIntegrityViolationException e){
-            log.info("Product with name={} or code={} already exists", product.getName(), product.getCode(), e);
+            log.info("Product with code={} already exists", product.getName(), product.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }
@@ -53,6 +55,7 @@ public class ProductService {
     public void update(String id, Product product) {
         Product current = findById(id);
         validateReferences(product);
+        checkNameForUpdate(current, product);
         current.updateMe(product);
         try {
             repository.save(current);
@@ -79,6 +82,18 @@ public class ProductService {
 
     public Page<Product> findByFilter(ProductFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private void checkNameForUpdate(Product current, Product product) {
+        if(!Objects.equals(current.getName(), product.getName())) {
+            checkName(product);
+        }
+    }
+
+    private void checkName(Product product) {
+        repository.findByName(product.getName()).ifPresent((ThrowingConsumer) -> {
+            throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
+        });
     }
 
     private void validateReferences(Product product) {

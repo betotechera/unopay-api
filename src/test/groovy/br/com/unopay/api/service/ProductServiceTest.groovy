@@ -1,6 +1,7 @@
 package br.com.unopay.api.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
@@ -32,11 +33,11 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'new product should be created'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-                        issuer = issuerUnderTest
-                        paymentRuleGroup = paymentRuleGroupUnderTest
-                    it }
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule(){{
+            add("accreditedNetwork", networkUnderTest)
+            add("issuer", issuerUnderTest)
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+        }})
 
         when:
         def result  = service.save(product)
@@ -47,11 +48,11 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'given product with same name should not be created'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            it }
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule(){{
+            add("accreditedNetwork", networkUnderTest)
+            add("issuer", issuerUnderTest)
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+        }})
 
         when:
         service.save(product)
@@ -64,11 +65,11 @@ class ProductServiceTest extends SpockApplicationTests {
 
     void 'given product with same code should not be created'(){
         given:
-        Product product = Fixture.from(Product.class).gimme("valid")
-                .with { accreditedNetwork = networkUnderTest
-            issuer = issuerUnderTest
-            paymentRuleGroup = paymentRuleGroupUnderTest
-            it }
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule(){{
+            add("accreditedNetwork", networkUnderTest)
+            add("issuer", issuerUnderTest)
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+        }})
 
         when:
         service.save(product)
