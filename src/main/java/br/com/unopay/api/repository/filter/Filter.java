@@ -23,7 +23,6 @@ import org.hibernate.jpa.criteria.path.SingularAttributePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.CollectionUtils;
 
 public class Filter<T> implements Specification<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Filter.class);
