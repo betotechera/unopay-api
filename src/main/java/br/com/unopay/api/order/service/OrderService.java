@@ -103,7 +103,9 @@ public class OrderService {
 
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        order.setPerson(currentUser.getContractor().getPerson());
+        if(currentUser.isContractorType()) {
+            order.setPerson(currentUser.getContractor().getPerson());
+        }
         return create(order);
     }
 
