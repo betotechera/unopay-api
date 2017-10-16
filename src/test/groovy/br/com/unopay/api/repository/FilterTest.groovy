@@ -78,6 +78,23 @@ class FilterTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(2)
+    }
+
+    def 'should return contracts in inclusive period'(){
+        given:
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme("withReferences", new Rule(){{
+            add("createdDateTime", instant("now"))
+        }})
+
+        def filter = new ContractFilter()
+        def endPeriodUnderTest = new Period(instant("1 day ago"), instant("today"))
+        filter.with { createdDateTime =  endPeriodUnderTest }
+
+        when:
+        def result = repository.findAll(filter)
+
+        then:
+        that result, hasSize(1)
 
     }
 

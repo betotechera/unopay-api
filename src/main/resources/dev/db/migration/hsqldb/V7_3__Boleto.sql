@@ -25,3 +25,4 @@ alter table payment_bank_account add our_number varchar(100) default '0000000' n
 alter table payment_bank_account add wallet_number varchar(100) default '000' not null;
 alter table payment_bank_account add beneficiary_code varchar(100) default '0000000' not null;
 alter table payment_bank_account add beneficiary_digit varchar(5) default '00' not null;
+alter table contract add created_date_time timestamp default SYSDATE() not null;

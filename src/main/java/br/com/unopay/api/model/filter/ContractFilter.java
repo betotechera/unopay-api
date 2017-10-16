@@ -53,6 +53,9 @@ public class ContractFilter  implements Serializable {
 
     @SearchableField(field = "end")
     private Period endPeriod;
+
+    @SearchableField
+    private Period createdDateTime;
     
 
 }

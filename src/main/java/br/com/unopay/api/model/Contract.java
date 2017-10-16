@@ -187,6 +187,10 @@ public class Contract implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "contract")
     private Set<ContractInstallment> contractInstallments;
 
+    @Column(name = "created_date_time")
+    @JsonView({Views.ContractorInstrumentCredit.List.class})
+    private Date createdDateTime;
+
     @JsonIgnore
     @Version
     private Integer version;
@@ -331,6 +335,7 @@ public class Contract implements Serializable {
         this.annuity = product.getAnnuity();
         this.membershipFee = product.getMembershipFee();
         this.paymentInstallments = product.getPaymentInstallments();
+        this.createdDateTime = new Date();
     }
 
     public BigDecimal installmentValue(){

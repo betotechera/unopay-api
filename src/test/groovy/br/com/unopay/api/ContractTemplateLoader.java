@@ -35,10 +35,11 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("begin", instant("now"));
             add("end", instant("2 days from now"));
             add("situation", ContractSituation.ACTIVE);
-            add("documentNumberInvoice", regex("\\d{4}\\w{15}"));
             add("annuity", random(BigDecimal.class, range(100,300)));
+            add("documentNumberInvoice", regex("\\d{4}\\w{15}"));
             add("membershipFee", random(BigDecimal.class, range(50,150)));
             add("paymentInstallments", random(Integer.class, range(2, 12)));
+            add("createdDateTime", instant("now"));
         }});
 
         Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule() {{
