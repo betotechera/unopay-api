@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.*
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository
 import br.com.unopay.api.infra.UnopayEncryptor

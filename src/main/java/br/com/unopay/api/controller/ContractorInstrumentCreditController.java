@@ -1,6 +1,6 @@
 package br.com.unopay.api.controller;
 
-import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;

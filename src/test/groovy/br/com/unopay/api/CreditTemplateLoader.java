@@ -9,11 +9,12 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.CreditSituation;
+import br.com.unopay.api.credit.model.InstrumentBalance;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.PaymentInstrumentSituation;
 import br.com.unopay.api.model.PaymentInstrumentType;
@@ -127,6 +128,12 @@ public class CreditTemplateLoader implements TemplateLoader {
                 .inherits("allFields", new Rule(){{
             add("contract", null);
             add("creditPaymentAccount", null);
+        }});
+
+        Fixture.of(InstrumentBalance.class).addTemplate("valid", new Rule(){{
+            add("paymentInstrument",one(PaymentInstrument.class, "valid"));
+            add("value",random(BigDecimal.class, range(21, 200)));
+            add("createdDateTime", instant("1 second from now"));
         }});
 
     }

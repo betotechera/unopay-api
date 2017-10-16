@@ -10,7 +10,7 @@ import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.InstrumentCreditSource
 import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.ContractorInstrumentCredit
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.PaymentInstrument
@@ -25,11 +25,9 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
-import org.apache.commons.beanutils.BeanUtils
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import spock.lang.Ignore
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {

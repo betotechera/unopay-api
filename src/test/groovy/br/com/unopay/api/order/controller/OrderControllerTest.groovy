@@ -2,7 +2,6 @@ package br.com.unopay.api.order.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderStatus

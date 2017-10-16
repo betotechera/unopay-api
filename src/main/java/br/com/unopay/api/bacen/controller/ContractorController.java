@@ -10,7 +10,7 @@ import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.ContractorInstrumentCredit;
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;

@@ -2,8 +2,6 @@ package br.com.unopay.api.credit.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.credit.model.CreditSituation
-import br.com.unopay.api.model.ContractorInstrumentCredit
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
 import spock.lang.Unroll
