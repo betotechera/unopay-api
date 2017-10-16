@@ -3,7 +3,7 @@ package br.com.unopay.api.billing.remittance.repository;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.RemittanceSituation;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
 

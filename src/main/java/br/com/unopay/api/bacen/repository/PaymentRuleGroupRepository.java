@@ -6,7 +6,7 @@ import br.com.unopay.api.bacen.model.Purpose;
 import br.com.unopay.api.bacen.model.Scope;
 import br.com.unopay.api.bacen.model.UserRelationship;
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
 

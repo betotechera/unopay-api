@@ -2,7 +2,7 @@ package br.com.unopay.api.repository;
 
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.filter.ContractFilter;
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
 

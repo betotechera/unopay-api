@@ -16,9 +16,10 @@ import br.com.unopay.api.bacen.repository.ServiceRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.Period
+
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
+import br.com.unopay.bootcommons.model.Period
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that

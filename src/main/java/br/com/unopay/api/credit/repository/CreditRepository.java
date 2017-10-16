@@ -4,7 +4,7 @@ import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
 import java.util.Set;
 

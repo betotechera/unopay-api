@@ -4,7 +4,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.ProductSituation;
-import br.com.unopay.api.repository.filter.SearchableField;
+import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.ToString;

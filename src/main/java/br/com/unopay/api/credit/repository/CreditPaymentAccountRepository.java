@@ -2,7 +2,7 @@ package br.com.unopay.api.credit.repository;
 
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.filter.CreditPaymentAccountFilter;
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
 

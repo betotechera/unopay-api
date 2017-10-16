@@ -2,8 +2,8 @@ package br.com.unopay.api.model.filter;
 
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.model.Period;
-import br.com.unopay.api.repository.filter.SearchableField;
+import br.com.unopay.bootcommons.model.Period;
+import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;

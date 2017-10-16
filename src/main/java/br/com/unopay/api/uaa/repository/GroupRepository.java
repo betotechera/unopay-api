@@ -1,8 +1,8 @@
 package br.com.unopay.api.uaa.repository;
 
-import br.com.unopay.api.repository.filter.UnovationFilterRepository;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.filter.GroupFilter;
+import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
