@@ -55,4 +55,10 @@ class InstrumentBalanceService {
         current.subtract(value);
         save(current);
     }
+
+    public InstrumentBalance findByInstrumentIdAndDocument(String instrumentId, String documentNumber) {
+        Optional<InstrumentBalance> balance = repository
+                                            .findByPaymentInstrumentIdAndDocumentNumber(instrumentId, documentNumber);
+        return balance.orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.INSTRUMENT_BALANCE_NOT_FOUND));
+    }
 }

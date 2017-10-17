@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface InstrumentBalanceRepository extends CrudRepository<InstrumentBalance, String>{
         Optional<InstrumentBalance> findByPaymentInstrumentId(String instrumentId);
+        Optional<InstrumentBalance> findByPaymentInstrumentIdAndDocumentNumber(String instrumentId, String document);
 }

@@ -183,6 +183,50 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
         comparator.compare(balance.updatedDateTime,new Date()) == 0
     }
 
+    def 'when find balance with known document and instrument should be found'(){
+        given:
+        def instrument = fixtureCreator.createInstrumentToProduct()
+        BigDecimal value = (Math.random() * 1000)
+
+        when:
+        service.add(instrument.id, value)
+
+        InstrumentBalance found = service.findByInstrumentIdAndDocument(instrument.id, instrument.documentNumber())
+
+        then:
+        found
+    }
+
+    def 'when find balance with unknown document and known instrument should not be found'(){
+        given:
+        def instrument = fixtureCreator.createInstrumentToProduct()
+        BigDecimal value = (Math.random() * 1000)
+
+        when:
+        service.add(instrument.id, value)
+
+        service.findByInstrumentIdAndDocument(instrument.id, '')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'INSTRUMENT_BALANCE_NOT_FOUND'
+    }
+
+    def 'when find balance with known document and unknown instrument should not be found'(){
+        given:
+        def instrument = fixtureCreator.createInstrumentToProduct()
+        BigDecimal value = (Math.random() * 1000)
+
+        when:
+        service.add(instrument.id, value)
+
+        service.findByInstrumentIdAndDocument('', instrument.documentNumber())
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'INSTRUMENT_BALANCE_NOT_FOUND'
+    }
+
     def 'when add value in unknown instrument should return error'(){
         when:
         service.add('', 20.0)

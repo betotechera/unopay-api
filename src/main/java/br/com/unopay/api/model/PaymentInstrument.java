@@ -140,6 +140,13 @@ public class PaymentInstrument implements Serializable, Updatable {
         return null;
     }
 
+    public String documentNumber(){
+        if(getContractor() != null){
+            return getContractor().getDocumentNumber();
+        }
+        return null;
+    }
+
     public void setCreatedDate(Date dateTime){
         this.createdDate = ObjectUtils.clone(dateTime);
     }
