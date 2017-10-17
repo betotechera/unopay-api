@@ -48,7 +48,7 @@ public interface Views {
 
     interface InstrumentBalance {
         interface Detail extends List {}
-        interface List {}
+        interface List extends PaymentInstrument.List {}
     }
 
     interface Credit {

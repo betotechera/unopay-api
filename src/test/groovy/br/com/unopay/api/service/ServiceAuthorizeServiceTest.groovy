@@ -70,6 +70,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         establishmentUnderTest = fixtureCreator.createEstablishment()
         establishmentEventUnderTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
                 instrumentCreditUnderTest.availableBalance)
+        instrumentBalanceService.add(instrumentCreditUnderTest.paymentInstrumentId, establishmentEventUnderTest.value)
     }
 
     void 'new service authorize should be created'() {
@@ -171,7 +172,6 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         serviceAuthorize.with {
             establishmentEvent.id = establishmentEventUnderTest.id
         }
-        instrumentBalanceService.add(instrumentCreditUnderTest.paymentInstrumentId, establishmentEventUnderTest.value)
         when:
         service.create(userUnderTest.email, serviceAuthorize)
 
@@ -345,6 +345,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             contractorInstrumentCredit = instrumentCredit
             contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                establishmentEventTest.value)
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -368,6 +370,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             contractorInstrumentCredit = instrumentCredit
             contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                establishmentEventTest.value)
 
         when:
         def created = service.create(userUnderTest.email, serviceAuthorize)
@@ -537,6 +541,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def instrumentCredit = createCreditInstrumentWithContract(establishmentContracts.find())
+        instrumentBalanceService.add(instrumentCredit.paymentInstrumentId, establishmentEventTest.value)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             contract = establishmentContracts.find()
@@ -619,6 +624,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentEvent = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         ServiceAuthorize serviceAuthorize = serviceAuthorizeWithoutPassword(userEstablishment, "1223456")
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                                                                            establishmentEvent.value)
         serviceAuthorize.establishmentEvent = establishmentEvent
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -639,7 +646,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             establishmentEvent = establishmentEventTest
             contractorInstrumentCredit.paymentInstrument.password = '123456'
         }
-
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                                                                        establishmentEventTest.value)
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
         def result = service.findById(created.id)
@@ -664,6 +672,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             contractorInstrumentCredit = instrumentCredit
             contractorInstrumentCredit.paymentInstrument.password = instrumentCredit.paymentInstrument.password
         }
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                establishmentEventTest.value)
 
         when:
         def created = service.create(userEstablishment.email, serviceAuthorize)
@@ -744,6 +754,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             contractorInstrumentCredit = instrumentCredit
             contractorInstrumentCredit.paymentInstrument.password = expectedPassword
         }
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                establishmentEventTest.value)
         when:
         service.create(userEstablishment.email, serviceAuthorize)
         def result = paymentInstrumentService.findById(instrumentCredit.paymentInstrument.id)
@@ -763,6 +775,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             establishmentEvent = establishmentEventTest
             contractorInstrumentCredit.paymentInstrument.password = expectedPassword
         }
+        instrumentBalanceService.add(serviceAuthorize.contractorInstrumentCredit.paymentInstrumentId,
+                establishmentEventTest.value)
 
         when:
         service.create(userEstablishment.email, serviceAuthorize)

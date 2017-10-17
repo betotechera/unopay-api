@@ -1,6 +1,7 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.credit.model.InstrumentBalance;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -17,10 +18,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -104,6 +107,10 @@ public class PaymentInstrument implements Serializable, Updatable {
     @Column(name = "gateway_token")
     @JsonView({Views.PaymentInstrument.Detail.class})
     private String gatewayToken;
+
+    @OneToOne(mappedBy = "paymentInstrument", fetch = FetchType.EAGER)
+    @JsonView({Views.PaymentInstrument.List.class})
+    private InstrumentBalance balance;
 
     @Version
     @JsonIgnore
