@@ -24,12 +24,16 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_VALUE;
 
 @Data
 @Entity
+@ToString(exclude = "paymentInstrument")
+@EqualsAndHashCode(of = {"id", "documentNumber"})
 @Table(name = "instrument_balance")
 public class InstrumentBalance  implements Serializable {
 
@@ -84,7 +88,7 @@ public class InstrumentBalance  implements Serializable {
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_VALUE);
         }
         if(this.value == null){
-            this.value = value;
+            this.value = Rounder.round(value);
             return;
         }
         this.value = Rounder.round(this.value.add(value));
