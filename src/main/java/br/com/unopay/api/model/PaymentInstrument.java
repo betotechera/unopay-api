@@ -10,6 +10,7 @@ import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -108,6 +109,7 @@ public class PaymentInstrument implements Serializable, Updatable {
     @JsonView({Views.PaymentInstrument.Detail.class})
     private String gatewayToken;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "paymentInstrument", fetch = FetchType.EAGER)
     @JsonView({Views.PaymentInstrument.List.class})
     private InstrumentBalance balance;

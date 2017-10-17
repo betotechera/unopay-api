@@ -8,6 +8,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
@@ -56,6 +57,7 @@ public class InstrumentBalance  implements Serializable {
     private String id;
 
     @OneToOne
+    @JsonBackReference
     @JoinColumn(name="payment_instrument_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.InstrumentBalance.Detail.class})
