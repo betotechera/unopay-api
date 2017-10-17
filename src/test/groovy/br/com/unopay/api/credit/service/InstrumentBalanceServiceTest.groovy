@@ -149,7 +149,7 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
         InstrumentBalance balance = service.findByInstrumentId(instrument.id)
 
         then:
-        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.secondOfDay())
+        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfDay())
         comparator.compare(balance.updatedDateTime,new Date()) == 0
     }
 
@@ -164,7 +164,7 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
         InstrumentBalance balance = service.findByInstrumentId(instrument.id)
 
         then:
-        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.secondOfDay())
+        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfDay())
         comparator.compare(balance.createdDateTime,new Date()) == 0
     }
 
@@ -179,7 +179,7 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
         InstrumentBalance balance = service.findByInstrumentId(instrument.id)
 
         then:
-        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.secondOfDay())
+        DateTimeComparator comparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfDay())
         comparator.compare(balance.updatedDateTime,new Date()) == 0
     }
 
