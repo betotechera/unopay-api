@@ -6,6 +6,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -85,7 +86,7 @@ public class InstrumentBalance  implements Serializable {
             this.value = value;
             return;
         }
-        this.value = this.value.add(value);
+        this.value = Rounder.round(this.value.add(value));
     }
 
     public void subtract(BigDecimal value) {
@@ -95,6 +96,6 @@ public class InstrumentBalance  implements Serializable {
         if(this.value == null || this.value.compareTo(value) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.BALANCE_LESS_THAN_REQUIRED);
         }
-        this.value = this.value.subtract(value);
+        this.value = Rounder.round(this.value.subtract(value));
     }
 }
