@@ -1,8 +1,10 @@
 create table instrument_balance (
     id VARCHAR(256) PRIMARY KEY,
     payment_instrument_id VARCHAR(256) not null,
+    document_number varchar(256) not null,
     value decimal(20,2) not null,
     created_date_time timestamp not null,
+    updated_date_time timestamp not null,
     version integer
 );
 

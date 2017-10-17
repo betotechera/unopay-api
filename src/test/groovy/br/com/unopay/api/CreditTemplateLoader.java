@@ -134,6 +134,8 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("value",random(BigDecimal.class, range(21, 200)));
             add("createdDateTime", instant("1 second from now"));
+            add("updatedDateTime", instant("1 second from now"));
+            add("documentNumber", cnpj());
         }});
 
     }

@@ -46,6 +46,11 @@ public interface Views {
         interface List {}
     }
 
+    interface InstrumentBalance {
+        interface Detail extends List {}
+        interface List {}
+    }
+
     interface Credit {
         interface Detail extends List{}
         interface List {}

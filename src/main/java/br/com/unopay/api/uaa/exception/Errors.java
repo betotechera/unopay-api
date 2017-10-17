@@ -541,6 +541,19 @@ public final class Errors {
     public static final UnovationError EXPIRATION_DAYS_REQUIRED =
             new UnovationError("EXPIRATION_DAYS_REQUIRED", "Expiration days required.");
 
+    /* Instrument Balance */
+    public static final UnovationError INSTRUMENT_BALANCE_NOT_FOUND =
+            new UnovationError("INSTRUMENT_BALANCE_NOT_FOUND", "Instrument balance not found.");
+    public static final UnovationError BALANCE_LESS_THAN_REQUIRED =
+            new UnovationError("BALANCE_LESS_THAN_REQUIRED", "Balance less than required.");
+    public static final UnovationError INVALID_VALUE =
+            new UnovationError("INVALID_VALUE", "Invalid value.");
+
+
+
+
+
+
 
 
 
