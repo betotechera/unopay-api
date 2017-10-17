@@ -45,6 +45,9 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     PaymentInstrumentService paymentInstrumentService
 
     @Autowired
+    InstrumentBalanceService instrumentBalanceService
+
+    @Autowired
     FixtureCreator fixtureCreator
 
     Contractor contractorUnderTest
@@ -196,6 +199,19 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         creditPaymentAccountService
                 .findById(instrumentCredit.creditPaymentAccount.id)
                 .availableBalance == Rounder.round(expectedPaymentAccountBalance)
+    }
+
+
+    def 'given a valid instrument credit when create should be increment instrument balance'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def expectedPaymentAccountBalance = instrumentCredit.value
+        when:
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        then:
+        instrumentBalanceService.findByInstrumentId(instrumentCredit.paymentInstrumentId)
+                .value == Rounder.round(expectedPaymentAccountBalance)
     }
 
     def 'when insert instrument credit then balance should be equals value'(){
@@ -556,6 +572,19 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
                             .availableBalance == Rounder.round(expectedPaymentAccountBalance)
     }
 
+    def 'when cancel credit should subtract credit of instrument balance'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+
+        when:
+        service.cancel(paymentInstrumentUnderTest.id, created.id)
+
+        then:
+        instrumentBalanceService.findByInstrumentId(instrumentCredit.paymentInstrumentId)
+                .value == 0.0
+    }
+
     def 'when cancel instrument credit already canceled should return error'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -599,6 +628,23 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         creditPaymentAccountService
                 .findById(instrumentCredit.creditPaymentAccount.id)
                 .availableBalance == Rounder.round(expectedPaymentAccountBalance)
+    }
+
+    def 'when cancel credit by contract should subtract all credit of instrument balances'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        def paymentAccount = creditPaymentAccountService.findById(instrumentCredit.creditPaymentAccount.id)
+        def expectedPaymentAccountBalance = paymentAccount.availableBalance
+        instrumentCredit = instrumentCredit.with { value = (expectedPaymentAccountBalance / 2); it }
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        service.insert(paymentInstrumentUnderTest.id, instrumentCredit.with { id = null; it })
+
+        when:
+        service.cancel(instrumentCredit.contract.id)
+
+        then:
+        instrumentBalanceService.findByInstrumentId(instrumentCredit.paymentInstrumentId)
+                .value == 0.0
     }
 
     def 'given a unknown contract should not be canceled'(){

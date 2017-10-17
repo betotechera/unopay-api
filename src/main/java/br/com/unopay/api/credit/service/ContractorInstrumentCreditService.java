@@ -42,18 +42,21 @@ public class ContractorInstrumentCreditService {
     private PaymentInstrumentService paymentInstrumentService;
     private CreditPaymentAccountService creditPaymentAccountService;
     private UserDetailService userDetailService;
+    private InstrumentBalanceService instrumentBalanceService;
 
     @Autowired
     public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository,
                                              ContractService contractService,
                                              PaymentInstrumentService paymentInstrumentService,
                                              CreditPaymentAccountService creditPaymentAccountService,
-                                             UserDetailService userDetailService) {
+                                             UserDetailService userDetailService,
+                                             InstrumentBalanceService instrumentBalanceService) {
         this.repository = repository;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.userDetailService = userDetailService;
+        this.instrumentBalanceService = instrumentBalanceService;
     }
 
     public ContractorInstrumentCredit findById(String id) {
@@ -78,8 +81,9 @@ public class ContractorInstrumentCreditService {
                 .findDigitalWalletByContractorDocument(order.getDocumentNumber()).orElse(null));
     }
 
+    @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
-        Contract contract = getReliableContract(paymentInstrumentId, instrumentCredit);
+        Contract contract = getValidContractorContract(paymentInstrumentId, instrumentCredit);
         instrumentCredit.validateMe(contract);
         setReferences(instrumentCredit);
         validateCreditPaymentAccount(instrumentCredit, contract);
@@ -88,6 +92,7 @@ public class ContractorInstrumentCreditService {
         if(instrumentCredit.creditSourceIsHirer()) {
             subtractPaymentAccountBalance(instrumentCredit);
         }
+        instrumentBalanceService.add(paymentInstrumentId, instrumentCredit.getValue());
         return repository.save(instrumentCredit);
     }
 
@@ -120,7 +125,7 @@ public class ContractorInstrumentCreditService {
         repository.save(instrumentCredit);
     }
 
-    private Contract getReliableContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
+    private Contract getValidContractorContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         PaymentInstrument paymentInstrument = paymentInstrumentService.findById(paymentInstrumentId);
         Contract contract = contractService
                               .getByIdAndContractorId(instrumentCredit.contractId(), paymentInstrument.contractorId());
@@ -170,6 +175,8 @@ public class ContractorInstrumentCreditService {
     private void cancelInstrumentCredit(ContractorInstrumentCredit instrumentCredit) {
         instrumentCredit.cancel();
         giveBackPaymentAccountBalance(instrumentCredit);
+        instrumentBalanceService.subtract(instrumentCredit.getPaymentInstrumentId(),
+                                                                    instrumentCredit.getValue());
         repository.save(instrumentCredit);
     }
 
