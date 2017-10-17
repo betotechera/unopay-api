@@ -125,7 +125,7 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
     def 'when add value in instrument with known balance should add value in balance'(){
         given:
         def instrument = fixtureCreator.createInstrumentToProduct()
-        BigDecimal value = (Math.random() * 1000)
+        BigDecimal value = Rounder.round(Math.random() * 1000)
         service.add(instrument.id, value)
 
         when:
@@ -134,7 +134,7 @@ class InstrumentBalanceServiceTest  extends SpockApplicationTests {
         InstrumentBalance balance = service.findByInstrumentId(instrument.id)
 
         then:
-        balance.value == Rounder.round(value + value)
+        balance.value == value + value
     }
 
     def 'when add value in instrument with known balance should update  updated date time'(){

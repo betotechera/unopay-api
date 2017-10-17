@@ -43,7 +43,7 @@ public class InstrumentBalance  implements Serializable {
 
     public InstrumentBalance(PaymentInstrument paymentInstrument, BigDecimal value){
         this.paymentInstrument = paymentInstrument;
-        this.value = value;
+        this.value = Rounder.round(value);
         this.documentNumber = paymentInstrument.getContractor().getDocumentNumber();
         this.createdDateTime = new Date();
         this.updatedDateTime = new Date();
