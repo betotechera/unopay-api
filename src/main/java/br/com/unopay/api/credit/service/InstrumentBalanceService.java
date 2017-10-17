@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-class InstrumentBalanceService {
+public class InstrumentBalanceService {
 
     private PaymentInstrumentService paymentInstrumentService;
     private InstrumentBalanceRepository repository;

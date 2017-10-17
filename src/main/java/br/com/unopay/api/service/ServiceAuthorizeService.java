@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
@@ -47,6 +48,7 @@ public class ServiceAuthorizeService {
     private PaymentInstrumentService paymentInstrumentService;
     private UnopayEncryptor encryptor;
     private EstablishmentEventService establishmentEventService;
+    private InstrumentBalanceService instrumentBalanceService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -56,7 +58,8 @@ public class ServiceAuthorizeService {
                                    ContractService contractService,
                                    PaymentInstrumentService paymentInstrumentService,
                                    UnopayEncryptor encryptor,
-                                   EstablishmentEventService establishmentEventService) {
+                                   EstablishmentEventService establishmentEventService,
+                                   InstrumentBalanceService instrumentBalanceService) {
         this.repository = repository;
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
@@ -65,6 +68,7 @@ public class ServiceAuthorizeService {
         this.paymentInstrumentService = paymentInstrumentService;
         this.encryptor = encryptor;
         this.establishmentEventService = establishmentEventService;
+        this.instrumentBalanceService = instrumentBalanceService;
     }
 
     @Transactional
@@ -75,9 +79,9 @@ public class ServiceAuthorizeService {
         ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(authorize);
         authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));
         authorize.setReferences(currentUser, instrumentCredit);
-        validateEvent(authorize);
+        checkEventAndDefineValue(authorize);
         authorize.setMeUp(instrumentCredit);
-        instrumentCreditService.subtract(instrumentCredit.getId(), authorize.getEventValue());
+        instrumentBalanceService.subtract(instrumentCredit.getPaymentInstrumentId(), authorize.getEventValue());
         authorize.setAuthorizationNumber(generateAuthorizationNumber(authorize));
         ServiceAuthorize authorized = repository.save(authorize);
         return authorized;
@@ -104,7 +108,7 @@ public class ServiceAuthorizeService {
 
     }
 
-    private void validateEvent(ServiceAuthorize serviceAuthorize) {
+    private void checkEventAndDefineValue(ServiceAuthorize serviceAuthorize) {
         EstablishmentEvent establishmentEvent =
                 establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
                         serviceAuthorize.establishmentEventId());
