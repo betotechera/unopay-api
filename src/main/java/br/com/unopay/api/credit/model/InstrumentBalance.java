@@ -88,7 +88,7 @@ public class InstrumentBalance  implements Serializable {
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_VALUE);
         }
         if(this.value == null){
-            this.value = Rounder.round(value);
+            this.value = value;
             return;
         }
         this.value = Rounder.round(this.value.add(value));
