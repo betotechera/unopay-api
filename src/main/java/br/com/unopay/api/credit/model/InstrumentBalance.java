@@ -58,7 +58,7 @@ public class InstrumentBalance  implements Serializable {
     private PaymentInstrument paymentInstrument;
 
     @Column(name = "value")
-    @JsonView({Views.InstrumentBalance.List.class})
+    @JsonView({Views.InstrumentBalance.List.class, Views.PaymentInstrument.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
 
