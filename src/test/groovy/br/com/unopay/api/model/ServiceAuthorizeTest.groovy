@@ -25,7 +25,7 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
         def quantity = quantityUnderTest
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("eventQuantity", quantity)
-            add("event", one(Event.class, "withoutRequestQuantity"))
+            add("event", one(Event.class, "withRequestQuantity"))
             add("eventValue", 55.0)
             add("paymentInstrument", paymentInstrument)
         }})
