@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
+import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Unroll
 
@@ -15,12 +16,12 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
     void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'(){
         given:
         def quantity = quantityUnderTest
-        Event event = Fixture.from(Event.class).gimme("withRequestQuantity")
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("eventQuantity", quantity)
+            add("event", one(Event.class, "withoutRequestQuantity"))
         }})
         when:
-        serviceAuthorize.validateEvent(event)
+        serviceAuthorize.validateEvent()
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -35,10 +36,19 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
 
     void 'given a event without request quantity when validate event quantity less than or equals zero should not return error'(){
         given:
+        InstrumentBalance balance = Fixture.from(InstrumentBalance.class).gimme("valid", new Rule(){{
+            add("value", 99.9)
+        }})
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                .gimme("valid", new Rule() {{
+            add("balance", balance)
+        }})
         def quantity = quantityUnderTest
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("event", one(Event.class, "withoutRequestQuantity"))
             add("eventQuantity", quantity)
+            add("eventValue", 55.0)
+            add("paymentInstrument", paymentInstrument)
         }})
         when:
         serviceAuthorize.validateEvent()
@@ -101,14 +111,18 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
 
     void 'given a event value greater than credit balance when validate event should return error'(){
         given:
-        ContractorInstrumentCredit creditUnderTest = Fixture.from(ContractorInstrumentCredit.class)
-                                                                        .gimme("allFields", new Rule() {{
-            add("availableBalance", 99.9)
+        InstrumentBalance balance = Fixture.from(InstrumentBalance.class).gimme("valid", new Rule(){{
+            add("value", 99.9)
         }})
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                                                                        .gimme("valid", new Rule() {{
+            add("balance", balance)
+        }})
+
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("event", one(Event.class, "withoutRequestQuantity"))
             add("eventValue", 100.0)
-            add("contractorInstrumentCredit", creditUnderTest)
+            add("paymentInstrument", paymentInstrument)
         }})
         when:
         serviceAuthorize.validateEvent()
@@ -120,14 +134,17 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
 
     void 'given a event value less than credit balance when validate event should not return error'(){
         given:
-        ContractorInstrumentCredit creditUnderTest = Fixture.from(ContractorInstrumentCredit.class)
-                .gimme("allFields", new Rule() {{
-            add("availableBalance", 100.0)
+        InstrumentBalance balance = Fixture.from(InstrumentBalance.class).gimme("valid", new Rule(){{
+            add("value", 100.0)
+        }})
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                .gimme("valid", new Rule() {{
+            add("balance", balance)
         }})
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("event", one(Event.class, "withoutRequestQuantity"))
             add("eventValue", 99.9)
-            add("contractorInstrumentCredit", creditUnderTest)
+            add("paymentInstrument", paymentInstrument)
         }})
         when:
         serviceAuthorize.validateEvent()

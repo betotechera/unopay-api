@@ -240,9 +240,9 @@ class FixtureCreator {
                 add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
-                add("contractorInstrumentCredit", credit)
+                add("paymentInstrument", credit.paymentInstrument)
                 add("establishment", establishment)
-                add("contractorInstrumentCredit.paymentInstrument.password", credit.paymentInstrument.password)
+                add("paymentInstrument.password", credit.paymentInstrument.password)
             }
         })
     }
@@ -258,10 +258,10 @@ class FixtureCreator {
                 add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
-                add("contractorInstrumentCredit", credit)
+                add("paymentInstrument", credit.paymentInstrument)
                 add("establishment", establishment)
                 add("batchClosingDateTime", new Date())
-                add("contractorInstrumentCredit.paymentInstrument.password", credit.paymentInstrument.password)
+                add("paymentInstrument.password", credit.paymentInstrument.password)
             }
         })
     }

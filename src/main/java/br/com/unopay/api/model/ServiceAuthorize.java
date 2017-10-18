@@ -127,9 +127,9 @@ public class ServiceAuthorize implements Serializable {
 
     @ManyToOne
     @NotNull(groups = {Reference.class})
-    @JoinColumn(name="contractor_inst_credit_id")
+    @JoinColumn(name="payment_instrument_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
-    private ContractorInstrumentCredit contractorInstrumentCredit;
+    private PaymentInstrument paymentInstrument;
 
     @Column(name = "last_inst_credit_balance")
     @JsonView({Views.ServiceAuthorize.Detail.class})
@@ -166,10 +166,6 @@ public class ServiceAuthorize implements Serializable {
     @JsonIgnore
     private Integer version;
 
-    @Transient
-    @JsonIgnore
-    private String operation = "1";
-
     public String contractId(){
         if(getContract() != null){
             return getContract().getId();
@@ -178,20 +174,17 @@ public class ServiceAuthorize implements Serializable {
     }
 
     public String instrumentPassword(){
-        if(getContractorInstrumentCredit() != null && getContractorInstrumentCredit().getPaymentInstrument() != null){
-            return getContractorInstrumentCredit().getPaymentInstrument().getPassword();
+        if(getPaymentInstrument() != null){
+            return getPaymentInstrument().getPassword();
         }
         return null;
     }
 
-    public void instrumentPassword(String password){
-        if(getContractorInstrumentCredit() == null){
-            setContractorInstrumentCredit(new ContractorInstrumentCredit());
+    public String instrumentId(){
+        if(getPaymentInstrument() != null){
+            return getPaymentInstrument().getId();
         }
-        if(getContractorInstrumentCredit().getPaymentInstrument() == null){
-            getContractorInstrumentCredit().setPaymentInstrument(new PaymentInstrument());
-        }
-        getContractorInstrumentCredit().getPaymentInstrument().setPassword(password);
+        return null;
     }
 
     public String establishmentId(){
@@ -208,21 +201,14 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
-    public String contractorInstrumentCreditId(){
-        if(getContractorInstrumentCredit() != null){
-            return getContractorInstrumentCredit().getId();
-        }
-        return null;
-    }
-
     public boolean withEstablishmentId(){
         return establishmentId() != null;
     }
 
-    public void setReferences(UserDetail currentUser, ContractorInstrumentCredit instrumentCredit) {
-        setContractorInstrumentCredit(instrumentCredit);
-        setContractor(instrumentCredit.getContract().getContractor());
-        setContract(instrumentCredit.getContract());
+    public void setReferences(UserDetail currentUser, PaymentInstrument paymentInstrument, Contract contract) {
+        setPaymentInstrument(paymentInstrument);
+        setContractor(contract.getContractor());
+        setContract(contract);
         setUser(currentUser);
     }
 
@@ -242,7 +228,7 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
-    public void validateEvent(Event event) {
+    public void validateEvent() {
         if(event != null && event.isRequestQuantity() && (eventQuantity == null || eventQuantity <= 0)){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
         }
@@ -251,18 +237,18 @@ public class ServiceAuthorize implements Serializable {
             log.info("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED {}", eventValue);
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
-        if(getContractorInstrumentCredit().getAvailableBalance().compareTo(eventValue) < 0){
+        if(getPaymentInstrument().getAvailableBalance().compareTo(eventValue) < 0){
             log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
-                    getContractorInstrumentCredit().getAvailableBalance(), eventValue);
+                    getPaymentInstrument().getAvailableBalance(), eventValue);
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
     }
 
-    public void setMeUp(ContractorInstrumentCredit instrumentCredit) {
+    public void setMeUp(PaymentInstrument paymentInstrument) {
         authorizationDateTime = new Date();
         solicitationDateTime = new Date();
-        setLastInstrumentCreditBalance(instrumentCredit.getAvailableBalance());
-        setCurrentInstrumentCreditBalance(instrumentCredit.getAvailableBalance().subtract(getEventValue()));
+        setLastInstrumentCreditBalance(paymentInstrument.getAvailableBalance());
+        setCurrentInstrumentCreditBalance(paymentInstrument.getAvailableBalance().subtract(getEventValue()));
         situation = TransactionSituation.AUTHORIZED;
     }
 
@@ -270,7 +256,7 @@ public class ServiceAuthorize implements Serializable {
         this.setEvent(establishmentEvent.getEvent());
         this.setServiceType(establishmentEvent.serviceType());
         this.setEventValue(establishmentEvent.getValue());
-        this.validateEvent(establishmentEvent.getEvent());
+        this.validateEvent();
         this.setValueFee(event.serviceFeeVal());
     }
 
@@ -300,7 +286,7 @@ public class ServiceAuthorize implements Serializable {
 
     @SneakyThrows
     public byte[] paymentInstrumentPasswordAsByte(){
-        return getContractorInstrumentCredit().getPaymentInstrument().getPassword().getBytes();
+        return getPaymentInstrument().getPassword().getBytes();
     }
 
     public void setAuthorizationDateTime(Date dateTime){

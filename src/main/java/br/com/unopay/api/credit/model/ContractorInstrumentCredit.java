@@ -216,13 +216,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         setSituation(CreditSituation.CANCELED);
     }
 
-    public boolean paymentInstrumentWithPassword(){
-        if(getPaymentInstrument() != null){
-            return paymentInstrument.hasPassword();
-        }
-        return false;
-    }
-
     public boolean contractIs(String contractId){
         if(getContract() != null) {
          return  Objects.equals(getContract().getId(), contractId);

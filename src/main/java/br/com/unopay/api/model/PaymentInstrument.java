@@ -14,7 +14,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -154,6 +156,20 @@ public class PaymentInstrument implements Serializable, Updatable {
             return getContractor().getDocumentNumber();
         }
         return null;
+    }
+
+    public BigDecimal getAvailableBalance(){
+        if(this.getBalance() != null){
+            return getBalance().getValue();
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public boolean productIs(String productId){
+        if(getProduct() != null) {
+            return  Objects.equals(getProduct().getId(), productId);
+        }
+        return false;
     }
 
     public void setCreatedDate(Date dateTime){

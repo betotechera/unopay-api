@@ -13,4 +13,5 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_INSTRUMENT_BALANCE'
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_INSTRUMENT_BALANCE', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_INSTRUMENT_BALANCE', '1');
-
+alter table service_authorize drop column contractor_inst_credit_id;
+alter table service_authorize add payment_instrument_id varchar(256) not null;

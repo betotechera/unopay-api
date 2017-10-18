@@ -24,8 +24,6 @@ public final class Errors {
             new UnovationError("FUEL_EVENT_NOT_FOUND","Fuel event not found.");
 
 
-
-
     /* service */
     public static final UnovationError
             SERVICE_NOT_FOUND = new UnovationError("SERVICE_NOT_FOUND","Service not found");
@@ -184,7 +182,6 @@ public final class Errors {
             new UnovationError("HIRER_DOCUMENT_NOT_FOUND","Hirer document not found");
 
 
-
     /* HirerBranch */
     public static final UnovationError PERSON_HIRER_BRANCH_ALREADY_EXISTS =
             new UnovationError("PERSON_HIRER_ALREADY_EXISTS","Person Hirer already exists");
@@ -204,10 +201,6 @@ public final class Errors {
             new UnovationError("CONTRACTOR_BIRTH_DATE_REQUIRED","Contractor birth date required.");
     public static final UnovationError INSTRUMENT_PASSWORD_REQUIRED =
             new UnovationError("INSTRUMENT_PASSWORD_REQUIRED","Contractor password required.");
-
-    public static final UnovationError RNTRC_REQUIRED_FOR_LEGAL_PERSON =
-            new UnovationError("RNTRC_REQUIRED_FOR_LEGAL_PERSON", "RNTRC is Required for legal person");
-
 
 
     /* Partner */
@@ -266,13 +259,10 @@ public final class Errors {
             new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_EVENT",
                     "Establishment not qualified for this event");
 
-
-
     /* brand flag */
     public static final UnovationError BRAND_FLAG_NOT_FOUND =
             new UnovationError("BRAND_FLAG_NOT_FOUND","Brand flag not found.");
-    public static final UnovationError BRAND_FLAG_ID_REQUIRED =
-            new UnovationError("BRAND_FLAG_ID_REQUIRED","Brand flag id is required.");
+
 
     /* contact */
     public static final UnovationError CONTACT_ID_REQUIRED =
@@ -287,11 +277,8 @@ public final class Errors {
             new UnovationError("CONTRACT_NOT_ACTIVATED","Contact not activated.");
     public static final UnovationError CONTRACT_NOT_IN_PROGRESS =
             new UnovationError("CONTRACT_NOT_IN_PROGRESS","Contact not in progress.");
-
     public static final UnovationError INVALID_CONTRACTOR =
             new UnovationError("INVALID_CONTRACTOR","Contractor does not belong to contract.");
-
-
 
 
     /* branch */
@@ -323,11 +310,9 @@ public final class Errors {
             new UnovationError("ESTABLISHMENT_ALREADY_IN_CONTRACT", "The establishment is already in the contract.");
     public static final UnovationError CODE_LENGTH_NOT_ACCEPTED =
             new UnovationError("CODE_LENGTH_NOT_ACCEPTED", "Code length not accepted.");
-
     public static final UnovationError CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT =
             new UnovationError("CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT",
                     "THe informed creditInsertionTypes has values that is not in the informed Product.");
-
     public static final UnovationError PRODUCT_REQUIRED =
             new UnovationError("PRODUCT_REQUIRED", "product required");
 
@@ -369,7 +354,6 @@ public final class Errors {
             new UnovationError("VALUE_GREATER_THEN_AVAILABLE_BALANCE","Value greater then available balance");
 
 
-
     /* credit payment instrument */
     public static final UnovationError PRODUCT_CODE_NOT_MET =
             new UnovationError("PRODUCT_CODE_NOT_MET", "Payment instrument product different of hirer product.");
@@ -404,8 +388,6 @@ public final class Errors {
             new UnovationError("EXPIRED_CREDIT","Expired credit.");
     public static final UnovationError CREDIT_UNAVAILABLE =
             new UnovationError("CREDIT_UNAVAILABLE","Credit unavailable.");
-    public static final UnovationError FINAL_SUPPLY_CREDIT_NOT_FOUND =
-            new UnovationError("FINAL_SUPPLY_CREDIT_NOT_FOUND","Credit for service type not found.");
 
     /* service authorize */
     public static final UnovationError ESTABLISHMENT_REQUIRED =
@@ -423,10 +405,6 @@ public final class Errors {
     public static final UnovationError SERVICE_NOT_ACCEPTABLE =
             new UnovationError("SERVICE_NOT_ACCEPTABLE",
                     "Service not acceptable.");
-
-    public static final UnovationError EVENT_NOT_ACCEPTED =
-            new UnovationError("EVENT_NOT_ACCEPTED",
-                    "Event not accepted.");
     public static final UnovationError EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED =
             new UnovationError("EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED",
                     "Event quantity greater than zero required");
@@ -436,20 +414,10 @@ public final class Errors {
     public static final UnovationError EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE =
             new UnovationError("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE",
                     "Event value greater than credit balance");
+    public static final UnovationError INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
+            new UnovationError("INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
+                    "Instrument not qualified for this contract");
 
-    /* freight receipt */
-    public static final UnovationError CARGO_CONTRACT_NOT_FOUND =
-            new UnovationError("CARGO_CONTRACT_NOT_FOUND",
-                    "Cargo contract not found.");
-    public static final UnovationError TRAVEL_DOCUMENT_NOT_FOUND =
-            new UnovationError("TRAVEL_DOCUMENT_NOT_FOUND",
-                    "Travel document not found.");
-    public static final UnovationError WEIGHT_REQUIRED =
-            new UnovationError("WEIGHT_REQUIRED", "Weight greater than or equals zero required.");
-    public static final UnovationError DAMAGED_ITEMS_REQUIRED =
-            new UnovationError("DAMAGED_ITEMS_REQUIRED", "Damaged items greater than or equals zero required.");
-    public static final UnovationError BASE_KEY_REQUIRED =
-            new UnovationError("BASE_KEY_REQUIRED", "Base key annotation required to translate fields.");
 
     /* batch closing */
     public static final UnovationError INVOICE_NOT_REQUIRED_FOR_BATCH =
@@ -484,11 +452,6 @@ public final class Errors {
             new UnovationError("RULE_COLUMN_REQUIRED", "Rule column required when fill cnab240 field.");
     public static final UnovationError LAYOUT_COLUMN_NOT_FILLED =
             new UnovationError("LAYOUT_COLUMN_NOT_FILLED", "Layout column not filled.");
-
-
-    /* Service Payment */
-    public static final UnovationError PROCESSING_REMITTANCE_ITEM_NOT_FOUND =
-            new UnovationError("PROCESSING_REMITTANCE_ITEM_NOT_FOUND", "Processing remittance item not found");
 
     /* Remittance */
     public static final UnovationError REMITTANCE_ALREADY_RUNNING =

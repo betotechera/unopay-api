@@ -1,6 +1,5 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
@@ -9,12 +8,14 @@ import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
+import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -71,24 +72,23 @@ public class ServiceAuthorizeService {
         this.instrumentBalanceService = instrumentBalanceService;
     }
 
+    private UserDetail getUserByEmail(String userEmail) {
+        return userDetailService.getByEmail(userEmail);
+    }
+
     @Transactional
     public ServiceAuthorize create(String userEmail, ServiceAuthorize authorize) {
         UserDetail currentUser = getUserByEmail(userEmail);
-        checkContract(authorize, currentUser);
+        Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
-        ContractorInstrumentCredit instrumentCredit = getValidContractorInstrumentCredit(authorize);
+        PaymentInstrument paymentInstrument = getValidContractorPaymentInstrument(authorize, contract);
         authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));
-        authorize.setReferences(currentUser, instrumentCredit);
+        authorize.setReferences(currentUser, paymentInstrument, contract);
         checkEventAndDefineValue(authorize);
-        authorize.setMeUp(instrumentCredit);
-        instrumentBalanceService.subtract(instrumentCredit.getPaymentInstrumentId(), authorize.getEventValue());
+        authorize.setMeUp(paymentInstrument);
+        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getEventValue());
         authorize.setAuthorizationNumber(generateAuthorizationNumber(authorize));
-        ServiceAuthorize authorized = repository.save(authorize);
-        return authorized;
-    }
-
-    private UserDetail getUserByEmail(String userEmail) {
-        return userDetailService.getByEmail(userEmail);
+        return repository.save(authorize);
     }
 
     private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
@@ -99,12 +99,12 @@ public class ServiceAuthorizeService {
         return authorizationNumber.substring(0, Math.min(authorizationNumber.length(), NUMBER_SIZE));
     }
 
-    private void checkContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
+    private Contract getValidContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
         serviceAuthorize.validateServiceType();
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
-        Establishment establishment = currentUser.myEstablishment().orElse(serviceAuthorize.getEstablishment());
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
-        contract.checkValidFor(serviceAuthorize.getContractor(), establishment);
+        contract.checkValidFor(serviceAuthorize.getContractor());
+        return contract;
 
     }
 
@@ -115,30 +115,25 @@ public class ServiceAuthorizeService {
         serviceAuthorize.setEventValues(establishmentEvent);
     }
 
-    private ContractorInstrumentCredit getValidContractorInstrumentCredit(ServiceAuthorize serviceAuthorize) {
-        ContractorInstrumentCredit instrumentCredit = instrumentCreditService
-                                                            .findById(serviceAuthorize.contractorInstrumentCreditId());
-        validateContractorPaymentCredit(serviceAuthorize, instrumentCredit);
-        instrumentCredit.validate();
-        updateValidPasswordWhenRequired(serviceAuthorize, instrumentCredit);
-        paymentInstrumentService
-                .checkPassword(instrumentCredit.getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
-        return instrumentCredit;
+    private PaymentInstrument getValidContractorPaymentInstrument(ServiceAuthorize serviceAuthorize, Contract contract){
+        PaymentInstrument instrument = paymentInstrumentService.findById(serviceAuthorize.instrumentId());
+        validateContractorInstrument(serviceAuthorize, instrument);
+        updateValidPasswordWhenRequired(serviceAuthorize, instrument, contract);
+        paymentInstrumentService.checkPassword(instrument.getId(), serviceAuthorize.instrumentPassword());
+        return instrument;
     }
 
-    private void validateContractorPaymentCredit(ServiceAuthorize serviceAuthorize,
-                                                 ContractorInstrumentCredit instrumentCredit) {
-        if (!instrumentCredit.contractIs(serviceAuthorize.contractId())) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
+    private void validateContractorInstrument(ServiceAuthorize serviceAuthorize, PaymentInstrument instrumentCredit){
+        if (!instrumentCredit.productIs(serviceAuthorize.getContract().getProduct().getId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
         }
     }
 
     private void updateValidPasswordWhenRequired(ServiceAuthorize serviceAuthorize,
-                                                 ContractorInstrumentCredit instrumentCredit) {
-        if (!instrumentCredit.paymentInstrumentWithPassword()) {
-            validateRequiredPasswordInformation(serviceAuthorize, instrumentCredit.getContract());
-            paymentInstrumentService.changePassword(instrumentCredit
-                    .getPaymentInstrumentId(), serviceAuthorize.instrumentPassword());
+                                                 PaymentInstrument paymentInstrument, Contract contract) {
+        if (!paymentInstrument.hasPassword()) {
+            validateRequiredPasswordInformation(serviceAuthorize, contract);
+            paymentInstrumentService.changePassword(paymentInstrument.getId(), serviceAuthorize.instrumentPassword());
         }
     }
 

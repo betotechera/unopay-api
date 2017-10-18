@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -30,7 +31,7 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("eventValue",random(BigDecimal.class, range(1, 20)));
             add("solicitationDateTime",instant("now"));
             add("creditInsertionType",random(CreditInsertionType.class));
-            add("contractorInstrumentCredit",one(ContractorInstrumentCredit.class, "allFields"));
+            add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("lastInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("currentInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("cancellationDateTime",instant("one day from now"));

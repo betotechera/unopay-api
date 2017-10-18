@@ -312,17 +312,9 @@ public class Contract implements Serializable {
                 .anyMatch(e -> Objects.equals(e.getId(),establishmentId));
     }
 
-    public void checkValidFor(Contractor contractor, Establishment establishment){
+    public void checkValidFor(Contractor contractor){
         validateActive();
         validateContractor(contractor);
-        checkEstablishmentRestriction(establishment.getId());
-    }
-
-    private void checkEstablishmentRestriction(String establishmentId) {
-        if(!meetsEstablishmentRestrictions(establishmentId)){
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
-        }
     }
 
     public void validateContractor(Contractor contractor){
