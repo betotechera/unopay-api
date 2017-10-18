@@ -15,10 +15,19 @@ class ServiceAuthorizeTest   extends FixtureApplicationTest {
     @Unroll
     void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'(){
         given:
+        InstrumentBalance balance = Fixture.from(InstrumentBalance.class).gimme("valid", new Rule(){{
+            add("value", 99.9)
+        }})
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                .gimme("valid", new Rule() {{
+            add("balance", balance)
+        }})
         def quantity = quantityUnderTest
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("eventQuantity", quantity)
             add("event", one(Event.class, "withoutRequestQuantity"))
+            add("eventValue", 55.0)
+            add("paymentInstrument", paymentInstrument)
         }})
         when:
         serviceAuthorize.validateEvent()
