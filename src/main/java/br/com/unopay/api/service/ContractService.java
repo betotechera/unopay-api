@@ -88,6 +88,7 @@ public class ContractService {
 
     @Transactional
     public Contract dealClose(Person person, String productCode){
+        checkContractor(person.documentNumber());
         Product product = productService.findByCode(productCode);
         Contractor contractor = contractorService.create(new Contractor(person));
         Hirer hirer = hirerService.findByDocumentNumber(product.getIssuer().documentNumber());
@@ -97,6 +98,11 @@ public class ContractService {
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor));
         return create(contract);
+    }
+
+    private void checkContractor(String documentNumber) {
+        Optional<Contractor> contractor = contractorService.getOptionalByDocument(documentNumber);
+        contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
     }
 
     public void update(String id, Contract contract) {
@@ -224,8 +230,6 @@ public class ContractService {
 
     private Contract getContract(Order order) {
         if (order.isType(OrderType.ADHESION)) {
-            Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
-            contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
             return dealClose(order.getPerson(), order.getProductCode());
         }
         Optional<Contract> contract = findByContractorAndProduct(order.getDocumentNumber(), order.getProductId());

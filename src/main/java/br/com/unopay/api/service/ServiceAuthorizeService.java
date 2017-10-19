@@ -1,6 +1,10 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
@@ -155,13 +159,9 @@ public class ServiceAuthorizeService {
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType()){
-            serviceAuthorize.setEstablishment(currentUser.getEstablishment());
-            return;
-        }
-        serviceAuthorize
-                .setEstablishment(establishmentService
-                        .findById(serviceAuthorize.establishmentId()));
+        Establishment establishment = currentUser.myEstablishment()
+                                            .orElse(establishmentService.findById(serviceAuthorize.establishmentId()));
+        serviceAuthorize.setEstablishment(establishment);
     }
 
     public ServiceAuthorize findById(String id) {
@@ -191,18 +191,10 @@ public class ServiceAuthorizeService {
         return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
     }
     private ServiceAuthorizeFilter buildFilterBy(ServiceAuthorizeFilter filter, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType()) {
-            filter.setEstablishment(currentUser.establishmentId());
-        }
-        if(currentUser.isContractorType()) {
-            filter.setContractor(currentUser.contractorId());
-        }
-        if(currentUser.isAccreditedNetworkType()) {
-            filter.setNetwork(currentUser.accreditedNetworkId());
-        }
-        if(currentUser.isHirerType()) {
-            filter.setHirer(currentUser.hirerId());
-        }
+        filter.setEstablishment(currentUser.myEstablishmentId());
+        filter.setContractor(currentUser.myContractorId());
+        filter.setNetwork(currentUser.myNetworkId());
+        filter.setHirer(currentUser.myHirerId());
         return filter;
     }
 

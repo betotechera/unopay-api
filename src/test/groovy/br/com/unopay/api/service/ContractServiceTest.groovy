@@ -132,18 +132,13 @@ class ContractServiceTest extends SpockApplicationTests {
         result.isPresent()
     }
 
-    def 'given a adhesion order for known contractor should return error'(){
+    def 'when deal close for known contractor should return error'(){
         given:
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         def contractor = fixtureCreator.createContractor()
-        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("person", contractor.person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-        }})
 
         when:
-        service.markInstallmentAsPaidFrom(order)
+        service.dealClose(contractor.person, product.code)
 
         then:
         def ex = thrown(ConflictException)

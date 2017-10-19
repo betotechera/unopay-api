@@ -227,6 +227,43 @@ public class UserDetail implements Serializable {
         }
         return Optional.empty();
     }
+
+    public Optional<Contractor> myContractor() {
+        if (isContractorType()) {
+            return Optional.ofNullable(getContractor());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<AccreditedNetwork> myNetWork() {
+        if (isAccreditedNetworkType()) {
+            return Optional.ofNullable(getAccreditedNetwork());
+        }
+        return Optional.empty();
+    }
+    public Optional<Hirer> myHirer() {
+        if (isAccreditedNetworkType()) {
+            return Optional.ofNullable(getHirer());
+        }
+        return Optional.empty();
+    }
+
+    public String myEstablishmentId() {
+        return myEstablishment().map(Establishment::getId).orElse(null);
+    }
+
+    public String myContractorId() {
+        return myContractor().map(Contractor::getId).orElse(null);
+    }
+
+    public String myHirerId() {
+        return myHirer().map(Hirer::getId).orElse(null);
+    }
+
+    public String myNetworkId() {
+        return myNetWork().map(AccreditedNetwork::getId).orElse(null);
+    }
+
     @JsonIgnore
     public boolean isIssuerType() {
         return issuer != null;

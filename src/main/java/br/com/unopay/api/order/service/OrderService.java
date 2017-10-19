@@ -103,6 +103,9 @@ public class OrderService {
 
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
+        if(!currentUser.isContractorType()) {
+            log.warn("INCONSISTENT USER={}", currentUser);
+        }
         if(currentUser.isContractorType()) {
             order.setPerson(currentUser.getContractor().getPerson());
         }
