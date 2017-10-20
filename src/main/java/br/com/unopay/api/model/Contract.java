@@ -276,13 +276,6 @@ public class Contract implements Serializable {
         return serviceTypes.stream().anyMatch(t -> t == serviceType);
     }
 
-    public BigDecimal productInstrumentIssuerFee(){
-        if(getProduct() !=null){
-            return getProduct().getPaymentInstrumentEmissionFee();
-        }
-        return null;
-    }
-
     public BigDecimal productCreditInsertFee(){
         if(getProduct() !=null){
             return getProduct().getCreditInsertionFee();
@@ -290,26 +283,12 @@ public class Contract implements Serializable {
         return null;
     }
 
-    public boolean withEstablishmentRestriction(){
-        return getEstablishments() != null && !getEstablishments().isEmpty();
-    }
-
-
     public boolean containsContractor(Contractor contractor) {
         return Objects.equals(this.contractor.getId(), contractor.getId());
     }
 
     public boolean valid(){
         return inProgress() && active();
-    }
-
-    public boolean meetsEstablishmentRestrictions(String establishmentId) {
-        return !withEstablishmentRestriction() || containsEstablishment(establishmentId);
-    }
-
-    public boolean containsEstablishment(String establishmentId) {
-       return establishments.stream()
-                .anyMatch(e -> Objects.equals(e.getId(),establishmentId));
     }
 
     public void checkValidFor(Contractor contractor){

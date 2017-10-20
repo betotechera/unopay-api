@@ -193,6 +193,7 @@ public class UserDetail implements Serializable {
         return "UserDetail{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
+                ", contractor='" + myContractor().map(Contractor::toString).orElse(null) + '\'' +
                 '}';
     }
 
