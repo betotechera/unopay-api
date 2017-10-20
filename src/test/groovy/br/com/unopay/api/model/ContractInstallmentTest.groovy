@@ -5,13 +5,14 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
+import org.joda.time.DateTime
 
 class ContractInstallmentTest extends FixtureApplicationTest {
 
     Date currentDate
 
     def setup(){
-        currentDate = new Date().parse('dd', '20')
+        currentDate = new DateTime().withDayOfMonth(20).toDate()
     }
 
     def 'when create from contract the value should be the annuity by payment installments'(){
@@ -61,7 +62,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
     def 'when increment expiration and today is after day 27 should be incremented with one month and at the end of the month'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
-        def currentDate =  new Date().parse('dd', '28')
+        def currentDate =  new DateTime().withDayOfMonth(28).toDate()
         when:
         def contractInstallment = new ContractInstallment(contract, currentDate)
         Date expiration = contractInstallment.expiration
@@ -84,7 +85,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
     def 'when increment expiration and today is before day 28 should be incremented with one month'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
-        def currentDate =  new Date().parse('dd', '27')
+        def currentDate =  new DateTime().withDayOfMonth(27).toDate()
 
         when:
         def contractInstallment = new ContractInstallment(contract,currentDate)
