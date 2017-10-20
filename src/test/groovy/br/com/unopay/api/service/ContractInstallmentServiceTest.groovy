@@ -9,6 +9,7 @@ import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
 
@@ -22,7 +23,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
     FixtureCreator fixtureCreator
 
     def setup(){
-        service.setCurrentDate(new Date().parse('dd', '28'))
+        service.setCurrentDate(new DateTime().withDayOfMonth(28).toDate())
     }
 
 
@@ -131,7 +132,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         given:
         BigDecimal membershipFee = 20.00
         def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
-        service.setCurrentDate(new Date().parse('dd', '28'))
+        service.setCurrentDate(new DateTime().withDayOfMonth(28).toDate())
         when:
         service.create(contract)
         Set<ContractInstallment> result = service.findByContractId(contract.id)
@@ -150,7 +151,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         given:
         BigDecimal membershipFee = 20.00
         def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
-        service.setCurrentDate(new Date().parse('dd', '27'))
+        service.setCurrentDate(new DateTime().withDayOfMonth(27).toDate())
         when:
         service.create(contract)
         Set<ContractInstallment> result = service.findByContractId(contract.id)
