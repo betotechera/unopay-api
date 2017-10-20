@@ -59,7 +59,7 @@ public class TransactionService {
         validate(transaction);
         Transaction created = save(transaction);
         gateway.createTransaction(created);
-        return created;
+        return save(created);
     }
 
     public Page<Transaction> findMyByFilter(String email, TransactionFilter filter, UnovationPageRequest pageable) {

@@ -53,7 +53,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     Establishment establishmentUnderTest
     EstablishmentEvent establishmentEventUnderTest
     PaymentInstrument paymentInstrumentUnderTest
-    DateTimeComparator timeComparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfDay())
+
 
     def setup() {
         contractUnderTest = fixtureCreator.createPersistedContract()

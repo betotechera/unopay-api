@@ -97,7 +97,11 @@ public class ContractService {
         contract.setContractor(contractor);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor));
-        return create(contract);
+        Contract created = create(contract);
+        if(!contract.withMembershipFee()) {
+            installmentService.markAsPaid(created.getId(), product.getInstallmentValue());
+        }
+        return contract;
     }
 
     private void checkContractor(String documentNumber) {
@@ -229,9 +233,6 @@ public class ContractService {
     }
 
     private Contract getContract(Order order) {
-        if (order.isType(OrderType.ADHESION)) {
-            return dealClose(order.getPerson(), order.getProductCode());
-        }
         Optional<Contract> contract = findByContractorAndProduct(order.getDocumentNumber(), order.getProductId());
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }

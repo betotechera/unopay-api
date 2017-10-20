@@ -21,6 +21,10 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    def setup(){
+        service.setCurrentDate(new Date().parse('dd', '28'))
+    }
+
 
     def 'given a contract with installments should mark as paid'(){
         given:
@@ -34,7 +38,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
         then:
         def installment = result.sort { it.installmentNumber }.find()
-        installment.paymentDateTime == Time.create()
+        timeComparator.compare(installment.paymentDateTime, new Date()) == 0
         installment.paymentValue == paid
     }
 
@@ -51,7 +55,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
         then:
         def installment = result.find { it.installmentNumber == 2 }
-        installment.paymentDateTime == Time.create()
+        timeComparator.compare(installment.paymentDateTime, new Date()) == 0
         installment.paymentValue == paid
     }
 
@@ -122,10 +126,31 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
     }
 
-    def 'given a valid contract should create the installments with expiration date with 30 days after the previous'(){
+    def """given a contract with membership fee and today is after day 27 should create the installments
+                    with expiration date with one month after the previous and at the end of the month"""(){
         given:
-        def contract = fixtureCreator.createPersistedContract()
+        BigDecimal membershipFee = 20.00
+        def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
+        service.setCurrentDate(new Date().parse('dd', '28'))
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
 
+        then:
+        !result.isEmpty()
+
+        result.sort { it.installmentNumber }.every {
+            timeComparator.compare(it.expiration, Time.createDateTime()
+                    .plusMonths(it.installmentNumber).dayOfMonth().withMaximumValue()) == 0
+        }
+    }
+
+    def """given a contract with membership fee and today is before day 28 should create
+            the installments with expiration date with one month after the previous"""(){
+        given:
+        BigDecimal membershipFee = 20.00
+        def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
+        service.setCurrentDate(new Date().parse('dd', '27'))
         when:
         service.create(contract)
         Set<ContractInstallment> result = service.findByContractId(contract.id)
@@ -133,9 +158,40 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         then:
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            it.expiration == Time.createDateTime()
-                    .plusMonths(it.installmentNumber - 1).dayOfMonth().withMaximumValue().toDate()
+            timeComparator.compare(it.expiration, Time.createDateTime()
+                    .plusMonths(it.installmentNumber)) == 0
         }
+    }
+
+    def 'given a contract without membership fee should create the first installment with now expiration date'(){
+        given:
+        BigDecimal membershipFee = null
+        def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
+
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        !result.isEmpty()
+        def installment = result.sort { it.installmentNumber }.find()
+        timeComparator.compare(installment.expiration, new Date()) == 0
+    }
+
+    def 'given a contract with membership fee should create the first installment after 30 days'(){
+        given:
+        BigDecimal membershipFee = 20.0
+        def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
+
+        when:
+        service.create(contract)
+        Set<ContractInstallment> result = service.findByContractId(contract.id)
+
+        then:
+        !result.isEmpty()
+        def installment = result.sort { it.installmentNumber }.find()
+        timeComparator.compare(installment.expiration,
+                Time.createDateTime().plusMonths(1).dayOfMonth().withMaximumValue()) == 0
     }
 
 

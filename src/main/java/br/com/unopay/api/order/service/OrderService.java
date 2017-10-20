@@ -142,11 +142,17 @@ public class OrderService {
                 notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
                 return;
             }
-            if(order.isType(INSTALLMENT_PAYMENT) || order.isType(ADHESION)){
+            if(order.isType(INSTALLMENT_PAYMENT)){
                 contractService.markInstallmentAsPaidFrom(order);
                 log.info("contract paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
                 notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+                return;
+            }
+            if(order.isType(ADHESION)){
+                contractService.dealClose(order.getPerson(), order.getProductCode());
+                log.info("adhesion paid for order={} type={} of value={}",
+                        order.getId(),order.getType(), order.getValue());
                 return;
             }
         }
@@ -165,6 +171,10 @@ public class OrderService {
     private void processAdhesionWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
             order.setContract(null);
+            if(order.productWithMembershipFee()){
+                order.setValue(order.getProductMembershipFee());
+                return;
+            }
             order.setValue(order.getProductInstallmentValue());
         }
     }

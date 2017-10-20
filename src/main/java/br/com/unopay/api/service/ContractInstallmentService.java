@@ -2,10 +2,7 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
-import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
-import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -14,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 import javax.transaction.Transactional;
-import org.joda.time.DateTime;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,21 +22,21 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FO
 public class ContractInstallmentService {
 
     private ContractInstallmentRepository repository;
+    @Setter private Date currentDate = new Date();
 
     @Autowired
     public ContractInstallmentService(ContractInstallmentRepository repository) {
         this.repository = repository;
     }
 
-
     @Transactional
     public void create(Contract contract) {
-        ContractInstallment firstInstallment = save(new ContractInstallment(contract));
+        ContractInstallment firstInstallment = save(new ContractInstallment(contract, currentDate));
         final Date[] previousDate = { firstInstallment.getExpiration() };
         final int[] previousNumber = { firstInstallment.getInstallmentNumber() };
         IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
-            ContractInstallment installment = new ContractInstallment(contract);
-            installment.plusExpiration(previousDate[0]);
+            ContractInstallment installment = new ContractInstallment(contract, currentDate);
+            installment.plusOneMonthInExpiration(previousDate[0]);
             installment.incrementNumber(previousNumber[0]);
             save(installment);
             previousDate[0] = installment.getExpiration();
@@ -85,9 +82,10 @@ public class ContractInstallmentService {
         Set<ContractInstallment> installments = findByContractId(contractId);
         ContractInstallment installment = installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
                 .sorted(Comparator.comparing(ContractInstallment::getInstallmentNumber))
-                .findFirst().orElseThrow(UnovationExceptions::unprocessableEntity);
+                .findFirst().orElseThrow(() ->
+                        UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_INSTALLMENT_NOT_FOUND));
         installment.setPaymentValue(paid);
-        installment.setPaymentDateTime(Time.create());
+        installment.setPaymentDateTime(new Date());
         update(installment.getId(), installment);
     }
 }

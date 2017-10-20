@@ -133,7 +133,6 @@ public class Product implements Serializable, Updatable {
     private ProductSituation situation;
 
     @Column(name = "membership_fee")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal membershipFee;
 

@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -34,15 +35,17 @@ public class ContractInstallment implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
     public static final int ONE_INSTALLMENT = 1;
+    public static final int END_OF_FEBRUARY = 28;
 
     public ContractInstallment(){}
 
-    public ContractInstallment(Contract contract) {
+    public ContractInstallment(Contract contract, Date currentDate) {
         this.value = contract.getAnnuity()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_UP);
-        this.expiration = Time.createDateTime().dayOfMonth().withMaximumValue().toDate();
+        this.currentDate = currentDate;
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;
+        defineExpiration(contract);
     }
 
     @Id
@@ -86,12 +89,29 @@ public class ContractInstallment implements Serializable, Updatable {
     @JsonIgnore
     private Integer version;
 
-    public void plusExpiration(Date previousMonth) {
-        this.expiration = Time.createDateTime(previousMonth)
-                .plusMonths(1).dayOfMonth().withMaximumValue().toDate();
+
+    @Transient
+    @JsonIgnore
+    private Date currentDate = new Date();
+
+    public void plusOneMonthInExpiration(Date previousMonth) {
+        if(new DateTime(currentDate).getDayOfMonth() >= END_OF_FEBRUARY) {
+            this.expiration = Time.createDateTime(previousMonth)
+                    .plusMonths(installmentNumber).dayOfMonth().withMaximumValue().toDate();
+            return;
+        }
+        this.expiration = Time.createDateTime(previousMonth).plusMonths(installmentNumber).toDate();
     }
 
     public void incrementNumber(Integer previousNumber) {
         this.installmentNumber = previousNumber + ONE_INSTALLMENT;
+    }
+
+    private void defineExpiration(Contract contract) {
+        if(contract.withMembershipFee()) {
+            plusOneMonthInExpiration(new Date());
+            return;
+        }
+        this.expiration = new Date();
     }
 }

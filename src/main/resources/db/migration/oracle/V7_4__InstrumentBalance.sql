@@ -16,3 +16,4 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_INS
 
 alter table service_authorize drop column contractor_inst_credit_id;
 alter table service_authorize add payment_instrument_id varchar(256) not null;
+alter table product modify membership_fee null;

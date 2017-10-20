@@ -313,4 +313,8 @@ public class Contract implements Serializable {
         return getContractInstallments().stream()
                 .findFirst().map(ContractInstallment::getValue).orElse(null);
     }
+
+    public boolean withMembershipFee() {
+        return this.membershipFee != null;
+    }
 }

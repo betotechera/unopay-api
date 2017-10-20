@@ -9,7 +9,7 @@ create table product (
     credit_insertion_type varchar(100) not null,
     payment_instrument_valid_days integer not null,
     situation varchar(50) not null,
-    membership_fee decimal(20,2) not null,
+    membership_fee decimal(20,2),
     credit_insertion_fee decimal(20,2) not null,
     pay_inst_emission_fee decimal(20,2) not null,
     pay_inst_second_copy_fee decimal(20,2) not null,

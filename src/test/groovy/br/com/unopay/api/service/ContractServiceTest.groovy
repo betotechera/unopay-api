@@ -100,7 +100,7 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
-    void 'should create from person and product'(){
+    void 'given valid person and product should deal close'(){
         given:
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
@@ -110,26 +110,6 @@ class ContractServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
-    }
-
-    def 'given a adhesion order should deal close'(){
-        given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
-
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-
-        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("person", person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-        }})
-
-        when:
-        service.markInstallmentAsPaidFrom(order)
-        def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
-
-        then:
-        result.isPresent()
     }
 
     def 'when deal close for known contractor should return error'(){
@@ -146,55 +126,28 @@ class ContractServiceTest extends SpockApplicationTests {
     }
 
 
-    def 'given a adhesion order should mark first contract installment as paid'(){
-        given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
-
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-
-        Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("person", person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-        }})
-
-        when:
-        service.markInstallmentAsPaidFrom(order)
-        def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
-
-        then:
-        result.get().contractInstallments.find {
-            it.installmentNumber == 1
-        }.paymentDateTime == Time.create()
-    }
-
     def 'given a installment payment order should mark next contract installment as paid'(){
         given:
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
-        Order initialOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("person", person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-        }})
-
         Order order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("person", person)
             add("product", product)
             add("type", OrderType.INSTALLMENT_PAYMENT)
         }})
-        service.markInstallmentAsPaidFrom(initialOrder)
+        service.dealClose(person, product.code)
 
         when:
         service.markInstallmentAsPaidFrom(order)
         def result = service.findByContractorAndProduct(person.documentNumber(), product.id)
 
         then:
-        result.get().contractInstallments.find {
+        def installment = result.get().contractInstallments.find {
             it.installmentNumber == 2
-        }.paymentDateTime == Time.create()
+        }
+        timeComparator.compare(installment.paymentDateTime, new Date()) == 0
     }
 
     def 'given a installment payment order with unknown contract should return error'(){
@@ -294,6 +247,34 @@ class ContractServiceTest extends SpockApplicationTests {
 
         then:
         result != null
+    }
+
+    void 'given product with member ship fee when deal close should not mark installment as paid'(){
+        given:
+        BigDecimal memberShipFee = 20.0
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer(memberShipFee)
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        Contract contract =  service.dealClose(person, product.code)
+        def result  = installmentService.findByContractId(contract.getId())
+        then:
+        result.every { it.paymentDateTime == null && it.paymentValue == null}
+    }
+
+    void 'given product without member ship fee when deal close should mark first installment as paid'(){
+        given:
+        def memberShipFee = null
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer(memberShipFee)
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        Contract contract =  service.dealClose(person, product.code)
+        def result  = installmentService.findByContractId(contract.getId())
+        then:
+        def installment = result.sort { it.installmentNumber }.find()
+        timeComparator.compare(installment.paymentDateTime, new Date()) == 0
+        installment.paymentValue == product.installmentValue
     }
 
     void 'when deal close should create contractor payment instrument'(){

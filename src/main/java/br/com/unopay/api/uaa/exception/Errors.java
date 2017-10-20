@@ -294,6 +294,8 @@ public final class Errors {
             new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
     public static final UnovationError PRODUCT_ALREADY_EXISTS =
             new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
+
+
     /* Contract */
     public static final UnovationError CONTRACT_NOT_FOUND =
             new UnovationError("CONTRACT_NOT_FOUND","Contract not found.");
@@ -397,11 +399,6 @@ public final class Errors {
     public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
             new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Establishment not qualified for this contract.");
-
-    public static final UnovationError CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
-            new UnovationError("CREDIT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
-                    "Credit not qualified for this contract.");
-
     public static final UnovationError SERVICE_NOT_ACCEPTABLE =
             new UnovationError("SERVICE_NOT_ACCEPTABLE",
                     "Service not acceptable.");

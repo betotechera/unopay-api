@@ -8,7 +8,7 @@ alter table event add request_value char(1) default '1' not null;
 alter table payment_instrument add gateway_token varchar(256) null;
 alter table physical_person_detail add gender varchar(10) default 'MAN' not null;
 alter table contract add annuity decimal(*,2) default 100.50 not null;
-alter table contract add membership_fee decimal(*,2) default 20.20 not null;
+alter table contract add membership_fee decimal(*,2) null;
 alter table contract add payment_installments integer default 10 not null;
 
 create table establishment_event (

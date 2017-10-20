@@ -7,14 +7,12 @@ import eu.payzen.webservices.sdk.builder.PaymentBuilder;
 import eu.payzen.webservices.sdk.builder.request.CardRequestBuilder;
 import eu.payzen.webservices.sdk.builder.request.OrderRequestBuilder;
 import eu.payzen.webservices.sdk.builder.request.PaymentRequestBuilder;
-import static eu.payzen.webservices.sdk.Payment.create;
-
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static eu.payzen.webservices.sdk.Payment.create;
 
 @Component
 public class Payzen {

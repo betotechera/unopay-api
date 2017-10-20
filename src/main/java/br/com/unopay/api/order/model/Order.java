@@ -225,4 +225,15 @@ public class Order implements Updatable{
             this.paymentRequest.getCreditCard().normalize();
         }
     }
+
+    public boolean productWithMembershipFee() {
+        return this.product != null && this.product.getMembershipFee() != null;
+    }
+
+    public BigDecimal getProductMembershipFee() {
+        if(this.product != null){
+            return this.product.getMembershipFee();
+        }
+        return null;
+    }
 }

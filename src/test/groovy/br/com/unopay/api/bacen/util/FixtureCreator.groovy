@@ -129,8 +129,14 @@ class FixtureCreator {
         })
     }
 
+    Contract createPersistedContractWithMembershipFee(BigDecimal membershipFee){
+        createPersistedContract(createContractor(), createProduct(),
+                createHirer(), ContractSituation.ACTIVE, membershipFee)
+    }
+
     Contract createPersistedContract(contractor = createContractor(), Product product = createProduct(),
-                                     hirer = createHirer(), situation = ContractSituation.ACTIVE) {
+                                     hirer = createHirer(), situation = ContractSituation.ACTIVE,
+                                     BigDecimal membershipFee = (Math.random() * 100)) {
         Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("hirer", hirer)
@@ -138,6 +144,7 @@ class FixtureCreator {
                 add("product", product)
                 add("serviceTypes", product.serviceTypes)
                 add("situation", situation)
+                add("membershipFee", membershipFee)
             }
         })
     }
@@ -322,13 +329,15 @@ class FixtureCreator {
             add("service", serviceUnderTest)
         }})
     }
-    Product createProduct(PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup()) {
+    Product createProduct(PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),
+                          BigDecimal membershipFee = (Math.random() * 100)) {
         Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("paymentRuleGroup", paymentRuleGroupUnderTest)
+            add("membershipFee", membershipFee)
         }})
     }
 
-    Product crateProductWithSameIssuerOfHirer(){
+    Product crateProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
         def hirer = createHirer()
         Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
             add("document.number", hirer.documentNumber)
@@ -338,6 +347,7 @@ class FixtureCreator {
         }})
         Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issuer", issuer)
+            add("membershipFee", membershipFee)
         }})
         createCreditPaymentAccount(hirer.documentNumber, product)
         product

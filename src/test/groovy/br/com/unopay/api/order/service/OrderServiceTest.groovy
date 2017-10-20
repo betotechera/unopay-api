@@ -19,7 +19,6 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
-import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
@@ -340,10 +339,11 @@ class OrderServiceTest extends SpockApplicationTests{
     }
 
 
-    def 'given a adhesion order then the payment value should be product installment value'(){
+    def 'given a adhesion order for product without membership fee then the payment value should be product installment value'(){
         given:
+        BigDecimal membershipFee = null
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = fixtureCreator.createProduct()
+        def product = fixtureCreator.createProduct(fixtureCreator.createPaymentRuleGroup(), membershipFee)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -356,6 +356,25 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value == creditOrder.product.installmentValue
+    }
+
+    def 'given a adhesion order for product with membership fee then the payment value should be membership fee value'(){
+        given:
+        BigDecimal membershipFee = 25.0
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProduct(fixtureCreator.createPaymentRuleGroup(), membershipFee)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.value == membershipFee
     }
 
     def 'given a unknown contractor and ADHESION order without payment instrument should be created'(){
@@ -438,26 +457,6 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value == installmentUnderTest.value
-    }
-
-    def 'given a unknown contractor and adhesion order the order value should be equals product installment'(){
-        given:
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = contractUnderTest.product
-        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("person", person)
-            add("product", product)
-            add("type", OrderType.ADHESION)
-            add("contract", contractUnderTest)
-            add("paymentInstrument", null)
-            add("value", null)
-        }})
-        when:
-        def created = service.create(creditOrder)
-        Order result = service.findById(created.id)
-
-        then:
-        result.value == Rounder.round(product.annuity / product.paymentInstallments)
     }
 
     def 'given a unknown contractor and order without payment instrument should be created'(){
