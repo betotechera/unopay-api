@@ -13,6 +13,9 @@ public class ContractorFilter implements Serializable {
     @SearchableField(field = "person.document.number")
     private String documentNumber;
 
+    @SearchableField(field = "person.physicalPersonDetail.email")
+    private String email;
+
     @SearchableField(field = "person.name")
     private String personName;
 

@@ -153,6 +153,7 @@ public class OrderService {
                 contractService.dealClose(order.getPerson(), order.getProductCode());
                 log.info("adhesion paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
+                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
                 return;
             }
         }
