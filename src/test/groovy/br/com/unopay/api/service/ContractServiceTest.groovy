@@ -6,7 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
@@ -25,10 +24,12 @@ import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import groovy.transform.CompileStatic
-import static org.hamcrest.Matchers.hasSize
-import org.joda.time.DateTime
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ResourceLoader
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractServiceTest extends SpockApplicationTests {
@@ -50,6 +51,9 @@ class ContractServiceTest extends SpockApplicationTests {
 
     @Autowired
     ContractInstallmentService installmentService
+
+    @Autowired
+    ResourceLoader resourceLoader
 
     Hirer hirerUnderTest
     Contractor contractorUnderTest
@@ -106,7 +110,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        def result  = service.dealClose(person, product.code)
+        def result  = service.dealCloseWithIssuerAsHirer(person, product.code)
 
         then:
         assert result.id != null
@@ -118,7 +122,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def contractor = fixtureCreator.createContractor()
 
         when:
-        service.dealClose(contractor.person, product.code)
+        service.dealCloseWithIssuerAsHirer(contractor.person, product.code)
 
         then:
         def ex = thrown(ConflictException)
@@ -137,7 +141,7 @@ class ContractServiceTest extends SpockApplicationTests {
             add("product", product)
             add("type", OrderType.INSTALLMENT_PAYMENT)
         }})
-        service.dealClose(person, product.code)
+        service.dealCloseWithIssuerAsHirer(person, product.code)
 
         when:
         service.markInstallmentAsPaidFrom(order)
@@ -176,7 +180,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         Contract result  = service.findById(contract.getId())
 
         then:
@@ -189,7 +193,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         Contract result  = service.findById(contract.getId())
 
         then:
@@ -203,7 +207,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         UserDetail result  = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
 
         then:
@@ -216,7 +220,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         UserDetail result  = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
 
         then:
@@ -229,7 +233,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         Contract result  = service.findById(contract.getId())
 
         then:
@@ -242,11 +246,39 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         Contractor result  = contractorService.getById(contract.getContractor().getId())
 
         then:
         result != null
+    }
+
+
+    void 'given unknown hirer when deal close should create contract with product issuer how hirer'(){
+        given:
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        service.dealCloseWithIssuerAsHirer(person, product.code)
+        def result  = service.findByHirerDocument(product.getIssuer().documentNumber())
+
+        then:
+        that result, hasSize(1)
+    }
+
+    void 'given known hirer when deal close should create contract with him'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        service.dealClose(person, product.code, hirer.documentNumber)
+        def result  = service.findByHirerDocument(hirer.documentNumber)
+
+        then:
+        that result, hasSize(1)
     }
 
     void 'given product with member ship fee when deal close should not mark installment as paid'(){
@@ -256,7 +288,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         def result  = installmentService.findByContractId(contract.getId())
         then:
         result.every { it.paymentDateTime == null && it.paymentValue == null}
@@ -269,12 +301,38 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         def result  = installmentService.findByContractId(contract.getId())
         then:
         def installment = result.sort { it.installmentNumber }.find()
         timeComparator.compare(installment.paymentDateTime, new Date()) == 0
         installment.paymentValue == product.installmentValue
+    }
+
+    def'given known hirer should deal close from csv with persons in file'(){
+        given:
+        def hirerDocument = "75136542000195"
+        Fixture.from(Product.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("code", uniqueRandom("5102", "5105"))
+        }})
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+            add("document.number", hirerDocument)
+        }})
+
+        Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", person)
+        }})
+
+        Resource csv  = resourceLoader.getResource("classpath:/clients.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
+
+        when:
+        service.dealCloseFromCsv(hirerDocument, file)
+        def result = service.findByHirerDocument(hirerDocument)
+
+        then:
+        that result, hasSize(2)
     }
 
     void 'when deal close should create contractor payment instrument'(){
@@ -283,7 +341,7 @@ class ContractServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.dealClose(person, product.code)
+        Contract contract =  service.dealCloseWithIssuerAsHirer(person, product.code)
         List<PaymentInstrument> result  = instrumentService.findByContractorId(contract.getContractor().getId())
 
         then:

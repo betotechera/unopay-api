@@ -6,16 +6,11 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.filter.ContractorFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
-import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.PaymentInstrument
-import br.com.unopay.api.model.Person
-import br.com.unopay.api.model.Product
-import br.com.unopay.api.service.ContractService
-import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.ResourceLoader
 import org.springframework.data.domain.Page
 
 class ContractorServiceTest extends SpockApplicationTests {

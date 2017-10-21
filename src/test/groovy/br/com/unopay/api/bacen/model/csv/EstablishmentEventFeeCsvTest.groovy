@@ -6,7 +6,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 
-class EstablishmentEventFeeCsvTest   extends FixtureApplicationTest {
+class EstablishmentEventFeeCsvTest extends FixtureApplicationTest {
 
     def 'should create event fee'(){
         given:

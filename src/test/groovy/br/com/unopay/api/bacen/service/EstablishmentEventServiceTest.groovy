@@ -46,8 +46,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
             add("person", uniqueRandom(person.find(), person.last()))
         }})
 
-        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
-        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+        Resource csv  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
 
         when:
         service.createFromCsv(null, file)
@@ -71,8 +71,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
             add("person", uniqueRandom(person.find(), person.last()))
         }})
 
-        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
-        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+        Resource csv  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
 
         when:
         service.createFromCsv("60840055000131",file)
@@ -96,8 +96,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
             add("person", person)
         }})
 
-        Resource createPassword  = resourceLoader.getResource("classpath:/eventFee.csv")
-        MultipartFile file = new MockMultipartFile('file', createPassword.getInputStream())
+        Resource csv  = resourceLoader.getResource("classpath:/eventFee.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
 
         when:
         service.createFromCsv(null, file)
