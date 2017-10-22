@@ -21,6 +21,7 @@ import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.api.util.Time
+import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -333,6 +334,33 @@ class ContractServiceTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(2)
+    }
+
+    def'given known hirer and invalid person information should not be deal close from csv with persons in file'(){
+        given:
+        def hirerDocument = "75136542000195"
+        Fixture.from(Product.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("code", uniqueRandom("5102", "5105"))
+        }})
+
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+            add("document.number", hirerDocument)
+        }})
+
+        Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", person)
+        }})
+
+        Resource csv  = resourceLoader.getResource("classpath:/invalidClients.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
+
+        when:
+        service.dealCloseFromCsv(hirerDocument, file)
+
+        then:
+        def ex = thrown(BadRequestException)
+        assert ex.errors.any { it.logref == 'gender' }
+        assert ex.errors.any { it.logref == 'document' }
     }
 
     void 'when deal close should create contractor payment instrument'(){

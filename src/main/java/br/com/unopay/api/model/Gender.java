@@ -16,4 +16,8 @@ public enum Gender implements DescriptableEnum {
     public String getDescription() {
         return description;
     }
+
+    public static Gender fromPt(String gender){
+        return "M".equals(gender) ? WOMAN : MAN;
+    }
 }

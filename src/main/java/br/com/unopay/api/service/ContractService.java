@@ -12,12 +12,15 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.bootcommons.exception.BadRequestException;
+import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
@@ -27,12 +30,14 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -60,6 +65,7 @@ public class ContractService {
     private PaymentInstrumentService paymentInstrumentService;
     private UserDetailService userDetailService;
     private ContractInstallmentService installmentService;
+    private Validator validator;
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
@@ -67,7 +73,7 @@ public class ContractService {
                            ContractEstablishmentRepository contractEstablishmentRepository,
                            PaymentInstrumentService paymentInstrumentService,
                            UserDetailService userDetailService,
-                           ContractInstallmentService installmentService) {
+                           ContractInstallmentService installmentService, Validator validator) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -76,6 +82,7 @@ public class ContractService {
         this.paymentInstrumentService = paymentInstrumentService;
         this.userDetailService = userDetailService;
         this.installmentService = installmentService;
+        this.validator = validator;
     }
 
     public Contract create(Contract contract) {
@@ -115,6 +122,8 @@ public class ContractService {
         }
         return contract;
     }
+
+
 
     private Hirer getHirer(String hirerDocument, Product product) {
         if(hirerDocument != null) {
@@ -276,7 +285,12 @@ public class ContractService {
     @Transactional
     public void dealCloseFromCsv(String hirerDocument, MultipartFile file) {
         List<ContractorCsv> dealCloseCsvs = getDealCloseCsvs(file);
-        dealCloseCsvs.forEach(line -> dealClose(line.toPerson(), line.getProduct(), hirerDocument));
+        final int[] lineNumber = {0};
+        dealCloseCsvs.forEach(line -> {
+            lineNumber[0]++;
+            line.validate(validator, lineNumber[0]);
+            dealClose(line.toPerson(), line.getProduct(), hirerDocument);
+        });
     }
 
     private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
