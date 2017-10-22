@@ -31,7 +31,7 @@ public class BankAccountService {
         List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
         if(!notFounds.isEmpty()) {
             throw UnovationExceptions.notFound().withErrors(BANK_ACCOUNT_NOT_FOUND
-                    .withArguments(notFounds));
+                    .withOnlyArguments(notFounds));
         }
         return  bankAccounts;
     }
