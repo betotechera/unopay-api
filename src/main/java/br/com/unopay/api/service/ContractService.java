@@ -263,7 +263,16 @@ public class ContractService {
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
+    @Transactional
+    public void dealCloseFromCsvForCurrentUser(String email, MultipartFile file){
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        if(currentUser.isHirerType()) {
+            dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(null), file);
+        }
+    }
+
     @SneakyThrows
+    @Transactional
     public void dealCloseFromCsv(String hirerDocument, MultipartFile file) {
         List<ContractorCsv> dealCloseCsvs = getDealCloseCsvs(file);
         dealCloseCsvs.forEach(line -> dealClose(line.toPerson(), line.getProduct(), hirerDocument));

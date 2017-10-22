@@ -10,7 +10,6 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.GroupService
-import br.com.unopay.api.uaa.service.UserDetailService
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,8 +25,7 @@ class EstablishmentEventControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
-    @Autowired
-    UserDetailService userDetailService
+
     @Autowired
     GroupService groupService
 
