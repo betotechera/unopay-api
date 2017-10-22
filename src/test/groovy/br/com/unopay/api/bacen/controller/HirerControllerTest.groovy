@@ -2,13 +2,11 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -25,13 +23,10 @@ class HirerControllerTest extends AuthServerApplicationTests {
     private static final String HIRER_ENDPOINT = '/hirers?access_token={access_token}'
     private static final String HIRER_ID_ENDPOINT = '/hirers/{id}?access_token={access_token}'
 
-    @Autowired
-    private PaymentRuleGroupRepository repository
 
-    
     void 'should create hirer'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(postHirer(accessToken, getHirer()))
         then:
@@ -44,7 +39,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
 
     void 'known hirer should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postHirer(accessToken, getHirer())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -56,7 +51,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
 
     void 'known hirer should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postHirer(accessToken, getHirer())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -78,7 +73,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
 
     void 'known hirer should be found'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             Hirer hirer = getHirer()
             def mvcResult = this.mvc.perform(postHirer(accessToken, hirer)).andReturn()
             def location = getLocationHeader(mvcResult)
@@ -93,7 +88,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
 
     void 'known hirer should be found when find all'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(postHirer(accessToken, getHirer()))
 
             this.mvc.perform(post(HIRER_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
