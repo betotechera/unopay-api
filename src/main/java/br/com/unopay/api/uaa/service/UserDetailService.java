@@ -86,6 +86,7 @@ public class UserDetailService implements UserDetailsService {
 
     public UserDetail create(UserDetail user) {
         try {
+            checkUser(user);
             if(user.getPassword() != null) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
             }
@@ -104,6 +105,13 @@ public class UserDetailService implements UserDetailsService {
             throw UnovationExceptions.conflict()
                     .withErrors(Errors.USER_EMAIL_ALREADY_EXISTS.withOnlyArgument(user.getEmail()));
         }
+    }
+
+    private void checkUser(UserDetail user) {
+        Optional<UserDetail> byEmailOptional = getByEmailOptional(user.getEmail());
+        byEmailOptional.ifPresent((ThrowingConsumer)-> { throw UnovationExceptions.conflict()
+                .withErrors(Errors.USER_EMAIL_ALREADY_EXISTS.withOnlyArgument(user.getEmail()));
+        });
     }
 
     @Override

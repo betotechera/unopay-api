@@ -43,6 +43,7 @@ public class ContractorService {
 
     public Contractor create(Contractor contractor) {
         try {
+            checkContractor(contractor);
             if(contractor.withBankAccount()) {
                 bankAccountService.create(contractor.getBankAccount());
             }
@@ -55,6 +56,14 @@ public class ContractorService {
                             .withOnlyArgument(contractor.getDocumentNumber()));
 
         }
+    }
+
+    private void checkContractor(Contractor contractor) {
+        Optional<Contractor> contractorOptional = getOptionalByDocument(contractor.getDocumentNumber());
+        contractorOptional.ifPresent((ThrowingConsumer)-> {
+            throw UnovationExceptions.conflict().withErrors(PERSON_CONTRACTOR_ALREADY_EXISTS
+                .withOnlyArgument(contractor.getDocumentNumber()));
+        });
     }
 
     public Contractor getById(String id) {

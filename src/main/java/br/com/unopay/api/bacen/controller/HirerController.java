@@ -101,12 +101,12 @@ public class HirerController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
-    @RequestMapping(value = "/hirers/{id}/contracts", method = RequestMethod.POST,
+    @RequestMapping(value = "/hirers/{document}/contracts", method = RequestMethod.POST,
             consumes = "multipart/form-data")
-    public void createFromCsvById(@PathVariable  String id, @RequestParam MultipartFile file){
+    public void createFromCsvById(@PathVariable  String document, @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file {}", fileName);
-        contractService.dealCloseFromCsv(id, file);
+        contractService.dealCloseFromCsv(document, file);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

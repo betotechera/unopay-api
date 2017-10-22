@@ -87,6 +87,7 @@ public class ContractService {
 
     public Contract create(Contract contract) {
         try {
+            checkContract(contract);
             validateReferences(contract);
             contract.validate();
             contract.checkFields();
@@ -96,8 +97,18 @@ public class ContractService {
             return created;
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode(), e);
-            throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
+            throw UnovationExceptions.conflict()
+                    .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
         }
+    }
+
+    private void checkContract(Contract contract) {
+        Optional<Contract> contractOptional = findByContractorAndProduct(contract.getContractor().getDocumentNumber(),
+                contract.getProduct().getCode());
+        contractOptional.ifPresent((ThrowingConsumer)-> {
+            throw UnovationExceptions.conflict()
+                    .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
+        });
     }
 
     @Transactional
