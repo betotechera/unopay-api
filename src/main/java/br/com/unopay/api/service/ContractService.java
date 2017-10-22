@@ -32,6 +32,7 @@ import javax.transaction.Transactional;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -266,9 +267,7 @@ public class ContractService {
     @Transactional
     public void dealCloseFromCsvForCurrentUser(String email, MultipartFile file){
         UserDetail currentUser = userDetailService.getByEmail(email);
-        if(currentUser.isHirerType()) {
-            dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(null), file);
-        }
+        dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(""), file);
     }
 
     @SneakyThrows
