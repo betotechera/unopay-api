@@ -88,7 +88,7 @@ public class PaymentRuleGroupService {
         List<String> notFounds = ids.stream().filter(id -> !founds.contains(id)).collect(Collectors.toList());
         if(!notFounds.isEmpty()) {
             throw UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND
-                    .withArguments(notFounds));
+                    .withOnlyArguments(notFounds));
         }
         return  paymentRuleGroups;
     }

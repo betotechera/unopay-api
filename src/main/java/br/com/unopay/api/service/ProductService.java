@@ -67,12 +67,14 @@ public class ProductService {
 
     public Product findById(String id) {
         Optional<Product> product = repository.findById(id);
-        return product.orElseThrow(() -> UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND));
+        return product.orElseThrow(() ->
+                UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Product findByCode(String code) {
         Optional<Product> product = repository.findByCode(code);
-        return product.orElseThrow(() -> UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND));
+        return product.orElseThrow(() ->
+                UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND.withOnlyArgument(code)));
     }
 
     public void delete(String id) {

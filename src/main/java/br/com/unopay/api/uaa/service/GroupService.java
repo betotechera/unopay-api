@@ -191,7 +191,7 @@ public class GroupService {
                                             .filter(id -> !foundsIds.contains(id) ).collect(Collectors.toList());
         if(!notFoundIds.isEmpty()) {
             throw  UnovationExceptions.unprocessableEntity()
-                    .withErrors(UNKNOWN_GROUP_FOUND.withArguments(notFoundIds));
+                    .withErrors(UNKNOWN_GROUP_FOUND.withOnlyArguments(notFoundIds));
         }
     }
 }

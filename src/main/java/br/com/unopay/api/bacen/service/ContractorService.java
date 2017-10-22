@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.*;
+
 @Slf4j
 @Service
 public class ContractorService {
@@ -48,19 +50,23 @@ public class ContractorService {
             return repository.save(contractor);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person contractor already exists %s", contractor.getPerson()), e);
-            throw UnovationExceptions.conflict().withErrors(Errors.PERSON_CONTRACTOR_ALREADY_EXISTS);
+            throw UnovationExceptions.conflict()
+                    .withErrors(PERSON_CONTRACTOR_ALREADY_EXISTS
+                            .withOnlyArgument(contractor.getDocumentNumber()));
 
         }
     }
 
     public Contractor getById(String id) {
         Optional<Contractor> contractor = repository.findById(id);
-        return contractor.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Contractor getByDocument(String document) {
         Optional<Contractor> contractor = repository.findByPersonDocumentNumber(document);
-        return contractor.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_NOT_FOUND));
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(document)));
     }
 
     public Optional<Contractor> getOptionalByDocument(String document) {
@@ -77,7 +83,7 @@ public class ContractorService {
     public void delete(String id) {
         getById(id);
         if(hasUser(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.CONTRACTOR_WITH_USERS);
+            throw UnovationExceptions.conflict().withErrors(CONTRACTOR_WITH_USERS);
         }
         repository.delete(id);
     }

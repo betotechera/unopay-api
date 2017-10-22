@@ -74,13 +74,13 @@ public class PersonService {
             throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
         }
         Optional<Person> person =  repository.findById(id);
-        return person.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withArguments(id)));
+        return person.orElseThrow(()->UnovationExceptions.notFound().withErrors(PERSON_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Person findByDocument(String document) {
         Optional<Person> person = repository.findByDocumentNumber(document);
         return person.orElseThrow(()-> UnovationExceptions.notFound()
-                .withErrors(PERSON_NOT_FOUND.withArguments(document)));
+                .withErrors(PERSON_NOT_FOUND.withOnlyArgument(document)));
     }
 
     public Optional<Person> findOptionalByDocument(String document) {

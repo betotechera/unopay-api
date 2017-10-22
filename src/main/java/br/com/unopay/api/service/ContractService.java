@@ -89,7 +89,7 @@ public class ContractService {
             return created;
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode(), e);
-            throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
+            throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
         }
     }
 
@@ -125,7 +125,9 @@ public class ContractService {
 
     private void checkContractor(String documentNumber) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(documentNumber);
-        contractor.ifPresent(c -> { throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR); });
+        contractor.ifPresent(c -> {
+            throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR.withOnlyArgument(documentNumber));
+        });
     }
 
     public void update(String id, Contract contract) {

@@ -62,14 +62,15 @@ public class HirerService {
     public void delete(String id) {
         getById(id);
         if(hasUser(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS);
+            throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS.withOnlyArgument(id));
         }
         repository.delete(id);
     }
 
     public Hirer findByDocumentNumber(String documentNumber){
         Optional<Hirer> hirer = repository.findByPersonDocumentNumber(documentNumber);
-        return hirer.orElseThrow(()-> UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND));
+        return hirer.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND.withOnlyArgument(documentNumber)));
     }
 
     private Boolean hasUser(String id) {

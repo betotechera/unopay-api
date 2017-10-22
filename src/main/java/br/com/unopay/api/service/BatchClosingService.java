@@ -195,17 +195,20 @@ public class BatchClosingService {
     private void validateBatchClosing(BatchClosing batchClosing) {
         if(!batchClosing.getIssueInvoice()){
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(INVOICE_NOT_REQUIRED_FOR_BATCH.withArguments(batchClosing.getId()));
+                    .withErrors(INVOICE_NOT_REQUIRED_FOR_BATCH.withOnlyArgument(batchClosing.getId()));
         }
     }
 
     private void checkUserQualifiedForBatch(UserDetail currentUser, BatchClosing batchClosing) {
         if(currentUser.isIssuerType() && !batchClosing.myIssuerIs(currentUser.getIssuer())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.ISSUER_NOT_QUALIFIED_FOR_THIS_BATCH.withOnlyArgument(currentUser.issuerId()));
         }
         else {
             if(!batchClosing.myEstablishmentIs(currentUser.getEstablishment())){
-                throw UnovationExceptions.unprocessableEntity().withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH);
+                throw UnovationExceptions.unprocessableEntity()
+                        .withErrors(ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_BATCH
+                                .withOnlyArgument(currentUser.establishmentId()));
             }
         }
     }

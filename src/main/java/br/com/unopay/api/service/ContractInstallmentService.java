@@ -83,7 +83,8 @@ public class ContractInstallmentService {
         ContractInstallment installment = installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
                 .sorted(Comparator.comparing(ContractInstallment::getInstallmentNumber))
                 .findFirst().orElseThrow(() ->
-                        UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_INSTALLMENT_NOT_FOUND));
+                        UnovationExceptions.unprocessableEntity()
+                                .withErrors(CONTRACT_INSTALLMENT_NOT_FOUND.withArguments(contractId)));
         installment.setPaymentValue(paid);
         installment.setPaymentDateTime(new Date());
         update(installment.getId(), installment);

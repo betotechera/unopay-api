@@ -50,7 +50,7 @@ public class FilledRecord implements RemittanceRecord {
                 .map(Map.Entry::getKey).collect(Collectors.toSet());
         if(!unfilledKeys.isEmpty()){
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(LAYOUT_COLUMN_NOT_FILLED.withArguments(unfilledKeys));
+                    .withErrors(LAYOUT_COLUMN_NOT_FILLED.withOnlyArgument(unfilledKeys));
         }
     }
 }
