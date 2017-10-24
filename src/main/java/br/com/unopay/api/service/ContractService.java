@@ -311,6 +311,6 @@ public class ContractService {
     private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         return new CsvToBeanBuilder<ContractorCsv>(inputStreamReader)
-                .withType(ContractorCsv.class).build().parse();
+                .withType(ContractorCsv.class).withSeparator(';').build().parse();
     }
 }
