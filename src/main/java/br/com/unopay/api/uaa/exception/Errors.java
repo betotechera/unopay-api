@@ -279,6 +279,8 @@ public final class Errors {
             new UnovationError("CONTRACT_NOT_IN_PROGRESS","Contact not in progress.");
     public static final UnovationError INVALID_CONTRACTOR =
             new UnovationError("INVALID_CONTRACTOR","Contractor does not belong to contract.");
+    public static final UnovationError FILE_WIHOUT_LINES_OR_HEADER =
+            new UnovationError("FILE_WITHOUT_LINES_OR_HEADER","File without lines or header");
 
 
     /* branch */

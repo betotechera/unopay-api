@@ -51,6 +51,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_HIRER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
+import static br.com.unopay.api.uaa.exception.Errors.FILE_WIHOUT_LINES_OR_HEADER;
 
 @Timed
 @Slf4j
@@ -302,6 +303,9 @@ public class ContractService {
             line.validate(validator, lineNumber[0]);
             dealClose(line.toPerson(), line.getProduct(), hirerDocument);
         });
+        if(dealCloseCsvs.isEmpty()){
+            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
+        }
     }
 
     private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
