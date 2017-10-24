@@ -1,5 +1,7 @@
 package br.com.unopay.api.notification.engine;
 
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
@@ -18,9 +20,13 @@ public class MailValidator {
     }
 
     public boolean isValid(final String hex) {
-
         matcher = pattern.matcher(hex);
         return matcher.matches();
+    }
 
+    public void check(final String email){
+        if(email == null || email.isEmpty() || !isValid(email)){
+            throw UnovationExceptions.badRequest().withErrors(Errors.INVALID_EMAIL.withOnlyArgument(email));
+        }
     }
 }

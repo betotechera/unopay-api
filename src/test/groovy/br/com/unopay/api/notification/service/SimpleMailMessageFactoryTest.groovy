@@ -3,6 +3,7 @@ package br.com.unopay.api.notification.service
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.notification.model.Email
 import br.com.unopay.api.notification.model.EventType
+import br.com.unopay.bootcommons.exception.BadRequestException
 import org.springframework.beans.factory.annotation.Autowired
 
 import javax.mail.Message
@@ -46,7 +47,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
         factory.create(mail, content, eventType)
 
         then:
-        thrown IllegalArgumentException
+        thrown BadRequestException
     }
 
     def "given a email object without email to should return error"(){
@@ -57,7 +58,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
         factory.create(mail, content, eventType)
 
         then:
-        thrown IllegalArgumentException
+        thrown BadRequestException
     }
 
     def "given a email object with empty email to should return error"(){
@@ -68,7 +69,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
         factory.create(mail, content, eventType)
 
         then:
-        thrown IllegalArgumentException
+        thrown BadRequestException
     }
 
     def "given a email object with empty content to should return error"(){

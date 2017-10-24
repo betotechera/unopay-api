@@ -3,6 +3,7 @@ package br.com.unopay.api.uaa.service;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.InstitutionService;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.uaa.exception.Errors;
@@ -55,32 +56,40 @@ public class UserDetailService implements UserDetailsService {
 
     public static final String CONTRACTOR = "CONTRATADO";
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
-    @Autowired
+
     private UserDetailRepository userDetailRepository;
-
-    @Autowired
     private IssuerService issuerService;
-
-    @Autowired
     private AccreditedNetworkService accreditedNetworkService;
-
-    @Autowired
     private InstitutionService institutionService;
-
-    @Autowired
     private UserTypeRepository userTypeRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private GroupService groupService;
-
-    @Autowired
     private NotificationService notificationService;
+    private PasswordTokenService passwordTokenService;
+    private MailValidator mailValidator;
 
     @Autowired
-    private PasswordTokenService passwordTokenService;
+    public UserDetailService(UserDetailRepository userDetailRepository,
+                             IssuerService issuerService,
+                             AccreditedNetworkService accreditedNetworkService,
+                             InstitutionService institutionService,
+                             UserTypeRepository userTypeRepository,
+                             PasswordEncoder passwordEncoder,
+                             GroupService groupService,
+                             NotificationService notificationService,
+                             PasswordTokenService passwordTokenService,
+                             MailValidator mailValidator) {
+        this.userDetailRepository = userDetailRepository;
+        this.issuerService = issuerService;
+        this.accreditedNetworkService = accreditedNetworkService;
+        this.institutionService = institutionService;
+        this.userTypeRepository = userTypeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.groupService = groupService;
+        this.notificationService = notificationService;
+        this.passwordTokenService = passwordTokenService;
+        this.mailValidator = mailValidator;
+    }
 
     public UserDetailService(){}
 
@@ -109,6 +118,7 @@ public class UserDetailService implements UserDetailsService {
 
     private void checkUser(UserDetail user) {
         Optional<UserDetail> byEmailOptional = getByEmailOptional(user.getEmail());
+        this.mailValidator.check(user.getEmail());
         byEmailOptional.ifPresent((ThrowingConsumer)-> { throw UnovationExceptions.conflict()
                 .withErrors(Errors.USER_EMAIL_ALREADY_EXISTS.withOnlyArgument(user.getEmail()));
         });

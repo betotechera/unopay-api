@@ -8,6 +8,7 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
@@ -62,6 +63,7 @@ public class OrderService {
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
+    private MailValidator mailValidator;
 
     public OrderService(){}
 
@@ -74,7 +76,7 @@ public class OrderService {
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
                         UserDetailService userDetailService, Notifier notifier,
-                        NotificationService notificationService){
+                        NotificationService notificationService, MailValidator mailValidator){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
@@ -85,6 +87,7 @@ public class OrderService {
         this.userDetailService = userDetailService;
         this.notifier = notifier;
         this.notificationService = notificationService;
+        this.mailValidator = mailValidator;
     }
 
     public Order save(Order order) {
@@ -197,6 +200,9 @@ public class OrderService {
             contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
         }
         contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
+        if(order.isType(OrderType.ADHESION)) {
+            this.mailValidator.check(order.getPersonEmail());
+        }
     }
 
     private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {

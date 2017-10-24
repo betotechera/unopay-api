@@ -9,6 +9,10 @@ public final class Errors {
         throw new IllegalAccessError("Utility class");
     }
 
+    /* notification */
+    public static final UnovationError INVALID_EMAIL =
+            new UnovationError("INVALID_EMAIL","invalid email");
+
     /* event */
     public static final UnovationError
             TYPE_REQUIRED = new UnovationError("TYPE_REQUIRED","type required");
