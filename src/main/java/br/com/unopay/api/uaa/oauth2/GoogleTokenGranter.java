@@ -57,7 +57,7 @@ public class GoogleTokenGranter extends AbstractTokenGranter {
             throw new InvalidClientException("missing organization identifier for client");
         }
 
-        Optional<UserDetail> optional = userDetailRepository.findByEmail(profile.getEmail());
+        Optional<UserDetail> optional = userDetailRepository.findByEmailIgnoreCase(profile.getEmail());
         UserDetail user =  optional.orElseThrow(()->
                 new BadCredentialsException(
                         String.format("could not find user with google account %s",

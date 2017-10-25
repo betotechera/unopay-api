@@ -20,8 +20,6 @@ import br.com.unopay.api.uaa.repository.UserTypeRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -125,11 +123,11 @@ public class UserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String email) {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UsernameNotFoundException("bad credentials");
         }
-        Optional<UserDetail> userOptional = getByEmailOptional(username);
+        Optional<UserDetail> userOptional = getByEmailOptional(email);
         UserDetail user = userOptional.orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
 
         List<SimpleGrantedAuthority> authorities = user.toGrantedAuthorities(groupService.findUserGroups(user.getId()));
@@ -137,7 +135,7 @@ public class UserDetailService implements UserDetailsService {
             authorities = Collections.singletonList(new SimpleGrantedAuthority(CONTRACTOR_ROLE));
         }
         AuthUserContextHolder.setAuthUserId(user.getId());
-        return new User(username, user.getPassword(), authorities);
+        return new User(email, user.getPassword(), authorities);
     }
 
     public UserDetail getById(String id) {
@@ -172,7 +170,7 @@ public class UserDetailService implements UserDetailsService {
     }
 
     public Optional<UserDetail> getByEmailOptional(String email) {
-        return this.userDetailRepository.findByEmail(email);
+        return this.userDetailRepository.findByEmailIgnoreCase(email);
     }
 
     public Page<UserDetail> findByFilter(UserFilter userFilter, UnovationPageRequest pageable) {

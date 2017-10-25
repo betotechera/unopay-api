@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserDetailRepository extends UnovationFilterRepository<UserDetail,String, UserFilter> {
 
-    Optional<UserDetail> findByEmail(String email);
+    Optional<UserDetail> findByEmailIgnoreCase(String email);
     UserDetail findById(String id);
     Page<UserDetail> findByGroupsId(String id, Pageable pageable);
     Set<UserDetail> findByIdIn(Set<String> usersIds);
