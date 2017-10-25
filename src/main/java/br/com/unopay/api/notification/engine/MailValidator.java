@@ -25,7 +25,7 @@ public class MailValidator {
     }
 
     public void check(final String email){
-        if(email == null || email.isEmpty() || !isValid(email)){
+        if(email == null || email.isEmpty() || !isValid(email.toLowerCase())){
             throw UnovationExceptions.badRequest().withErrors(Errors.INVALID_EMAIL.withOnlyArgument(email));
         }
     }
