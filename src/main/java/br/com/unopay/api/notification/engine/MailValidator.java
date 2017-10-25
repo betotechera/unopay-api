@@ -20,12 +20,15 @@ public class MailValidator {
     }
 
     public boolean isValid(final String hex) {
-        matcher = pattern.matcher(hex);
-        return matcher.matches();
+        if(hex != null) {
+            matcher = pattern.matcher(hex.toLowerCase());
+            return matcher.matches();
+        }
+        return false;
     }
 
     public void check(final String email){
-        if(email == null || email.isEmpty() || !isValid(email.toLowerCase())){
+        if(email == null || email.isEmpty() || !isValid(email)){
             throw UnovationExceptions.badRequest().withErrors(Errors.INVALID_EMAIL.withOnlyArgument(email));
         }
     }
