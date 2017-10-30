@@ -102,7 +102,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         int number = 0
         excitations.every {
             number++;
-            it == Time.createDateTime().plusMonths(number).toDate()
+            timeComparator.compare(it,Time.createDateTime(currentDate).plusMonths(number)) == 0
         }
     }
 
@@ -117,7 +117,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def contractInstallment = new ContractInstallment(contract,currentDate)
 
         then:
-        timeComparator.compare(contractInstallment.expiration, new Date()) == 0
+        timeComparator.compare(contractInstallment.expiration, currentDate) == 0
     }
 
     def 'given a contract with membership fee when increment should create first installment with one month expiration'(){
@@ -132,7 +132,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
 
         then:
         timeComparator.compare(contractInstallment.expiration,
-                Time.createDateTime().plusMonths(1)) == 0
+                Time.createDateTime(currentDate).plusMonths(1)) == 0
     }
 
     def 'installment number should be incremented'(){

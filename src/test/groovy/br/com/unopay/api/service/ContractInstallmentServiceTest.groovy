@@ -151,7 +151,8 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         given:
         BigDecimal membershipFee = 20.00
         def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
-        service.setCurrentDate(new DateTime().withDayOfMonth(27).toDate())
+        def currentDate = new DateTime().withDayOfMonth(27).toDate()
+        service.setCurrentDate(currentDate)
         when:
         service.create(contract)
         Set<ContractInstallment> result = service.findByContractId(contract.id)
@@ -159,7 +160,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         then:
         !result.isEmpty()
         result.sort { it.installmentNumber }.every {
-            timeComparator.compare(it.expiration, Time.createDateTime()
+            timeComparator.compare(it.expiration, Time.createDateTime(currentDate)
                     .plusMonths(it.installmentNumber)) == 0
         }
     }
@@ -168,6 +169,8 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         given:
         BigDecimal membershipFee = null
         def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
+        def currentDate = new DateTime().withDayOfMonth(27).toDate()
+        service.setCurrentDate(currentDate)
 
         when:
         service.create(contract)
@@ -176,7 +179,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         then:
         !result.isEmpty()
         def installment = result.sort { it.installmentNumber }.find()
-        timeComparator.compare(installment.expiration, new Date()) == 0
+        timeComparator.compare(installment.expiration, currentDate) == 0
     }
 
     def 'given a contract with membership fee should create the first installment after 30 days'(){

@@ -109,9 +109,9 @@ public class ContractInstallment implements Serializable, Updatable {
 
     private void defineExpiration(Contract contract) {
         if(contract.withMembershipFee()) {
-            plusOneMonthInExpiration(new Date());
+            plusOneMonthInExpiration(currentDate);
             return;
         }
-        this.expiration = new Date();
+        this.expiration = currentDate;
     }
 }

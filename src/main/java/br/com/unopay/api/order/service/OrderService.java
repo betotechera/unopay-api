@@ -106,9 +106,6 @@ public class OrderService {
 
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        if(!currentUser.isContractorType()) {
-            log.warn("INCONSISTENT USER={}", currentUser);
-        }
         if(currentUser.isContractorType()) {
             order.setPerson(currentUser.getContractor().getPerson());
         }
@@ -192,7 +189,8 @@ public class OrderService {
         if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
             throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
         }
-        List<PaymentInstrument> instruments = paymentInstrumentService.findByContractorDocument(order.getDocumentNumber());
+        List<PaymentInstrument> instruments = paymentInstrumentService
+                                                                .findByContractorDocument(order.getDocumentNumber());
         if (!contractor.isPresent()) {
             order.setPaymentInstrument(null);
         }
