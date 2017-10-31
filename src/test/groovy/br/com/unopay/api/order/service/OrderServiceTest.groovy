@@ -341,7 +341,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a adhesion order for product without membership fee then the payment value should be product installment value'(){
         given:
-        BigDecimal membershipFee = null
+        BigDecimal membershipFee = fee
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def product = fixtureCreator.createProduct(fixtureCreator.createPaymentRuleGroup(), membershipFee)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -356,6 +356,11 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value == creditOrder.product.installmentValue
+
+        where:
+        _ | fee
+        _ | null
+        _ | 0
     }
 
     def 'given a adhesion order for product with membership fee then the payment value should be membership fee value'(){

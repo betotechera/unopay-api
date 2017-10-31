@@ -227,7 +227,8 @@ public class Order implements Updatable{
     }
 
     public boolean productWithMembershipFee() {
-        return this.product != null && this.product.getMembershipFee() != null;
+        return this.product != null && this.product.getMembershipFee() != null
+                && this.product.getMembershipFee().compareTo(BigDecimal.ZERO) !=0;
     }
 
     public BigDecimal getProductMembershipFee() {
