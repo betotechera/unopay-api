@@ -2,6 +2,7 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
@@ -61,6 +62,7 @@ public class OrderService {
     private PaymentInstrumentService paymentInstrumentService;
     private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
+    private HirerService hirerService;
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
     private MailValidator mailValidator;
@@ -75,7 +77,7 @@ public class OrderService {
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
-                        UserDetailService userDetailService, Notifier notifier,
+                        UserDetailService userDetailService, HirerService hirerService, Notifier notifier,
                         NotificationService notificationService, MailValidator mailValidator){
         this.repository = repository;
         this.personService = personService;
@@ -85,6 +87,7 @@ public class OrderService {
         this.paymentInstrumentService = paymentInstrumentService;
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
+        this.hirerService = hirerService;
         this.notifier = notifier;
         this.notificationService = notificationService;
         this.mailValidator = mailValidator;
@@ -121,11 +124,16 @@ public class OrderService {
         checkContractorRules(order);
         definePaymentValueWhenRequired(order);
         order.setCreateDateTime(new Date());
+        hirerService.findByDocumentNumber(order.getProduct().getIssuer().documentNumber());
         Order created = repository.save(order);
+        notifyOrder(order, created);
+        return created;
+    }
+
+    private void notifyOrder(Order order, Order created) {
         order.getPaymentRequest().setOrderId(order.getId());
         order.getPaymentRequest().setValue(order.getValue());
         notifier.notify(Queues.ORDER_CREATED, created);
-        return created;
     }
 
     private void definePaymentValueWhenRequired(Order order) {

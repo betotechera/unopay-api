@@ -372,11 +372,10 @@ class FixtureCreator {
 
     Order createOrder(Contract contract = createPersistedContract()){
         def contractor = createContractor("physical")
-        def product = createProduct()
-        def instrument = createInstrumentToProduct(product, contractor)
+        def instrument = createInstrumentToProduct(contract.product, contractor)
         return Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
-            add("product", product)
+            add("product", contract.product)
             add("contract", contract)
             add("type", OrderType.CREDIT)
             add("paymentInstrument", instrument)
