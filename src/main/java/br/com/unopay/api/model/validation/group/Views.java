@@ -139,7 +139,7 @@ public interface Views {
 
     interface ServiceAuthorize {
         interface Detail extends List {}
-        interface List {}
+        interface List extends Address{}
     }
 
     interface User {
