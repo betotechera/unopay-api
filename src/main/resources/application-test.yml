@@ -5,6 +5,13 @@ payment:
       shopKey: 4876228797067177
       mode: TEST
       endpointHost: secure.payzen.com.br
+  soap:
+      santander:
+        cobranca-online:
+          dlb-wsdl-location: classpath:wsdl/DLB/TicketEndpointService.wsdl
+          dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
+          ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
+          ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
 
 unopay:
   credit:

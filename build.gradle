@@ -179,3 +179,11 @@ sonarqube {
 		property 'sonar.exclusions', '**/*.html'
     }
 }
+
+/*wsdl2java{
+	wsdlsToGenerate = [
+			[ 'src/main/resources/wsdl/DLB/TicketEndpointService.wsdl'],
+			[ 'src/main/resources/wsdl/YMB/CobrancaEndpointService.wsdl']
+	]
+	generatedWsdlDir = file("$projectDir/generated")
+}*/

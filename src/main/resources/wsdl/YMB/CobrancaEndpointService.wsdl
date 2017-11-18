@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CobrancaEndpointService" targetNamespace="http://impl.webservice.ymb.app.bsbr.altec.com/" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:tns="http://impl.webservice.ymb.app.bsbr.altec.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://impl.webservice.ymb.app.bsbr.altec.com/" schemaLocation="CobrancaEndpointService_schema1.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="WebServiceException">
+    <part name="fault" element="tns:WebServiceException">
+    </part>
+  </message>
+  <message name="getVersionResponse">
+    <part name="parameters" element="tns:getVersionResponse">
+    </part>
+  </message>
+  <message name="consultaTituloResponse">
+    <part name="parameters" element="tns:consultaTituloResponse">
+    </part>
+  </message>
+  <message name="consultaTitulo">
+    <part name="parameters" element="tns:consultaTitulo">
+    </part>
+  </message>
+  <message name="registraTituloResponse">
+    <part name="parameters" element="tns:registraTituloResponse">
+    </part>
+  </message>
+  <message name="getVersion">
+    <part name="parameters" element="tns:getVersion">
+    </part>
+  </message>
+  <message name="registraTitulo">
+    <part name="parameters" element="tns:registraTitulo">
+    </part>
+  </message>
+  <portType name="CobrancaEndpoint">
+    <operation name="registraTitulo">
+      <input message="tns:registraTitulo" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/registraTituloRequest">
+    </input>
+      <output message="tns:registraTituloResponse" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/registraTituloResponse">
+    </output>
+      <fault name="WebServiceException" message="tns:WebServiceException" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/registraTitulo/Fault/WebServiceException">
+    </fault>
+    </operation>
+    <operation name="consultaTitulo">
+      <input message="tns:consultaTitulo" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/consultaTituloRequest">
+    </input>
+      <output message="tns:consultaTituloResponse" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/consultaTituloResponse">
+    </output>
+      <fault name="WebServiceException" message="tns:WebServiceException" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/consultaTitulo/Fault/WebServiceException">
+    </fault>
+    </operation>
+    <operation name="getVersion">
+      <input message="tns:getVersion" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/getVersionRequest">
+    </input>
+      <output message="tns:getVersionResponse" wsam:Action="http://impl.webservice.ymb.app.bsbr.altec.com/CobrancaEndpoint/getVersionResponse">
+    </output>
+    </operation>
+  </portType>
+  <binding name="CobrancaEndpointPortBinding" type="tns:CobrancaEndpoint">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="registraTitulo">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="WebServiceException">
+        <soap:fault name="WebServiceException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="consultaTitulo">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="WebServiceException">
+        <soap:fault name="WebServiceException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getVersion">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="CobrancaEndpointService">
+    <port name="CobrancaEndpointPort" binding="tns:CobrancaEndpointPortBinding">
+      <soap:address location="https://ymbcash.santander.com.br:443/ymbsrv/CobrancaEndpointService"/>
+    </port>
+  </service>
+</definitions>
