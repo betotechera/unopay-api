@@ -9,9 +9,9 @@ import static br.com.unopay.api.model.PersonType.PHYSICAL;
 
 public enum DocumentType{
 
-    CNPJ(LEGAL,"1"),
+    CNPJ(LEGAL,"2"),
     STATE_REGISTRATION(LEGAL,"0"),
-    CPF(PHYSICAL,"2"),
+    CPF(PHYSICAL,"1"),
     RNTRC("0"),
     PIS(PHYSICAL,"0"),
     CNH(PHYSICAL, "0"),

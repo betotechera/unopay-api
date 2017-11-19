@@ -82,6 +82,13 @@ public class PaymentBankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     private String ourNumber;
 
+
+    @Column(name = "station")
+    @JsonView({Views.BankAccount.class})
+    @Size(max = 7)
+    @NotNull(groups = {Create.class, Update.class})
+    private String station;
+
     @Size(max = 3)
     @Column(name = "wallet_number")
     @JsonView({Views.BankAccount.class})

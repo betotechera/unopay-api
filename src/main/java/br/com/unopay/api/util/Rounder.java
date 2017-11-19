@@ -7,7 +7,7 @@ public class Rounder {
     private Rounder(){}
 
     public static BigDecimal round(BigDecimal value){
-        return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return value.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     }
 
     public static BigDecimal zero(){
@@ -15,6 +15,6 @@ public class Rounder {
     }
 
     public static String roundToString(BigDecimal value){
-        return value.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        return value.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
     }
 }

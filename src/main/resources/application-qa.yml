@@ -12,6 +12,7 @@ payment:
         dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
         ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
         ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
+        enviroment: 'T'
 unopay:
   resetPassword:
         url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
