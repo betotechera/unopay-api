@@ -136,6 +136,10 @@ public class Person implements Serializable{
         return getDocument().getNumber();
     }
 
+    public String documentType(){
+        return getDocument().getType().getCode();
+    }
+
     @JsonIgnore
     public boolean isPhysical() {
         return PersonType.PHYSICAL.equals(this.type) && physicalPersonDetail != null;

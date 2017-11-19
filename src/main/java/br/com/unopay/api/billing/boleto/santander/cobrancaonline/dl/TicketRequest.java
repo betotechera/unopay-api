@@ -55,9 +55,14 @@ public class TicketRequest {
 
         public List<TicketRequest.Dados.Entry> getEntry() {
             if (entry == null) {
-                entry = new ArrayList<TicketRequest.Dados.Entry>();
+                entry = new ArrayList<>();
             }
             return this.entry;
+        }
+
+        public Dados entry(List<TicketRequest.Dados.Entry> entries){
+            this.entry = entries;
+            return this;
         }
 
         @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,6 +89,15 @@ public class TicketRequest {
 
             public void setValue(String value) {
                 this.value = value;
+            }
+
+            public Entry key(String key){
+                this.key = key;
+                return this;
+            }
+            public Entry value(String value){
+                this.value = value;
+                return this;
             }
 
         }
