@@ -168,8 +168,6 @@ task copyJacoco(type: Copy) {
 	}
 }
 
-afterReleaseBuild.dependsOn backupJar, copyJacoco
-
 test.finalizedBy('sonarqube')
 
 sonarqube {
