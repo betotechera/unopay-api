@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,7 @@ public class InstitutionController {
                 .body(created);
 
     }
+
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.GET)
@@ -59,6 +61,7 @@ public class InstitutionController {
         log.info("get Institution={}", id);
         return service.getById(id);
     }
+
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.PUT)
@@ -81,6 +84,33 @@ public class InstitutionController {
     public Results<Institution> getByParams(InstitutionFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Institution with filter={}", filter);
         Page<Institution> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/institutions", api));
+    }
+
+    @JsonView({Views.Institution.Detail.class})
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/institutions/me", method = RequestMethod.GET)
+    public Institution getMe(OAuth2Authentication authentication) {
+        log.info("get Institution={}", authentication.getName());
+        return service.getMe(authentication.getName());
+    }
+
+    @JsonView({Views.Institution.Detail.class})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/institutions/me", method = RequestMethod.PUT)
+    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Institution institution) {
+        log.info("updating institution={}", authentication.getName());
+        service.updateMe(authentication.getName(),institution);
+    }
+
+    @JsonView(Views.Institution.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/institutions", method = RequestMethod.GET, params = "currentUser")
+    public Results<Institution> getMeByParams(OAuth2Authentication authentication,
+                                              InstitutionFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search Institution with filter={}", filter);
+        Page<Institution> page =  service.findMeByFilter(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/institutions", api));
     }
