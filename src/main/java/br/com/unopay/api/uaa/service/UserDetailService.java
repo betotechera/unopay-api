@@ -207,6 +207,10 @@ public class UserDetailService implements UserDetailsService {
         return userDetailRepository.countByEstablishmentId(id) > 0;
     }
 
+    public Boolean hasHirer(String id) {
+        return userDetailRepository.countByHirerId(id) > 0;
+    }
+
     private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
         userDetailRepository.save(user);

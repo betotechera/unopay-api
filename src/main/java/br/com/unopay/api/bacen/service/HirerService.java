@@ -1,11 +1,13 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -17,21 +19,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_DOCUMENT_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
 
 @Slf4j
 @Service
 public class HirerService {
     private HirerRepository repository;
     private PersonService personService;
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
     private BankAccountService bankAccountService;
 
     @Autowired
     public HirerService(HirerRepository repository, PersonService personService,
-                        UserDetailRepository userDetailRepository, BankAccountService bankAccountService) {
+                        UserDetailService userDetailService, BankAccountService bankAccountService) {
         this.repository = repository;
         this.personService = personService;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.bankAccountService = bankAccountService;
     }
 
@@ -47,9 +50,19 @@ public class HirerService {
         }
     }
 
+    public Hirer getMe(String email) {
+        Hirer userHirer = getUserHirer(email);
+        return getById(userHirer.getId());
+    }
+
     public Hirer getById(String id) {
         Optional<Hirer> hirer = repository.findById(id);
         return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
+    }
+
+    public void updateMe(String email, Hirer hirer) {
+        Hirer userHirer = getUserHirer(email);
+        update(userHirer.getId(), hirer);
     }
 
     public void update(String id, Hirer hirer) {
@@ -61,7 +74,7 @@ public class HirerService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
+        if(userDetailService.hasHirer(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS.withOnlyArgument(id));
         }
         repository.delete(id);
@@ -73,12 +86,19 @@ public class HirerService {
                 UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND.withOnlyArgument(documentNumber)));
     }
 
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByHirerId(id) > 0;
+    public Page<Hirer> findMeByFilter(String email, HirerFilter filter, UnovationPageRequest pageable) {
+        Hirer userHirer = getUserHirer(email);
+        filter.setDocumentNumber(userHirer.getDocumentNumber());
+        return findByFilter(filter, pageable);
     }
-
     public Page<Hirer> findByFilter(HirerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private Hirer getUserHirer(String email) {
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        return currentUser.myHirer()
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
     }
 
 }

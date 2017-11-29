@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
+@PreAuthorize("#oauth2.isUser()")
 @Timed(prefix = "api")
 public class HirerController {
 
@@ -110,7 +111,6 @@ public class HirerController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/hirers/me/contracts", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createMyFromCsvById(OAuth2Authentication authentication,
@@ -118,6 +118,32 @@ public class HirerController {
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file={} for={}", fileName, authentication.getName());
         contractService.dealCloseFromCsvForCurrentUser(authentication.getName(), file);
+    }
+
+    @JsonView(Views.Hirer.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me", method = RequestMethod.GET)
+    public Hirer getMe(OAuth2Authentication authentication) {
+        log.info("get Hirer={}", authentication.getName());
+        return service.getMe(authentication.getName());
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me", method = RequestMethod.PUT)
+    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Hirer hirer) {
+        log.info("updating hirer={}", authentication.getName());
+        service.updateMe(authentication.getName(),hirer);
+    }
+
+    @JsonView(Views.Hirer.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers", method = RequestMethod.GET, params = "currentUser")
+    public Results<Hirer> getMeByParams(OAuth2Authentication authentication,
+                                        HirerFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search Hirer with filter={}", filter);
+        Page<Hirer> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers", api));
     }
 
 }
