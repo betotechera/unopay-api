@@ -207,12 +207,16 @@ public class UserDetailService implements UserDetailsService {
         return userDetailRepository.countByEstablishmentId(id) > 0;
     }
 
-    public Boolean hasHirer(String id) {
+    public boolean hasHirer(String id) {
         return userDetailRepository.countByHirerId(id) > 0;
     }
 
-    public Boolean hasInstitution(String id) {
+    public boolean hasInstitution(String id) {
         return userDetailRepository.countByInstitutionId(id) > 0;
+    }
+
+    public boolean hasPartner(String id) {
+        return userDetailRepository.countByPartnerId(id) > 0;
     }
 
     private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {

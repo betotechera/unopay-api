@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.filter.PartnerFilter;
 import br.com.unopay.api.bacen.repository.PartnerRepository;
@@ -7,13 +8,13 @@ import br.com.unopay.api.model.Product;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +25,24 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+
 @Slf4j
 @Service
 public class PartnerService {
     private PartnerRepository repository;
     private PersonService personService;
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
     private BankAccountService bankAccountService;
     private ProductService productService;
 
     @Autowired
     public PartnerService(PartnerRepository repository, PersonService personService,
-                          UserDetailRepository userDetailRepository, BankAccountService bankAccountService, ProductService productService) {
+                          UserDetailService userDetailService,
+                          BankAccountService bankAccountService, ProductService productService) {
         this.repository = repository;
         this.personService = personService;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.bankAccountService = bankAccountService;
         this.productService = productService;
     }
@@ -58,9 +62,19 @@ public class PartnerService {
         }
     }
 
+    public Partner getMe(String email) {
+        Partner userPartner = getUserPartner(email);
+        return getById(userPartner.getId());
+    }
+
     public Partner getById(String id) {
         Optional<Partner> partner = repository.findById(id);
         return partner.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND));
+    }
+
+    public void updateMe(String email, Partner partner) {
+        Partner userPartner = getUserPartner(email);
+        update(userPartner.getId(), partner);
     }
 
     public void update(String id, Partner partner) {
@@ -82,18 +96,26 @@ public class PartnerService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
+        if(userDetailService.hasPartner(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.PARTNER_WITH_USERS);
         }
         repository.delete(id);
     }
 
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByPartnerId(id) > 0;
+    public Page<Partner> findMeByFilter(String email, PartnerFilter filter, UnovationPageRequest pageable) {
+        Partner userPartner = getUserPartner(email);
+        filter.setDocumentNumber(userPartner.documentNumber());
+        return findByFilter(filter, pageable);
     }
 
     public Page<Partner> findByFilter(PartnerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private Partner getUserPartner(String email) {
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        return currentUser.myPartner()
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
     }
 
 }

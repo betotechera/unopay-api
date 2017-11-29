@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,6 +83,32 @@ public class PartnerController {
     public Results<Partner> getByParams(PartnerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Partner with filter={}", filter);
         Page<Partner> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/partners", api));
+    }
+
+    @JsonView(Views.Partner.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/partners/me", method = RequestMethod.GET)
+    public Partner getMe(OAuth2Authentication authentication) {
+        log.info("get Partner={}", authentication.getName());
+        return service.getMe(authentication.getName());
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/partners/me", method = RequestMethod.PUT)
+    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Partner partner) {
+        log.info("updating partner={}", partner);
+        service.updateMe(authentication.getName(),partner);
+    }
+
+    @JsonView(Views.Partner.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/partners", method = RequestMethod.GET, params = "currentUser")
+    public Results<Partner> getMeByParams(OAuth2Authentication authentication,
+                                          PartnerFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search Partner with filter={}", filter);
+        Page<Partner> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/partners", api));
     }

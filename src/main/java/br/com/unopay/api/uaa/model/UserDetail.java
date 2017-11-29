@@ -263,6 +263,13 @@ public class UserDetail implements Serializable {
         return Optional.empty();
     }
 
+    public Optional<Partner> myPartner() {
+        if (isIssuerType()) {
+            return Optional.ofNullable(getPartner());
+        }
+        return Optional.empty();
+    }
+
     public String myEstablishmentId() {
         return myEstablishment().map(Establishment::getId).orElse(null);
     }

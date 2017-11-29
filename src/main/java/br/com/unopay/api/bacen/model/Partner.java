@@ -77,4 +77,11 @@ public class Partner implements Serializable {
     public boolean hasProducts() {
         return this.products != null && !this.products.isEmpty();
     }
+
+    public String documentNumber(){
+        if(getPerson() != null && getPerson().getDocument() != null){
+            return getPerson().getDocument().getNumber();
+        }
+        return null;
+    }
 }
