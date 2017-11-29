@@ -146,7 +146,6 @@ public class ContractorController {
 
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
     public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
                                             OAuth2Authentication authentication) {
@@ -170,7 +169,6 @@ public class ContractorController {
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/credits", method = RequestMethod.GET)
     public Results<ContractorInstrumentCredit> getMyCredits(OAuth2Authentication authentication,
                                                           @RequestParam(required = false) String contractId,
@@ -193,7 +191,6 @@ public class ContractorController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/orders", method = POST)
     public ResponseEntity<Order> create(OAuth2Authentication authentication,
                                         @Validated(Create.Order.class) @RequestBody Order order) {
@@ -204,7 +201,6 @@ public class ContractorController {
 
     @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getMyInstruments(OAuth2Authentication authentication) {
         log.info("get Contractor instruments for={}", authentication.getName());
@@ -215,7 +211,6 @@ public class ContractorController {
 
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
     public Results<Boleto> findBoletos(OAuth2Authentication authentication,
                                       BoletoFilter filter, @Validated UnovationPageRequest pageable) {
@@ -227,7 +222,6 @@ public class ContractorController {
 
     @JsonView(Views.Billing.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/transactions", method = RequestMethod.GET)
     public Results<Transaction> findTransactions(OAuth2Authentication authentication,
                                            TransactionFilter filter, @Validated UnovationPageRequest pageable) {

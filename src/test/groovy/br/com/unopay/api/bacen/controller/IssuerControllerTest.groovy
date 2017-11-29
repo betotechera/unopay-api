@@ -19,7 +19,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     void 'valid issuer should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
 
         when:
@@ -32,7 +32,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     void 'known issuer should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/issuers?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     void 'known issuer should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/issuers?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     void 'known issuers should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/issuers?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     void 'all issuers should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         this.mvc.perform(post('/issuers?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)

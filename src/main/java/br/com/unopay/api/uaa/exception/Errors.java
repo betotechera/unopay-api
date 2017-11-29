@@ -43,7 +43,8 @@ public final class Errors {
             new UnovationError("SERVICE_NAME_ALREADY_EXISTS","Service name already exists");
     public static final UnovationError SERVICE_CODE_ALREADY_EXISTS =
             new UnovationError("SERVICE_CODE_ALREADY_EXISTS","Service code already exists");
-
+    public static final UnovationError INVALID_USER_TYPE =
+            new UnovationError("INVALID_USER_TYPE","Invalid user type");
 
 
     /* bank account */

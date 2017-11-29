@@ -1,11 +1,13 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -16,13 +18,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+
 @Slf4j
 @Service
 public class AccreditedNetworkService {
 
     private AccreditedNetworkRepository repository;
 
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
 
     private PersonService personService;
 
@@ -31,11 +35,11 @@ public class AccreditedNetworkService {
 
     @Autowired
     public AccreditedNetworkService(AccreditedNetworkRepository repository,
-                                    UserDetailRepository userDetailRepository,
+                                    UserDetailService userDetailService,
                                     PersonService personService,
                                     BankAccountService bankAccountService) {
         this.repository = repository;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.personService = personService;
         this.bankAccountService = bankAccountService;
     }
@@ -52,8 +56,20 @@ public class AccreditedNetworkService {
         }
     }
 
+    public Page<AccreditedNetwork> findMeByFilter(String email, AccreditedNetworkFilter filter,
+                                                                        UnovationPageRequest pageable) {
+        AccreditedNetwork userNetwork = getUserNetwork(email);
+        filter.setDocumentNumber(userNetwork.documentNumber());
+        return findByFilter(filter, pageable);
+    }
+
     public Page<AccreditedNetwork> findByFilter(AccreditedNetworkFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public AccreditedNetwork getMe(String email) {
+        AccreditedNetwork userNetwork = getUserNetwork(email);
+        return getById(userNetwork.getId());
     }
 
     public AccreditedNetwork getById(String id) {
@@ -61,7 +77,10 @@ public class AccreditedNetworkService {
         return accreditedNetwork
                 .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND));
     }
-
+    public void updateMe(String email, AccreditedNetwork accreditedNetwork) {
+        AccreditedNetwork userNetwork = getUserNetwork(email);
+        update(userNetwork.getId(), accreditedNetwork);
+    }
     public void update(String id, AccreditedNetwork accreditedNetwork) {
         AccreditedNetwork current = repository.findOne(id);
         current.updateModel(accreditedNetwork);
@@ -72,7 +91,7 @@ public class AccreditedNetworkService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
+        if(userDetailService.hasNetwork(id)){
             throw UnovationExceptions.conflict()
                     .withErrors(Errors.ACCREDITED_NETWORK_WITH_USERS);
         }
@@ -80,7 +99,9 @@ public class AccreditedNetworkService {
         repository.delete(id);
     }
 
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByAccreditedNetworkId(id) > 0;
+    private AccreditedNetwork getUserNetwork(String email) {
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        return currentUser.myNetWork()
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
     }
 }

@@ -26,7 +26,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     
     void 'should create accreditedNetwork'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(postAccreditedNetwork(accessToken, getAccreditedNetwork()))
         then:
@@ -39,7 +39,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     void 'known accreditedNetwork should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postAccreditedNetwork(accessToken, getAccreditedNetwork())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -51,7 +51,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     void 'known accreditedNetwork should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postAccreditedNetwork(accessToken, getAccreditedNetwork())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -73,7 +73,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     void 'known accreditedNetwork should be found'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             AccreditedNetwork accreditedNetwork = getAccreditedNetwork()
             def mvcResult = this.mvc.perform(postAccreditedNetwork(accessToken, accreditedNetwork)).andReturn()
             def location = getLocationHeader(mvcResult)
@@ -88,7 +88,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     void 'known accreditedNetwork should be found when find all'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(postAccreditedNetwork(accessToken, getAccreditedNetwork()))
 
             this.mvc.perform(post(ACCREDITED_NETWORK_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)

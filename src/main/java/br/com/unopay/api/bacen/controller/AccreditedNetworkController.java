@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@PreAuthorize("#oauth2.isUser()")
 @Timed(prefix = "api")
 public class AccreditedNetworkController {
 
@@ -53,6 +56,7 @@ public class AccreditedNetworkController {
                 .body(created);
 
     }
+
     @JsonView({Views.AccreditedNetwork.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.GET)
@@ -60,6 +64,7 @@ public class AccreditedNetworkController {
         log.info("get AccreditedNetwork={}", id);
         return service.getById(id);
     }
+
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.PUT)
@@ -85,6 +90,34 @@ public class AccreditedNetworkController {
                                                   @Validated UnovationPageRequest pageable) {
         log.info("search AccreditedNetwork with filter={}", filter);
         Page<AccreditedNetwork> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks", api));
+    }
+
+    @JsonView({Views.AccreditedNetwork.Detail.class})
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.GET)
+    public AccreditedNetwork getMe(OAuth2Authentication authentication) {
+        log.info("get AccreditedNetwork={}", authentication.getName());
+        return service.getMe(authentication.getName());
+    }
+
+    @JsonView(Views.AccreditedNetwork.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.PUT)
+    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class)
+    @RequestBody AccreditedNetwork accreditedNetwork) {
+        log.info("updating accreditedNetwork {}", authentication.getName());
+        service.updateMe(authentication.getName(),accreditedNetwork);
+    }
+
+    @JsonView(Views.AccreditedNetwork.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET, params = "currentUser")
+    public Results<AccreditedNetwork> getMeByParams(OAuth2Authentication authentication, AccreditedNetworkFilter filter,
+                                                  @Validated UnovationPageRequest pageable) {
+        log.info("search AccreditedNetwork with filter={}", filter);
+        Page<AccreditedNetwork> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks", api));
     }

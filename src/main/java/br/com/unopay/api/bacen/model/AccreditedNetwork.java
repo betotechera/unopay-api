@@ -110,4 +110,8 @@ public class AccreditedNetwork implements Serializable {
         this.textColor = accreditedNetwork.textColor;
 
     }
+
+    public String documentNumber(){
+        return person.documentNumber();
+    }
 }

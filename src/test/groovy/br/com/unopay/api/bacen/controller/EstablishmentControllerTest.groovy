@@ -32,7 +32,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'valid establishment should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                                 .with { network = networkUnderTest; it }
 
@@ -46,7 +46,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishment should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                     .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -66,7 +66,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishment should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -84,7 +84,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishments should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -104,7 +104,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'all establishments should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)

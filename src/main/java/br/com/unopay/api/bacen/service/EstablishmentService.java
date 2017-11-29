@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.bacen.repository.EstablishmentEventRepository;
@@ -10,7 +11,8 @@ import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
 
 @Service
 public class EstablishmentService {
@@ -32,7 +35,7 @@ public class EstablishmentService {
     private PersonService personService;
     private AccreditedNetworkService networkService;
     private BankAccountService bankAccountService;
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
     private EstablishmentEventRepository establishmentEventRepository;
     @Setter
     private UnopayScheduler scheduler;
@@ -44,7 +47,7 @@ public class EstablishmentService {
                                 PersonService personService,
                                 AccreditedNetworkService networkService,
                                 BankAccountService bankAccountService,
-                                UserDetailRepository userDetailRepository,
+                                UserDetailService userDetailService,
                                 EstablishmentEventRepository establishmentEventRepository,
                                 UnopayScheduler scheduler) {
         this.repository = repository;
@@ -53,7 +56,7 @@ public class EstablishmentService {
         this.personService = personService;
         this.networkService = networkService;
         this.bankAccountService = bankAccountService;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.establishmentEventRepository = establishmentEventRepository;
         this.scheduler = scheduler;
     }
@@ -67,6 +70,11 @@ public class EstablishmentService {
         return created;
     }
 
+    public void updateMe(String email, Establishment establishment) {
+        Establishment userEstablishment = getUserEstablishment(email);
+        update(userEstablishment.getId(), establishment);
+    }
+
     public void update(String id, Establishment establishment) {
         establishment.validateUpdate();
         Establishment current = findById(id);
@@ -75,6 +83,11 @@ public class EstablishmentService {
         current.updateMe(establishment);
         repository.save(current);
         scheduleClosingJob(current);
+    }
+
+    public Establishment findMe(String email) {
+        Establishment userEstablishment = getUserEstablishment(email);
+        return findById(userEstablishment.getId());
     }
 
     public Establishment findById(String id) {
@@ -97,20 +110,26 @@ public class EstablishmentService {
         repository.delete(id);
     }
 
+    public Page<Establishment> findMeByFilter(String email, EstablishmentFilter filter, UnovationPageRequest pageable) {
+        Establishment userEstablishment = getUserEstablishment(email);
+        filter.setDocumentNumber(userEstablishment.documentNumber());
+        return findByFilter(filter, pageable);
+    }
+
+    public Page<Establishment> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
     private void validateDelete(String id) {
         if(hasBranches(id)){
             throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_WITH_BRANCH);
         }
-        if(hasUsers(id)){
+        if(userDetailService.hasEstablishment(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_USERS);
         }
         if(hasEventValue(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.ESTABLISHMENT_WITH_EVENT_VALUE);
         }
-    }
-
-    private boolean hasUsers(String id) {
-        return userDetailRepository.countByEstablishmentId(id) > 0;
     }
 
     private boolean hasBranches(String id) {
@@ -137,8 +156,10 @@ public class EstablishmentService {
         bankAccountService.findById(establishment.getBankAccount().getId());
     }
 
-    public Page<Establishment> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
-        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    private Establishment getUserEstablishment(String email) {
+        UserDetail currentUser = userDetailService.getByEmail(email);
+        return currentUser.myEstablishment()
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
     }
 
     private void scheduleClosingJob(Establishment created) {
