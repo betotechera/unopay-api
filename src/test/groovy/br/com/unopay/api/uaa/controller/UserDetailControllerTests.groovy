@@ -29,7 +29,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void should_create_user() throws Exception {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             UserDetail user = getUserWithGroup()
             def result = performPostToUser(accessToken, user)
@@ -44,7 +44,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void should_update_user_me() throws Exception {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             UserDetail user = getUserWithGroup()
         when:
             def result = this.mvc.perform(
@@ -74,12 +74,12 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void should_update_user() throws Exception {
         given:
-            String accessToken = getClientAccessToken()
+            String getUserAccessToken = getUserAccessToken()
 
             UserDetail user = getUserWithGroup()
         when:
             MockHttpServletResponse result = this.mvc.perform(
-                post(USER_ENDPOINT, accessToken)
+                post(USER_ENDPOINT, getUserAccessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(user)))
                 .andExpect(status().isCreated()).andReturn().getResponse()
@@ -94,9 +94,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
             user.setPassword("otherpass")
             user.setEmail(randomAlphabetic(7)+"@gmail.com")
 
-            String uaaManagerAccessToken = getUAAManagerAccessToken()
-
-            this.mvc.perform(put("/users/{id}?access_token={access_token}", user.getId(), uaaManagerAccessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(user))).andExpect(status().isNoContent())
+            this.mvc.perform(put("/users/{id}?access_token={access_token}", user.getId(), getUserAccessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(user))).andExpect(status().isNoContent())
 
             passwordFlow(user.getEmail(), user.getPassword())
                 .andExpect(status().isOk())
@@ -106,7 +104,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void should_not_allow_duplicated_users() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
 
             UserDetail user = getUserWithoutGroup()
         when:
@@ -118,7 +116,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     void should_not_allow_client_authentication_on_user_me() throws Exception {
         given:
             UserDetail user = getUserWithoutGroup()
-            String accessToken = clientCredentialsAccessToken()
+            String accessToken = getClientAccessToken()
         when:
             def result = this.mvc.perform(put(USER_ME_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(user)))
         then:
@@ -129,7 +127,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         given:
             UserDetail user = getUserWithGroup()
 
-            String accessToken = clientCredentialsAccessToken()
+            String accessToken = getUserAccessToken()
 
             user.getGroups().find().setId('1')
 
@@ -150,7 +148,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         given:
             UserDetail user = getUserWithGroup()
 
-            String accessToken = clientCredentialsAccessToken()
+            String accessToken = getUserAccessToken()
 
             user.getGroups().find().setId('1')
 
@@ -180,7 +178,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         given:
             UserDetail user = getUserWithGroup()
 
-            String accessToken = clientCredentialsAccessToken()
+            String accessToken = getUserAccessToken()
 
             MvcResult mvcResult = expectUserCreatedAndPasswordFlowOk(accessToken, user)
 
@@ -199,7 +197,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void 'given known group and user should be associate user with group'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             String groupId = '1'
             this.mvc.perform(put(GROUP_ENDPOINT, groupId, accessToken).contentType(MediaType.APPLICATION_JSON).content("""["1", "2"]"""))
 
@@ -216,7 +214,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
    
     void 'should return error when associate groups without list'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             String userId = '1'
         when:
             def result = this.mvc.perform(
@@ -230,7 +228,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     void 'when search user by params should return'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
 
             UserDetail user = getUserWithGroup()
 
