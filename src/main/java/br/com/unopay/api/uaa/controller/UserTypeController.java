@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +38,7 @@ public class UserTypeController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_TYPE')")
     @RequestMapping(value = "/user-types", method = RequestMethod.GET)
     public Results<UserType> findAll() {
         LOGGER.info("find all user types");
@@ -46,6 +48,7 @@ public class UserTypeController {
 
     @JsonView({Views.Group.Detail.class})
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_TYPE')")
     @RequestMapping(value = "/user-types/{id}/groups", method = RequestMethod.GET)
     public Results<Group> findUserTypeGroups(@PathVariable String id) {
         LOGGER.info("find user type groups. userTypeId={}",id);
