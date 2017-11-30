@@ -51,7 +51,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_MANAGE_GROUP')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_GROUPS')")
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
     public ResponseEntity<Group> create(@Validated(Create.class) @RequestBody Group group) {
         LOGGER.info("creating uaa group {}", group);
@@ -63,7 +63,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_GROUP')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_GROUPS')")
     @RequestMapping(value = "/groups/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") String id) {
         LOGGER.info("deleting uaa group {}", id);
@@ -71,7 +71,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_GROUP')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_GROUPS')")
     @RequestMapping(value = "/groups/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable("id") String id,@RequestBody Group group) {
         LOGGER.info("updating uaa group {} {}", id, group);
@@ -81,7 +81,7 @@ public class GroupController {
 
     @JsonView(Views.Group.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_GROUP')")
+    @PreAuthorize("hasRole('ROLE_LIST_GROUPS')")
     @RequestMapping(value = "/groups/{id}", method = RequestMethod.GET)
     public Group get(@PathVariable  String id) {
         LOGGER.info("get uaa user={}", id);
@@ -90,7 +90,7 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Group.List.class)
-    @PreAuthorize("hasRole('ROLE_LIST_GROUP')")
+    @PreAuthorize("hasRole('ROLE_LIST_GROUPS')")
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     Results<Group> findAllGroups(GroupFilter groupFilter,@Valid UnovationPageRequest pageable) {
         LOGGER.info("getting all groups by filter={}",groupFilter);
@@ -100,7 +100,7 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_GROUP')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_GROUPS')")
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> membersIds) {
         String memberIdsAsString = StringJoiner.join(membersIds);
@@ -110,7 +110,7 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Group.Detail.class)
-    @PreAuthorize("hasRole('ROLE_LIST_GROUP')")
+    @PreAuthorize("hasRole('ROLE_LIST_GROUPS')")
     @RequestMapping(value = "/groups/{id}/members", method = RequestMethod.GET)
     public Results<UserDetail> getGroupMembers(@PathVariable("id") String id, @Valid UnovationPageRequest pageable) {
         LOGGER.info("get members to group={}", id);
@@ -121,7 +121,7 @@ public class GroupController {
 
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_GROUP')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_GROUPS')")
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.PUT)
     public void groupAuthorities(@PathVariable("id") String id, @RequestBody Set<String> authoritiesIds) {
         String authorityIdsAsString = StringJoiner.join(authoritiesIds);
@@ -131,7 +131,7 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.Group.Detail.class)
-    @PreAuthorize("hasRole('ROLE_LIST_GROUP')")
+    @PreAuthorize("hasRole('ROLE_LIST_GROUPS')")
     @RequestMapping(value = "/groups/{id}/authorities", method = RequestMethod.GET)
     public Results<Authority> getGroupAuthorities(@PathVariable("id") String id) {
         LOGGER.info("get authorities to group={}", id);
