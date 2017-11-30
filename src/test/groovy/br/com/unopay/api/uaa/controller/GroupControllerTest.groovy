@@ -33,7 +33,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
     
     void 'should create group'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(postGroups(accessToken, getGroup()))
         then:
@@ -46,7 +46,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
     void 'known group should be deleted'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             def mvcResult = this.mvc.perform(postGroups(accessToken, getGroup())).andReturn()
             def location = getLocationHeader(mvcResult)
             def id = extractId(location)
@@ -66,7 +66,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
     void 'known group should be found'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             Group group = getGroup()
             def mvcResult = this.mvc.perform(postGroups(accessToken, group)).andReturn()
             def location = getLocationHeader(mvcResult)
@@ -82,7 +82,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
     void 'known groups should be found when find all'() {
         given:
             groupRepository.deleteAll()
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(postGroups(accessToken, getGroup()))
             this.mvc.perform(post(GROUP_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(group.with { name = 'temp'; it })))
         when:
@@ -96,7 +96,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
    
     void 'given known group and user should be add member to group'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content("""["1", "2"]"""))
         when:
             def result = this.mvc.perform(get("$MEMBERS_ENDPOINT&page=1&size=20", DEFAULT_GROUP_ID, accessToken))
@@ -109,7 +109,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
    
     void 'given known group and authority should be add authority to group'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content("""["ROLE_ADMIN", "ROLE_USER"]"""))
         when:
             def result = this.mvc.perform(get("$AUTHORITIES_ENDPOINT&page=1&size=20", DEFAULT_GROUP_ID, accessToken))
@@ -121,7 +121,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
    
     void 'should return error when add authorities without list'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content(""""""))
         then:
@@ -130,7 +130,7 @@ class GroupControllerTest extends AuthServerApplicationTests {
    
     void 'should return error when add members without list'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content(""""""))
         then:
