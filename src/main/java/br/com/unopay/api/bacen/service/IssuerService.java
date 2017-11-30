@@ -26,7 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
 @Slf4j
@@ -158,7 +158,7 @@ public class IssuerService {
     private Issuer getUserIssuer(String email) {
         UserDetail currentUser = userDetailService.getByEmail(email);
         return currentUser.myIssuer()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
 }

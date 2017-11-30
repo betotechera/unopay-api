@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.filter.InstitutionFilter;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
@@ -19,7 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Slf4j
 @Service
@@ -95,7 +94,7 @@ public class InstitutionService {
     private Institution getUserInstitution(String email) {
         UserDetail currentUser = userDetailService.getByEmail(email);
         return currentUser.myInstitution()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
     private boolean hasPaymentRuleGroup(String id) {

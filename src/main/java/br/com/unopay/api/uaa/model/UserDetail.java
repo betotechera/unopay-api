@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.Partner;
+import br.com.unopay.api.infra.ReflectionHelper;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.PasswordRequired;
 import br.com.unopay.api.model.validation.group.Update;
@@ -268,6 +269,11 @@ public class UserDetail implements Serializable {
             return Optional.ofNullable(getPartner());
         }
         return Optional.empty();
+    }
+
+
+    public Object my(Class<?> clazz) {
+        return ReflectionHelper.invokeAttributeOfType(clazz, this);
     }
 
     public String myEstablishmentId() {

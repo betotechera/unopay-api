@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
 import br.com.unopay.api.bacen.repository.EstablishmentEventRepository;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Service
 public class EstablishmentService {
@@ -159,7 +158,7 @@ public class EstablishmentService {
     private Establishment getUserEstablishment(String email) {
         UserDetail currentUser = userDetailService.getByEmail(email);
         return currentUser.myEstablishment()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
     private void scheduleClosingJob(Establishment created) {

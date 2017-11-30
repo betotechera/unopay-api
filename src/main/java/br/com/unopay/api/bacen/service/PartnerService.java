@@ -1,6 +1,5 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.filter.PartnerFilter;
 import br.com.unopay.api.bacen.repository.PartnerRepository;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Slf4j
 @Service
@@ -115,7 +114,7 @@ public class PartnerService {
     private Partner getUserPartner(String email) {
         UserDetail currentUser = userDetailService.getByEmail(email);
         return currentUser.myPartner()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
 }

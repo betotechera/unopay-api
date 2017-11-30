@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.service.PersonService;
@@ -18,7 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_USER_TYPE;
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Slf4j
 @Service
@@ -102,6 +101,6 @@ public class AccreditedNetworkService {
     private AccreditedNetwork getUserNetwork(String email) {
         UserDetail currentUser = userDetailService.getByEmail(email);
         return currentUser.myNetWork()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(INVALID_USER_TYPE));
+                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 }

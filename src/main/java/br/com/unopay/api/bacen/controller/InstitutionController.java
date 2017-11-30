@@ -1,8 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.filter.InstitutionFilter;
+import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.service.InstitutionService;
+import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -33,14 +36,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class InstitutionController {
 
     private InstitutionService service;
+    private PaymentRuleGroupService paymentRuleGroupService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    public InstitutionController(InstitutionService service) {
+    public InstitutionController(InstitutionService service,
+                                 PaymentRuleGroupService paymentRuleGroupService) {
         this.service = service;
-     }
+        this.paymentRuleGroupService = paymentRuleGroupService;
+    }
 
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
@@ -51,7 +57,6 @@ public class InstitutionController {
         return ResponseEntity
                 .created(URI.create("/institutions/"+created.getId()))
                 .body(created);
-
     }
 
     @JsonView({Views.Institution.Detail.class})
@@ -65,7 +70,7 @@ public class InstitutionController {
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Institution institution) {
+    public void update(@PathVariable String id, @Validated(Update.class) @RequestBody Institution institution) {
         institution.setId(id);
         log.info("updating institution {}", institution);
         service.update(id,institution);
@@ -113,6 +118,54 @@ public class InstitutionController {
         Page<Institution> page =  service.findMeByFilter(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/institutions", api));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/institutions/me/payment-rule-groups/{id}", method = RequestMethod.PUT)
+    public void updatePaymentRuleGroup(Institution institution, @PathVariable  String id,
+                       @Validated(Update.class) @RequestBody PaymentRuleGroup paymentRuleGroup) {
+        paymentRuleGroup.setId(id);
+        log.info("updating paymentRuleGroups {}", paymentRuleGroup);
+        paymentRuleGroupService.updateForInstitution(id, institution, paymentRuleGroup);
+    }
+
+    @JsonView(Views.PaymentRuleGroup.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/institutions/me/payment-rule-groups/{id}", method = RequestMethod.GET)
+    public PaymentRuleGroup getPaymentRuleGroup(Institution institution, @PathVariable  String id) {
+        log.info("get paymentRuleGroups={} for institution={}", id, institution.documentNumber());
+        return paymentRuleGroupService.getForInstitutionById(id, institution);
+    }
+
+    @JsonView(Views.PaymentRuleGroup.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/institutions/me/payment-rule-groups", method = RequestMethod.POST)
+    public ResponseEntity<PaymentRuleGroup> createPaymentRuleGroup(Institution institution, @Validated(Create.class)
+                                                   @RequestBody PaymentRuleGroup paymentRuleGroup) {
+        log.info("creating PaymentRuleGroup={} for institution={}", paymentRuleGroup, institution.documentNumber());
+        PaymentRuleGroup created = paymentRuleGroupService.createForInstitution(paymentRuleGroup, institution);
+        return ResponseEntity
+                .created(URI.create("/payment-rule-groups/"+created.getId()))
+                .body(created);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/institutions/me/payment-rule-groups/{id}", method = RequestMethod.DELETE)
+    public void removePaymentRuleGroup(@PathVariable  String id, Institution institution) {
+        log.info("removing payment rule groups={} for institution={}", id, institution.documentNumber());
+        paymentRuleGroupService.deleteForInstitution(id, institution);
+    }
+
+    @JsonView(Views.PaymentRuleGroup.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/institutions/me/payment-rule-groups", method = RequestMethod.GET)
+    public Results<PaymentRuleGroup> getPaymentRuleGroupByParams(Institution institution, PaymentRuleGroupFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search PaymentRuleGroup by filter with filter={}", filter);
+        Page<PaymentRuleGroup> page =  paymentRuleGroupService.findByFilterForInstitution(institution,filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/institutions/me/payment-rule-groups", api));
     }
 
 }

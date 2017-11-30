@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.Service
@@ -51,6 +52,17 @@ class FixtureCreator {
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
             {
                 add("establishment", establishmentUnderTest)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
+    UserDetail createInstitutionUser(institution = createInstitution()) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+            {
+                add("institution", institution)
                 add("password", passwordEncoder.encode(generatePassword))
             }
         })
@@ -440,12 +452,19 @@ class FixtureCreator {
     AccreditedNetwork createNetwork() {
         Fixture.from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
     }
+
     Issuer createIssuer() {
         Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid")
     }
 
-    PaymentRuleGroup createPaymentRuleGroup() {
-        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid")
+    Institution createInstitution() {
+        Fixture.from(Institution.class).uses(jpaProcessor).gimme("valid")
+    }
+
+    PaymentRuleGroup createPaymentRuleGroup(Institution institution = createInstitution()) {
+        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("institution", institution)
+        }})
     }
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {
