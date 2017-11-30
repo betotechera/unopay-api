@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,10 +26,11 @@ public class AddressController {
 
     @JsonView(Views.Address.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ADDRESS')")
     @RequestMapping(value = "/addresses", method = RequestMethod.GET)
     public ResponseEntity<Address> searchAddress(@RequestParam @Valid
-                                                     @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
-                                                             String zipCode) {
+                                                 @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
+                                                         String zipCode) {
         log.info("find Address with zipCode={}", zipCode);
         return ResponseEntity.ok(service.search(zipCode));
     }
