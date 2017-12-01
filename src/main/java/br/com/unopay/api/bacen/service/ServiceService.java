@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.filter.ServiceFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
@@ -7,6 +8,8 @@ import br.com.unopay.api.bacen.repository.ServiceRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +29,12 @@ public class ServiceService {
         this.repository = repository;
         this.eventRepository = eventRepository;
     }
-
+    public Service createForEstablishment(Service service, Establishment establishment) {
+        HashSet<Establishment> establishments = new HashSet<>();
+        establishments.add(establishment);
+        service.setEstablishments(establishments);
+        return create(service);
+    }
     public Service create(Service service) {
         service.validate();
         validateFields(service);
@@ -54,11 +62,18 @@ public class ServiceService {
         return repository.countByName(name) > 0;
     }
 
-
+    public void updateForEstablishment(String id, Establishment establishment, Service service) {
+        Service current = findByIdForEstablishment(id, establishment);
+        update(service, current);
+    }
 
     public void update(String id, Service service) {
-        service.validate();
         Service current = findById(id);
+        update(service, current);
+    }
+
+    private void update(Service service, Service current) {
+        service.validate();
         if(!current.getName().equals(service.getName())) {
             validateName(service.getName());
         }
@@ -67,12 +82,24 @@ public class ServiceService {
         }
         current.updateModel(service);
         repository.save(current);
+    }
 
+    public Service findByIdForEstablishment(String id, Establishment establishment) {
+        Optional<Service> service = repository.findByIdAndEstablishmentsId(id, establishment.getId());
+        return service.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND));
     }
 
     public Service findById(String id) {
         Optional<Service> service = repository.findById(id);
         return service.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND));
+    }
+
+    public void deleteForEstablishment(String id, Establishment establishment) {
+        findByIdForEstablishment(id, establishment);
+        if(hasEvents(id)){
+            throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_WITH_EVENTS);
+        }
+        repository.delete(id);
     }
 
     public void delete(String id) {

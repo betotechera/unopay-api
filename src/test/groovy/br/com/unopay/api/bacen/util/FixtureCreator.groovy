@@ -477,6 +477,12 @@ class FixtureCreator {
         Fixture.from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
     }
 
+    Service createService(Establishment establishment = createEstablishment()) {
+        Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishments", Arrays.asList(establishment))
+        }})
+    }
+
     Issuer createIssuer() {
         Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid")
     }
