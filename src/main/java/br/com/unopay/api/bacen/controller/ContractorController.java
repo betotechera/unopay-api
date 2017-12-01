@@ -93,6 +93,7 @@ public class ContractorController {
                 .body(created);
 
     }
+
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.GET)

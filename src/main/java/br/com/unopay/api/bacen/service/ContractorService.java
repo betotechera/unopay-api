@@ -9,8 +9,6 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +67,12 @@ public class ContractorService {
         });
     }
 
+    public Contractor getByIdForHirer(String id, Hirer hirer) {
+        Optional<Contractor> contractor = repository.findByIdAndContractsHirerId(id, hirer.getId());
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
+    }
+
     public Contractor getById(String id) {
         Optional<Contractor> contractor = repository.findById(id);
         return contractor.orElseThrow(()->
@@ -85,8 +89,17 @@ public class ContractorService {
         return repository.findByPersonDocumentNumber(document);
     }
 
+    public void updateForHirer(String id, Hirer hirer, Contractor contractor) {
+        Contractor current = getByIdForHirer(id, hirer);
+        update(contractor, current);
+    }
+
     public void update(String id, Contractor contractor) {
-        Contractor current = repository.findOne(id);
+        Contractor current = getById(id);
+        update(contractor, current);
+    }
+
+    private void update(Contractor contractor, Contractor current) {
         current.updateModel(contractor);
         personService.save(contractor.getPerson());
         repository.save(current);

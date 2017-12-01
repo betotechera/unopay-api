@@ -152,6 +152,24 @@ public class HirerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers", api));
     }
 
+    @JsonView(Views.Contractor.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/contractors/{id}", method = RequestMethod.GET)
+    public Contractor getContractor(Hirer hirer,@PathVariable  String id) {
+        log.info("get Contractor={} for hirer={}", id, hirer.getDocumentNumber());
+        return contractorService.getByIdForHirer(id, hirer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/contractors/{id}", method = RequestMethod.PUT)
+    public void updateContractor(Hirer hirer,
+                                 @PathVariable String id,
+                                 @Validated(Update.class) @RequestBody Contractor contractor){
+        contractor.setId(id);
+        log.info("updating contractor={} for hirer={}", contractor, hirer.getDocumentNumber());
+        contractorService.updateForHirer(id, hirer, contractor);
+    }
+
     @JsonView(Views.Contractor.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/me/contractors", method = RequestMethod.GET)
