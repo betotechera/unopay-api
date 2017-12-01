@@ -21,11 +21,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@ToString(exclude = "establishments")
+@EqualsAndHashCode(exclude = "establishments")
 @Table(name = "service")
 public class Service implements Serializable {
 
