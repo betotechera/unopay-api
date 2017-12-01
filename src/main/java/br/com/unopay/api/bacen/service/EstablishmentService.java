@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.repository.BranchRepository;
@@ -89,6 +90,11 @@ public class EstablishmentService {
         return findById(userEstablishment.getId());
     }
 
+    public Establishment findByIdAndNewtwork(String id, AccreditedNetwork network) {
+        Optional<Establishment> establishment = repository.findByIdAndNetworkId(id, network.getId());
+        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
+    }
+
     public Establishment findById(String id) {
         Optional<Establishment> establishment = repository.findById(id);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
@@ -112,6 +118,12 @@ public class EstablishmentService {
     public Page<Establishment> findMeByFilter(String email, EstablishmentFilter filter, UnovationPageRequest pageable) {
         Establishment userEstablishment = getUserEstablishment(email);
         filter.setDocumentNumber(userEstablishment.documentNumber());
+        return findByFilter(filter, pageable);
+    }
+
+    public Page<Establishment> findByFilterForNetwork(AccreditedNetwork accreditedNetwork,
+                                                      EstablishmentFilter filter, UnovationPageRequest pageable) {
+        filter.setAccreditedNetwork(accreditedNetwork.documentNumber());
         return findByFilter(filter, pageable);
     }
 

@@ -25,8 +25,6 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     AccreditedNetwork networkUnderTest
 
     void setup(){
-        flyway.clean()
-        flyway.migrate()
         networkUnderTest = fixtureCreator.createNetwork()
     }
 

@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
@@ -94,6 +95,38 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'known establishments should be found'() {
+        given:
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+        Establishment establishment = fixtureCreator.createEstablishment(accreditedNetworkUser.accreditedNetwork)
+
+        def id = establishment.id
+        when:
+        def result = this.mvc.perform(
+                get('/accredited-networks/me/establishments/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.fee', is(notNullValue())))
+    }
+
+    void 'all establishments should be found'() {
+        given:
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+        fixtureCreator.createEstablishment(accreditedNetworkUser.accreditedNetwork)
+
+        when:
+        def result = this.mvc.perform(
+                get('/accredited-networks/me/establishments?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
     AccreditedNetwork getAccreditedNetwork() {
