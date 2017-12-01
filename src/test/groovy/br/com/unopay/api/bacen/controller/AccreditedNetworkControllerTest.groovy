@@ -97,6 +97,50 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
     }
 
+    void 'known me accreditedNetwork should be updated'() {
+        given:
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(put("/accredited-networks/me?access_token={access_token}", accessToken)
+                .content(toJson(accreditedNetwork.with { person.name = 'updated';it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known me accreditedNetwork should be found'() {
+        given:
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+        def person = accreditedNetworkUser.accreditedNetwork.person
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me?access_token={access_token}", accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.person.name', is(equalTo(person.name))))
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.person.document.number', is(equalTo(person.document.number))))
+    }
+
+    void 'known me accreditedNetwork should be found when find all'() {
+        given:
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+        when:
+        def result = this.mvc.perform(get("/accredited-networks?currentUser=true&access_token={access_token}",accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
     void 'known establishments should be found'() {
         given:
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()

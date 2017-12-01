@@ -103,27 +103,28 @@ public class AccreditedNetworkController {
     @JsonView({Views.AccreditedNetwork.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.GET)
-    public AccreditedNetwork getMe(OAuth2Authentication authentication) {
-        log.info("get AccreditedNetwork={}", authentication.getName());
-        return service.getMe(authentication.getName());
+    public AccreditedNetwork getMe(AccreditedNetwork accreditedNetwork) {
+        log.info("get AccreditedNetwork={}", accreditedNetwork.documentNumber());
+        return service.getById(accreditedNetwork.getId());
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class)
+    public void updateMe(AccreditedNetwork current, @Validated(Update.class)
     @RequestBody AccreditedNetwork accreditedNetwork) {
-        log.info("updating accreditedNetwork {}", authentication.getName());
-        service.updateMe(authentication.getName(),accreditedNetwork);
+        log.info("updating accreditedNetwork={}", accreditedNetwork);
+        service.update(current.getId(),accreditedNetwork);
     }
 
     @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET, params = "currentUser")
-    public Results<AccreditedNetwork> getMeByParams(OAuth2Authentication authentication, AccreditedNetworkFilter filter,
+    public Results<AccreditedNetwork> getMeByParams(AccreditedNetwork accreditedNetwork, AccreditedNetworkFilter filter,
                                                   @Validated UnovationPageRequest pageable) {
         log.info("search AccreditedNetwork with filter={}", filter);
-        Page<AccreditedNetwork> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
+        filter.setDocumentNumber(accreditedNetwork.documentNumber());
+        Page<AccreditedNetwork> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks", api));
     }
