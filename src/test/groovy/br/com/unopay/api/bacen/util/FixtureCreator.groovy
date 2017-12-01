@@ -69,6 +69,17 @@ class FixtureCreator {
         user.with { password = generatePassword; it }
     }
 
+    UserDetail createHirerUser(hirer = createHirer()) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+            {
+                add("hirer", hirer)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
     UserDetail createAccreditedNetworkUser(network = createNetwork()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {

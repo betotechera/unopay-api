@@ -28,4 +28,5 @@ public class EstablishmentFilter implements Serializable {
 
     @SearchableField(field = "person.address.state")
     private State state;
+
 }

@@ -1,7 +1,10 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -38,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class HirerController {
 
     private HirerService service;
+    private ContractorService contractorService;
     private ContractService contractService;
 
     @Value("${unopay.api}")
@@ -45,8 +49,10 @@ public class HirerController {
 
     @Autowired
     public HirerController(HirerService service,
+                           ContractorService contractorService,
                            ContractService contractService) {
         this.service = service;
+        this.contractorService = contractorService;
         this.contractService = contractService;
     }
 
@@ -144,6 +150,17 @@ public class HirerController {
         Page<Hirer> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers", api));
+    }
+
+    @JsonView(Views.Contractor.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/contractors", method = RequestMethod.GET)
+    public Results<Contractor> getContractorsByParams(Hirer hirer, ContractorFilter filter,
+                                                      @Validated UnovationPageRequest pageable){
+        log.info("search Contractor with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        Page<Contractor> page =  contractorService.findByFilterForHirer(hirer, filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/contractors", api));
     }
 
 }

@@ -25,4 +25,7 @@ public class ContractorFilter implements Serializable {
     @SearchableField(field = "person.address.state")
     private State state;
 
+    @SearchableField(field = "contracts.hirer.id")
+    private String hirer;
+
 }

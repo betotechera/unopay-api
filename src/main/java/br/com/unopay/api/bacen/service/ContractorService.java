@@ -1,16 +1,16 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
-import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.Product;
-import br.com.unopay.api.service.ContractService;
+import br.com.unopay.api.repository.ContractRepository;
 import br.com.unopay.api.service.PersonService;
-import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +29,19 @@ public class ContractorService {
     private PersonService personService;
     private UserDetailRepository userDetailRepository;
     private BankAccountService bankAccountService;
+    private ContractRepository contractRepository;
 
     @Autowired
     public ContractorService(ContractorRepository repository,
                              PersonService personService,
                              UserDetailRepository userDetailRepository,
-                             BankAccountService bankAccountService) {
+                             BankAccountService bankAccountService,
+                             ContractRepository contractRepository) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailRepository = userDetailRepository;
         this.bankAccountService = bankAccountService;
+        this.contractRepository = contractRepository;
     }
 
     public Contractor create(Contractor contractor) {
@@ -99,6 +102,11 @@ public class ContractorService {
 
     private Boolean hasUser(String id) {
         return userDetailRepository.countByContractorId(id) > 0;
+    }
+
+    public Page<Contractor> findByFilterForHirer(Hirer hirer, ContractorFilter filter, UnovationPageRequest pageable) {
+        filter.setHirer(hirer.getId());
+        return findByFilter(filter, pageable);
     }
 
     public Page<Contractor> findByFilter(ContractorFilter filter, UnovationPageRequest pageable) {

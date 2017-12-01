@@ -2,11 +2,14 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -23,6 +26,8 @@ class HirerControllerTest extends AuthServerApplicationTests {
     private static final String HIRER_ENDPOINT = '/hirers?access_token={access_token}'
     private static final String HIRER_ID_ENDPOINT = '/hirers/{id}?access_token={access_token}'
 
+    @Autowired
+    private FixtureCreator fixtureCreator
 
     void 'should create hirer'() {
         given:
@@ -99,6 +104,22 @@ class HirerControllerTest extends AuthServerApplicationTests {
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'known contractor should be found when find all'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),
+                fixtureCreator.createProduct(),hirerUser.hirer)
+        when:
+        def result = this.mvc.perform(get("/hirers/me/contractors?access_token={access_token}",accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
     }
 
