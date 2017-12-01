@@ -92,7 +92,7 @@ public class GroupController {
     @JsonView(Views.Group.List.class)
     @PreAuthorize("hasRole('ROLE_LIST_GROUPS')")
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
-    Results<Group> findAllGroups(GroupFilter groupFilter,@Valid UnovationPageRequest pageable) {
+    public Results<Group> findAllGroups(GroupFilter groupFilter,@Valid UnovationPageRequest pageable) {
         LOGGER.info("getting all groups by filter={}",groupFilter);
         Page<Group> page =  service.findAll(groupFilter,pageable);
         pageable.setTotal(page.getTotalElements());
