@@ -5,6 +5,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -70,7 +71,7 @@ public class Service implements Serializable {
 
     @ManyToMany
     @BatchSize(size = 10)
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonIgnore
     @JoinTable(name = "establishment_service",
             joinColumns = { @JoinColumn(name = "service_id") },
             inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
