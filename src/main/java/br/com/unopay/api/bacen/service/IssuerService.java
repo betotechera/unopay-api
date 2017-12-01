@@ -77,20 +77,9 @@ public class IssuerService {
         }
     }
 
-    public Issuer findByUser(String email){
-        Issuer userIssuer = getUserIssuer(email);
-        return findById(userIssuer.getId());
-    }
-
     public Issuer findById(String id) {
         Optional<Issuer> issuer = repository.findById(id);
         return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
-    }
-
-    @Transactional
-    public Issuer updateByUser(String email, Issuer issuer){
-        Issuer userIssuer = getUserIssuer(email);
-        return update(userIssuer.getId(), issuer);
     }
 
     @Transactional
@@ -123,12 +112,6 @@ public class IssuerService {
         repository.delete(id);
     }
 
-    public Page<Issuer> findByUserFilter(String email, IssuerFilter filter, UnovationPageRequest pageable) {
-        Issuer userIssuer = getUserIssuer(email);
-        filter.setDocumentNumber(userIssuer.documentNumber());
-        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
-    }
-
     public Page<Issuer> findByFilter(IssuerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
@@ -145,20 +128,9 @@ public class IssuerService {
         scheduler.schedule(created.getId(), created.depositPeriodPattern(),RemittanceJob.class);
     }
 
-    public void executePaymentRemittanceByUser(String email, RemittanceFilter filter) {
-        Issuer userIssuer = getUserIssuer(email);
-        filter.setId(userIssuer.getId());
-        paymentRemittanceService.execute(filter);
-    }
-
     public void executePaymentRemittance(RemittanceFilter filter) {
         paymentRemittanceService.execute(filter);
     }
 
-    private Issuer getUserIssuer(String email) {
-        UserDetail currentUser = userDetailService.getByEmail(email);
-        return currentUser.myIssuer()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
-    }
 
 }

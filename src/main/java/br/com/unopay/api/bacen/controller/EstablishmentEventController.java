@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.model.validation.group.Create;
@@ -120,54 +121,46 @@ public class EstablishmentEventController {
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST)
-    public ResponseEntity<EstablishmentEvent> createMy(OAuth2Authentication authentication, @Validated(Create.class)
-    @RequestBody EstablishmentEvent establishment) {
-        UserDetail currentUser = getCurrentUser(authentication);
-        log.info("creating establishment event{}", establishment);
-        EstablishmentEvent created = service.create(currentUser.establishmentId(), establishment);
+    public ResponseEntity<EstablishmentEvent> createMy(Establishment establishment, @Validated(Create.class)
+    @RequestBody EstablishmentEvent event) {
+        log.info("creating event event{}", event);
+        EstablishmentEvent created = service.create(establishment.getId(), event);
         return ResponseEntity
-                .created(URI.create("/establishments/"+currentUser.establishmentId()+"/event-fees"+created.getId()))
+                .created(URI.create("/establishments/"+establishment.getId()+"/event-fees"+created.getId()))
                 .body(created);
 
     }
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.GET)
-    public EstablishmentEvent getMy(OAuth2Authentication authentication, @PathVariable  String id) {
-        UserDetail currentUser = getCurrentUser(authentication);
+    public EstablishmentEvent getMy(Establishment establishment, @PathVariable  String id) {
         log.info("get establishment event={}", id);
-        return service.findByEstablishmentIdAndId(currentUser.establishmentId(), id);
+        return service.findByEstablishmentIdAndId(establishment.getId(), id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.PUT)
-    public void updateMy(OAuth2Authentication authentication, @PathVariable  String id,
-                       @Validated(Update.class) @RequestBody EstablishmentEvent establishment) {
-        UserDetail currentUser = getCurrentUser(authentication);
-        establishment.setId(id);
-        log.info("updating establishment event {}", establishment);
-        service.update(currentUser.establishmentId(),establishment);
+    public void updateMy(Establishment establishment, @PathVariable  String id,
+                       @Validated(Update.class) @RequestBody EstablishmentEvent event) {
+        event.setId(id);
+        log.info("updating establishment event={}", event);
+        service.update(establishment.getId(),event);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.DELETE)
-    public void removeMy(OAuth2Authentication authentication, @PathVariable  String id) {
+    public void removeMy(Establishment establishment, @PathVariable  String id) {
         log.info("removing establishment event id={}", id);
-        UserDetail currentUser = getCurrentUser(authentication);
-        service.deleteByEstablishmentIdAndId(currentUser.establishmentId(), id);
+        service.deleteByEstablishmentIdAndId(establishment.getId(), id);
     }
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.GET)
-    public Results<EstablishmentEvent> getMyByParams(OAuth2Authentication authentication) {
-        log.info("find establishment events of establishment={}", authentication.getName());
-        UserDetail currentUser = getCurrentUser(authentication);
-        List<EstablishmentEvent> page =  service.findByEstablishmentId(currentUser.establishmentId());
+    public Results<EstablishmentEvent> getMyByParams(Establishment establishment) {
+        log.info("find establishment events of establishment={}", establishment.documentNumber());
+        List<EstablishmentEvent> page =  service.findByEstablishmentId(establishment.getId());
         return new Results<>(page);
     }
 
-    private UserDetail getCurrentUser(OAuth2Authentication authentication) {
-        return userDetailService.getByEmail(authentication.getName());
-    }
 }

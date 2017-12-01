@@ -3,10 +3,10 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -103,33 +102,35 @@ public class IssuerController {
     @JsonView(Views.Issuer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me", method = RequestMethod.GET)
-    public Issuer getMe(OAuth2Authentication authentication) {
-        log.info("get issuer={}", authentication.getName());
-        return service.findByUser(authentication.getName());
+    public Issuer getMe(Issuer issuer) {
+        log.info("get issuer={}", issuer.documentNumber());
+        return service.findById(issuer.getId());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/issuers/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Issuer issuer) {
-        log.info("updating issuers {}", issuer);
-        service.updateByUser(authentication.getName(),issuer);
+    public void updateMe(Issuer current, @Validated(Update.class) @RequestBody Issuer issuer) {
+        log.info("updating issuers={}", issuer);
+        service.update(current.getId(),issuer);
     }
 
     @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers", method = RequestMethod.GET, params = "currentUser")
-    public Results<Issuer> getByMeParams(OAuth2Authentication authentication, IssuerFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Issuer> getByMeParams(Issuer issuer, IssuerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search issuer with filter={}", filter);
-        Page<Issuer> page =  service.findByUserFilter(authentication.getName(), filter, pageable);
+        filter.setDocumentNumber(issuer.documentNumber());
+        Page<Issuer> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers", api));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/payment-remittances", method = RequestMethod.POST)
-    public void createMyPaymentRemittance(OAuth2Authentication authentication, @RequestBody RemittanceFilter filter)
+    public void createMyPaymentRemittance(Issuer issuer, @RequestBody RemittanceFilter filter)
     {
-        log.info("Executing paymentRemittance for issuer={} and filter={}", authentication.getName(),filter);
-        service.executePaymentRemittanceByUser(authentication.getName(), filter);
+        log.info("Executing paymentRemittance for issuer={} and filter={}", issuer.documentNumber(),filter);
+        filter.setId(issuer.getId());
+        service.executePaymentRemittance(filter);
     }
 }
