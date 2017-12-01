@@ -39,7 +39,8 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     }
 
     MockHttpServletRequestBuilder postAccreditedNetwork(String accessToken, AccreditedNetwork accreditedNetwork) {
-        post(ACCREDITED_NETWORK_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(accreditedNetwork))
+        post(ACCREDITED_NETWORK_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(accreditedNetwork))
     }
 
     void 'known accreditedNetwork should be deleted'() {
@@ -48,7 +49,8 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         def network = fixtureCreator.createNetwork()
         def id = network.id
         when:
-        def result = this.mvc.perform(delete(ACCREDITED_NETWORK_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
+        def result = this.mvc.perform(delete(ACCREDITED_NETWORK_ID_ENDPOINT,id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
     }
@@ -73,12 +75,14 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         def id = network.id
 
         when:
-        def result = this.mvc.perform(get(ACCREDITED_NETWORK_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
+        def result = this.mvc.perform(get(ACCREDITED_NETWORK_ID_ENDPOINT,id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
 
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.person.name', is(equalTo(network.person.name))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.person.document.number', is(equalTo(network.person.document.number))))
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.person.document.number', is(equalTo(network.person.document.number))))
     }
 
     void 'known accreditedNetwork should be found when find all'() {
@@ -86,10 +90,17 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
             String accessToken = getUserAccessToken()
             this.mvc.perform(postAccreditedNetwork(accessToken, getAccreditedNetwork()))
 
-            this.mvc.perform(post(ACCREDITED_NETWORK_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
-                    .content(toJson(accreditedNetwork.with { person.id = null; person.name = 'temp';person.document.number = '1234576777';it })))
+            this.mvc.perform(post(ACCREDITED_NETWORK_ENDPOINT, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                    toJson(accreditedNetwork.with {
+                        person.id = null
+                        person.name = 'temp'
+                        person.document.number = '1234576777'
+                        it })))
         when:
-            def result = this.mvc.perform(get("$ACCREDITED_NETWORK_ENDPOINT",accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(get("$ACCREDITED_NETWORK_ENDPOINT",accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
@@ -132,7 +143,8 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
         String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
         when:
-        def result = this.mvc.perform(get("/accredited-networks?currentUser=true&access_token={access_token}",accessToken)
+        def result = this.mvc.perform(
+                get("/accredited-networks?currentUser=true&access_token={access_token}",accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
