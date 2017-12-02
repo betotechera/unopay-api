@@ -1,8 +1,10 @@
 package br.com.unopay.api.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
@@ -38,7 +40,9 @@ class CreditControllerTest extends AuthServerApplicationTests {
     void 'known credit should be canceled'() {
         given:
         String accessToken = getUserAccessToken()
-        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule(){{
+            add("situation", CreditSituation.AVAILABLE)
+        }})
         def id = credit.id
 
         when:

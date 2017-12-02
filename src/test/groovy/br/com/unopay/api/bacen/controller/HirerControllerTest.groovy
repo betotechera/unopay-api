@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
@@ -189,7 +190,8 @@ class HirerControllerTest extends AuthServerApplicationTests {
         def hirerUser = fixtureCreator.createHirerUser()
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-                add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("situation", CreditSituation.AVAILABLE)
         }})
         def id = credit.id
 
