@@ -33,7 +33,7 @@ public class CreditPaymentAccountController {
     @ResponseStatus(OK)
     @JsonView({Views.CreditPaymentAccount.Detail.class})
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
-    @RequestMapping(value = "/hirers/{document}/credit-payment-accounts/{id}", method = GET)
+    @RequestMapping(value = "/hirers/credit-payment-accounts/{id}", method = GET)
     public CreditPaymentAccount get(@PathVariable String id) {
         log.info("get CreditPaymentAccount={}", id);
         return service.findById(id);
