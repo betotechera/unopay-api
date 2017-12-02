@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;

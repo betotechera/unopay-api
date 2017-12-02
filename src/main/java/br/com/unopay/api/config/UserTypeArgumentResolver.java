@@ -7,7 +7,6 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.Partner;
-import br.com.unopay.api.infra.ReflectionHelper;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.ForbiddenException;

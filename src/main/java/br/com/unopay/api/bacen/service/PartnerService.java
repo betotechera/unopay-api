@@ -14,15 +14,13 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 

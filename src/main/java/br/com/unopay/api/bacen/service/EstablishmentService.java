@@ -22,9 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Service
 public class EstablishmentService {

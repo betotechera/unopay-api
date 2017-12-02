@@ -1,13 +1,11 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.api.uaa.model.UserDetail
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is

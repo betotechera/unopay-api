@@ -16,7 +16,6 @@ import br.com.unopay.api.bacen.repository.ServiceRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.Contract
-
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
 import br.com.unopay.bootcommons.model.Period

@@ -7,16 +7,6 @@ import br.com.unopay.api.bacen.model.BankAccount
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.config.Queues
-import br.com.unopay.api.fileuploader.service.FileUploaderService
-import static br.com.unopay.api.function.FixtureFunctions.instant
-import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.model.BatchClosing
-import br.com.unopay.api.model.BatchClosingSituation
-import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditInsertionType
-import br.com.unopay.api.credit.model.CreditSituation
-import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
@@ -28,6 +18,16 @@ import br.com.unopay.api.billing.remittance.model.PaymentTransferOption
 import br.com.unopay.api.billing.remittance.model.RemittancePayer
 import br.com.unopay.api.billing.remittance.model.RemittanceSituation
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditInsertionType
+import br.com.unopay.api.credit.model.CreditSituation
+import br.com.unopay.api.fileuploader.service.FileUploaderService
+import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.model.BatchClosing
+import br.com.unopay.api.model.BatchClosingSituation
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired

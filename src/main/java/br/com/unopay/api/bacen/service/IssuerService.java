@@ -4,14 +4,13 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
+import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.job.RemittanceJob;
 import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
-import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -26,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 
 @Slf4j

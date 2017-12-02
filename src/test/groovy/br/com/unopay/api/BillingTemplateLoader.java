@@ -10,15 +10,13 @@ import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
-import br.com.unopay.api.billing.remittance.model.RemittancePayee;
-import br.com.unopay.api.billing.remittance.model.RemittancePayer;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.Order;
-import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.OrderStatus;
+import br.com.unopay.api.order.model.OrderType;
 import java.math.BigDecimal;
 
 public class BillingTemplateLoader  implements TemplateLoader {

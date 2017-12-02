@@ -1,10 +1,9 @@
 package br.com.unopay.api;
 
+import java.util.Random;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
 
 @Data
 @Component

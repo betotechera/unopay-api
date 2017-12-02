@@ -17,7 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_WITH_USERS;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_CONTRACTOR_ALREADY_EXISTS;
 
 @Slf4j
 @Service

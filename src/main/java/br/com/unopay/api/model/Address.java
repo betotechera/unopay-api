@@ -1,9 +1,9 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.address.model.AddressSearch;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.address.model.AddressSearch;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;

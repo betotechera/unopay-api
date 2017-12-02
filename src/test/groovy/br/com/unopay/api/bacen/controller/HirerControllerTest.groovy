@@ -10,7 +10,6 @@ import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
-import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.beans.factory.annotation.Autowired

@@ -11,7 +11,6 @@ import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.ProductSituation;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
