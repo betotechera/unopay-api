@@ -1,8 +1,10 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
@@ -124,12 +126,70 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
 
         when:
-        def result = this.mvc.perform(get('/issuers?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(get('/issuers?currentUser=true&access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+    }
+
+    void 'valid me product should be created'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule() {{
+                add("accreditedNetwork", fixtureCreator.createNetwork())
+                add("paymentRuleGroup", fixtureCreator.createPaymentRuleGroup())
+        }})
+
+        when:
+        def result = this.mvc.perform(post('/issuers/me/products?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(product)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
+    void 'known me product should be updated'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        Product product = fixtureCreator.createProductWithIssuer(issuerUser.issuer)
+        def id = product.id
+        when:
+        def result = this.mvc.perform(put('/issuers/me/products/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(product.with { name = '56456'; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known me product should be deleted'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        Product product = fixtureCreator.createProductWithIssuer(issuerUser.issuer)
+        def id = product.id
+        when:
+        def result = this.mvc.perform(delete('/issuers/me/products/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known me products should be found'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        Product product = fixtureCreator.createProductWithIssuer(issuerUser.issuer)
+        def id = product.id
+        when:
+        def result = this.mvc.perform(get('/issuers/me/products/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
     }
 
 }

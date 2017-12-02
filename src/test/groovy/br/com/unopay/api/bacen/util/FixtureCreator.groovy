@@ -371,6 +371,12 @@ class FixtureCreator {
         }})
     }
 
+    Product createProductWithIssuer(Issuer issuer = createIssuer()) {
+        Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+                add("issuer", issuer)
+       }})
+    }
+
     Product crateProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
         def hirer = createHirer()
         Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{

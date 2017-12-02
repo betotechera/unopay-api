@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
@@ -40,7 +41,7 @@ public class ProductService {
         this.paymentRuleGroupService = paymentRuleGroupService;
     }
 
-    public Product save(Product product) {
+    public Product create(Product product) {
         try {
             product.validate();
             checkName(product);
@@ -51,9 +52,17 @@ public class ProductService {
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }
+    public void updateForIssuer(String id,Issuer issuer, Product product) {
+        Product current = findByIdForIssuer(id, issuer);
+        update(product, current);
+    }
 
     public void update(String id, Product product) {
         Product current = findById(id);
+        update(product, current);
+    }
+
+    private void update(Product product, Product current) {
         validateReferences(product);
         checkName(current, product);
         current.updateMe(product);
@@ -71,10 +80,21 @@ public class ProductService {
                 UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public Product findByIdForIssuer(String id, Issuer issuer) {
+        Optional<Product> product = repository.findByIdAndIssuerId(id, issuer.getId());
+        return product.orElseThrow(() ->
+                UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND.withOnlyArgument(id)));
+    }
+
     public Product findByCode(String code) {
         Optional<Product> product = repository.findByCode(code);
         return product.orElseThrow(() ->
                 UnovationExceptions.notFound().withErrors(PRODUCT_NOT_FOUND.withOnlyArgument(code)));
+    }
+
+    public void deleteForIssuer(String id, Issuer issuer) {
+        findByIdForIssuer(id, issuer);
+        repository.delete(id);
     }
 
     public void delete(String id) {
