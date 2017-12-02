@@ -2,10 +2,14 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.model.filter.CreditFilter;
+import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -34,6 +38,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Slf4j
 @RestController
 @PreAuthorize("#oauth2.isUser()")
@@ -43,6 +54,7 @@ public class HirerController {
     private HirerService service;
     private ContractorService contractorService;
     private ContractService contractService;
+    private CreditService creditService;
 
     @Value("${unopay.api}")
     private String api;
@@ -50,10 +62,12 @@ public class HirerController {
     @Autowired
     public HirerController(HirerService service,
                            ContractorService contractorService,
-                           ContractService contractService) {
+                           ContractService contractService,
+                           CreditService creditService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
+        this.creditService = creditService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -179,6 +193,45 @@ public class HirerController {
         Page<Contractor> page =  contractorService.findByFilterForHirer(hirer, filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/contractors", api));
+    }
+
+    @JsonView(Views.Credit.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/hirers/me/credits", method = POST)
+    public ResponseEntity<Credit> insertCredit(Hirer hirer,
+                                         @Validated(Create.class) @RequestBody Credit credit) {
+        log.info("inserting credit={} for hirer={}", credit, hirer.getDocumentNumber());
+        credit.setHirerDocument(hirer.getDocumentNumber());
+        Credit created = creditService.insert(credit);
+        log.info("Inserted credit={}", created);
+        return created(URI.create(String.format("/hirers/me/credits/%s",created.getId()))).body(created);
+
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.Credit.Detail.class)
+    @RequestMapping(value = "/hirers/me/credits/{id}", method = GET)
+    public Credit getCredit(Hirer hirer, @PathVariable String id) {
+        log.info("get credit={} for hirer={}", id, hirer.getDocumentNumber());
+        return creditService.findByIdForHirer(id, hirer);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/credits/{id}", method = RequestMethod.DELETE)
+    public void cancel(Hirer hirer, @PathVariable String id) {
+        log.info("canceling credit id={} for hirer={}", id, hirer.getDocumentNumber());
+        creditService.cancelForHirer(id, hirer);
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.Credit.List.class)
+    @RequestMapping(value = "/hirers/me/credits", method = GET)
+    public Results<Credit> findCreditByParams(Hirer hirer, CreditFilter filter,
+                                  @Validated UnovationPageRequest pageable) {
+        log.info("search Credit with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        Page<Credit> page =  creditService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/credits", api));
     }
 
 }
