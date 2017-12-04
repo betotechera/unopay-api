@@ -51,6 +51,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.POST)
     public ResponseEntity<AccreditedNetwork> create(@Validated(Create.class)
                                                         @RequestBody AccreditedNetwork accreditedNetwork) {
@@ -64,6 +65,7 @@ public class AccreditedNetworkController {
 
     @JsonView({Views.AccreditedNetwork.Detail.class})
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.GET)
     public AccreditedNetwork get(@PathVariable  String id) {
         log.info("get AccreditedNetwork={}", id);
@@ -72,6 +74,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class)
     @RequestBody AccreditedNetwork accreditedNetwork) {
@@ -82,6 +85,7 @@ public class AccreditedNetworkController {
 
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing accreditedNetwork id={}", id);
@@ -90,6 +94,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET)
     public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter,
                                                   @Validated UnovationPageRequest pageable) {
@@ -118,6 +123,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ACCREDITED_NETWORK')")
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET, params = "currentUser")
     public Results<AccreditedNetwork> getMeByParams(AccreditedNetwork accreditedNetwork, AccreditedNetworkFilter filter,
                                                   @Validated UnovationPageRequest pageable) {
