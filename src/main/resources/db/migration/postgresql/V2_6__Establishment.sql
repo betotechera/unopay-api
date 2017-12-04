@@ -34,7 +34,7 @@ create table establishment (
     gathering_channel varchar(256),
     movement_account_id varchar(256) not null,
     movement_period VARCHAR(16),
-    authorize_transfer char(1),
+    authorize_transfer varchar(20),
     closing_payment_days integer,
     minimum_deposit_value decimal(10,2),
     invoice_receipt_period  VARCHAR(16),

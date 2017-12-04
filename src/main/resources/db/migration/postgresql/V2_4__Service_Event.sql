@@ -12,7 +12,7 @@ create table event (
  service_id varchar(256) not null,
  ncm_code varchar(50) not null,
  name varchar(256) not null,
- request_quantity char(1) not null,
+ request_quantity varchar(20) not null,
  quantity_unity varchar(256),
  constraint fk_service_event foreign key(service_id) REFERENCES service(id)
 );

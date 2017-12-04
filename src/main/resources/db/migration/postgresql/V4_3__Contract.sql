@@ -6,7 +6,7 @@ create table contract (
     begin_date DATE,
     end_date DATE,
     credit_insertion_type varchar(50),
-    issue_invoice char(1) not null,
+    issue_invoice varchar(20) not null,
     document_number_invoice varchar(50) not null,
     situation varchar(20) not null,
     rntrc varchar(20) not null,
