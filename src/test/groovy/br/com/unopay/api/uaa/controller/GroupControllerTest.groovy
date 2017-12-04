@@ -51,7 +51,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
             def location = getLocationHeader(mvcResult)
             def id = extractId(location)
         when:
-            def result = this.mvc.perform(delete(GROUP_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(delete(GROUP_ID_ENDPOINT,id, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isNoContent())
     }
@@ -72,7 +73,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
             def location = getLocationHeader(mvcResult)
             def id = extractId(location)
         when:
-            def result = this.mvc.perform(get(GROUP_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(get(GROUP_ID_ENDPOINT,id, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.name', is(equalTo(group.name))))
@@ -87,7 +89,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
             this.mvc.perform(post(GROUP_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(group.with { name = 'temp'; it })))
         when:
-            def result = this.mvc.perform(get("$GROUP_ENDPOINT&page=1&size=2",accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(get("$GROUP_ENDPOINT&page=1&size=2",accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', hasSize(2)))
@@ -98,7 +101,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
     void 'given known group and user should be add member to group'() {
         given:
             String accessToken = getUserAccessToken()
-            this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content("""["1", "2"]"""))
+            this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON).content("""["1", "2"]"""))
         when:
             def result = this.mvc.perform(get("$MEMBERS_ENDPOINT&page=1&size=20", DEFAULT_GROUP_ID, accessToken))
         then:
@@ -111,7 +115,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
     void 'given known group and authority should be add authority to group'() {
         given:
             String accessToken = getUserAccessToken()
-            this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content("""["ROLE_ADMIN", "ROLE_USER"]"""))
+            this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON).content("""["ROLE_ADMIN", "ROLE_USER"]"""))
         when:
             def result = this.mvc.perform(get("$AUTHORITIES_ENDPOINT&page=1&size=20", DEFAULT_GROUP_ID, accessToken))
         then:
@@ -124,7 +129,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
         given:
             String accessToken = getUserAccessToken()
         when:
-            def result = this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content(""""""))
+            def result = this.mvc.perform(put(AUTHORITIES_ENDPOINT, DEFAULT_GROUP_ID, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON).content(""""""))
         then:
             result.andExpect(status().isBadRequest())
     }
@@ -133,7 +139,8 @@ class GroupControllerTest extends AuthServerApplicationTests {
         given:
             String accessToken = getUserAccessToken()
         when:
-            def result = this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken).contentType(MediaType.APPLICATION_JSON).content(""""""))
+            def result = this.mvc.perform(put(MEMBERS_ENDPOINT, DEFAULT_GROUP_ID, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON).content(""""""))
         then:
             result.andExpect(status().isBadRequest())
     }
