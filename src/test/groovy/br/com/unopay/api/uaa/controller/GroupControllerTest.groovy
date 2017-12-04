@@ -81,10 +81,11 @@ class GroupControllerTest extends AuthServerApplicationTests {
 
     void 'known groups should be found when find all'() {
         given:
-            groupRepository.deleteAll()
             String accessToken = getUserAccessToken()
+            groupRepository.deleteAll()
             this.mvc.perform(postGroups(accessToken, getGroup()))
-            this.mvc.perform(post(GROUP_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(group.with { name = 'temp'; it })))
+            this.mvc.perform(post(GROUP_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
+                    .content(toJson(group.with { name = 'temp'; it })))
         when:
             def result = this.mvc.perform(get("$GROUP_ENDPOINT&page=1&size=2",accessToken).contentType(MediaType.APPLICATION_JSON))
         then:
