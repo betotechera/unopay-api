@@ -126,7 +126,8 @@ public class BoletoStellaBuilder {
                 .comDigitoCodigoBeneficiario(paymentAccount.getBeneficiaryDigit())
                 .comNumeroConvenio(paymentAccount.getBankAgreementNumberForDebit())
                 .comCarteira(paymentAccount.getWalletNumber())
-                .comEndereco(enderecoBeneficiario);
+                .comEndereco(enderecoBeneficiario)
+                .comNossoNumero("");
     }
 
     private Endereco getEndereco(Address beneficiaryAddress) {

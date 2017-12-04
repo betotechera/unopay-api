@@ -169,7 +169,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("prePaidPaymentDays", random(Integer.class,range(1,31)));
             add("bankAgreementNumberForCredit", regex("\\d{7}"));
             add("bankAgreementNumberForDebit", regex("\\d{7}"));
-            add("ourNumber", regex("\\d{7}"));
             add("station", regex("\\d{7}"));
             add("walletNumber", regex("\\d{3}"));
             add("beneficiaryCode", regex("\\d{7}"));
