@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +51,7 @@ public class InstitutionController {
 
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_INSTITUTION')")
     @RequestMapping(value = "/institutions", method = RequestMethod.POST)
     public ResponseEntity<Institution> create(@Validated(Create.class) @RequestBody Institution institution) {
         log.info("creating institution {}", institution);
@@ -61,6 +63,7 @@ public class InstitutionController {
 
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_INSTITUTION')")
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.GET)
     public Institution get(@PathVariable  String id) {
         log.info("get Institution={}", id);
@@ -69,6 +72,7 @@ public class InstitutionController {
 
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_INSTITUTION')")
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable String id, @Validated(Update.class) @RequestBody Institution institution) {
         institution.setId(id);
@@ -77,6 +81,7 @@ public class InstitutionController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_INSTITUTION')")
     @RequestMapping(value = "/institutions/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing institution id={}", id);
@@ -85,6 +90,7 @@ public class InstitutionController {
 
     @JsonView(Views.Institution.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_INSTITUTION')")
     @RequestMapping(value = "/institutions", method = RequestMethod.GET)
     public Results<Institution> getByParams(InstitutionFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Institution with filter={}", filter);
@@ -111,6 +117,7 @@ public class InstitutionController {
 
     @JsonView(Views.Institution.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_INSTITUTION')")
     @RequestMapping(value = "/institutions", method = RequestMethod.GET, params = "currentUser")
     public Results<Institution> getMeByParams(OAuth2Authentication authentication,
                                               InstitutionFilter filter, @Validated UnovationPageRequest pageable) {

@@ -60,12 +60,6 @@ create table institution (
 
 create unique index inst_pers_id on institution (person_id);
 
-Insert into AUTHORITY(name, description) values('ROLE_LIST_institution','Permite listar Instituidores');
-Insert into AUTHORITY(name, description) values('ROLE_MANAGE_institution','Permite gerenciar Instituidores');
-
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_institution', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_institution', '1');
-
 
 ALTER TABLE oauth_user_details ADD institution_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_inst FOREIGN KEY(institution_id) REFERENCES institution(id);
@@ -76,3 +70,10 @@ INSERT INTO PERSON (ID,NAME,"TYPE",DOCUMENT_TYPE,DOCUMENT_NUMBER,ADDRESS_ID,LEGA
 insert into institution(id,person_id,payment_rule_group_id) values('1','1','1')
 
 update oauth_user_details set institution_id = '1' where id = '3'
+
+
+Insert into AUTHORITY(name, description) values('ROLE_LIST_INSTITUTION','Permite listar Instituidores');
+Insert into AUTHORITY(name, description) values('ROLE_MANAGE_INSTITUTION','Permite gerenciar Instituidores');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_INSTITUTION', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_INSTITUTION', '1');
