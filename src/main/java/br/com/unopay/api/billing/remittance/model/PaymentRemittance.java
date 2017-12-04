@@ -107,6 +107,7 @@ public class PaymentRemittance implements Serializable {
     private String cnabUri;
 
     @Column(name = "situation")
+    @Enumerated(EnumType.STRING)
     @JsonView(Views.PaymentRemittance.List.class)
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;

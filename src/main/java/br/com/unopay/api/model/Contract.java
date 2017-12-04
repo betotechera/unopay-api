@@ -12,11 +12,9 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -56,7 +54,6 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_REQUIRED;
 @Data
 @Entity
 @Table(name = "contract")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(exclude = {"contractEstablishments", "establishments", "contractInstallments"})
 public class Contract implements Serializable {
 

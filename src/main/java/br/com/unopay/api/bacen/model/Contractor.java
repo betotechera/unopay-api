@@ -8,9 +8,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -36,7 +34,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "contractor")
 @ToString(exclude = "contracts")
 @EqualsAndHashCode(exclude = {"contracts"})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Contractor implements Serializable {
 
     public static final long serialVersionUID = 1L;
