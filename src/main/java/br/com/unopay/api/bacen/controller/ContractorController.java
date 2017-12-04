@@ -84,6 +84,7 @@ public class ContractorController {
 
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACTOR')")
     @RequestMapping(value = "/contractors", method = RequestMethod.POST)
     public ResponseEntity<Contractor> create(@Validated(Create.class) @RequestBody Contractor contractor) {
         log.info("creating contractor {}", contractor);
@@ -96,6 +97,7 @@ public class ContractorController {
 
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.GET)
     public Contractor get(@PathVariable  String id) {
         log.info("get Contractor={}", id);
@@ -104,6 +106,7 @@ public class ContractorController {
 
     @JsonView({Views.Contractor.Detail.class})
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors", method = RequestMethod.GET, params = {"documentNumber","useOnlyDocument"})
     public Contractor getByDocument(@RequestParam String documentNumber, @RequestParam String useOnlyDocument){
         log.info("get Contractor document={}", documentNumber);
@@ -111,6 +114,7 @@ public class ContractorController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Contractor contractor) {
         contractor.setId(id);
@@ -119,6 +123,7 @@ public class ContractorController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing hired id={}", id);
@@ -127,6 +132,7 @@ public class ContractorController {
 
     @JsonView(Views.Contractor.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors", method = RequestMethod.GET)
     public Results<Contractor> getByParams(ContractorFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Contractor with filter={}", filter);
@@ -137,6 +143,7 @@ public class ContractorController {
 
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{id}/contracts", method = RequestMethod.GET)
     public Results<Contract> getValidContracts(@PathVariable  String id,
                                                @RequestParam(required = false) String productCode) {
@@ -157,6 +164,7 @@ public class ContractorController {
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{contractorDocument}/credits", method = RequestMethod.GET)
     public Results<ContractorInstrumentCredit> getCredits(@PathVariable  String contractorDocument,
                                                           @RequestParam(required = false) String contractId,
@@ -183,6 +191,7 @@ public class ContractorController {
 
     @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{contractorDocument}/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getInstruments(@PathVariable String contractorDocument) {
         log.info("search Contractor instruments document={}", contractorDocument);
