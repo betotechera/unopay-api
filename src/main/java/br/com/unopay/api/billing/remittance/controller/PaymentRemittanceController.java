@@ -1,9 +1,9 @@
 package br.com.unopay.api.billing.remittance.controller;
 
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;

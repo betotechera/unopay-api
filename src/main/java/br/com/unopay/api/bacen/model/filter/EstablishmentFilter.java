@@ -14,6 +14,9 @@ public class EstablishmentFilter implements Serializable {
     @SearchableField(field = "person.document.number")
     private String documentNumber;
 
+    @SearchableField(field = "network.person.document.number")
+    private String accreditedNetwork;
+
     @SearchableField(field = "person.name")
     private String personName;
 
@@ -25,4 +28,5 @@ public class EstablishmentFilter implements Serializable {
 
     @SearchableField(field = "person.address.state")
     private State state;
+
 }

@@ -8,13 +8,13 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;
+import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.model.BatchClosing;
 import br.com.unopay.api.model.BatchClosingItem;
 import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.ServiceAuthorize;
-import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import java.math.BigDecimal;
 
 public class BatchClosingTemplateLoader  implements TemplateLoader {

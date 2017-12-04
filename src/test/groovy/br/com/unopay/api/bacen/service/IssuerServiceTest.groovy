@@ -6,10 +6,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.RecurrencePeriod
-import br.com.unopay.api.job.RemittanceJob
-import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService
+import br.com.unopay.api.job.RemittanceJob
+import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

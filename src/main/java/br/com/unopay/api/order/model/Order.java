@@ -13,13 +13,11 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.bootcommons.exception.UnauthorizedException;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -43,7 +41,12 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.*;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCELED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCEL_PENDING;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURE_RECEIVED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.DENIED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUND;
 
 @Data
 @Entity

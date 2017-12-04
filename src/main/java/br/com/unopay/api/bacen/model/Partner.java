@@ -5,9 +5,7 @@ import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import lombok.Data;
@@ -76,5 +73,12 @@ public class Partner implements Serializable {
 
     public boolean hasProducts() {
         return this.products != null && !this.products.isEmpty();
+    }
+
+    public String documentNumber(){
+        if(getPerson() != null && getPerson().getDocument() != null){
+            return getPerson().getDocument().getNumber();
+        }
+        return null;
     }
 }

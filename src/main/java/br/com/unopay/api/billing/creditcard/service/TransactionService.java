@@ -6,7 +6,6 @@ import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.repository.TransactionRepository;
-import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;

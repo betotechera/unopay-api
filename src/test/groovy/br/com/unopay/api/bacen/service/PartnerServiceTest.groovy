@@ -9,7 +9,6 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page

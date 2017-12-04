@@ -2,9 +2,6 @@ package br.com.unopay.api.uaa;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
-import br.com.six2six.fixturefactory.function.AtomicFunction;
-import br.com.six2six.fixturefactory.function.Function;
-import br.com.six2six.fixturefactory.function.impl.RegexFunction;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.uaa.model.Authority;
@@ -12,7 +9,6 @@ import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
 import java.util.Arrays;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 public class UaaTemplateLoader implements TemplateLoader {
 

@@ -4,8 +4,6 @@ import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.model.DocumentType
 import br.com.unopay.api.model.PersonType
 
-import javax.validation.Validator
-
 class ContractorCsvTest extends FixtureApplicationTest {
 
     def 'given contractor csv with should create person'(){

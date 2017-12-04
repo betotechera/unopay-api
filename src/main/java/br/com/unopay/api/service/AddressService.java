@@ -1,8 +1,8 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.model.Address;
 import br.com.unopay.api.address.model.AddressSearch;
 import br.com.unopay.api.address.service.AddressSearchService;
+import br.com.unopay.api.model.Address;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

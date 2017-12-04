@@ -49,7 +49,7 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     public ResponseEntity<Product> create(@Validated(Create.class) @RequestBody Product product) {
         log.info("creating product {}", product);
-        Product created = service.save(product);
+        Product created = service.create(product);
         return ResponseEntity
                 .created(URI.create("/products/"+created.getId()))
                 .body(created);

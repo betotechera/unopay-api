@@ -5,22 +5,32 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@ToString(exclude = "establishments")
+@EqualsAndHashCode(exclude = "establishments")
 @Table(name = "service")
 public class Service implements Serializable {
 
@@ -58,6 +68,14 @@ public class Service implements Serializable {
     @Column(name = "fee_percent")
     @JsonView({Views.Service.Detail.class})
     private Double feePercent;
+
+    @ManyToMany
+    @BatchSize(size = 10)
+    @JsonIgnore
+    @JoinTable(name = "establishment_service",
+            joinColumns = { @JoinColumn(name = "service_id") },
+            inverseJoinColumns = { @JoinColumn(name = "establishment_id") })
+    private Set<Establishment> establishments;
 
     public void validate() {
         if(feePercent == null && feeVal == null){

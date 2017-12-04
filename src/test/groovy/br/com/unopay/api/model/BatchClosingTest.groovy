@@ -5,7 +5,6 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Time
-import org.joda.time.DateTime
 
 class BatchClosingTest extends FixtureApplicationTest {
 

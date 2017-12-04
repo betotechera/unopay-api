@@ -39,7 +39,7 @@ create table travel_document (
     caveat varchar(100),
     created_date_time timestamp not null,
     delivery_date_time timestamp,
-    cargo_weight decimal(*,2),
+    cargo_weight decimal(20,2),
     damaged_items integer,
     version integer,
     cargo_contract_id varchar(256),

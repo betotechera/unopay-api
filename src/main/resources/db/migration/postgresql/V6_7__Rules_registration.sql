@@ -1,13 +1,13 @@
 alter table product drop column maximum_credit_insertion;
 alter table product drop column minimum_credit_insertion;
-alter table payment_rule_group add maximum_credit_insertion decimal(*,2);
-alter table payment_rule_group add minimum_credit_insertion decimal(*,2);
+alter table payment_rule_group add maximum_credit_insertion decimal(20,2);
+alter table payment_rule_group add minimum_credit_insertion decimal(20,2);
 alter table credit add issuer_document varchar(20) default '24122925000173' not null;
 alter table legal_person_detail add municipal_inscription_number varchar(150) null;
 alter table issuer add financier_mail_for_remittance varchar(256) default 'financeiro@roadcard.com.br' not null;
 alter table payment_bank_account add bank_agreement_number_debit varchar(20) default '0000000000' not null;
 alter table remittance_payer add bank_agreement_number_debit varchar(20) default '0000000000' not null;
-alter table remittance_payee add receivable decimal(*,2) default 0.0 not null;
+alter table remittance_payee add receivable decimal(20,2) default 0.0 not null;
 
 
 

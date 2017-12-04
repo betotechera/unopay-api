@@ -3,7 +3,6 @@ package br.com.unopay.api.billing.remittance.cnab240
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
@@ -86,6 +85,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceReco
 import br.com.unopay.api.billing.remittance.model.PaymentOperationType
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
 import spock.lang.Unroll
 

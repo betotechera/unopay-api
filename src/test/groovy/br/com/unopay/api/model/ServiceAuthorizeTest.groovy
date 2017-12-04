@@ -4,7 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Event
-import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Unroll

@@ -31,5 +31,5 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_BRANCH','Permite ge
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BRANCH', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BRANCH', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
-ALTER TABLE PERSON MODIFY name varchar(150);
-ALTER TABLE LEGAL_PERSON_DETAIL MODIFY fantasy_name varchar(150);
+ALTER TABLE unovation.PERSON alter column name type varchar(150);
+ALTER TABLE LEGAL_PERSON_DETAIL alter column fantasy_name type varchar(150);

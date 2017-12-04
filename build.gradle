@@ -73,7 +73,7 @@ dependencies {
 
 	compile 'com.google.guava:guava:21.0'
 
-	compile 'com.oracle.jdbc:ojdbc8:12.2.0.1'
+	compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
 	compile 'org.hsqldb:hsqldb'
 	compile "org.flywaydb:flyway-core:4.1.1"
 	compile "org.apache.commons:commons-lang3:3.6"
