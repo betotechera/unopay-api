@@ -31,7 +31,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
     
     void 'should create partner'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
         when:
             def result = this.mvc.perform(postPartner(accessToken, getPartner()))
         then:
@@ -44,7 +44,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
 
     void 'known partner should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postPartner(accessToken, getPartner())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -56,7 +56,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
 
     void 'known partner should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         def mvcResult = this.mvc.perform(postPartner(accessToken, getPartner())).andReturn()
         def location = getLocationHeader(mvcResult)
         def id = extractId(location)
@@ -78,7 +78,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
 
     void 'known partner should be found'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             Partner partner = getPartner()
             def mvcResult = this.mvc.perform(postPartner(accessToken, partner)).andReturn()
             def location = getLocationHeader(mvcResult)
@@ -93,7 +93,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
 
     void 'known partner should be found when find all'() {
         given:
-            String accessToken = getClientAccessToken()
+            String accessToken = getUserAccessToken()
             this.mvc.perform(postPartner(accessToken, getPartner()))
 
             this.mvc.perform(post(HIRER_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
