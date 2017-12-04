@@ -6,8 +6,8 @@ create table boleto (
     expiration_date_time timestamp not null,
     processed_at timestamp not null,
     "number" varchar(100) not null,
-    value decimal(*,2) not null,
-    payment_penalty_value decimal(*,2),
+    value decimal(20,2) not null,
+    payment_penalty_value decimal(20,2),
     interest decimal(3,2),
     uri varchar(256) not null,
     typing_code varchar(256) not null,
@@ -26,5 +26,5 @@ alter table payment_bank_account add OUR_NUMBER varchar(100) default '0000000' n
 alter table payment_bank_account add wallet_number varchar(100) default '000' not null;
 alter table payment_bank_account add beneficiary_code varchar(100) default '0000000' not null;
 alter table payment_bank_account add beneficiary_digit varchar(5) default '00' not null;
-alter table contract add created_date_time timestamp default SYSDATE not null;
+alter table contract add created_date_time timestamp default CURRENT_TIMESTAMP not null;
 

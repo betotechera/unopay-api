@@ -15,10 +15,10 @@ payment:
         enviroment: 'T'
 unopay:
   resetPassword:
-        url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
+        url: 'http://backoffice.unovation.com.br/#/page/password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
-  api: api.qa.unvlocal.com.br:8080
+  api: unopay.api.unovation.com.br
   notification:
     defaultTemplate: "email-templates/%s/%s.html"
     subjectByEvent:
@@ -46,31 +46,40 @@ unopay:
         folder: establishment-facades
 amazon:
   s3:
-    bucketName: unopay-files
+    bucketName: unopay-files-prod
     cdn:
-      uri: https://s3-us-west-2.amazonaws.com/unopay-files
+      uri: https://s3-us-west-2.amazonaws.com/unopay-files-prod
     accessKey: AKIAIVBZ43OSHKREK4XQ
     secretKey: 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
 multipart:
   max-file-size: 9000Kb
 spring:
   datasource:
-      url: jdbc:postgresql://unopay-qa.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:5432/unopay?currentSchema=unovation
+      url: jdbc:postgresql://unopay-prod.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:5432/unopay?currentSchema=unovation
       username: administrator
-      password: LVTQB5MkBuH0
+      password: xKQRKAwYVNQ7GTan
       driverClassName: org.postgresql.Driver
+      initialSize: 5
+      min-idle: 5
+      max-idle: 12
+      max-active: 12
+      max-wait: 10000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+      time-between-eviction-runs-millis: 20000
   encryptor:
-    password: vEexq7mVjQj948B7
+    password: 2nGvyMDNJz2Wjp6M
   jpa:
     hibernate.ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     generate-ddl: false
-    database: ORACLE
   redis:
-    host: redis.qa.unvlocal.com.br
+    host: redis.prod.unvlocal.com.br
     port: 6379
   rabbitmq:
-    host: rabbit.qa.unvlocal.com.br
+    host: rabbit.prod.unvlocal.com.br
     port: 5672
     username: unopay
     password: unopay
