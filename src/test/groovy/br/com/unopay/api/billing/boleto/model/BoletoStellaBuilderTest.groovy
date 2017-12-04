@@ -37,7 +37,6 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
         boletoStella.getBeneficiario().agencia == issuer.paymentAccount.bankAccount.agency
         boletoStella.getBeneficiario().digitoAgencia == issuer.paymentAccount.bankAccount.agencyDigit
         boletoStella.getBeneficiario().numeroConvenio == issuer.paymentAccount.bankAgreementNumberForDebit
-        boletoStella.getBeneficiario().nossoNumero == issuer.paymentAccount.ourNumber
         boletoStella.getBeneficiario().codigoBeneficiario == issuer.paymentAccount.beneficiaryCode
         boletoStella.getBeneficiario().digitoCodigoBeneficiario == issuer.paymentAccount.beneficiaryDigit
         boletoStella.getBeneficiario().carteira == issuer.paymentAccount.walletNumber
