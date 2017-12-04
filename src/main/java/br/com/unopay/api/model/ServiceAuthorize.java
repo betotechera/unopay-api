@@ -5,26 +5,17 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -39,10 +30,18 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 
 @Slf4j
 @Data

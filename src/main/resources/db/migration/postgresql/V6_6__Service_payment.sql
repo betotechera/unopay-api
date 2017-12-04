@@ -115,7 +115,7 @@ create table payment_remittance_item (
     payment_remittance_id varchar(256),
     payee_id varchar(256) not null,
     transfer_option varchar(150) not null,
-    value decimal(*,2) not null,
+    value decimal(20,2) not null,
     situation varchar(150) not null,
     occurrence_code varchar(100),
     version integer,

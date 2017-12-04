@@ -10,10 +10,14 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit
+import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
@@ -21,9 +25,6 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.credit.model.ContractorInstrumentCredit
-import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
@@ -51,6 +52,39 @@ class FixtureCreator {
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
             {
                 add("establishment", establishmentUnderTest)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
+    UserDetail createInstitutionUser(institution = createInstitution()) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+            {
+                add("institution", institution)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
+    UserDetail createHirerUser(hirer = createHirer()) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+            {
+                add("hirer", hirer)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
+    UserDetail createAccreditedNetworkUser(network = createNetwork()) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+            {
+                add("accreditedNetwork", network)
                 add("password", passwordEncoder.encode(generatePassword))
             }
         })
@@ -337,6 +371,12 @@ class FixtureCreator {
         }})
     }
 
+    Product createProductWithIssuer(Issuer issuer = createIssuer()) {
+        Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+                add("issuer", issuer)
+       }})
+    }
+
     Product crateProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
         def hirer = createHirer()
         Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
@@ -429,8 +469,10 @@ class FixtureCreator {
         Fixture.from(Product.class).uses(jpaProcessor).gimme("creditWithoutDirectDebit")
     }
 
-    Establishment createEstablishment() {
-        Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+    Establishment createEstablishment(AccreditedNetwork network = createNetwork()) {
+        Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("network",network)
+        }})
     }
 
     Establishment createHeadOffice() {
@@ -440,12 +482,25 @@ class FixtureCreator {
     AccreditedNetwork createNetwork() {
         Fixture.from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
     }
+
+    Service createService(Establishment establishment = createEstablishment()) {
+        Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("establishments", Arrays.asList(establishment))
+        }})
+    }
+
     Issuer createIssuer() {
         Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid")
     }
 
-    PaymentRuleGroup createPaymentRuleGroup() {
-        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid")
+    Institution createInstitution() {
+        Fixture.from(Institution.class).uses(jpaProcessor).gimme("valid")
+    }
+
+    PaymentRuleGroup createPaymentRuleGroup(Institution institution = createInstitution()) {
+        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("institution", institution)
+        }})
     }
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {

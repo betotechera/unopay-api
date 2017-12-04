@@ -9,8 +9,9 @@ import br.com.unopay.api.billing.boleto.service.BoletoService;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
-import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -18,7 +19,6 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -93,6 +93,7 @@ public class ContractorController {
                 .body(created);
 
     }
+
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/{id}", method = RequestMethod.GET)
@@ -146,7 +147,6 @@ public class ContractorController {
 
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
     public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
                                             OAuth2Authentication authentication) {
@@ -170,7 +170,6 @@ public class ContractorController {
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/credits", method = RequestMethod.GET)
     public Results<ContractorInstrumentCredit> getMyCredits(OAuth2Authentication authentication,
                                                           @RequestParam(required = false) String contractId,
@@ -193,7 +192,6 @@ public class ContractorController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/orders", method = POST)
     public ResponseEntity<Order> create(OAuth2Authentication authentication,
                                         @Validated(Create.Order.class) @RequestBody Order order) {
@@ -204,7 +202,6 @@ public class ContractorController {
 
     @JsonView(Views.PaymentInstrument.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/payment-instruments", method = RequestMethod.GET)
     public Results<PaymentInstrument> getMyInstruments(OAuth2Authentication authentication) {
         log.info("get Contractor instruments for={}", authentication.getName());
@@ -215,7 +212,6 @@ public class ContractorController {
 
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
     public Results<Boleto> findBoletos(OAuth2Authentication authentication,
                                       BoletoFilter filter, @Validated UnovationPageRequest pageable) {
@@ -227,7 +223,6 @@ public class ContractorController {
 
     @JsonView(Views.Billing.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/contractors/me/transactions", method = RequestMethod.GET)
     public Results<Transaction> findTransactions(OAuth2Authentication authentication,
                                            TransactionFilter filter, @Validated UnovationPageRequest pageable) {

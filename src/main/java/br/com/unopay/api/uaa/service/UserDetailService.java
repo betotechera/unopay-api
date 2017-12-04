@@ -1,8 +1,5 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.service.AccreditedNetworkService;
-import br.com.unopay.api.bacen.service.InstitutionService;
-import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -12,7 +9,6 @@ import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserType;
-import br.com.unopay.api.uaa.model.UserTypeNames;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
@@ -42,8 +38,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.USER_TYPE_REQUIRED;
 
 @Service
 @Timed
@@ -56,10 +50,8 @@ public class UserDetailService implements UserDetailsService {
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
 
     private UserDetailRepository userDetailRepository;
-    private IssuerService issuerService;
-    private AccreditedNetworkService accreditedNetworkService;
-    private InstitutionService institutionService;
     private UserTypeRepository userTypeRepository;
+    private UserTypeService userTypeService;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
     private NotificationService notificationService;
@@ -68,24 +60,20 @@ public class UserDetailService implements UserDetailsService {
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository,
-                             IssuerService issuerService,
-                             AccreditedNetworkService accreditedNetworkService,
-                             InstitutionService institutionService,
                              UserTypeRepository userTypeRepository,
                              PasswordEncoder passwordEncoder,
                              GroupService groupService,
                              NotificationService notificationService,
                              PasswordTokenService passwordTokenService,
+                             UserTypeService userTypeService,
                              MailValidator mailValidator) {
         this.userDetailRepository = userDetailRepository;
-        this.issuerService = issuerService;
-        this.accreditedNetworkService = accreditedNetworkService;
-        this.institutionService = institutionService;
         this.userTypeRepository = userTypeRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
         this.notificationService = notificationService;
         this.passwordTokenService = passwordTokenService;
+        this.userTypeService = userTypeService;
         this.mailValidator = mailValidator;
     }
 
@@ -101,7 +89,7 @@ public class UserDetailService implements UserDetailsService {
             if(user.getType() == null) {
                 user.setType(userType);
             }
-            validateUserType(user);
+            userTypeService.validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
             UserDetail created =  this.userDetailRepository.save(user);
@@ -207,58 +195,33 @@ public class UserDetailService implements UserDetailsService {
         updatePasswordByUser(user, newPassword);
     }
 
+    public boolean hasIssuer(String id) {
+        return  userDetailRepository.countByIssuerId(id) > 0;
+    }
+
+    public boolean hasNetwork(String id) {
+        return userDetailRepository.countByAccreditedNetworkId(id) > 0;
+    }
+
+    public boolean hasEstablishment(String id) {
+        return userDetailRepository.countByEstablishmentId(id) > 0;
+    }
+
+    public boolean hasHirer(String id) {
+        return userDetailRepository.countByHirerId(id) > 0;
+    }
+
+    public boolean hasInstitution(String id) {
+        return userDetailRepository.countByInstitutionId(id) > 0;
+    }
+
+    public boolean hasPartner(String id) {
+        return userDetailRepository.countByPartnerId(id) > 0;
+    }
+
     private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
         userDetailRepository.save(user);
     }
-
-    private void validateUserType(UserDetail user) {
-        if(user.getType() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_REQUIRED);
-        }
-
-        UserType type = userTypeRepository.findById(user.getType().getId());
-        if(type == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(USER_TYPE_NOT_FOUND);
-        }
-
-        if(type.getName().equals(UserTypeNames.INSTITUTION)) {
-            validateInstitution(user);
-        }
-        if(type.getName().equals(UserTypeNames.ACCREDITED_NETWORK)) {
-            validateAccreditedNetwork(user);
-        }
-        if(type.getName().equals(UserTypeNames.ISSUER)) {
-            validateIssuer(user);
-        }
-    }
-
-    private void validateIssuer(UserDetail user) {
-        if(user.getIssuer() == null || user.getIssuer().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ISSUER);
-        } else {
-           issuerService.findById(user.getIssuer().getId());
-        }
-    }
-
-    private void validateAccreditedNetwork(UserDetail user) {
-        if(user.getAccreditedNetwork() == null || user.getAccreditedNetwork().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
-        } else {
-            accreditedNetworkService.getById(user.getAccreditedNetwork().getId());
-        }
-    }
-
-    private void validateInstitution(UserDetail user) {
-        if(user.getInstitution() == null || user.getInstitution().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
-        } else {
-            institutionService.getById(user.getInstitution().getId());
-        }
-
-    }
-
 
 }

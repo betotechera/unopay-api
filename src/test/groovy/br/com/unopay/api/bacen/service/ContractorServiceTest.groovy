@@ -10,7 +10,6 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.ResourceLoader
 import org.springframework.data.domain.Page
 
 class ContractorServiceTest extends SpockApplicationTests {

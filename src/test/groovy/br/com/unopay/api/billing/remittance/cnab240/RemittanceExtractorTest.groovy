@@ -2,7 +2,6 @@ package br.com.unopay.api.billing.remittance.cnab240
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.billing.remittance.cnab240.filler.RecordColumnRule
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
@@ -12,6 +11,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEGMENTO
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class RemittanceExtractorTest extends FixtureApplicationTest {

@@ -5,7 +5,6 @@ import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import org.joda.time.DateTime
 
 class PaymentInstrumentTest  extends FixtureApplicationTest {
 

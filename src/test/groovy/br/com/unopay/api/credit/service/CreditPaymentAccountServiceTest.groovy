@@ -4,8 +4,6 @@ import br.com.unopay.api.SpockApplicationTests
 import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.credit.service.CreditPaymentAccountService
-import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.api.credit.model.CreditPaymentAccount

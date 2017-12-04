@@ -222,6 +222,7 @@ public class Establishment implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
     }
+
     public String documentNumber(){
         if(getPerson() != null && getPerson().getDocument() != null){
             return getPerson().getDocument().getNumber();

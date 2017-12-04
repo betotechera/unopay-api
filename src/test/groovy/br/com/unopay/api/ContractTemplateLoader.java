@@ -6,18 +6,17 @@ import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
-import static java.util.Collections.singletonList;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 public class ContractTemplateLoader implements TemplateLoader {
 

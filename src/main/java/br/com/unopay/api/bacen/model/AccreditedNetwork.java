@@ -7,12 +7,8 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,8 +21,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
@@ -109,5 +108,9 @@ public class AccreditedNetwork implements Serializable {
         this.backgroundColor = accreditedNetwork.backgroundColor;
         this.textColor = accreditedNetwork.textColor;
 
+    }
+
+    public String documentNumber(){
+        return person.documentNumber();
     }
 }

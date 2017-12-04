@@ -1,12 +1,18 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditSituation
+import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -23,6 +29,8 @@ class HirerControllerTest extends AuthServerApplicationTests {
     private static final String HIRER_ENDPOINT = '/hirers?access_token={access_token}'
     private static final String HIRER_ID_ENDPOINT = '/hirers/{id}?access_token={access_token}'
 
+    @Autowired
+    private FixtureCreator fixtureCreator
 
     void 'should create hirer'() {
         given:
@@ -79,11 +87,13 @@ class HirerControllerTest extends AuthServerApplicationTests {
             def location = getLocationHeader(mvcResult)
             def id = extractId(location)
         when:
-            def result = this.mvc.perform(get(HIRER_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(get(HIRER_ID_ENDPOINT,id, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.person.name', is(equalTo(hirer.person.name))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.person.document.number', is(equalTo(hirer.person.document.number))))
+                .andExpect(MockMvcResultMatchers
+                    .jsonPath('$.person.document.number', is(equalTo(hirer.person.document.number))))
     }
 
     void 'known hirer should be found when find all'() {
@@ -92,7 +102,13 @@ class HirerControllerTest extends AuthServerApplicationTests {
             this.mvc.perform(postHirer(accessToken, getHirer()))
 
             this.mvc.perform(post(HIRER_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
-                    .content(toJson(hirer.with { person.id = null; person.name = 'temp';person.document.number = '1234576777';it })))
+                    .content(
+                    toJson(hirer.with {
+                        person.id = null
+                        person.name = 'temp'
+                        person.document.number = '1234576777'
+                        it
+                    })))
         when:
             def result = this.mvc.perform(get("$HIRER_ENDPOINT",accessToken).contentType(MediaType.APPLICATION_JSON))
         then:
@@ -100,6 +116,123 @@ class HirerControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'known contractor should be updated'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContract(contractor, fixtureCreator.createProduct(),hirerUser.hirer)
+        def id = contractor.id
+
+        when:
+        def result = this.mvc.perform(put("/hirers/me/contractors/{id}?access_token={access_token}",id, accessToken)
+                .content(toJson(contractor.with { person.name = 'updated';it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known contractor should be found'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContract(contractor,fixtureCreator.createProduct(),hirerUser.hirer)
+        def id = contractor.id
+
+        when:
+        def result = this.mvc.perform(get("/hirers/me/contractors/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.person.name', is(equalTo(contractor.person.name))))
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.person.document.number', is(equalTo(contractor.person.document.number))))
+    }
+
+    void 'known contractor should be found when find all'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),
+                fixtureCreator.createProduct(),hirerUser.hirer)
+        when:
+        def result = this.mvc.perform(get("/hirers/me/contractors?access_token={access_token}",accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'valid credit should be created'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+
+        Credit credit = fixtureCreator.createCredit()
+
+        when:
+        def result = this.mvc.perform(
+                post('/hirers/me/credits/?access_token={access_token}', accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJsonFromView(credit, Views.Credit.Detail.class)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
+    void 'known credit should be canceled'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("situation", CreditSituation.AVAILABLE)
+        }})
+        def id = credit.id
+
+        when:
+        def result = this.mvc.perform(delete("/hirers/me/credits/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known credit should be found'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirerUser.hirer.documentNumber)
+        }})
+        def id = credit.id
+
+        when:
+        def result = this.mvc.perform(get("/hirers/me/credits/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.value', is(notNullValue())))
+    }
+
+    void 'known credit should be found when find all'() {
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirerUser.hirer.documentNumber)
+        }})
+        when:
+        def result = this.mvc.perform(get("/hirers/me/credits?access_token={access_token}",accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].value', is(notNullValue())))
     }
 
     Hirer getHirer() {

@@ -53,6 +53,7 @@ public class PaymentRuleGroupController {
                 .body(created);
 
     }
+
     @JsonView(Views.PaymentRuleGroup.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/payment-rule-groups/{id}", method = RequestMethod.GET)
@@ -60,6 +61,7 @@ public class PaymentRuleGroupController {
         log.info("get paymentRuleGroups={}", id);
         return paymentRuleGroupService.getById(id);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/payment-rule-groups/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id,

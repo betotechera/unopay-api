@@ -8,11 +8,11 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.credit.model.InstrumentCreditSource
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
+import br.com.unopay.api.credit.model.InstrumentCreditSource
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product

@@ -6,7 +6,7 @@ create table "order" (
     payment_instrument_id varchar(256),
     create_date_time TIMESTAMP not null,
     status varchar(150) not null,
-    value decimal(*,2) not null,
+    value decimal(20,2) not null,
     contract_id varchar(256),
     partner_id varchar(256),
     type varchar(150) not null,
@@ -23,7 +23,7 @@ create table transaction (
     payment_method varchar(100) not null,
     status varchar(100) not null,
     currency varchar(5) not null,
-    value decimal(*,2) not null,
+    value decimal(20,2) not null,
     installments integer not null,
     create_date_time Timestamp not null,
     captured_requested_at Timestamp,
@@ -33,7 +33,8 @@ create table transaction (
 
 alter table contractor_instrument_credit drop column credit_insertion_type;
 alter table contractor_instrument_credit add credit_source varchar(100) default 'HIRER' not null;
-alter table contractor_instrument_credit modify service_type varchar(150) null;
+alter table contractor_instrument_credit alter column service_type type varchar(150);
+alter table contractor_instrument_credit alter column service_type drop not null;
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_ORDERS','Permite listar pedidos.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_ORDERS','Permite gerenciar pedidos');

@@ -4,7 +4,6 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;

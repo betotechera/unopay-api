@@ -40,7 +40,7 @@ class ProductServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        def result  = service.save(product)
+        def result  = service.create(product)
 
         then:
         assert result.id != null
@@ -55,8 +55,8 @@ class ProductServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.save(product)
-        service.save(product.with { code = 'AAA'; id = null; it })
+        service.create(product)
+        service.create(product.with { code = 'AAA'; id = null; it })
 
         then:
         def ex = thrown(ConflictException)
@@ -72,8 +72,8 @@ class ProductServiceTest extends SpockApplicationTests {
         }})
 
         when:
-        service.save(product)
-        service.save(product.with { name = 'AAA'; id = null; it })
+        service.create(product)
+        service.create(product.with { name = 'AAA'; id = null; it })
 
         then:
         def ex = thrown(ConflictException)
@@ -89,7 +89,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(NotFoundException)
@@ -105,7 +105,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(NotFoundException)
@@ -121,7 +121,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(NotFoundException)
@@ -137,7 +137,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -153,7 +153,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -169,7 +169,7 @@ class ProductServiceTest extends SpockApplicationTests {
             it }
 
         when:
-        service.save(product)
+        service.create(product)
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -180,7 +180,7 @@ class ProductServiceTest extends SpockApplicationTests {
         given:
         Product product = createProduct('name')
 
-        def created  = service.save(product)
+        def created  = service.create(product)
         def newName = 'ProductNew'
         product.name = newName
 
@@ -212,8 +212,8 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        service.save(product)
-        def created = service.save(product.with { code = 'AAA'; name='AAA'; id = null; it })
+        service.create(product)
+        def created = service.create(product.with { code = 'AAA'; name='AAA'; id = null; it })
 
         when:
         service.update(created.id, product.with { code = 'BBB'; name = knownName; id = null; it })
@@ -233,8 +233,8 @@ class ProductServiceTest extends SpockApplicationTests {
             code = knownCode
             it }
 
-        service.save(product)
-        def created = service.save(product.with { code = 'BBB'; name='AAA'; id = null; it })
+        service.create(product)
+        def created = service.create(product.with { code = 'BBB'; name='AAA'; id = null; it })
 
         when:
         service.update(created.id, product.with { name = 'BBB'; code = knownCode; it })
@@ -249,7 +249,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with { name = knownName
@@ -267,7 +267,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with { name = knownName; issuer = issuerUnderTest.with { id = ''; it }; it })
@@ -282,7 +282,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with {
@@ -299,7 +299,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with { name = knownName
@@ -315,7 +315,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with { name = knownName
@@ -332,7 +332,7 @@ class ProductServiceTest extends SpockApplicationTests {
         def knownName = 'myName'
         Product product = createProduct(knownName)
 
-        def created = service.save(product)
+        def created = service.create(product)
 
         when:
         service.update(created.id, product.with {
@@ -349,7 +349,7 @@ class ProductServiceTest extends SpockApplicationTests {
         given:
         Product product = createProduct('name')
 
-        def created  = service.save(product)
+        def created  = service.create(product)
         when:
         def result = service.findById(created.id)
 
@@ -370,7 +370,7 @@ class ProductServiceTest extends SpockApplicationTests {
         given:
         Product product = createProduct('name')
 
-        def created  = service.save(product)
+        def created  = service.create(product)
         when:
         service.delete(created.id)
         service.findById(created.id)

@@ -12,7 +12,6 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

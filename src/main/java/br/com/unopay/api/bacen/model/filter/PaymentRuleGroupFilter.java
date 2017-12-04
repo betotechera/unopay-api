@@ -21,5 +21,8 @@ public class PaymentRuleGroupFilter implements Serializable {
     @SearchableField
     private UserRelationship userRelationship;
 
+    @SearchableField(field = "institution.person.document.number")
+    private String institution;
+
     public PaymentRuleGroupFilter() {}
 }

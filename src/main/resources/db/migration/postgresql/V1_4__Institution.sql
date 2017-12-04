@@ -23,8 +23,8 @@ create table address (
   district VARCHAR(50),
   city VARCHAR(50),
   state VARCHAR(50),
-  latitude NUMBER(10,6),
-  longitude NUMBER(10,6),
+  latitude decimal(10,6),
+  longitude decimal(10,6),
   version integer
 );
 

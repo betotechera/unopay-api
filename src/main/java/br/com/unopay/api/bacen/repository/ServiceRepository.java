@@ -11,4 +11,6 @@ public interface ServiceRepository extends UnovationFilterRepository<Service,Str
     int countByName(String name);
 
     Optional<Service> findById(String id);
+
+    Optional<Service> findByIdAndEstablishmentsId(String id, String establishmentId);
 }
