@@ -154,17 +154,6 @@ public class HirerController {
         service.updateMe(authentication.getName(),hirer);
     }
 
-    @JsonView(Views.Hirer.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hirers", method = RequestMethod.GET, params = "currentUser")
-    public Results<Hirer> getMeByParams(OAuth2Authentication authentication,
-                                        HirerFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search Hirer with filter={}", filter);
-        Page<Hirer> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers", api));
-    }
-
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/me/contractors/{id}", method = RequestMethod.GET)

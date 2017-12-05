@@ -22,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,28 +96,17 @@ public class EstablishmentController {
     @JsonView(Views.Establishment.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/me", method = RequestMethod.GET)
-    public Establishment getMe(OAuth2Authentication authentication) {
-        log.info("get establishment={}", authentication.getName());
-        return service.findMe(authentication.getName());
+    public Establishment getMe(Establishment establishment) {
+        log.info("get establishment={}", establishment.documentNumber());
+        return service.findById(establishment.getId());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/establishments/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication,
+    public void updateMe(Establishment current,
                          @Validated(Update.class) @RequestBody Establishment establishment) {
-        log.info("updating establishments={}", authentication.getName());
-        service.updateMe(authentication.getName(),establishment);
-    }
-
-    @JsonView(Views.Establishment.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/establishments", method = RequestMethod.GET, params = "currentUser")
-    public Results<Establishment> getMeByParams(OAuth2Authentication authentication,
-                                                EstablishmentFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search establishment with filter={}", filter);
-        Page<Establishment> page =  service.findMeByFilter(authentication.getName(),filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/establishments", api));
+        log.info("updating establishments={}", establishment.documentNumber());
+        service.update(current.getId(), establishment);
     }
 
     @JsonView(Views.Service.Detail.class)

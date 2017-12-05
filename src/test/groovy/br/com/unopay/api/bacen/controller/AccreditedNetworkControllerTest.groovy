@@ -138,21 +138,6 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .jsonPath('$.person.document.number', is(equalTo(person.document.number))))
     }
 
-    void 'known me accreditedNetwork should be found when find all'() {
-        given:
-        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()
-        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
-        when:
-        def result = this.mvc.perform(
-                get("/accredited-networks?currentUser=true&access_token={access_token}",accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath('$.items', notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
-    }
-
     void 'known establishments should be found'() {
         given:
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser()

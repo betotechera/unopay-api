@@ -7,7 +7,6 @@ import br.com.unopay.api.model.Product;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -21,8 +20,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Slf4j
 @Service
@@ -59,19 +56,9 @@ public class PartnerService {
         }
     }
 
-    public Partner getMe(String email) {
-        Partner userPartner = getUserPartner(email);
-        return getById(userPartner.getId());
-    }
-
     public Partner getById(String id) {
         Optional<Partner> partner = repository.findById(id);
         return partner.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND));
-    }
-
-    public void updateMe(String email, Partner partner) {
-        Partner userPartner = getUserPartner(email);
-        update(userPartner.getId(), partner);
     }
 
     public void update(String id, Partner partner) {
@@ -99,20 +86,8 @@ public class PartnerService {
         repository.delete(id);
     }
 
-    public Page<Partner> findMeByFilter(String email, PartnerFilter filter, UnovationPageRequest pageable) {
-        Partner userPartner = getUserPartner(email);
-        filter.setDocumentNumber(userPartner.documentNumber());
-        return findByFilter(filter, pageable);
-    }
-
     public Page<Partner> findByFilter(PartnerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
-    }
-
-    private Partner getUserPartner(String email) {
-        UserDetail currentUser = userDetailService.getByEmail(email);
-        return currentUser.myPartner()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
 }

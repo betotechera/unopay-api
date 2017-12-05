@@ -120,20 +120,6 @@ class IssuerControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.fee', is(notNullValue())))
     }
 
-    void 'all me issuers should be found'() {
-        given:
-        def issuerUser = fixtureCreator.createIssuerUser()
-        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
-
-        when:
-        def result = this.mvc.perform(get('/issuers?currentUser=true&access_token={access_token}', accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
-    }
-
     void 'valid me product should be created'() {
         given:
         def issuerUser = fixtureCreator.createIssuerUser()

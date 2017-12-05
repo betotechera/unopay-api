@@ -284,24 +284,6 @@ public class PaymentRemittanceService {
         return items.stream().filter(item -> item.payeeDocumentIs(document)).findFirst();
     }
 
-    public Page<PaymentRemittance> findMyByFilter(String userEmail, PaymentRemittanceFilter filter,
-                                             UnovationPageRequest pageable) {
-        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
-    }
-
-    private PaymentRemittanceFilter buildFilterBy(PaymentRemittanceFilter filter, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType()) {
-            filter.setEstablishment(currentUser.establishmentId());
-        }
-        if(currentUser.isIssuerType()) {
-            filter.setIssuer(currentUser.issuerId());
-        }
-        if(currentUser.isAccreditedNetworkType()) {
-            filter.setAccreditedNetwork(currentUser.accreditedNetworkId());
-        }
-        return filter;
-    }
-
     private UserDetail getUserByEmail(String userEmail) {
         return userDetailService.getByEmail(userEmail);
     }

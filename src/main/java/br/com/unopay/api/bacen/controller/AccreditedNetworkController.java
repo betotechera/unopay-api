@@ -116,19 +116,6 @@ public class AccreditedNetworkController {
         service.update(current.getId(),accreditedNetwork);
     }
 
-    @JsonView(Views.AccreditedNetwork.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET, params = "currentUser")
-    public Results<AccreditedNetwork> getMeByParams(AccreditedNetwork accreditedNetwork, AccreditedNetworkFilter filter,
-                                                  @Validated UnovationPageRequest pageable) {
-        log.info("search AccreditedNetwork with filter={}", filter);
-        filter.setDocumentNumber(accreditedNetwork.documentNumber());
-        Page<AccreditedNetwork> page =  service.findByFilter(filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks", api));
-    }
-
-
     @JsonView(Views.Establishment.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/me/establishments/{id}", method = RequestMethod.GET)

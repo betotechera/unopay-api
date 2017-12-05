@@ -96,28 +96,17 @@ public class InstitutionController {
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/institutions/me", method = RequestMethod.GET)
-    public Institution getMe(OAuth2Authentication authentication) {
-        log.info("get Institution={}", authentication.getName());
-        return service.getMe(authentication.getName());
+    public Institution getMe(Institution institution) {
+        log.info("get Institution={}", institution.documentNumber());
+        return service.getById(institution.getId());
     }
 
     @JsonView({Views.Institution.Detail.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/institutions/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Institution institution) {
-        log.info("updating institution={}", authentication.getName());
-        service.updateMe(authentication.getName(),institution);
-    }
-
-    @JsonView(Views.Institution.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/institutions", method = RequestMethod.GET, params = "currentUser")
-    public Results<Institution> getMeByParams(OAuth2Authentication authentication,
-                                              InstitutionFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search Institution with filter={}", filter);
-        Page<Institution> page =  service.findMeByFilter(authentication.getName(), filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/institutions", api));
+    public void updateMe(Institution current, @Validated(Update.class) @RequestBody Institution institution) {
+        log.info("updating institution={} for institution={}", institution, current.documentNumber());
+        service.update(current.getId(),institution);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

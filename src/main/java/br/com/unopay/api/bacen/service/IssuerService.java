@@ -38,7 +38,6 @@ public class IssuerService {
     private PaymentBankAccountService paymentBankAccountService;
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter private UnopayScheduler scheduler;
-    @Setter private PaymentRemittanceService paymentRemittanceService;
 
     public IssuerService(){}
 
@@ -49,7 +48,7 @@ public class IssuerService {
                          BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
                          PaymentRuleGroupService paymentRuleGroupService,
-                         UnopayScheduler scheduler, @Lazy PaymentRemittanceService paymentRemittanceService) {
+                         UnopayScheduler scheduler) {
         this.repository = repository;
         this.userDetailService = userDetailService;
         this.personService = personService;
@@ -57,7 +56,6 @@ public class IssuerService {
         this.paymentBankAccountService = paymentBankAccountService;
         this.paymentRuleGroupService = paymentRuleGroupService;
         this.scheduler = scheduler;
-        this.paymentRemittanceService = paymentRemittanceService;
     }
 
     public Issuer create(Issuer issuer) {
@@ -125,10 +123,5 @@ public class IssuerService {
     private void scheduleClosingJob(Issuer created) {
         scheduler.schedule(created.getId(), created.depositPeriodPattern(),RemittanceJob.class);
     }
-
-    public void executePaymentRemittance(RemittanceFilter filter) {
-        paymentRemittanceService.execute(filter);
-    }
-
 
 }

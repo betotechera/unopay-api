@@ -26,12 +26,9 @@ class IssuerServiceTest  extends SpockApplicationTests {
     PaymentRuleGroupService paymentRuleGroupService
 
     UnopayScheduler schedulerMock = Mock(UnopayScheduler)
-    PaymentRemittanceService remittanceMock = Mock(PaymentRemittanceService)
-
 
     def setup(){
         service.scheduler = schedulerMock
-        service.paymentRemittanceService = remittanceMock
     }
 
     def 'when create issuer should be schedule remittance job'(){
@@ -511,19 +508,6 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'ISSUER_NOT_FOUND'
-    }
-
-    def 'should schedule remittance job manually'(){
-        given:
-        Issuer issuer = Fixture.from(Issuer.class).gimme("valid", new Rule(){{
-            add("paymentAccount.depositPeriod", RecurrencePeriod.BIWEEKLY)
-        }})
-        RemittanceFilter filter = new RemittanceFilter(id: issuer.id,at: new Date())
-        when:
-        service.executePaymentRemittance(filter)
-
-        then:
-        1 * remittanceMock.execute(filter)
     }
 
 

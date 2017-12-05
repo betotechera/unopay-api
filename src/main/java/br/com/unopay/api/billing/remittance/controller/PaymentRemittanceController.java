@@ -51,17 +51,6 @@ public class PaymentRemittanceController {
         return service.findById(id);
     }
 
-    @ResponseStatus(OK)
-    @JsonView(Views.PaymentRemittance.List.class)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_LIST_PAYMENT_REMITTANCE')")
-    @RequestMapping(value = "/payment-remittances/my", method = GET)
-    public Results<PaymentRemittance> findMyByFilter(OAuth2Authentication authentication,
-                                                     PaymentRemittanceFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search PaymentRemittance with filter={}", filter);
-        Page<PaymentRemittance> page =  service.findMyByFilter(authentication.getName(),filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-remittances/my", api));
-    }
 
     @ResponseStatus(OK)
     @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")

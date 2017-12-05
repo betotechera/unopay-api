@@ -85,11 +85,6 @@ public class HirerService {
                 UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND.withOnlyArgument(documentNumber)));
     }
 
-    public Page<Hirer> findMeByFilter(String email, HirerFilter filter, UnovationPageRequest pageable) {
-        Hirer userHirer = getUserHirer(email);
-        filter.setDocumentNumber(userHirer.getDocumentNumber());
-        return findByFilter(filter, pageable);
-    }
     public Page<Hirer> findByFilter(HirerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }

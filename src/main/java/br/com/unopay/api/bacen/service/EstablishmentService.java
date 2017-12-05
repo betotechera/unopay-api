@@ -11,7 +11,6 @@ import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.service.ContactService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
 
@@ -70,11 +68,6 @@ public class EstablishmentService {
         return created;
     }
 
-    public void updateMe(String email, Establishment establishment) {
-        Establishment userEstablishment = getUserEstablishment(email);
-        update(userEstablishment.getId(), establishment);
-    }
-
     public void update(String id, Establishment establishment) {
         establishment.validateUpdate();
         Establishment current = findById(id);
@@ -83,11 +76,6 @@ public class EstablishmentService {
         current.updateMe(establishment);
         repository.save(current);
         scheduleClosingJob(current);
-    }
-
-    public Establishment findMe(String email) {
-        Establishment userEstablishment = getUserEstablishment(email);
-        return findById(userEstablishment.getId());
     }
 
     public Establishment findByIdAndNewtwork(String id, AccreditedNetwork network) {
@@ -113,12 +101,6 @@ public class EstablishmentService {
         findById(id);
         validateDelete(id);
         repository.delete(id);
-    }
-
-    public Page<Establishment> findMeByFilter(String email, EstablishmentFilter filter, UnovationPageRequest pageable) {
-        Establishment userEstablishment = getUserEstablishment(email);
-        filter.setDocumentNumber(userEstablishment.documentNumber());
-        return findByFilter(filter, pageable);
     }
 
     public Page<Establishment> findByFilterForNetwork(AccreditedNetwork accreditedNetwork,
@@ -165,12 +147,6 @@ public class EstablishmentService {
         contactService.findById(establishment.getFinancierContact().getId());
         contactService.findById(establishment.getAdministrativeContact().getId());
         bankAccountService.findById(establishment.getBankAccount().getId());
-    }
-
-    private Establishment getUserEstablishment(String email) {
-        UserDetail currentUser = userDetailService.getByEmail(email);
-        return currentUser.myEstablishment()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
     }
 
     private void scheduleClosingJob(Establishment created) {

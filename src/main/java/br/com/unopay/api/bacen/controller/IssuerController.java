@@ -3,7 +3,10 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
+import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
+import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.model.validation.group.Create;
@@ -23,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Slf4j
 @RestController
@@ -39,15 +46,18 @@ public class IssuerController {
 
     private IssuerService service;
     private ProductService productService;
+    private PaymentRemittanceService paymentRemittanceService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
     public IssuerController(IssuerService service,
-                            ProductService productService) {
+                            ProductService productService,
+                            PaymentRemittanceService paymentRemittanceService) {
         this.service = service;
         this.productService = productService;
+        this.paymentRemittanceService = paymentRemittanceService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -102,7 +112,7 @@ public class IssuerController {
     {
         log.info("Executing paymentRemittance for issuerId={} and filter={}", id,filter);
         filter.setId(id);
-        service.executePaymentRemittance(filter);
+        paymentRemittanceService.execute(filter);
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -120,24 +130,27 @@ public class IssuerController {
         service.update(current.getId(),issuer);
     }
 
-    @JsonView(Views.Issuer.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/issuers", method = RequestMethod.GET, params = "currentUser")
-    public Results<Issuer> getByMeParams(Issuer issuer, IssuerFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("search issuer with filter={}", filter);
-        filter.setDocumentNumber(issuer.documentNumber());
-        Page<Issuer> page =  service.findByFilter(filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers", api));
-    }
-
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/payment-remittances", method = RequestMethod.POST)
     public void createMyPaymentRemittance(Issuer issuer, @RequestBody RemittanceFilter filter)
     {
         log.info("Executing paymentRemittance for issuer={} and filter={}", issuer.documentNumber(),filter);
         filter.setId(issuer.getId());
-        service.executePaymentRemittance(filter);
+        paymentRemittanceService.execute(filter);
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.PaymentRemittance.List.class)
+    @RequestMapping(value = "/issuers/me/payment-remittances", method = GET)
+    public Results<PaymentRemittance> findMyByFilter(Issuer issuer,
+                                                     PaymentRemittanceFilter filter,
+                                                     @Validated UnovationPageRequest pageable) {
+        log.info("search PaymentRemittance with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<PaymentRemittance> page =  paymentRemittanceService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/payment-remittances", api));
     }
 
 

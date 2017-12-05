@@ -49,20 +49,11 @@ public class InstitutionService {
         }
     }
 
-    public Institution getMe(String email) {
-        Institution userInstitution = getUserInstitution(email);
-        return getById(userInstitution.getId());
-    }
-
     public Institution getById(String id) {
         Optional<Institution> institution = repository.findById(id);
         return institution.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.INSTITUTION_NOT_FOUND));
     }
 
-    public void updateMe(String email, Institution institution) {
-        Institution userInstitution = getUserInstitution(email);
-        update(userInstitution.getId(), institution);
-    }
     public void update(String id, Institution institution) {
         Institution current = repository.findOne(id);
         current.updateModel(institution);
@@ -81,21 +72,10 @@ public class InstitutionService {
         repository.delete(id);
     }
 
-    public Page<Institution> findMeByFilter(String email, InstitutionFilter filter, UnovationPageRequest pageable) {
-        Institution userInstitution = getUserInstitution(email);
-        filter.setDocumentNumber(userInstitution.documentNumber());
-        return findByFilter(filter, pageable);
-
-    }
     public Page<Institution> findByFilter(InstitutionFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private Institution getUserInstitution(String email) {
-        UserDetail currentUser = userDetailService.getByEmail(email);
-        return currentUser.myInstitution()
-                .orElseThrow(()-> UnovationExceptions.forbidden().withErrors(CANNOT_INVOKE_TYPE));
-    }
 
     private boolean hasPaymentRuleGroup(String id) {
         return paymentRuleGroupRepository.countByInstitutionId(id) > 0;
