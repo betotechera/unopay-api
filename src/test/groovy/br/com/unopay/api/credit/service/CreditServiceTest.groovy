@@ -525,6 +525,44 @@ class CreditServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'given a credit with payment rule group without maximum credit value should be inserted'(){
+        given:
+        def paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("maximumCreditInsertion", null)
+        }})
+        def hirer = fixtureCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroup)
+        }})
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.id != null
+    }
+
+    void 'given a credit with payment rule group without minimum credit value should be inserted'(){
+        given:
+        def paymentRuleGroup = Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("minimumCreditInsertion", null)
+        }})
+        def hirer = fixtureCreator.createHirer()
+        Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroup)
+        }})
+
+        when:
+        def inserted  = service.insert(credit)
+        def result = service.findById(inserted.id)
+
+        then:
+        assert result.id != null
+    }
+
     void 'given known credit should be canceled'(){
         given:
         Credit credit = createCredit()
