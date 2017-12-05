@@ -31,7 +31,7 @@ public class UserTypeArgumentResolver implements HandlerMethodArgumentResolver {
     public boolean supportsParameter(MethodParameter parameter) {
         return Arrays.asList(Institution.class, Issuer.class,
                 Establishment.class, AccreditedNetwork.class,
-                Partner.class, Contractor.class, Hirer.class).contains(parameter.getParameterType());
+                Partner.class, Contractor.class, Hirer.class, UserDetail.class).contains(parameter.getParameterType());
     }
 
     @Override
@@ -47,6 +47,9 @@ public class UserTypeArgumentResolver implements HandlerMethodArgumentResolver {
         }
 
         UserDetail currentUser = userDetailService.getByEmail(authentication.getName());
+        if(methodParameter.getParameterType().equals(UserDetail.class)){
+            return currentUser;
+        }
         return currentUser.my(methodParameter.getParameterType());
     }
 }

@@ -48,6 +48,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createFromCsvById(@PathVariable  String id, @RequestParam MultipartFile file){
@@ -57,6 +58,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/event-fees", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createFromCsv(@RequestParam MultipartFile file){
@@ -67,7 +69,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST)
     public ResponseEntity<EstablishmentEvent> create(@PathVariable  String id, @Validated(Create.class)
                                                 @RequestBody EstablishmentEvent establishment) {
@@ -82,14 +84,14 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.GET)
     public EstablishmentEvent get(@PathVariable  String establishmentId, @PathVariable  String id) {
         log.info("get establishment event={}", id);
         return service.findByEstablishmentIdAndId(establishmentId, id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String establishmentId, @PathVariable  String id,
                        @Validated(Update.class) @RequestBody EstablishmentEvent establishment) {
@@ -99,7 +101,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String establishmentId, @PathVariable  String id) {
         log.info("removing establishment event id={}", id);
@@ -108,7 +110,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.GET)
     public Results<EstablishmentEvent> getByParams(@PathVariable  String id) {
         log.info("find establishment events of establishment={}", id);
@@ -159,6 +161,15 @@ public class EstablishmentEventController {
         log.info("find establishment events of establishment={}", establishment.documentNumber());
         List<EstablishmentEvent> page =  service.findByEstablishmentId(establishment.getId());
         return new Results<>(page);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createFromCsvByMe(Establishment establishment, @RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading establishment event fee csv file {}", fileName);
+        service.createFromCsv(establishment.getId(), file);
     }
 
 }

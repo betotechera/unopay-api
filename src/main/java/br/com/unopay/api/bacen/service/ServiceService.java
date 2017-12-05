@@ -28,12 +28,7 @@ public class ServiceService {
         this.repository = repository;
         this.eventRepository = eventRepository;
     }
-    public Service createForEstablishment(Service service, Establishment establishment) {
-        HashSet<Establishment> establishments = new HashSet<>();
-        establishments.add(establishment);
-        service.setEstablishments(establishments);
-        return create(service);
-    }
+
     public Service create(Service service) {
         service.validate();
         validateFields(service);
@@ -61,11 +56,6 @@ public class ServiceService {
         return repository.countByName(name) > 0;
     }
 
-    public void updateForEstablishment(String id, Establishment establishment, Service service) {
-        Service current = findByIdForEstablishment(id, establishment);
-        update(service, current);
-    }
-
     public void update(String id, Service service) {
         Service current = findById(id);
         update(service, current);
@@ -83,22 +73,9 @@ public class ServiceService {
         repository.save(current);
     }
 
-    public Service findByIdForEstablishment(String id, Establishment establishment) {
-        Optional<Service> service = repository.findByIdAndEstablishmentsId(id, establishment.getId());
-        return service.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND));
-    }
-
     public Service findById(String id) {
         Optional<Service> service = repository.findById(id);
         return service.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_NOT_FOUND));
-    }
-
-    public void deleteForEstablishment(String id, Establishment establishment) {
-        findByIdForEstablishment(id, establishment);
-        if(hasEvents(id)){
-            throw UnovationExceptions.conflict().withErrors(Errors.SERVICE_WITH_EVENTS);
-        }
-        repository.delete(id);
     }
 
     public void delete(String id) {

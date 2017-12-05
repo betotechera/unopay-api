@@ -3,8 +3,8 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
@@ -124,44 +124,19 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         given:
         def establishmentUser = fixtureCreator.createEstablishmentUser()
         String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
-        Service service = Fixture.from(Service.class).gimme("valid")
+        ServiceAuthorize service = fixtureCreator
+                .createServiceAuthorize(fixtureCreator.createContractorInstrumentCreditPersisted(),
+                establishmentUser.establishment)
 
         when:
-        def result = this.mvc.perform(post('/establishments/me/services?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(
+                post('/establishments/me/service-authorizations?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(service)))
         then:
         result.andExpect(status().isCreated())
-    }
-
-    void 'known service should be updated'() {
-        given:
-        def establishmentUser = fixtureCreator.createEstablishmentUser()
-        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
-        Service service = fixtureCreator.createService(establishmentUser.establishment)
-        def id = service.id
-
-        when:
-        def result = this.mvc.perform(put('/establishments/me/services/{id}?access_token={access_token}',id,accessToken)
-                .content(toJson(service.with { name = '56456'; it }))
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isNoContent())
-    }
-
-    void 'known service should be deleted'() {
-        given:
-        def establishmentUser = fixtureCreator.createEstablishmentUser()
-        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
-        Service service = fixtureCreator.createService(establishmentUser.establishment)
-        def id = service.id
-
-        when:
-        def result = this.mvc.perform(
-                delete('/establishments/me/services/{id}?access_token={access_token}',id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isNoContent())
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.establishment.id', is(equalTo(establishmentUser.establishment.id))))
     }
 
 
@@ -169,20 +144,21 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         given:
         def establishmentUser = fixtureCreator.createEstablishmentUser()
         String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
-        Service service = fixtureCreator.createService(establishmentUser.establishment)
+        ServiceAuthorize service = fixtureCreator
+                .createServiceAuthorizePersisted(fixtureCreator.createContractorInstrumentCreditPersisted(),
+                establishmentUser.establishment)
         def id = service.id
 
         when:
         def result = this.mvc.perform(
-                get('/establishments/me/services/{id}?access_token={access_token}',id, accessToken)
+                get('/establishments/me/service-authorizations/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.authorizationNumber', is(notNullValue())))
     }
 
-
-    private String extractId(String location) {
+    String extractId(String location) {
         location.replaceAll('/establishments/', "")
     }
 

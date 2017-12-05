@@ -23,7 +23,7 @@ class BatchClosingItemServiceTest extends SpockApplicationTests {
         given:
         def batchClosing = fixtureCreator.createBatchClosing()
         def serviceAuthorize = fixtureCreator.createServiceAuthorize()
-        serviceAuthorizeService.create(fixtureCreator.createUser().email, serviceAuthorize)
+        serviceAuthorizeService.create(fixtureCreator.createUser(), serviceAuthorize)
         BatchClosingItem batchClosingItem = Fixture.from(BatchClosingItem.class).gimme("valid", new Rule(){{
             add("batchClosing", batchClosing)
             add("serviceAuthorize", serviceAuthorize)
