@@ -8,12 +8,15 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -63,7 +66,7 @@ public class Contractor implements Serializable {
     @JsonView({Views.BankAccount.class})
     private BankAccount bankAccount;
 
-    @JsonView({Views.Contractor.List.class})
+    @JsonIgnore
     @OneToMany(mappedBy = "contractor")
     private Set<Contract> contracts;
 
