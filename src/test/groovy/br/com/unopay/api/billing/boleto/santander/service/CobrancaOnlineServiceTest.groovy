@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
 class CobrancaOnlineServiceTest extends SpockApplicationTests{
 
@@ -14,6 +15,7 @@ class CobrancaOnlineServiceTest extends SpockApplicationTests{
     @Autowired
     FixtureCreator fixtureCreator
 
+    @Ignore
     def 'should create ticket'(){
         given:
         def issuer = fixtureCreator.createIssuer()
