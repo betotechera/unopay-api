@@ -1,9 +1,7 @@
 package br.com.unopay.api.billing.boleto.santander.service
 
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Ignore
 

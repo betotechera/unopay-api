@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.SneakyThrows;
@@ -46,7 +47,6 @@ public class CobrancaOnlineService {
         this.ticketEndpoint = ticketEndpointPort;
         ((BindingProvider)this.ticketEndpoint).getRequestContext().put(SSL_SOCKET_FACTORY, sslConnectionSocketFactory);
         this.cobrancaEndpoint = cobrancaEndpointPort;
-        ((BindingProvider)this.cobrancaEndpoint).getRequestContext().put(SSL_SOCKET_FACTORY,sslConnectionSocketFactory);
     }
 
     @SneakyThrows
