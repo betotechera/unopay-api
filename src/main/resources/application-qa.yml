@@ -65,7 +65,6 @@ spring:
     hibernate.ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     generate-ddl: false
-    database: ORACLE
   redis:
     host: redis.qa.unvlocal.com.br
     port: 6379

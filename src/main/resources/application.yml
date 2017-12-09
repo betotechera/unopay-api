@@ -50,9 +50,7 @@ soap:
     ssl:
       key-store: classpath:wsdl/unovation_com_br.p12
       key-store-password: 'unovationSuper!@'
-      trust-store: classpath:wsdl/cacerts
-      trust-store-password: 'unovationSuper!@'
 quartz:
-  delegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+  delegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
   appMaxJobRetries: 10
   appDelayBetweenFailedJobsInSeconds: 10
