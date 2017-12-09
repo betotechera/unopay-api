@@ -138,7 +138,8 @@ public class AccreditedNetworkController {
         log.info("search establishment with filter={} for network={}", filter, accreditedNetwork.documentNumber());
         Page<Establishment> page =  establishmentService.findByFilterForNetwork(accreditedNetwork,filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/establishments", api));
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/accredited-networks/me/establishments", api));
     }
 
 }
