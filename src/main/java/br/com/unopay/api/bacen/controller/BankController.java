@@ -33,7 +33,7 @@ public class BankController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_BANK')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/banks", method = RequestMethod.GET)
     public Results<Bank> getAll(@Validated UnovationPageRequest pageable) {
         log.info("get banks");
