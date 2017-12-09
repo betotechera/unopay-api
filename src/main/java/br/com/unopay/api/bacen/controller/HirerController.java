@@ -142,16 +142,16 @@ public class HirerController {
     @JsonView(Views.Hirer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/me", method = RequestMethod.GET)
-    public Hirer getMe(OAuth2Authentication authentication) {
-        log.info("get Hirer={}", authentication.getName());
-        return service.getMe(authentication.getName());
+    public Hirer getMe(Hirer hirer) {
+        log.info("get Hirer={}", hirer.getDocumentNumber());
+        return service.getById(hirer.getId());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/hirers/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Hirer hirer) {
-        log.info("updating hirer={}", authentication.getName());
-        service.updateMe(authentication.getName(),hirer);
+    public void updateMe(Hirer current, @Validated(Update.class) @RequestBody Hirer hirer) {
+        log.info("updating hirer={} for hirer={}",hirer, current.getDocumentNumber());
+        service.update(hirer.getId(),hirer);
     }
 
     @JsonView(Views.Contractor.Detail.class)
