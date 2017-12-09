@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +45,7 @@ public class ProductController {
 
     @JsonView(Views.Product.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PRODUCT')")
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     public ResponseEntity<Product> create(@Validated(Create.class) @RequestBody Product product) {
         log.info("creating product {}", product);
@@ -55,12 +57,14 @@ public class ProductController {
     }
     @JsonView(Views.Product.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_PRODUCT')")
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     public Product get(@PathVariable String id) {
         log.info("get product={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PRODUCT')")
     @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Product product) {
         product.setId(id);
@@ -69,6 +73,7 @@ public class ProductController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PRODUCT')")
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing product id={}", id);
@@ -77,6 +82,7 @@ public class ProductController {
 
     @JsonView(Views.Product.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_PRODUCT')")
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public Results<Product> getByParams(ProductFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search product with filter={}", filter);

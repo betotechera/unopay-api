@@ -14,7 +14,7 @@ class UserTypeControllerTest extends AuthServerApplicationTests {
 
     void 'when find all should return'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
 
         when:
         def result = this.mvc.perform(

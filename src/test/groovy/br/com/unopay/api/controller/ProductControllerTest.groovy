@@ -36,7 +36,7 @@ class ProductControllerTest extends AuthServerApplicationTests {
 
     void 'valid product should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Product product = Fixture.from(Product.class).gimme("valid", new Rule() {
             {
                 add("accreditedNetwork", networkUnderTest)
@@ -55,7 +55,7 @@ class ProductControllerTest extends AuthServerApplicationTests {
 
     void 'known product should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Product product = createProduct()
         def id = product.id
         when:
@@ -68,7 +68,7 @@ class ProductControllerTest extends AuthServerApplicationTests {
 
     void 'known product should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Product product = createProduct()
         def id = product.id
         when:
@@ -81,7 +81,7 @@ class ProductControllerTest extends AuthServerApplicationTests {
 
     void 'known products should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Product product = createProduct()
         def id = product.id
         when:

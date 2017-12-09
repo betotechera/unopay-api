@@ -17,7 +17,7 @@ class BankAccountControllerTest extends AuthServerApplicationTests {
 
     void 'valid bank account should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
 
         when:
@@ -30,7 +30,7 @@ class BankAccountControllerTest extends AuthServerApplicationTests {
 
     void 'known bank account should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,7 +48,7 @@ class BankAccountControllerTest extends AuthServerApplicationTests {
 
     void 'known bank account should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ class BankAccountControllerTest extends AuthServerApplicationTests {
 
     void 'known bank accounts should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         BankAccount account = Fixture.from(BankAccount.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/bankAccounts?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)

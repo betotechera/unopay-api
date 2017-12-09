@@ -69,6 +69,7 @@ public class UserDetailController {
 
     @JsonView(Views.User.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<UserDetail> create(@Validated(Create.class) @RequestBody UserDetail user) {
         LOGGER.info("creating uaa user {}", user);
@@ -114,6 +115,7 @@ public class UserDetailController {
 
     @JsonView(Views.User.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}", method = GET)
     public UserDetail get(@PathVariable  String id) {
         LOGGER.info("get uaa user={}", id);
@@ -121,6 +123,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}", method = PUT)
     public void update(@PathVariable  String id,
                        @Validated(Update.class) @RequestBody UserDetail user) {
@@ -130,6 +133,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         LOGGER.info("removing uaa userId={}", id);
@@ -137,6 +141,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}/groups", method = PUT)
     public void groupMembers(@PathVariable("id") String id, @RequestBody Set<String> groupsIds) {
         String groupsAsString = StringJoiner.join(groupsIds);
@@ -146,6 +151,7 @@ public class UserDetailController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.User.Detail.class)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}/groups", method = GET)
     public Results<Group> getGroups(@PathVariable("id") String id) {
         LOGGER.info("get members to group={}", id);
@@ -155,6 +161,7 @@ public class UserDetailController {
 
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.User.List.class)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_DETAIL')")
     @RequestMapping(value = "/users", method = GET)
     public Results<UserDetail> getByParams(UserFilter userFilter,@Validated UnovationPageRequest pageable) {
         LOGGER.info("search users by filter with filter={}", userFilter);
@@ -164,6 +171,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/password", method = PUT)
     public void updatePasswordByToken(@RequestBody @Validated NewPassword passwordChange) {
         LOGGER.info("password token change request. change={}", passwordChange);
@@ -171,6 +179,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/{id}/password", method = DELETE)
     public void resetPasswordByToken(@PathVariable("id") String id) {
         LOGGER.info("password reset request. to user={}", id);
@@ -194,6 +203,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
     public void resetPasswordByEmail(HttpServletRequest request) {
         String email = request.getParameter("email");

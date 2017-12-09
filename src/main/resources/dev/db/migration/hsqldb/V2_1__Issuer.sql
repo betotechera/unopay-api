@@ -50,3 +50,9 @@ create table payment_rule_group_issuer (
 
 ALTER TABLE oauth_user_details ADD issuer_id VARCHAR(256);
 ALTER TABLE oauth_user_details ADD CONSTRAINT fK_user_issuer FOREIGN KEY(issuer_id) REFERENCES issuer(id);
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_ISSUER','Permite listar Emissores');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_ISSUER','Permite gerenciar Emissores');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_ISSUER', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_ISSUER', '1');

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,7 @@ public class BranchController {
 
     @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BRANCH')")
     @RequestMapping(value = "/branches", method = RequestMethod.POST)
     public ResponseEntity<Branch> create(@Validated(Create.class) @RequestBody Branch branch) {
         log.info("creating branch {}", branch);
@@ -54,12 +56,14 @@ public class BranchController {
     }
     @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_BRANCH')")
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.GET)
     public Branch get(@PathVariable  String id) {
         log.info("get branch={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BRANCH')")
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch branch) {
         branch.setId(id);
@@ -68,6 +72,7 @@ public class BranchController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BRANCH')")
     @RequestMapping(value = "/branches/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing branch id={}", id);
@@ -76,6 +81,7 @@ public class BranchController {
 
     @JsonView(Views.Branch.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_BRANCH')")
     @RequestMapping(value = "/branches", method = RequestMethod.GET)
     public Results<Branch> getByParams(BranchFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search branch with filter={}", filter);

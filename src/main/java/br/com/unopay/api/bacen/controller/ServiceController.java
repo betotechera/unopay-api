@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,7 @@ public class ServiceController {
 
     @JsonView(Views.Service.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE')")
     @RequestMapping(value = "/services", method = RequestMethod.POST)
     public ResponseEntity<Service> create(@Validated(Create.class) @RequestBody Service service) {
         log.info("creating bank account {}", service);
@@ -54,12 +56,14 @@ public class ServiceController {
     }
     @JsonView(Views.Service.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_SERVICE')")
     @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
     public Service get(@PathVariable String id) {
         log.info("get bank account={}", id);
         return service.findById(id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE')")
     @RequestMapping(value = "/services/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Service service) {
         service.setId(id);
@@ -68,6 +72,7 @@ public class ServiceController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE')")
     @RequestMapping(value = "/services/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing bank account id={}", id);
@@ -76,6 +81,7 @@ public class ServiceController {
 
     @JsonView(Views.Service.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_SERVICE')")
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public Results<Service> getByParams(ServiceFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Service by filter with filter={}", filter);

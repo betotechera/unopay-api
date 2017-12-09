@@ -12,7 +12,7 @@ class AddressControllerTest extends AuthServerApplicationTests {
 
     void 'known address should be returned'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
 
         when:
         def result = this.mvc.perform(get('/addresses?access_token={access_token}&zipCode=05305011', accessToken)

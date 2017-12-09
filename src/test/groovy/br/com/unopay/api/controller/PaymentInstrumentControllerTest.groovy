@@ -22,7 +22,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
 
     void 'valid instrument should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
@@ -36,7 +36,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
 
     void 'known instrument should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
@@ -56,7 +56,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
 
     void 'known instrument should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 
@@ -75,7 +75,7 @@ class PaymentInstrumentControllerTest extends AuthServerApplicationTests {
 
     void 'known payment-instruments should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
         instrument.getProduct().getAccreditedNetwork().setPaymentRuleGroups(null)
 

@@ -13,7 +13,7 @@ class BankControllerTest extends AuthServerApplicationTests {
 
     void 'known banks should be returned'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
 
         when:
         def result = this.mvc.perform(get('/banks?access_token={access_token}', accessToken)
