@@ -1,0 +1,92 @@
+payment:
+  gateway:
+    config:
+      shopId: 21985337
+      shopKey: 4876228797067177
+      mode: TEST
+      endpointHost: secure.payzen.com.br
+  soap:
+    santander:
+      cobranca-online:
+        dlb-wsdl-location: classpath:wsdl/DLB/TicketEndpointService.wsdl
+        dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
+        ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
+        ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
+        enviroment: 'T'
+unopay:
+  resetPassword:
+        url: 'http://backoffice.unovation.com.br/#/page/password/'
+  credit:
+    defaultCreditInsertionType: 'BOLETO'
+  api: unopay.api.unovation.com.br
+  notification:
+    defaultTemplate: "email-templates/%s/%s.html"
+    subjectByEvent:
+      'PASSWORD_RESET' : "Foi requisitado a mudança de senha"
+      'CREATE_PASSWORD' : "Crie sua nova senha"
+      'USER_CREATED' : "Seu usuario foi criado"
+      'BATCH_CLOSED' : "Lote fechado."
+      'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
+      'PAYMENT_APPROVED' : "Pagamento aprovado!"
+      'PAYMENT_DENIED' : 'Pagamento não aprovado.'
+    defaultMail:
+      from: 'no-reply@unovation.com.br'
+      personalFrom: 'Unopay'
+  file-uploader:
+    configs:
+      avatar:
+        folder: avatar
+      ciot:
+        folder: ciot
+      receipt:
+        folder: nfe
+      logo:
+        folder: logo
+      facade:
+        folder: establishment-facades
+amazon:
+  s3:
+    bucketName: unopay-files-prod
+    cdn:
+      uri: https://s3-us-west-2.amazonaws.com/unopay-files-prod
+    accessKey: AKIAIVBZ43OSHKREK4XQ
+    secretKey: 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
+multipart:
+  max-file-size: 9000Kb
+spring:
+  datasource:
+      url: jdbc:postgresql://unopay-prod.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:5432/unopay?currentSchema=unovation
+      username: administrator
+      password: xKQRKAwYVNQ7GTan
+      driverClassName: org.postgresql.Driver
+      initialSize: 5
+      min-idle: 5
+      max-idle: 12
+      max-active: 12
+      max-wait: 10000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+      time-between-eviction-runs-millis: 20000
+  encryptor:
+    password: 2nGvyMDNJz2Wjp6M
+  jpa:
+    hibernate.ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    generate-ddl: false
+  redis:
+    host: redis.prod.unvlocal.com.br
+    port: 6379
+  rabbitmq:
+    host: rabbit.prod.unvlocal.com.br
+    port: 5672
+    username: unopay
+    password: unopay
+  mail:
+    default-encoding: UTF-8
+    host: smtp.unvlocal.com.br
+    port: 1025
+    test-connection: false
+    properties:
+      mail.smtp.host: smtp.gmail.com

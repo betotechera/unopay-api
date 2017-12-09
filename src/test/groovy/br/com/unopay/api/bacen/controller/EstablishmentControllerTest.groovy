@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
@@ -25,14 +26,12 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     AccreditedNetwork networkUnderTest
 
     void setup(){
-        flyway.clean()
-        flyway.migrate()
         networkUnderTest = fixtureCreator.createNetwork()
     }
 
     void 'valid establishment should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                                 .with { network = networkUnderTest; it }
 
@@ -46,7 +45,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishment should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                     .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -66,7 +65,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishment should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -84,7 +83,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'known establishments should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         def mvcResult = this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -104,7 +103,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     void 'all establishments should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
                                                                             .with { network = networkUnderTest; it }
         this.mvc.perform(post('/establishments?access_token={access_token}', accessToken)
@@ -121,7 +120,45 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
     }
 
 
-    private String extractId(String location) {
+    void 'valid service should be created'() {
+        given:
+        def establishmentUser = fixtureCreator.createEstablishmentUser()
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ServiceAuthorize service = fixtureCreator
+                .createServiceAuthorize(fixtureCreator.createContractorInstrumentCreditPersisted(),
+                establishmentUser.establishment)
+
+        when:
+        def result = this.mvc.perform(
+                post('/establishments/me/service-authorizations?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(service)))
+        then:
+        result.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.establishment.id', is(equalTo(establishmentUser.establishment.id))))
+    }
+
+
+    void 'known services should be found'() {
+        given:
+        def establishmentUser = fixtureCreator.createEstablishmentUser()
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ServiceAuthorize service = fixtureCreator
+                .createServiceAuthorizePersisted(fixtureCreator.createContractorInstrumentCreditPersisted(),
+                establishmentUser.establishment)
+        def id = service.id
+
+        when:
+        def result = this.mvc.perform(
+                get('/establishments/me/service-authorizations/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.authorizationNumber', is(notNullValue())))
+    }
+
+    String extractId(String location) {
         location.replaceAll('/establishments/', "")
     }
 

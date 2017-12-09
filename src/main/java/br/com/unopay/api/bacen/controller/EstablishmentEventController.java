@@ -1,11 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
+@PreAuthorize("#oauth2.isUser()")
 @Timed(prefix = "api")
 public class EstablishmentEventController {
 
@@ -48,6 +48,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createFromCsvById(@PathVariable  String id, @RequestParam MultipartFile file){
@@ -57,6 +58,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/event-fees", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createFromCsv(@RequestParam MultipartFile file){
@@ -67,7 +69,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.POST)
     public ResponseEntity<EstablishmentEvent> create(@PathVariable  String id, @Validated(Create.class)
                                                 @RequestBody EstablishmentEvent establishment) {
@@ -82,14 +84,14 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.GET)
     public EstablishmentEvent get(@PathVariable  String establishmentId, @PathVariable  String id) {
         log.info("get establishment event={}", id);
         return service.findByEstablishmentIdAndId(establishmentId, id);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String establishmentId, @PathVariable  String id,
                        @Validated(Update.class) @RequestBody EstablishmentEvent establishment) {
@@ -99,7 +101,7 @@ public class EstablishmentEventController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ALL_ESTABLISHMENT_EVENT_VALUE') ")
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT_EVENT_VALUE') ")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String establishmentId, @PathVariable  String id) {
         log.info("removing establishment event id={}", id);
@@ -108,7 +110,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ALL_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.GET)
     public Results<EstablishmentEvent> getByParams(@PathVariable  String id) {
         log.info("find establishment events of establishment={}", id);
@@ -118,60 +120,56 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("#oauth2.isUser() ")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST)
-    public ResponseEntity<EstablishmentEvent> createMy(OAuth2Authentication authentication, @Validated(Create.class)
-    @RequestBody EstablishmentEvent establishment) {
-        UserDetail currentUser = getCurrentUser(authentication);
-        log.info("creating establishment event{}", establishment);
-        EstablishmentEvent created = service.create(currentUser.establishmentId(), establishment);
+    public ResponseEntity<EstablishmentEvent> createMy(Establishment establishment, @Validated(Create.class)
+    @RequestBody EstablishmentEvent event) {
+        log.info("creating event event{}", event);
+        EstablishmentEvent created = service.create(establishment.getId(), event);
         return ResponseEntity
-                .created(URI.create("/establishments/"+currentUser.establishmentId()+"/event-fees"+created.getId()))
+                .created(URI.create("/establishments/"+establishment.getId()+"/event-fees"+created.getId()))
                 .body(created);
 
     }
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.GET)
-    public EstablishmentEvent getMy(OAuth2Authentication authentication, @PathVariable  String id) {
-        UserDetail currentUser = getCurrentUser(authentication);
+    public EstablishmentEvent getMy(Establishment establishment, @PathVariable  String id) {
         log.info("get establishment event={}", id);
-        return service.findByEstablishmentIdAndId(currentUser.establishmentId(), id);
+        return service.findByEstablishmentIdAndId(establishment.getId(), id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#oauth2.isUser() ")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.PUT)
-    public void updateMy(OAuth2Authentication authentication, @PathVariable  String id,
-                       @Validated(Update.class) @RequestBody EstablishmentEvent establishment) {
-        UserDetail currentUser = getCurrentUser(authentication);
-        establishment.setId(id);
-        log.info("updating establishment event {}", establishment);
-        service.update(currentUser.establishmentId(),establishment);
+    public void updateMy(Establishment establishment, @PathVariable  String id,
+                       @Validated(Update.class) @RequestBody EstablishmentEvent event) {
+        event.setId(id);
+        log.info("updating establishment event={}", event);
+        service.update(establishment.getId(),event);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees/{id}", method = RequestMethod.DELETE)
-    public void removeMy(OAuth2Authentication authentication, @PathVariable  String id) {
+    public void removeMy(Establishment establishment, @PathVariable  String id) {
         log.info("removing establishment event id={}", id);
-        UserDetail currentUser = getCurrentUser(authentication);
-        service.deleteByEstablishmentIdAndId(currentUser.establishmentId(), id);
+        service.deleteByEstablishmentIdAndId(establishment.getId(), id);
     }
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.GET)
-    public Results<EstablishmentEvent> getMyByParams(OAuth2Authentication authentication) {
-        log.info("find establishment events of establishment={}", authentication.getName());
-        UserDetail currentUser = getCurrentUser(authentication);
-        List<EstablishmentEvent> page =  service.findByEstablishmentId(currentUser.establishmentId());
+    public Results<EstablishmentEvent> getMyByParams(Establishment establishment) {
+        log.info("find establishment events of establishment={}", establishment.documentNumber());
+        List<EstablishmentEvent> page =  service.findByEstablishmentId(establishment.getId());
         return new Results<>(page);
     }
 
-    private UserDetail getCurrentUser(OAuth2Authentication authentication) {
-        return userDetailService.getByEmail(authentication.getName());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/event-fees", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createFromCsvByMe(Establishment establishment, @RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading establishment event fee csv file {}", fileName);
+        service.createFromCsv(establishment.getId(), file);
     }
+
 }

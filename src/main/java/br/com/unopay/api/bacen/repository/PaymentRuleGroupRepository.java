@@ -16,6 +16,8 @@ public interface PaymentRuleGroupRepository extends
 
     Optional<PaymentRuleGroup> findById(String id);
 
+    Optional<PaymentRuleGroup> findByIdAndInstitutionId(String id, String institutionId);
+
     List<PaymentRuleGroup> findByIdIn(List<String> ids);
 
     Long countByInstitutionId(String id);

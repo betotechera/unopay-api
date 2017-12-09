@@ -137,15 +137,16 @@ public class Credit implements Serializable, Updatable {
     public void validateCreditValue() {
         if(withProduct()){
             getProduct().validateCreditInsertionType(this.creditInsertionType);
-
             if(!getProduct().getCreditInsertionTypes().contains(this.creditInsertionType)) {
                 throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT);
             }
         }
-        if(value.compareTo(paymentRuleGroup.getMinimumCreditInsertion()) == -1){
+        if(paymentRuleGroup.getMinimumCreditInsertion() != null &&
+                value.compareTo(paymentRuleGroup.getMinimumCreditInsertion()) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET);
         }
-        if(value.compareTo(paymentRuleGroup.getMaximumCreditInsertion()) == 1){
+        if(paymentRuleGroup.getMaximumCreditInsertion() != null &&
+                value.compareTo(paymentRuleGroup.getMaximumCreditInsertion()) == 1){
             throw UnovationExceptions.unprocessableEntity().withErrors(MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET);
         }
 

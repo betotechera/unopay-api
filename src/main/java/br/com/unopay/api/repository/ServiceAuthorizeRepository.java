@@ -13,6 +13,8 @@ public interface ServiceAuthorizeRepository extends
         UnovationFilterRepository<ServiceAuthorize,String, ServiceAuthorizeFilter> {
 
     Optional<ServiceAuthorize> findById(String id);
+
+    Optional<ServiceAuthorize> findByIdAndEstablishmentId(String id, String establishmentId);
     List<ServiceAuthorize> findAll();
 
     @Query("SELECT s FROM ServiceAuthorize s WHERE s.establishment.id = ?1 and  " +

@@ -1,8 +1,6 @@
 package br.com.unopay.api.http
 
 import br.com.unopay.api.bacen.model.BankAccountType
-import br.com.unopay.bootcommons.exception.BadRequestException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext

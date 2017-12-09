@@ -1,8 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
+import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,18 +32,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@PreAuthorize("#oauth2.isUser()")
 @Timed(prefix = "api")
 public class AccreditedNetworkController {
 
     private AccreditedNetworkService service;
+    private EstablishmentService establishmentService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
-    public AccreditedNetworkController(AccreditedNetworkService service) {
+    public AccreditedNetworkController(AccreditedNetworkService service,
+                                       EstablishmentService establishmentService) {
         this.service = service;
-     }
+        this.establishmentService = establishmentService;
+    }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,6 +61,7 @@ public class AccreditedNetworkController {
                 .body(created);
 
     }
+
     @JsonView({Views.AccreditedNetwork.Detail.class})
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.GET)
@@ -60,6 +69,7 @@ public class AccreditedNetworkController {
         log.info("get AccreditedNetwork={}", id);
         return service.getById(id);
     }
+
     @JsonView(Views.AccreditedNetwork.Detail.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/{id}", method = RequestMethod.PUT)
@@ -87,6 +97,43 @@ public class AccreditedNetworkController {
         Page<AccreditedNetwork> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks", api));
+    }
+
+    @JsonView({Views.AccreditedNetwork.Detail.class})
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.GET)
+    public AccreditedNetwork getMe(AccreditedNetwork accreditedNetwork) {
+        log.info("get AccreditedNetwork={}", accreditedNetwork.documentNumber());
+        return service.getById(accreditedNetwork.getId());
+    }
+
+    @JsonView(Views.AccreditedNetwork.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me", method = RequestMethod.PUT)
+    public void updateMe(AccreditedNetwork current, @Validated(Update.class)
+    @RequestBody AccreditedNetwork accreditedNetwork) {
+        log.info("updating accreditedNetwork={}", accreditedNetwork);
+        service.update(current.getId(),accreditedNetwork);
+    }
+
+    @JsonView(Views.Establishment.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments/{id}", method = RequestMethod.GET)
+    public Establishment getEstablishment(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
+        log.info("get establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        return establishmentService.findByIdAndNewtwork(id, accreditedNetwork);
+    }
+
+    @JsonView(Views.Establishment.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments", method = RequestMethod.GET)
+    public Results<Establishment> getEstablishmentByParams(AccreditedNetwork accreditedNetwork,
+                                                           EstablishmentFilter filter,
+                                                           @Validated UnovationPageRequest pageable) {
+        log.info("search establishment with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        Page<Establishment> page =  establishmentService.findByFilterForNetwork(accreditedNetwork,filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/establishments", api));
     }
 
 }

@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.filter.ServiceFilter;
 import br.com.unopay.api.bacen.repository.EventRepository;
@@ -7,6 +8,7 @@ import br.com.unopay.api.bacen.repository.ServiceRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.HashSet;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,11 +56,13 @@ public class ServiceService {
         return repository.countByName(name) > 0;
     }
 
-
-
     public void update(String id, Service service) {
-        service.validate();
         Service current = findById(id);
+        update(service, current);
+    }
+
+    private void update(Service service, Service current) {
+        service.validate();
         if(!current.getName().equals(service.getName())) {
             validateName(service.getName());
         }
@@ -67,7 +71,6 @@ public class ServiceService {
         }
         current.updateModel(service);
         repository.save(current);
-
     }
 
     public Service findById(String id) {

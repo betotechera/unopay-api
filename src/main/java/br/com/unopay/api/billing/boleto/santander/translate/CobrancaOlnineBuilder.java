@@ -59,7 +59,8 @@ public class CobrancaOlnineBuilder {
         entries.add(entry("PAGADOR.CEP",issuer.getPerson().getAddress().getZipCode()));
         entries.add(entry("PAGADOR.UF",issuer.getPerson().getAddress().getState().name()));
         entries.add(entry("CONVENIO.COD-CONVENIO",issuer.getPaymentAccount().getBankAgreementNumberForDebit()));
-        entries.add(entry("CONVENIO.COD-BANCO",issuer.getPaymentAccount().getBankAccount().bacenCode().toString()));
+        entries.add(entry("CONVENIO.COD-BANCO",issuer.getPaymentAccount().getBankAccount().getBank()
+                                                    .getBacenCode().toString()));
         entries.add(entry("TITULO.NOSSO-NUMERO",ourNumber));
         entries.add(entry("TITULO.SEU-NUMERO",yourNumber));
         entries.add(entry("TITULO.DT-VENCTO", format(new DateTime().plusDays(expirationDays).toDate())));

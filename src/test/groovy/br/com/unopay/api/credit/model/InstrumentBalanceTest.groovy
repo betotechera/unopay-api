@@ -4,7 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import spock.lang.Unroll
 
 class InstrumentBalanceTest  extends FixtureApplicationTest {
 

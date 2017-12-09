@@ -86,4 +86,19 @@ public class PartnerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/partners", api));
     }
 
+    @JsonView(Views.Partner.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/partners/me", method = RequestMethod.GET)
+    public Partner getMe(Partner partner) {
+        log.info("get Partner={}", partner.documentNumber());
+        return service.getById(partner.getId());
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/partners/me", method = RequestMethod.PUT)
+    public void updateMe(Partner current, @Validated(Update.class) @RequestBody Partner partner) {
+        log.info("updating partner={} for partner={}", partner, current.documentNumber());
+        service.update(current.getId(),partner);
+    }
+
 }

@@ -4,7 +4,6 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;
@@ -68,13 +67,8 @@ public class ServiceAuthorizeService {
         this.instrumentBalanceService = instrumentBalanceService;
     }
 
-    private UserDetail getUserByEmail(String userEmail) {
-        return userDetailService.getByEmail(userEmail);
-    }
-
     @Transactional
-    public ServiceAuthorize create(String userEmail, ServiceAuthorize authorize) {
-        UserDetail currentUser = getUserByEmail(userEmail);
+    public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
         PaymentInstrument paymentInstrument = getValidContractorPaymentInstrument(authorize, contract);
@@ -156,6 +150,11 @@ public class ServiceAuthorizeService {
         serviceAuthorize.setEstablishment(establishment);
     }
 
+    public ServiceAuthorize findByIdForEstablishment(String id, Establishment establishment) {
+        Optional<ServiceAuthorize> serviceAuthorize =  repository.findByIdAndEstablishmentId(id, establishment.getId());
+        return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
+    }
+
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
@@ -178,9 +177,9 @@ public class ServiceAuthorizeService {
         return repository.findAll(filter,new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    public Page<ServiceAuthorize> findMyByFilter(String userEmail, ServiceAuthorizeFilter filter,
+    public Page<ServiceAuthorize> findMyByFilter(UserDetail currentUser, ServiceAuthorizeFilter filter,
                                                  UnovationPageRequest pageable) {
-        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
+        return findByFilter(buildFilterBy(filter,currentUser),pageable);
     }
     private ServiceAuthorizeFilter buildFilterBy(ServiceAuthorizeFilter filter, UserDetail currentUser) {
         filter.setEstablishment(currentUser.myEstablishmentId());

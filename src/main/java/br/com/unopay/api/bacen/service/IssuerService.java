@@ -4,14 +4,14 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
+import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
+import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.job.RemittanceJob;
 import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
-import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -32,32 +32,30 @@ import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 public class IssuerService {
 
     private IssuerRepository repository;
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
     private PersonService personService;
     private BankAccountService bankAccountService;
     private PaymentBankAccountService paymentBankAccountService;
     private PaymentRuleGroupService paymentRuleGroupService;
     @Setter private UnopayScheduler scheduler;
-    @Setter private PaymentRemittanceService paymentRemittanceService;
 
     public IssuerService(){}
 
     @Autowired
     public IssuerService(IssuerRepository repository,
-                         UserDetailRepository userDetailRepository,
+                         UserDetailService userDetailService,
                          PersonService personService,
                          BankAccountService bankAccountService,
                          PaymentBankAccountService paymentBankAccountService,
                          PaymentRuleGroupService paymentRuleGroupService,
-                         UnopayScheduler scheduler, @Lazy PaymentRemittanceService paymentRemittanceService) {
+                         UnopayScheduler scheduler) {
         this.repository = repository;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.personService = personService;
         this.bankAccountService = bankAccountService;
         this.paymentBankAccountService = paymentBankAccountService;
         this.paymentRuleGroupService = paymentRuleGroupService;
         this.scheduler = scheduler;
-        this.paymentRemittanceService = paymentRemittanceService;
     }
 
     public Issuer create(Issuer issuer) {
@@ -104,14 +102,10 @@ public class IssuerService {
 
     public void delete(String id) {
         findById(id);
-        if(hasUsers(id)){
+        if(userDetailService.hasIssuer(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.ISSUER_WITH_USERS);
         }
         repository.delete(id);
-    }
-
-    private boolean hasUsers(String id) {
-        return  userDetailRepository.countByIssuerId(id) > 0;
     }
 
     public Page<Issuer> findByFilter(IssuerFilter filter, UnovationPageRequest pageable) {
@@ -128,10 +122,6 @@ public class IssuerService {
 
     private void scheduleClosingJob(Issuer created) {
         scheduler.schedule(created.getId(), created.depositPeriodPattern(),RemittanceJob.class);
-    }
-
-    public void executePaymentRemittance(RemittanceFilter filter) {
-        paymentRemittanceService.execute(filter);
     }
 
 }

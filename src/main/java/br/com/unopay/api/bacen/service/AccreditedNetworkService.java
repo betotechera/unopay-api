@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -22,7 +22,7 @@ public class AccreditedNetworkService {
 
     private AccreditedNetworkRepository repository;
 
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
 
     private PersonService personService;
 
@@ -31,11 +31,11 @@ public class AccreditedNetworkService {
 
     @Autowired
     public AccreditedNetworkService(AccreditedNetworkRepository repository,
-                                    UserDetailRepository userDetailRepository,
+                                    UserDetailService userDetailService,
                                     PersonService personService,
                                     BankAccountService bankAccountService) {
         this.repository = repository;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.personService = personService;
         this.bankAccountService = bankAccountService;
     }
@@ -61,7 +61,6 @@ public class AccreditedNetworkService {
         return accreditedNetwork
                 .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND));
     }
-
     public void update(String id, AccreditedNetwork accreditedNetwork) {
         AccreditedNetwork current = repository.findOne(id);
         current.updateModel(accreditedNetwork);
@@ -72,7 +71,7 @@ public class AccreditedNetworkService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
+        if(userDetailService.hasNetwork(id)){
             throw UnovationExceptions.conflict()
                     .withErrors(Errors.ACCREDITED_NETWORK_WITH_USERS);
         }
@@ -80,7 +79,4 @@ public class AccreditedNetworkService {
         repository.delete(id);
     }
 
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByAccreditedNetworkId(id) > 0;
-    }
 }

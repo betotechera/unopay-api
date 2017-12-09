@@ -1,8 +1,8 @@
 package br.com.unopay.api.controller;
 
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
-import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.credit.service.CreditPaymentAccountService;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -33,7 +33,7 @@ public class CreditPaymentAccountController {
     @ResponseStatus(OK)
     @JsonView({Views.CreditPaymentAccount.Detail.class})
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
-    @RequestMapping(value = "/hirers/{document}/credit-payment-accounts/{id}", method = GET)
+    @RequestMapping(value = "/hirers/credit-payment-accounts/{id}", method = GET)
     public CreditPaymentAccount get(@PathVariable String id) {
         log.info("get CreditPaymentAccount={}", id);
         return service.findById(id);

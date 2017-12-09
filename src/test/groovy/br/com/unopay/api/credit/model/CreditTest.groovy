@@ -3,9 +3,6 @@ package br.com.unopay.api.credit.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditInsertionType
-import br.com.unopay.api.credit.model.CreditSituation
 
 class CreditTest  extends FixtureApplicationTest {
 

@@ -5,7 +5,7 @@ create table accredited_network (
     merchant_discount_rate decimal(3,2),
     type VARCHAR(10),
     movement_period VARCHAR(16),
-    authorize_transfer number(1),
+    authorize_transfer varchar(20),
     closing_payment_days integer,
     minimum_deposit_value decimal(10,2),
         invoice_receipt_period  VARCHAR(16),

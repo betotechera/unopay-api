@@ -6,7 +6,8 @@ import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
+import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
@@ -17,21 +18,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
+
 @Slf4j
 @Service
 public class InstitutionService {
     private InstitutionRepository repository;
     private PersonService personService;
-    private UserDetailRepository userDetailRepository;
+    private UserDetailService userDetailService;
     private PaymentRuleGroupRepository paymentRuleGroupRepository;
 
     @Autowired
     public InstitutionService(InstitutionRepository repository, PersonService personService,
-                              UserDetailRepository userDetailRepository,
+                              UserDetailService userDetailService,
                               PaymentRuleGroupRepository paymentRuleGroupRepository) {
         this.repository = repository;
         this.personService = personService;
-        this.userDetailRepository = userDetailRepository;
+        this.userDetailService = userDetailService;
         this.paymentRuleGroupRepository = paymentRuleGroupRepository;
     }
 
@@ -60,7 +63,7 @@ public class InstitutionService {
 
     public void delete(String id) {
         getById(id);
-        if(hasUser(id)){
+        if(userDetailService.hasInstitution(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.INSTITUTION_WITH_USERS);
         }
         if(hasPaymentRuleGroup(id)){
@@ -68,16 +71,14 @@ public class InstitutionService {
         }
         repository.delete(id);
     }
-    private boolean hasPaymentRuleGroup(String id) {
-        return paymentRuleGroupRepository.countByInstitutionId(id) > 0;
-    }
-
-    private Boolean hasUser(String id) {
-        return userDetailRepository.countByInstitutionId(id) > 0;
-    }
 
     public Page<Institution> findByFilter(InstitutionFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+
+    private boolean hasPaymentRuleGroup(String id) {
+        return paymentRuleGroupRepository.countByInstitutionId(id) > 0;
     }
 
 }

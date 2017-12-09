@@ -4,9 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
-import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
-
 import static java.math.BigDecimal.ONE
 import org.apache.commons.beanutils.BeanUtils
 import spock.lang.Unroll

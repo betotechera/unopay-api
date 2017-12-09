@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
@@ -11,6 +12,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,6 +42,11 @@ public class PaymentRuleGroupService {
         this.accreditedNetworkRepository = accreditedNetworkRepository;
     }
 
+    public PaymentRuleGroup createForInstitution(PaymentRuleGroup paymentRuleGroup, Institution institution) {
+        paymentRuleGroup.setInstitution(institution);
+        return create(paymentRuleGroup);
+    }
+
     public PaymentRuleGroup create(PaymentRuleGroup paymentRuleGroup) {
         try {
             paymentRuleGroup.validate();
@@ -64,6 +71,13 @@ public class PaymentRuleGroupService {
                 countByInstitutionAndPurposeAndScopeAndUserRelationship
                 (paymentRuleGroup.getInstitution(),paymentRuleGroup.getPurpose(),paymentRuleGroup.getScope(),
                                 paymentRuleGroup.getUserRelationship()) > 0;
+    }
+
+    public Page<PaymentRuleGroup> findByFilterForInstitution(Institution institution,
+                                                             PaymentRuleGroupFilter filter,
+                                                             UnovationPageRequest pageable) {
+        filter.setInstitution(institution.documentNumber());
+        return findByFilter(filter, pageable);
     }
 
     public Page<PaymentRuleGroup> findByFilter(PaymentRuleGroupFilter filter, UnovationPageRequest pageable) {
@@ -93,6 +107,18 @@ public class PaymentRuleGroupService {
         return  paymentRuleGroups;
     }
 
+    @Transactional
+    public void updateForInstitution(String id, Institution institution, PaymentRuleGroup paymentRuleGroup) {
+        PaymentRuleGroup current = getForInstitutionById(id, institution);
+        current.updateMe(paymentRuleGroup);
+        repository.save(current);
+    }
+
+    public PaymentRuleGroup getForInstitutionById(String id, Institution institution) {
+        Optional<PaymentRuleGroup> paymentRuleGroup = repository.findByIdAndInstitutionId(id, institution.getId());
+        return paymentRuleGroup.orElseThrow(()-> UnovationExceptions.notFound().withErrors(PAYMENT_RULE_GROUP_NOT_FOUND));
+    }
+
     public void update(String id, PaymentRuleGroup paymentRuleGroup) {
         PaymentRuleGroup current = repository.findOne(id);
         current.updateMe(paymentRuleGroup);
@@ -105,8 +131,17 @@ public class PaymentRuleGroupService {
         }
     }
 
+    public void deleteForInstitution(String id, Institution institution) {
+        getForInstitutionById(id, institution);
+        deleteIfPossible(id);
+    }
+
     public void delete(String id) {
         getById(id);
+        deleteIfPossible(id);
+    }
+
+    private void deleteIfPossible(String id) {
         if(hasIssuer(id)) {
             throw UnovationExceptions.conflict().withErrors(Errors.PAYMENT_RULE_GROUP_IN_ISSUER);
         }

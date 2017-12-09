@@ -1,5 +1,6 @@
 package br.com.unopay.api.credit.service;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.credit.model.Credit;
@@ -102,6 +103,11 @@ public class CreditService {
         credit.defineCreditNumber(lastCreditNumber);
     }
 
+    public Credit findByIdForHirer(String id, Hirer hirer) {
+        Optional<Credit> credit = repository.findByIdAndHirerDocument(id, hirer.getDocumentNumber());
+        return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
+    }
+
     public Credit  findById(String id) {
         Optional<Credit> credit = repository.findById(id);
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
@@ -135,8 +141,18 @@ public class CreditService {
     }
 
     @Transactional
+    public void cancelForHirer(String id, Hirer hirer) {
+        Credit credit = findByIdForHirer(id, hirer);
+        cancel(credit);
+    }
+
+    @Transactional
     public void cancel(String id) {
         Credit credit = findById(id);
+        cancel(credit);
+    }
+
+    private void cancel(Credit credit) {
         credit.cancel();
         creditPaymentAccountService.subtract(credit);
         repository.save(credit);

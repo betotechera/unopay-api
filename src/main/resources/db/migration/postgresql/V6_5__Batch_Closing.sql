@@ -4,7 +4,7 @@ create table batch_closing (
     issuer_id varchar(256) not null,
     accredited_network_id varchar(256) not null,
     hirer_id varchar(256) not null,
-    issue_invoice char(1) not null,
+    issue_invoice varchar(20) not null,
     closing_date_time TIMESTAMP not null,
     value decimal(20,2) not null,
     period varchar(256) not null,

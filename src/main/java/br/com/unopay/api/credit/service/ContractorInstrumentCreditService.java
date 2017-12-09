@@ -1,11 +1,11 @@
 package br.com.unopay.api.credit.service;
 
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;

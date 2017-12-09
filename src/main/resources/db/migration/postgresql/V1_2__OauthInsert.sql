@@ -1,6 +1,6 @@
 -- pass secret
 insert into oauth_client_details(client_id,client_secret,resource_ids,scope,authorized_grant_types,authorities,additional_information,access_token_validity,refresh_token_validity)
-values ('unovation','c7bfc8f1ce2b3bcbdec9ae12dc4f04af0d9d1ad0253dcdcf8205b0a31bd4c6e5c4494095a762b79b','uaa','read,write','client_credentials,password,refresh_token,facebook,google','ROLE_CLIENT', '{"organization": "1"}',900,900);
+values ('unovation','$2a$10$4MLmOKHwG8GtxYTivl82U.HmELpk0RU/tPZ9i/mYql/DYdQ3XJX8O','uaa','read,write','client_credentials,password,refresh_token,facebook,google','ROLE_CLIENT', '{"organization": "1"}',900,900);
 
 insert into user_type(id, name, description, version) values('92af025e-1580-4c49-8246-f965e48c5721', 'ARRANJO', 'Arranjo de pagamento', 0);
 insert into user_type(id, name, description, version) values('9574193f-603f-416f-bc48-09e2ddb3d3d6', 'EMISSORA', 'Instituição de Pagamento emissora', 0);
@@ -11,10 +11,7 @@ insert into user_type(id, name, description, version) values('865b362c-fc31-4a35
 insert into user_type(id, name, description, version) values('5ba95e66-5e88-4ba8-bdf4-66a7a480c252', 'PARCEIRO', 'Parceiro', 0);
 
 insert into oauth_user_details(id, email,name, type, password, version)
-values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation', '92af025e-1580-4c49-8246-f965e48c5721',  'a023dceb3b15e9b9586bc149e02b57d0f0b6929db9b84bfcaa607216d8fe638c4faf2ca543d2304a', 0);
-
-insert into oauth_user_details(id, email,name, type, password, version)
-values('aa183b19-b6a9-4a15-8805-10c4bdad8cd4', 'qualidade@roadcard.com.br', 'qualidade', '92af025e-1580-4c49-8246-f965e48c5721',  '5d61e4717663bb81738c84bd25db68d66928cbcc56ce487a9afdcd1bd18f85f8f082bf6fecda473f', 0);
+values('643f406a-0cfa-422c-bea2-e80dfc63af15', 'ti@unovation.com.br', 'unovation', '92af025e-1580-4c49-8246-f965e48c5721',  '$2a$10$47j.qDS.gRbTqF8hyE0/3OA6jGaKJf5ifFr1K8iRrD7V.7ikxx0XS', 0);
 
 insert into oauth_groups(id, group_name, description, version, user_type) values('99bf9ba6-75e4-4109-b5be-e4858f3f68b2','admin', 'Permite acesso completo ao sistema', 0, '92af025e-1580-4c49-8246-f965e48c5721');
 

@@ -76,13 +76,6 @@ public class PaymentBankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     private String bankAgreementNumberForDebit;
 
-    @Size(max = 7)
-    @Column(name = "our_number")
-    @JsonView({Views.BankAccount.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private String ourNumber;
-
-
     @Column(name = "station")
     @JsonView({Views.BankAccount.class})
     @Size(max = 7)

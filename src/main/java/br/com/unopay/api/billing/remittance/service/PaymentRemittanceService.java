@@ -36,7 +36,6 @@ import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -283,24 +282,6 @@ public class PaymentRemittanceService {
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){
         return items.stream().filter(item -> item.payeeDocumentIs(document)).findFirst();
-    }
-
-    public Page<PaymentRemittance> findMyByFilter(String userEmail, PaymentRemittanceFilter filter,
-                                             UnovationPageRequest pageable) {
-        return findByFilter(buildFilterBy(filter,getUserByEmail(userEmail)),pageable);
-    }
-
-    private PaymentRemittanceFilter buildFilterBy(PaymentRemittanceFilter filter, UserDetail currentUser) {
-        if(currentUser.isEstablishmentType()) {
-            filter.setEstablishment(currentUser.establishmentId());
-        }
-        if(currentUser.isIssuerType()) {
-            filter.setIssuer(currentUser.issuerId());
-        }
-        if(currentUser.isAccreditedNetworkType()) {
-            filter.setAccreditedNetwork(currentUser.accreditedNetworkId());
-        }
-        return filter;
     }
 
     private UserDetail getUserByEmail(String userEmail) {

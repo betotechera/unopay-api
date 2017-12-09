@@ -2,9 +2,9 @@ package br.com.unopay.api.controller;
 
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
+import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -50,21 +50,20 @@ public class CreditController {
     @JsonView(Views.Credit.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT')")
-    @RequestMapping(value = "/hirers/{document}/credits", method = POST)
-    public ResponseEntity<Credit> create(@PathVariable String document,
-                                         @Validated(Create.class) @RequestBody Credit credit) {
+    @RequestMapping(value = "/hirers/credits", method = POST)
+    public ResponseEntity<Credit> create(@Validated(Create.class) @RequestBody Credit credit) {
         log.info("inserting credit={}", credit);
-        credit.setHirerDocument(document);
         Credit created = service.insert(credit);
         log.info("Inserted credit={}", created);
-        return created(URI.create(String.format("/hirers/%s/credits/%s",document, created.getId()))).body(created);
+        return created(URI.create(String
+                .format("/hirers/%s/credits/%s",created.getHirerDocument(), created.getId()))).body(created);
 
     }
 
     @ResponseStatus(OK)
     @JsonView(Views.Credit.Detail.class)
     @PreAuthorize("hasRole('ROLE_LIST_CREDIT')")
-    @RequestMapping(value = "/hirers/{document}/credits/{id}", method = GET)
+    @RequestMapping(value = "/hirers/credits/{id}", method = GET)
     public Credit get(@PathVariable String id) {
         log.info("get contract={}", id);
         return service.findById(id);
@@ -72,7 +71,7 @@ public class CreditController {
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_CREDIT')")
-    @RequestMapping(value = "/hirers/{document}/credits/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/hirers/credits/{id}", method = RequestMethod.DELETE)
     public void cancel(@PathVariable  String id) {
         log.info("canceling credit id={}", id);
         service.cancel(id);

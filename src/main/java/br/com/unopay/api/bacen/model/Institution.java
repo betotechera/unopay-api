@@ -42,4 +42,11 @@ public class Institution implements Serializable {
     public void updateModel(Institution institution) {
         person.update(institution.getPerson(), (o) -> o.updateForInstitution(o));
     }
+
+    public String documentNumber(){
+        if(getPerson() != null && getPerson().getDocument() != null){
+            return getPerson().getDocument().getNumber();
+        }
+        return null;
+    }
 }
