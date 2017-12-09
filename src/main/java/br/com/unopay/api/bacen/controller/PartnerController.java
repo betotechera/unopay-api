@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,7 @@ public class PartnerController {
 
     @JsonView(Views.Partner.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PARTNER')")
     @RequestMapping(value = "/partners", method = RequestMethod.POST)
     public ResponseEntity<Partner> create(@Validated(Create.class) @RequestBody Partner partner) {
         log.info("creating partner {}", partner);
@@ -55,6 +57,7 @@ public class PartnerController {
 
     @JsonView(Views.Partner.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_PARTNER')")
     @RequestMapping(value = "/partners/{id}", method = RequestMethod.GET)
     public Partner get(@PathVariable  String id) {
         log.info("get Partner={}", id);
@@ -62,6 +65,7 @@ public class PartnerController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PARTNER')")
     @RequestMapping(value = "/partners/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Partner partner) {
         partner.setId(id);
@@ -70,6 +74,7 @@ public class PartnerController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_PARTNER')")
     @RequestMapping(value = "/partners/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing partner id={}", id);
@@ -78,6 +83,7 @@ public class PartnerController {
 
     @JsonView(Views.Partner.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_PARTNER')")
     @RequestMapping(value = "/partners", method = RequestMethod.GET)
     public Results<Partner> getByParams(PartnerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Partner with filter={}", filter);

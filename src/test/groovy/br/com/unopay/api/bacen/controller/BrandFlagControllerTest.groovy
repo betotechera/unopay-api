@@ -12,7 +12,7 @@ class BrandFlagControllerTest extends AuthServerApplicationTests {
 
     void 'known brand flags should be returned'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
 
         when:
         def result = this.mvc.perform(get('/brand-flags?access_token={access_token}', accessToken)

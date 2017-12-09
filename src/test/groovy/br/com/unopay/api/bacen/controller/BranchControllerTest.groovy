@@ -32,7 +32,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
     void 'valid branch should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
 
         when:
@@ -45,7 +45,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
     void 'known branch should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +63,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
     void 'known branch should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
     void 'known branches should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
 
     void 'all branches should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)

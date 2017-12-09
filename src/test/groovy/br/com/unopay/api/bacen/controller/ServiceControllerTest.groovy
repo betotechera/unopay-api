@@ -17,7 +17,7 @@ class ServiceControllerTest extends AuthServerApplicationTests {
 
     void 'valid service should be created'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Service service = Fixture.from(Service.class).gimme("valid")
 
         when:
@@ -30,7 +30,7 @@ class ServiceControllerTest extends AuthServerApplicationTests {
 
     void 'known service should be updated'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Service service = Fixture.from(Service.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,7 +48,7 @@ class ServiceControllerTest extends AuthServerApplicationTests {
 
     void 'known service should be deleted'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Service service = Fixture.from(Service.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ class ServiceControllerTest extends AuthServerApplicationTests {
 
     void 'known services should be found'() {
         given:
-        String accessToken = getClientAccessToken()
+        String accessToken = getUserAccessToken()
         Service service = Fixture.from(Service.class).gimme("valid")
         def mvcResult = this.mvc.perform(post('/services?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)

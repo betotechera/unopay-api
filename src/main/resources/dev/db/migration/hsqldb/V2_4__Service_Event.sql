@@ -28,3 +28,9 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_EVENT','Permite ger
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_EVENT', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_EVENT', '1');
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_SERVICE','Permite listar Serviços');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_SERVICE','Permite gerenciar Serviços');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_SERVICE', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_SERVICE', '1');

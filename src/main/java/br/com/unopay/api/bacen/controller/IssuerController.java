@@ -26,7 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +61,7 @@ public class IssuerController {
 
     @JsonView(Views.Issuer.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @RequestMapping(value = "/issuers", method = RequestMethod.POST)
     public ResponseEntity<Issuer> create(@Validated(Create.class) @RequestBody Issuer issuer) {
         log.info("creating issuer {}", issuer);
@@ -74,6 +74,7 @@ public class IssuerController {
 
     @JsonView(Views.Issuer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ISSUER')")
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.GET)
     public Issuer get(@PathVariable  String id) {
         log.info("get issuer={}", id);
@@ -81,6 +82,7 @@ public class IssuerController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable  String id, @Validated(Update.class) @RequestBody Issuer issuer) {
         issuer.setId(id);
@@ -89,6 +91,7 @@ public class IssuerController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @RequestMapping(value = "/issuers/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing issuer id={}", id);
@@ -97,6 +100,7 @@ public class IssuerController {
 
     @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_ISSUER')")
     @RequestMapping(value = "/issuers", method = RequestMethod.GET)
     public Results<Issuer> getByParams(IssuerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search issuer with filter={}", filter);
