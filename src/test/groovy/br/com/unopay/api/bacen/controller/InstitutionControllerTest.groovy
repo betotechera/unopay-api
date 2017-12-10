@@ -97,7 +97,7 @@ class InstitutionControllerTest extends AuthServerApplicationTests {
 
     void 'known institution should be found when find all'() {
         given:
-            String accessToken = getUserAccessToken()
+            String accessToken = getClientAccessToken()
             this.mvc.perform(postInstitution(accessToken, getInstitution()))
 
             this.mvc.perform(post(INSTITUTION_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)

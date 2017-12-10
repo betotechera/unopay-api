@@ -2,6 +2,7 @@ package br.com.unopay.api.infra;
 
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
@@ -12,6 +13,7 @@ public class ReflectionHelper {
         return Stream.of(object.getClass().getDeclaredFields())
                 .filter(f -> f.getType() == clazz)
                 .map(f -> getValue(object, f))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(()->
                         UnovationExceptions

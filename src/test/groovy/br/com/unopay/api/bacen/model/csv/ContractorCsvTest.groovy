@@ -15,7 +15,7 @@ class ContractorCsvTest extends FixtureApplicationTest {
                 shortName = "teste"
                 fullName = "teste teste"
                 birthDate = new Date()
-                gender = "MAN"
+                gender = "MALE"
                 cellPhone = "116546587496"
                 telephone = "5466987498"
                 zipCode = "03645645"

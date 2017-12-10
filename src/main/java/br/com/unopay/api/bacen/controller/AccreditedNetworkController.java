@@ -94,7 +94,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ACCREDITED_NETWORK')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET)
     public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter,
                                                   @Validated UnovationPageRequest pageable) {

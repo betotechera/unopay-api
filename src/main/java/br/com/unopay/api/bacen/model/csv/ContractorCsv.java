@@ -53,7 +53,7 @@ public class ContractorCsv {
 
     @NotNull
     @CsvBindByName
-    @Pattern(message = "invalid gender (H|M)", regexp = "^(H|M)")
+    @Pattern(message = "invalid gender (F|M)", regexp = "^(F|M)")
     private String gender;
 
     @NotNull

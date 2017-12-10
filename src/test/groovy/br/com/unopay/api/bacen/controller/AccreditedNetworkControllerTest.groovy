@@ -99,7 +99,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                         person.document.number = '1234576777'
                         it })))
         when:
-            def result = this.mvc.perform(get("$ACCREDITED_NETWORK_ENDPOINT",accessToken)
+            def result = this.mvc.perform(get("$ACCREDITED_NETWORK_ENDPOINT",getClientAccessToken())
                     .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())

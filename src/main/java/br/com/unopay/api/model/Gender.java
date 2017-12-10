@@ -4,7 +4,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum Gender implements DescriptableEnum {
 
-    WOMAN("Mulher"), MAN("Homem");
+    FEMALE("Feminino"), MALE("Masculino");
 
     private String description;
 
@@ -18,6 +18,6 @@ public enum Gender implements DescriptableEnum {
     }
 
     public static Gender fromPt(String gender){
-        return "M".equals(gender) ? WOMAN : MAN;
+        return "F".equals(gender) ? FEMALE : MALE;
     }
 }

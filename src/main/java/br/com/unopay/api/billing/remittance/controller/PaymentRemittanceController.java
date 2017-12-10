@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Slf4j
 @RestController
+@PreAuthorize("#oauth2.isUser()")
 @Timed(prefix = "api")
 public class PaymentRemittanceController {
 
@@ -51,9 +51,20 @@ public class PaymentRemittanceController {
         return service.findById(id);
     }
 
+    @ResponseStatus(OK)
+    @JsonView(Views.PaymentRemittance.List.class)
+    @PreAuthorize("hasRole('ROLE_LIST_PAYMENT_REMITTANCE')")
+    @RequestMapping(value = "/payment-remittances", method = GET)
+    public Results<PaymentRemittance> findByFilter(PaymentRemittanceFilter filter,
+                                                     @Validated UnovationPageRequest pageable) {
+        log.info("search PaymentRemittance with filter={}", filter);
+        Page<PaymentRemittance> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-remittances", api));
+    }
 
     @ResponseStatus(OK)
-    @PreAuthorize("#oauth2.isUser() && hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")
     @RequestMapping(value = "/payment-remittances/return-files", method = POST)
     public void processReturn(@RequestParam MultipartFile file) {
         service.processReturn(file);

@@ -86,7 +86,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
                 .content(toJson(issuer)))
 
         when:
-        def result = this.mvc.perform(get('/issuers?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(get('/issuers?access_token={access_token}', getClientAccessToken())
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())

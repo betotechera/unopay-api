@@ -100,7 +100,7 @@ public class IssuerController {
 
     @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ISSUER')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/issuers", method = RequestMethod.GET)
     public Results<Issuer> getByParams(IssuerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search issuer with filter={}", filter);
@@ -150,7 +150,7 @@ public class IssuerController {
                                                      PaymentRemittanceFilter filter,
                                                      @Validated UnovationPageRequest pageable) {
         log.info("search PaymentRemittance with filter={} for issuer={}", filter, issuer.documentNumber());
-        filter.setIssuer(issuer.getId());
+        filter.setIssuer(issuer.documentNumber());
         Page<PaymentRemittance> page =  paymentRemittanceService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),

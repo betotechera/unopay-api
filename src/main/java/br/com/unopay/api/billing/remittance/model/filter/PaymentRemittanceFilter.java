@@ -15,7 +15,7 @@ public class PaymentRemittanceFilter {
     @SearchableField(field = "remittanceItems.establishment.accreditedNetwork.id")
     private String accreditedNetwork;
 
-    @SearchableField(field = "issuer.id")
+    @SearchableField(field = "payer.documentNumber")
     private String issuer;
 
     @SearchableField

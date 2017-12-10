@@ -91,7 +91,7 @@ class PaymentRuleGroupControllerTest extends AuthServerApplicationTests {
             this.mvc.perform(post(PAYMENT_RULE_GROUP_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(paymentRuleGroup.with { name = 'temp'; code = 'temp';it })))
         when:
-            def result = this.mvc.perform(get("$PAYMENT_RULE_GROUP_ENDPOINT",accessToken)
+            def result = this.mvc.perform(get("$PAYMENT_RULE_GROUP_ENDPOINT",getClientAccessToken())
                     .contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
