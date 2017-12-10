@@ -77,7 +77,6 @@ public class Product implements Serializable, Updatable {
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Product.List.class})
     private Issuer issuer;
 
@@ -102,12 +101,10 @@ public class Product implements Serializable, Updatable {
     @CollectionTable(name = "product_payment_instrument_tp", joinColumns = @JoinColumn(name = "product_id"))
     private Set<PaymentInstrumentType> paymentInstrumentTypes;
 
-    @Size(min = 1)
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = ServiceType.class)
     @Column(name = "service_type", nullable = false)
     @JsonView({Views.Product.Detail.class, Views.Product.List.class})
-    @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "product_service_type", joinColumns = @JoinColumn(name = "product_id"))
     private Set<ServiceType> serviceTypes;
 
