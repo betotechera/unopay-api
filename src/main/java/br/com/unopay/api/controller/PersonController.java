@@ -35,7 +35,7 @@ public class PersonController {
 
     @JsonView(Views.Person.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_PERSON')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/persons/{documentNumber}", method = RequestMethod.GET)
     public ResponseEntity<Person> findPersonByDocument(@PathVariable String documentNumber) {
         log.info("find Person  by document={}", documentNumber);
