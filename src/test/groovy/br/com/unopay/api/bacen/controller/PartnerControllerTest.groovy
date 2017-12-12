@@ -99,7 +99,7 @@ class PartnerControllerTest extends AuthServerApplicationTests {
             this.mvc.perform(post(HIRER_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(partner.with { person.id = null; person.name = 'temp';person.document.number = '1234576777';it })))
         when:
-            def result = this.mvc.perform(get("$HIRER_ENDPOINT",accessToken).contentType(MediaType.APPLICATION_JSON))
+            def result = this.mvc.perform(get("$HIRER_ENDPOINT",getClientAccessToken()).contentType(MediaType.APPLICATION_JSON))
         then:
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
