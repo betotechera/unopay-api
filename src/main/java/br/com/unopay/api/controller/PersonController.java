@@ -25,7 +25,7 @@ public class PersonController {
 
     @JsonView(Views.Person.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_PERSON')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/persons", method = RequestMethod.GET)
     public ResponseEntity<Person> findPerson(PersonFilter filter) {
         log.info("find Person  with filter={}", filter);

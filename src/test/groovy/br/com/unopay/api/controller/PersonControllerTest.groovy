@@ -12,7 +12,7 @@ class PersonControllerTest  extends AuthServerApplicationTests {
 
     void 'known persons should be returned'() {
         given:
-        String accessToken = getUserAccessToken()
+        String accessToken = getClientAccessToken()
 
         when:
         def result = this.mvc.perform(get('/persons?access_token={access_token}', accessToken)
