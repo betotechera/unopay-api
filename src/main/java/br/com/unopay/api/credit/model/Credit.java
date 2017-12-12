@@ -67,7 +67,6 @@ public class Credit implements Serializable, Updatable {
     private PaymentRuleGroup paymentRuleGroup;
 
     @Column(name = "hirer_document")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Credit.List.class})
     private String hirerDocument;
 
