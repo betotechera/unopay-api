@@ -5,6 +5,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -55,6 +56,19 @@ class PaymentRuleGroupServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.first().logref == 'MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED'
+    }
+
+    void 'a payment rule group without institution should not be create'(){
+        given:
+        PaymentRuleGroup group = Fixture.from(PaymentRuleGroup.class).gimme("valid")
+        group.institution = null
+
+        when:
+        service.create(group)
+
+        then:
+        def ex = thrown(BadRequestException)
+        ex.errors.first().logref == 'INSTITUTION_REQUIRED'
     }
 
     void 'a payment rule group without maximum value should not be create'(){

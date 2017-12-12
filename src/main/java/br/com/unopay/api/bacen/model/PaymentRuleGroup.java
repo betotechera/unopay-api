@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.uaa.exception.Errors.INSTITUTION_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.LARGE_PAYMENT_RULE_GROUP_NAME;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED;
@@ -76,7 +77,6 @@ public class PaymentRuleGroup implements Serializable, Updatable {
     @JsonView(Views.PaymentRuleGroup.List.class)
     private UserRelationship userRelationship;
 
-    @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     @JoinColumn(name="institution_id")
     @JsonView({Views.PaymentRuleGroup.Detail.class})
@@ -94,6 +94,9 @@ public class PaymentRuleGroup implements Serializable, Updatable {
 
 
     public void validate(){
+        if(getInstitution() == null){
+            throw UnovationExceptions.badRequest().withErrors(INSTITUTION_REQUIRED);
+        }
         if (getName() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_NAME_REQUIRED);
         }

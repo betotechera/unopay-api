@@ -147,6 +147,9 @@ public final class Errors {
             new UnovationError("MINIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED","Minimum payment rule group value required.");
     public static final UnovationError MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED =
             new UnovationError("MAXIMUM_PAYMENT_RULE_GROUP_VALUE_REQUIRED","Maximum payment rule group value required.");
+    public static final UnovationError INSTITUTION_REQUIRED =
+            new UnovationError("INSTITUTION_REQUIRED","Institution required.");
+
 
     /* Person */
     public static final UnovationError INVALID_DOCUMENT_TYPE_FOR_USER =
