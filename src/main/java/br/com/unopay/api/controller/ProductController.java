@@ -82,7 +82,7 @@ public class ProductController {
 
     @JsonView(Views.Product.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_PRODUCT')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public Results<Product> getByParams(ProductFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search product with filter={}", filter);
