@@ -98,7 +98,6 @@ public class Contract implements Serializable {
 
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView(Views.Contract.List.class)
     @Size(min=2, max = 100, groups = {Create.class, Update.class})
     private String name;
 

@@ -7,18 +7,26 @@ import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
+import br.com.unopay.api.credit.service.CreditPaymentAccountService;
 import br.com.unopay.api.credit.service.CreditService;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.service.ContractService;
+import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +62,8 @@ public class HirerController {
     private ContractorService contractorService;
     private ContractService contractService;
     private CreditService creditService;
+    private CreditPaymentAccountService creditPaymentAccountService;
+    private PaymentInstrumentService paymentInstrumentService;
 
     @Value("${unopay.api}")
     private String api;
@@ -62,11 +72,15 @@ public class HirerController {
     public HirerController(HirerService service,
                            ContractorService contractorService,
                            ContractService contractService,
-                           CreditService creditService) {
+                           CreditService creditService,
+                           CreditPaymentAccountService creditPaymentAccountService,
+                           PaymentInstrumentService paymentInstrumentService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
         this.creditService = creditService;
+        this.creditPaymentAccountService = creditPaymentAccountService;
+        this.paymentInstrumentService = paymentInstrumentService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -139,6 +153,26 @@ public class HirerController {
         contractService.dealCloseFromCsvForCurrentUser(authentication.getName(), file);
     }
 
+    @ResponseStatus(OK)
+    @JsonView(Views.Contract.List.class)
+    @RequestMapping(value = "/hirers/me/contracts", method = GET)
+    public Results<Contract> findContractsByParams(Hirer hirer, ContractFilter filter,
+                                                   @Validated UnovationPageRequest pageable) {
+        log.info("search contracts with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        filter.setHirer(hirer.getId());
+        Page<Contract> page =  contractService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/contracts", api));
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.Contract.Detail.class)
+    @RequestMapping(value = "/hirers/me/contracts/{id}", method = GET)
+    public Contract getContract(@PathVariable String id, Hirer hirer) {
+        log.info("get contract={} for hirer={}", id, hirer.getDocumentNumber());
+        return contractService.findByIdForHirer(id, hirer);
+    }
+
     @JsonView(Views.Hirer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/me", method = RequestMethod.GET)
@@ -183,6 +217,21 @@ public class HirerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/contractors", api));
     }
 
+    @JsonView(Views.PaymentInstrument.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/contractors/{id}/payment-instruments", method = RequestMethod.GET)
+    public Results<PaymentInstrument> getContractorsInstrumentsByParams(Hirer hirer, @PathVariable String id,
+                                                                        PaymentInstrumentFilter filter,
+                                                                        @Validated UnovationPageRequest pageable){
+        log.info("search Contractor instruments with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        filter.setContractor(id);
+        contractorService.getByIdForHirer(id, hirer);
+        Page<PaymentInstrument> page =  paymentInstrumentService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/hirers/me/contractors/{%s}/payment-instruments", api, id));
+    }
+
     @JsonView(Views.Credit.Detail.class)
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/hirers/me/credits", method = POST)
@@ -217,9 +266,20 @@ public class HirerController {
     public Results<Credit> findCreditByParams(Hirer hirer, CreditFilter filter,
                                   @Validated UnovationPageRequest pageable) {
         log.info("search Credit with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        filter.setHirerDocument(hirer.getDocumentNumber());
         Page<Credit> page =  creditService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/credits", api));
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.CreditPaymentAccount.Detail.class)
+    @RequestMapping(value = "/hirers/me/credit-payment-accounts", method = GET)
+    public Results<CreditPaymentAccount> findPaymentAccountByParams(Hirer hirer) {
+        log.info("search payment accounts for hirer={}", hirer.getDocumentNumber());
+        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
+                                                                .findByHirerDocument(hirer.getDocumentNumber());
+        return new Results<>(creditPaymentAccounts);
     }
 
 }
