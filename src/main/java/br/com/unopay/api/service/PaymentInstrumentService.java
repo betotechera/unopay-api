@@ -93,6 +93,11 @@ public class PaymentInstrumentService {
         return repository.findByContractorId(contractorId);
     }
 
+    public PaymentInstrument findByIdAndContractorId(String id, String contractorId) {
+        Optional<PaymentInstrument> instrument = repository.findByIdAndContractorId(id, contractorId);
+        return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
+    }
+
     public List<PaymentInstrument> findMyInstruments(String email){
         UserDetail currentUser = userDetailService.getByEmail(email);
         if(currentUser.isContractorType()) {

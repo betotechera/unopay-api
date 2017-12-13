@@ -12,6 +12,8 @@ public interface PaymentInstrumentRepository
     Optional<PaymentInstrument> findById(String id);
 
     List<PaymentInstrument> findByContractorId(String contractorId);
+
+    Optional<PaymentInstrument> findByIdAndContractorId(String id, String contractorId);
     List<PaymentInstrument> findByContractorPersonDocumentNumber(String contractorDocumentNumber);
 
     Optional<PaymentInstrument> findFirstByContractorPersonDocumentNumberAndType(String contractorDocumentNumber,

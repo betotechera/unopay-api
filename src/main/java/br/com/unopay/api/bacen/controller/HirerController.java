@@ -6,9 +6,11 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditPaymentAccountService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.model.Contract;
@@ -64,6 +66,7 @@ public class HirerController {
     private CreditService creditService;
     private CreditPaymentAccountService creditPaymentAccountService;
     private PaymentInstrumentService paymentInstrumentService;
+    private ContractorInstrumentCreditService contractorInstrumentCreditService;
 
     @Value("${unopay.api}")
     private String api;
@@ -74,13 +77,15 @@ public class HirerController {
                            ContractService contractService,
                            CreditService creditService,
                            CreditPaymentAccountService creditPaymentAccountService,
-                           PaymentInstrumentService paymentInstrumentService) {
+                           PaymentInstrumentService paymentInstrumentService,
+                           ContractorInstrumentCreditService contractorInstrumentCreditService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
         this.creditService = creditService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.contractorInstrumentCreditService = contractorInstrumentCreditService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -230,6 +235,27 @@ public class HirerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/hirers/me/contractors/{%s}/payment-instruments", api, id));
+    }
+
+    @JsonView(Views.ContractorInstrumentCredit.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/hirers/me/contractors/{contractorId}/payment-instruments/{id}/credits", method = POST)
+    public ResponseEntity<ContractorInstrumentCredit> create(Hirer hirer,
+                                                             @PathVariable String contractorId,
+                                                             @PathVariable String id,
+                                                             @Validated(Create.class) @RequestBody
+                                                                         ContractorInstrumentCredit credit) {
+        log.info("inserting payment instrument credit={} for contractor={} of hirer={}",
+                                                credit, contractorId, hirer.getDocumentNumber());
+        contractorService.getByIdForHirer(contractorId, hirer);
+        paymentInstrumentService.findByIdAndContractorId(id,contractorId);
+        ContractorInstrumentCredit created = contractorInstrumentCreditService.insert(id, credit);
+        log.info("inserted payment instrument credit={} for contractor={} of hirer={}",
+                credit, contractorId, hirer.getDocumentNumber());
+        return created(URI.create(
+                String.format("/hirers/me/contractors/%s/payment-instruments/%s/credits/%s",contractorId,id,
+                        created.getId()))).body(created);
+
     }
 
     @JsonView(Views.Credit.Detail.class)
