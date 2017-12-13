@@ -9,6 +9,7 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
+import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditPaymentAccountService;
@@ -256,6 +257,29 @@ public class HirerController {
                 String.format("/hirers/me/contractors/%s/payment-instruments/%s/credits/%s",contractorId,id,
                         created.getId()))).body(created);
 
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.ContractorInstrumentCredit.List.class)
+    @RequestMapping(value = "/hirers/me/contractors/payment-instruments/credits", method = GET)
+    public Results<ContractorInstrumentCredit> findAll(Hirer hirer,
+                                                       ContractorInstrumentCreditFilter filter,
+                                                       @Validated UnovationPageRequest pageable) {
+        log.info("search ContractorInstrumentCredit with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        filter.setHirer(hirer.getId());
+        Page<ContractorInstrumentCredit> page =  contractorInstrumentCreditService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/hirers/me/contractors/payment-instruments/credits", api));
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/contractors/payment-instruments/credits/{id}",
+            method = RequestMethod.DELETE)
+    public void cancelForHirer(Hirer hirer, @PathVariable  String id) {
+        log.info("canceling payment instrument credit id={} for hire={}",
+                id, hirer.getDocumentNumber());
+        contractorInstrumentCreditService.cancelForHirer(id, hirer);
     }
 
     @JsonView(Views.Credit.Detail.class)

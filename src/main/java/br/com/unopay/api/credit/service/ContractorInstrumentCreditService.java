@@ -1,5 +1,6 @@
 package br.com.unopay.api.credit.service;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
@@ -65,6 +66,12 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
+    public ContractorInstrumentCredit findByIdAndHirer(String id, Hirer hirer) {
+        Optional<ContractorInstrumentCredit> instrumentCredit = repository.findByIdAndContractHirerId(id,hirer.getId());
+        return instrumentCredit.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
+    }
+
     public ContractorInstrumentCredit processOrder(Order order) {
         Contract contract = getContract(order);
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
@@ -99,6 +106,12 @@ public class ContractorInstrumentCreditService {
     @Transactional
     public void cancel(String instrumentId, String id) {
         ContractorInstrumentCredit instrumentCredit = findById(id);
+        cancelInstrumentCredit(instrumentCredit);
+    }
+
+    @Transactional
+    public void cancelForHirer(String id, Hirer hirer) {
+        ContractorInstrumentCredit instrumentCredit = findByIdAndHirer(id, hirer);
         cancelInstrumentCredit(instrumentCredit);
     }
 

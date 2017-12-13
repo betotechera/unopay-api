@@ -23,6 +23,12 @@ public class ContractorInstrumentCreditFilter  implements Serializable {
     @SearchableField(field = "contract.id")
     private String contract;
 
+    @SearchableField(field = "contract.hirer.id")
+    private String hirer;
+
+    @SearchableField(field = "contract.contractor.id")
+    private String contractor;
+
     @SearchableField(field = "serviceType")
     private ServiceType serviceType;
 

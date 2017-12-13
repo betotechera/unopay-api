@@ -15,6 +15,8 @@ public interface ContractorInstrumentCreditRepository
 
     Optional<ContractorInstrumentCredit> findById(String id);
 
+    Optional<ContractorInstrumentCredit> findByIdAndContractHirerId(String id, String hirerId);
+
     Set<ContractorInstrumentCredit> findByContractId(String contractId);
 
     Optional<ContractorInstrumentCredit> findByPaymentInstrumentContractorId(String contractorId);
