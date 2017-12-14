@@ -1,7 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
@@ -46,6 +50,7 @@ public class IssuerController {
     private IssuerService service;
     private ProductService productService;
     private PaymentRemittanceService paymentRemittanceService;
+    private ContractorService contractorService;
 
     @Value("${unopay.api}")
     private String api;
@@ -53,10 +58,11 @@ public class IssuerController {
     @Autowired
     public IssuerController(IssuerService service,
                             ProductService productService,
-                            PaymentRemittanceService paymentRemittanceService) {
+                            PaymentRemittanceService paymentRemittanceService, ContractorService contractorService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
+        this.contractorService = contractorService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -203,5 +209,35 @@ public class IssuerController {
         Page<Product> page =  productService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/products", api));
+    }
+
+    @JsonView(Views.Contractor.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/contractors/{id}", method = RequestMethod.GET)
+    public Contractor getContractor(Issuer issuer, @PathVariable  String id) {
+        log.info("get Contractor={} for issuer={}", id, issuer.documentNumber());
+        return contractorService.getByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/contractors/{id}", method = RequestMethod.PUT)
+    public void updateContractor(Issuer issuer,
+                                 @PathVariable String id,
+                                 @Validated(Update.class) @RequestBody Contractor contractor){
+        contractor.setId(id);
+        log.info("updating contractor={} for issuer={}", contractor, issuer.documentNumber());
+        contractorService.updateForIssuer(id, issuer, contractor);
+    }
+
+    @JsonView(Views.Contractor.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/contractors", method = RequestMethod.GET)
+    public Results<Contractor> getContractorsByParams(Issuer issuer, ContractorFilter filter,
+                                                      @Validated UnovationPageRequest pageable){
+        log.info("search Contractor with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<Contractor> page =  contractorService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/contractors", api));
     }
 }

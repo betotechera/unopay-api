@@ -78,9 +78,11 @@ public class Contractor implements Serializable {
 
     public void updateModel(Contractor contractor) {
         person.update(contractor.getPerson());
-        if(contractor.withBankAccount()) {
+        if(contractor.withBankAccount() && this.bankAccount != null) {
             this.bankAccount.updateMe(contractor.getBankAccount());
+            return;
         }
+        this.bankAccount = contractor.getBankAccount();
     }
 
 

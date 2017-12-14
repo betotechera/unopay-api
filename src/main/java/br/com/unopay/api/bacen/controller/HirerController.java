@@ -218,7 +218,8 @@ public class HirerController {
     public Results<Contractor> getContractorsByParams(Hirer hirer, ContractorFilter filter,
                                                       @Validated UnovationPageRequest pageable){
         log.info("search Contractor with filter={} for hirer={}", filter, hirer.getDocumentNumber());
-        Page<Contractor> page =  contractorService.findByFilterForHirer(hirer, filter, pageable);
+        filter.setHirer(hirer.getId());
+        Page<Contractor> page =  contractorService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/contractors", api));
     }
@@ -292,7 +293,6 @@ public class HirerController {
         Credit created = creditService.insert(credit);
         log.info("Inserted credit={}", created);
         return created(URI.create(String.format("/hirers/me/credits/%s",created.getId()))).body(created);
-
     }
 
     @ResponseStatus(OK)

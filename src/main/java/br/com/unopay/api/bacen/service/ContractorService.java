@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
 import br.com.unopay.api.repository.ContractRepository;
@@ -69,6 +70,12 @@ public class ContractorService {
         });
     }
 
+    public Contractor getByIdForIssuer(String id, Issuer issuer) {
+        Optional<Contractor> contractor = repository.findByIdAndContractsProductIssuerId(id, issuer.getId());
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
+    }
+
     public Contractor getByIdForHirer(String id, Hirer hirer) {
         Optional<Contractor> contractor = repository.findByIdAndContractsHirerId(id, hirer.getId());
         return contractor.orElseThrow(()->
@@ -96,6 +103,11 @@ public class ContractorService {
         update(contractor, current);
     }
 
+    public void updateForIssuer(String id, Issuer issuer, Contractor contractor) {
+        Contractor current = getByIdForIssuer(id, issuer);
+        update(contractor, current);
+    }
+
     public void update(String id, Contractor contractor) {
         Contractor current = getById(id);
         update(contractor, current);
@@ -117,11 +129,6 @@ public class ContractorService {
 
     private Boolean hasUser(String id) {
         return userDetailRepository.countByContractorId(id) > 0;
-    }
-
-    public Page<Contractor> findByFilterForHirer(Hirer hirer, ContractorFilter filter, UnovationPageRequest pageable) {
-        filter.setHirer(hirer.getId());
-        return findByFilter(filter, pageable);
     }
 
     public Page<Contractor> findByFilter(ContractorFilter filter, UnovationPageRequest pageable) {
