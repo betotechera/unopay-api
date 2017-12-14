@@ -97,7 +97,7 @@ public class PaymentInstrumentService {
     }
 
     public PaymentInstrument findByIdForIssuer(String id, Issuer issuer) {
-        Optional<PaymentInstrument> instrument = repository.findByIdForIssuer(id, issuer.getId());
+        Optional<PaymentInstrument> instrument = repository.findByIdAndProductIssuerId(id, issuer.getId());
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
