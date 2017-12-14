@@ -11,6 +11,8 @@ public interface PaymentInstrumentRepository
                             extends UnovationFilterRepository<PaymentInstrument,String, PaymentInstrumentFilter> {
     Optional<PaymentInstrument> findById(String id);
 
+    Optional<PaymentInstrument> findByIdForIssuer(String id, String issuerId);
+
     List<PaymentInstrument> findByContractorId(String contractorId);
 
     Optional<PaymentInstrument> findByIdAndContractorId(String id, String contractorId);

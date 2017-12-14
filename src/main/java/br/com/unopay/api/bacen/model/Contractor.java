@@ -82,7 +82,6 @@ public class Contractor implements Serializable {
             this.bankAccount.updateMe(contractor.getBankAccount());
             return;
         }
-        this.bankAccount = contractor.getBankAccount();
     }
 
 

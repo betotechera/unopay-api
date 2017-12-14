@@ -29,5 +29,8 @@ public class PaymentInstrumentFilter  implements Serializable{
     @SearchableField(field = "contractor.person.document.number")
     private String contractorDocumentNumber;
 
+    @SearchableField(field = "product.issuer.id")
+    private String issuer;
+
 
 }

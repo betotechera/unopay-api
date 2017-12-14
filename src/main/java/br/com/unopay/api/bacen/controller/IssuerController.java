@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
@@ -11,11 +10,14 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -51,6 +53,7 @@ public class IssuerController {
     private ProductService productService;
     private PaymentRemittanceService paymentRemittanceService;
     private ContractorService contractorService;
+    private PaymentInstrumentService paymentInstrumentService;
 
     @Value("${unopay.api}")
     private String api;
@@ -58,11 +61,13 @@ public class IssuerController {
     @Autowired
     public IssuerController(IssuerService service,
                             ProductService productService,
-                            PaymentRemittanceService paymentRemittanceService, ContractorService contractorService) {
+                            PaymentRemittanceService paymentRemittanceService, ContractorService contractorService,
+                            PaymentInstrumentService paymentInstrumentService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
         this.contractorService = contractorService;
+        this.paymentInstrumentService = paymentInstrumentService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -239,5 +244,54 @@ public class IssuerController {
         Page<Contractor> page =  contractorService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/contractors", api));
+    }
+
+    @JsonView(Views.PaymentInstrument.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/issuers/me/payment-instruments", method = RequestMethod.POST)
+    public ResponseEntity<PaymentInstrument> createPaymentInstrument(Issuer issuer, @Validated(Create.class)
+                                                    @RequestBody PaymentInstrument paymentInstrument) {
+        log.info("creating paymentInstrument {}", paymentInstrument);
+        PaymentInstrument created = paymentInstrumentService.createForIssuer(issuer, paymentInstrument);
+        return ResponseEntity
+                .created(URI.create("/issuers/me/payment-instruments/"+created.getId()))
+                .body(created);
+    }
+
+    @JsonView(Views.PaymentInstrument.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/payment-instruments/{id}", method = RequestMethod.GET)
+    public PaymentInstrument getPaymentInstrument(Issuer issuer, @PathVariable String id) {
+        log.info("get paymentInstrument={} for issuer={}", id, issuer.documentNumber());
+        return paymentInstrumentService.findByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/payment-instruments/{id}", method = RequestMethod.PUT)
+    public void update(Issuer issuer, @PathVariable  String id,
+                       @Validated(Update.class) @RequestBody PaymentInstrument paymentInstrument) {
+        paymentInstrument.setId(id);
+        log.info("updating paymentInstrument={} for issuer={}", paymentInstrument, issuer.documentNumber());
+        paymentInstrumentService.updateForIssuer(id, issuer, paymentInstrument);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/payment-instruments/{id}", method = RequestMethod.DELETE)
+    public void removePaymentInstrument(Issuer issuer, @PathVariable  String id) {
+        log.info("removing paymentInstrument id={} for issuer={}", id, issuer.documentNumber());
+        paymentInstrumentService.deleteForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.PaymentInstrument.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/payment-instruments", method = RequestMethod.GET)
+    public Results<PaymentInstrument> getPaymentInstrumentByParams(Issuer issuer, PaymentInstrumentFilter filter,
+                                                  @Validated UnovationPageRequest pageable) {
+        log.info("search paymentInstrument with filter={}", filter);
+        filter.setIssuer(issuer.getId());
+        Page<PaymentInstrument> page =  paymentInstrumentService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/payment-instruments", api));
     }
 }

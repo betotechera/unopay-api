@@ -1,6 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.InstrumentNumberGenerator;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
@@ -56,8 +57,18 @@ public class PaymentInstrumentService {
 
     @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
     public PaymentInstrument save(PaymentInstrument instrument) {
+        validateReference(instrument);
+        return create(instrument);
+    }
+
+    @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
+    public PaymentInstrument createForIssuer(Issuer issuer, PaymentInstrument instrument) {
+        validateReferenceForIssuer(issuer, instrument);
+        return create(instrument);
+    }
+
+    private PaymentInstrument create(PaymentInstrument instrument) {
         try {
-            validateReference(instrument);
             instrument.setMeUp(generateNumber(instrument));
             if(instrument.hasPassword()){
                 String encodedPassword = passwordEncoder.encode(instrument.getPassword());
@@ -82,6 +93,11 @@ public class PaymentInstrumentService {
 
     public PaymentInstrument findById(String id) {
         Optional<PaymentInstrument> instrument = getById(id);
+        return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
+    }
+
+    public PaymentInstrument findByIdForIssuer(String id, Issuer issuer) {
+        Optional<PaymentInstrument> instrument = repository.findByIdForIssuer(id, issuer.getId());
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
@@ -117,6 +133,15 @@ public class PaymentInstrumentService {
     @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
     public void update(String id, PaymentInstrument instrument) {
         PaymentInstrument current = findById(id);
+        update(instrument, current);
+    }
+
+    public void updateForIssuer(String id, Issuer issuer, PaymentInstrument instrument) {
+        PaymentInstrument current = findByIdForIssuer(id, issuer);
+        update(instrument, current);
+    }
+
+    private void update(PaymentInstrument instrument, PaymentInstrument current) {
         validateReference(instrument);
         instrument.validate();
         current.updateAllExcept(instrument, "password");
@@ -154,6 +179,11 @@ public class PaymentInstrumentService {
         repository.delete(id);
     }
 
+    public void deleteForIssuer(String id, Issuer issuer) {
+        findByIdForIssuer(id, issuer);
+        repository.delete(id);
+    }
+
     public Page<PaymentInstrument> findByFilter(PaymentInstrumentFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
@@ -161,5 +191,10 @@ public class PaymentInstrumentService {
     private void validateReference(PaymentInstrument instrument) {
         instrument.setContractor(contractorService.getById(instrument.getContractor().getId()));
         instrument.setProduct(productService.findById(instrument.getProduct().getId()));
+    }
+
+    private void validateReferenceForIssuer(Issuer issuer, PaymentInstrument instrument) {
+        instrument.setContractor(contractorService.getByIdForIssuer(instrument.getContractor().getId(), issuer));
+        instrument.setProduct(productService.findByIdForIssuer(instrument.getProduct().getId(), issuer));
     }
 }

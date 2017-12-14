@@ -115,6 +115,9 @@ public class ContractorService {
 
     private void update(Contractor contractor, Contractor current) {
         current.updateModel(contractor);
+        if(!current.withBankAccount() && contractor.withBankAccount()) {
+            current.setBankAccount(bankAccountService.create(contractor.getBankAccount()));
+        }
         personService.save(contractor.getPerson());
         repository.save(current);
     }
