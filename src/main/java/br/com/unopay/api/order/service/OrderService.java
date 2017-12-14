@@ -1,6 +1,7 @@
 package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.config.Queues;
@@ -102,6 +103,11 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    public Order findByIdForIssuer(String id, Issuer issuer) {
+        Optional<Order> order = repository.findByIdAndProductIssuerId(id, issuer.getId());
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+    }
+
     public List<String> findIdsByPersonEmail(String email) {
         List<Order> orders = repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
@@ -118,6 +124,17 @@ public class OrderService {
 
     @Transactional
     public Order create(Order order) {
+        validateProduct(order);
+        return createOrder(order);
+    }
+
+    @Transactional
+    public Order createForIssuer(Issuer issuer, Order order) {
+        validateProductForIssuer(issuer, order);
+        return createOrder(order);
+    }
+
+    private Order createOrder(Order order) {
         validateReferences(order);
         order.normalize();
         order.setPerson(getOrCreatePerson(order));
@@ -233,9 +250,6 @@ public class OrderService {
     }
 
     private void validateReferences(Order order) {
-        if(order.getProduct() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_REQUIRED);
-        }
         if(order.getPaymentRequest() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_REQUEST_REQUIRED);
         }
@@ -244,7 +258,20 @@ public class OrderService {
                 order.getContract() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTRACT_REQUIRED);
         }
+    }
+
+    private void validateProduct(Order order) {
+        if(order.getProduct() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_REQUIRED);
+        }
         order.setProduct(productService.findById(order.getProduct().getId()));
+    }
+
+    private void validateProductForIssuer(Issuer issuer, Order order) {
+        if(order.getProduct() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_REQUIRED);
+        }
+        order.setProduct(productService.findByIdForIssuer(order.getProduct().getId(), issuer));
     }
 
     private void incrementNumber(Order order) {
@@ -268,6 +295,16 @@ public class OrderService {
     @Transactional
     public void update(String id, Order order) {
         Order current = findById(id);
+        update(order, current);
+    }
+
+    @Transactional
+    public void updateForIssuer(String id,Issuer issuer, Order order) {
+        Order current = findByIdForIssuer(id, issuer);
+        update(order, current);
+    }
+
+    private void update(Order order, Order current) {
         current.validateUpdate();
         current.updateOnly(order,"status");
         if (current.paid()) {

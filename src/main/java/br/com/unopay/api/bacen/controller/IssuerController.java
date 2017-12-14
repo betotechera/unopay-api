@@ -17,6 +17,9 @@ import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.filter.OrderFilter;
+import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -40,8 +43,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -54,6 +62,7 @@ public class IssuerController {
     private PaymentRemittanceService paymentRemittanceService;
     private ContractorService contractorService;
     private PaymentInstrumentService paymentInstrumentService;
+    private OrderService orderService;
 
     @Value("${unopay.api}")
     private String api;
@@ -62,12 +71,13 @@ public class IssuerController {
     public IssuerController(IssuerService service,
                             ProductService productService,
                             PaymentRemittanceService paymentRemittanceService, ContractorService contractorService,
-                            PaymentInstrumentService paymentInstrumentService) {
+                            PaymentInstrumentService paymentInstrumentService, OrderService orderService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.orderService = orderService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -293,5 +303,41 @@ public class IssuerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/issuers/me/payment-instruments", api));
+    }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/issuers/me/orders", method = POST)
+    public ResponseEntity<Order> createOrder(Issuer issuer,
+                                             @Validated(Create.Order.Adhesion.class) @RequestBody Order order) {
+        log.info("creating order {}", order);
+        Order created = orderService.createForIssuer(issuer, order);
+        return created(URI.create("/issuers/me/credit-orders/"+created.getId())).body(created);
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.Order.Detail.class)
+    @RequestMapping(value = "/issuers/me/orders/{id}", method = GET)
+    public Order getOrder(Issuer issuer, @PathVariable String id) {
+        log.info("get order={}", id);
+        return orderService.findByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/orders/{id}", method = PUT)
+    public void updateOrder(Issuer issuer, @PathVariable String id, @RequestBody Order order) {
+        log.info("update order={}", id);
+        orderService.updateForIssuer(id, issuer, order);
+    }
+
+    @JsonView(Views.Order.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/orders", method = RequestMethod.GET)
+    public Results<Order> getOrderByParams(Issuer issuer, OrderFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("search order with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<Order> page =  orderService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/orders", api));
     }
 }

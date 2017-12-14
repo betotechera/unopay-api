@@ -15,6 +15,9 @@ public class OrderFilter {
     @SearchableField(field = "product.code")
     private String product;
 
+    @SearchableField(field = "product.issuer.id")
+    private String issuer;
+
     @SearchableField
     private OrderType type;
 
