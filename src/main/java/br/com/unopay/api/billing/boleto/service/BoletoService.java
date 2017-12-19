@@ -1,10 +1,14 @@
 package br.com.unopay.api.billing.boleto.service;
 
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
+import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.model.Boleto;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
+import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
+import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
+import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
@@ -30,6 +34,7 @@ public class BoletoService {
 
     private BoletoRepository repository;
     private OrderService orderService;
+    @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
 
     @Value("${unopay.boleto.deadline_in_days}")
@@ -43,9 +48,11 @@ public class BoletoService {
     @Autowired
     public BoletoService(BoletoRepository repository,
                          OrderService orderService,
+                         CobrancaOnlineService cobrancaOnlineService,
                          FileUploaderService fileUploaderService) {
         this.repository = repository;
         this.orderService = orderService;
+        this.cobrancaOnlineService = cobrancaOnlineService;
         this.fileUploaderService = fileUploaderService;
     }
 
@@ -59,12 +66,20 @@ public class BoletoService {
 
     public Boleto create(String orderId) {
         Order order = orderService.findById(orderId);
+        PaymentBankAccount paymentBankAccount = order.getProduct().getIssuer().getPaymentAccount();
         String number = createNumber();
+        List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
+                .payer(order.getPerson()).expirationDays(deadlineInDays)
+                .paymentBankAccount(paymentBankAccount)
+                .value(order.getValue())
+                .yourNumber(number).build();
+        cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
+
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(order.getProduct().getIssuer())
                 .number(number)
                 .expirationDays(deadlineInDays)
-                .client(order.getPerson())
+                .payer(order.getPerson())
                 .value(order.getValue())
                 .build();
 

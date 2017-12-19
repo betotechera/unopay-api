@@ -19,7 +19,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
                 .issuer(order.getProduct().getIssuer())
                 .number("12345")
                 .expirationDays(1)
-                .client(order.person)
+                .payer(order.person)
                 .value(order.value)
                 .build()
 
@@ -59,7 +59,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(order.getProduct().getIssuer())
                 .number("12345")
-                .client(order.person)
+                .payer(order.person)
                 .value(order.value)
                 .expirationDays(expirationDays)
                 .build()
@@ -79,7 +79,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
                 .issuer(order.getProduct().getIssuer())
                 .number("12345")
                 .expirationDays(1)
-                .client(order.person)
+                .payer(order.person)
                 .build()
 
         then:
@@ -112,7 +112,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
         new BoletoStellaBuilder()
                 .number("12345")
                 .expirationDays(1)
-                .client(order.person)
+                .payer(order.person)
                 .value(order.value)
                 .build()
 
@@ -128,7 +128,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
         when:
         new BoletoStellaBuilder()
                 .issuer(order.getProduct().getIssuer())
-                .client(order.person)
+                .payer(order.person)
                 .expirationDays(1)
                 .value(order.value)
                 .build()
@@ -145,7 +145,7 @@ class BoletoStellaBuilderTest extends FixtureApplicationTest{
         when:
         new BoletoStellaBuilder()
                 .issuer(order.getProduct().getIssuer())
-                .client(order.person)
+                .payer(order.person)
                 .number("1235")
                 .value(order.value)
                 .build()

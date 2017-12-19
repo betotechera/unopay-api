@@ -1,6 +1,5 @@
 package br.com.unopay.api.billing.boleto.santander.service;
 
-import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketEndpoint;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketEndpointService;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
@@ -10,15 +9,15 @@ import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.CobrancaEnd
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloGenericRequest;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloGenericResponse;
-import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
-import java.math.BigDecimal;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ public class CobrancaOnlineService {
     public static final String DD_MM_YYYY = "ddMMyyyy";
     public static final String TEST = "T";
     public static final String NSU_TEST_PREFIX = "TST";
+    public static final String YMB = "YMB";
     private TicketEndpoint ticketEndpoint;
     private CobrancaEndpoint cobrancaEndpoint;
 
@@ -50,21 +50,24 @@ public class CobrancaOnlineService {
     }
 
     @SneakyThrows
-    public TituloDto getTicket(Issuer issuer) {
-        List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
-                .issuer(issuer).expirationDays(5).number("123").ourNumber("123")
-                .value(BigDecimal.ONE).yourNumber("1234").build();
+    public TituloDto getTicket(List<TicketRequest.Dados.Entry> entries, String statiion) {
         TicketRequest.Dados dados = new TicketRequest.Dados().entry(entries);
         TicketRequest ticketRequest = new TicketRequest();
         ticketRequest.setDados(dados);
+        ticketRequest.setSistema(YMB);
         TicketResponse ticketResponse = ticketEndpoint.create(ticketRequest);
         TituloGenericRequest tituloGenericRequest = new TituloGenericRequest();
         tituloGenericRequest.setTpAmbiente(enviroment);
         tituloGenericRequest.setDtNsu(new SimpleDateFormat(DD_MM_YYYY).format(new Date()));
         tituloGenericRequest.setTicket(ticketResponse.getTicket());
         tituloGenericRequest.setNsu(getNsu());
-        tituloGenericRequest.setEstacao(issuer.getPaymentAccount().getStation());
+        tituloGenericRequest.setEstacao(statiion);
         TituloGenericResponse tituloGenericResponse = cobrancaEndpoint.registraTitulo(tituloGenericRequest);
+        if(!StringUtils.isEmpty(tituloGenericResponse.getDescricaoErro())){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.TICKET_REGISTRATION_ERROR
+                            .withOnlyArgument(tituloGenericResponse.getDescricaoErro()));
+        }
         return tituloGenericResponse.getTitulo();
     }
 

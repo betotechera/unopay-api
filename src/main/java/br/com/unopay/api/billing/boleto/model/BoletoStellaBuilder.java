@@ -25,7 +25,7 @@ import static br.com.unopay.api.uaa.exception.Errors.VALUE_REQUIRED;
 public class BoletoStellaBuilder {
 
     private Issuer issuer;
-    private Person client;
+    private Person payer;
     private BigDecimal value;
     private String number;
     private Integer expirationDays;
@@ -45,8 +45,8 @@ public class BoletoStellaBuilder {
         return this;
     }
 
-    public BoletoStellaBuilder client(Person client) {
-        this.client = client;
+    public BoletoStellaBuilder payer(Person payer) {
+        this.payer = payer;
         return this;
     }
 
@@ -65,12 +65,12 @@ public class BoletoStellaBuilder {
         PaymentBankAccount paymentAccount = issuer.getPaymentAccount();
         Beneficiario beneficiario = getBeneficiario(enderecoBeneficiario, paymentAccount);
 
-        Address payerAddress = this.client.getAddress();
+        Address payerAddress = this.payer.getAddress();
         Endereco enderecoPagador = getEndereco(payerAddress);
 
         Pagador pagador = Pagador.novoPagador()
-                .comNome(this.client.getName())
-                .comDocumento(this.client.documentNumber())
+                .comNome(this.payer.getName())
+                .comDocumento(this.payer.documentNumber())
                 .comEndereco(enderecoPagador);
 
         Banco banco = new Santander();
@@ -91,7 +91,7 @@ public class BoletoStellaBuilder {
         if(this.issuer == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(ISSUER_REQUIRED);
         }
-        if(this.client == null){
+        if(this.payer == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CLIENT_REQUIRED);
         }
         if(this.number == null){

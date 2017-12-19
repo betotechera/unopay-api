@@ -513,6 +513,8 @@ public final class Errors {
             new UnovationError("NUMBER_REQUIRED", "Number required.");
     public static final UnovationError EXPIRATION_DAYS_REQUIRED =
             new UnovationError("EXPIRATION_DAYS_REQUIRED", "Expiration days required.");
+    public static final UnovationError TICKET_REGISTRATION_ERROR =
+            new UnovationError("TICKET_REGISTRATION_ERROR", "Error when register ticket.");
 
     /* Instrument Balance */
     public static final UnovationError INSTRUMENT_BALANCE_NOT_FOUND =

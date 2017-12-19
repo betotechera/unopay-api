@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.boleto.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -15,12 +16,14 @@ class BoletoServiceTest extends SpockApplicationTests{
     String path
     Order order
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
+    CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
 
     def setup(){
         order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
         service.fileUploaderService = uploaderServiceMock
+        service.cobrancaOnlineService = cobrancaOnlineServiceMock
     }
 
     def 'given a valid boleto should be created'(){

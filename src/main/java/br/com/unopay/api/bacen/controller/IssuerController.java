@@ -333,7 +333,7 @@ public class IssuerController {
     @JsonView(Views.Order.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/orders", method = RequestMethod.GET)
-    public Results<Order> getOrderByParams(Issuer issuer, OrderFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Order> getOrderByParams(Issuer issuer, OrderFilter filter, @Validated UnovationPageRequest pageable){
         log.info("search order with filter={} for issuer={}", filter, issuer.documentNumber());
         filter.setIssuer(issuer.getId());
         Page<Order> page =  orderService.findByFilter(filter, pageable);
