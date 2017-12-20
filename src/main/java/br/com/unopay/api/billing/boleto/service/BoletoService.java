@@ -15,10 +15,8 @@ import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoletoService {
 
-    private static final String ZERO = "0";
     private static final int SIZE = 8;
     private static final String PDF_PATH = "%s/%s/%s.pdf";
 
@@ -67,7 +64,7 @@ public class BoletoService {
     public Boleto create(String orderId) {
         Order order = orderService.findById(orderId);
         PaymentBankAccount paymentBankAccount = order.getProduct().getIssuer().getPaymentAccount();
-        String number = createNumber();
+        String number = createNumber(order);
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
                 .payer(order.getPerson()).expirationDays(deadlineInDays)
                 .paymentBankAccount(paymentBankAccount)
@@ -123,11 +120,11 @@ public class BoletoService {
         return boleto;
     }
 
-    private String createNumber() {
-        Optional<Boleto> last = repository.findFirstByOrderByCreateDateTimeDesc();
-        String lastNumber = last.map(Boleto::getNumber).orElse(ZERO);
-        Long number = Long.valueOf(lastNumber);
-        number++;
-        return StringUtils.leftPad(String.valueOf(number), SIZE, ZERO);
+    private String createNumber(Order order) {
+        long count = repository.count();
+        String number = String.format("%s%s%s", String.valueOf(order.getNumber()),
+                String.valueOf(count),
+                String.valueOf(order.getCreateDateTime().getTime()));
+        return number.substring(0, Math.min(number.length(), SIZE));
     }
 }

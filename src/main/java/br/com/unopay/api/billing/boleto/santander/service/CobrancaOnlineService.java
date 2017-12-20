@@ -17,7 +17,6 @@ import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ public class CobrancaOnlineService {
     public static final String TEST = "T";
     public static final String NSU_TEST_PREFIX = "TST";
     public static final String YMB = "YMB";
+    public static final String REGISTRY_OK_MESSAGE = "registrado";
     private TicketEndpoint ticketEndpoint;
     private CobrancaEndpoint cobrancaEndpoint;
 
@@ -50,7 +50,7 @@ public class CobrancaOnlineService {
     }
 
     @SneakyThrows
-    public TituloDto getTicket(List<TicketRequest.Dados.Entry> entries, String statiion) {
+    public TituloDto getTicket(List<TicketRequest.Dados.Entry> entries, String station) {
         TicketRequest.Dados dados = new TicketRequest.Dados().entry(entries);
         TicketRequest ticketRequest = new TicketRequest();
         ticketRequest.setDados(dados);
@@ -61,9 +61,9 @@ public class CobrancaOnlineService {
         tituloGenericRequest.setDtNsu(new SimpleDateFormat(DD_MM_YYYY).format(new Date()));
         tituloGenericRequest.setTicket(ticketResponse.getTicket());
         tituloGenericRequest.setNsu(getNsu());
-        tituloGenericRequest.setEstacao(statiion);
+        tituloGenericRequest.setEstacao(station);
         TituloGenericResponse tituloGenericResponse = cobrancaEndpoint.registraTitulo(tituloGenericRequest);
-        if(!StringUtils.isEmpty(tituloGenericResponse.getDescricaoErro())){
+        if(!tituloGenericResponse.getDescricaoErro().contains(REGISTRY_OK_MESSAGE)){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.TICKET_REGISTRATION_ERROR
                             .withOnlyArgument(tituloGenericResponse.getDescricaoErro()));

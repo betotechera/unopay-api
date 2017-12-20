@@ -78,7 +78,7 @@ public class PaymentBankAccount implements Serializable{
 
     @Column(name = "station")
     @JsonView({Views.BankAccount.class})
-    @Size(max = 7)
+    @Size(max = 4)
     @NotNull(groups = {Create.class, Update.class})
     private String station;
 
@@ -88,13 +88,13 @@ public class PaymentBankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     private String walletNumber;
 
-    @Size(max = 7)
+    @Size(max = 4)
     @Column(name = "beneficiary_code")
     @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
     private String beneficiaryCode;
 
-    @Size(max = 3)
+    @Size(max = 1)
     @Column(name = "beneficiary_digit")
     @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
