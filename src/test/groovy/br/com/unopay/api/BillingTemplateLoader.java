@@ -87,6 +87,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("uri", regex("\\w{10}"));
             add("typingCode", regex("\\d{44}"));
             add("number", regex("\\d{44}"));
+            add("ourNumber", regex("\\d{13}"));
         }});
     }
 }

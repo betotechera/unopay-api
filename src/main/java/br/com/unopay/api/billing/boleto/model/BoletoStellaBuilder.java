@@ -24,11 +24,14 @@ import static br.com.unopay.api.uaa.exception.Errors.VALUE_REQUIRED;
 
 public class BoletoStellaBuilder {
 
+    public static final String DS = "DS";
+    public static final String EMPTY = "";
     private Issuer issuer;
     private Person payer;
     private BigDecimal value;
     private String number;
     private Integer expirationDays;
+    private String ourNumber;
 
     public BoletoStellaBuilder issuer(Issuer issuer) {
         this.issuer = issuer;
@@ -78,10 +81,12 @@ public class BoletoStellaBuilder {
         return Boleto.novoBoleto()
                 .comBanco(banco)
                 .comDatas(datas)
+                .comEspecieDocumento(DS)
                 .comBeneficiario(beneficiario)
                 .comPagador(pagador)
                 .comValorBoleto(this.value)
                 .comNumeroDoDocumento(this.number);
+
     }
 
     private void checkUp() {
@@ -122,12 +127,11 @@ public class BoletoStellaBuilder {
                 .comDocumento(issuer.documentNumber())
                 .comAgencia(paymentAccount.getBankAccount().getAgency())
                 .comDigitoAgencia(paymentAccount.getBankAccount().getAgencyDigit())
-                .comCodigoBeneficiario(paymentAccount.getBeneficiaryCode())
-                .comDigitoCodigoBeneficiario(paymentAccount.getBeneficiaryDigit())
                 .comNumeroConvenio(paymentAccount.getBankAgreementNumberForDebit())
                 .comCarteira(paymentAccount.getWalletNumber())
                 .comEndereco(enderecoBeneficiario)
-                .comNossoNumero("");
+                .comNossoNumero(this.ourNumber)
+                .comDigitoNossoNumero(EMPTY);
     }
 
     private Endereco getEndereco(Address beneficiaryAddress) {
@@ -137,5 +141,10 @@ public class BoletoStellaBuilder {
                     .comCep(beneficiaryAddress.getZipCode())
                     .comCidade(beneficiaryAddress.getCity())
                     .comUf(beneficiaryAddress.getState().name());
+    }
+
+    public BoletoStellaBuilder ourNumber(String ourNumber) {
+        this.ourNumber = ourNumber;
+        return this;
     }
 }

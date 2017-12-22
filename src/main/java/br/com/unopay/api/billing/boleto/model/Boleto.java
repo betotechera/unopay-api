@@ -87,6 +87,11 @@ public class Boleto {
     @JsonView({Views.Boleto.List.class})
     private String number;
 
+    @Column(name = "our_number")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.List.class})
+    private String ourNumber;
+
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.List.class})

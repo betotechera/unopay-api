@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.boleto.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.order.model.Order
@@ -23,6 +24,7 @@ class BoletoServiceTest extends SpockApplicationTests{
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
         service.fileUploaderService = uploaderServiceMock
+        cobrancaOnlineServiceMock.getTicket(_,_) >> new TituloDto().with { nossoNumero = "1234"; it }
         service.cobrancaOnlineService = cobrancaOnlineServiceMock
     }
 

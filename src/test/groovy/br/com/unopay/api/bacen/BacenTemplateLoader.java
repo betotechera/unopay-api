@@ -171,8 +171,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAgreementNumberForDebit", regex("\\d{7}"));
             add("station", "2XHI");
             add("walletNumber", regex("\\d{3}"));
-            add("beneficiaryCode", regex("\\d{4}"));
-            add("beneficiaryDigit", regex("\\d{1}"));
         }});
 
         Fixture.of(Service.class).addTemplate("valid", new Rule(){{

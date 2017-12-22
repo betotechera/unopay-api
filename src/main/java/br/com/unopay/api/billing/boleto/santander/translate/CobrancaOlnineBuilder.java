@@ -1,5 +1,6 @@
 package br.com.unopay.api.billing.boleto.santander.translate;
 
+import br.com.caelum.stella.boleto.bancos.gerador.GeradorDeDigitoSantander;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
@@ -16,6 +17,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class CobrancaOlnineBuilder {
 
+    public static final String DS_SERVICES = "04";
+    public static final String ZERO = "0000000000000";
+    public static final String EMPTY = "";
+    public static final String DOT = ".";
     private PaymentBankAccount paymentBankAccount;
     private Person payer;
     private BigDecimal value;
@@ -61,8 +66,9 @@ public class CobrancaOlnineBuilder {
         entries.add(entry("TITULO.DT-VENCTO", format(new DateTime().plusDays(expirationDays).toDate())));
         entries.add(entry("TITULO.DT-EMISSAO",format(new Date())));
         entries.add(entry("TITULO.SEU-NUMERO",this.yourNumber));
-        entries.add(entry("TITULO.ESPECIE","99"));
-        entries.add(entry("TITULO.VL-NOMINAL",Rounder.roundToString(value).replace(".", "")));
+        entries.add(entry("TITULO.NOSSO-NUMERO", ZERO));
+        entries.add(entry("TITULO.ESPECIE", DS_SERVICES));
+        entries.add(entry("TITULO.VL-NOMINAL",Rounder.roundToString(value).replace(DOT, EMPTY)));
         entries.add(entry("TITULO.TP-DESC","0"));
         entries.add(entry("TITULO.TP-PROTESTO","3"));
         entries.add(entry("TITULO.QT-DIAS-BAIXA","2"));

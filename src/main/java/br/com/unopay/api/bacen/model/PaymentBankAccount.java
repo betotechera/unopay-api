@@ -88,20 +88,6 @@ public class PaymentBankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     private String walletNumber;
 
-    @Size(max = 4)
-    @Column(name = "beneficiary_code")
-    @JsonView({Views.BankAccount.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private String beneficiaryCode;
-
-    @Size(max = 1)
-    @Column(name = "beneficiary_digit")
-    @JsonView({Views.BankAccount.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private String beneficiaryDigit;
-
-
-
     @JsonIgnore
     public String getBankAccountId() {
         return bankAccount.getId();

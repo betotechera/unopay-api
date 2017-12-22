@@ -6,6 +6,7 @@ create table boleto (
     expiration_date_time timestamp not null,
     processed_at timestamp not null,
     "number" varchar(100) not null,
+    our_number varchar(20) not null,
     value decimal(20,2) not null,
     payment_penalty_value decimal(20,2),
     interest decimal(3,2),
@@ -23,7 +24,5 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BOL
 
 alter table payment_bank_account add station varchar(100) default '0000000' not null;
 alter table payment_bank_account add wallet_number varchar(100) default '000' not null;
-alter table payment_bank_account add beneficiary_code varchar(100) default '0000000' not null;
-alter table payment_bank_account add beneficiary_digit varchar(5) default '00' not null;
 alter table contract add created_date_time timestamp default CURRENT_TIMESTAMP not null;
 

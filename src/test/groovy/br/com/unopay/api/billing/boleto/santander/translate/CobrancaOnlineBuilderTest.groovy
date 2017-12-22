@@ -43,7 +43,7 @@ class CobrancaOnlineBuilderTest extends FixtureApplicationTest{
         entries.find { it.key == 'TITULO.DT-VENCTO' }.value == new DateTime()
                 .plusDays(expirationDays).toDate().format("ddMMyyyy")
         entries.find { it.key == 'TITULO.DT-EMISSAO' }.value == new Date().format("ddMMyyyy")
-        entries.find { it.key == 'TITULO.ESPECIE' }.value == '99'
+        entries.find { it.key == 'TITULO.ESPECIE' }.value == '04'
         entries.find { it.key == 'TITULO.VL-NOMINAL' }.value == Rounder.roundToString(value).replace(".", "")
         entries.find { it.key == 'TITULO.TP-DESC' }.value == '0'
         entries.find { it.key == 'TITULO.TP-PROTESTO' }.value == '3'

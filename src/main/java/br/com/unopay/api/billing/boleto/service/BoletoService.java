@@ -7,6 +7,7 @@ import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
+import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
 import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
@@ -26,8 +27,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoletoService {
 
-    private static final int SIZE = 8;
+    private static final int SIZE = 4;
     private static final String PDF_PATH = "%s/%s/%s.pdf";
+    public static final String ZERO = "0";
+    public static final String EMPTY = "";
 
     private BoletoRepository repository;
     private OrderService orderService;
@@ -70,17 +73,19 @@ public class BoletoService {
                 .paymentBankAccount(paymentBankAccount)
                 .value(order.getValue())
                 .yourNumber(number).build();
-        cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
 
+        TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
+        String clearOurNumber = tituloDto.getNossoNumero().replace(ZERO, EMPTY);
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(order.getProduct().getIssuer())
                 .number(number)
                 .expirationDays(deadlineInDays)
                 .payer(order.getPerson())
                 .value(order.getValue())
+                .ourNumber(clearOurNumber)
                 .build();
 
-        Boleto boleto = createBoletoModel(order, boletoStella);
+        Boleto boleto = createBoletoModel(order, boletoStella, clearOurNumber);
 
         return save(boleto);
     }
@@ -104,7 +109,7 @@ public class BoletoService {
         return fileUploaderService.uploadBytes(path, bytes);
     }
 
-    private Boleto createBoletoModel(Order order, br.com.caelum.stella.boleto.Boleto boletoStella) {
+    private Boleto createBoletoModel(Order order, br.com.caelum.stella.boleto.Boleto boletoStella, String ourNumber) {
         final String path = createFile(order, boletoStella);
         Boleto boleto = new Boleto();
         boleto.setValue(order.getValue());
@@ -114,6 +119,7 @@ public class BoletoService {
         boleto.setUri(path);
         boleto.setTypingCode(boletoStella.getLinhaDigitavel());
         boleto.setNumber(boletoStella.getNumeroDoDocumento());
+        boleto.setOurNumber(ourNumber);
         boleto.setCreateDateTime(new Date());
         boleto.setProcessedAt(new Date());
         boleto.setExpirationDateTime(boletoStella.getDatas().getVencimento().getTime());
@@ -122,7 +128,7 @@ public class BoletoService {
 
     private String createNumber(Order order) {
         long count = repository.count();
-        String number = String.format("%s%s%s", String.valueOf(order.getNumber()),
+        String number = String.format("%s%s%s", order.getNumber().replace(ZERO, EMPTY),
                 String.valueOf(count),
                 String.valueOf(order.getCreateDateTime().getTime()));
         return number.substring(0, Math.min(number.length(), SIZE));
