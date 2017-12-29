@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
@@ -163,6 +164,44 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isNoContent())
     }
+
+
+    void 'known network should be enabled for me'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        def networkIssuer = new AccreditedNetworkIssuer()
+        networkIssuer.setAccreditedNetwork(network)
+        when:
+        def result = this.mvc.perform(post('/issuers/me/accredited-networks?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(networkIssuer)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
+
+    void 'should return all me networks'(){
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        Fixture.from(AccreditedNetworkIssuer).uses(jpaProcessor).gimme(2,"valid", new Rule(){{
+            add("issuer", issuerUser.issuer)
+        }})
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+
+        when:
+        def result = this.mvc.perform(get('/issuers/me/accredited-networks?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+    }
+
+
+
 
     void 'known me products should be found'() {
         given:

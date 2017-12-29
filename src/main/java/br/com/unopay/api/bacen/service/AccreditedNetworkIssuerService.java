@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.filter.AccreditedNetworkIssuerFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkIssuerRepository;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,7 @@ public class AccreditedNetworkIssuerService {
 
     public AccreditedNetworkIssuer create(String currentUserMail, AccreditedNetworkIssuer networkIssuer) {
         setReferences(currentUserMail, networkIssuer);
+        networkIssuer.setCreatedDateTime(new Date());
         return repository.save(networkIssuer);
     }
 

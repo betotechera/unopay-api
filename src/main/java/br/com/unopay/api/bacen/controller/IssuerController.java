@@ -1,9 +1,12 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.filter.AccreditedNetworkIssuerFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
+import br.com.unopay.api.bacen.service.AccreditedNetworkIssuerService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -29,12 +32,14 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,6 +68,7 @@ public class IssuerController {
     private ContractorService contractorService;
     private PaymentInstrumentService paymentInstrumentService;
     private OrderService orderService;
+    private AccreditedNetworkIssuerService networkIssuerService;
 
     @Value("${unopay.api}")
     private String api;
@@ -70,14 +76,18 @@ public class IssuerController {
     @Autowired
     public IssuerController(IssuerService service,
                             ProductService productService,
-                            PaymentRemittanceService paymentRemittanceService, ContractorService contractorService,
-                            PaymentInstrumentService paymentInstrumentService, OrderService orderService) {
+                            PaymentRemittanceService paymentRemittanceService,
+                            ContractorService contractorService,
+                            PaymentInstrumentService paymentInstrumentService,
+                            OrderService orderService,
+                            AccreditedNetworkIssuerService networkIssuerService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.orderService = orderService;
+        this.networkIssuerService = networkIssuerService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -340,4 +350,33 @@ public class IssuerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/orders", api));
     }
+
+    @JsonView(Views.Issuer.AccreditedNetwork.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/issuers/me/accredited-networks", method = POST)
+    public ResponseEntity<AccreditedNetworkIssuer> enableNetowrk(Issuer issuer, OAuth2Authentication authentication,
+                                                                 @Validated(Create.class)
+                                                                 @RequestBody AccreditedNetworkIssuer networkIssuer) {
+        log.info("Enabling  network={} for Issuer={}", networkIssuer
+                .getAccreditedNetwork().documentNumber(), issuer.documentNumber());
+        networkIssuer.setIssuer(issuer);
+        AccreditedNetworkIssuer created = networkIssuerService.create(authentication.getName(), networkIssuer);
+        return created(URI.create("/issuers/me/accredited-networks/"+created.getId())).body(created);
+    }
+
+
+    @JsonView(Views.Order.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/accredited-networks", method = RequestMethod.GET)
+    public Results<AccreditedNetworkIssuer> getNetworksByParams(Issuer issuer, AccreditedNetworkIssuerFilter filter,
+                                                                @Validated UnovationPageRequest pageable){
+        log.info("search network with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<AccreditedNetworkIssuer> page =  networkIssuerService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/accredited-networks", api));
+    }
+
+
 }

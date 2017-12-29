@@ -45,7 +45,6 @@ public class AccreditedNetworkIssuer implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="issuer_id")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.Issuer.AccreditedNetwork.class})
     private Issuer issuer;
 
