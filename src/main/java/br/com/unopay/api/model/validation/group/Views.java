@@ -100,6 +100,7 @@ public interface Views {
     interface Issuer {
         interface Detail extends Person,Address,BankAccount,List {}
         interface List extends AddressList{}
+        interface AccreditedNetwork {}
     }
 
     interface Partner {

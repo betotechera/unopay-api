@@ -6,18 +6,22 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -29,8 +33,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = {"paymentRuleGroups"})
-@ToString(exclude = "paymentRuleGroups")
+@EqualsAndHashCode(exclude = {"paymentRuleGroups", "issuers"})
+@ToString(exclude = {"paymentRuleGroups", "issuers"})
 @Table(name = "accredited_network")
 public class AccreditedNetwork implements Serializable {
 
@@ -49,6 +53,13 @@ public class AccreditedNetwork implements Serializable {
             joinColumns = { @JoinColumn(name = "accredited_network_id") },
             inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
     private Set<PaymentRuleGroup> paymentRuleGroups;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "accredited_network_issuer",
+            joinColumns = { @JoinColumn(name = "accredited_network_id") },
+            inverseJoinColumns = { @JoinColumn(name = "issuer_id") })
+    private Set<Issuer> issuers;
 
     @Valid
     @ManyToOne

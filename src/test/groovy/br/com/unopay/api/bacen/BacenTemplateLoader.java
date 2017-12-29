@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.BankAccountType;
@@ -34,6 +35,7 @@ import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
 
 
@@ -265,6 +267,14 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("gatheringChannel", random(GatheringChannel.class));
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
+        }});
+
+        Fixture.of(AccreditedNetworkIssuer.class).addTemplate("valid", new Rule(){{
+            add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
+            add("issuer", one(Issuer.class, "valid"));
+            add("user", one(UserDetail.class, "with-group"));
+            add("createdDateTime", instant("now"));
+            add("active", random(Boolean.class));
         }});
 
     }
