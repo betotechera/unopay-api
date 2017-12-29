@@ -45,7 +45,8 @@ public class AccreditedNetworkIssuerService {
         return repository.findOne(id);
     }
 
-    public Page<AccreditedNetworkIssuer> findByFilter(AccreditedNetworkIssuerFilter filter, UnovationPageRequest pageable) {
+    public Page<AccreditedNetworkIssuer> findByFilter(AccreditedNetworkIssuerFilter filter,
+                                                      UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }
