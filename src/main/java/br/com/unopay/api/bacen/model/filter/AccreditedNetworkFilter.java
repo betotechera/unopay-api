@@ -15,4 +15,7 @@ public class AccreditedNetworkFilter implements Serializable{
     @SearchableField(field = "person.name")
     private String name;
 
+    @SearchableField(field = "issuers.id")
+    private String issuer;
+
 }

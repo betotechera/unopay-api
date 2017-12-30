@@ -1,12 +1,14 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.filter.AccreditedNetworkIssuerFilter;
+import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.service.AccreditedNetworkIssuerService;
+import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -33,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -70,6 +71,7 @@ public class IssuerController {
     private PaymentInstrumentService paymentInstrumentService;
     private OrderService orderService;
     private AccreditedNetworkIssuerService networkIssuerService;
+    private AccreditedNetworkService networkService;
 
     @Value("${unopay.api}")
     private String api;
@@ -81,7 +83,8 @@ public class IssuerController {
                             ContractorService contractorService,
                             PaymentInstrumentService paymentInstrumentService,
                             OrderService orderService,
-                            AccreditedNetworkIssuerService networkIssuerService) {
+                            AccreditedNetworkIssuerService networkIssuerService,
+                            AccreditedNetworkService networkService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
@@ -89,6 +92,7 @@ public class IssuerController {
         this.paymentInstrumentService = paymentInstrumentService;
         this.orderService = orderService;
         this.networkIssuerService = networkIssuerService;
+        this.networkService = networkService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -369,11 +373,11 @@ public class IssuerController {
     @JsonView(Views.Order.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/accredited-networks", method = RequestMethod.GET)
-    public Results<AccreditedNetworkIssuer> getNetworksByParams(Issuer issuer, AccreditedNetworkIssuerFilter filter,
+    public Results<AccreditedNetwork> getNetworksByParams(Issuer issuer, AccreditedNetworkFilter filter,
                                                                 @Validated UnovationPageRequest pageable){
         log.info("search network with filter={} for issuer={}", filter, issuer.documentNumber());
         filter.setIssuer(issuer.getId());
-        Page<AccreditedNetworkIssuer> page =  networkIssuerService.findByFilter(filter, pageable);
+        Page<AccreditedNetwork> page =  networkService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/issuers/me/accredited-networks", api));
