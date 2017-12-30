@@ -229,4 +229,5 @@ public class Establishment implements Serializable, Updatable {
         }
         return null;
     }
+
 }

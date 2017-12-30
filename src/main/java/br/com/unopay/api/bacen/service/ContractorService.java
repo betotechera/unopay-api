@@ -10,7 +10,9 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import com.google.common.collect.Sets;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -76,6 +78,12 @@ public class ContractorService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public Contractor getByIdForIssuers(String id, Set<String> issuersIds) {
+        Optional<Contractor> contractor = repository.findByIdAndContractsProductIssuerIdIn(id, issuersIds);
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
+    }
+
     public Contractor getByIdForHirer(String id, Hirer hirer) {
         Optional<Contractor> contractor = repository.findByIdAndContractsHirerId(id, hirer.getId());
         return contractor.orElseThrow(()->
@@ -103,8 +111,8 @@ public class ContractorService {
         update(contractor, current);
     }
 
-    public void updateForIssuer(String id, Issuer issuer, Contractor contractor) {
-        Contractor current = getByIdForIssuer(id, issuer);
+    public void updateForIssuer(String id, Set<String> issuersIds, Contractor contractor) {
+        Contractor current = getByIdForIssuers(id, issuersIds);
         update(contractor, current);
     }
 

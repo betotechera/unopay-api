@@ -1,7 +1,12 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
@@ -16,6 +21,8 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,15 +52,18 @@ public class EstablishmentController {
 
     private EstablishmentService service;
     private ServiceAuthorizeService authorizeService;
+    private ContractorService contractorService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
     public EstablishmentController(EstablishmentService service,
-                                   ServiceAuthorizeService authorizeService) {
+                                   ServiceAuthorizeService authorizeService,
+                                   ContractorService contractorService) {
         this.service = service;
         this.authorizeService = authorizeService;
+        this.contractorService = contractorService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -150,6 +160,37 @@ public class EstablishmentController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/establishments/me/service-authorizations", api));
+    }
+
+    @JsonView(Views.Contractor.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/contractors/{id}", method = RequestMethod.GET)
+    public Contractor getContractor(Establishment establishment, @PathVariable  String id) {
+        log.info("get Contractor={} for establishment={}", id, establishment.documentNumber());
+        return contractorService.getByIdForIssuers(id, establishment.getNetwork().issuersIds());
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/contractors/{id}", method = RequestMethod.PUT)
+    public void updateContractor(Establishment establishment,
+                                 @PathVariable String id,
+                                 @Validated(Update.class) @RequestBody Contractor contractor){
+        contractor.setId(id);
+        log.info("updating contractor={} for establishment={}", contractor, establishment.documentNumber());
+        contractorService.updateForIssuer(id, establishment.getNetwork().issuersIds(), contractor);
+    }
+
+    @JsonView(Views.Contractor.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/contractors", method = RequestMethod.GET)
+    public Results<Contractor> getContractorsByParams(Establishment establishment, ContractorFilter filter,
+                                                      @Validated UnovationPageRequest pageable){
+        log.info("search Contractor with filter={} for establishment={}", filter, establishment.documentNumber());
+        filter.setIssuers(establishment.getNetwork().issuersIds());
+        Page<Contractor> page =  contractorService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/establishments/me/contractors", api));
     }
 
 }

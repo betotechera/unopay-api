@@ -30,6 +30,7 @@ import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.collect.Sets;
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -251,7 +252,7 @@ public class IssuerController {
                                  @Validated(Update.class) @RequestBody Contractor contractor){
         contractor.setId(id);
         log.info("updating contractor={} for issuer={}", contractor, issuer.documentNumber());
-        contractorService.updateForIssuer(id, issuer, contractor);
+        contractorService.updateForIssuer(id, Sets.newHashSet(issuer.getId()), contractor);
     }
 
     @JsonView(Views.Contractor.List.class)

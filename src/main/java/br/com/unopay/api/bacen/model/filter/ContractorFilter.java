@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.model.filter;
 import br.com.unopay.api.model.State;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -30,5 +31,8 @@ public class ContractorFilter implements Serializable {
 
     @SearchableField(field = "contracts.product.issuer.id")
     private String issuer;
+
+    @SearchableField(field = "contracts.product.issuer.id")
+    private Set<String> issuers;
 
 }

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -123,5 +124,9 @@ public class AccreditedNetwork implements Serializable {
 
     public String documentNumber(){
         return person.documentNumber();
+    }
+
+    public Set<String> issuersIds(){
+        return getIssuers().stream().map(Issuer::getId).collect(Collectors.toSet());
     }
 }

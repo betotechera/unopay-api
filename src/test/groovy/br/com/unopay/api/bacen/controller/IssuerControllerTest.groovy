@@ -165,7 +165,6 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
     }
 
-
     void 'known network should be enabled for me'(){
         given:
         def network = fixtureCreator.createNetwork()
@@ -200,9 +199,6 @@ class IssuerControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
-
-
-
     void 'known me products should be found'() {
         given:
         def issuerUser = fixtureCreator.createIssuerUser()
@@ -216,5 +212,4 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
     }
-
 }
