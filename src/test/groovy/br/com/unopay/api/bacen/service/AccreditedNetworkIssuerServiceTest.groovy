@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -78,5 +79,23 @@ class AccreditedNetworkIssuerServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'USER_NOT_FOUND'
+    }
+
+
+    def 'given a existing network issuer when create should return error'(){
+        given:
+        AccreditedNetworkIssuer networkIssuer = Fixture.from(AccreditedNetworkIssuer).gimme("valid", new Rule(){{
+            add("issuer", fixtureCreator.createIssuer())
+            add("accreditedNetwork", fixtureCreator.createNetwork())
+            add("user", fixtureCreator.createUser())
+        }})
+
+        when:
+        service.create(userEmailUnderTest, networkIssuer)
+        service.create(userEmailUnderTest, networkIssuer.with {id = null; it })
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'ACCREDITED_NETWORK_ISSUER_ALREADY_EXISTS'
     }
 }

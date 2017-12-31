@@ -524,6 +524,13 @@ public final class Errors {
     public static final UnovationError INVALID_VALUE =
             new UnovationError("INVALID_VALUE", "Invalid value.");
 
+    /* AccreditedNetworkIssuer */
+    public static final UnovationError ACCREDITED_NETWORK_ISSUER_ALREADY_EXISTS =
+            new UnovationError("ACCREDITED_NETWORK_ISSUER_ALREADY_EXISTS", "" +
+                    "AccreditedNetworkIssuer already exists");
+
+
+
 
 
 
