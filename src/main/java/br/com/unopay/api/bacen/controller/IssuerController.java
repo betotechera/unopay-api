@@ -134,6 +134,36 @@ public class IssuerController {
         service.delete(id);
     }
 
+    @JsonView(Views.Issuer.AccreditedNetwork.class)
+    @ResponseStatus(CREATED)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
+    @RequestMapping(value = "/issuers/{id}/accredited-networks", method = POST)
+    public ResponseEntity<AccreditedNetworkIssuer> enableAllNetowrk(@PathVariable  String id,
+                                                                    OAuth2Authentication authentication,
+                                                                 @Validated(Create.class)
+                                                                 @RequestBody AccreditedNetworkIssuer networkIssuer) {
+        log.info("Enabling  network={} for Issuer={}", networkIssuer
+                .getAccreditedNetwork().documentNumber(), id);
+        networkIssuer.setIssuer(new Issuer() {{ setId(id); }});
+        AccreditedNetworkIssuer created = networkIssuerService.create(authentication.getName(), networkIssuer);
+        return created(URI.create("/issuers/"+id+"/accredited-networks/"+created.getId())).body(created);
+    }
+
+
+    @JsonView(Views.Order.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
+    @RequestMapping(value = "/issuers/{id}/accredited-networks", method = RequestMethod.GET)
+    public Results<AccreditedNetwork> getAllNetworksByParams(@PathVariable  String id, AccreditedNetworkFilter filter,
+                                                          @Validated UnovationPageRequest pageable){
+        log.info("search network with filter={} for issuer={}", filter, id);
+        filter.setIssuer(id);
+        Page<AccreditedNetwork> page =  networkService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/%s/accredited-networks", api, id));
+    }
+
     @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#oauth2.isClient()")
@@ -313,7 +343,7 @@ public class IssuerController {
     public Results<PaymentInstrument> getPaymentInstrumentByParams(Issuer issuer, PaymentInstrumentFilter filter,
                                                   @Validated UnovationPageRequest pageable) {
         log.info("search paymentInstrument with filter={}", filter);
-        filter.setIssuer(issuer.getId());
+        filter.setIssuer(Sets.newHashSet(issuer.getId()));
         Page<PaymentInstrument> page =  paymentInstrumentService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),

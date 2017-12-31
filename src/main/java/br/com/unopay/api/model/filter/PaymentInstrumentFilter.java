@@ -3,6 +3,7 @@ package br.com.unopay.api.model.filter;
 import br.com.unopay.api.model.PaymentInstrumentSituation;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
+import java.util.Set;
 import lombok.Data;
 import lombok.ToString;
 
@@ -30,7 +31,7 @@ public class PaymentInstrumentFilter  implements Serializable{
     private String contractorDocumentNumber;
 
     @SearchableField(field = "product.issuer.id")
-    private String issuer;
+    private Set<String> issuer;
 
 
 }

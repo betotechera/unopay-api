@@ -2,17 +2,19 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ServiceAuthorizeService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -20,9 +22,8 @@ import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.collect.Sets;
 import java.net.URI;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +54,7 @@ public class EstablishmentController {
     private EstablishmentService service;
     private ServiceAuthorizeService authorizeService;
     private ContractorService contractorService;
+    private PaymentInstrumentService paymentInstrumentService;
 
     @Value("${unopay.api}")
     private String api;
@@ -60,10 +62,12 @@ public class EstablishmentController {
     @Autowired
     public EstablishmentController(EstablishmentService service,
                                    ServiceAuthorizeService authorizeService,
-                                   ContractorService contractorService) {
+                                   ContractorService contractorService,
+                                   PaymentInstrumentService paymentInstrumentService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
+        this.paymentInstrumentService = paymentInstrumentService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -191,6 +195,20 @@ public class EstablishmentController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/establishments/me/contractors", api));
+    }
+
+    @JsonView(Views.PaymentInstrument.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/payment-instruments", method = RequestMethod.GET)
+    public Results<PaymentInstrument> getPaymentInstrumentByParams(Establishment establishment,
+                                                                   PaymentInstrumentFilter filter,
+                                                                   @Validated UnovationPageRequest pageable) {
+        log.info("search paymentInstrument with filter={}", filter);
+        filter.setIssuer(establishment.getNetwork().issuersIds());
+        Page<PaymentInstrument> page =  paymentInstrumentService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/establishments/me/payment-instruments", api));
     }
 
 }

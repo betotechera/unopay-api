@@ -73,4 +73,18 @@ public class AccreditedNetworkIssuer implements Serializable {
     public Date getCreation(){
         return ObjectUtils.clone(this.createdDateTime);
     }
+
+    public String networkId(){
+        if(accreditedNetwork != null){
+            return this.accreditedNetwork.getId();
+        }
+        return null;
+    }
+
+    public String issuerId(){
+        if(issuer != null){
+            return this.issuer.getId();
+        }
+        return null;
+    }
 }

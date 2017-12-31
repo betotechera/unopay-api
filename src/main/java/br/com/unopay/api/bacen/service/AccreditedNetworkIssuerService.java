@@ -37,9 +37,8 @@ public class AccreditedNetworkIssuerService {
     }
 
     private void setReferences(String currentUserMail, AccreditedNetworkIssuer networkIssuer) {
-        networkIssuer
-                .setAccreditedNetwork(accreditedNetworkService.getById(networkIssuer.getAccreditedNetwork().getId()));
-        networkIssuer.setIssuer(issuerService.findById(networkIssuer.getIssuer().getId()));
+        networkIssuer.setAccreditedNetwork(accreditedNetworkService.getById(networkIssuer.networkId()));
+        networkIssuer.setIssuer(issuerService.findById(networkIssuer.issuerId()));
         networkIssuer.setUser(userDetailService.getByEmail(currentUserMail));
     }
 
