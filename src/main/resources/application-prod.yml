@@ -3,7 +3,7 @@ payment:
     config:
       shopId: 21985337
       shopKey: 4876228797067177
-      mode: TEST
+      mode: PROD
       endpointHost: secure.payzen.com.br
   soap:
     santander:
@@ -12,7 +12,7 @@ payment:
         dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
         ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
         ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
-        enviroment: 'T'
+        enviroment: 'P'
 unopay:
   resetPassword:
         url: 'http://backoffice.unovation.com.br/#/page/password/'
