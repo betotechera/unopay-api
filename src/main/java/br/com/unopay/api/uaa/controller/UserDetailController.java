@@ -171,10 +171,10 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/users/password", method = PUT)
     public void updatePasswordByToken(@RequestBody @Validated NewPassword passwordChange) {
-        LOGGER.info("password token change request. change={}", passwordChange);
+        LOGGER.info("password token change request. token={}", passwordChange.getToken());
         userDetailService.updatePasswordByToken(passwordChange);
     }
 

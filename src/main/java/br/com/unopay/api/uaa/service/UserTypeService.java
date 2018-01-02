@@ -70,6 +70,7 @@ public class UserTypeService {
         if(type.getName().equals(UserTypeNames.ISSUER)) {
             validateIssuer(user);
         }
+
     }
 
     private void validateIssuer(UserDetail user) {
