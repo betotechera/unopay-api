@@ -76,8 +76,8 @@ public class UserTypeService {
         if(user.getIssuer() == null || user.getIssuer().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.USER_TYPE_MUST_SET_AN_ISSUER);
         } else {
-            issuerRepository.findById(user.getIssuer().getId()).orElseThrow(()->
-                    UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
+            user.setIssuer(issuerRepository.findById(user.getIssuer().getId()).orElseThrow(()->
+                    UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND)));
         }
     }
 
@@ -86,8 +86,8 @@ public class UserTypeService {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.USER_TYPE_MUST_SET_AN_ACCREDITED_NETWORK);
         } else {
-            accreditedNetworkRepository.findById(user.getAccreditedNetwork().getId()).orElseThrow(()->
-                    UnovationExceptions.notFound().withErrors(ACCREDITED_NETWORK_NOT_FOUND));
+            user.setAccreditedNetwork(accreditedNetworkRepository.findById(user.getAccreditedNetwork().getId())
+                    .orElseThrow(()-> UnovationExceptions.notFound().withErrors(ACCREDITED_NETWORK_NOT_FOUND)));
         }
     }
 
@@ -96,8 +96,8 @@ public class UserTypeService {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.USER_TYPE_MUST_SET_AN_INSTITUTION);
         } else {
-            institutionRepository.findById(user.getInstitution().getId()).orElseThrow(()->
-                    UnovationExceptions.notFound().withErrors(INSTITUTION_NOT_FOUND));
+            user.setInstitution(institutionRepository.findById(user.getInstitution().getId())
+                    .orElseThrow(()-> UnovationExceptions.notFound().withErrors(INSTITUTION_NOT_FOUND)));
         }
 
     }
