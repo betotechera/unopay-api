@@ -203,7 +203,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_USER_DETAIL')")
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
     public void resetPasswordByEmail(HttpServletRequest request) {
         String email = request.getParameter("email");
