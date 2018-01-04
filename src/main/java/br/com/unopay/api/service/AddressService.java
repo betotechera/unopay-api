@@ -24,7 +24,7 @@ public class AddressService {
             AddressSearch addressSearch = addressSearchService.search(zipCode);
             return  new Address(addressSearch);
         }catch (HttpClientErrorException e){
-            log.warn("Error on getting address",e);
+            log.warn("Getting address failed",e.getMessage());
             return new Address(zipCode);
         }
     }
