@@ -19,19 +19,6 @@ unopay:
   api: localhost:8080
   resetPassword:
     url: 'http://unopay.qa.unvlocal.com.br/#/page/password/'
-  notification:
-    defaultTemplate: "email-templates/%s/%s.html"
-    subjectByEvent:
-      'PASSWORD_RESET' : "Foi requisitado a mudança de senha"
-      'CREATE_PASSWORD' : "Crie sua nova senha"
-      'USER_CREATED' : "Seu usuario foi criado"
-      'BATCH_CLOSED' : "Lote fechado."
-      'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
-      'PAYMENT_APPROVED' : "Pagamento aprovado!"
-      'PAYMENT_DENIED' : 'Pagamento não aprovado.'
-    defaultMail:
-      from: 'no-reply@roadcard.com.br'
-      personalFrom: 'RoadCard'
   file-uploader:
     configs:
       avatar:

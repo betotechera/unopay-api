@@ -11,6 +11,7 @@ import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
 import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -36,6 +37,7 @@ public class BoletoService {
     private OrderService orderService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
+    private NotificationService notificationService;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -49,11 +51,12 @@ public class BoletoService {
     public BoletoService(BoletoRepository repository,
                          OrderService orderService,
                          CobrancaOnlineService cobrancaOnlineService,
-                         FileUploaderService fileUploaderService) {
+                         FileUploaderService fileUploaderService, NotificationService notificationService) {
         this.repository = repository;
         this.orderService = orderService;
         this.cobrancaOnlineService = cobrancaOnlineService;
         this.fileUploaderService = fileUploaderService;
+        this.notificationService = notificationService;
     }
 
     public Boleto save(Boleto boleto) {
@@ -86,7 +89,7 @@ public class BoletoService {
                 .build();
 
         Boleto boleto = createBoletoModel(order, boletoStella, clearOurNumber);
-
+        notificationService.sendBoletoIssued(order, boleto);
         return save(boleto);
     }
 

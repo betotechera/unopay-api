@@ -1,5 +1,6 @@
 package br.com.unopay.api.notification.service;
 
+import br.com.unopay.api.billing.boleto.model.Boleto;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
@@ -66,6 +67,14 @@ public class NotificationService {
     public void sendPaymentEmail(Order order, EventType eventType){
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("order", order); }};
         sendEmailToQueue(order.getPersonEmail(), payload, eventType);
+    }
+
+    public void sendBoletoIssued(Order order, Boleto boleto) {
+        Map<String, Object> payload = new HashMap<String, Object>();
+        payload.put("order", order);
+        payload.put("boleto", boleto);
+
+        sendEmailToQueue(order.getPersonEmail(), payload, EventType.BOLETO_ISSUED);
     }
 
     private Map<String, Object> buildPayload(UserDetail user, String token) {
