@@ -6,6 +6,7 @@ import br.com.unopay.api.billing.boleto.model.Boleto
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,7 @@ class BoletoServiceTest extends SpockApplicationTests{
     Order order
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
+    NotificationService notificationServiceMock = Mock(NotificationService)
 
     def setup(){
         order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
@@ -26,6 +28,7 @@ class BoletoServiceTest extends SpockApplicationTests{
         service.fileUploaderService = uploaderServiceMock
         cobrancaOnlineServiceMock.getTicket(_,_) >> new TituloDto().with { nossoNumero = "1234"; it }
         service.cobrancaOnlineService = cobrancaOnlineServiceMock
+        service.notificationService = notificationServiceMock
     }
 
     def 'given a valid boleto should be created'(){
@@ -38,6 +41,14 @@ class BoletoServiceTest extends SpockApplicationTests{
 
         then:
         result != null
+    }
+
+    def 'should send email when a new boleto is created'(){
+        when:
+        service.create(order.id)
+
+        then:
+        1 * notificationServiceMock.sendBoletoIssued(order,_)
     }
 
     def 'should create boleto from known order'(){

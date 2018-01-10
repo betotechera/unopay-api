@@ -70,7 +70,10 @@ public class NotificationService {
     }
 
     public void sendBoletoIssued(Order order, Boleto boleto) {
-        Map<String, Object> payload = new HashMap<String, Object>() {{put("order", order); put("boleto", boleto); }};
+        Map<String, Object> payload = new HashMap<String, Object>();
+        payload.put("order", order);
+        payload.put("boleto", boleto);
+
         sendEmailToQueue(order.getPersonEmail(), payload, EventType.BOLETO_ISSUED);
     }
 
