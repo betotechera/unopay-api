@@ -44,7 +44,8 @@ public class RecordColumn {
 
     private void setValue(String value){
         if(value != null && value.length() > this.rule.getLength()){
-            log.error("cnab240 rule={} unexpected length={}", getField(), value.length());
+            log.error("cnab rule={} unexpected length={} for value={}, expected={}",
+                    getField(), value.length(), value, this.rule.getLength());
             throw UnovationExceptions.unprocessableEntity().withErrors(REMITTANCE_COLUMN_LENGTH_NOT_MET);
         }
         if(value != null && ColumnType.NUMBER.equals(rule.getColumnType())){
