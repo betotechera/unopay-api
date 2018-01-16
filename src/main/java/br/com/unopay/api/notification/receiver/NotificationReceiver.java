@@ -1,7 +1,8 @@
-package br.com.unopay.api.notification.service;
+package br.com.unopay.api.notification.receiver;
 
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.notification.model.Notification;
+import br.com.unopay.api.notification.service.UnopayMailSender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
