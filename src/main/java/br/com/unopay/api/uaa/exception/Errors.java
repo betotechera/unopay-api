@@ -344,8 +344,6 @@ public final class Errors {
 
 
     /* credit */
-    public static final UnovationError CREDIT_INSERT_TYPE_NOT_CONFIGURED =
-            new UnovationError("CREDIT_INSERT_TYPE_NOT_CONFIGURED","Credit insert type not configured");
     public static final UnovationError MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET =
             new UnovationError("MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET","Minimum payment rule group value not met.");
     public static final UnovationError MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET =
@@ -358,7 +356,6 @@ public final class Errors {
             new UnovationError("CREDIT_ALREADY_CANCELED","Credit already canceled.");
     public static final UnovationError PAYMENT_RULE_GROUP_REQUIRED =
             new UnovationError("PAYMENT_RULE_GROUP_REQUIRED","Payment rule group required.");
-
 
     /* credit payment account */
     public static final UnovationError CREDIT_REQUIRED_WHEN_UPDATE_BALANCE =

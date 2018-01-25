@@ -144,13 +144,11 @@ public class OrderService {
         order.setCreateDateTime(new Date());
         hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         Order created = repository.save(order);
-        notifyOrder(order, created);
+        notifyOrder(created);
         return created;
     }
 
-    private void notifyOrder(Order order, Order created) {
-        order.getPaymentRequest().setOrderId(order.getId());
-        order.getPaymentRequest().setValue(order.getValue());
+    private void notifyOrder(Order created) {
         notifier.notify(Queues.ORDER_CREATED, created);
     }
 

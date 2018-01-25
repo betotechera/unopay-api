@@ -61,6 +61,8 @@ class AmqpConfig {
             declareQueue(amqpAdmin, Queues.DLQ_CREDIT_PROCESSED, Queues.DLQ_CREDIT_PROCESSED);
             declareQueue(amqpAdmin, Queues.ORDER_CREATED, Queues.ORDER_CREATED);
             declareQueue(amqpAdmin, Queues.DLQ_ORDER_CREATED, Queues.DLQ_ORDER_CREATED);
+            declareQueue(amqpAdmin, Queues.HIRER_CREDIT_CREATED, Queues.HIRER_CREDIT_CREATED);
+            declareQueue(amqpAdmin, Queues.DLQ_HIRER_CREDIT_CREATED, Queues.DLQ_HIRER_CREDIT_CREATED);
         };
     }
 

@@ -166,40 +166,27 @@ public class Credit implements Serializable, Updatable {
     }
 
     private void defineSituation() {
-        if(isDirectDebit()) {
-            situation = CreditSituation.PROCESSING;
-        }
-        if(creditInsertionType.isPaymentProcessedByClient()){
-            situation = CreditSituation.CONFIRMED;
-        }
+        situation = CreditSituation.PROCESSING;
     }
 
     public boolean isDirectDebit() {
         return CreditInsertionType.DIRECT_DEBIT.equals(creditInsertionType);
     }
 
-    public void defineCreditInsertionType(String creditInsertionType){
-        this.creditInsertionType = CreditInsertionType.valueOf(creditInsertionType);
-    }
-
     public void defineAvailableValue(){
-        if(isDirectDebit() && !confirmedSituation()){
+        if(!confirmedSituation()) {
             availableValue = BigDecimal.ZERO;
             return;
         }
-        availableValue = this.value;
+        availableValue = value;
     }
 
     public void defineBlockedValue(){
-        if(creditInsertionType.isPaymentProcessedByClient() || confirmedSituation()){
-            blockedValue = BigDecimal.ZERO;
+        if(!confirmedSituation()) {
+            blockedValue = this.value;
             return;
         }
-        blockedValue = this.value;
-    }
-
-    private boolean confirmedSituation() {
-        return CreditSituation.CONFIRMED.equals(situation);
+        blockedValue = BigDecimal.ZERO;
     }
 
     public BigDecimal getAvailableValue(){
@@ -260,4 +247,9 @@ public class Credit implements Serializable, Updatable {
     public Date getCreatedDateTime(){
         return ObjectUtils.clone(this.createdDateTime);
     }
+
+    private boolean confirmedSituation() {
+        return CreditSituation.CONFIRMED.equals(situation);
+    }
+
 }
