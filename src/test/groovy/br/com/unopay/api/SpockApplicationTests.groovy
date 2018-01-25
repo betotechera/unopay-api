@@ -1,5 +1,8 @@
 package br.com.unopay.api
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.base.Throwables
 import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener
@@ -57,5 +60,15 @@ class SpockApplicationTests extends FixtureApplicationTest{
         when(authentication.isAuthenticated()).thenReturn(true)
         when(authentication.isClientOnly()).thenReturn(true)
         SecurityContextHolder.getContext().setAuthentication(authentication)
+    }
+
+    protected static String toJson(Object object) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper()
+            return objectMapper.writeValueAsString(object)
+        } catch (JsonProcessingException e) {
+            Throwables.propagate(e)
+            return null
+        }
     }
 }
