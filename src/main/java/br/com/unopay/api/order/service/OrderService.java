@@ -142,7 +142,7 @@ public class OrderService {
         checkContractorRules(order);
         definePaymentValueWhenRequired(order);
         order.setCreateDateTime(new Date());
-        hirerService.findByDocumentNumber(order.getProduct().getIssuer().documentNumber());
+        hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         Order created = repository.save(order);
         notifyOrder(order, created);
         return created;
@@ -155,8 +155,8 @@ public class OrderService {
     }
 
     private void definePaymentValueWhenRequired(Order order) {
-        processAdhesionWhenRequired(order);
-        processContractRuleWhenRequired(order);
+        defineValueWithAdhesionValueWhenRequired(order);
+        defineValueWithInstallmentValueWhenRequired(order);
     }
 
     public void process(Order order){
@@ -186,7 +186,7 @@ public class OrderService {
         notificationService.sendPaymentEmail(order,  EventType.PAYMENT_DENIED);
     }
 
-    private void processContractRuleWhenRequired(Order order) {
+    private void defineValueWithInstallmentValueWhenRequired(Order order) {
         if(!order.isType(OrderType.ADHESION)){
             Contract contract = contractService.findById(order.getContractId());
             if(order.isType(OrderType.INSTALLMENT_PAYMENT)) {
@@ -195,7 +195,7 @@ public class OrderService {
         }
     }
 
-    private void processAdhesionWhenRequired(Order order) {
+    private void defineValueWithAdhesionValueWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
             order.setContract(null);
             if(order.productWithMembershipFee()){
@@ -221,7 +221,7 @@ public class OrderService {
             order.setPaymentInstrument(null);
         }
         if(order.isType(OrderType.CREDIT)) {
-            contractor.ifPresent(contractor1 -> checkCreditRules(order, instruments));
+            contractor.ifPresent(it -> checkCreditRules(order, instruments));
         }
         contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
         if(order.isType(OrderType.ADHESION)) {

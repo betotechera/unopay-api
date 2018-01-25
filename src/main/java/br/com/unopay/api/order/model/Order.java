@@ -229,6 +229,13 @@ public class Order implements Updatable{
         }
     }
 
+    public String issuerDocumentNumber(){
+        if(this.getProduct() != null && this.getProduct().getIssuer() != null){
+            return getProduct().getIssuer().documentNumber();
+        }
+        return null;
+    }
+
     public boolean productWithMembershipFee() {
         return this.product != null && this.product.getMembershipFee() != null
                 && this.product.getMembershipFee().compareTo(BigDecimal.ZERO) !=0;
