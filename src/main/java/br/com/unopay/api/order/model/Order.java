@@ -215,7 +215,7 @@ public class Order implements Updatable, Billable{
 
 
     @JsonIgnore
-    public String getPersonEmail() {
+    public String getBillingMail() {
         if(this.person != null && this.person.getPhysicalPersonDetail() != null){
             return this.person.getPhysicalPersonDetail().getEmail();
         }

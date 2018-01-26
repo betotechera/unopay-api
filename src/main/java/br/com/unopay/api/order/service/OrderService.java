@@ -207,7 +207,7 @@ public class OrderService {
 
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getPersonEmail());
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
         if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
             throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
         }
@@ -224,7 +224,7 @@ public class OrderService {
         }
         contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
         if(order.isType(OrderType.ADHESION)) {
-            this.mailValidator.check(order.getPersonEmail());
+            this.mailValidator.check(order.getBillingMail());
         }
     }
 

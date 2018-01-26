@@ -395,8 +395,8 @@
             <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="email-masthead">
-                        <a href="https://example.com" class="email-masthead_name">
-                            <img  src="http://backoffice.qa.unovation.com.br/app/img/logo_unopay.svg"  width="25%" height="80%"/>
+                        <a href="https://unopay.unovation.com.br" class="email-masthead_name">
+                            <img  src="http://backoffice.unovation.com.br/app/img/logo_unopay.svg"  width="25%" height="80%"/>
                         </a>
                     </td>
                 </tr>
@@ -408,7 +408,7 @@
                             <tr>
                                 <td class="content-cell">
                                     <h1>Ol&aacute; {{order.person.shortName}},</h1>
-                                    <p>Seu boleto no valor de {{ "R$: %s " | format(boleto.value) }} para o pedido {{order.number}} foi gerado. Clique no link abaixo para baix&aacute;-lo.</p>
+                                    <p>Seu boleto no valor de {{ "R$: %s " | format(boleto.value) }} para o pedido {{order.number}} foi gerado. Clique no botao abaixo para baix&aacute;-lo.</p>
                                     <!-- Action -->
                                     <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
@@ -434,7 +434,7 @@
                                     <table class="body-sub">
                                         <tr>
                                             <td>
-                                                <p>Se voc&ecirc; tiver problema com o bot&atilde;o acima, copie o c&oacute;digo do boleto.</p>
+                                                <p>Caso prefira pode copiar o codigo abaixo para pagar pela internet</p>
                                                 <p>{{boleto.typingCode}}</p>
                                             </td>
                                         </tr>

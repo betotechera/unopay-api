@@ -10,6 +10,8 @@ import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketReques
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
 import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
+import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -39,6 +41,7 @@ public class BoletoService {
 
     private BoletoRepository repository;
     private OrderService orderService;
+    private CreditService creditService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
     private NotificationService notificationService;
@@ -54,10 +57,13 @@ public class BoletoService {
     @Autowired
     public BoletoService(BoletoRepository repository,
                          OrderService orderService,
+                         CreditService creditService,
                          CobrancaOnlineService cobrancaOnlineService,
-                         FileUploaderService fileUploaderService, NotificationService notificationService) {
+                         FileUploaderService fileUploaderService,
+                         NotificationService notificationService) {
         this.repository = repository;
         this.orderService = orderService;
+        this.creditService = creditService;
         this.cobrancaOnlineService = cobrancaOnlineService;
         this.fileUploaderService = fileUploaderService;
         this.notificationService = notificationService;
@@ -75,6 +81,13 @@ public class BoletoService {
         Order order = orderService.findById(orderId);
         Boleto boleto = create(order);
         notificationService.sendBoletoIssued(order, boleto);
+        return boleto;
+    }
+
+    public Boleto createForCredit(Credit credit) {
+        Credit current = creditService.findById(credit.getId());
+        Boleto boleto = create(current);
+        notificationService.sendBoletoIssued(current, boleto);
         return boleto;
     }
 
@@ -144,4 +157,5 @@ public class BoletoService {
                 valueOf(order.getCreateDateTime().getTime()));
         return number.substring(0, Math.min(number.length(), SIZE));
     }
+
 }

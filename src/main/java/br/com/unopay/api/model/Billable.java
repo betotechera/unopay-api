@@ -16,5 +16,7 @@ public interface Billable {
 
     String getNumber();
 
-   Date getCreateDateTime();
+    Date getCreateDateTime();
+
+    String getBillingMail();
 }

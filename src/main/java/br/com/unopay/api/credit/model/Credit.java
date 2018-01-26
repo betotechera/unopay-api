@@ -4,6 +4,8 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.model.Billable;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -47,7 +49,7 @@ import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_
 @EqualsAndHashCode(exclude = {"paymentRuleGroup", "product"})
 @ToString(exclude = {"paymentRuleGroup", "product"})
 @Table(name = "credit")
-public class Credit implements Serializable, Updatable {
+public class Credit implements Serializable, Updatable, Billable {
 
     public Credit(){}
 
@@ -248,6 +250,14 @@ public class Credit implements Serializable, Updatable {
         return null;
     }
 
+    @JsonIgnore
+    public String getBillingMail() {
+        if(this.getHirer() != null && this.getHirer().getPerson() != null && this.getHirer().getPerson().getPhysicalPersonDetail() != null){
+            return this.getHirer().getPerson().getPhysicalPersonDetail().getEmail();
+        }
+        return null;
+    }
+
     public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {
         return creditPayment.stream()
                 .filter(c -> Objects.equals(c.getProductId(), getProductId()) && c.getServiceType() == getServiceType())
@@ -273,4 +283,21 @@ public class Credit implements Serializable, Updatable {
         return CreditSituation.CONFIRMED.equals(situation);
     }
 
+    @JsonIgnore
+    @Override
+    public Person getPayer() {
+        return getHirer().getPerson();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getNumber() {
+        return String.valueOf(getCreditNumber());
+    }
+
+    @JsonIgnore
+    @Override
+    public Date getCreateDateTime() {
+        return getCreatedDateTime();
+    }
 }
