@@ -1,6 +1,10 @@
 package br.com.unopay.api.credit.service
 
+import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
+import br.com.six2six.fixturefactory.base.Sequence
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Hirer
 import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
 import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
 import br.com.unopay.api.bacen.util.FixtureCreator
@@ -112,38 +116,50 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.insertionCreatedDateTime > 1.second.ago
-        result.insertionCreatedDateTime < 1.second.from.now
+        timeComparator.compare(result.insertionCreatedDateTime, new Date()) == 0
     }
 
     void 'given a credit with existing service credit should update balance when insert without direct debit'(){
         given:
+        def hirer = fixtureCreator.createHirer()
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
-        Credit credit = fixtureCreator.createCredit(knownProduct)
-                .with {
-            creditInsertionType = CreditInsertionType.BOLETO
-            serviceType = FREIGHT
-            it }
+        BigDecimal value = 10.5
+        List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("value", value)
+            add("product", knownProduct)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", FREIGHT)
+        }})
         when:
-        creditService.insert(credit)
-        creditService.insert(credit.with { id = null; it })
-        creditService.insert(credit.with { id = null; it })
+        credits.each { service.register(it)}
 
         then:
-        service.findAll().last().availableBalance == (credit.value * 3)
+        service.findAll().last().availableBalance == (value * 3)
     }
 
     void 'given a credit without same service credit should insert new credit when insert without direct debit'(){
         given:
-        def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
-        Credit credit = fixtureCreator.createCredit(knownProduct)
-                .with {
-            creditInsertionType = CreditInsertionType.BOLETO
-            serviceType = FREIGHT
-            it }
+        def hirer = fixtureCreator.createHirer()
+        BigDecimal value = 10.5
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("value", value)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", FREIGHT)
+        }})
+        List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("value", value)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", ELECTRONIC_TOLL)
+        }})
         when:
-        creditService.insert(credit)
-        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; it })
+        credits.each { service.register(it)}
+        service.register(credit)
 
         then:
         service.findAll().every { it.availableBalance == credit.value}
@@ -153,16 +169,28 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         given:
         def paymentRuleGroupUnderTest = fixtureCreator.createPaymentRuleGroup()
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
-        Credit credit = fixtureCreator.createCredit(null)
-                .with {
-                        creditInsertionType = CreditInsertionType.BOLETO
-                        serviceType = ELECTRONIC_TOLL
-                        paymentRuleGroup = paymentRuleGroupUnderTest
-                it }
+        def hirer = fixtureCreator.createHirer()
+        BigDecimal value = 10.5
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+            add("value", value)
+            add("product", null)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", ELECTRONIC_TOLL)
+        }})
+        List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("value", value)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", ELECTRONIC_TOLL)
+        }})
         when:
-        creditService.insert(credit)
-        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; product = knownProduct; it })
-        creditService.insert(credit.with { id = null; serviceType = ELECTRONIC_TOLL; product = knownProduct; it })
+        credits.each { service.register(it)}
+        service.register(credit)
 
         then:
         service.findAll().find {
@@ -176,24 +204,36 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
     void 'given a credit without service and product should update balance when insert without direct debit'(){
         given:
         fixtureCreator.createPaymentRuleGroupDefault()
+        def hirer = fixtureCreator.createHirer()
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
-        Credit credit = fixtureCreator.createCredit(knownProduct)
-                .with {
-            creditInsertionType = CreditInsertionType.BOLETO
-            serviceType = ELECTRONIC_TOLL
-            it }
+        BigDecimal value = 10.5
+        Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", knownProduct)
+            add("value", value)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", ELECTRONIC_TOLL)
+        }})
+        List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
+            add("hirerDocument", hirer.getDocumentNumber())
+            add("product", null)
+            add("value", value)
+            add("availableValue", value)
+            add("creditInsertionType", CreditInsertionType.BOLETO)
+            add("serviceType", null)
+        }})
         when:
-        creditService.insert(credit)
-        creditService.insert(credit.with { id = null; serviceType = null; product = null; it })
-        creditService.insert(credit.with { id = null; serviceType = null; product = null; it })
+        credits.each { service.register(it)}
+        service.register(credit)
 
         then:
         service.findAll().find {
             it.serviceType == null && it.product == null
-        }?.availableBalance == (credit.value * 2)
+        }?.availableBalance == (value * 2)
         service.findAll().find {
             it.serviceType == ELECTRONIC_TOLL && it.product != null
-        }?.availableBalance == credit.value
+        }?.availableBalance == value
     }
 
     void 'given a existing payment account with balance when subtract should be subtract credit'(){

@@ -17,6 +17,7 @@ import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.api.model.BatchClosing

@@ -144,6 +144,7 @@ public class OrderService {
         order.setCreateDateTime(new Date());
         hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         Order created = repository.save(order);
+        created.getPaymentRequest().setOrderId(order.getId());
         notifyOrder(created);
         return created;
     }

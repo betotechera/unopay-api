@@ -56,6 +56,7 @@ public class CreditService {
         this.notifier = notifier;
     }
 
+    @Transactional
     public Credit insert(Credit credit) {
         validateProductReference(credit);
         credit.setupMyCreate();
