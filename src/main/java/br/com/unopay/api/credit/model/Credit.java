@@ -225,6 +225,22 @@ public class Credit implements Serializable, Updatable {
     }
 
     @JsonIgnore
+    public String issuerId(){
+        if(issuer != null){
+            return issuer.getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public String hirerId(){
+        if(hirer != null){
+            return hirer.getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public String getPaymentRuleGroupId(){
         if(paymentRuleGroup != null){
             return paymentRuleGroup.getId();

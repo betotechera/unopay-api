@@ -2,6 +2,7 @@ package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
@@ -36,6 +37,7 @@ public class CreditService {
     private HirerService hirerService;
     private ProductService productService;
     private PaymentRuleGroupService paymentRuleGroupService;
+    private IssuerService issuerService;
     @Setter private CreditPaymentAccountService creditPaymentAccountService;
     @Setter private Notifier notifier;
 
@@ -46,12 +48,14 @@ public class CreditService {
                          HirerService hirerService,
                          ProductService productService,
                          PaymentRuleGroupService paymentRuleGroupService,
+                         IssuerService issuerService,
                          CreditPaymentAccountService creditPaymentAccountService,
                          Notifier notifier) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.productService = productService;
         this.paymentRuleGroupService = paymentRuleGroupService;
+        this.issuerService = issuerService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.notifier = notifier;
     }
@@ -108,9 +112,12 @@ public class CreditService {
     }
 
     private void validateReferences(Credit credit) {
-        hirerService.getById(credit.getHirer().getId());
+        hirerService.getById(credit.hirerId());
         if (!credit.withPaymentRuleGroup()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
+        }
+        if(!credit.withProduct()){
+            credit.setIssuer(issuerService.findById(credit.issuerId()));
         }
         credit.setPaymentRuleGroup(paymentRuleGroupService.getById(credit.getPaymentRuleGroupId()));
     }
@@ -119,6 +126,7 @@ public class CreditService {
         if(credit.withProduct()) {
             Product product = productService.findById(credit.getProductId());
             credit.setProduct(product);
+            credit.setIssuer(product.getIssuer());
         }
     }
 

@@ -30,7 +30,7 @@ class CreditControllerTest extends AuthServerApplicationTests {
         Credit credit = fixtureCreator.createCredit()
         when:
         def result = this.mvc.perform(
-                            post('/hirers/credits/?access_token={access_token}', accessToken)
+                            post('/hirers/credits?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJsonFromView(credit, Views.Credit.Detail.class)))
         then:

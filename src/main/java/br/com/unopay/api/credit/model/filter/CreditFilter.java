@@ -20,7 +20,7 @@ public class CreditFilter  implements Serializable {
     private CreditSituation situation;
 
 
-    @SearchableField
+    @SearchableField(field = "hirer.person.document.number")
     private String hirerDocument;
 
 }

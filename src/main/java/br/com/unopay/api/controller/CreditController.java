@@ -56,7 +56,7 @@ public class CreditController {
         Credit created = service.insert(credit);
         log.info("Inserted credit={}", created);
         return created(URI.create(String
-                .format("/hirers/%s/credits/%s",created.getHirer(), created.getId()))).body(created);
+                .format("/hirers/%s/credits/%s",created.getHirer().getDocumentNumber(),created.getId()))).body(created);
 
     }
 

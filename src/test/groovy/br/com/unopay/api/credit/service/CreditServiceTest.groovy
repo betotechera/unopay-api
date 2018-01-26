@@ -410,6 +410,7 @@ class CreditServiceTest extends SpockApplicationTests {
             add("paymentRuleGroup", paymentRuleGroup)
             add("value", paymentRuleGroup.minimumCreditInsertion - 1)
             add("product", null)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -429,6 +430,7 @@ class CreditServiceTest extends SpockApplicationTests {
             add("paymentRuleGroup", paymentRuleGroup)
             add("product", null)
             add("value", paymentRuleGroup.maximumCreditInsertion+1)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -485,6 +487,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
             add("hirer", hirer)
             add("paymentRuleGroup", new PaymentRuleGroup())
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
