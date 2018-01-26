@@ -45,7 +45,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'should send email when a new boleto is created'(){
         when:
-        service.create(order.id)
+        service.createForOrder(order.id)
 
         then:
         1 * notificationServiceMock.sendBoletoIssued(order,_)
@@ -53,7 +53,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'should create boleto from known order'(){
         when:
-        Boleto created = service.create(order.id)
+        Boleto created = service.createForOrder(order.id)
 
         then:
         created.issuerDocument == order.product.issuer.documentNumber()
@@ -64,7 +64,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should be found'(){
         when:
-        Boleto created = service.create(order.id)
+        Boleto created = service.createForOrder(order.id)
         Boleto result = service.findById(created.id)
 
         then:
@@ -73,7 +73,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should create with meta information'(){
         when:
-        Boleto created = service.create(order.id)
+        Boleto created = service.createForOrder(order.id)
 
         then:
         created.uri
@@ -85,7 +85,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should increment number'(){
         when:
-        Boleto result = service.create(order.id)
+        Boleto result = service.createForOrder(order.id)
 
         then:
         result.number
@@ -93,7 +93,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should upload file'(){
         when:
-        service.create(order.id)
+        service.createForOrder(order.id)
 
         then:
         1 * uploaderServiceMock.uploadBytes(_, _) >> path
@@ -101,7 +101,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create with unkown order should error'(){
         when:
-        service.create('')
+        service.createForOrder('')
 
         then:
         def ex = thrown(NotFoundException)

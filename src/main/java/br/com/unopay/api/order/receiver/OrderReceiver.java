@@ -50,7 +50,7 @@ public class OrderReceiver {
             orderService.process(current);
         }
         if(order.is(PaymentMethod.BOLETO)){
-            boletoService.create(order.getId());
+            boletoService.createForOrder(order.getId());
         }
     }
 }

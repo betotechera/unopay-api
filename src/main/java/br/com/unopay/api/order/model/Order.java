@@ -1,8 +1,10 @@
 package br.com.unopay.api.order.model;
 
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
@@ -55,7 +57,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUN
 @EqualsAndHashCode(of = {"id"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order implements Updatable{
+public class Order implements Updatable, Billable{
 
     public Order(){}
 
@@ -244,6 +246,19 @@ public class Order implements Updatable{
     public BigDecimal getProductMembershipFee() {
         if(this.product != null){
             return this.product.getMembershipFee();
+        }
+        return null;
+    }
+
+    @Override
+    public Person getPayer() {
+        return this.getPerson();
+    }
+
+    @Override
+    public Issuer getIssuer() {
+        if(this.getProduct() != null) {
+            return this.getProduct().getIssuer();
         }
         return null;
     }

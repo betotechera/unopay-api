@@ -43,7 +43,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
 
         then:
         0 * transactionalServiceMock.create(_)
-        1 * boletoServiceMock.create(_)
+        1 * boletoServiceMock.createForOrder(_)
     }
 
     def 'when receive credit card order should call transaction service'(){
