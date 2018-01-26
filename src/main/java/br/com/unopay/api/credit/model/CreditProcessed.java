@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CreditProcessed {
 
-    private String document;
+    private String issuerId;
     private BigDecimal value;
     private CreditInsertionType insertionType;
     private CreditTarget target;

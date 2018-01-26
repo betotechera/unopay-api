@@ -1,5 +1,7 @@
 package br.com.unopay.api.credit.model;
 
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.Product;
@@ -26,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -66,14 +69,16 @@ public class Credit implements Serializable, Updatable {
     @JsonView({Views.Credit.Detail.class})
     private PaymentRuleGroup paymentRuleGroup;
 
-    @Column(name = "hirer_document")
+    @ManyToOne
+    @JoinColumn(name = "hirer_id")
     @JsonView({Views.Credit.List.class})
-    private String hirerDocument;
+    private Hirer hirer;
 
-    @Column(name = "issuer_document")
+    @ManyToOne
+    @JoinColumn(name = "issuer_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Credit.Detail.class})
-    private String issuerDocument;
+    private Issuer issuer;
 
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)

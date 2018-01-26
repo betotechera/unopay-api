@@ -294,8 +294,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
         def hirer = fixtureCreator.createHirer()
         from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
-            add("issuerDocument", issuer.documentNumber())
-            add("hirerDocument",  hirer.documentNumber)
+            add("issuer", issuer)
+            add("hirer",  hirer)
             add("situation", CreditSituation.PROCESSING)
             add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
@@ -313,8 +313,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
         def hirer = fixtureCreator.createHirer()
         from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {{
-                add("issuerDocument", issuer.documentNumber())
-                add("hirerDocument",  hirer.documentNumber)
+                add("issuer", issuer)
+                add("hirer",  hirer)
                 add("situation", CreditSituation.PROCESSING)
                 add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
@@ -332,8 +332,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         Issuer issuer = fixtureCreator.createIssuer()
         def hirer = fixtureCreator.createHirer()
         Set<Credit> credits = from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
-                add("issuerDocument", issuer.documentNumber())
-                add("hirerDocument", hirer.documentNumber)
+                add("issuer", issuer)
+                add("hirer", hirer)
                 add("situation", CreditSituation.PROCESSING)
                 add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
         }})
@@ -355,8 +355,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         def creditSituation = situation
         from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
-            add("issuerDocument", issuer.documentNumber())
-            add("hirerDocument", hirer.documentNumber)
+            add("issuer", issuer)
+            add("hirer", hirer)
             add("situation", creditSituation)
             add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
             add("product", product)
@@ -385,8 +385,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         def insertionType = insertion
         from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
-            add("issuerDocument", issuer.documentNumber())
-            add("hirerDocument", hirer.documentNumber)
+            add("issuer", issuer)
+            add("hirer", hirer)
             add("situation", CreditSituation.PROCESSING)
             add("creditInsertionType", insertionType)
         }})
@@ -661,8 +661,8 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         from(Credit.class).uses(jpaProcessor).gimme(1, "allFields", new Rule() {
             {
-                add("issuerDocument", issuer.documentNumber())
-                add("hirerDocument", hirer.documentNumber)
+                add("issuer", issuer)
+                add("hirer", hirer)
                 add("situation", CreditSituation.PROCESSING)
                 add("creditInsertionType", CreditInsertionType.DIRECT_DEBIT)
             }

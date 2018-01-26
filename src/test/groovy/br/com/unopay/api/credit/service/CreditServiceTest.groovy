@@ -7,7 +7,6 @@ import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditInsertionType
 import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO
 import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD
 import static br.com.unopay.api.credit.model.CreditInsertionType.DIRECT_DEBIT
@@ -44,7 +43,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         service.insert(credit)
-        def pair = new CreditProcessed(credit.issuerDocument, 0.0, DIRECT_DEBIT, HIRER)
+        def pair = new CreditProcessed(credit.getIssuer().documentNumber(), 0.0, DIRECT_DEBIT, HIRER)
 
         when:
         service.unblockCredit(pair)
@@ -58,7 +57,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         service.insert(credit)
-        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
+        def pair = new CreditProcessed(credit.issuer.getId(), credit.value, DIRECT_DEBIT, HIRER)
 
         when:
         service.unblockCredit(pair)
@@ -73,7 +72,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithCreditInsertionType([DIRECT_DEBIT])
         Credit credit = fixtureCreator.createCredit(knownProduct)
         def inserted  = service.insert(credit)
-        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
+        def pair = new CreditProcessed(credit.issuer.getId(), credit.value, DIRECT_DEBIT, HIRER)
 
         when:
         service.unblockCredit(pair)
@@ -89,7 +88,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Credit credit = fixtureCreator.createCredit(knownProduct)
         credit.creditInsertionType = DIRECT_DEBIT
         def inserted  = service.insert(credit)
-        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
+        def pair = new CreditProcessed(credit.issuer.getId(), credit.value, DIRECT_DEBIT, HIRER)
 
         when:
         service.unblockCredit(pair)
@@ -105,7 +104,7 @@ class CreditServiceTest extends SpockApplicationTests {
         Credit credit = fixtureCreator.createCredit(knownProduct)
         credit.creditInsertionType = DIRECT_DEBIT
         def inserted  = service.insert(credit)
-        def pair = new CreditProcessed(credit.issuerDocument, credit.value, DIRECT_DEBIT, HIRER)
+        def pair = new CreditProcessed(credit.issuer.getId(), credit.value, DIRECT_DEBIT, HIRER)
 
         when:
         service.unblockCredit(pair)
@@ -238,8 +237,9 @@ class CreditServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("product", knownProduct)
+            add("issuer", knownProduct.getIssuer())
         }})
 
         when:
@@ -257,10 +257,11 @@ class CreditServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("product", knownProduct)
             add("situation", CreditSituation.CONFIRMED)
             add("creditInsertionType", creditType)
+            add("issuer", knownProduct.getIssuer())
         }})
 
         when:
@@ -405,7 +406,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
             add("value", paymentRuleGroup.minimumCreditInsertion - 1)
             add("product", null)
@@ -424,7 +425,7 @@ class CreditServiceTest extends SpockApplicationTests {
         def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("allFields", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
             add("product", null)
             add("value", paymentRuleGroup.maximumCreditInsertion+1)
@@ -443,8 +444,9 @@ class CreditServiceTest extends SpockApplicationTests {
         def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -464,7 +466,7 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", null)
             add("product", null)
         }})
@@ -481,7 +483,7 @@ class CreditServiceTest extends SpockApplicationTests {
         given:
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", new PaymentRuleGroup())
         }})
 
@@ -516,7 +518,7 @@ class CreditServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'HIRER_DOCUMENT_NOT_FOUND'
+        assert ex.errors.first().logref == 'HIRER_NOT_FOUND'
     }
 
     void 'given a credit without payment rule group and product should be inserted'(){
@@ -524,8 +526,9 @@ class CreditServiceTest extends SpockApplicationTests {
         def paymentRuleGroup = fixtureCreator.createPaymentRuleGroup()
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -543,8 +546,9 @@ class CreditServiceTest extends SpockApplicationTests {
         }})
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -562,8 +566,9 @@ class CreditServiceTest extends SpockApplicationTests {
         }})
         def hirer = fixtureCreator.createHirer()
         Credit credit = Fixture.from(Credit.class).gimme("withoutProductAndPaymentRuleGroup", new Rule(){{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroup)
+            add("issuer", fixtureCreator.createIssuer())
         }})
 
         when:
@@ -624,9 +629,11 @@ class CreditServiceTest extends SpockApplicationTests {
 
     private Credit createCredit() {
         def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
         Fixture.from(Credit.class).gimme("withProduct", new Rule(){{
-            add("product", fixtureCreator.createProduct())
-            add("hirerDocument",hirer.getDocumentNumber() )
+            add("product", product)
+            add("hirer",hirer)
+            add("issuer", product.getIssuer())
         }})
     }
 

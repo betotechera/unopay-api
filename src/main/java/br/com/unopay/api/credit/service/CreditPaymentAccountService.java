@@ -49,7 +49,7 @@ public class CreditPaymentAccountService {
     }
 
     public CreditPaymentAccount register(Credit credit) {
-        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirerDocument());
+        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirer().getDocumentNumber());
         Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
         creditPaymentAccount.ifPresent(creditPayment -> {
             creditPayment.updateMyBalance(credit);
@@ -76,7 +76,7 @@ public class CreditPaymentAccountService {
     }
 
     public void subtract(Credit credit) {
-        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirerDocument());
+        List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirer().getDocumentNumber());
         Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
         creditPaymentAccount.ifPresent(creditPayment -> {
             creditPayment.subtract(credit);

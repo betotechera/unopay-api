@@ -52,7 +52,7 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             }
             this.product = credit.getProduct();
             this.paymentRuleGroup = credit.getPaymentRuleGroup();
-            this.hirerDocument = credit.getHirerDocument();
+            this.hirerDocument = credit.getHirer().getDocumentNumber();
             this.serviceType = credit.getServiceType();
             this.creditInsertionType = credit.getCreditInsertionType();
             this.creditNumber = credit.getCreditNumber();

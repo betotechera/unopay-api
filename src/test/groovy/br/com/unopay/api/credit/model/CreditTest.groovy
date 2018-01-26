@@ -19,7 +19,7 @@ class CreditTest  extends FixtureApplicationTest {
         then:
         a.product == b.product
         a.paymentRuleGroup == b.paymentRuleGroup
-        a.hirerDocument == b.hirerDocument
+        a.hirer.id == b.hirer.id
         a.serviceType == b.serviceType
         a.creditInsertionType == b.creditInsertionType
         a.creditNumber == b.creditNumber
@@ -43,7 +43,7 @@ class CreditTest  extends FixtureApplicationTest {
         then:
         a.product != b.product
         a.paymentRuleGroup != b.paymentRuleGroup
-        a.hirerDocument != b.hirerDocument
+        a.hirer != b.hirer
         a.serviceType != b.serviceType
         a.creditInsertionType != b.creditInsertionType
         a.creditNumber != b.creditNumber

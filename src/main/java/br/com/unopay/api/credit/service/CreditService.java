@@ -72,7 +72,7 @@ public class CreditService {
 
     @Transactional
     public void unblockCredit(CreditProcessed processed) {
-        Set<Credit> credits = findProcessingByIssuerDocumentAndInsertionType(processed.getDocument(),
+        Set<Credit> credits = findProcessingByIssuerAndInsertionType(processed.getIssuerId(),
                                                                                 processed.getInsertionType());
         credits.stream()
                 .filter(credit -> credit.valueIs(processed.getValue()))
@@ -82,12 +82,8 @@ public class CreditService {
                     credit.defineBlockedValue();
                     repository.save(credit);
                     creditPaymentAccountService.register(credit);
-            log.info("unblock credit for issuer={} of value={} processed",processed.getDocument(),processed.getValue());
+            log.info("unblock credit for issuer={} of value={} processed",processed.getIssuerId(),processed.getValue());
         });
-    }
-
-    private void notifyCredit(Credit credit) {
-        notifier.notify(Queues.HIRER_CREDIT_CREATED, credit);
     }
 
     private void incrementCreditNumber(Credit credit) {
@@ -97,7 +93,7 @@ public class CreditService {
     }
 
     public Credit findByIdForHirer(String id, Hirer hirer) {
-        Optional<Credit> credit = repository.findByIdAndHirerDocument(id, hirer.getDocumentNumber());
+        Optional<Credit> credit = repository.findByIdAndHirerId(id, hirer.getId());
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
@@ -106,13 +102,13 @@ public class CreditService {
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
-    public Set<Credit> findProcessingByIssuerDocumentAndInsertionType(String issuerDocument, CreditInsertionType type){
-        return repository.findByIssuerDocumentAndSituationAndCreditInsertionType(issuerDocument,
+    public Set<Credit> findProcessingByIssuerAndInsertionType(String issuerId, CreditInsertionType type){
+        return repository.findByIssuerIdAndSituationAndCreditInsertionType(issuerId,
                 CreditSituation.PROCESSING, type);
     }
 
     private void validateReferences(Credit credit) {
-        hirerService.findByDocumentNumber(credit.getHirerDocument());
+        hirerService.getById(credit.getHirer().getId());
         if (!credit.withPaymentRuleGroup()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_RULE_GROUP_REQUIRED);
         }

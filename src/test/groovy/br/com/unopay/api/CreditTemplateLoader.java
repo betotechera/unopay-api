@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
@@ -53,8 +54,8 @@ public class CreditTemplateLoader implements TemplateLoader {
         Fixture.of(Credit.class).addTemplate("allFields", new Rule(){{
             add("product", one(Product.class, "valid"));
             add("paymentRuleGroup",one(PaymentRuleGroup.class, "valid"));
-            add("hirerDocument",cnpj());
-            add("issuerDocument",cnpj());
+            add("hirer",one(Hirer.class, "valid"));
+            add("issuer",one(Issuer.class, "valid"));
             add("serviceType", random(ServiceType.class));
             add("creditInsertionType",random(CreditInsertionType.class));
             add("creditNumber", random(Long.class));

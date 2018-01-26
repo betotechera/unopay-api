@@ -152,7 +152,7 @@ public class PaymentRemittanceService {
     public void createForCredit(String issuerId) {
         Issuer currentIssuer = issuerService.findById(issuerId);
         Set<Credit> credits = creditService
-                .findProcessingByIssuerDocumentAndInsertionType(currentIssuer.documentNumber(), DIRECT_DEBIT);
+                .findProcessingByIssuerAndInsertionType(currentIssuer.getId(), DIRECT_DEBIT);
         if(!credits.isEmpty()) {
             createFromCredit(currentIssuer, credits);
         }
@@ -171,7 +171,7 @@ public class PaymentRemittanceService {
     private void createFromCredit(Issuer currentIssuer, Set<Credit> credits){
         Set<RemittancePayee> payees = credits.stream()
                 .map(credit ->
-                        new RemittancePayee(hirerService.findByDocumentNumber(credit.getHirerDocument()),
+                        new RemittancePayee(credit.getHirer(),
                                 currentIssuer.paymentBankCode(),
                                 credit.getValue()))
                 .collect(Collectors.toSet());

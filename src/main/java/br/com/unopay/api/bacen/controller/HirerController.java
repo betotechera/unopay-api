@@ -289,7 +289,7 @@ public class HirerController {
     public ResponseEntity<Credit> insertCredit(Hirer hirer,
                                          @Validated(Create.class) @RequestBody Credit credit) {
         log.info("inserting credit={} for hirer={}", credit, hirer.getDocumentNumber());
-        credit.setHirerDocument(hirer.getDocumentNumber());
+        credit.setHirer(hirer);
         Credit created = creditService.insert(credit);
         log.info("Inserted credit={}", created);
         return created(URI.create(String.format("/hirers/me/credits/%s",created.getId()))).body(created);

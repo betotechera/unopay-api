@@ -189,7 +189,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
         def hirerUser = fixtureCreator.createHirerUser()
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("hirer", hirerUser.hirer)
             add("situation", CreditSituation.AVAILABLE)
         }})
         def id = credit.id
@@ -206,7 +206,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
         def hirerUser = fixtureCreator.createHirerUser()
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("hirer", hirerUser.hirer)
         }})
         def id = credit.id
 
@@ -223,7 +223,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
         def hirerUser = fixtureCreator.createHirerUser()
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirerUser.hirer.documentNumber)
+            add("hirer", hirerUser.hirer)
         }})
         when:
         def result = this.mvc.perform(get("/hirers/me/credits?access_token={access_token}",accessToken)

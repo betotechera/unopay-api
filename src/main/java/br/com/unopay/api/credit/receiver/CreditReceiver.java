@@ -31,7 +31,7 @@ public class CreditReceiver {
     @RabbitListener(queues = Queues.CREDIT_PROCESSED, containerFactory = Queues.DURABLE_CONTAINER)
     public void creditReceiptNotify(String objectAsString) {
         CreditProcessed credit = genericObjectMapper.getAsObject(objectAsString, CreditProcessed.class);
-        log.info("credit for {}={} of value={} received",credit.getTarget(),credit.getDocument(),credit.getValue());
+        log.info("credit for {}={} of value={} received",credit.getTarget(),credit.getIssuerId(),credit.getValue());
         if(credit.forHirer()) {
             creditService.unblockCredit(credit);
             return;

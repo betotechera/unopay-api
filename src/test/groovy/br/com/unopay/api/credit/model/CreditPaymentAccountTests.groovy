@@ -76,7 +76,7 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.issuer == credit.product.issuer
         paymentAccount.product == credit.product
         paymentAccount.paymentRuleGroup == credit.paymentRuleGroup
-        paymentAccount.hirerDocument == credit.hirerDocument
+        paymentAccount.hirerDocument == credit.hirer.documentNumber
         paymentAccount.serviceType == credit.serviceType
         paymentAccount.creditInsertionType == credit.creditInsertionType
         paymentAccount.creditNumber == credit.creditNumber
@@ -100,7 +100,7 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.issuer == null
         paymentAccount.product == null
         paymentAccount.paymentRuleGroup == credit.paymentRuleGroup
-        paymentAccount.hirerDocument == credit.hirerDocument
+        paymentAccount.hirerDocument == credit.hirer.documentNumber
         paymentAccount.serviceType == credit.serviceType
         paymentAccount.creditInsertionType == credit.creditInsertionType
         paymentAccount.creditNumber == credit.creditNumber

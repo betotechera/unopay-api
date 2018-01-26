@@ -125,7 +125,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         BigDecimal value = 10.5
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(3, "allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("value", value)
             add("product", knownProduct)
             add("availableValue", value)
@@ -144,14 +144,14 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         BigDecimal value = 10.5
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
             add("serviceType", FREIGHT)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
@@ -172,7 +172,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         BigDecimal value = 10.5
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("paymentRuleGroup", paymentRuleGroupUnderTest)
             add("value", value)
             add("product", null)
@@ -181,7 +181,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("serviceType", ELECTRONIC_TOLL)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("product", knownProduct)
             add("value", value)
             add("availableValue", value)
@@ -208,7 +208,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
         def knownProduct = fixtureCreator.createProductWithOutDirectDebit()
         BigDecimal value = 10.5
         Credit credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("product", knownProduct)
             add("value", value)
             add("availableValue", value)
@@ -216,7 +216,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("serviceType", ELECTRONIC_TOLL)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
-            add("hirerDocument", hirer.getDocumentNumber())
+            add("hirer", hirer)
             add("product", null)
             add("value", value)
             add("availableValue", value)

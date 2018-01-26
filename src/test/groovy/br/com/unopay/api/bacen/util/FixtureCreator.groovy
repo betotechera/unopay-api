@@ -141,10 +141,12 @@ class FixtureCreator {
 
     Credit createCredit(Product product = createProduct()) {
         def hirer = createHirer()
+        def issuer = createIssuer()
         Fixture.from(Credit.class).gimme("allFields", new Rule() {
             {
-                add("hirerDocument", hirer.getDocumentNumber())
+                add("hirer", hirer)
                 add("product", product)
+                add("issuer", product ? product.getIssuer() : issuer)
                 if (product?.creditInsertionTypes) {
                     add("creditInsertionType", product?.creditInsertionTypes?.find())
                 }
