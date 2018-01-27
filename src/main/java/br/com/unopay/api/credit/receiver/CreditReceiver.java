@@ -61,6 +61,7 @@ public class CreditReceiver {
                 credit.issuerId(), credit.hirerId(), credit.getValue());
         if(credit.isCreditCard()) {
             credit.getPaymentRequest().setValue(credit.getValue());
+            credit.getPaymentRequest().setOrderId(credit.getId());
             Transaction transaction = transactionService.create(credit.getPaymentRequest());
             credit.defineStatus(transaction.getStatus());
             creditService.save(credit);
