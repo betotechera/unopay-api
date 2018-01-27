@@ -44,6 +44,7 @@ public class OrderReceiver {
                 order.getId(),order.getType(), order.getValue());
         if(order.is(PaymentMethod.CARD)) {
             Order current = orderService.findById(order.getId());
+            order.getPaymentRequest().setValue(current.getValue());
             Transaction transaction = transactionService.create(order.getPaymentRequest());
             current.defineStatus(transaction.getStatus());
             orderService.save(current);

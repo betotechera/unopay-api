@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -32,7 +33,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -78,7 +81,6 @@ public class Credit implements Serializable, Updatable, Billable {
 
     @ManyToOne
     @JoinColumn(name = "issuer_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Credit.Detail.class})
     private Issuer issuer;
 
@@ -127,6 +129,10 @@ public class Credit implements Serializable, Updatable, Billable {
     @Column(name = "blocked_value")
     @JsonView({Views.Credit.Detail.class})
     private BigDecimal blockedValue;
+
+    @Valid
+    @Transient
+    private PaymentRequest paymentRequest;
 
     @Version
     @JsonIgnore
