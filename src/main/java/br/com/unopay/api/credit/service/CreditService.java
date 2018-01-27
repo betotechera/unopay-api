@@ -151,4 +151,8 @@ public class CreditService {
     public Page<Credit> findByFilter(CreditFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
+
+    public void save(Credit credit) {
+        repository.save(credit);
+    }
 }

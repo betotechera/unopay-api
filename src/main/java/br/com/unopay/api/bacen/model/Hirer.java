@@ -52,6 +52,11 @@ public class Hirer implements Serializable {
     @JsonView({Views.Hirer.Detail.class})
     private String documentEmail;
 
+    @Column(name = "financier_mail")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Hirer.Detail.class})
+    private String financierMail;
+
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {
             person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));

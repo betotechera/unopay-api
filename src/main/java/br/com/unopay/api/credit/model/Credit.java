@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
+import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -12,6 +13,7 @@ import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +46,12 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCELED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCEL_PENDING;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURE_RECEIVED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.DENIED;
+import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUND;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.MAXIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_VALUE_NOT_MET;
@@ -186,6 +195,15 @@ public class Credit implements Serializable, Updatable, Billable {
         return CreditInsertionType.DIRECT_DEBIT.equals(creditInsertionType);
     }
 
+    public boolean isCreditCard() {
+        return CreditInsertionType.CREDIT_CARD.equals(creditInsertionType);
+    }
+
+    public boolean isBoleto() {
+        return CreditInsertionType.BOLETO.equals(creditInsertionType);
+    }
+
+
     public void defineAvailableValue(){
         if(!confirmedSituation()) {
             availableValue = BigDecimal.ZERO;
@@ -258,8 +276,8 @@ public class Credit implements Serializable, Updatable, Billable {
 
     @JsonIgnore
     public String getBillingMail() {
-        if(this.getHirer() != null && this.getHirer().getPerson() != null && this.getHirer().getPerson().getPhysicalPersonDetail() != null){
-            return this.getHirer().getPerson().getPhysicalPersonDetail().getEmail();
+        if(this.getHirer() != null && this.getHirer() != null){
+            return this.getHirer().getFinancierMail();
         }
         return null;
     }
@@ -305,5 +323,22 @@ public class Credit implements Serializable, Updatable, Billable {
     @Override
     public Date getCreateDateTime() {
         return getCreatedDateTime();
+    }
+
+    public void defineStatus(TransactionStatus transactionStatus) {
+        if(Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)){
+            this.situation = CreditSituation.CANCELED;
+            return;
+        }
+        if(Arrays.asList(CAPTURED, CAPTURE_RECEIVED).contains(transactionStatus)){
+            this.situation = CreditSituation.AVAILABLE;
+            return;
+        }
+        if(DENIED.equals(transactionStatus)){
+            this.situation = CreditSituation.CANCELED;
+            return;
+        }
+        this.situation = CreditSituation.PROCESSING;
+
     }
 }

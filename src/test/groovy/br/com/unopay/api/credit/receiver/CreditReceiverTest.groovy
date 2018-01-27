@@ -1,5 +1,7 @@
 package br.com.unopay.api.credit.receiver
 
+import br.com.unopay.api.billing.boleto.service.BoletoService
+import br.com.unopay.api.billing.creditcard.service.TransactionService
 import static br.com.unopay.api.credit.model.CreditInsertionType.DIRECT_DEBIT
 import br.com.unopay.api.credit.model.CreditProcessed
 import static br.com.unopay.api.credit.model.CreditTarget.CLIENT
@@ -12,13 +14,15 @@ import spock.lang.Specification
 
 class CreditReceiverTest extends  Specification{
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper()
     GenericObjectMapper genericObjectMapper = new GenericObjectMapper(objectMapper)
     CreditService creditServiceMock = Mock(CreditService)
+    BoletoService boletoServiceMock = Mock(BoletoService)
+    TransactionService transactionServiceMock = Mock(TransactionService)
 
     def 'when receive credit for hirer should call credit service'(){
         given:
-        def receiver = new CreditReceiver(creditServiceMock,genericObjectMapper)
+        def receiver = new CreditReceiver(creditServiceMock,genericObjectMapper, boletoServiceMock, transactionServiceMock)
         def valueAsString = objectMapper.writeValueAsString(new CreditProcessed("123", ONE, DIRECT_DEBIT, HIRER))
         when:
         receiver.creditReceiptNotify(valueAsString)
@@ -29,7 +33,7 @@ class CreditReceiverTest extends  Specification{
 
     def 'when receive credit for client should call credit service'(){
         given:
-        def receiver = new CreditReceiver(creditServiceMock,genericObjectMapper)
+        def receiver = new CreditReceiver(creditServiceMock,genericObjectMapper, boletoServiceMock, transactionServiceMock)
         def valueAsString = objectMapper.writeValueAsString(new CreditProcessed("123", ONE, DIRECT_DEBIT, CLIENT))
         when:
         receiver.creditReceiptNotify(valueAsString)
