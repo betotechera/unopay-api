@@ -6,6 +6,12 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
+import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
+import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
@@ -68,6 +74,8 @@ public class HirerController {
     private CreditPaymentAccountService creditPaymentAccountService;
     private PaymentInstrumentService paymentInstrumentService;
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
+    private BoletoService boletoService;
+    private TransactionService transactionService;
 
     @Value("${unopay.api}")
     private String api;
@@ -79,7 +87,8 @@ public class HirerController {
                            CreditService creditService,
                            CreditPaymentAccountService creditPaymentAccountService,
                            PaymentInstrumentService paymentInstrumentService,
-                           ContractorInstrumentCreditService contractorInstrumentCreditService) {
+                           ContractorInstrumentCreditService contractorInstrumentCreditService,
+                           BoletoService boletoService, TransactionService transactionService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -87,6 +96,8 @@ public class HirerController {
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
+        this.boletoService = boletoService;
+        this.transactionService = transactionService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -330,6 +341,28 @@ public class HirerController {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                                                                 .findByHirerDocument(hirer.getDocumentNumber());
         return new Results<>(creditPaymentAccounts);
+    }
+
+    @JsonView(Views.Boleto.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/boletos", method = RequestMethod.GET)
+    public Results<Boleto> findBoletos(OAuth2Authentication authentication,
+                                       BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
+        Page<Boleto> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/boletos", api));
+    }
+
+    @JsonView(Views.Billing.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/transactions", method = RequestMethod.GET)
+    public Results<Transaction> findTransactions(OAuth2Authentication authentication,
+                                                 TransactionFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find transactions for={} with filter={}", authentication.getName(), filter);
+        Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
     }
 
 }
