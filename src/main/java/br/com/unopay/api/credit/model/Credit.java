@@ -276,7 +276,7 @@ public class Credit implements Serializable, Updatable, Billable {
 
     @JsonIgnore
     public String getBillingMail() {
-        if(this.getHirer() != null && this.getHirer() != null){
+        if(this.getHirer() != null){
             return this.getHirer().getFinancierMail();
         }
         return null;
@@ -340,5 +340,9 @@ public class Credit implements Serializable, Updatable, Billable {
         }
         this.situation = CreditSituation.PROCESSING;
 
+    }
+
+    public boolean confirmed() {
+        return CreditSituation.CONFIRMED.equals(situation);
     }
 }

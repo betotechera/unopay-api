@@ -65,7 +65,7 @@ public class NotificationService {
         sendEmailToQueue(emailAsText, payload, EventType.REMITTANCE_CREATED);
     }
 
-    public void sendPaymentEmail(Order order, EventType eventType){
+    public void sendPaymentEmail(Billable order, EventType eventType){
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("order", order); }};
         sendEmailToQueue(order.getBillingMail(), payload, eventType);
     }

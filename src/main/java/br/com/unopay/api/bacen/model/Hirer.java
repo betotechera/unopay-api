@@ -49,12 +49,10 @@ public class Hirer implements Serializable {
     private BankAccount bankAccount;
 
     @Column(name="document_email")
-    @JsonView({Views.Hirer.Detail.class})
     private String documentEmail;
 
     @Column(name = "financier_mail")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Hirer.Detail.class})
     private String financierMail;
 
     public void updateModel(Hirer hirer) {
