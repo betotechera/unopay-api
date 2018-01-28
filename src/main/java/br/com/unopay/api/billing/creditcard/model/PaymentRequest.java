@@ -9,7 +9,6 @@ import lombok.Data;
 public class PaymentRequest {
 
     public static final int DEFAULT_INSTALLMENT = 1;
-    @NotNull
     private PaymentMethod method;
     private String orderId;
 
