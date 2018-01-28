@@ -1,6 +1,7 @@
 package br.com.unopay.api.credit.receiver;
 
 import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.config.Queues;
@@ -53,25 +54,38 @@ public class CreditReceiver {
         }
     }
 
-    @Transactional
     @RabbitListener(queues = Queues.HIRER_CREDIT_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void creditCreated(String objectAsString) {
         Credit credit = genericObjectMapper.getAsObject(objectAsString, Credit.class);
         log.info("creating payment for hirer credit issuer={} hirer={} value={}",
                 credit.issuerId(), credit.hirerId(), credit.getValue());
         if(credit.isCreditCard()) {
-            credit.getPaymentRequest().setValue(credit.getValue());
-            credit.getPaymentRequest().setOrderId(credit.getId());
+            definePaymentRequest(credit);
             Transaction transaction = transactionService.create(credit.getPaymentRequest());
-            credit.defineStatus(transaction.getStatus());
-            creditService.save(credit);
-            CreditProcessed processed = new CreditProcessed(credit.getHirer().getDocumentNumber(),
-                    credit.getValue(), CREDIT_CARD, HIRER);
-            creditService.unblockCredit(processed);
+            updateStatus(credit, transaction);
+            unblockCredit(credit);
         }
         if(credit.isBoleto()) {
             boletoService.createForCredit(credit);
         }
+    }
+
+    private void unblockCredit(Credit credit) {
+        CreditProcessed processed = new CreditProcessed(credit.getHirer().getDocumentNumber(),
+                credit.getValue(), CREDIT_CARD, HIRER);
+        creditService.unblockCredit(processed);
+    }
+
+    private void updateStatus(Credit credit, Transaction transaction) {
+        Credit current = creditService.findById(credit.getId());
+        current.defineStatus(transaction.getStatus());
+        creditService.save(current);
+    }
+
+    private void definePaymentRequest(Credit credit) {
+        credit.getPaymentRequest().setValue(credit.getValue());
+        credit.getPaymentRequest().setOrderId(credit.getId());
+        credit.getPaymentRequest().setMethod(PaymentMethod.CARD);
     }
 
 }
