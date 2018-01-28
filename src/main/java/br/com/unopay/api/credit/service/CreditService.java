@@ -165,11 +165,9 @@ public class CreditService {
     }
 
     public void process(Credit credit, Transaction transaction) {
-        updateStatus(credit, transaction);
         unblockCredit(credit);
-        if(!credit.confirmed()){
-            notificationService.sendPaymentEmail(credit,  EventType.PAYMENT_DENIED);
-        }
+        updateStatus(credit, transaction);
+
     }
 
     private void unblockCredit(Credit credit) {
@@ -182,5 +180,8 @@ public class CreditService {
         Credit current = findById(credit.getId());
         current.defineStatus(transaction.getStatus());
         save(current);
+        if(!credit.confirmed()){
+            notificationService.sendPaymentEmail(current,  EventType.PAYMENT_DENIED);
+        }
     }
 }
