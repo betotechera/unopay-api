@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
+import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
@@ -13,6 +14,8 @@ import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.repository.CreditRepository;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.notification.model.EventType;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -26,6 +29,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD;
+import static br.com.unopay.api.credit.model.CreditTarget.HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_REQUIRED;
 
@@ -40,6 +45,7 @@ public class CreditService {
     private IssuerService issuerService;
     @Setter private CreditPaymentAccountService creditPaymentAccountService;
     @Setter private Notifier notifier;
+    private NotificationService notificationService;
 
     public CreditService(){}
 
@@ -50,7 +56,7 @@ public class CreditService {
                          PaymentRuleGroupService paymentRuleGroupService,
                          IssuerService issuerService,
                          CreditPaymentAccountService creditPaymentAccountService,
-                         Notifier notifier) {
+                         Notifier notifier, NotificationService notificationService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.productService = productService;
@@ -58,6 +64,7 @@ public class CreditService {
         this.issuerService = issuerService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.notifier = notifier;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -86,6 +93,7 @@ public class CreditService {
                     credit.defineBlockedValue();
                     repository.save(credit);
                     creditPaymentAccountService.register(credit);
+                    notificationService.sendPaymentEmail(credit,  EventType.PAYMENT_APPROVED);
             log.info("unblock credit for issuer={} of value={} processed",processed.getIssuerId(),processed.getValue());
         });
     }
@@ -154,5 +162,25 @@ public class CreditService {
 
     public void save(Credit credit) {
         repository.save(credit);
+    }
+
+    public void process(Credit credit, Transaction transaction) {
+        updateStatus(credit, transaction);
+        unblockCredit(credit);
+        if(!credit.confirmed()){
+            notificationService.sendPaymentEmail(credit,  EventType.PAYMENT_DENIED);
+        }
+    }
+
+    private void unblockCredit(Credit credit) {
+        CreditProcessed processed = new CreditProcessed(credit.getHirer().getDocumentNumber(),
+                credit.getValue(), CREDIT_CARD, HIRER);
+        unblockCredit(processed);
+    }
+
+    private void updateStatus(Credit credit, Transaction transaction) {
+        Credit current = findById(credit.getId());
+        current.defineStatus(transaction.getStatus());
+        save(current);
     }
 }

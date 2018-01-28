@@ -62,25 +62,14 @@ public class CreditReceiver {
         if(credit.isCreditCard()) {
             definePaymentRequest(credit);
             Transaction transaction = transactionService.create(credit.getPaymentRequest());
-            updateStatus(credit, transaction);
-            unblockCredit(credit);
+            creditService.process(credit, transaction);
         }
         if(credit.isBoleto()) {
             boletoService.createForCredit(credit);
         }
     }
 
-    private void unblockCredit(Credit credit) {
-        CreditProcessed processed = new CreditProcessed(credit.getHirer().getDocumentNumber(),
-                credit.getValue(), CREDIT_CARD, HIRER);
-        creditService.unblockCredit(processed);
-    }
 
-    private void updateStatus(Credit credit, Transaction transaction) {
-        Credit current = creditService.findById(credit.getId());
-        current.defineStatus(transaction.getStatus());
-        creditService.save(current);
-    }
 
     private void definePaymentRequest(Credit credit) {
         credit.getPaymentRequest().setValue(credit.getValue());
