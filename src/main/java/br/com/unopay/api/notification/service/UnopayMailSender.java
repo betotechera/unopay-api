@@ -73,8 +73,8 @@ public class UnopayMailSender {
                 && notification.getEmail().getTo() != null
                 && mailValidator.isValid(notification.getEmail().getTo());
         if(!valid){
-            log.warn("Invalid notification mail. Type={} mail={}", notification.getEventType(),
-                    notification.getEmail().getTo());
+            String mail = notification.getEmail() != null ? notification.getEmail().getTo() : "";
+            log.warn("Invalid notification mail. Type={} mail={}", notification.getEventType(), mail);
         }
         return valid;
     }
