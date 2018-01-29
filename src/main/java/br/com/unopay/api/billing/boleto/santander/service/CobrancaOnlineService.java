@@ -32,6 +32,7 @@ public class CobrancaOnlineService {
     public static final String NSU_TEST_PREFIX = "TST";
     public static final String YMB = "YMB";
     public static final String REGISTRY_OK_MESSAGE = "registrado";
+    public static final int EXPIRATION_IN_SECONDS = 600;
     private TicketEndpoint ticketEndpoint;
     private CobrancaEndpoint cobrancaEndpoint;
 
@@ -55,6 +56,7 @@ public class CobrancaOnlineService {
         TicketRequest ticketRequest = new TicketRequest();
         ticketRequest.setDados(dados);
         ticketRequest.setSistema(YMB);
+        ticketRequest.setExpiracao(EXPIRATION_IN_SECONDS);
         TicketResponse ticketResponse = ticketEndpoint.create(ticketRequest);
         TituloGenericRequest tituloGenericRequest = new TituloGenericRequest();
         tituloGenericRequest.setTpAmbiente(enviroment);
