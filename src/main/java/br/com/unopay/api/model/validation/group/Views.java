@@ -156,13 +156,19 @@ public interface Views {
     }
 
     interface Billing {
-        interface Detail {}
+        interface Detail extends List{}
         interface List{}
     }
 
     interface Boleto {
-        interface Detail {}
+        interface Detail extends List{}
         interface List{}
     }
+
+    interface ContractorCreditRecurrence {
+        interface Detail extends List {}
+        interface List{}
+    }
+
 
 }

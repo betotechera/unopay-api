@@ -7,7 +7,9 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.ContractorCreditRecurrence;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditInsertionType;
@@ -137,6 +139,14 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("createdDateTime", instant("1 second from now"));
             add("updatedDateTime", instant("1 second from now"));
             add("documentNumber", cnpj());
+        }});
+
+        Fixture.of(ContractorCreditRecurrence.class).addTemplate("valid", new Rule(){{
+            add("hirer",one(Hirer.class, "valid"));
+            add("value",random(BigDecimal.class, range(21, 200)));
+            add("createdDateTime", instant("1 second from now"));
+            add("contract", one(Contract.class, "valid"));
+            add("recurrencePeriod", random(RecurrencePeriod.class));
         }});
 
     }
