@@ -164,10 +164,16 @@ public class CreditService {
         repository.save(credit);
     }
 
+    public void processAsPaid(String creditId) {
+        Credit credit = findById(creditId);
+        credit.setSituation(CreditSituation.CONFIRMED);
+        save(credit);
+        unblockCredit(credit);
+    }
+
     public void process(Credit credit, Transaction transaction) {
         unblockCredit(credit);
         updateStatus(credit, transaction);
-
     }
 
     private void unblockCredit(Credit credit) {

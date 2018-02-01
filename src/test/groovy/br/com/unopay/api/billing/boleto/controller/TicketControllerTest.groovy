@@ -1,7 +1,7 @@
 package br.com.unopay.api.billing.boleto.controller
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
@@ -10,13 +10,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class BoletoControllerTest extends AuthServerApplicationTests {
+class TicketControllerTest extends AuthServerApplicationTests {
 
 
     void 'known boletos should be returned'() {
         given:
         String accessToken = getUserAccessToken()
-        Fixture.from(Boleto.class).uses(jpaProcessor).gimme("valid")
+        Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid")
 
         when:
         def result = this.mvc.perform(get('/boletos?access_token={access_token}', accessToken)

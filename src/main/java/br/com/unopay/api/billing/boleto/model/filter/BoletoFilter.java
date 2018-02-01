@@ -13,13 +13,13 @@ public class BoletoFilter implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
-    @SearchableField
+    @SearchableField(field = "sourceId")
     private List<String> orderId;
 
     @SearchableField
     private String issuerDocument;
 
-    @SearchableField
+    @SearchableField(field = "payerDocument")
     private String clientDocument;
 
     @SearchableField

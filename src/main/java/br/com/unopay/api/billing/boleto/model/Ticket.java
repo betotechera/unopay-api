@@ -24,8 +24,8 @@ import org.hibernate.annotations.GenericGenerator;
 @Slf4j
 @Data
 @Entity
-@Table(name = "boleto")
-public class Boleto {
+@Table(name = "ticket")
+public class Ticket {
 
     @Id
     @Column(name="id")
@@ -112,4 +112,11 @@ public class Boleto {
     @Version
     private Integer version;
 
+    public boolean fromContractor() {
+        return TicketPaymentSource.CONTRACTOR.equals(paymentSource);
+    }
+
+    public boolean fromHirer() {
+        return TicketPaymentSource.HIRER.equals(paymentSource);
+    }
 }

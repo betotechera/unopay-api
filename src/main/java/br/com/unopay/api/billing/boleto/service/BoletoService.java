@@ -2,7 +2,7 @@ package br.com.unopay.api.billing.boleto.service;
 
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
-import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
@@ -50,7 +50,8 @@ public class BoletoService {
     public static final String EMPTY = "";
     public static final String PAID = "06";
     public static final int FIRST_TICKET_LINE = 3;
-    public static final int NETXT_TICKET_LINE = 2;
+    public static final int NEXT_TICKET_LINE = 2;
+    public static final int TRAILER = 2;
 
     private BoletoRepository repository;
     @Setter private OrderService orderService;
@@ -85,29 +86,29 @@ public class BoletoService {
         this.notificationService = notificationService;
     }
 
-    public Boleto save(Boleto boleto) {
-        return repository.save(boleto);
+    public Ticket save(Ticket ticket) {
+        return repository.save(ticket);
     }
 
-    public Boleto findById(String id) {
+    public Ticket findById(String id) {
         return repository.findOne(id);
     }
 
-    public Boleto createForOrder(String orderId) {
+    public Ticket createForOrder(String orderId) {
         Order order = orderService.findById(orderId);
-        Boleto boleto = create(order);
-        notificationService.sendBoletoIssued(order, boleto);
-        return boleto;
+        Ticket ticket = create(order);
+        notificationService.sendBoletoIssued(order, ticket);
+        return ticket;
     }
 
-    public Boleto createForCredit(Credit credit) {
+    public Ticket createForCredit(Credit credit) {
         Credit current = creditService.findById(credit.getId());
-        Boleto boleto = create(current);
-        notificationService.sendBoletoIssued(current, boleto);
-        return boleto;
+        Ticket ticket = create(current);
+        notificationService.sendBoletoIssued(current, ticket);
+        return ticket;
     }
 
-    private Boleto create(Billable order) {
+    private Ticket create(Billable order) {
         PaymentBankAccount paymentBankAccount = order.getIssuer().getPaymentAccount();
         String number = createNumber(order);
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
@@ -134,16 +135,21 @@ public class BoletoService {
     @SneakyThrows
     public void processTicketReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
-        for (int currentLine = FIRST_TICKET_LINE; currentLine < cnab240.split(SEPARATOR).length;
-                                                                currentLine += NETXT_TICKET_LINE) {
+        for (int currentLine = FIRST_TICKET_LINE; currentLine < cnab240.split(SEPARATOR).length - TRAILER;
+                                                                currentLine += NEXT_TICKET_LINE) {
             String ticketNumber = getTicketNumber(cnab240, currentLine);
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
-            Optional<Boleto> current = repository.findByNumber(ticketNumber);
-            current.ifPresent(boleto -> {
+            Optional<Ticket> current = repository.findByNumber(ticketNumber);
+            current.ifPresent(ticket -> {
                 if(PAID.equals(occurrenceCode)){
-                    processAsPaid(boleto);
+                    if(ticket.fromContractor()){
+                        processOrderAsPaid(ticket);
+                    }
+                    if(ticket.fromHirer()){
+                        processCreditAsPaid(ticket);
+                    }
                 }else{
-                    defineOccurrence(boleto, occurrenceCode);
+                    defineOccurrence(ticket, occurrenceCode);
                 }
             });
         }
@@ -154,15 +160,20 @@ public class BoletoService {
         return remittanceExtractor.extractOnLine(CODIGO_OCORRENCIA, currentLine);
     }
 
-    private void processAsPaid(Boleto boleto) {
-        defineOccurrence(boleto, PAID);
-        orderService.processAsPaid(boleto.getSourceId());
+    private void processOrderAsPaid(Ticket ticket) {
+        defineOccurrence(ticket, PAID);
+        orderService.processAsPaid(ticket.getSourceId());
     }
 
-    private void defineOccurrence(Boleto boleto, String occurrenceCode) {
-        boleto.setProcessedAt(new Date());
-        boleto.setOccurrenceCode(occurrenceCode);
-        repository.save(boleto);
+    private void processCreditAsPaid(Ticket ticket) {
+        defineOccurrence(ticket, PAID);
+        creditService.processAsPaid(ticket.getSourceId());
+    }
+
+    private void defineOccurrence(Ticket ticket, String occurrenceCode) {
+        ticket.setProcessedAt(new Date());
+        ticket.setOccurrenceCode(occurrenceCode);
+        repository.save(ticket);
     }
 
 
@@ -176,7 +187,7 @@ public class BoletoService {
         return Integer.valueOf(remittanceNumber.replaceAll(" ", "")).toString();
     }
 
-    public Page<Boleto> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
+    public Page<Ticket> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
         List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
         ids = filter.getOrderId().isEmpty() ? ids : intersection;
@@ -184,7 +195,7 @@ public class BoletoService {
         return findByFilter(filter, pageable);
     }
 
-    public Page<Boleto> findByFilter(BoletoFilter filter, UnovationPageRequest pageable) {
+    public Page<Ticket> findByFilter(BoletoFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
@@ -195,22 +206,22 @@ public class BoletoService {
         return fileUploaderService.uploadBytes(path, bytes);
     }
 
-    private Boleto createBoletoModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
+    private Ticket createBoletoModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
                                      String ourNumber) {
         final String path = createFile(billable, boletoStella);
-        Boleto boleto = new Boleto();
-        boleto.setValue(billable.getValue());
-        boleto.setIssuerDocument(billable.getIssuer().documentNumber());
-        boleto.setPayerDocument(billable.getPayer().documentNumber());
-        boleto.setSourceId(billable.getId());
-        boleto.setUri(path);
-        boleto.setTypingCode(boletoStella.getLinhaDigitavel());
-        boleto.setNumber(boletoStella.getNumeroDoDocumento());
-        boleto.setOurNumber(ourNumber);
-        boleto.setCreateDateTime(new Date());
-        boleto.setExpirationDateTime(boletoStella.getDatas().getVencimento().getTime());
-        boleto.setPaymentSource(billable.getPaymentSource());
-        return save(boleto);
+        Ticket ticket = new Ticket();
+        ticket.setValue(billable.getValue());
+        ticket.setIssuerDocument(billable.getIssuer().documentNumber());
+        ticket.setPayerDocument(billable.getPayer().documentNumber());
+        ticket.setSourceId(billable.getId());
+        ticket.setUri(path);
+        ticket.setTypingCode(boletoStella.getLinhaDigitavel());
+        ticket.setNumber(boletoStella.getNumeroDoDocumento());
+        ticket.setOurNumber(ourNumber);
+        ticket.setCreateDateTime(new Date());
+        ticket.setExpirationDateTime(boletoStella.getDatas().getVencimento().getTime());
+        ticket.setPaymentSource(billable.getPaymentSource());
+        return save(ticket);
     }
 
     private String createNumber(Billable order) {

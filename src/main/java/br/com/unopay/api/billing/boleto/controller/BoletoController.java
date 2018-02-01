@@ -1,6 +1,6 @@
 package br.com.unopay.api.billing.boleto.controller;
 
-import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.service.BoletoService;
 import br.com.unopay.api.model.validation.group.Views;
@@ -35,7 +35,7 @@ public class BoletoController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_BOLETOS')")
     @RequestMapping(value = "/boletos", method = RequestMethod.GET)
-    public Results<Boleto> findBoletos(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Ticket> findBoletos(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos  with filter={}", filter);
         return getBoletoResults(filter, pageable);
     }
@@ -43,13 +43,13 @@ public class BoletoController {
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/boletos", method = RequestMethod.GET, params = "orderId")
-    public Results<Boleto> findBoletosByOrderIdOnly(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Ticket> findBoletosByOrderIdOnly(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos  with filter={}", filter);
         return getBoletoResults(filter, pageable);
     }
 
-    private Results<Boleto> getBoletoResults(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
-        Page<Boleto> page = service.findByFilter(filter, pageable);
+    private Results<Ticket> getBoletoResults(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+        Page<Ticket> page = service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/boletos", api));
     }

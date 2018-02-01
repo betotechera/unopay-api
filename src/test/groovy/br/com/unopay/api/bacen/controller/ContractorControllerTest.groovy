@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.model.PaymentInstrument
@@ -191,8 +191,8 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
         Order order = fixtureCreator.createPersistedAdhesionOrder(person)
 
-        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("orderId", order.id)
+        Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("sourceId", order.id)
         }})
 
         when:
@@ -214,14 +214,14 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Order orderA = fixtureCreator.createPersistedAdhesionOrder(person)
         Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
 
-        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("orderId", uniqueRandom(orderA.id,orderB.id))
+        Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("sourceId", uniqueRandom(orderA.id,orderB.id))
         }})
 
-        def orderId = orderA.id
+        def sourceId = orderA.id
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={orderId}',accessToken, orderId)
+        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -229,7 +229,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
     }
 
-    void 'should not return boleto with unkown orderId'() {
+    void 'should not return boleto with unkown sourceId'() {
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
@@ -238,14 +238,14 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Order orderA = fixtureCreator.createPersistedAdhesionOrder(person)
         Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
 
-        Fixture.from(Boleto.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("orderId", uniqueRandom(orderA.id,orderB.id))
+        Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+            add("sourceId", uniqueRandom(orderA.id,orderB.id))
         }})
 
-        def orderId = 'unknown'
+        def sourceId = 'unknown'
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={orderId}',accessToken, orderId)
+        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())

@@ -501,7 +501,7 @@ public final class Errors {
     public static final UnovationError UNABLE_TO_UPDATE_ORDER_STATUS =
             new UnovationError("UNABLE_TO_UPDATE_ORDER_STATUS", "Unable to update order status.");
 
-    /* Boleto */
+    /* Ticket */
     public static final UnovationError CLIENT_REQUIRED =
             new UnovationError("CLIENT_REQUIRED", "Client required.");
     public static final UnovationError ISSUER_REQUIRED =

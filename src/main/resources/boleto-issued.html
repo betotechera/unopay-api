@@ -408,7 +408,7 @@
                             <tr>
                                 <td class="content-cell">
                                     <h1>Ol&aacute; {{order.person.shortName}},</h1>
-                                    <p>Seu boleto no valor de {{ "R$: %s " | format(boleto.value) }} para o pedido {{order.number}} foi gerado. Clique no botao abaixo para baix&aacute;-lo.</p>
+                                    <p>Seu ticket no valor de {{ "R$: %s " | format(ticket.value) }} para o pedido {{order.number}} foi gerado. Clique no botao abaixo para baix&aacute;-lo.</p>
                                     <!-- Action -->
                                     <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
@@ -421,7 +421,7 @@
                                                             <table border="0" cellspacing="0" cellpadding="0">
                                                                 <tr>
                                                                     <td>
-                                                                        <a href="{{boleto.uri}}" class="button button--green " target="_blank">Baixar boleto</a>
+                                                                        <a href="{{ticket.uri}}" class="button button--green " target="_blank">Baixar ticket</a>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -435,7 +435,7 @@
                                         <tr>
                                             <td>
                                                 <p>Caso prefira pode copiar o codigo abaixo para pagar pela internet</p>
-                                                <p>{{boleto.typingCode}}</p>
+                                                <p>{{ticket.typingCode}}</p>
                                             </td>
                                         </tr>
                                     </table>

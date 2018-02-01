@@ -4,7 +4,7 @@ import br.com.unopay.api.http.DescriptableEnum;
 import java.util.Arrays;
 
 public enum CreditInsertionType implements DescriptableEnum {
-    BOLETO("Boleto"), DIRECT_DEBIT("Debito em conta."),
+    BOLETO("oleto"), DIRECT_DEBIT("Debito em conta."),
     CREDIT_CARD("Cartao de credito.");
 
     private String description;

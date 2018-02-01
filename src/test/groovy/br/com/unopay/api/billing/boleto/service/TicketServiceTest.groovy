@@ -3,7 +3,7 @@ package br.com.unopay.api.billing.boleto.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.billing.boleto.model.Boleto
+import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService
@@ -13,6 +13,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_OCORRENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_TITULO
 import br.com.unopay.api.credit.model.Credit
+import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
@@ -23,7 +24,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mock.web.MockMultipartFile
 
-class BoletoServiceTest extends SpockApplicationTests{
+class TicketServiceTest extends SpockApplicationTests{
 
     public static final String PAID = "06"
     @Autowired
@@ -31,19 +32,20 @@ class BoletoServiceTest extends SpockApplicationTests{
     String path
     Order order
     Credit credit
-    Boleto boleto
+    Ticket boleto
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
     NotificationService notificationServiceMock = Mock(NotificationService)
     RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
+    CreditService creditServiceMock = Mock(CreditService)
 
 
     def setup(){
         credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
         order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
-        boleto = Fixture.from(Boleto.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
         }})
         path = "${order.person.documentNumber()}.pdf"
@@ -55,8 +57,14 @@ class BoletoServiceTest extends SpockApplicationTests{
         service.notificationService = notificationServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
         service.orderService = orderServiceMock
+        service.creditService = creditServiceMock
+        creditServiceMock.findById(credit.id) >> credit
         orderServiceMock.findById(order.id) >> order
+        creditServiceMock.findById(null) >> {
+            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_CREDIT_NOT_FOUND)
+        }
         orderServiceMock.findById('') >> { throw UnovationExceptions.notFound().withErrors(Errors.ORDER_NOT_FOUND) }
+
     }
 
     def 'when process cnab paid ticket the occurrence code should be paid'(){
@@ -91,7 +99,7 @@ class BoletoServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
         extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        boleto = Fixture.from(Boleto.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
         }})
@@ -99,16 +107,34 @@ class BoletoServiceTest extends SpockApplicationTests{
         service.processTicketReturn(file)
 
         then:
-        orderServiceMock.processAsPaid(order.id)
+        2 * orderServiceMock.processAsPaid(order.id)
+        0 * creditServiceMock.processAsPaid(_)
+    }
+
+    def 'given a hirer payment source when process paid ticket should call credit process'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER)
+        }})
+        when:
+        service.processTicketReturn(file)
+
+        then:
+        2 * creditServiceMock.processAsPaid(credit.id)
+        0 * orderServiceMock.processAsPaid(_)
     }
 
     def 'given a valid boleto should be created'(){
         given:
-        Boleto boleto = Fixture.from(Boleto.class).gimme("valid")
+        Ticket boleto = Fixture.from(Ticket.class).gimme("valid")
 
         when:
-        Boleto created = service.save(boleto)
-        Boleto result = service.findById(created.id)
+        Ticket created = service.save(boleto)
+        Ticket result = service.findById(created.id)
 
         then:
         result != null
@@ -124,7 +150,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'should create boleto from known order'(){
         when:
-        Boleto created = service.createForOrder(order.id)
+        Ticket created = service.createForOrder(order.id)
 
         then:
         created.issuerDocument == order.product.issuer.documentNumber()
@@ -135,8 +161,8 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should be found'(){
         when:
-        Boleto created = service.createForOrder(order.id)
-        Boleto result = service.findById(created.id)
+        Ticket created = service.createForOrder(order.id)
+        Ticket result = service.findById(created.id)
 
         then:
         result != null
@@ -144,7 +170,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should create with meta information'(){
         when:
-        Boleto created = service.createForOrder(order.id)
+        Ticket created = service.createForOrder(order.id)
 
         then:
         created.uri
@@ -156,7 +182,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto should increment number'(){
         when:
-        Boleto result = service.createForOrder(order.id)
+        Ticket result = service.createForOrder(order.id)
 
         then:
         result.number
@@ -189,7 +215,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'should create boleto from known credit'(){
         when:
-        Boleto created = service.createForCredit(credit)
+        Ticket created = service.createForCredit(credit)
 
         then:
         created.issuerDocument == credit.issuer.documentNumber()
@@ -200,8 +226,8 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto for credit should be found'(){
         when:
-        Boleto created = service.createForCredit(credit)
-        Boleto result = service.findById(created.id)
+        Ticket created = service.createForCredit(credit)
+        Ticket result = service.findById(created.id)
 
         then:
         result != null
@@ -209,7 +235,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto for credit should create with meta information'(){
         when:
-        Boleto created = service.createForCredit(credit)
+        Ticket created = service.createForCredit(credit)
 
         then:
         created.uri
@@ -221,7 +247,7 @@ class BoletoServiceTest extends SpockApplicationTests{
 
     def 'when create boleto for credit should increment number'(){
         when:
-        Boleto result = service.createForCredit(credit)
+        Ticket result = service.createForCredit(credit)
 
         then:
         result.number

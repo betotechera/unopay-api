@@ -1,6 +1,6 @@
 package br.com.unopay.api.notification.service;
 
-import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
@@ -9,7 +9,6 @@ import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
-import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;
@@ -70,10 +69,10 @@ public class NotificationService {
         sendEmailToQueue(order.getBillingMail(), payload, eventType);
     }
 
-    public void sendBoletoIssued(Billable order, Boleto boleto) {
+    public void sendBoletoIssued(Billable order, Ticket ticket) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("order", order);
-        payload.put("boleto", boleto);
+        payload.put("ticket", ticket);
         sendEmailToQueue(order.getBillingMail(), payload, EventType.BOLETO_ISSUED);
     }
 

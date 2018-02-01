@@ -3,7 +3,7 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.Amount;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
@@ -76,7 +76,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("securityCode", regex("\\d{3}"));
         }});
 
-        Fixture.of(Boleto.class).addTemplate("valid", new Rule() {{
+        Fixture.of(Ticket.class).addTemplate("valid", new Rule() {{
             add("sourceId", regex("\\d{8}"));
             add("issuerDocument", cnpj());
             add("payerDocument", cnpj());

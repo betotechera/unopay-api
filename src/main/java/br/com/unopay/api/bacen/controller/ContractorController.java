@@ -3,7 +3,7 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
-import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
 import br.com.unopay.api.billing.boleto.service.BoletoService;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
@@ -222,10 +222,10 @@ public class ContractorController {
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
-    public Results<Boleto> findBoletos(OAuth2Authentication authentication,
-                                      BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Ticket> findBoletos(OAuth2Authentication authentication,
+                                       BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Page<Boleto> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
+        Page<Ticket> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/boletos", api));
     }
