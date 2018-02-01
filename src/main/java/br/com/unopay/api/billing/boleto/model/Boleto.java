@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,10 +34,10 @@ public class Boleto {
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
-    @Column(name = "order_id")
+    @Column(name = "source_id")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.Detail.class})
-    private String orderId;
+    private String sourceId;
 
     @NotNull(groups = {Create.class})
     @JoinColumn(name="issuer_document")
@@ -43,9 +45,9 @@ public class Boleto {
     private String issuerDocument;
 
     @NotNull(groups = {Create.class})
-    @JoinColumn(name="client_document")
+    @JoinColumn(name="payer_document")
     @JsonView({Views.Boleto.Detail.class})
-    private String clientDocument;
+    private String payerDocument;
 
     @Column(name = "expiration_date_time")
     @NotNull(groups = {Create.class})
@@ -53,7 +55,6 @@ public class Boleto {
     private Date expirationDateTime;
 
     @Column(name = "processed_at")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.Detail.class})
     private Date processedAt;
 
@@ -96,6 +97,16 @@ public class Boleto {
     @NotNull(groups = {Create.class})
     @JsonView({Views.Boleto.List.class})
     private Date createDateTime;
+
+    @Column(name = "occurrence_code")
+    @JsonView({Views.Boleto.Detail.class})
+    private String occurrenceCode;
+
+    @Column(name = "source_type")
+    @Enumerated(EnumType.STRING)
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Boleto.Detail.class})
+    private TicketPaymentSource paymentSource;
 
     @JsonIgnore
     @Version

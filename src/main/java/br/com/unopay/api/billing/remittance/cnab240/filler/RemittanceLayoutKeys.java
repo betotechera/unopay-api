@@ -75,4 +75,6 @@ public class RemittanceLayoutKeys {
     public static final String VALOR_MORA = "valorMora";
     public static final String VALOR_MULTA = "valorMulta";
     public static final String CODIGO_DOCUMENTO_FAVORECIDO = "codigoDocumentoFavorecido";
+    public static final String CODIGO_OCORRENCIA = "codigoOcorrencia";
+    public static final String IDENTIFICACAO_TITULO = "identificacaoTitulo";
 }

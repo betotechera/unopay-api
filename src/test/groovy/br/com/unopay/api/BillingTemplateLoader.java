@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.billing.boleto.model.Boleto;
+import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.Amount;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
@@ -76,9 +77,9 @@ public class BillingTemplateLoader  implements TemplateLoader {
         }});
 
         Fixture.of(Boleto.class).addTemplate("valid", new Rule() {{
-            add("orderId", regex("\\d{8}"));
+            add("sourceId", regex("\\d{8}"));
             add("issuerDocument", cnpj());
-            add("clientDocument", cnpj());
+            add("payerDocument", cnpj());
             add("expirationDateTime", instant("3 days from now"));
             add("processedAt", instant("2 days from now"));
             add("value", random(BigDecimal.class, range(0.1, 500)));
@@ -86,8 +87,9 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
             add("uri", regex("\\w{10}"));
             add("typingCode", regex("\\d{44}"));
-            add("number", regex("\\d{44}"));
-            add("ourNumber", regex("\\d{13}"));
+            add("number", regex("\\d{8}"));
+            add("ourNumber", regex("\\d{8}"));
+            add("paymentSource", random(TicketPaymentSource.class));
         }});
     }
 }

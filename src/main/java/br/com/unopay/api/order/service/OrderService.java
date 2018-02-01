@@ -14,6 +14,7 @@ import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
@@ -157,6 +158,14 @@ public class OrderService {
         defineValueWithAdhesionValueWhenRequired(order);
         defineValueWithInstallmentValueWhenRequired(order);
     }
+
+    public void processAsPaid(String orderId){
+        Order order = findById(orderId);
+        order.setStatus(OrderStatus.PAID);
+        save(order);
+        process(order);
+    }
+
 
     public void process(Order order){
         if(order.paid()) {

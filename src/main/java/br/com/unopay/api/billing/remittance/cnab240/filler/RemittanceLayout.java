@@ -13,6 +13,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CEP;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CIDADE;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_DOCUMENTO_FAVORECIDO;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_OCORRENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_REMESSA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO_CEP;
@@ -33,6 +34,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_TED;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FORMA_LANCAMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.HORA_GERACAO_ARQUIVO;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_TITULO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INFORMACAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INICIO_FEBRABAN;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INSTITUICAO_MOVIMENTO;
@@ -197,6 +199,17 @@ public abstract class RemittanceLayout {
         put(CODIGO_DOCUMENTO_FAVORECIDO, new RecordColumnRule(23,211,225,15, ColumnType.ALPHA));
         put(FIM_FEBRABAN, new RecordColumnRule(24,226,240,15, ColumnType.ALPHA));
     }};
+
+
+
+    public static Map<String, RecordColumnRule> getBatchSegmentT() {
+        return batchSegmentT;
+    }
+    private static final Map<String, RecordColumnRule> batchSegmentT = new HashMap<String, RecordColumnRule>(){
+        {
+            put(CODIGO_OCORRENCIA, new RecordColumnRule(1,16,17,2, ColumnType.ALPHA));
+            put(IDENTIFICACAO_TITULO, new RecordColumnRule(2,55,69,15, ColumnType.NUMBER));
+        }};
 
     private static final Map<String, RecordColumnRule> batchTrailer = new HashMap<String, RecordColumnRule>(){{
         put(BANCO_COMPENSACAO, new RecordColumnRule(1,1,3,3, "237", ColumnType.NUMBER));

@@ -10,6 +10,8 @@ import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketReques
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
 import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
+import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
+import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
@@ -20,14 +22,22 @@ import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentT;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_OCORRENCIA;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_TITULO;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 
@@ -38,13 +48,17 @@ public class BoletoService {
     private static final String PDF_PATH = "%s/%s/%s.pdf";
     public static final String ZERO = "0";
     public static final String EMPTY = "";
+    public static final String PAID = "06";
+    public static final int FIRST_TICKET_LINE = 3;
+    public static final int NETXT_TICKET_LINE = 2;
 
     private BoletoRepository repository;
-    private OrderService orderService;
-    private CreditService creditService;
+    @Setter private OrderService orderService;
+    @Setter private CreditService creditService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
-    private NotificationService notificationService;
+    @Setter private LayoutExtractorSelector layoutExtractorSelector;
+    @Setter private NotificationService notificationService;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -60,12 +74,14 @@ public class BoletoService {
                          CreditService creditService,
                          CobrancaOnlineService cobrancaOnlineService,
                          FileUploaderService fileUploaderService,
+                         LayoutExtractorSelector layoutExtractorSelector,
                          NotificationService notificationService) {
         this.repository = repository;
         this.orderService = orderService;
         this.creditService = creditService;
         this.cobrancaOnlineService = cobrancaOnlineService;
         this.fileUploaderService = fileUploaderService;
+        this.layoutExtractorSelector = layoutExtractorSelector;
         this.notificationService = notificationService;
     }
 
@@ -101,7 +117,7 @@ public class BoletoService {
                 .yourNumber(number).build();
 
         TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
-        String clearOurNumber = tituloDto.getNossoNumero().replace(ZERO, EMPTY);
+        String clearOurNumber = Integer.valueOf(tituloDto.getNossoNumero()).toString();
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(order.getIssuer())
                 .number(number)
@@ -111,6 +127,53 @@ public class BoletoService {
                 .ourNumber(clearOurNumber)
                 .build();
         return createBoletoModel(order, boletoStella, clearOurNumber);
+    }
+
+
+    @Transactional
+    @SneakyThrows
+    public void processTicketReturn(MultipartFile multipartFile) {
+        String cnab240 = new String(multipartFile.getBytes());
+        for (int currentLine = FIRST_TICKET_LINE; currentLine < cnab240.split(SEPARATOR).length;
+                                                                currentLine += NETXT_TICKET_LINE) {
+            String ticketNumber = getTicketNumber(cnab240, currentLine);
+            String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
+            Optional<Boleto> current = repository.findByNumber(ticketNumber);
+            current.ifPresent(boleto -> {
+                if(PAID.equals(occurrenceCode)){
+                    processAsPaid(boleto);
+                }else{
+                    defineOccurrence(boleto, occurrenceCode);
+                }
+            });
+        }
+    }
+
+    private String getOccurrenceCode(String cnab240, int currentLine) {
+        RemittanceExtractor remittanceExtractor = layoutExtractorSelector.define(getBatchSegmentT(), cnab240);
+        return remittanceExtractor.extractOnLine(CODIGO_OCORRENCIA, currentLine);
+    }
+
+    private void processAsPaid(Boleto boleto) {
+        defineOccurrence(boleto, PAID);
+        orderService.processAsPaid(boleto.getSourceId());
+    }
+
+    private void defineOccurrence(Boleto boleto, String occurrenceCode) {
+        boleto.setProcessedAt(new Date());
+        boleto.setOccurrenceCode(occurrenceCode);
+        repository.save(boleto);
+    }
+
+
+    private String getTicketNumber(String cnab240, int currentLine) {
+        RemittanceExtractor remittanceExtractor = layoutExtractorSelector.define(getBatchSegmentT(), cnab240);
+        String ticketNumber = remittanceExtractor.extractOnLine(IDENTIFICACAO_TITULO,currentLine);
+        return getNumberWithoutLeftPad(ticketNumber);
+    }
+
+    private String getNumberWithoutLeftPad(String remittanceNumber) {
+        return Integer.valueOf(remittanceNumber.replaceAll(" ", "")).toString();
     }
 
     public Page<Boleto> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
@@ -138,15 +201,15 @@ public class BoletoService {
         Boleto boleto = new Boleto();
         boleto.setValue(billable.getValue());
         boleto.setIssuerDocument(billable.getIssuer().documentNumber());
-        boleto.setClientDocument(billable.getPayer().documentNumber());
-        boleto.setOrderId(billable.getId());
+        boleto.setPayerDocument(billable.getPayer().documentNumber());
+        boleto.setSourceId(billable.getId());
         boleto.setUri(path);
         boleto.setTypingCode(boletoStella.getLinhaDigitavel());
         boleto.setNumber(boletoStella.getNumeroDoDocumento());
         boleto.setOurNumber(ourNumber);
         boleto.setCreateDateTime(new Date());
-        boleto.setProcessedAt(new Date());
         boleto.setExpirationDateTime(boletoStella.getDatas().getVencimento().getTime());
+        boleto.setPaymentSource(billable.getPaymentSource());
         return save(boleto);
     }
 

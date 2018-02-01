@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface BoletoRepository extends UnovationFilterRepository<Boleto,String, BoletoFilter> {
     Optional<Boleto> findFirstByOrderByCreateDateTimeDesc();
+
+    Optional<Boleto> findByNumber(String number);
 }

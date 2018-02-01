@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.model.Billable;
@@ -13,7 +14,6 @@ import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.order.model.OrderStatus;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -34,7 +34,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -280,6 +279,11 @@ public class Credit implements Serializable, Updatable, Billable {
             return this.getHirer().getFinancierMail();
         }
         return null;
+    }
+
+    @Override
+    public TicketPaymentSource getPaymentSource() {
+        return TicketPaymentSource.HIRER;
     }
 
     public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {

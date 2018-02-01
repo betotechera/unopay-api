@@ -1,6 +1,7 @@
 package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
@@ -220,6 +221,11 @@ public class Order implements Updatable, Billable{
             return this.person.getPhysicalPersonDetail().getEmail();
         }
         return null;
+    }
+
+    @Override
+    public TicketPaymentSource getPaymentSource() {
+        return TicketPaymentSource.CONTRACTOR;
     }
 
     public void normalize() {
