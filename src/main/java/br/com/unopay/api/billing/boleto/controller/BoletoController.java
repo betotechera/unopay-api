@@ -29,7 +29,7 @@ public class BoletoController {
 
 
     @Autowired
-    BoletoService service;
+    private BoletoService service;
 
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)

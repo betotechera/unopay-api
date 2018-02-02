@@ -133,7 +133,6 @@ public class BoletoService {
     }
 
 
-    @Transactional
     @SneakyThrows
     public void processTicketReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
@@ -141,22 +140,26 @@ public class BoletoService {
                                                                 currentLine += NEXT_TICKET_LINE) {
             String ticketNumber = getTicketNumber(cnab240, currentLine);
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
-            Optional<Ticket> current = repository.findByNumber(ticketNumber);
-            log.info("ticket={} occurrenceCode={} found={} paymentSource={}", ticketNumber, occurrenceCode,
-                    current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));
-            current.ifPresent(ticket -> {
-                if(PAID.equals(occurrenceCode)){
-                    if(ticket.fromContractor()){
-                        processOrderAsPaid(ticket);
-                    }
-                    if(ticket.fromHirer()){
-                        processCreditAsPaid(ticket);
-                    }
-                }else{
-                    defineOccurrence(ticket, occurrenceCode);
-                }
-            });
+            process(ticketNumber, occurrenceCode);
         }
+    }
+
+    private void process(String ticketNumber, String occurrenceCode) {
+        Optional<Ticket> current = repository.findByNumber(ticketNumber);
+        current.ifPresent(ticket -> {
+            if(PAID.equals(occurrenceCode)){
+                if(ticket.fromContractor()){
+                    processOrderAsPaid(ticket);
+                }
+                if(ticket.fromHirer()){
+                    processCreditAsPaid(ticket);
+                }
+            }else{
+                defineOccurrence(ticket, occurrenceCode);
+            }
+        });
+        log.info("ticket={} occurrenceCode={} found={} paymentSource={}", ticketNumber, occurrenceCode,
+                current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));
     }
 
     private String getOccurrenceCode(String cnab240, int currentLine) {
