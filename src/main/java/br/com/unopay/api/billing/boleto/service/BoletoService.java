@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceReco
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 
+@Slf4j
 @Service
 public class BoletoService {
 
@@ -140,6 +142,8 @@ public class BoletoService {
             String ticketNumber = getTicketNumber(cnab240, currentLine);
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
             Optional<Ticket> current = repository.findByNumber(ticketNumber);
+            log.info("ticket={} occurrenceCode={} found={} paymentSource={}", ticketNumber, occurrenceCode,
+                    current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));
             current.ifPresent(ticket -> {
                 if(PAID.equals(occurrenceCode)){
                     if(ticket.fromContractor()){

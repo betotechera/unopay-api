@@ -73,31 +73,15 @@ class TicketServiceTest extends SpockApplicationTests{
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
         }})
+
+        when:
+        service.processTicketReturn(file)
+        def result = service.findById(ticket.id)
+
+        then:
         extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        when:
-        service.processTicketReturn(file)
-        def result = service.findById(ticket.id)
-
-        then:
         result.occurrenceCode == PAID
-    }
-
-    def 'when process a not paid ticket the occurrence code should not be paid'(){
-        given:
-        MockMultipartFile file = createCnabFile()
-        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("sourceId", order.id)
-        }})
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
-        when:
-        service.processTicketReturn(file)
-        def result = service.findById(ticket.id)
-
-        then:
-        result.occurrenceCode == "02"
-
     }
 
     def 'given a contractor payment source when process paid ticket should call order process'(){
@@ -107,14 +91,33 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", order.id)
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
         }})
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+
         when:
         service.processTicketReturn(file)
 
         then:
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         2 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
+    }
+
+    def 'when process a not paid ticket the occurrence code should not be paid'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+        }})
+
+        when:
+        service.processTicketReturn(file)
+        def result = service.findById(ticket.id)
+
+        then:
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        result.occurrenceCode == "02"
+
     }
 
     def 'given a hirer payment source when process paid ticket should call credit process'(){
@@ -124,30 +127,30 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", credit.id)
             add("paymentSource", TicketPaymentSource.HIRER)
         }})
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturn(file)
 
         then:
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         2 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
     }
 
-    def 'given a valid boleto should be created'(){
+    def 'given a valid ticket should be created'(){
         given:
-        Ticket boleto = Fixture.from(Ticket.class).gimme("valid")
+        Ticket ticket = Fixture.from(Ticket.class).gimme("valid")
 
         when:
-        Ticket created = service.save(boleto)
+        Ticket created = service.save(ticket)
         Ticket result = service.findById(created.id)
 
         then:
         result != null
     }
 
-    def 'should send email when a new boleto is created'(){
+    def 'should send email when a new ticket is created'(){
         when:
         service.createForOrder(order.id)
 
@@ -155,7 +158,7 @@ class TicketServiceTest extends SpockApplicationTests{
         1 * notificationServiceMock.sendBoletoIssued(order,_)
     }
 
-    def 'should create boleto from known order'(){
+    def 'should create ticket from known order'(){
         when:
         Ticket created = service.createForOrder(order.id)
 
@@ -166,7 +169,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.sourceId == order.id
     }
 
-    def 'when create boleto should be found'(){
+    def 'when create ticket should be found'(){
         when:
         Ticket created = service.createForOrder(order.id)
         Ticket result = service.findById(created.id)
@@ -175,7 +178,7 @@ class TicketServiceTest extends SpockApplicationTests{
         result != null
     }
 
-    def 'when create boleto should create with meta information'(){
+    def 'when create ticket should create with meta information'(){
         when:
         Ticket created = service.createForOrder(order.id)
 
@@ -187,7 +190,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.expirationDateTime
     }
 
-    def 'when create boleto should increment number'(){
+    def 'when create ticket should increment number'(){
         when:
         Ticket result = service.createForOrder(order.id)
 
@@ -195,7 +198,7 @@ class TicketServiceTest extends SpockApplicationTests{
         result.number
     }
 
-    def 'when create boleto should upload file'(){
+    def 'when create ticket should upload file'(){
         when:
         service.createForOrder(order.id)
 
@@ -212,7 +215,7 @@ class TicketServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
     }
 
-    def 'should send email when a new boleto is created for credit'(){
+    def 'should send email when a new ticket is created for credit'(){
         when:
         service.createForCredit(credit)
 
@@ -220,7 +223,7 @@ class TicketServiceTest extends SpockApplicationTests{
         1 * notificationServiceMock.sendBoletoIssued(_,_)
     }
 
-    def 'should create boleto from known credit'(){
+    def 'should create ticket from known credit'(){
         when:
         Ticket created = service.createForCredit(credit)
 
@@ -231,7 +234,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.sourceId == credit.id
     }
 
-    def 'when create boleto for credit should be found'(){
+    def 'when create ticket for credit should be found'(){
         when:
         Ticket created = service.createForCredit(credit)
         Ticket result = service.findById(created.id)
@@ -240,7 +243,7 @@ class TicketServiceTest extends SpockApplicationTests{
         result != null
     }
 
-    def 'when create boleto for credit should create with meta information'(){
+    def 'when create ticket for credit should create with meta information'(){
         when:
         Ticket created = service.createForCredit(credit)
 
@@ -252,7 +255,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.expirationDateTime
     }
 
-    def 'when create boleto for credit should increment number'(){
+    def 'when create ticket for credit should increment number'(){
         when:
         Ticket result = service.createForCredit(credit)
 
@@ -260,7 +263,7 @@ class TicketServiceTest extends SpockApplicationTests{
         result.number
     }
 
-    def 'when create boleto for credit should upload file'(){
+    def 'when create ticket for credit should upload file'(){
         when:
         service.createForCredit(credit)
 
