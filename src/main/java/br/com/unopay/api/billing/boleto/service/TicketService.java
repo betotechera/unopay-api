@@ -209,6 +209,7 @@ public class TicketService {
 
     public Page<Ticket> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
+        log.info("filter={} order ids={} getOrderId={}", filter, ids, filter.getOrderId());
         List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
         ids = filter.getOrderId().isEmpty() ? ids : intersection;
         filter.setOrderId(ids);

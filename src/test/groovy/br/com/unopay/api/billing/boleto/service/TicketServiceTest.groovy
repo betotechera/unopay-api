@@ -63,8 +63,8 @@ class TicketServiceTest extends SpockApplicationTests{
         service.layoutExtractorSelector = extractorSelectorMock
         service.orderService = orderServiceMock
         service.creditService = creditServiceMock
-        creditServiceMock.findById(credit.id) >> credit
-        orderServiceMock.findById(order.id) >> order
+        creditServiceMock.findById(_) >> credit
+        orderServiceMock.findById(_) >> order
         creditServiceMock.findById(null) >> {
             throw UnovationExceptions.notFound().withErrors(Errors.HIRER_CREDIT_NOT_FOUND)
         }
