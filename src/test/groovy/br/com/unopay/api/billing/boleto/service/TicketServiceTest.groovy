@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.boleto.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
@@ -29,6 +30,8 @@ class TicketServiceTest extends SpockApplicationTests{
     public static final String PAID = "06"
     @Autowired
     private BoletoService service
+    @Autowired
+    private FixtureCreator fixtureCreator
     String path
     Order order
     Credit credit
@@ -44,7 +47,9 @@ class TicketServiceTest extends SpockApplicationTests{
 
     def setup(){
         credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
-        order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
+        order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", fixtureCreator.createPersistedContract())
+        }})
         boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
         }})
@@ -114,12 +119,13 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'given a hirer payment source when process paid ticket should call credit process'(){
         given:
         MockMultipartFile file = createCnabFile()
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
             add("paymentSource", TicketPaymentSource.HIRER)
         }})
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
         when:
         service.processTicketReturn(file)
 
