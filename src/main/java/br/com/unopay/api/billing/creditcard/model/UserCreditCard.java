@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.creditcard.gateway.payzen.model;
+package br.com.unopay.api.billing.creditcard.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
