@@ -1,6 +1,7 @@
 package br.com.unopay.api.billing.boleto.service;
 
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
@@ -23,8 +24,8 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ import static java.lang.String.valueOf;
 
 @Slf4j
 @Service
-public class BoletoService {
+public class TicketService {
 
     private static final int SIZE = 4;
     private static final String PDF_PATH = "%s/%s/%s.pdf";
@@ -69,10 +70,10 @@ public class BoletoService {
     @Value("${unopay.boleto.folder}")
     private String folder;
 
-    public BoletoService(){}
+    public TicketService(){}
 
     @Autowired
-    public BoletoService(BoletoRepository repository,
+    public TicketService(BoletoRepository repository,
                          OrderService orderService,
                          CreditService creditService,
                          CobrancaOnlineService cobrancaOnlineService,
@@ -132,8 +133,19 @@ public class BoletoService {
         return createBoletoModel(order, boletoStella, clearOurNumber);
     }
 
+    @SneakyThrows
+    public void processTicketReturnForIssuer(Issuer issuer, MultipartFile multipartFile) {
+        String cnab240 = new String(multipartFile.getBytes());
+        for (int currentLine = FIRST_TICKET_LINE; currentLine < cnab240.split(SEPARATOR).length - TRAILER;
+             currentLine += NEXT_TICKET_LINE) {
+            String ticketNumber = getTicketNumber(cnab240, currentLine);
+            String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
+            log.info("ticket={} issuer={}  occurrenceCode={}", ticketNumber, issuer.documentNumber(), occurrenceCode);
+            processTicket(occurrenceCode, () ->
+                    repository.findByNumberAndIssuerDocument(ticketNumber, issuer.documentNumber()));
+        }
+    }
 
-    @Transactional
     @SneakyThrows
     public void processTicketReturn(MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
@@ -141,22 +153,26 @@ public class BoletoService {
                                                                 currentLine += NEXT_TICKET_LINE) {
             String ticketNumber = getTicketNumber(cnab240, currentLine);
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
-            Optional<Ticket> current = repository.findByNumber(ticketNumber);
-            log.info("ticket={} occurrenceCode={} found={} paymentSource={}", ticketNumber, occurrenceCode,
-                    current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));
-            current.ifPresent(ticket -> {
-                if(PAID.equals(occurrenceCode)){
-                    if(ticket.fromContractor()){
-                        processOrderAsPaid(ticket);
-                    }
-                    if(ticket.fromHirer()){
-                        processCreditAsPaid(ticket);
-                    }
-                }else{
-                    defineOccurrence(ticket, occurrenceCode);
-                }
-            });
+            log.info("ticket={} occurrenceCode={}", ticketNumber, occurrenceCode);
+            processTicket(occurrenceCode, () -> repository.findByNumber(ticketNumber));
         }
+    }
+
+    private void processTicket(String occurrenceCode, Supplier<Optional<Ticket>> ticketSupplier) {
+        Optional<Ticket> current = ticketSupplier.get();
+        current.ifPresent(ticket -> {
+            if(PAID.equals(occurrenceCode)){
+                if(ticket.fromContractor()){
+                    processOrderAsPaid(ticket);
+                }
+                if(ticket.fromHirer()){
+                    processCreditAsPaid(ticket);
+                }
+            }else{
+                defineOccurrence(ticket, occurrenceCode);
+            }
+        });
+        log.info("found={} paymentSource={}", current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));
     }
 
     private String getOccurrenceCode(String cnab240, int currentLine) {

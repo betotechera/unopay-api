@@ -11,6 +11,7 @@ import br.com.unopay.api.bacen.service.AccreditedNetworkIssuerService;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
@@ -47,8 +48,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -72,6 +75,7 @@ public class IssuerController {
     private OrderService orderService;
     private AccreditedNetworkIssuerService networkIssuerService;
     private AccreditedNetworkService networkService;
+    private TicketService ticketService;
 
     @Value("${unopay.api}")
     private String api;
@@ -84,7 +88,8 @@ public class IssuerController {
                             PaymentInstrumentService paymentInstrumentService,
                             OrderService orderService,
                             AccreditedNetworkIssuerService networkIssuerService,
-                            AccreditedNetworkService networkService) {
+                            AccreditedNetworkService networkService,
+                            TicketService ticketService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
@@ -93,6 +98,7 @@ public class IssuerController {
         this.orderService = orderService;
         this.networkIssuerService = networkIssuerService;
         this.networkService = networkService;
+        this.ticketService = ticketService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -411,6 +417,12 @@ public class IssuerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/issuers/me/accredited-networks", api));
+    }
+
+    @ResponseStatus(OK)
+    @RequestMapping(value = "/issuers/me/tickets/return-files", method = POST)
+    public void processReturn(Issuer issuer, @RequestParam MultipartFile file) {
+        ticketService.processTicketReturnForIssuer(issuer, file);
     }
 
 

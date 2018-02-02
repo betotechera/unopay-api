@@ -8,7 +8,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
@@ -74,7 +74,7 @@ public class HirerController {
     private CreditPaymentAccountService creditPaymentAccountService;
     private PaymentInstrumentService paymentInstrumentService;
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
-    private BoletoService boletoService;
+    private TicketService ticketService;
     private TransactionService transactionService;
 
     @Value("${unopay.api}")
@@ -88,7 +88,7 @@ public class HirerController {
                            CreditPaymentAccountService creditPaymentAccountService,
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
-                           BoletoService boletoService, TransactionService transactionService) {
+                           TicketService ticketService, TransactionService transactionService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -96,7 +96,7 @@ public class HirerController {
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
-        this.boletoService = boletoService;
+        this.ticketService = ticketService;
         this.transactionService = transactionService;
     }
 
@@ -349,7 +349,7 @@ public class HirerController {
     public Results<Ticket> findBoletos(OAuth2Authentication authentication,
                                        BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Page<Ticket> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
+        Page<Ticket> page = ticketService.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/boletos", api));
     }

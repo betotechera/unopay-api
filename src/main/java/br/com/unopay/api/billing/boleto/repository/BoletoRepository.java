@@ -9,4 +9,6 @@ public interface BoletoRepository extends UnovationFilterRepository<Ticket,Strin
     Optional<Ticket> findFirstByOrderByCreateDateTimeDesc();
 
     Optional<Ticket> findByNumber(String number);
+
+    Optional<Ticket> findByNumberAndIssuerDocument(String number, String issuerDocument);
 }

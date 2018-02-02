@@ -2,7 +2,7 @@ package br.com.unopay.api.billing.remittance.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.IssuerService;
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
@@ -74,7 +74,7 @@ public class PaymentRemittanceService {
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
-    private BoletoService boletoService;
+    private TicketService ticketService;
     private CreditService creditService;
     @Setter private NotificationService notificationService;
 
@@ -89,7 +89,7 @@ public class PaymentRemittanceService {
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
-                                    BoletoService boletoService,
+                                    TicketService ticketService,
                                     CreditService creditService,
                                     NotificationService notificationService) {
         this.repository = repository;
@@ -101,7 +101,7 @@ public class PaymentRemittanceService {
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
-        this.boletoService = boletoService;
+        this.ticketService = ticketService;
         this.creditService = creditService;
         this.notificationService = notificationService;
     }

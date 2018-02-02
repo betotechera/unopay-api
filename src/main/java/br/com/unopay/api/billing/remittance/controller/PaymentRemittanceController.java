@@ -1,6 +1,6 @@
 package br.com.unopay.api.billing.remittance.controller;
 
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
@@ -38,7 +38,7 @@ public class PaymentRemittanceController {
 
     private PaymentRemittanceService service;
     @Autowired
-    private BoletoService boletoService;
+    private TicketService ticketService;
 
     @Autowired
     public PaymentRemittanceController(PaymentRemittanceService service) {
@@ -70,7 +70,7 @@ public class PaymentRemittanceController {
     @PreAuthorize("hasRole('ROLE_MANAGE_PAYMENT_REMITTANCE')")
     @RequestMapping(value = "/payment-remittances/return-files", method = POST)
     public void processReturn(@RequestParam MultipartFile file) {
-        boletoService.processTicketReturn(file);
+        service.processReturn(file);
     }
 
 }

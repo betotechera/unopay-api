@@ -2,7 +2,7 @@ package br.com.unopay.api.billing.boleto.controller;
 
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -17,8 +17,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Slf4j
 @RestController
@@ -29,7 +34,7 @@ public class BoletoController {
 
 
     @Autowired
-    BoletoService service;
+    private TicketService service;
 
     @JsonView(Views.Boleto.List.class)
     @ResponseStatus(HttpStatus.OK)
@@ -46,6 +51,13 @@ public class BoletoController {
     public Results<Ticket> findBoletosByOrderIdOnly(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos  with filter={}", filter);
         return getBoletoResults(filter, pageable);
+    }
+
+    @ResponseStatus(OK)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BOLETOS')")
+    @RequestMapping(value = "/boletos/return-files", method = POST)
+    public void processReturn(@RequestParam MultipartFile file) {
+        service.processTicketReturn(file);
     }
 
     private Results<Ticket> getBoletoResults(BoletoFilter filter, @Validated UnovationPageRequest pageable) {

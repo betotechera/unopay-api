@@ -84,7 +84,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("typingCode", regex("\\d{44}"));
             add("number", regex("\\d{8}"));
             add("ourNumber", regex("\\d{8}"));
-            add("paymentSource", random(TicketPaymentSource.class));
+            add("paymentSource", TicketPaymentSource.CONTRACTOR);
         }});
 
         Fixture.of(UserCreditCard.class).addTemplate("valid", new Rule() {{

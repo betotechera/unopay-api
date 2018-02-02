@@ -22,14 +22,16 @@ import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnovationExceptions
+import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mock.web.MockMultipartFile
 
+@Slf4j
 class TicketServiceTest extends SpockApplicationTests{
 
     public static final String PAID = "06"
     @Autowired
-    private BoletoService service
+    private TicketService service
     @Autowired
     private FixtureCreator fixtureCreator
     String path
@@ -46,8 +48,10 @@ class TicketServiceTest extends SpockApplicationTests{
 
     def setup(){
         credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
+        def contract = fixtureCreator.createPersistedContract()
         order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("contract", fixtureCreator.createPersistedContract())
+            add("contract", contract)
+            add("product", contract.product)
         }})
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
@@ -79,8 +83,8 @@ class TicketServiceTest extends SpockApplicationTests{
         def result = service.findById(ticket.id)
 
         then:
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         result.occurrenceCode == PAID
     }
 
@@ -95,9 +99,9 @@ class TicketServiceTest extends SpockApplicationTests{
         service.processTicketReturn(file)
 
         then:
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        2 * orderServiceMock.processAsPaid(order.id)
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
     }
 
@@ -113,8 +117,8 @@ class TicketServiceTest extends SpockApplicationTests{
         def result = service.findById(ticket.id)
 
         then:
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         result.occurrenceCode == "02"
 
     }
@@ -131,9 +135,9 @@ class TicketServiceTest extends SpockApplicationTests{
         service.processTicketReturn(file)
 
         then:
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        2 * creditServiceMock.processAsPaid(credit.id)
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
     }
 
@@ -167,6 +171,85 @@ class TicketServiceTest extends SpockApplicationTests{
         created.value == order.value
         created.sourceId == order.id
     }
+
+    def 'when process cnab paid ticket the occurrence code for issuer should be paid'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+        def result = service.findById(ticket.id)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        result.occurrenceCode == PAID
+    }
+
+    def 'given a contractor payment source when process paid ticket  for issuer should call order process'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * orderServiceMock.processAsPaid(order.id)
+        0 * creditServiceMock.processAsPaid(_)
+    }
+
+    def 'when process a not paid ticket the occurrence code  for issuer should not be paid'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+        def result = service.findById(ticket.id)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        result.occurrenceCode == "02"
+
+    }
+
+    def 'given a hirer payment source when process paid ticket  for issuer should call credit process'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+
+        then:
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * creditServiceMock.processAsPaid(credit.id)
+        0 * orderServiceMock.processAsPaid(_)
+    }
+
 
     def 'when create ticket should be found'(){
         when:
@@ -284,8 +367,6 @@ class TicketServiceTest extends SpockApplicationTests{
 03303881T01  040 2015200249000118009195386           112740130011355                                                                                   0000001229012018                                         
 0330388300001T 02112740130011355        000000000020326715           0102201800000000000079903303190                         00100001234567895601300113550000000000000000000000000                      
 0330388300002U 020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002901201829012018000000000000000000000000000                              000                           
-0330388300003T 02112740130011355        000000000020427815           0102201800000000000079903303190                         00100001234567895401300113550000000000000000000000000                      
-0330388300004U 020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002901201829012018000000000000000000000000000                              000                           
 03303885         0000040000070000000000000559300000000000000000000000000000000000000000000000000000000000000000000000000006                                                                                                                     
 03303889         000001000008                                                                                                                                                                                                                   
 """

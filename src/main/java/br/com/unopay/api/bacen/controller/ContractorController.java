@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
@@ -60,7 +60,7 @@ public class ContractorController {
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
     private PaymentInstrumentService paymentInstrumentService;
     private TransactionService transactionService;
-    private BoletoService boletoService;
+    private TicketService ticketService;
 
     @Value("${unopay.api}")
     private String api;
@@ -72,14 +72,14 @@ public class ContractorController {
                                 ContractorInstrumentCreditService contractorInstrumentCreditService,
                                 PaymentInstrumentService paymentInstrumentService,
                                 TransactionService transactionService,
-                                BoletoService boletoService) {
+                                TicketService ticketService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.transactionService = transactionService;
-        this.boletoService = boletoService;
+        this.ticketService = ticketService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -225,7 +225,7 @@ public class ContractorController {
     public Results<Ticket> findBoletos(OAuth2Authentication authentication,
                                        BoletoFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Page<Ticket> page = boletoService.findMyByFilter(authentication.getName(),filter, pageable);
+        Page<Ticket> page = ticketService.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/boletos", api));
     }
