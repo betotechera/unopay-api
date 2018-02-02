@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.boleto.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
@@ -29,10 +30,11 @@ class TicketServiceTest extends SpockApplicationTests{
     public static final String PAID = "06"
     @Autowired
     private BoletoService service
+    @Autowired
+    private FixtureCreator fixtureCreator
     String path
     Order order
     Credit credit
-    Ticket boleto
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
     NotificationService notificationServiceMock = Mock(NotificationService)
@@ -44,9 +46,8 @@ class TicketServiceTest extends SpockApplicationTests{
 
     def setup(){
         credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
-        order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid")
-        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("sourceId", order.id)
+        order = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", fixtureCreator.createPersistedContract())
         }})
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
@@ -64,17 +65,19 @@ class TicketServiceTest extends SpockApplicationTests{
             throw UnovationExceptions.notFound().withErrors(Errors.HIRER_CREDIT_NOT_FOUND)
         }
         orderServiceMock.findById('') >> { throw UnovationExceptions.notFound().withErrors(Errors.ORDER_NOT_FOUND) }
-
     }
 
     def 'when process cnab paid ticket the occurrence code should be paid'(){
         given:
         MockMultipartFile file = createCnabFile()
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+        }})
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         when:
         service.processTicketReturn(file)
-        def result = service.findById(boleto.id)
+        def result = service.findById(ticket.id)
 
         then:
         result.occurrenceCode == PAID
@@ -83,11 +86,14 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'when process a not paid ticket the occurrence code should not be paid'(){
         given:
         MockMultipartFile file = createCnabFile()
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+        }})
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         when:
         service.processTicketReturn(file)
-        def result = service.findById(boleto.id)
+        def result = service.findById(ticket.id)
 
         then:
         result.occurrenceCode == "02"
@@ -97,12 +103,12 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'given a contractor payment source when process paid ticket should call order process'(){
         given:
         MockMultipartFile file = createCnabFile()
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
         }})
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         when:
         service.processTicketReturn(file)
 
@@ -114,12 +120,13 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'given a hirer payment source when process paid ticket should call credit process'(){
         given:
         MockMultipartFile file = createCnabFile()
-        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> boleto.number
-        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        boleto = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
             add("paymentSource", TicketPaymentSource.HIRER)
         }})
+        extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
         when:
         service.processTicketReturn(file)
 
