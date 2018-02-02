@@ -87,7 +87,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
             add("uri", regex("\\w{10}"));
             add("typingCode", regex("\\d{44}"));
-            add("number", regex("\\d{8}"));
+            add("number", random("123456", "65469798", "9878977", "84456546"));
             add("ourNumber", regex("\\d{8}"));
             add("paymentSource", TicketPaymentSource.CONTRACTOR);
         }});

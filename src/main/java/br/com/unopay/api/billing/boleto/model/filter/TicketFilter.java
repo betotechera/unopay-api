@@ -9,7 +9,7 @@ import java.util.Optional;
 import lombok.Data;
 
 @Data
-public class BoletoFilter implements Serializable {
+public class TicketFilter implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 

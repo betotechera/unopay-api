@@ -5,8 +5,8 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
-import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
-import br.com.unopay.api.billing.boleto.repository.BoletoRepository;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
+import br.com.unopay.api.billing.boleto.repository.TicketRepository;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
@@ -56,7 +56,7 @@ public class TicketService {
     public static final int NEXT_TICKET_LINE = 2;
     public static final int TRAILER = 2;
 
-    private BoletoRepository repository;
+    private TicketRepository repository;
     @Setter private OrderService orderService;
     @Setter private CreditService creditService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
@@ -73,7 +73,7 @@ public class TicketService {
     public TicketService(){}
 
     @Autowired
-    public TicketService(BoletoRepository repository,
+    public TicketService(TicketRepository repository,
                          OrderService orderService,
                          CreditService creditService,
                          CobrancaOnlineService cobrancaOnlineService,
@@ -207,16 +207,15 @@ public class TicketService {
         return Integer.valueOf(remittanceNumber.replaceAll(" ", "")).toString();
     }
 
-    public Page<Ticket> findMyByFilter(String email, BoletoFilter filter, UnovationPageRequest pageable) {
+    public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
-        log.info("filter={} order ids={} getOrderId={}", filter, ids, filter.getOrderId());
         List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
         ids = filter.getOrderId().isEmpty() ? ids : intersection;
         filter.setOrderId(ids);
         return findByFilter(filter, pageable);
     }
 
-    public Page<Ticket> findByFilter(BoletoFilter filter, UnovationPageRequest pageable) {
+    public Page<Ticket> findByFilter(TicketFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
@@ -250,7 +249,7 @@ public class TicketService {
         String number = format("%s%s%s", order.getNumber().replace(ZERO, EMPTY),
                 valueOf(count),
                 valueOf(order.getCreateDateTime().getTime()));
-        return number.substring(0, Math.min(number.length(), SIZE));
+        return getNumberWithoutLeftPad(number.substring(0, Math.min(number.length(), SIZE)));
     }
 
 }

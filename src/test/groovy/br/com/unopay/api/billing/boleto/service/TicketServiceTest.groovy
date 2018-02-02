@@ -34,16 +34,22 @@ class TicketServiceTest extends SpockApplicationTests{
     private TicketService service
     @Autowired
     private FixtureCreator fixtureCreator
+
+    @Autowired
+    private OrderService orderService
     String path
     Order order
     Credit credit
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
     NotificationService notificationServiceMock = Mock(NotificationService)
-    RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
     CreditService creditServiceMock = Mock(CreditService)
+
+    def cleanup() {
+        service.orderService = orderService
+    }
 
 
     def setup(){
@@ -55,7 +61,6 @@ class TicketServiceTest extends SpockApplicationTests{
         }})
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
-        extractorSelectorMock.define(batchSegmentT,_) >> extractorMock
         service.fileUploaderService = uploaderServiceMock
         cobrancaOnlineServiceMock.getTicket(_,_) >> new TituloDto().with { nossoNumero = "1234"; it }
         service.cobrancaOnlineService = cobrancaOnlineServiceMock
@@ -65,10 +70,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.creditService = creditServiceMock
         creditServiceMock.findById(_) >> credit
         orderServiceMock.findById(_) >> order
-        creditServiceMock.findById(null) >> {
-            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_CREDIT_NOT_FOUND)
-        }
-        orderServiceMock.findById('') >> { throw UnovationExceptions.notFound().withErrors(Errors.ORDER_NOT_FOUND) }
+        orderServiceMock.findIdsByPersonEmail(_) >> []
     }
 
     def 'when process cnab paid ticket the occurrence code should be paid'(){
@@ -77,14 +79,16 @@ class TicketServiceTest extends SpockApplicationTests{
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturn(file)
         def result = service.findById(ticket.id)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         result.occurrenceCode == PAID
     }
 
@@ -95,12 +99,15 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", order.id)
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
         when:
         service.processTicketReturn(file)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
     }
@@ -111,14 +118,16 @@ class TicketServiceTest extends SpockApplicationTests{
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturn(file)
         def result = service.findById(ticket.id)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         result.occurrenceCode == "02"
 
     }
@@ -131,12 +140,15 @@ class TicketServiceTest extends SpockApplicationTests{
             add("paymentSource", TicketPaymentSource.HIRER)
         }})
 
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
         when:
         service.processTicketReturn(file)
 
         then:
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
     }
@@ -180,14 +192,16 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", order.id)
             add("issuerDocument", issuer.documentNumber())
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
         def result = service.findById(ticket.id)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         result.occurrenceCode == PAID
     }
 
@@ -200,12 +214,15 @@ class TicketServiceTest extends SpockApplicationTests{
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
             add("issuerDocument", issuer.documentNumber())
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
         when:
         service.processTicketReturnForIssuer(issuer, file)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
     }
@@ -218,14 +235,16 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", order.id)
             add("issuerDocument", issuer.documentNumber())
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
         def result = service.findById(ticket.id)
 
         then:
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         result.occurrenceCode == "02"
 
     }
@@ -239,13 +258,15 @@ class TicketServiceTest extends SpockApplicationTests{
             add("paymentSource", TicketPaymentSource.HIRER)
             add("issuerDocument", issuer.documentNumber())
         }})
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
 
         then:
-        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
-        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
     }
@@ -293,6 +314,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.createForOrder('')
 
         then:
+        orderServiceMock.findById('') >> { throw UnovationExceptions.notFound().withErrors(Errors.ORDER_NOT_FOUND) }
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
     }
@@ -358,6 +380,9 @@ class TicketServiceTest extends SpockApplicationTests{
         service.createForCredit(new Credit())
 
         then:
+        creditServiceMock.findById(null) >> {
+            throw UnovationExceptions.notFound().withErrors(Errors.HIRER_CREDIT_NOT_FOUND)
+        }
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'HIRER_CREDIT_NOT_FOUND'
     }

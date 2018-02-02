@@ -1,12 +1,11 @@
 package br.com.unopay.api.billing.boleto.repository;
 
 import br.com.unopay.api.billing.boleto.model.Ticket;
-import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
 
-public interface BoletoRepository extends UnovationFilterRepository<Ticket,String, BoletoFilter> {
-    Optional<Ticket> findFirstByOrderByCreateDateTimeDesc();
+public interface TicketRepository extends UnovationFilterRepository<Ticket,String, TicketFilter> {
 
     Optional<Ticket> findByNumber(String number);
 
