@@ -1,6 +1,6 @@
 package br.com.unopay.api.credit.receiver
 
-import br.com.unopay.api.billing.boleto.service.BoletoService
+import br.com.unopay.api.billing.boleto.service.TicketService
 import br.com.unopay.api.billing.creditcard.service.TransactionService
 import static br.com.unopay.api.credit.model.CreditInsertionType.DIRECT_DEBIT
 import br.com.unopay.api.credit.model.CreditProcessed
@@ -17,7 +17,7 @@ class CreditReceiverTest extends  Specification{
     ObjectMapper objectMapper = new ObjectMapper()
     GenericObjectMapper genericObjectMapper = new GenericObjectMapper(objectMapper)
     CreditService creditServiceMock = Mock(CreditService)
-    BoletoService boletoServiceMock = Mock(BoletoService)
+    TicketService boletoServiceMock = Mock(TicketService)
     TransactionService transactionServiceMock = Mock(TransactionService)
 
     def 'when receive credit for hirer should call credit service'(){

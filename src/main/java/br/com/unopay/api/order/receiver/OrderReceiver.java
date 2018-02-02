@@ -1,6 +1,6 @@
 package br.com.unopay.api.order.receiver;
 
-import br.com.unopay.api.billing.boleto.service.BoletoService;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
@@ -23,17 +23,17 @@ public class OrderReceiver {
     private TransactionService transactionService;
     private GenericObjectMapper genericObjectMapper;
     private OrderService orderService;
-    private BoletoService boletoService;
+    private TicketService ticketService;
 
     @Autowired
     public OrderReceiver(TransactionService transactionService,
                          GenericObjectMapper genericObjectMapper,
                          OrderService orderService,
-                         BoletoService boletoService){
+                         TicketService ticketService){
         this.transactionService = transactionService;
         this.genericObjectMapper = genericObjectMapper;
         this.orderService = orderService;
-        this.boletoService = boletoService;
+        this.ticketService = ticketService;
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class OrderReceiver {
             orderService.process(current);
         }
         if(order.is(PaymentMethod.BOLETO)){
-            boletoService.createForOrder(order.getId());
+            ticketService.createForOrder(order.getId());
         }
     }
 }

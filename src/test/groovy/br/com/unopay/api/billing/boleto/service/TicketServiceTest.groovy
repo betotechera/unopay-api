@@ -31,7 +31,7 @@ class TicketServiceTest extends SpockApplicationTests{
 
     public static final String PAID = "06"
     @Autowired
-    private BoletoService service
+    private TicketService service
     @Autowired
     private FixtureCreator fixtureCreator
     String path
@@ -84,7 +84,6 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-
         1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         result.occurrenceCode == PAID
     }
@@ -101,7 +100,6 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-
         1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
@@ -120,7 +118,6 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-
         1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         result.occurrenceCode == "02"
 
@@ -140,7 +137,6 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
-
         1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
     }
@@ -175,6 +171,85 @@ class TicketServiceTest extends SpockApplicationTests{
         created.value == order.value
         created.sourceId == order.id
     }
+
+    def 'when process cnab paid ticket the occurrence code for issuer should be paid'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+        def result = service.findById(ticket.id)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        result.occurrenceCode == PAID
+    }
+
+    def 'given a contractor payment source when process paid ticket  for issuer should call order process'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * orderServiceMock.processAsPaid(order.id)
+        0 * creditServiceMock.processAsPaid(_)
+    }
+
+    def 'when process a not paid ticket the occurrence code  for issuer should not be paid'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", order.id)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+        def result = service.findById(ticket.id)
+
+        then:
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        result.occurrenceCode == "02"
+
+    }
+
+    def 'given a hirer payment source when process paid ticket  for issuer should call credit process'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER)
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+
+        then:
+        1 * extractorMock.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        1 * extractorMock.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        1 * creditServiceMock.processAsPaid(credit.id)
+        0 * orderServiceMock.processAsPaid(_)
+    }
+
 
     def 'when create ticket should be found'(){
         when:

@@ -3,7 +3,7 @@ package br.com.unopay.api.order.receiver
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.billing.boleto.service.BoletoService
+import br.com.unopay.api.billing.boleto.service.TicketService
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
@@ -25,7 +25,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     ContractorInstrumentCreditService instrumentCreditServiceMock = Mock(ContractorInstrumentCreditService)
     OrderService orderServiceMock = Mock(OrderService)
     ContractService contractServiceMock = Mock(ContractService)
-    BoletoService boletoServiceMock = Mock(BoletoService)
+    TicketService boletoServiceMock = Mock(TicketService)
 
     def setup(){
         orderServiceMock.findById(_) >> Fixture.from(Order.class).gimme("valid")
