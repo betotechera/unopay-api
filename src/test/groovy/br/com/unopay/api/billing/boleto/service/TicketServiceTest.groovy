@@ -91,7 +91,6 @@ class TicketServiceTest extends SpockApplicationTests{
             add("sourceId", order.id)
             add("paymentSource", TicketPaymentSource.CONTRACTOR)
         }})
-
         when:
         service.processTicketReturn(file)
 
