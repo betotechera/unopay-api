@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,23 +38,27 @@ public class UserCreditCard {
 
     @Column(name = "brand")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String brand;
 
     @Column(name = "last_four_digits")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String lastFourDigits;
 
-    @Column(name = "expiration_month")
+    @Transient
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.UserCreditCard.Detail.class})
     private String expirationMonth;
 
-    @Column(name = "expiration_year")
+    @Transient
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.UserCreditCard.Detail.class})
     private String expirationYear;
+
+    @Column(name = "expiration_date")
+    @JsonView({Views.UserCreditCard.Detail.class})
+    private Date expirationDate;
 
     @Column(name = "gateway_source")
     @NotNull(groups = {Create.class, Update.class})
@@ -66,11 +71,26 @@ public class UserCreditCard {
     private String gatewayToken;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private Date createdDateTime;
 
     @JsonIgnore
     @Version
     private Integer version;
+
+    public void setupMyCreate(UserCreditCard userCreditCard){
+        userCreditCard.defineExpirationDate();
+    }
+
+
+    public void defineExpirationDate(){
+        this.expirationDate = DateTime.now()
+                .withYear(Integer.parseInt(this.getExpirationYear()))
+                .withMonthOfYear(Integer.parseInt(this.getExpirationMonth()))
+                .withDayOfMonth(1)
+                .withTime(0, 0, 0, 0)
+                .toDate();
+    }
+
 
 }
