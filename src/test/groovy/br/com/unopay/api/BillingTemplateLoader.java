@@ -81,7 +81,6 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("issuerDocument", cnpj());
             add("payerDocument", cnpj());
             add("expirationDateTime", instant("3 days from now"));
-            add("processedAt", instant("2 days from now"));
             add("value", random(BigDecimal.class, range(0.1, 500)));
             add("createDateTime", instant("2 days from now"));
             add("paymentPenaltyValue", random(BigDecimal.class, range(0.1, 10.1)));
@@ -89,7 +88,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("typingCode", regex("\\d{44}"));
             add("number", random("123456", "65469798", "9878977", "84456546"));
             add("ourNumber", regex("\\d{8}"));
-            add("paymentSource", TicketPaymentSource.CONTRACTOR);
+            add("paymentSource", random(TicketPaymentSource.class));
         }});
     }
 }

@@ -16,16 +16,19 @@ import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
+import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_OCORRENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_TITULO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR;
+import static br.com.unopay.api.uaa.exception.Errors.TICKET_NUMBER_ALREADY_EXISTS;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 
@@ -47,22 +51,22 @@ import static java.lang.String.valueOf;
 @Service
 public class TicketService {
 
-    private static final int SIZE = 4;
+    private static final int SIZE = 10;
     private static final String PDF_PATH = "%s/%s/%s.pdf";
-    public static final String ZERO = "0";
-    public static final String EMPTY = "";
+
     public static final String PAID = "06";
     public static final int FIRST_TICKET_LINE = 3;
     public static final int NEXT_TICKET_LINE = 2;
     public static final int TRAILER = 2;
 
-    private TicketRepository repository;
+    @Getter private TicketRepository repository;
     @Setter private OrderService orderService;
     @Setter private CreditService creditService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     @Setter private NotificationService notificationService;
+    @Setter private NumberGenerator numberGenerator;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -87,6 +91,7 @@ public class TicketService {
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.notificationService = notificationService;
+        this.numberGenerator = new NumberGenerator(this.repository);
     }
 
     public Ticket save(Ticket ticket) {
@@ -113,7 +118,7 @@ public class TicketService {
 
     private Ticket create(Billable order) {
         PaymentBankAccount paymentBankAccount = order.getIssuer().getPaymentAccount();
-        String number = createNumber(order);
+        String number = getValidNumber(order);
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
                 .payer(order.getPayer()).expirationDays(deadlineInDays)
                 .paymentBankAccount(paymentBankAccount)
@@ -133,6 +138,14 @@ public class TicketService {
         return createBoletoModel(order, boletoStella, clearOurNumber);
     }
 
+    private String getValidNumber(Billable order) {
+        String number = numberGenerator.createNumber(order, SIZE);
+        if(repository.countByNumber(number) > 0){
+            throw UnovationExceptions.conflict().withErrors(TICKET_NUMBER_ALREADY_EXISTS.withOnlyArgument(number));
+        }
+        return number;
+    }
+
     @SneakyThrows
     public void processTicketReturnForIssuer(Issuer issuer, MultipartFile multipartFile) {
         String cnab240 = new String(multipartFile.getBytes());
@@ -142,7 +155,7 @@ public class TicketService {
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
             log.info("ticket={} issuer={}  occurrenceCode={}", ticketNumber, issuer.documentNumber(), occurrenceCode);
             processTicket(occurrenceCode, () ->
-                    repository.findByNumberAndIssuerDocument(ticketNumber, issuer.documentNumber()));
+                    repository.findByNumberAndIssuerDocumentAndProcessedAtIsNull(ticketNumber,issuer.documentNumber()));
         }
     }
 
@@ -154,7 +167,7 @@ public class TicketService {
             String ticketNumber = getTicketNumber(cnab240, currentLine);
             String occurrenceCode = getOccurrenceCode(cnab240, currentLine);
             log.info("ticket={} occurrenceCode={}", ticketNumber, occurrenceCode);
-            processTicket(occurrenceCode, () -> repository.findByNumber(ticketNumber));
+            processTicket(occurrenceCode, () -> repository.findByNumberAndProcessedAtIsNull(ticketNumber));
         }
     }
 
@@ -200,12 +213,10 @@ public class TicketService {
     private String getTicketNumber(String cnab240, int currentLine) {
         RemittanceExtractor remittanceExtractor = layoutExtractorSelector.define(getBatchSegmentT(), cnab240);
         String ticketNumber = remittanceExtractor.extractOnLine(IDENTIFICACAO_TITULO,currentLine);
-        return getNumberWithoutLeftPad(ticketNumber);
+        return numberGenerator.getNumberWithoutLeftPad(ticketNumber);
     }
 
-    private String getNumberWithoutLeftPad(String remittanceNumber) {
-        return Integer.valueOf(remittanceNumber.replaceAll(" ", "")).toString();
-    }
+
 
     public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
@@ -242,14 +253,6 @@ public class TicketService {
         ticket.setExpirationDateTime(boletoStella.getDatas().getVencimento().getTime());
         ticket.setPaymentSource(billable.getPaymentSource());
         return save(ticket);
-    }
-
-    private String createNumber(Billable order) {
-        long count = repository.count();
-        String number = format("%s%s%s", order.getNumber().replace(ZERO, EMPTY),
-                valueOf(count),
-                valueOf(order.getCreateDateTime().getTime()));
-        return getNumberWithoutLeftPad(number.substring(0, Math.min(number.length(), SIZE)));
     }
 
 }

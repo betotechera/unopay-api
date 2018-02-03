@@ -16,10 +16,12 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
+import br.com.unopay.api.infra.NumberGenerator
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.uaa.exception.Errors
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnovationExceptions
 import groovy.util.logging.Slf4j
@@ -46,11 +48,16 @@ class TicketServiceTest extends SpockApplicationTests{
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
     CreditService creditServiceMock = Mock(CreditService)
+    NumberGenerator numberGeneratorMock = Mock(NumberGenerator)
 
     def cleanup() {
         service.orderService = orderService
+        service.numberGenerator =  getNumberGenerator()
     }
 
+    private NumberGenerator getNumberGenerator() {
+        new NumberGenerator(service.repository)
+    }
 
     def setup(){
         credit = Fixture.from(Credit.class).uses(jpaProcessor).gimme("allFields")
@@ -71,6 +78,8 @@ class TicketServiceTest extends SpockApplicationTests{
         creditServiceMock.findById(_) >> credit
         orderServiceMock.findById(_) >> order
         orderServiceMock.findIdsByPersonEmail(_) >> []
+        numberGeneratorMock.createNumber(_,_) >> getNumberGenerator().createNumber(order, 10)
+        service.numberGenerator = numberGeneratorMock
     }
 
     def 'when process cnab paid ticket the occurrence code should be paid'(){
@@ -83,6 +92,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturn(file)
@@ -103,6 +113,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturn(file)
@@ -122,6 +133,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturn(file)
@@ -144,12 +156,59 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturn(file)
 
         then:
         1 * creditServiceMock.processAsPaid(credit.id)
+        0 * orderServiceMock.processAsPaid(_)
+    }
+
+    def 'given a processed ticket should not be processed'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER)
+            add("processedAt", instant("1 second ago"))
+        }})
+
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
+        when:
+        service.processTicketReturn(file)
+
+        then:
+        0 * creditServiceMock.processAsPaid(_)
+        0 * orderServiceMock.processAsPaid(_)
+    }
+
+    def 'given a processed ticket for issuer should not be processed'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER)
+            add("processedAt", instant("1 second ago"))
+            add("issuerDocument", issuer.documentNumber())
+        }})
+
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+
+        when:
+        service.processTicketReturnForIssuer(issuer, file)
+
+        then:
+        0 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
     }
 
@@ -196,6 +255,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
@@ -218,6 +278,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
@@ -239,6 +300,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
@@ -262,6 +324,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
 
         when:
         service.processTicketReturnForIssuer(issuer, file)
@@ -309,7 +372,20 @@ class TicketServiceTest extends SpockApplicationTests{
         1 * uploaderServiceMock.uploadBytes(_, _) >> path
     }
 
-    def 'when create with unkown order should error'(){
+    def 'when create with known number should return error'(){
+        given:
+        service.createForOrder(order.id)
+        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+
+        when:
+        service.createForOrder(order.id)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'TICKET_NUMBER_ALREADY_EXISTS'
+    }
+
+    def 'when create with unknown order should return error'(){
         when:
         service.createForOrder('')
 
@@ -375,7 +451,20 @@ class TicketServiceTest extends SpockApplicationTests{
         1 * uploaderServiceMock.uploadBytes(_, _) >> path
     }
 
-    def 'when create with unkown credit should error'(){
+    def 'when create with known number for credit should return error'(){
+        given:
+        service.createForCredit(credit)
+        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+
+        when:
+        service.createForCredit(credit)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'TICKET_NUMBER_ALREADY_EXISTS'
+    }
+
+    def 'when create with unknown credit should return error'(){
         when:
         service.createForCredit(new Credit())
 

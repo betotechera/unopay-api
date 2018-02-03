@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface TicketRepository extends UnovationFilterRepository<Ticket,String, TicketFilter> {
 
-    Optional<Ticket> findByNumber(String number);
+    Optional<Ticket> findByNumberAndProcessedAtIsNull(String number);
 
-    Optional<Ticket> findByNumberAndIssuerDocument(String number, String issuerDocument);
+    Optional<Ticket> findByNumberAndIssuerDocumentAndProcessedAtIsNull(String number, String issuerDocument);
+
+    Integer countByNumber(String number);
 }
