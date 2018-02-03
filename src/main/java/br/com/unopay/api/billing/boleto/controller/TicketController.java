@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Slf4j
 @RestController
-public class BoletoController {
+public class TicketController {
 
     @Value("${unopay.api}")
     private String api;
@@ -36,30 +36,30 @@ public class BoletoController {
     @Autowired
     private TicketService service;
 
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_BOLETOS')")
     @RequestMapping(value = "/tickets", method = RequestMethod.GET)
     public Results<Ticket> findBoletos(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
-        return getBoletoResults(filter, pageable);
+        return getTicketResults(filter, pageable);
     }
 
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/tickets", method = RequestMethod.GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
-        return getBoletoResults(filter, pageable);
+        return getTicketResults(filter, pageable);
     }
 
     @Deprecated
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/boletos", method = RequestMethod.GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnlyOld(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
-        return getBoletoResults(filter, pageable);
+        return getTicketResults(filter, pageable);
     }
 
     @ResponseStatus(OK)
@@ -69,8 +69,8 @@ public class BoletoController {
         service.processTicketReturn(file);
     }
 
-    private Results<Ticket> getBoletoResults(TicketFilter filter, @Validated UnovationPageRequest pageable) {
-        Page<Ticket> page = service.findByFilter(filter, pageable);
+    private Results<Ticket> getTicketResults(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/tickets", api));
     }
