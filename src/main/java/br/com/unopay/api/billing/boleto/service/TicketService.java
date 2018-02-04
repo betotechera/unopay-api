@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -102,6 +103,7 @@ public class TicketService {
         return repository.findOne(id);
     }
 
+    @Transactional
     public Ticket createForOrder(String orderId) {
         Order order = orderService.findById(orderId);
         Ticket ticket = create(order);
@@ -109,6 +111,7 @@ public class TicketService {
         return ticket;
     }
 
+    @Transactional
     public Ticket createForCredit(Credit credit) {
         Credit current = creditService.findById(credit.getId());
         Ticket ticket = create(current);
