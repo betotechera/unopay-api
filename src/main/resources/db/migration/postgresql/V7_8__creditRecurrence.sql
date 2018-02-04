@@ -15,3 +15,5 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_CONTRACTOR_CREDIT_R
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_CONTRACTOR_CREDIT_RECURRENCE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CONTRACTOR_CREDIT_RECURRENCE', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+
+alter table credit_payment_account drop credit_number;

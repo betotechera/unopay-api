@@ -55,9 +55,8 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             this.hirerDocument = credit.getHirer().getDocumentNumber();
             this.serviceType = credit.getServiceType();
             this.creditInsertionType = credit.getCreditInsertionType();
-            this.creditNumber = credit.getCreditNumber();
             this.value = credit.getValue();
-            this.situation = credit.getSituation();
+            this.situation = CreditSituation.AVAILABLE;
             this.creditSource = credit.getCreditSource();
             this.availableBalance = credit.getAvailableValue();
         }
@@ -71,7 +70,6 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             this.paymentRuleGroup = order.getProduct().getPaymentRuleGroup();
             this.hirerDocument = order.getContract().getHirer().getDocumentNumber();
             this.creditInsertionType = CreditInsertionType.DIRECT_DEBIT;
-            this.creditNumber = 999999999L;
             this.value = order.getValue();
             this.situation = CreditSituation.AVAILABLE;
             this.creditSource = InstrumentCreditSource.CLIENT.name();
@@ -130,11 +128,6 @@ public class CreditPaymentAccount implements Serializable, Updatable {
     @JsonView({Views.CreditPaymentAccount.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     private Date solicitationDateTime;
-
-    @Column(name = "credit_number")
-    @JsonView({Views.CreditPaymentAccount.Detail.class})
-    @NotNull(groups = {Create.class, Update.class})
-    private Long creditNumber;
 
     @Column(name = "insertion_created_date_time")
     @JsonView({Views.CreditPaymentAccount.Detail.class})

@@ -76,7 +76,8 @@ public class ContractorInstrumentCreditService {
         Contract contract = getContract(order);
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
-        ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
+        ContractorInstrumentCredit credit = createInstrumentCreditFromClient(contract,
+                                                                            paymentInstrument, creditPaymentAccount);
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
     }
@@ -227,8 +228,8 @@ public class ContractorInstrumentCreditService {
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
-                                                              CreditPaymentAccount creditPaymentAccount) {
+    private ContractorInstrumentCredit createInstrumentCreditFromClient(Contract contract, PaymentInstrument paymentInstrument,
+                                                                        CreditPaymentAccount creditPaymentAccount) {
         ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);

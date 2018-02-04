@@ -28,7 +28,6 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         a.serviceType == b.serviceType
         a.creditInsertionType == b.creditInsertionType
         a.solicitationDateTime == b.solicitationDateTime
-        a.creditNumber == b.creditNumber
         a.insertionCreatedDateTime == b.insertionCreatedDateTime
         a.value == b.value
         a.situation == b.situation
@@ -55,7 +54,6 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         a.serviceType != b.serviceType
         a.creditInsertionType != b.creditInsertionType
         a.solicitationDateTime != b.solicitationDateTime
-        a.creditNumber != b.creditNumber
         a.insertionCreatedDateTime != b.insertionCreatedDateTime
         a.value != b.value
         a.situation != b.situation
@@ -79,9 +77,8 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.hirerDocument == credit.hirer.documentNumber
         paymentAccount.serviceType == credit.serviceType
         paymentAccount.creditInsertionType == credit.creditInsertionType
-        paymentAccount.creditNumber == credit.creditNumber
         paymentAccount.value == credit.value
-        paymentAccount.situation == credit.situation
+        paymentAccount.situation == CreditSituation.AVAILABLE
         paymentAccount.creditSource == credit.creditSource
         paymentAccount.availableBalance == credit.availableValue
     }
@@ -103,9 +100,8 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.hirerDocument == credit.hirer.documentNumber
         paymentAccount.serviceType == credit.serviceType
         paymentAccount.creditInsertionType == credit.creditInsertionType
-        paymentAccount.creditNumber == credit.creditNumber
         paymentAccount.value == credit.value
-        paymentAccount.situation == credit.situation
+        paymentAccount.situation == CreditSituation.AVAILABLE
         paymentAccount.creditSource == credit.creditSource
         paymentAccount.availableBalance == credit.availableValue
     }
@@ -125,7 +121,6 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.paymentRuleGroup == order.getProduct().getPaymentRuleGroup()
         paymentAccount.hirerDocument == order.getContract().getHirer().documentNumber
         paymentAccount.creditInsertionType == CreditInsertionType.DIRECT_DEBIT
-        paymentAccount.creditNumber != null
         paymentAccount.value == order.value
         paymentAccount.situation == CreditSituation.AVAILABLE
         paymentAccount.creditSource == InstrumentCreditSource.CLIENT.name()
@@ -144,7 +139,6 @@ class CreditPaymentAccountTests extends FixtureApplicationTest {
         paymentAccount.hirerDocument == null
         paymentAccount.serviceType == null
         paymentAccount.creditInsertionType == null
-        paymentAccount.creditNumber == null
         paymentAccount.value == null
         paymentAccount.situation == null
         paymentAccount.creditSource == null
