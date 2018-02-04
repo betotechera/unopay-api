@@ -529,6 +529,10 @@ public final class Errors {
             new UnovationError("ACCREDITED_NETWORK_ISSUER_ALREADY_EXISTS", "" +
                     "AccreditedNetworkIssuer already exists");
 
+    /* Contractor Credit Recurrence */
+    public static final UnovationError HIRER_BELONG_TO_OTHER_CONTRACT =
+            new UnovationError("HIRER_BELONG_TO_OTHER_CONTRACT", "" +
+                    "Hirer belong to other contract");
 
 
 

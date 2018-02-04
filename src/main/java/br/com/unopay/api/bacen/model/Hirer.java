@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -54,6 +56,12 @@ public class Hirer implements Serializable {
     @Column(name = "financier_mail")
     @NotNull(groups = {Create.class, Update.class})
     private String financierMail;
+
+
+    @Column(name = "credit_recurrence_period")
+    @Enumerated(EnumType.STRING)
+    @NotNull(groups = {Create.class, Update.class})
+    private RecurrencePeriod creditRecurrencePeriod;
 
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {

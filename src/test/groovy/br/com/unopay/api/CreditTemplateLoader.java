@@ -145,7 +145,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class, range(21, 200)));
             add("createdDateTime", instant("1 second from now"));
             add("contract", one(Contract.class, "valid"));
-            add("recurrencePeriod", random(RecurrencePeriod.class));
+            add("paymentInstrument", one(PaymentInstrument.class, "valid"));
         }});
 
     }

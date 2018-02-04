@@ -81,13 +81,13 @@ public class ContractorInstrumentCreditService {
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
     }
-
-
     private PaymentInstrument getContractorPaymentInstrument(Order order) {
         Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
                 .findDigitalWalletByContractorDocument(order.getDocumentNumber()).orElse(null));
     }
+
+
 
     @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
