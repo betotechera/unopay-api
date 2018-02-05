@@ -4,6 +4,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -13,6 +14,8 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+
+import static br.com.unopay.api.uaa.exception.Errors.*;
 
 @Data
 @Entity
@@ -78,19 +81,56 @@ public class UserCreditCard {
     @Version
     private Integer version;
 
-    public void setupMyCreate(UserCreditCard userCreditCard){
-        userCreditCard.defineExpirationDate();
+    public void setupMyCreate(){
+        this.defineExpirationDate();
     }
 
+    public void validateMe(){
+        validateMonth();
+        validateYear();
+    }
+
+    public void validateMonth(){
+        if (getExpirationMonth() != null){
+            int month = Integer.parseInt(getExpirationMonth());
+            if (month < 1 || month > 12){
+                throw UnovationExceptions.unprocessableEntity()
+                        .withErrors(INVALID_MONTH.withOnlyArgument(month));
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(BLANK_MONTH_VALUE);
+        }
+    }
+
+    public void validateYear(){
+        if (getExpirationYear() != null){
+            int year = Integer.parseInt(getExpirationYear());
+            if (year < 1000 || year > 9999){
+                throw UnovationExceptions.unprocessableEntity()
+                        .withErrors(INVALID_YEAR.withOnlyArgument(year));
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(BLANK_YEAR_VALUE);
+        }
+    }
 
     public void defineExpirationDate(){
         this.expirationDate = DateTime.now()
-                .withYear(Integer.parseInt(this.getExpirationYear()))
-                .withMonthOfYear(Integer.parseInt(this.getExpirationMonth()))
+                .withYear(Integer.parseInt(getExpirationYear()))
+                .withMonthOfYear(Integer.parseInt(getExpirationMonth()))
                 .withDayOfMonth(1)
                 .withTime(0, 0, 0, 0)
                 .toDate();
     }
-
 
 }

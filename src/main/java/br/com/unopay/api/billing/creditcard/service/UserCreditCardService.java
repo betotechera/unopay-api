@@ -26,6 +26,8 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard create(UserCreditCard userCreditCard) {
+        userCreditCard.setupMyCreate();
+        userCreditCard.validateMe();
         userCreditCard.setCreatedDateTime(new Date());
         return save(userCreditCard);
     }

@@ -90,7 +90,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("holderName", regex("\\w{16}"));
             add("brand", regex("\\w{8}"));
             add("lastFourDigits", regex("\\d{4}"));
-            add("expirationMonth", regex("\\d{2}"));
+            add("expirationMonth", random("1","2","3","4","5","6","7","8","9","10","11","12"));
             add("expirationYear", regex("\\d{4}"));
             add("gatewaySource", regex("\\w{32}"));
             add("gatewayToken", regex("\\w{64}"));

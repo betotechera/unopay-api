@@ -534,8 +534,19 @@ public final class Errors {
             new UnovationError("HIRER_BELONG_TO_OTHER_CONTRACT", "" +
                     "Hirer belong to other contract");
 
-
-
+    /* User Credit Card */
+    public static final UnovationError INVALID_MONTH =
+            new UnovationError("INVALID_MONTH", "" +
+                    "Invalid month");
+    public static final UnovationError BLANK_MONTH_VALUE =
+            new UnovationError("BLANK_MONTH_VALUE", "" +
+                    "Blank month value");
+    public static final UnovationError INVALID_YEAR =
+            new UnovationError("INVALID_YEAR", "" +
+                    "Invalid year");
+    public static final UnovationError BLANK_YEAR_VALUE =
+            new UnovationError("BLANK_YEAR_VALUE", "" +
+                    "Blank year value");
 
 
 
