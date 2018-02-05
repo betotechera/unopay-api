@@ -51,7 +51,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUI
 @Table(name = "product")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(of = {"id", "code", "name"})
-@ToString(exclude = {"partners"})
+@ToString(exclude = {"partners", "accreditedNetwork", "paymentRuleGroup"})
 public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;

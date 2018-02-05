@@ -4,7 +4,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
-import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
@@ -219,13 +219,13 @@ public class ContractorController {
     }
 
 
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
     public Results<Ticket> findBoletos(OAuth2Authentication authentication,
-                                       BoletoFilter filter, @Validated UnovationPageRequest pageable) {
+                                       TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Page<Ticket> page = ticketService.findMyByFilter(authentication.getName(),filter, pageable);
+        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = ticketService.findMyByFilter(authentication.getName(),filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/boletos", api));
     }

@@ -19,7 +19,7 @@ class TicketControllerTest extends AuthServerApplicationTests {
         Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid")
 
         when:
-        def result = this.mvc.perform(get('/boletos?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(get('/tickets?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())

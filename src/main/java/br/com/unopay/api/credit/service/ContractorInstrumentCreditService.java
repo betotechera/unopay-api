@@ -76,17 +76,18 @@ public class ContractorInstrumentCreditService {
         Contract contract = getContract(order);
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
-        ContractorInstrumentCredit credit = createInstrumentCredit(contract,paymentInstrument,creditPaymentAccount);
+        ContractorInstrumentCredit credit = createInstrumentCreditFromClient(contract,
+                                                                            paymentInstrument, creditPaymentAccount);
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
     }
-
-
     private PaymentInstrument getContractorPaymentInstrument(Order order) {
         Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
                 .findDigitalWalletByContractorDocument(order.getDocumentNumber()).orElse(null));
     }
+
+
 
     @Transactional
     public ContractorInstrumentCredit insert(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
@@ -227,8 +228,8 @@ public class ContractorInstrumentCreditService {
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
-                                                              CreditPaymentAccount creditPaymentAccount) {
+    private ContractorInstrumentCredit createInstrumentCreditFromClient(Contract contract, PaymentInstrument paymentInstrument,
+                                                                        CreditPaymentAccount creditPaymentAccount) {
         ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);

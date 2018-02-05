@@ -8,7 +8,7 @@ import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Unroll
 
-class ServiceAuthorizeTest   extends FixtureApplicationTest {
+class ServiceAuthorizeTest  extends FixtureApplicationTest {
 
 
     @Unroll

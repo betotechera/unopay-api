@@ -1,7 +1,7 @@
 package br.com.unopay.api.billing.boleto.controller;
 
 import br.com.unopay.api.billing.boleto.model.Ticket;
-import br.com.unopay.api.billing.boleto.model.filter.BoletoFilter;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Slf4j
 @RestController
-public class BoletoController {
+public class TicketController {
 
     @Value("${unopay.api}")
     private String api;
@@ -36,34 +36,43 @@ public class BoletoController {
     @Autowired
     private TicketService service;
 
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_BOLETOS')")
-    @RequestMapping(value = "/boletos", method = RequestMethod.GET)
-    public Results<Ticket> findBoletos(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find boletos  with filter={}", filter);
-        return getBoletoResults(filter, pageable);
+    @RequestMapping(value = "/tickets", method = RequestMethod.GET)
+    public Results<Ticket> findBoletos(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find tickets  with filter={}", filter);
+        return getTicketResults(filter, pageable);
     }
 
-    @JsonView(Views.Boleto.List.class)
+    @JsonView(Views.Ticket.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/tickets", method = RequestMethod.GET, params = "orderId")
+    public Results<Ticket> findBoletosByOrderIdOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find tickets  with filter={}", filter);
+        return getTicketResults(filter, pageable);
+    }
+
+    @Deprecated
+    @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/boletos", method = RequestMethod.GET, params = "orderId")
-    public Results<Ticket> findBoletosByOrderIdOnly(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find boletos  with filter={}", filter);
-        return getBoletoResults(filter, pageable);
+    public Results<Ticket> findBoletosByOrderIdOnlyOld(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find tickets  with filter={}", filter);
+        return getTicketResults(filter, pageable);
     }
 
     @ResponseStatus(OK)
     @PreAuthorize("hasRole('ROLE_MANAGE_BOLETOS')")
-    @RequestMapping(value = "/boletos/return-files", method = POST)
+    @RequestMapping(value = "/tickets/return-files", method = POST)
     public void processReturn(@RequestParam MultipartFile file) {
         service.processTicketReturn(file);
     }
 
-    private Results<Ticket> getBoletoResults(BoletoFilter filter, @Validated UnovationPageRequest pageable) {
-        Page<Ticket> page = service.findByFilter(filter, pageable);
+    private Results<Ticket> getTicketResults(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/boletos", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/tickets", api));
     }
 
 }

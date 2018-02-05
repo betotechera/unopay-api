@@ -102,7 +102,6 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("creditInsertionType",random(CreditInsertionType.class));
             add("solicitationDateTime",beforeDate("24/04/2017",
                     new SimpleDateFormat("dd/MM/yyyy")));
-            add("creditNumber",random(Long.class));
             add("insertionCreatedDateTime",beforeDate("24/04/2017",
                     new SimpleDateFormat("dd/MM/yyyy")));
             add("value",random(BigDecimal.class, range(21, 200)));
@@ -146,7 +145,7 @@ public class CreditTemplateLoader implements TemplateLoader {
             add("value",random(BigDecimal.class, range(21, 200)));
             add("createdDateTime", instant("1 second from now"));
             add("contract", one(Contract.class, "valid"));
-            add("recurrencePeriod", random(RecurrencePeriod.class));
+            add("paymentInstrument", one(PaymentInstrument.class, "valid"));
         }});
 
     }

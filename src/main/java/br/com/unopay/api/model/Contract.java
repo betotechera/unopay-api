@@ -313,4 +313,11 @@ public class Contract implements Serializable {
     public boolean withMembershipFee() {
         return this.membershipFee != null;
     }
+
+    public boolean containsHirer(Hirer hirer) {
+        if(getHirer() != null && hirer != null){
+            return Objects.equals(getHirer().getId(), hirer.getId());
+        }
+        return false;
+    }
 }

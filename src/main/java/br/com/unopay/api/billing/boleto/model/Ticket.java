@@ -30,82 +30,82 @@ public class Ticket {
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     @GenericGenerator(name="system-uuid", strategy="uuid2")
     private String id;
 
     @Column(name = "source_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private String sourceId;
 
     @NotNull(groups = {Create.class})
     @JoinColumn(name="issuer_document")
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private String issuerDocument;
 
     @NotNull(groups = {Create.class})
     @JoinColumn(name="payer_document")
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private String payerDocument;
 
     @Column(name = "expiration_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private Date expirationDateTime;
 
     @Column(name = "processed_at")
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private Date processedAt;
 
     @Column(name = "value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private BigDecimal value;
 
     @Column(name = "payment_penalty_value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private BigDecimal paymentPenaltyValue;
 
     @Column(name = "interest")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private BigDecimal interest;
 
     @Column(name = "uri")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private String uri;
 
     @Column(name = "typing_code")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private String typingCode;
 
     @Column(name = "\"number\"")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private String number;
 
     @Column(name = "our_number")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private String ourNumber;
 
     @Column(name = "create_date_time")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.List.class})
+    @JsonView({Views.Ticket.List.class})
     private Date createDateTime;
 
     @Column(name = "occurrence_code")
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private String occurrenceCode;
 
     @Column(name = "source_type")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Boleto.Detail.class})
+    @JsonView({Views.Ticket.Detail.class})
     private TicketPaymentSource paymentSource;
 
     @JsonIgnore

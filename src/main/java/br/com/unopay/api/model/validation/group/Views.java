@@ -165,7 +165,7 @@ public interface Views {
         interface List{}
     }
 
-    interface Boleto {
+    interface Ticket {
         interface Detail extends List{}
         interface List{}
     }

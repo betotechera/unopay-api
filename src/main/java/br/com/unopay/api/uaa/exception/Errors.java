@@ -512,6 +512,9 @@ public final class Errors {
             new UnovationError("EXPIRATION_DAYS_REQUIRED", "Expiration days required.");
     public static final UnovationError TICKET_REGISTRATION_ERROR =
             new UnovationError("TICKET_REGISTRATION_ERROR", "Error when register ticket.");
+    public static final UnovationError TICKET_NUMBER_ALREADY_EXISTS =
+            new UnovationError("TICKET_NUMBER_ALREADY_EXISTS", "Ticket number already exists.");
+
 
     /* Instrument Balance */
     public static final UnovationError INSTRUMENT_BALANCE_NOT_FOUND =
@@ -526,6 +529,10 @@ public final class Errors {
             new UnovationError("ACCREDITED_NETWORK_ISSUER_ALREADY_EXISTS", "" +
                     "AccreditedNetworkIssuer already exists");
 
+    /* Contractor Credit Recurrence */
+    public static final UnovationError HIRER_BELONG_TO_OTHER_CONTRACT =
+            new UnovationError("HIRER_BELONG_TO_OTHER_CONTRACT", "" +
+                    "Hirer belong to other contract");
 
 
 
