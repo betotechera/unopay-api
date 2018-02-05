@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.joda.time.DateTime
+import spock.lang.Unroll
 
 class UserCreditCardTest extends FixtureApplicationTest {
 
@@ -56,11 +57,12 @@ class UserCreditCardTest extends FixtureApplicationTest {
         !difference
     }
 
-    def 'when creating UserCreditCard with blank month value should return error'(){
+    def 'when creating UserCreditCard without an int month value should return error'(){
 
         given:
+        def invalidValue = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", null)
+            add("expirationMonth", invalidValue)
         }})
 
         when:
@@ -68,7 +70,35 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.find()?.logref == 'BLANK_MONTH_VALUE'
+        assert ex.errors.find()?.logref == 'INVALID_MONTH'
+
+        where:
+        _ | value
+        _ | "a"
+        _ | "1.0"
+        _ | "1,1"
+    }
+
+    @Unroll
+    def 'when creating UserCreditCard with month value #value should return error'(){
+
+        given:
+        def invalidValue = value
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationMonth", invalidValue)
+        }})
+
+        when:
+        userCreditCard.validateMonth()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.find()?.logref == 'INVALID_MONTH'
+
+        where:
+        _ | value
+        _ | null
+        _ | ""
     }
 
     def 'when creating UserCreditCard with month value smaller than 1 should return error'(){
@@ -103,11 +133,12 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
     }
 
-    def 'when creating UserCreditCard with blank year value should return error'(){
+    def 'when creating UserCreditCard without an int year value should return error'(){
 
         given:
+        def invalidValue = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", null)
+            add("expirationYear", invalidValue)
         }})
 
         when:
@@ -115,7 +146,35 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.find()?.logref == 'BLANK_YEAR_VALUE'
+        assert ex.errors.find()?.logref == 'INVALID_YEAR'
+
+        where:
+        _ | value
+        _ | "a"
+        _ | "1.0"
+        _ | "1,1"
+    }
+
+    @Unroll
+    def 'when creating UserCreditCard with year value #value should return error'(){
+
+        given:
+        def invalidValue = value
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationYear", invalidValue)
+        }})
+
+        when:
+        userCreditCard.validateYear()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.find()?.logref == 'INVALID_YEAR'
+
+        where:
+        _ | value
+        _ | null
+        _ | ""
     }
 
     def 'when creating UserCreditCard with year value smaller than 1000 should return error'(){

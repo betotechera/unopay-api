@@ -55,22 +55,6 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         timeComparator.compare(found.createdDateTime, new Date()) == 0
     }
 
-    def 'given a user credit card with blank user value should return error'(){
-
-        given:
-        def user = fixtureCreator.createUser()
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user.with { id = ''; it })
-        }})
-
-        when:
-        userCreditCardService.create(userCreditCard)
-
-        then:
-        def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'USER_REQUIRED'
-    }
-
     def 'given a user credit card with unknown user value should return error'(){
 
         given:

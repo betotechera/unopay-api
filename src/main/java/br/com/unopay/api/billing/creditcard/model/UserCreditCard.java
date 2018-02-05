@@ -14,13 +14,20 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Scanner;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
+import static javax.persistence.EnumType.STRING;
+import static org.joda.time.DateTimeConstants.DECEMBER;
+import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
 @Entity
 @Table(name = "user_credit_card")
 public class UserCreditCard {
+
+    private static final int MIN_YEAR = 1000;
+    private static final int MAX_YEAR = 9999;
 
     @Id
     @Column(name="id")
@@ -64,9 +71,10 @@ public class UserCreditCard {
     private Date expirationDate;
 
     @Column(name = "gateway_source")
+    @Enumerated(STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.UserCreditCard.Detail.class})
-    private String gatewaySource;
+    private GatewaySource gatewaySource;
 
     @Column(name = "gateway_token")
     @NotNull(groups = {Create.class, Update.class})
@@ -83,6 +91,7 @@ public class UserCreditCard {
 
     public void setupMyCreate(){
         defineExpirationDate();
+        setCreatedDateTime(new Date());
     }
 
     public void validateMe(){
@@ -91,37 +100,39 @@ public class UserCreditCard {
     }
 
     public void validateMonth(){
-        if (getExpirationMonth() != null){
-            int month = Integer.parseInt(getExpirationMonth());
-            if (month < 1 || month > 12){
-                throw UnovationExceptions.unprocessableEntity()
-                        .withErrors(INVALID_MONTH.withOnlyArgument(month));
-            }
-            else {
-                return;
-            }
-        }
-        else {
+        if (getExpirationMonth() == null ||
+                getExpirationMonth() == "" ||
+                !isInteger(getExpirationMonth(), 10) ||
+                !isMonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(BLANK_MONTH_VALUE);
+                    .withErrors(INVALID_MONTH.withOnlyArgument(getExpirationMonth()));
         }
     }
 
+    public boolean isMonthRangeValid(){
+        int month = Integer.parseInt(expirationMonth);
+        if (month >= JANUARY && month <= DECEMBER) {
+            return true;
+        }
+        return false;
+    }
+
     public void validateYear(){
-        if (getExpirationYear() != null){
-            int year = Integer.parseInt(getExpirationYear());
-            if (year < 1000 || year > 9999){
-                throw UnovationExceptions.unprocessableEntity()
-                        .withErrors(INVALID_YEAR.withOnlyArgument(year));
-            }
-            else {
-                return;
-            }
-        }
-        else {
+        if (getExpirationYear() == null ||
+                getExpirationYear() == "" ||
+                !isInteger(getExpirationYear(), 10) ||
+                !isYearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(BLANK_YEAR_VALUE);
+                    .withErrors(INVALID_YEAR.withOnlyArgument(getExpirationYear()));
         }
+    }
+
+    public boolean isYearRangeValid(){
+        int year = Integer.parseInt(expirationYear);
+        if (year >= MIN_YEAR && year <= MAX_YEAR) {
+            return true;
+        }
+        return false;
     }
 
     public void defineExpirationDate(){
@@ -131,6 +142,13 @@ public class UserCreditCard {
                 .withDayOfMonth(1)
                 .withTime(0, 0, 0, 0)
                 .toDate();
+    }
+
+    private static boolean isInteger(String s, int radix) {
+        Scanner sc = new Scanner(s.trim());
+        if(!sc.hasNextInt(radix)) return false;
+        sc.nextInt(radix);
+        return !sc.hasNext();
     }
 
 }

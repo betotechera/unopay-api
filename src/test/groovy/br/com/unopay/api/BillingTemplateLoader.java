@@ -92,7 +92,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("lastFourDigits", regex("\\d{4}"));
             add("expirationMonth", random("1","2","3","4","5","6","7","8","9","10","11","12"));
             add("expirationYear", random("1990", "1998", "2000", "5599", "9999", "1000", "2018"));
-            add("gatewaySource", regex("\\w{32}"));
+            add("gatewaySource", random(GatewaySource.class));
             add("gatewayToken", regex("\\w{64}"));
             add("createdDateTime", instant("1 second from now"));
         }});

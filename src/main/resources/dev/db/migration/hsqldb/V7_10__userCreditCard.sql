@@ -9,7 +9,7 @@ create table user_credit_card (
     gateway_token VARCHAR(256) not null,
     created_date_time TIMESTAMP not null,
     version INTEGER,
-    constraint fk_credit_card_user foreign key(user_id) references oauth_user_details(id),
+    constraint fk_credit_card_user foreign key(user_id) references oauth_user_details(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_USER_CREDIT_CARD','Permite listar os cartoes de credito de usuarios.');
