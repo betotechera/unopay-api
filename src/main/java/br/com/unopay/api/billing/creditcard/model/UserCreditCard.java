@@ -82,7 +82,7 @@ public class UserCreditCard {
     private Integer version;
 
     public void setupMyCreate(){
-        this.defineExpirationDate();
+        defineExpirationDate();
     }
 
     public void validateMe(){

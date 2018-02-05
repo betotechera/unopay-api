@@ -56,7 +56,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         !difference
     }
 
-    def 'when creating UserCreditCard with blank month value, error must be thrown'(){
+    def 'when creating UserCreditCard with blank month value should return error'(){
 
         given:
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
@@ -71,7 +71,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'BLANK_MONTH_VALUE'
     }
 
-    def 'when creating UserCreditCard with month value smaller than 1, error must be thrown'(){
+    def 'when creating UserCreditCard with month value smaller than 1 should return error'(){
 
         given:
         String expirationMonth = '0'
@@ -87,7 +87,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
     }
 
-    def 'when creating UserCreditCard with month value greater than 12, error must be thrown'(){
+    def 'when creating UserCreditCard with month value greater than 12 should return error'(){
 
         given:
         String expirationMonth = '13'
@@ -103,7 +103,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
     }
 
-    def 'when creating UserCreditCard with blank year value, error must be thrown'(){
+    def 'when creating UserCreditCard with blank year value should return error'(){
 
         given:
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
@@ -118,7 +118,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'BLANK_YEAR_VALUE'
     }
 
-    def 'when creating UserCreditCard with year value smaller than 1000, error must be thrown'(){
+    def 'when creating UserCreditCard with year value smaller than 1000 should return error'(){
 
         given:
         String expirationYear = '999'
@@ -134,7 +134,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
     }
 
-    def 'when creating UserCreditCard with year value greater than 9999, error must be thrown'(){
+    def 'when creating UserCreditCard with year value greater than 9999 should return error'(){
 
         given:
         String expirationYear = '10000'
@@ -150,7 +150,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
     }
 
-    def 'when calling validateMe with month value smaller than 1, error must be thrown'(){
+    def 'when calling validateMe with month value smaller than 1 should return error'(){
 
         given:
         String expirationMoth = '0'
@@ -166,7 +166,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
     }
 
-    def 'when calling validateMe with year value smaller than 1000, error must be thrown'(){
+    def 'when calling validateMe with year value smaller than 1000 should return error'(){
 
         given:
         String expirationYear = '999'

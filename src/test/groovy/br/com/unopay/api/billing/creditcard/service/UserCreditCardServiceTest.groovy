@@ -28,6 +28,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("user", user)
         }})
+        userCreditCard.setupMyCreate()
 
         when:
         UserCreditCard saved = userCreditCardService.save(userCreditCard)
@@ -37,7 +38,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         found
     }
 
-    def 'given a user credit card without date should be created'(){
+    def 'given a user credit card without creation date should be created'(){
 
         given:
         def user = fixtureCreator.createUser()
@@ -54,20 +55,35 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         timeComparator.compare(found.createdDateTime, new Date()) == 0
     }
 
-    def 'given a user credit card with unknown user should not be created'(){
+    def 'given a user credit card with blank user value should return error'(){
 
         given:
         def user = fixtureCreator.createUser()
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user)
+            add("user", user.with { id = ''; it })
         }})
-        userDetailService.delete(user.getId())
 
         when:
         userCreditCardService.create(userCreditCard)
 
         then:
         def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'USER_NOT_FOUND'
+        assert ex.errors.first().logref == 'USER_REQUIRED'
+    }
+
+    def 'given a user credit card with unknown user value should return error'(){
+
+        given:
+        def user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user.with { id = user.getId().reverse(); it })
+        }})
+
+        when:
+        userCreditCardService.create(userCreditCard)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_NOT_FOUND'
     }
 }
