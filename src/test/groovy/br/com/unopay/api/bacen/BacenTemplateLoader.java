@@ -83,6 +83,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("financierMail", "nome@teste.com");
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
+            add("defaultCreditValue", random(BigDecimal.class, range(1d,300d)));
+            add("defaultMemberCreditValue", random(BigDecimal.class, range(1d,300d)));
         }});
 
         Fixture.of(Partner.class).addTemplate("valid", new Rule(){{

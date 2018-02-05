@@ -19,3 +19,5 @@ insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_CON
 
 alter table credit_payment_account drop credit_number;
 alter table hirer add credit_recurrence_period varchar(100) default 'MONTHLY' not null;
+alter table hirer add default_credit_value decimal default 0.0 not null;
+alter table hirer add default_member_credit_value decimal default 0.0 not null;
