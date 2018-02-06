@@ -535,6 +535,8 @@ public final class Errors {
                     "Hirer belong to other contract");
 
     /* User Credit Card */
+    public static final UnovationError USER_CREDIT_CARD_NOT_FOUND =
+            new UnovationError("USER_CREDIT_CARD_NOT_FOUND","User credit card not found.");
     public static final UnovationError INVALID_MONTH =
             new UnovationError("INVALID_MONTH", "" +
                     "Invalid month");

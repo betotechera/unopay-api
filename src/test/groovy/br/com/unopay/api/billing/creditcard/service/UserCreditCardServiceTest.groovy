@@ -18,12 +18,17 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     @Autowired
     private FixtureCreator fixtureCreator
 
+    private UserDetail userDetail
+
+    void setup(){
+        userDetail = fixtureCreator.createUser()
+    }
+
     def 'given a valid user credit card should be created'(){
 
         given:
-        def user = fixtureCreator.createUser()
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user)
+            add("user", userDetail)
         }})
         userCreditCard.setupMyCreate()
 
@@ -38,9 +43,8 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     def 'given a user credit card without creation date should be created'(){
 
         given:
-        def user = fixtureCreator.createUser()
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user);
+            add("user", userDetail);
             add("createdDateTime", null)
         }})
 
@@ -55,9 +59,8 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     def 'given a user credit card with unknown user should return error'(){
 
         given:
-        def user = fixtureCreator.createUser()
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user.with { id = user.getId().reverse(); it })
+            add("user", userDetail.with { id = userDetail.getId().reverse(); it })
         }})
 
         when:
@@ -67,4 +70,32 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'USER_NOT_FOUND'
     }
+
+    def 'known user credit card should be deleted'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        def created = userCreditCardService.create(userCreditCard)
+
+        when:
+        userCreditCardService.delete(created.id)
+        userCreditCardService.findById(created.id)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'unkown user credit card should not be deleted'(){
+
+        when:
+        userCreditCardService.findById('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
 }

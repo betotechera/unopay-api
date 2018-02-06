@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
+
+import static br.com.unopay.api.uaa.exception.Errors.USER_CREDIT_CARD_NOT_FOUND;
 
 @Service
 public class UserCreditCardService {
@@ -29,10 +32,6 @@ public class UserCreditCardService {
         return userCreditCardRepository.save(userCreditCard);
     }
 
-    public UserCreditCard findById(String id) {
-        return userCreditCardRepository.findOne(id);
-    }
-
     public UserCreditCard create(UserCreditCard userCreditCard) {
         userCreditCard.setupMyCreate();
         userCreditCard.validateMe();
@@ -40,11 +39,24 @@ public class UserCreditCardService {
         return save(userCreditCard);
     }
 
+    public void delete(String id) {
+        findById(id);
+        userCreditCardRepository.delete(id);
+    }
+
+    public UserCreditCard findById(String id) {
+        Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findById(id);
+        return userCreditCard.orElseThrow(() ->
+                UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
+    }
+
     public void validateUserCreditCard (UserCreditCard userCreditCard){
         setValidUser(userCreditCard);
     }
 
     public void setValidUser (UserCreditCard userCreditCard){
-        userCreditCard.setUser(userDetailService.getById(userCreditCard.getUser().getId()));
+        if (userCreditCard.getUser().getId() != null) {
+            userCreditCard.setUser(userDetailService.getById(userCreditCard.getUser().getId()));
+        }
     }
 }
