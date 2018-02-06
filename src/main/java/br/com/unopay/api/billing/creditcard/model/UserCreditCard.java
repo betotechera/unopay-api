@@ -11,8 +11,11 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
 
+import javax.annotation.RegEx;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
@@ -48,11 +51,13 @@ public class UserCreditCard {
     private String holderName;
 
     @Column(name = "brand")
+    @Enumerated(STRING)
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.UserCreditCard.List.class})
-    private String brand;
+    private CardBrand brand;
 
     @Column(name = "last_four_digits")
+    @Pattern(message = "Must have 4 digits", regexp = "\\d{4}")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.UserCreditCard.List.class})
     private String lastFourDigits;
