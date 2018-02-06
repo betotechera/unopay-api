@@ -28,6 +28,7 @@ public class UserCreditCard {
 
     private static final int MIN_YEAR = 1000;
     private static final int MAX_YEAR = 9999;
+    private static final int BASE_10 = 10;
 
     @Id
     @Column(name="id")
@@ -102,7 +103,7 @@ public class UserCreditCard {
     public void validateMonth(){
         if (getExpirationMonth() == null
                 || getExpirationMonth() == ""
-                || !isInteger(getExpirationMonth(), 10)
+                || !isInteger(getExpirationMonth(), BASE_10)
                 || !isMonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_MONTH.withOnlyArgument(getExpirationMonth()));
@@ -117,7 +118,7 @@ public class UserCreditCard {
     public void validateYear(){
         if (getExpirationYear() == null
                 || getExpirationYear() == ""
-                || !isInteger(getExpirationYear(), 10)
+                || !isInteger(getExpirationYear(), BASE_10)
                 || !isYearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_YEAR.withOnlyArgument(getExpirationYear()));
