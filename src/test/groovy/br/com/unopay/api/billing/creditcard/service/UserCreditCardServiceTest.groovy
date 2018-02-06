@@ -18,9 +18,6 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     @Autowired
     private FixtureCreator fixtureCreator
 
-    @Autowired
-    UserDetailService userDetailService
-
     def 'given a valid user credit card should be created'(){
 
         given:
@@ -55,7 +52,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         timeComparator.compare(found.createdDateTime, new Date()) == 0
     }
 
-    def 'given a user credit card with unknown user value should return error'(){
+    def 'given a user credit card with unknown user should return error'(){
 
         given:
         def user = fixtureCreator.createUser()
