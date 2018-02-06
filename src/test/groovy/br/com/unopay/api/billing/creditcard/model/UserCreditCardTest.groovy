@@ -101,7 +101,6 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | ""
     }
 
-    @Unroll
     def 'when creating UserCreditCard with month value smaller than 1 should return error'(){
 
         given:
@@ -146,8 +145,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '9812389'
     }
 
-    @Unroll
-    def 'when creating UserCreditCard without an int year value "#value" should return error'(){
+    def 'when creating UserCreditCard without an int year value should return error'(){
 
         given:
         def invalidValue = value
