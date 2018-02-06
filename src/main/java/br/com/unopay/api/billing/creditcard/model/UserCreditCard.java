@@ -1,5 +1,6 @@
 package br.com.unopay.api.billing.creditcard.model;
 
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -28,7 +29,7 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 @Data
 @Entity
 @Table(name = "user_credit_card")
-public class UserCreditCard {
+public class UserCreditCard implements Updatable {
 
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int BASE_10 = 10;

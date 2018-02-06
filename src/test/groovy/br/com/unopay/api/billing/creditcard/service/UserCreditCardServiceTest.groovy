@@ -98,4 +98,23 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
+    def 'known user credit card should be updated'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "1234")
+        }})
+        def created = userCreditCardService.create(userCreditCard)
+        def fourDigits = "4321"
+        userCreditCard.lastFourDigits = fourDigits
+
+        when:
+        userCreditCardService.update(created.id, userCreditCard)
+        def result = userCreditCardService.findById(created.id)
+
+        then:
+        result.lastFourDigits == fourDigits
+    }
+
 }

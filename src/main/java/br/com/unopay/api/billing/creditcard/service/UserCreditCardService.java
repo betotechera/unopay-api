@@ -2,15 +2,11 @@ package br.com.unopay.api.billing.creditcard.service;
 
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
-import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 import java.util.Optional;
 
 import static br.com.unopay.api.uaa.exception.Errors.USER_CREDIT_CARD_NOT_FOUND;
@@ -33,10 +29,19 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard create(UserCreditCard userCreditCard) {
-        userCreditCard.setupMyCreate();
         userCreditCard.validateMe();
+        userCreditCard.setupMyCreate();
         validateUserCreditCard(userCreditCard);
         return save(userCreditCard);
+    }
+
+    public UserCreditCard update(String id, UserCreditCard userCreditCard){
+        userCreditCard.validateMe();
+        userCreditCard.setupMyCreate();
+        validateUserCreditCard(userCreditCard);
+        UserCreditCard current = findById(id);
+        current.updateMe(userCreditCard);
+        return userCreditCardRepository.save(current);
     }
 
     public void delete(String id) {
