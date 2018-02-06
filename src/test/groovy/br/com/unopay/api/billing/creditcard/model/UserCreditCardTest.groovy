@@ -57,10 +57,11 @@ class UserCreditCardTest extends FixtureApplicationTest {
         !difference
     }
 
-    def 'when creating UserCreditCard without an int month value should return error'(){
+    @Unroll
+    def 'when creating UserCreditCard with month value "#notAnIntValue" should return error'(){
 
         given:
-        def invalidValue = value
+        def invalidValue = notAnIntValue
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationMonth", invalidValue)
         }})
@@ -73,35 +74,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
 
         where:
-        _ | value
+        _ | notAnIntValue
+        _ | null
+        _ | ""
         _ | "a"
         _ | "1.0"
         _ | "1,1"
     }
 
-    @Unroll
-    def 'when creating UserCreditCard with month value #value should return error'(){
-
-        given:
-        def invalidValue = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", invalidValue)
-        }})
-
-        when:
-        userCreditCard.validateMonth()
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.find()?.logref == 'INVALID_MONTH'
-
-        where:
-        _ | value
-        _ | null
-        _ | ""
-    }
-
-    def 'when creating UserCreditCard with month value smaller than 1 should return error'(){
+    def 'when creating UserCreditCard with month value before January should return error'(){
 
         given:
         String expirationMonth = value
@@ -123,7 +104,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-83183'
     }
 
-    def 'when creating UserCreditCard with month value greater than 12 should return error'(){
+    def 'when creating UserCreditCard with month value after December should return error'(){
 
         given:
         String expirationMonth = value
@@ -145,10 +126,11 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '9812389'
     }
 
-    def 'when creating UserCreditCard without an int year value should return error'(){
+    @Unroll
+    def 'when creating UserCreditCard with year value "#notAnIntValue" should return error'(){
 
         given:
-        def invalidValue = value
+        def invalidValue = notAnIntValue
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationYear", invalidValue)
         }})
@@ -161,35 +143,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
 
         where:
-        _ | value
+        _ | notAnIntValue
+        _ | null
+        _ | ""
         _ | "a"
         _ | "1.0"
         _ | "1,1"
         _ | "2018 a"
         _ | "2018" + "a"
         _ | "a2018"
-    }
-
-    @Unroll
-    def 'when creating UserCreditCard with year value "#value" should return error'(){
-
-        given:
-        def invalidValue = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", invalidValue)
-        }})
-
-        when:
-        userCreditCard.validateYear()
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.find()?.logref == 'INVALID_YEAR'
-
-        where:
-        _ | value
-        _ | null
-        _ | ""
     }
 
     def 'when creating UserCreditCard with year value smaller than 1000 should return error'(){
@@ -236,7 +198,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '123123213'
     }
 
-    def 'when calling validateMe with month value smaller than 1 should return error'(){
+    def 'when calling validateMe with month value before January should return error'(){
 
         given:
         String expirationMoth = value
