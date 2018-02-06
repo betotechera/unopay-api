@@ -101,10 +101,11 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | ""
     }
 
+    @Unroll
     def 'when creating UserCreditCard with month value smaller than 1 should return error'(){
 
         given:
-        String expirationMonth = '0'
+        String expirationMonth = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationMonth", expirationMonth)
         }})
@@ -115,12 +116,18 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
+
+        where:
+        _ | value
+        _ | '-1'
+        _ | '0'
+        _ | '-83183'
     }
 
     def 'when creating UserCreditCard with month value greater than 12 should return error'(){
 
         given:
-        String expirationMonth = '13'
+        String expirationMonth = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationMonth", expirationMonth)
         }})
@@ -131,9 +138,16 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
+
+        where:
+        _ | value
+        _ | '13'
+        _ | '20'
+        _ | '9812389'
     }
 
-    def 'when creating UserCreditCard without an int year value should return error'(){
+    @Unroll
+    def 'when creating UserCreditCard without an int year value "#value" should return error'(){
 
         given:
         def invalidValue = value
@@ -156,7 +170,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
     }
 
     @Unroll
-    def 'when creating UserCreditCard with year value #value should return error'(){
+    def 'when creating UserCreditCard with year value "#value" should return error'(){
 
         given:
         def invalidValue = value
@@ -180,7 +194,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
     def 'when creating UserCreditCard with year value smaller than 1000 should return error'(){
 
         given:
-        String expirationYear = '999'
+        String expirationYear = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationYear", expirationYear)
         }})
@@ -191,12 +205,19 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
+
+        where:
+        _ | value
+        _ | '999'
+        _ | '10'
+        _ | '0'
+        _ | '-1'
     }
 
     def 'when creating UserCreditCard with year value greater than 9999 should return error'(){
 
         given:
-        String expirationYear = '10000'
+        String expirationYear = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationYear", expirationYear)
         }})
@@ -207,12 +228,17 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
+
+        where:
+        _ | value
+        _ | '10000'
+        _ | '123123213'
     }
 
     def 'when calling validateMe with month value smaller than 1 should return error'(){
 
         given:
-        String expirationMoth = '0'
+        String expirationMoth = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationMonth", expirationMoth)
         }})
@@ -223,12 +249,18 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_MONTH'
+
+        where:
+        _ | value
+        _ | '0'
+        _ | '-1'
+        _ | '-13788731'
     }
 
     def 'when calling validateMe with year value smaller than 1000 should return error'(){
 
         given:
-        String expirationYear = '999'
+        String expirationYear = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
             add("expirationYear", expirationYear)
         }})
@@ -239,5 +271,12 @@ class UserCreditCardTest extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
+
+        where:
+        _ | value
+        _ | '999'
+        _ | '0'
+        _ | '-1'
+        _ | '-18299898'
     }
 }
