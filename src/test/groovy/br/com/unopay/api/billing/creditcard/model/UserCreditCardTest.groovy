@@ -154,7 +154,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | "a2018"
     }
 
-    def 'when creating UserCreditCard with year value smaller than 1000 should return error'(){
+    def 'when creating UserCreditCard with year value before current year should return error'(){
 
         given:
         String expirationYear = value
@@ -175,9 +175,10 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '10'
         _ | '0'
         _ | '-1'
+        _ | '2017'
     }
 
-    def 'when creating UserCreditCard with year value greater than 9999 should return error'(){
+    def 'when creating UserCreditCard with year value after current year plus 100 should return error'(){
 
         given:
         String expirationYear = value
@@ -194,6 +195,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         where:
         _ | value
+        _ | '2300'
         _ | '10000'
         _ | '123123213'
     }
@@ -220,7 +222,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-13788731'
     }
 
-    def 'when calling validateMe with year value smaller than 1000 should return error'(){
+    def 'when calling validateMe with year value before current year should return error'(){
 
         given:
         String expirationYear = value
@@ -237,6 +239,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         where:
         _ | value
+        _ | '2017'
         _ | '999'
         _ | '0'
         _ | '-1'

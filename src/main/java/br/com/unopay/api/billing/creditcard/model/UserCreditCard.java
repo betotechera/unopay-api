@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -26,8 +27,7 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 @Table(name = "user_credit_card")
 public class UserCreditCard {
 
-    private static final int MIN_YEAR = 1000;
-    private static final int MAX_YEAR = 9999;
+    private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int BASE_10 = 10;
 
     @Id
@@ -127,7 +127,7 @@ public class UserCreditCard {
 
     public boolean isYearRangeValid(){
         int year = Integer.parseInt(expirationYear);
-        return year >= MIN_YEAR && year <= MAX_YEAR;
+        return year >= CURRENT_YEAR && year <= CURRENT_YEAR + 100;
     }
 
     public void defineExpirationDate(){
