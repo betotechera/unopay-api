@@ -165,6 +165,9 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | "a"
         _ | "1.0"
         _ | "1,1"
+        _ | "2018 a"
+        _ | "2018" + "a"
+        _ | "a2018"
     }
 
     @Unroll

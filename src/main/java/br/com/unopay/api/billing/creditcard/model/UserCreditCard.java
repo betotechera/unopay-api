@@ -100,10 +100,10 @@ public class UserCreditCard {
     }
 
     public void validateMonth(){
-        if (getExpirationMonth() == null ||
-                getExpirationMonth() == "" ||
-                !isInteger(getExpirationMonth(), 10) ||
-                !isMonthRangeValid()) {
+        if (getExpirationMonth() == null
+                || getExpirationMonth() == ""
+                || !isInteger(getExpirationMonth(), 10)
+                || !isMonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_MONTH.withOnlyArgument(getExpirationMonth()));
         }
@@ -111,17 +111,14 @@ public class UserCreditCard {
 
     public boolean isMonthRangeValid(){
         int month = Integer.parseInt(expirationMonth);
-        if (month >= JANUARY && month <= DECEMBER) {
-            return true;
-        }
-        return false;
+        return month >= JANUARY && month <= DECEMBER;
     }
 
     public void validateYear(){
-        if (getExpirationYear() == null ||
-                getExpirationYear() == "" ||
-                !isInteger(getExpirationYear(), 10) ||
-                !isYearRangeValid()){
+        if (getExpirationYear() == null
+                || getExpirationYear() == ""
+                || !isInteger(getExpirationYear(), 10)
+                || !isYearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_YEAR.withOnlyArgument(getExpirationYear()));
         }
@@ -129,10 +126,7 @@ public class UserCreditCard {
 
     public boolean isYearRangeValid(){
         int year = Integer.parseInt(expirationYear);
-        if (year >= MIN_YEAR && year <= MAX_YEAR) {
-            return true;
-        }
-        return false;
+        return year >= MIN_YEAR && year <= MAX_YEAR;
     }
 
     public void defineExpirationDate(){
@@ -150,5 +144,4 @@ public class UserCreditCard {
         sc.nextInt(radix);
         return !sc.hasNext();
     }
-
 }
