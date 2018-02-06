@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.infra.ReflectionHelper;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.PasswordRequired;
 import br.com.unopay.api.model.validation.group.Update;
@@ -46,7 +47,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Table(name = "oauth_user_details")
 @Data
 @EqualsAndHashCode(exclude = { "groups" })
-public class UserDetail implements Serializable {
+public class UserDetail implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -216,49 +217,54 @@ public class UserDetail implements Serializable {
     }
 
     public String establishmentId(){
-        if(isEstablishmentType()){
-            return getEstablishment().getId();
-        }
-        return null;
+        return isEstablishmentType() ? getEstablishment().getId() : null;
+    }
+
+    public String institutionId(){
+        return institution == null ? null : getInstitution().getId();
+    }
+
+    public String partnerId() {
+        return partner == null ?  null : getPartner().getId();
     }
 
 
     public Optional<Establishment> myEstablishment() {
-        if (isEstablishmentType()) {
+        if (establishment != null) {
             return Optional.ofNullable(getEstablishment());
         }
         return Optional.empty();
     }
 
     public Optional<Contractor> myContractor() {
-        if (isContractorType()) {
+        if (contractor != null) {
             return Optional.ofNullable(getContractor());
         }
         return Optional.empty();
     }
 
     public Optional<AccreditedNetwork> myNetWork() {
-        if (isAccreditedNetworkType()) {
+        if (accreditedNetwork != null) {
             return Optional.ofNullable(getAccreditedNetwork());
         }
         return Optional.empty();
     }
     public Optional<Hirer> myHirer() {
-        if (isAccreditedNetworkType()) {
+        if (accreditedNetwork != null) {
             return Optional.ofNullable(getHirer());
         }
         return Optional.empty();
     }
 
     public Optional<Issuer> myIssuer() {
-        if (isIssuerType()) {
+        if (issuer != null) {
             return Optional.ofNullable(getIssuer());
         }
         return Optional.empty();
     }
 
     public Optional<Institution> myInstitution() {
-        if (isIssuerType()) {
+        if (issuer != null) {
             return Optional.ofNullable(getInstitution());
         }
         return Optional.empty();
