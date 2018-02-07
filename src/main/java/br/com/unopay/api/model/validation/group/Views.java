@@ -92,7 +92,7 @@ public interface Views {
         interface List {}
     }
 
-    interface HirerNegociation{
+    interface HirerNegotiation {
         interface Detail extends List {}
         interface List {}
     }

@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.HirerNegotiation
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
@@ -461,6 +462,14 @@ class FixtureCreator {
             add("type", OrderType.ADHESION)
             add("value", BigDecimal.ONE)
             add("status", OrderStatus.PAID)
+        }})
+    }
+
+
+    HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct()){
+        return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
         }})
     }
 

@@ -294,6 +294,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
             add("autoRenewal", random(Boolean.class));
+            add("effectiveDate", instant("one day from now"));
             add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
             add("createdDateTime", instant("now"));
             add("active", random(Boolean.class));

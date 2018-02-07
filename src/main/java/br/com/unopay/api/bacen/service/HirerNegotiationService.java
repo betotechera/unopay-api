@@ -31,6 +31,7 @@ public class HirerNegotiationService {
     }
 
     public void update(String id, HirerNegotiation negotiation) {
+        negotiation.validateMe();
         HirerNegotiation current = findById(id);
         current.updateMe(negotiation);
         defineValidReferences(current);
@@ -38,6 +39,7 @@ public class HirerNegotiationService {
     }
 
     public HirerNegotiation create(HirerNegotiation negotiation) {
+        negotiation.validateMe();
         defineValidReferences(negotiation);
         negotiation.setMeUp();
         return save(negotiation);
