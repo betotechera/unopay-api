@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.HirerNegotiation
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class HirerNegotiationServiceTest extends SpockApplicationTests{
@@ -64,6 +65,76 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'PRODUCT_NOT_FOUND'
+    }
+
+
+    def 'given a negotiation without product should not be created'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", null)
+        }})
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'PRODUCT_NOT_FOUND'
+    }
+
+    def 'given a negotiation without hirer should not be created'(){
+        given:
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", null)
+            add("product", product)
+        }})
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'HIRER_NOT_FOUND'
+    }
+
+
+    def 'given a negotiation without installments should be created with product installments'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("installments", null)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        found.installments == product.paymentInstallments
+    }
+
+    def 'given a negotiation without installment value should be created with product installment value'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("installmentValue", null)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        found.installmentValue == product.installmentValue
     }
 
     def 'given a known hirer negotiation should be updated'(){

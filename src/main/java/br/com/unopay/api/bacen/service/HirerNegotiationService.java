@@ -39,11 +39,12 @@ public class HirerNegotiationService {
 
     public HirerNegotiation create(HirerNegotiation negotiation) {
         defineValidReferences(negotiation);
+        negotiation.setMeUp();
         return save(negotiation);
     }
 
     private void defineValidReferences(HirerNegotiation negotiation) {
-        negotiation.setHirer(hirerService.getById(negotiation.getHirer().getId()));
-        negotiation.setProduct(productService.findById(negotiation.getProduct().getId()));
+        negotiation.setHirer(hirerService.getById(negotiation.hirerId()));
+        negotiation.setProduct(productService.findById(negotiation.productId()));
     }
 }

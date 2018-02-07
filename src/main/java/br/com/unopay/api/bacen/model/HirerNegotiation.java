@@ -64,17 +64,17 @@ public class HirerNegotiation implements Updatable{
     private Integer paymentDay;
 
     @Column(name = "installments")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     @JsonView({Views.HirerNegociation.Detail.class})
     private Integer installments;
 
     @Column(name = "installment_value")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     @JsonView({Views.HirerNegociation.Detail.class})
     private BigDecimal installmentValue;
 
     @Column(name = "installment_value_by_member")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     @JsonView({Views.HirerNegociation.Detail.class})
     private BigDecimal installmentValueByMember;
 
@@ -107,5 +107,35 @@ public class HirerNegotiation implements Updatable{
     @JsonIgnore
     private Integer version;
 
+    public void setMeUp(){
+        if(!withInstallments()){
+            installments = product.getPaymentInstallments();
+        }
+        if(!withInstallmentValue()){
+            installmentValue = product.getInstallmentValue();
+        }
+    }
 
+    public String productId(){
+        if(getProduct() != null){
+            return getProduct().getId();
+        }
+        return null;
+    }
+
+    public String hirerId(){
+        if(getHirer() != null){
+            return getHirer().getId();
+        }
+        return null;
+    }
+
+    private boolean withInstallmentValue() {
+        return installmentValue != null;
+    }
+
+
+    public boolean withInstallments() {
+        return installments != null;
+    }
 }
