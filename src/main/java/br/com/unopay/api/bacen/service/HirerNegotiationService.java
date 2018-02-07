@@ -38,6 +38,7 @@ public class HirerNegotiationService {
     }
 
     public HirerNegotiation create(HirerNegotiation negotiation) {
+        negotiation.validateMe();
         defineValidReferences(negotiation);
         negotiation.setMeUp();
         return save(negotiation);

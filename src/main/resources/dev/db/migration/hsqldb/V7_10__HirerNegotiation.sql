@@ -11,6 +11,7 @@ create table hirer_negotiation (
     credit_recurrence_period varchar(100) not null,
     free_installment_quantity integer not null,
     auto_renewal varchar(20) not null,
+    effective_date timestamp not null,
     created_date_time Timestamp not null,
     "active" varchar(20) not null,
     version integer,

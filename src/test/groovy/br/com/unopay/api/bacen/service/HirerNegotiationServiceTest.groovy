@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.HirerNegotiation
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class HirerNegotiationServiceTest extends SpockApplicationTests{
@@ -47,6 +48,60 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'HIRER_NOT_FOUND'
+    }
+
+    def 'given a negotiation with past effective date should not be created'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("effectiveDate", instant("one second ago"))
+        }})
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'EFFECTIVE_DATE_IS_BEFORE_CREATION'
+    }
+
+    def 'given a negotiation without effective date should not be created'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("effectiveDate", null)
+        }})
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'EFFECTIVE_DATE_REQUIRED'
+    }
+
+    def 'given a negotiation without past effective date should not be created'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("effectiveDate", instant("one second ago"))
+        }})
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'EFFECTIVE_DATE_IS_BEFORE_CREATION'
     }
 
     def 'given a negotiation with unknown product should not be created'(){
