@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,14 @@ public class AuthorizedMemberController {
     public AuthorizedMember get(@PathVariable String id) {
         log.info("get authorizedMember={}", id);
         return service.findById(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
+    @RequestMapping(value = "/authorized-members/{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable String id,
+                       @Validated(Update.class) @RequestBody AuthorizedMember authorizedMember) {
+        log.info("updating authorizedMember={}", authorizedMember);
+        service.update(id, authorizedMember);
     }
 }
