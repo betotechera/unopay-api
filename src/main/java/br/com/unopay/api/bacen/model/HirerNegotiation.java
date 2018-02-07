@@ -154,4 +154,8 @@ public class HirerNegotiation implements Updatable{
     public boolean withInstallments() {
         return installments != null;
     }
+
+    public boolean withFreeInstallments() {
+        return freeInstallmentQuantity != null && freeInstallmentQuantity != 0;
+    }
 }
