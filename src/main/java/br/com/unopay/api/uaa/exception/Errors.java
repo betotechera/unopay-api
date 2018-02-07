@@ -559,4 +559,7 @@ public final class Errors {
     public static final UnovationError AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED =
             new UnovationError("AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED", "The authorized member " +
                     "relatedness with a hirer is required");
+
+    public static final UnovationError AUTHORIZED_MEMBER_NOT_FOUND =
+            new UnovationError("AUTHORIZED_MEMBER_NOT_FOUND", "Authorized member not founds");
 }
