@@ -6,7 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.HirerNegotiation
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.NotFoundException
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 
 class HirerNegotiationServiceTest extends SpockApplicationTests{
