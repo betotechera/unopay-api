@@ -18,12 +18,23 @@ public class AuthorizedMemberService {
     AuthorizedMemberRepository repository;
 
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
+        return save(authorizedMember);
+    }
+
+    private AuthorizedMember save(AuthorizedMember authorizedMember) {
         authorizedMember.validateMe();
         return repository.save(authorizedMember);
     }
+
     public AuthorizedMember findById(String id) {
         Optional<AuthorizedMember> authorizedMember = repository.findById(id);
         return authorizedMember.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
                 Errors.AUTHORIZED_MEMBER_NOT_FOUND));
+    }
+
+    public void update(String id, AuthorizedMember authorizedMember) {
+        AuthorizedMember current = findById(id);
+        current.updateMe(authorizedMember);
+        save(authorizedMember);
     }
 }

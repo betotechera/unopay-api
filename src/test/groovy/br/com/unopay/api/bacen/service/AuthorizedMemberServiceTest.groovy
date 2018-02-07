@@ -71,4 +71,18 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
+
+    void 'should update known AuthorizedMember'() {
+        given:
+        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        authorizedMember.name = "new name"
+        when:
+        service.update(authorizedMember.id, authorizedMember)
+
+        then:
+        def found = service.findById(authorizedMember.id)
+        found.name == authorizedMember.name
+
+    }
+
 }

@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Document;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
@@ -25,7 +26,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "authorized_member")
-public class AuthorizedMember implements Serializable{
+public class AuthorizedMember implements Serializable, Updatable{
 
     public static final long serialVersionUID = 1L;
 
