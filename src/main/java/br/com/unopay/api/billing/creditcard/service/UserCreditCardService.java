@@ -42,6 +42,11 @@ public class UserCreditCardService {
         return userCreditCardRepository.save(current);
     }
 
+    public UserCreditCard updateForUser(String id, UserDetail user, UserCreditCard userCreditCard){
+        UserCreditCard current = findByIdForUser(id, user);
+        return update(current.getId(), userCreditCard);
+    }
+
     public void delete(String id) {
         findById(id);
         userCreditCardRepository.delete(id);

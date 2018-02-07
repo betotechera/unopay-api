@@ -131,7 +131,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         created.id == found.id
     }
 
-    def 'known user credit card should not be found with a different user'(){
+    def 'known user credit card to be find with a different user should return error'(){
 
         given:
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
@@ -142,6 +142,47 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
 
         when:
         userCreditCardService.findByIdForUser(created.id, differentUser)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'known user credit card should be updated with its user'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "1234")
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        def fourDigits = "4321"
+        userCreditCard.lastFourDigits = fourDigits
+
+        when:
+        userCreditCardService.updateForUser(created.id, userDetail, userCreditCard)
+        def result = userCreditCardService.findById(created.id)
+
+        then:
+        result.lastFourDigits == fourDigits
+    }
+
+    def 'known user credit card to be updated with a different user should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "1234")
+        }})
+        UserCreditCard newUserCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "4321")
+        }})
+        UserDetail differentUser = fixtureCreator.createUser()
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+
+        when:
+        userCreditCardService.updateForUser(created.id, differentUser, newUserCreditCard)
 
         then:
         def ex = thrown(NotFoundException)
