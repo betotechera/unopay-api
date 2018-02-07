@@ -78,7 +78,7 @@ public class UserCreditCardService {
     }
 
     public void setValidUser (UserCreditCard userCreditCard){
-        if (userCreditCard.getUser().getId() != null) {
+        if (userCreditCard.userId() != null) {
             userCreditCard.setUser(userDetailService.getById(userCreditCard.getUser().getId()));
         }
     }
