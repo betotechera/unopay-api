@@ -18,6 +18,7 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
+import br.com.unopay.api.bacen.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
 import br.com.unopay.api.bacen.model.InvoiceReceiptType;
@@ -35,6 +36,7 @@ import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
 
@@ -83,6 +85,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("financierMail", "nome@teste.com");
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
+            add("defaultCreditValue", random(BigDecimal.class, range(1d,300d)));
+            add("defaultMemberCreditValue", random(BigDecimal.class, range(1d,300d)));
         }});
 
         Fixture.of(Partner.class).addTemplate("valid", new Rule(){{
@@ -275,6 +279,22 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
             add("issuer", one(Issuer.class, "valid"));
             add("user", one(UserDetail.class, "with-group"));
+            add("createdDateTime", instant("now"));
+            add("active", random(Boolean.class));
+        }});
+
+        Fixture.of(HirerNegotiation.class).addTemplate("valid", new Rule(){{
+            add("product", one(Product.class, "valid"));
+            add("hirer", one(Hirer.class, "valid"));
+            add("defaultCreditValue", random(BigDecimal.class, range(2, 300)));
+            add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
+            add("paymentDay", random(Integer.class, range(1, 31)));
+            add("installments", random(Integer.class, range(1, 31)));
+            add("installmentValue", random(BigDecimal.class, range(2, 300)));
+            add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
+            add("creditRecurrencePeriod", random(RecurrencePeriod.class));
+            add("autoRenewal", random(Boolean.class));
+            add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
             add("createdDateTime", instant("now"));
             add("active", random(Boolean.class));
         }});

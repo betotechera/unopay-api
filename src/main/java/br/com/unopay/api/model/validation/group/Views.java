@@ -92,6 +92,11 @@ public interface Views {
         interface List {}
     }
 
+    interface HirerNegociation{
+        interface Detail extends List {}
+        interface List {}
+    }
+
     interface Institution {
         interface Detail extends Person,Address,List {}
         interface List {}
