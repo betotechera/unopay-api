@@ -101,6 +101,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         when:
         service.delete(id)
         then:
+        service.findById(id)
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
