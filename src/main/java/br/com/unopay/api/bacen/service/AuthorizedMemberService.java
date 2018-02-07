@@ -37,4 +37,9 @@ public class AuthorizedMemberService {
         current.updateMe(authorizedMember);
         save(authorizedMember);
     }
+
+    public void delete(String id) {
+        findById(id);
+        repository.delete(id);
+    }
 }

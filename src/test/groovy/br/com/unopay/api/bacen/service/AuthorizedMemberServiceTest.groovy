@@ -82,7 +82,26 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         then:
         def found = service.findById(authorizedMember.id)
         found.name == authorizedMember.name
-
     }
 
+    void 'when trying to delete unknown AuthorizedMember should return error'(){
+        given:
+        def id = "123"
+        when:
+        service.delete(id)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'should delete known AuthorizedMember'(){
+        given:
+        def authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        def id = authorizedMember.id;
+        when:
+        service.delete(id)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
 }
