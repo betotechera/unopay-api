@@ -66,7 +66,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         given:
         def id = "123"
         when:
-        def found = service.findById(id)
+        service.findById(id)
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
@@ -100,8 +100,8 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         def id = authorizedMember.id;
         when:
         service.delete(id)
-        then:
         service.findById(id)
+        then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }

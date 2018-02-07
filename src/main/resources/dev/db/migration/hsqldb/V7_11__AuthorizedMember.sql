@@ -11,3 +11,9 @@ create table authorized_member(
     payment_instrument_id VARCHAR(256),
     constraint fk_auth_member_pay_inst foreign key(payment_instrument_id) references payment_instrument(id)
 );
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_AUTHORIZED_MEMBER','Permite listar membros autorizados');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_AUTHORIZED_MEMBER','Permite gerenciar membros autorizados');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_AUTHORIZED_MEMBER', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_AUTHORIZED_MEMBER', '1');
