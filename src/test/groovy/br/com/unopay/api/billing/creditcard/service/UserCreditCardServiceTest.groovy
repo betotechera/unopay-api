@@ -116,6 +116,36 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         result.lastFourDigits == fourDigits
     }
 
+    def 'known user credit card should be found with its user'(){
 
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+
+        when:
+        UserCreditCard found = userCreditCardService.findByIdForUser(created.id, userDetail)
+
+        then:
+        created.id == found.id
+    }
+
+    def 'known user credit card should not be found with a different user'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserDetail differentUser = fixtureCreator.createUser()
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+
+        when:
+        userCreditCardService.findByIdForUser(created.id, differentUser)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
 
 }

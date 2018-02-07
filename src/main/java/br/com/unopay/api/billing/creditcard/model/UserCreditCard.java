@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 @Data
 @Entity
 @Table(name = "user_credit_card")
-public class UserCreditCard implements Updatable {
+public class UserCreditCard implements Serializable, Updatable {
 
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int BASE_10 = 10;
