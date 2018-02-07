@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
+import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.BankAccountType;
@@ -298,6 +299,13 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
             add("createdDateTime", instant("now"));
             add("active", random(Boolean.class));
+        }});
+
+        Fixture.of(AuthorizedMember.class).addTemplate("valid", new Rule(){{
+            add("birthDate", instant("18 years ago"));
+            add("name",  regex("\\w{15}"));
+            add("gender",  regex("\\w{15}"));
+            add("relatedness",  regex("\\w{15}"));
         }});
 
     }

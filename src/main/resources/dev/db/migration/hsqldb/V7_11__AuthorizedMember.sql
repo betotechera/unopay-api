@@ -1,7 +1,7 @@
 create table authorized_member(
     id VARCHAR(256) PRIMARY KEY,
     birth_date TIMESTAMP not null,
-    name varchar(255) not null,
+    name varchar(256) not null,
     gender varchar(50) not null,
     relatedness varchar(50) not null,
     email VARCHAR(256),
