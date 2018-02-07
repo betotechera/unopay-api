@@ -62,4 +62,17 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
         found.andExpect(status().isOk()).andExpect(jsonPath('$.name', equalTo("new name")))
     }
+
+    def 'all AuthorizedMembers should be found'() {
+        given:
+        def accessToken = getUserAccessToken()
+        Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme(2, "valid")
+        when:
+        def result = this.mvc.perform(get('/authorized-members?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+
+        then:
+        result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
+    }
 }

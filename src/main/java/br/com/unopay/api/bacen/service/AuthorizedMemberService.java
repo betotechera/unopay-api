@@ -1,11 +1,15 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -41,5 +45,9 @@ public class AuthorizedMemberService {
     public void delete(String id) {
         findById(id);
         repository.delete(id);
+    }
+
+    public Page<AuthorizedMember> findByFilter(AuthorizedMemberFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }

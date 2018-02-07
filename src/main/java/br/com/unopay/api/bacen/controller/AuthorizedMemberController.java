@@ -1,12 +1,17 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.bootcommons.jsoncollections.PageableResults;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +29,9 @@ import java.net.URI;
 @RestController
 @Timed(prefix = "api")
 public class AuthorizedMemberController {
+
+    @Value("${unopay.api}")
+    private String api;
 
     @Autowired
     AuthorizedMemberService service;
@@ -56,5 +64,15 @@ public class AuthorizedMemberController {
                        @Validated(Update.class) @RequestBody AuthorizedMember authorizedMember) {
         log.info("updating authorizedMember={}", authorizedMember);
         service.update(id, authorizedMember);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/authorized-members", method = RequestMethod.GET)
+    public PageableResults<AuthorizedMember> getByParams(AuthorizedMemberFilter filter,
+                                                         @Validated UnovationPageRequest pageable) {
+        log.info("search AuthorizedMember with filter={}", filter);
+        Page<AuthorizedMember> page =  service.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/authorized-members", api));
     }
 }
