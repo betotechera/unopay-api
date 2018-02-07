@@ -245,4 +245,70 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-1'
         _ | '-18299898'
     }
+
+    def 'when calling validateContainsExpirationDate with value #blankOrNull should return error'(){
+
+        given:
+        Date invalidValue = blankOrNull
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationDate", invalidValue)
+        }})
+
+        when:
+        userCreditCard.validateContainsExpirationDate()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.find()?.logref == 'INVALID_EXPIRATION_DATE'
+
+        where:
+        _ | blankOrNull
+        _ | null
+    }
+
+    def "when calling defineMonthBasedOnExpirationDate with given expirationDate, month should be equal to expirationDate's month"(){
+
+        given:
+        def expMonth = value
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationMonth", expMonth)
+        }})
+        userCreditCard.defineExpirationDate()
+        userCreditCard.expirationMonth = ""
+
+        when:
+        userCreditCard.defineMonthBasedOnExpirationDate()
+
+        then:
+        userCreditCard.expirationMonth == expMonth
+
+        where:
+        _ | value
+        _ | "1"
+        _ | "4"
+
+    }
+
+    def "when calling defineYearBasedOnExpirationDate with given expirationDate, year should be equal to expirationDate's year"(){
+
+        given:
+        def expYear = value
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationYear", expYear)
+        }})
+        userCreditCard.defineExpirationDate()
+        userCreditCard.expirationYear = ""
+
+        when:
+        userCreditCard.defineYearBasedOnExpirationDate()
+
+        then:
+        userCreditCard.expirationYear == expYear
+
+        where:
+        _ | value
+        _ | "2040"
+        _ | "2050"
+
+    }
 }

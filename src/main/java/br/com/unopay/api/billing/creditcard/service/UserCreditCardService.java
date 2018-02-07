@@ -5,7 +5,6 @@ import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -29,16 +28,14 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard create(UserCreditCard userCreditCard) {
-        userCreditCard.validateMe();
         userCreditCard.setupMyCreate();
-        validateUserCreditCard(userCreditCard);
+        setValidUser(userCreditCard);
         return save(userCreditCard);
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){
-        userCreditCard.validateMe();
         userCreditCard.setupMyCreate();
-        validateUserCreditCard(userCreditCard);
+        setValidUser(userCreditCard);
         UserCreditCard current = findById(id);
         current.updateMe(userCreditCard);
         return userCreditCardRepository.save(current);
@@ -51,12 +48,12 @@ public class UserCreditCardService {
 
     public UserCreditCard findById(String id) {
         Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findById(id);
+        if (userCreditCard.isPresent()){
+            userCreditCard.get().defineMonthBasedOnExpirationDate();
+            userCreditCard.get().defineYearBasedOnExpirationDate();
+        }
         return userCreditCard.orElseThrow(() ->
                 UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
-    }
-
-    public void validateUserCreditCard (UserCreditCard userCreditCard){
-        setValidUser(userCreditCard);
     }
 
     public void setValidUser (UserCreditCard userCreditCard){

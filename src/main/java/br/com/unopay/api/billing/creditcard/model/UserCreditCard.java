@@ -12,11 +12,9 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
 
-import javax.annotation.RegEx;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
@@ -97,6 +95,7 @@ public class UserCreditCard implements Updatable {
     private Integer version;
 
     public void setupMyCreate(){
+        validateMe();
         defineExpirationDate();
         setCreatedDateTime(new Date());
     }
@@ -121,6 +120,11 @@ public class UserCreditCard implements Updatable {
         return month >= JANUARY && month <= DECEMBER;
     }
 
+    public void defineMonthBasedOnExpirationDate(){
+        validateContainsExpirationDate();
+        expirationMonth = String.valueOf(expirationDate.getMonth() + 1);
+    }
+
     public void validateYear(){
         if (getExpirationYear() == null
                 || getExpirationYear() == ""
@@ -136,13 +140,28 @@ public class UserCreditCard implements Updatable {
         return year >= CURRENT_YEAR && year <= CURRENT_YEAR + 100;
     }
 
+    public void defineYearBasedOnExpirationDate(){
+        validateContainsExpirationDate();
+        expirationYear = String.valueOf(expirationDate.getYear() + 1900);
+    }
+
     public void defineExpirationDate(){
+        validateMonth();
+        validateYear();
         this.expirationDate = DateTime.now()
                 .withYear(Integer.parseInt(getExpirationYear()))
                 .withMonthOfYear(Integer.parseInt(getExpirationMonth()))
                 .withDayOfMonth(1)
                 .withTime(0, 0, 0, 0)
                 .toDate();
+    }
+
+    public void validateContainsExpirationDate(){
+        if (getExpirationDate() == null
+                || getExpirationDate().toString() == "") {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_EXPIRATION_DATE.withOnlyArgument(getExpirationDate()));
+        }
     }
 
     private static boolean isInteger(String s, int radix) {

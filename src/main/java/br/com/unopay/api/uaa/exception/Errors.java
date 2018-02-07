@@ -544,6 +544,9 @@ public final class Errors {
     public static final UnovationError INVALID_YEAR =
             new UnovationError("INVALID_YEAR", "" +
                     "Invalid year");
+    public static final UnovationError INVALID_EXPIRATION_DATE =
+            new UnovationError("INVALID_EXPIRATION_DATE", "" +
+                    "Invalid expiration date");
 
     /* Hirer Negotiation */
     public static final UnovationError EFFECTIVE_DATE_IS_BEFORE_CREATION =

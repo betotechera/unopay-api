@@ -6,7 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -116,5 +115,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         then:
         result.lastFourDigits == fourDigits
     }
+
+
 
 }
