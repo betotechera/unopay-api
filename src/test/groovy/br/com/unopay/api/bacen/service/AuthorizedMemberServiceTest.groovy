@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import javassist.NotFoundException
+import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
 class AuthorizedMemberServiceTest extends SpockApplicationTests {
@@ -69,5 +69,6 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         def found = service.findById(id)
         then:
         def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 }
