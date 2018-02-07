@@ -31,6 +31,7 @@ public class HirerNegotiationService {
     }
 
     public void update(String id, HirerNegotiation negotiation) {
+        negotiation.validateMe();
         HirerNegotiation current = findById(id);
         current.updateMe(negotiation);
         defineValidReferences(current);

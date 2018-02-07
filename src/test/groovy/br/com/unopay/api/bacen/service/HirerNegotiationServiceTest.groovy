@@ -208,6 +208,42 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         found.installments == negotiation.installments
     }
 
+    def 'given negotiation with past effect date should not be updated'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("effectiveDate", instant("one second ago"))
+        }})
+
+        when:
+        service.update(negotiation.id, negotiation.with { installments = 40; it })
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'EFFECTIVE_DATE_IS_BEFORE_CREATION'
+    }
+
+    def 'given negotiation without effect date should not be updated'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+        }})
+
+
+        when:
+        service.update(negotiation.id, negotiation.with { effectiveDate = null; it })
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find().logref == 'EFFECTIVE_DATE_REQUIRED'
+    }
+
 
     def 'given a known hirer negotiation when update with unknown hirer should not be updated'(){
         given:
