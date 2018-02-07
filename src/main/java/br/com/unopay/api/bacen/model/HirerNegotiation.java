@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -25,7 +26,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @Table(name = "hirer_negotiation")
-public class HirerNegotiation {
+public class HirerNegotiation implements Updatable{
 
     public HirerNegotiation(){}
 
