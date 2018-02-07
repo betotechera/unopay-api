@@ -544,70 +544,19 @@ public final class Errors {
                     "effective date required");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /* Authorized Member*/
+    public static final UnovationError AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED", "The authorized member " +
+                    "birth date is required");
+
+    public static final UnovationError AUTHORIZED_MEMBER_NAME_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_NAME_REQUIRED", "The authorized member " +
+                    "name is required");
+
+    public static final UnovationError AUTHORIZED_MEMBER_GENDER_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_GENDER_REQUIRED", "The authorized member " +
+                    "gender is required");
+    public static final UnovationError AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED", "The authorized member " +
+                    "relatedness with a hirer is required");
 }

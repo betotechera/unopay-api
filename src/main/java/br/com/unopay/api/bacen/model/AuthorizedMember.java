@@ -4,6 +4,8 @@ import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -61,4 +63,18 @@ public class AuthorizedMember implements Serializable{
     @Valid
     @Embedded
     private Document document;
+
+    public void validateMe() {
+        if(birthDate == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
+
+        if(name == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
+
+        if(gender == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED);
+
+        if(relatedness == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
+    }
 }
