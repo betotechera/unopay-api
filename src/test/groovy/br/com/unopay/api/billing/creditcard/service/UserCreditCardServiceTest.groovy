@@ -189,4 +189,38 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
+    def 'known user credit card should be deleted with its user'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        userCreditCardService.deleteForUser(created.id, userDetail)
+
+        when:
+        userCreditCardService.findById(created.id)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'known user credit card to be deleted with a different user should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        UserDetail differentUser = fixtureCreator.createUser()
+
+        when:
+        userCreditCardService.deleteForUser(created.id, differentUser)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
 }

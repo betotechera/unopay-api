@@ -52,6 +52,11 @@ public class UserCreditCardService {
         userCreditCardRepository.delete(id);
     }
 
+    public void deleteForUser(String id, UserDetail user){
+        UserCreditCard toBeDeleted = findByIdForUser(id, user);
+        delete(toBeDeleted.getId());
+    }
+
     public UserCreditCard findById(String id) {
         Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findById(id);
         if (userCreditCard.isPresent()){
