@@ -8,6 +8,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static br.com.unopay.api.uaa.exception.Errors.USER_CREDIT_CARD_NOT_FOUND;
 
@@ -58,20 +59,17 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard findById(String id) {
-        Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findById(id);
-        return returnUserCreditCard(id, userCreditCard);
+        return returnUserCreditCard(id, () -> userCreditCardRepository.findById(id));
     }
 
     public UserCreditCard findByIdForUser(String id, UserDetail user){
-        Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findByIdAndUserId(id, user.getId());
-        return returnUserCreditCard(id, userCreditCard);
+        return returnUserCreditCard(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
     }
 
-    private UserCreditCard returnUserCreditCard(String id, Optional<UserCreditCard> userCreditCard){
-        userCreditCard.ifPresent(card -> {
-            card.defineMonthAndYearBasedOnExpirationDate();
-        });
-        return userCreditCard.orElseThrow(() ->
+    private UserCreditCard returnUserCreditCard(String id, Supplier<Optional<UserCreditCard>> userCreditCard){
+        Optional<UserCreditCard> credit = userCreditCard.get();
+        credit.ifPresent(UserCreditCard::defineMonthAndYearBasedOnExpirationDate);
+        return credit.orElseThrow(() ->
                 UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
     }
 
