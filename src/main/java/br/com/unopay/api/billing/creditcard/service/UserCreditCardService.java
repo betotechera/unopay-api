@@ -59,15 +59,15 @@ public class UserCreditCardService {
 
     public UserCreditCard findById(String id) {
         Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findById(id);
-        userCreditCard.ifPresent(card -> {
-            card.defineMonthAndYearBasedOnExpirationDate();
-        });
-        return userCreditCard.orElseThrow(() ->
-                UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
+        return returnUserCreditCard(id, userCreditCard);
     }
 
     public UserCreditCard findByIdForUser(String id, UserDetail user){
         Optional<UserCreditCard> userCreditCard = userCreditCardRepository.findByIdAndUserId(id, user.getId());
+        return returnUserCreditCard(id, userCreditCard);
+    }
+
+    private UserCreditCard returnUserCreditCard(String id, Optional<UserCreditCard> userCreditCard){
         userCreditCard.ifPresent(card -> {
             card.defineMonthAndYearBasedOnExpirationDate();
         });
