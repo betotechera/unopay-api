@@ -1,5 +1,7 @@
-package br.com.unopay.api.bacen.model;
+package br.com.unopay.api.market.model;
 
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -104,6 +106,11 @@ public class HirerNegotiation implements Updatable{
     @Column(name = "effective_date")
     @JsonView({Views.HirerNegotiation.Detail.class})
     private Date effectiveDate;
+
+    @Column(name = "billing_with_credits")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.HirerNegotiation.Detail.class})
+    private Boolean billingWithCredits;
 
     @Column(name = "created_date_time")
     @JsonView({Views.HirerNegotiation.Detail.class})

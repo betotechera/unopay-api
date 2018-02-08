@@ -1,4 +1,4 @@
-package br.com.unopay.api.bacen.model.filter;
+package br.com.unopay.api.market.model.filter;
 
 import lombok.Data;
 

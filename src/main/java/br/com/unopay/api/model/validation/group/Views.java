@@ -97,6 +97,11 @@ public interface Views {
         interface List {}
     }
 
+    interface NegotiationBilling {
+        interface Detail extends List {}
+        interface List {}
+    }
+
     interface Institution {
         interface Detail extends Person,Address,List {}
         interface List {}

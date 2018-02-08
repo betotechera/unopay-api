@@ -18,7 +18,7 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
-import br.com.unopay.api.bacen.model.HirerNegotiation;
+import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
 import br.com.unopay.api.bacen.model.InvoiceReceiptType;
@@ -32,11 +32,15 @@ import br.com.unopay.api.bacen.model.Scope;
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
 
@@ -290,6 +294,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
             add("paymentDay", random(Integer.class, range(1, 31)));
             add("installments", random(Integer.class, range(6, 24)));
+            add("billingWithCredits", random(Boolean.class));
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
@@ -302,6 +307,35 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(HirerNegotiation.class).addTemplate("withFreeInstallments").inherits("valid", new Rule(){{
             add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
+        }});
+
+        Fixture.of(NegotiationBilling.class).addTemplate("valid", new Rule(){{
+            add("hirerNegotiation", one(HirerNegotiation.class, "valid"));
+            add("installmentNumber", random(Integer.class, range(1, 5)));
+            add("installmentExpiration", instant("one day from now"));
+            add("installments", random(Integer.class, range(6, 24)));
+            add("billingWithCredits", random(Boolean.class));
+            add("installmentValue", random(BigDecimal.class, range(2, 300)));
+            add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
+            add("freeInstallmentQuantity", 0);
+            add("defaultCreditValue", random(BigDecimal.class, range(2, 300)));
+            add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
+            add("createdDateTime", instant("now"));
+            add("value",  random(BigDecimal.class, range(2, 300)));
+            add("status", random(PaymentStatus.class));
+        }});
+
+        Fixture.of(NegotiationBillingDetail.class).addTemplate("valid", new Rule(){{
+            add("negotiationBilling", one(NegotiationBilling.class, "valid"));
+            add("contract", one(Contract.class, "valid"));
+            add("installmentValue", random(BigDecimal.class, range(2, 300)));
+            add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
+            add("freeInstallment", random(Boolean.class));
+            add("creditValue", random(BigDecimal.class, range(2, 300)));
+            add("memberCreditValue", random(BigDecimal.class, range(2, 300)));
+            add("createdDateTime", instant("now"));
+            add("value",  random(BigDecimal.class, range(2, 300)));
+            add("memberTotal",  random(Integer.class, range(1, 100)));
         }});
 
     }

@@ -14,7 +14,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.OrderStatus
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
@@ -76,7 +76,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a credit order with paid status and credit type should call credit service'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.CREDIT, contractor)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID, OrderType.CREDIT, contractor)
 
         when:
         service.process(paid)
@@ -102,7 +102,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a installment payment order with paid status should mark installment as paid'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
 
         when:
         service.process(paid)
@@ -115,10 +115,10 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known credit order with status waiting payment should update to paid status'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
-        def orderA = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT,OrderType.CREDIT, contractor)
+        def orderA = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.WAITING_PAYMENT,OrderType.CREDIT, contractor)
 
         Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("contract", orderA.contract)
         }})
 
@@ -127,12 +127,12 @@ class OrderServiceTest extends SpockApplicationTests{
         def result = service.findById(orderA.id)
 
         then:
-        result.status == OrderStatus.PAID
+        result.status == PaymentStatus.PAID
     }
 
     def 'given a credit order with paid status should send payment approved email'(){
         given:
-        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAID)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID)
 
         when:
         service.process(paid)
@@ -144,7 +144,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a credit order with payment denied status should send payment denied email'(){
         given:
-        def paid = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.PAYMENT_DENIED)
+        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAYMENT_DENIED)
 
         when:
         service.process(paid)
@@ -158,10 +158,10 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")
 
-        def orderA = fixtureCreator.createPersistedOrderWithStatus(OrderStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
+        def orderA = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
 
         Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("contract", orderA.contract)
         }})
 
@@ -178,7 +178,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known order with status canceled when trying to update should return error'(){
         given:
         Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("status", OrderStatus.CANCELED)
+            add("status", PaymentStatus.CANCELED)
         }})
 
         Order order = Fixture.from(Order.class).gimme("valid")
@@ -195,11 +195,11 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a unknown order with status waiting payment should return error'(){
         given:
         Order unknownOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("status", OrderStatus.WAITING_PAYMENT)
+            add("status", PaymentStatus.WAITING_PAYMENT)
         }})
 
         Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
         }})
 
         when:

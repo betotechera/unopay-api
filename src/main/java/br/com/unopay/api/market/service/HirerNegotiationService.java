@@ -1,7 +1,8 @@
-package br.com.unopay.api.bacen.service;
+package br.com.unopay.api.market.service;
 
-import br.com.unopay.api.bacen.model.HirerNegotiation;
-import br.com.unopay.api.bacen.repository.HirerNegotiationRepository;
+import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Optional;

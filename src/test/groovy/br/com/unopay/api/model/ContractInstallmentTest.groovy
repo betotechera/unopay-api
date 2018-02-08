@@ -3,9 +3,8 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.bacen.model.HirerNegotiation
+import br.com.unopay.api.market.model.HirerNegotiation
 import static br.com.unopay.api.function.FixtureFunctions.*
-import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
 import org.joda.time.DateTime
