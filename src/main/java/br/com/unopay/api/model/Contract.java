@@ -279,6 +279,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public String productId(){
+        if(getProduct() != null){
+            return getProduct().getId();
+        }
+        return null;
+    }
+
     public boolean containsContractor(Contractor contractor) {
         return Objects.equals(this.contractor.getId(), contractor.getId());
     }

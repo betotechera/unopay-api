@@ -3,8 +3,12 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.HirerNegotiation;
 import br.com.unopay.api.bacen.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.ProductService;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static br.com.unopay.api.uaa.exception.Errors.HIRER_NEGOTIATION_NOT_FOUND;
 
 @Service
 public class HirerNegotiationService {
@@ -28,6 +32,13 @@ public class HirerNegotiationService {
 
     public HirerNegotiation findById(String id) {
         return repository.findOne(id);
+    }
+
+    public HirerNegotiation findByHirerDocument(String document, String productId) {
+        Optional<HirerNegotiation> negotiation = repository
+                                                    .findByHirerPersonDocumentNumberAndProductId(document, productId);
+        return negotiation.orElseThrow(()-> UnovationExceptions.notFound()
+                .withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(document)));
     }
 
     public void update(String id, HirerNegotiation negotiation) {

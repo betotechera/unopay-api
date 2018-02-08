@@ -2,8 +2,10 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.csv.ContractorCsv;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.bacen.service.HirerNegotiationService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
@@ -68,7 +70,8 @@ public class ContractService {
                            ContractEstablishmentRepository contractEstablishmentRepository,
                            PaymentInstrumentService paymentInstrumentService,
                            UserDetailService userDetailService,
-                           ContractInstallmentService installmentService, Validator validator) {
+                           ContractInstallmentService installmentService,
+                           Validator validator) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -81,6 +84,10 @@ public class ContractService {
     }
 
     public Contract create(Contract contract) {
+        return create(contract, false);
+    }
+
+    public Contract create(Contract contract, Boolean forHirer) {
         try {
             checkContract(contract);
             validateReferences(contract);
@@ -88,13 +95,21 @@ public class ContractService {
             contract.checkFields();
             contract.setupMeUp();
             Contract created = repository.save(contract);
-            installmentService.create(created);
+            createInstallment(forHirer, created);
             return created;
         }catch (DataIntegrityViolationException e){
             log.info("Contract with code={} already exists",  contract.getCode(), e);
             throw UnovationExceptions.conflict()
                     .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
         }
+    }
+
+    private void createInstallment(Boolean forHirer, Contract created) {
+        if(forHirer){
+            installmentService.createForHirer(created);
+            return;
+        }
+        installmentService.create(created);
     }
 
     private void checkContract(Contract contract) {
@@ -122,7 +137,7 @@ public class ContractService {
         contract.setContractor(contractor);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor));
-        Contract created = create(contract);
+        Contract created = create(contract, hirerDocument != null);
         if(!contract.withMembershipFee()) {
             installmentService.markAsPaid(created.getId(), product.getInstallmentValue());
         }

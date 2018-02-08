@@ -3,6 +3,9 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.bacen.model.HirerNegotiation
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
 import org.joda.time.DateTime
@@ -13,6 +16,100 @@ class ContractInstallmentTest extends FixtureApplicationTest {
 
     def setup(){
         currentDate = new DateTime().withDayOfMonth(20).toDate()
+    }
+
+    def 'when create from contract and negotiation the value should be the annuity by payment installments from negotiation'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        installment.value == Rounder.round(negotiation.installmentValue)
+    }
+
+    def 'when create from contract and negotiation  the contract should be the contract param'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        installment.contract.id == contract.id
+    }
+
+
+    def 'when create from contract and negotiation with free installment should be created with free installment'(){
+        given:
+        def freeInstallments = value
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("freeInstallmentQuantity", freeInstallments)
+        }})
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        installment.value == 0.0
+
+        where:
+        _ | value
+        _ | 1
+        _ | 2
+        _ | 20
+    }
+
+    def """"when create from contract and negotiation with past effective date
+        should be created with one installment nummber"""(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("freeInstallmentQuantity", 0)
+            add("effectiveDate", instant("5 months ago"))
+        }})
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        installment.installmentNumber == ContractInstallment.ONE_INSTALLMENT
+    }
+
+    def """"when create from contract and negotiation with effective date in the future
+        should be created with effective date as expiration date """(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("freeInstallmentQuantity", 0)
+            add("effectiveDate", instant("one month from now"))
+        }})
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        timeComparator.compare(installment.expiration, instant("one month from now")) == 0
+    }
+
+    def """"when create from contract and negotiation with past effective date
+        should be created with current date as expiration date """(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("freeInstallmentQuantity", 0)
+            add("effectiveDate", instant("2 months ago"))
+        }})
+
+        when:
+        def installment = new ContractInstallment(contract, negotiation,currentDate)
+
+        then:
+        timeComparator.compare(installment.expiration, currentDate) == 0
     }
 
     def 'when create from contract the value should be the annuity by payment installments'(){

@@ -3,8 +3,11 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.HirerNegotiation
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.ContractInstallment
+import br.com.unopay.api.model.Person
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -296,6 +299,124 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'CONTRACT_INSTALLMENT_NOT_FOUND'
+    }
+
+
+    void """given known negotiation for contract product and hirer
+            when create installments should be created"""(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        fixtureCreator.createNegotiation(contract.hirer, contract.product)
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result
+    }
+
+    void """given unknown negotiation for contract product and hirer
+            when create installments should not be created"""(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        when:
+        service.createForHirer(contract)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'HIRER_NEGOTIATION_NOT_FOUND'
+    }
+
+
+    void """given known negotiation for contract product and hirer
+            when create installments should be created with negotiation installment value"""(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def negotiation = fixtureCreator.createNegotiation(contract.hirer, contract.product)
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result.every { it.value == negotiation.installmentValue }
+    }
+
+    void """given known negotiation for contract product and hirer
+            when create installments should be created with negotiation installments"""(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def negotiation = fixtureCreator.createNegotiation(contract.hirer, contract.product)
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result.size() == negotiation.installments
+    }
+
+    void """given known negotiation for contract product and hirer with past effective date
+            when create installments should be created without past installments"""(){
+        given:
+        def monthsAgo = 5
+        def contract = fixtureCreator.createPersistedContract()
+        def negotiation = fixtureCreator.createNegotiation(contract.hirer, contract.product, instant("5 months ago"))
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        result.size() == negotiation.installments - monthsAgo
+    }
+
+    void """given known negotiation for contract product and hirer with free installments
+            when create installments should be created firsts free contract installments
+            with negotiation installment number"""(){
+        given:
+        def freeInstallmentQuantity = 3
+        def contract = fixtureCreator.createPersistedContract()
+        Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", contract.hirer)
+            add("product", contract.product)
+            add("freeInstallmentQuantity", freeInstallmentQuantity)
+        }})
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        def installments = 1..freeInstallmentQuantity
+        installments.every { number ->
+            result.find { it.installmentNumber == number }?.value == 0.0
+        }
+    }
+
+    void """given known negotiation for contract product and hirer with free installments
+            when create installments should be created lasts contract installments
+            without discount"""(){
+        given:
+        def freeInstallmentQuantity = 4
+        def contract = fixtureCreator.createPersistedContract()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", contract.hirer)
+            add("product", contract.product)
+            add("freeInstallmentQuantity", freeInstallmentQuantity - 1)
+        }})
+
+        when:
+        service.createForHirer(contract)
+        def result = service.findByContractId(contract.id)
+
+        then:
+        def installments = freeInstallmentQuantity..negotiation.installments
+        installments.every { number ->
+            result.find { it.installmentNumber == number }.value == negotiation.installmentValue
+        }
     }
 
     private ContractInstallment create(contract = fixtureCreator.createPersistedContract()){

@@ -557,6 +557,10 @@ public final class Errors {
             new UnovationError("EFFECTIVE_DATE_REQUIRED", "" +
                     "effective date required");
 
+    public static final UnovationError HIRER_NEGOTIATION_NOT_FOUND =
+            new UnovationError("HIRER_NEGOTIATION_NOT_FOUND", "" +
+                    "Hirer negotiation not found");
+
 
 
 
