@@ -32,6 +32,9 @@ public class UserCreditCard implements Serializable, Updatable {
 
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int BASE_10 = 10;
+    private static final int MONTH_OFFSET = 1;
+    private static final int YEAR_OFFSET = 1900;
+    private static final int SURPLUS_LIMIT = 100;
 
     @Id
     @Column(name="id")
@@ -123,7 +126,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     public void defineMonthBasedOnExpirationDate(){
         validateContainsExpirationDate();
-        expirationMonth = String.valueOf(expirationDate.getMonth() + 1);
+        expirationMonth = String.valueOf(expirationDate.getMonth() + MONTH_OFFSET);
     }
 
     public void validateYear(){
@@ -138,12 +141,12 @@ public class UserCreditCard implements Serializable, Updatable {
 
     public boolean isYearRangeValid(){
         int year = Integer.parseInt(expirationYear);
-        return year >= CURRENT_YEAR && year <= CURRENT_YEAR + 100;
+        return year >= CURRENT_YEAR && year <= CURRENT_YEAR + SURPLUS_LIMIT;
     }
 
     public void defineYearBasedOnExpirationDate(){
         validateContainsExpirationDate();
-        expirationYear = String.valueOf(expirationDate.getYear() + 1900);
+        expirationYear = String.valueOf(expirationDate.getYear() + YEAR_OFFSET);
     }
 
     public void defineMonthAndYearBasedOnExpirationDate(){
