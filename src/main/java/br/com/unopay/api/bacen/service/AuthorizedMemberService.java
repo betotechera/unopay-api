@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
+import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -21,13 +22,21 @@ public class AuthorizedMemberService {
     @Autowired
     AuthorizedMemberRepository repository;
 
+    @Autowired
+    PaymentInstrumentService paymentInstrumentService;
+
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
         return save(authorizedMember);
     }
 
     private AuthorizedMember save(AuthorizedMember authorizedMember) {
         authorizedMember.validateMe();
+        validateReferences(authorizedMember);
         return repository.save(authorizedMember);
+    }
+
+    private void validateReferences(AuthorizedMember authorizedMember) {
+        authorizedMember.setPaymentInstrument(paymentInstrumentService.findById(authorizedMember.paymentInstrumentId()));
     }
 
     public AuthorizedMember findById(String id) {

@@ -92,4 +92,8 @@ public class AuthorizedMember implements Serializable, Updatable{
         if(paymentInstrument == null)
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
     }
+
+    public String paymentInstrumentId() {
+        return paymentInstrument != null ? paymentInstrument.getId() : null;
+    }
 }

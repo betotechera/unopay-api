@@ -67,6 +67,7 @@ public class AuthorizedMemberController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_AUTHORIZED_MEMBER')")
     @RequestMapping(value = "/authorized-members", method = RequestMethod.GET)
     public PageableResults<AuthorizedMember> getByParams(AuthorizedMemberFilter filter,
                                                          @Validated UnovationPageRequest pageable) {
@@ -74,5 +75,13 @@ public class AuthorizedMemberController {
         Page<AuthorizedMember> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/authorized-members", api));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
+    @RequestMapping(value = "/authorized-members/{id}", method = RequestMethod.DELETE)
+    public void remove(@PathVariable  String id) {
+        log.info("removing authorizedMember id={}", id);
+        service.delete(id);
     }
 }

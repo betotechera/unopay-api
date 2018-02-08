@@ -1,8 +1,9 @@
 package br.com.unopay.api.bacen.controller
 
-import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 
 import static org.hamcrest.Matchers.equalTo
@@ -14,14 +15,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-
 class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
+
+    @Autowired
+    FixtureCreator fixtureCreator
 
     def 'given valid AuthorizedMember should create it'() {
         given:
         def accessToken = getUserAccessToken()
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
 
         when:
         def result = this.mvc.perform(post('/authorized-members?access_token={access_token}', accessToken)
@@ -35,7 +37,7 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
     def 'known AuthorizedMember should be found'() {
         given:
         def accessToken = getUserAccessToken()
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         def id = authorizedMember.id
         when:
         def result = this.mvc.perform(get('/authorized-members/{id}?access_token={access_token}', id, accessToken)
@@ -48,7 +50,7 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
     def 'known AuthorizedMember should be updated'() {
         given:
         def accessToken = getUserAccessToken()
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         authorizedMember.name = "new name"
         def id = authorizedMember.id
         when:
@@ -66,7 +68,8 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
     def 'all AuthorizedMembers should be found'() {
         given:
         def accessToken = getUserAccessToken()
-        Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme(2, "valid")
+        fixtureCreator.createPersistedAuthorizedMember()
+        fixtureCreator.createPersistedAuthorizedMember()
         when:
         def result = this.mvc.perform(get('/authorized-members?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -74,5 +77,18 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
 
         then:
         result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
+    }
+
+    def 'known AuthorizedMember should be deleted'() {
+        given:
+        def accessToken = getUserAccessToken()
+        def id = fixtureCreator.createPersistedAuthorizedMember().id
+        when:
+        def result = this.mvc.perform(delete('/authorized-members/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+
+        then:
+        result.andExpect(status().isNoContent())
     }
 }
