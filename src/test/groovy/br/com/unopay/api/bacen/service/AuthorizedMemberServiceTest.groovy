@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,9 +12,12 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     @Autowired
     AuthorizedMemberService service
 
+    @Autowired
+    FixtureCreator fixtureCreator
+
     void 'given valid AuthorizedMember should create'(){
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         when:
         def result = service.create(authorizedMember)
         then:
@@ -22,7 +26,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'given AuthorizedMember without birthDate should return error'(){
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         authorizedMember.birthDate = null
         when:
         service.create(authorizedMember)
@@ -33,7 +37,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'given AuthorizedMember without gender should return error'(){
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         authorizedMember.gender = null
         when:
         service.create(authorizedMember)
@@ -44,7 +48,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'given AuthorizedMember without relatedness should return error'(){
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         authorizedMember.relatedness = null
         when:
         service.create(authorizedMember)
@@ -53,9 +57,20 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED'
     }
 
+    void 'given AuthorizedMember without paymentInstrument should return error'(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.paymentInstrument = null
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'PAYMENT_INSTRUMENT_REQUIRED'
+    }
+
     void 'should find known AuthorizedMember'(){
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
         when:
         def found = service.findById(authorizedMember.id)
         then:
@@ -74,7 +89,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'should update known AuthorizedMember'() {
         given:
-        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         authorizedMember.name = "new name"
         when:
         service.update(authorizedMember.id, authorizedMember)
@@ -96,7 +111,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'should delete known AuthorizedMember'(){
         given:
-        def authorizedMember = Fixture.from(AuthorizedMember).uses(jpaProcessor).gimme("valid")
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         def id = authorizedMember.id;
         when:
         service.delete(id)

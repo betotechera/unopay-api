@@ -1,12 +1,15 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Document;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +19,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -65,6 +70,12 @@ public class AuthorizedMember implements Serializable, Updatable{
     @Embedded
     private Document document;
 
+    @ManyToOne
+    @JoinColumn(name="payment_instrument_id")
+    @NotNull(groups = {Create.class, Update.class})
+    private PaymentInstrument paymentInstrument;
+
+
     public void validateMe() {
         if(birthDate == null)
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
@@ -77,5 +88,8 @@ public class AuthorizedMember implements Serializable, Updatable{
 
         if(relatedness == null)
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
+
+        if(paymentInstrument == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
     }
 }

@@ -8,7 +8,7 @@ create table authorized_member(
     document_type VARCHAR(50),
     document_number VARCHAR(50),
     registry_entity VARCHAR(50),
-    payment_instrument_id VARCHAR(256),
+    payment_instrument_id VARCHAR(256) not null,
     constraint fk_auth_member_pay_inst foreign key(payment_instrument_id) references payment_instrument(id)
 );
 
