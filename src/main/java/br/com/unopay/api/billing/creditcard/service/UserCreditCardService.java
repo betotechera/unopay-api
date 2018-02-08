@@ -59,14 +59,14 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard findById(String id) {
-        return returnUserCreditCard(id, () -> userCreditCardRepository.findById(id));
+        return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findById(id));
     }
 
     public UserCreditCard findByIdForUser(String id, UserDetail user){
-        return returnUserCreditCard(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
+        return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
     }
 
-    private UserCreditCard returnUserCreditCard(String id, Supplier<Optional<UserCreditCard>> userCreditCard){
+    private UserCreditCard getUserCreditCardWithMonthAndYear(String id, Supplier<Optional<UserCreditCard>> userCreditCard){
         Optional<UserCreditCard> credit = userCreditCard.get();
         credit.ifPresent(UserCreditCard::defineMonthAndYearBasedOnExpirationDate);
         return credit.orElseThrow(() ->
@@ -74,8 +74,6 @@ public class UserCreditCardService {
     }
 
     public void setValidUser (UserCreditCard userCreditCard){
-        if (userCreditCard.userId() != null) {
-            userCreditCard.setUser(userDetailService.getById(userCreditCard.getUser().getId()));
-        }
+        userCreditCard.setUser(userDetailService.getById(userCreditCard.userId()));
     }
 }
