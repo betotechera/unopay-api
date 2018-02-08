@@ -1,5 +1,6 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.bacen.model.HirerNegotiation;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.util.Time;
@@ -48,6 +49,14 @@ public class ContractInstallment implements Serializable, Updatable {
         defineExpiration(contract);
     }
 
+    public ContractInstallment(Contract contract, HirerNegotiation negotiation, Date currentDate) {
+        this.currentDate = currentDate;
+        defineValue(negotiation);
+        this.installmentNumber = ONE_INSTALLMENT;
+        this.contract = contract;
+        defineExpirationForNegotiation(negotiation, currentDate);
+    }
+
     @Id
     @Column(name="id")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
@@ -64,7 +73,7 @@ public class ContractInstallment implements Serializable, Updatable {
     @Column(name = "installment_number")
     @NotNull(groups = {Create.class})
     @JsonView({Views.Contract.Installment.class})
-    private Integer installmentNumber;
+    private int installmentNumber;
 
     @Column(name = "value")
     @NotNull(groups = {Create.class})
@@ -113,5 +122,26 @@ public class ContractInstallment implements Serializable, Updatable {
             return;
         }
         this.expiration = currentDate;
+    }
+
+    private void defineExpirationForNegotiation(HirerNegotiation negotiation, Date currentDate) {
+        if(negotiation.getEffectiveDate().after(currentDate)){
+            this.expiration = negotiation.getEffectiveDate();
+            return;
+        }
+        this.expiration = currentDate;
+    }
+
+    public void defineValue(HirerNegotiation negotiation) {
+        defineValue(negotiation, installmentNumber);
+    }
+    public void defineValue(HirerNegotiation negotiation, Integer installmentNumber) {
+        if(negotiation.withFreeInstallments() &&
+                installmentNumber <= negotiation.getFreeInstallmentQuantity()) {
+            this.value = BigDecimal.ZERO;
+            return;
+        }
+        this.value = negotiation.getInstallmentValue();
+
     }
 }

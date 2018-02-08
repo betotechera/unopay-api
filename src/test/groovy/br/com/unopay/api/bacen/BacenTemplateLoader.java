@@ -290,13 +290,13 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("defaultCreditValue", random(BigDecimal.class, range(2, 300)));
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
             add("paymentDay", random(Integer.class, range(1, 31)));
-            add("installments", random(Integer.class, range(1, 31)));
+            add("installments", random(Integer.class, range(6, 24)));
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
             add("autoRenewal", random(Boolean.class));
             add("effectiveDate", instant("one day from now"));
-            add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
+            add("freeInstallmentQuantity", 0);
             add("createdDateTime", instant("now"));
             add("active", random(Boolean.class));
         }});
@@ -306,6 +306,10 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("name",  regex("\\w{15}"));
             add("gender",  regex("\\w{15}"));
             add("relatedness",  regex("\\w{15}"));
+        }});
+
+        Fixture.of(HirerNegotiation.class).addTemplate("withFreeInstallments").inherits("valid", new Rule(){{
+            add("freeInstallmentQuantity", random(Integer.class, range(1, 31)));
         }});
 
     }

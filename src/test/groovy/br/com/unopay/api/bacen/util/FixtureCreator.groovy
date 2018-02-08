@@ -21,6 +21,7 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.Contract
@@ -466,10 +467,13 @@ class FixtureCreator {
     }
 
 
-    HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct()){
+    HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
+                                       Date effectiveDate = FixtureFunctions.instant("one day from now")){
         return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
+            add("effectiveDate", effectiveDate)
+            add("freeInstallmentQuantity", 0)
         }})
     }
 
