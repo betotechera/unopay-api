@@ -2,11 +2,15 @@ package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_NEGOTIATION_NOT_FOUND;
@@ -47,7 +51,12 @@ public class HirerNegotiationService {
         HirerNegotiation current = findById(id);
         current.updateMe(negotiation);
         defineValidReferences(current);
-        save(negotiation);
+        save(current);
+    }
+
+    private void defineValidReferences(HirerNegotiation negotiation) {
+        negotiation.setHirer(hirerService.getById(negotiation.hirerId()));
+        negotiation.setProduct(productService.findById(negotiation.productId()));
     }
 
     public HirerNegotiation create(HirerNegotiation negotiation) {
@@ -57,8 +66,7 @@ public class HirerNegotiationService {
         return save(negotiation);
     }
 
-    private void defineValidReferences(HirerNegotiation negotiation) {
-        negotiation.setHirer(hirerService.getById(negotiation.hirerId()));
-        negotiation.setProduct(productService.findById(negotiation.productId()));
+    public Page<HirerNegotiation> findByFilter(HirerNegotiationFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 }
