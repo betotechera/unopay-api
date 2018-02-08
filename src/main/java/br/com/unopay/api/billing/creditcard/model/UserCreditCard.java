@@ -146,6 +146,11 @@ public class UserCreditCard implements Serializable, Updatable {
         expirationYear = String.valueOf(expirationDate.getYear() + 1900);
     }
 
+    public void defineMonthAndYearBasedOnExpirationDate(){
+        defineMonthBasedOnExpirationDate();
+        defineYearBasedOnExpirationDate();
+    }
+
     public void defineExpirationDate(){
         validateMonth();
         validateYear();

@@ -4,20 +4,23 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import org.hsqldb.rights.User
 import org.joda.time.DateTime
 import spock.lang.Unroll
 
 class UserCreditCardTest extends FixtureApplicationTest {
 
-    def 'when creating UserCreditCard, expiration date should be set at 0 hour of 1st day of given expiration month and given expiration year'(){
+    def 'when creating UserCreditCard, expiration date should be set at 0 hour of 1st day of given expiration month and given expiration year'() {
 
         given:
         String expirationYear = '2118'
         String expirationMonth = '10'
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expirationYear)
-            add("expirationMonth", expirationMonth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expirationYear)
+                add("expirationMonth", expirationMonth)
+            }
+        })
 
         when:
         userCreditCard.defineExpirationDate()
@@ -33,15 +36,17 @@ class UserCreditCardTest extends FixtureApplicationTest {
         !difference
     }
 
-    def 'when calling setupMyCreate, UserCreditCard expiration date should be set at 0 hour of 1st day of given expiration month and given expiration year'(){
+    def 'when calling setupMyCreate, UserCreditCard expiration date should be set at 0 hour of 1st day of given expiration month and given expiration year'() {
 
         given:
         String expirationYear = '2118'
         String expirationMonth = '10'
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expirationYear)
-            add("expirationMonth", expirationMonth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expirationYear)
+                add("expirationMonth", expirationMonth)
+            }
+        })
 
         when:
         userCreditCard.setupMyCreate()
@@ -58,13 +63,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
     }
 
     @Unroll
-    def 'when creating UserCreditCard with month value "#notAnIntValue" should return error'(){
+    def 'when creating UserCreditCard with month value "#notAnIntValue" should return error'() {
 
         given:
         def invalidValue = notAnIntValue
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", invalidValue)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationMonth", invalidValue)
+            }
+        })
 
         when:
         userCreditCard.validateMonth()
@@ -82,13 +89,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | "1,1"
     }
 
-    def 'when creating UserCreditCard with month value before January should return error'(){
+    def 'when creating UserCreditCard with month value before January should return error'() {
 
         given:
         String expirationMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", expirationMonth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationMonth", expirationMonth)
+            }
+        })
 
         when:
         userCreditCard.validateMonth()
@@ -104,13 +113,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-83183'
     }
 
-    def 'when creating UserCreditCard with month value after December should return error'(){
+    def 'when creating UserCreditCard with month value after December should return error'() {
 
         given:
         String expirationMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", expirationMonth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationMonth", expirationMonth)
+            }
+        })
 
         when:
         userCreditCard.validateMonth()
@@ -127,13 +138,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
     }
 
     @Unroll
-    def 'when creating UserCreditCard with year value "#notAnIntValue" should return error'(){
+    def 'when creating UserCreditCard with year value "#notAnIntValue" should return error'() {
 
         given:
         def invalidValue = notAnIntValue
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", invalidValue)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", invalidValue)
+            }
+        })
 
         when:
         userCreditCard.validateYear()
@@ -154,13 +167,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | "a2018"
     }
 
-    def 'when creating UserCreditCard with year value before current year should return error'(){
+    def 'when creating UserCreditCard with year value before current year should return error'() {
 
         given:
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expirationYear)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expirationYear)
+            }
+        })
 
         when:
         userCreditCard.validateYear()
@@ -178,13 +193,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '2017'
     }
 
-    def 'when creating UserCreditCard with year value after current year plus 100 should return error'(){
+    def 'when creating UserCreditCard with year value after current year plus 100 should return error'() {
 
         given:
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expirationYear)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expirationYear)
+            }
+        })
 
         when:
         userCreditCard.validateYear()
@@ -200,13 +217,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '123123213'
     }
 
-    def 'when calling validateMe with month value before January should return error'(){
+    def 'when calling validateMe with month value before January should return error'() {
 
         given:
         String expirationMoth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", expirationMoth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationMonth", expirationMoth)
+            }
+        })
 
         when:
         userCreditCard.validateMe()
@@ -222,13 +241,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-13788731'
     }
 
-    def 'when calling validateMe with year value before current year should return error'(){
+    def 'when calling validateMe with year value before current year should return error'() {
 
         given:
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expirationYear)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expirationYear)
+            }
+        })
 
         when:
         userCreditCard.validateMe()
@@ -246,13 +267,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-18299898'
     }
 
-    def 'when calling validateContainsExpirationDate with value #blankOrNull should return error'(){
+    def 'when calling validateContainsExpirationDate with value #blankOrNull should return error'() {
 
         given:
         Date invalidValue = blankOrNull
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationDate", invalidValue)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationDate", invalidValue)
+            }
+        })
 
         when:
         userCreditCard.validateContainsExpirationDate()
@@ -266,13 +289,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | null
     }
 
-    def "when calling defineMonthBasedOnExpirationDate with given expirationDate, month should be equal to expirationDate's month"(){
+    def "when calling defineMonthBasedOnExpirationDate with given expirationDate, expirationMonth should be equal to expirationDate's month"() {
 
         given:
         def expMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationMonth", expMonth)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationMonth", expMonth)
+            }
+        })
         userCreditCard.defineExpirationDate()
         userCreditCard.expirationMonth = ""
 
@@ -289,13 +314,15 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
     }
 
-    def "when calling defineYearBasedOnExpirationDate with given expirationDate, year should be equal to expirationDate's year"(){
+    def "when calling defineYearBasedOnExpirationDate with given expirationDate, expirationYear should be equal to expirationDate's year"() {
 
         given:
         def expYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("expirationYear", expYear)
-        }})
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+            {
+                add("expirationYear", expYear)
+            }
+        })
         userCreditCard.defineExpirationDate()
         userCreditCard.expirationYear = ""
 
@@ -309,6 +336,34 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | value
         _ | "2040"
         _ | "2050"
+
+    }
+
+    def "when calling defineMonthAdnYearBasedOnExpirationDate with given expirationDate, expirationMonth should be equal to expirationDate's month and expirationYear should be equal to expirationDate's year"(){
+
+        given:
+        def expMonth = monthValue
+        def expYear = yearValue
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("expirationMonth", expMonth)
+            add("expirationYear", expYear)
+        }})
+        userCreditCard.defineExpirationDate()
+        userCreditCard.expirationMonth = ""
+        userCreditCard.expirationYear = ""
+
+        when:
+        userCreditCard.defineMonthAndYearBasedOnExpirationDate()
+
+        then:
+        userCreditCard.expirationMonth == expMonth
+        userCreditCard.expirationYear == expYear
+
+        where:
+        monthValue | yearValue
+               "5" | "2030"
+               "3" | "2029"
+              "11" | "2053"
 
     }
 }
