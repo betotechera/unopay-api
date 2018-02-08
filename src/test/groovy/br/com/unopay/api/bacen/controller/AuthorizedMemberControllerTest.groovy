@@ -79,6 +79,19 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
     }
 
+    def 'known AuthorizedMembers should be found by name filter'() {
+        given:
+        def accessToken = getUserAccessToken()
+        def name = fixtureCreator.createPersistedAuthorizedMember().name
+        when:
+        def result = this.mvc.perform(get('/authorized-members?name={name}&access_token={access_token}', name, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+
+        then:
+        result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
+    }
+
     def 'known AuthorizedMember should be deleted'() {
         given:
         def accessToken = getUserAccessToken()
