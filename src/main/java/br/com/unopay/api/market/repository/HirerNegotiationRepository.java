@@ -9,4 +9,6 @@ public interface HirerNegotiationRepository
         extends UnovationFilterRepository<HirerNegotiation, String, HirerNegotiationFilter> {
 
     Optional<HirerNegotiation> findByHirerPersonDocumentNumberAndProductId(String number, String productId);
+
+    Optional<HirerNegotiation> findByIdAndHirerId(String id, String hirerId);
 }
