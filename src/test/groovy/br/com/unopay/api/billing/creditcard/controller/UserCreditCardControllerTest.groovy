@@ -50,4 +50,23 @@ class UserCreditCardControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
 
     }
+
+    void 'known user credit card should be found'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken()
+        def id = userCreditCard.id
+
+        when:
+        def result = this.mvc.perform(get('/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.expirationYear', is(notNullValue())))
+    }
 }

@@ -16,10 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -46,5 +43,14 @@ public class UserCreditCardController {
         Page<UserCreditCard> page = userCreditCardService.findByFilter(userCreditCardFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/credit-cards", api));
+    }
+
+    @JsonView(Views.UserCreditCard.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_USER_CREDIT_CARD')")
+    @RequestMapping(value = "/credit-cards/{id}", method = RequestMethod.GET)
+    public UserCreditCard get(@PathVariable String id) {
+        log.info("get user credit card={}", id);
+        return userCreditCardService.findById(id);
     }
 }
