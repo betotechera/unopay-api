@@ -222,11 +222,19 @@ public class UserDetailController {
     @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.GET)
     public Results<UserCreditCard> getUserCreditCardByParams(UserDetail userDetail,
                                                              UserCreditCardFilter filter,
-                                                             @Validated UnovationPageRequest pageable){
+                                                             @Validated UnovationPageRequest pageable) {
         LOGGER.info("search user credit card with filter={} for user={}", filter, userDetail.getId());
         filter.setUser(userDetail.getId());
         Page<UserCreditCard> page = userCreditCardService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/users/me/credit-cards", api));
+    }
+
+    @JsonView(Views.UserCreditCard.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.GET)
+    public UserCreditCard getUserCreditCard(UserDetail userDetail, @PathVariable String id) {
+        LOGGER.info("get user credit card={} for user={}", id, userDetail.getId());
+        return userCreditCardService.findByIdForUser(id, userDetail);
     }
 }

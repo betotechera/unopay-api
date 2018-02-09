@@ -278,6 +278,27 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
+    void 'know me user credit card should be found'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken(user.email, user.password)
+        def id = userCreditCard.id
+
+        when:
+        def result = this.mvc.perform(get('/users/me/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.expirationMonth', is(notNullValue())))
+
+    }
+
     MockHttpServletRequestBuilder postToUserEndpoint(String accessToken, UserDetail user) {
         post(USER_ENDPOINT, accessToken).contentType(MediaType.APPLICATION_JSON).content(toJson(user))
     }
