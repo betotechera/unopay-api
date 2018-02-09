@@ -547,6 +547,10 @@ public final class Errors {
             new UnovationError("HIRER_NEGOTIATION_NOT_FOUND", "" +
                     "Hirer negotiation not found");
 
+    public static final UnovationError HIRER_NEGOTIATION_BILLING_NOT_FOUND =
+            new UnovationError("HIRER_NEGOTIATION_BILLING_NOT_FOUND", "" +
+                    "Hirer negotiation billing not found");
+
 
 
 

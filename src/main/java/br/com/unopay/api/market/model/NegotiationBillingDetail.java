@@ -4,6 +4,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.util.Rounder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 
 @Data
 @Entity
@@ -26,6 +28,17 @@ import org.hibernate.annotations.GenericGenerator;
 public class NegotiationBillingDetail {
 
     public NegotiationBillingDetail(){}
+
+    public NegotiationBillingDetail(Contract contract, NegotiationBilling billing){
+        this.contract = contract;
+        this.creditValue = billing.getDefaultCreditValue();
+        this.memberCreditValue = billing.getDefaultMemberCreditValue();
+        this.installmentValue = billing.getInstallmentValue();
+        this.installmentValueByMember = billing.getInstallmentValueByMember();
+        this.negotiationBilling = billing;
+        this.freeInstallment = Boolean.FALSE;
+        this.createdDateTime = new Date();
+    }
 
     @Id
     @Column(name="id")
@@ -67,7 +80,7 @@ public class NegotiationBillingDetail {
 
     @Column(name = "member_total")
     @JsonView({Views.NegotiationBilling.Detail.class})
-    private Integer memberTotal;
+    private Integer memberTotal = 1;
 
     @Column(name = "value")
     @JsonView({Views.NegotiationBilling.Detail.class})
@@ -80,4 +93,17 @@ public class NegotiationBillingDetail {
     @Version
     @JsonIgnore
     private Integer version;
+
+    public NegotiationBillingDetail defineValue() {
+        if(freeInstallment){
+            BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
+            this.value = this.creditValue.add(membersTotalValue);
+            return this;
+        }
+        BigDecimal memberSum = this.memberCreditValue.add(this.installmentValueByMember);
+        BigDecimal membersTotalValue = memberSum.multiply(new BigDecimal(this.memberTotal));
+        this.value = this.creditValue.add(this.installmentValue).add(membersTotalValue);
+        return this;
+    }
+
 }

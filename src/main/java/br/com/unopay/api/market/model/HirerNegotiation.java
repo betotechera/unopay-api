@@ -82,12 +82,6 @@ public class HirerNegotiation implements Updatable{
     @JsonView({Views.HirerNegotiation.Detail.class})
     private BigDecimal installmentValueByMember;
 
-    @Column(name = "credit_recurrence_period")
-    @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
-    private RecurrencePeriod creditRecurrencePeriod;
-
     @Column(name = "auto_renewal")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.HirerNegotiation.Detail.class})

@@ -6,15 +6,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Data;
@@ -26,6 +23,19 @@ import org.hibernate.annotations.GenericGenerator;
 public class NegotiationBilling {
 
     public NegotiationBilling(){}
+
+    public NegotiationBilling(HirerNegotiation negotiation){
+        billingWithCredits = negotiation.getBillingWithCredits();
+        defaultCreditValue = negotiation.getDefaultCreditValue();
+        defaultMemberCreditValue = negotiation.getDefaultMemberCreditValue();
+        freeInstallmentQuantity = negotiation.getFreeInstallmentQuantity();
+        installments = negotiation.getInstallments();
+        installmentValueByMember = negotiation.getInstallmentValueByMember();
+        hirerNegotiation = negotiation;
+        installmentValue = negotiation.getInstallmentValue();
+        status = PaymentStatus.WAITING_PAYMENT;
+        createdDateTime = new Date();
+    }
 
     @Id
     @Column(name="id")
@@ -76,7 +86,7 @@ public class NegotiationBilling {
 
     @Column(name = "value")
     @JsonView({Views.NegotiationBilling.Detail.class})
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
 
     @Column(name = "status")
     @JsonView({Views.NegotiationBilling.Detail.class})
@@ -89,4 +99,8 @@ public class NegotiationBilling {
     @Version
     @JsonIgnore
     private Integer version;
+
+    public void addValue(BigDecimal value) {
+        this.value = this.value.add(value);
+    }
 }

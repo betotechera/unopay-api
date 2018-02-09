@@ -63,14 +63,6 @@ public class Hirer implements Serializable {
     @NotNull(groups = {Create.class, Update.class})
     private RecurrencePeriod creditRecurrencePeriod;
 
-    @Column(name = "default_credit_value")
-    @NotNull(groups = {Create.class, Update.class})
-    private BigDecimal defaultCreditValue;
-
-    @Column(name = "default_member_credit_value")
-    @NotNull(groups = {Create.class, Update.class})
-    private BigDecimal defaultMemberCreditValue;
-
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {
             person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));

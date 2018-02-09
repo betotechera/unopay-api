@@ -9,7 +9,6 @@ create table hirer_negotiation (
     billing_with_credits varchar(20) not null,
     installment_value decimal(20,2) not null,
     installment_value_by_member decimal(20,2) not null,
-    credit_recurrence_period varchar(100) not null,
     free_installment_quantity integer not null,
     auto_renewal varchar(20) not null,
     effective_date timestamp not null,
