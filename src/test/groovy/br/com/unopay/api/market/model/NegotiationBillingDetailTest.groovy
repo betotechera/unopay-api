@@ -9,35 +9,47 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
     def 'should be created from contract'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
-        NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
 
         when:
-        def detail = new NegotiationBillingDetail(contract, billing)
+        def detail = new NegotiationBillingDetail(contract)
 
         then:
         detail.contract.id == contract.id
+        detail.freeInstallment == Boolean.FALSE
+        timeComparator.compare(detail.createdDateTime, new Date()) == 0
+    }
+
+    def 'should be defined from billing'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
+        def detail = new NegotiationBillingDetail(contract)
+
+        when:
+        detail.defineBillingInformation(billing)
+
+        then:
         detail.creditValue == billing.defaultCreditValue
         detail.memberCreditValue == billing.defaultMemberCreditValue
         detail.installmentValue == billing.installmentValue
         detail.installmentValueByMember == billing.installmentValueByMember
         detail.negotiationBilling.id == billing.id
-        detail.freeInstallment == Boolean.FALSE
-        timeComparator.compare(detail.createdDateTime, new Date()) == 0
     }
 
     def 'should define valid detail value'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
-        def detail = new NegotiationBillingDetail(contract, billing)
+        def detail = new NegotiationBillingDetail(contract)
+        detail.defineBillingInformation(billing)
         detail.memberTotal = members
-        detail.setMemberCreditValue(memberCreditValue as BigDecimal)
-        detail.setInstallmentValue(installmentValue)
-        detail.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
-        detail.setCreditValue(creditValue)
+        billing.setDefaultMemberCreditValue(memberCreditValue as BigDecimal)
+        billing.setInstallmentValue(installmentValue)
+        billing.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
+        billing.setDefaultCreditValue(creditValue)
 
         when:
-        detail.defineValue()
+        detail.defineBillingInformation(billing)
 
         then:
         detail.value == value as BigDecimal
@@ -55,16 +67,17 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
-        def detail = new NegotiationBillingDetail(contract, billing)
+        def detail = new NegotiationBillingDetail(contract)
+
         detail.memberTotal = members
-        detail.setMemberCreditValue(memberCreditValue as BigDecimal)
-        detail.setInstallmentValue(installmentValue)
-        detail.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
-        detail.setCreditValue(creditValue)
+        billing.setDefaultMemberCreditValue(memberCreditValue as BigDecimal)
+        billing.setInstallmentValue(installmentValue)
+        billing.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
+        billing.setDefaultCreditValue(creditValue)
         detail.setFreeInstallment(true)
 
         when:
-        detail.defineValue()
+        detail.defineBillingInformation(billing)
 
         then:
         detail.value == value as BigDecimal

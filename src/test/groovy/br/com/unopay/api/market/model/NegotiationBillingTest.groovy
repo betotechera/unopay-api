@@ -9,9 +9,9 @@ class NegotiationBillingTest extends FixtureApplicationTest {
     def 'should be created from hirer negotiation'(){
         given:
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
-
+        def installmentNumber = 30
         when:
-        def billing = new NegotiationBilling(negotiation)
+        def billing = new NegotiationBilling(negotiation, installmentNumber)
 
         then:
         billing.billingWithCredits == negotiation.billingWithCredits
@@ -22,6 +22,7 @@ class NegotiationBillingTest extends FixtureApplicationTest {
         billing.installmentValue == negotiation.installmentValue
         billing.installments == negotiation.installments
         billing.hirerNegotiation.id == negotiation.id
+        billing.installmentNumber == installmentNumber
         billing.status == PaymentStatus.WAITING_PAYMENT
         timeComparator.compare(billing.createdDateTime, new Date()) == 0
     }

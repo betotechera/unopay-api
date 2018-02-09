@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,18 +68,25 @@ public class NegotiationBillingService {
         HirerNegotiation negotiation = hirerNegotiationService.findByHirerId(hirerId);
         Integer nextInstallment = getNextInstallmentNumber(hirerId);
         if(nextInstallment <= negotiation.getInstallments()) {
-            NegotiationBilling billing = new NegotiationBilling(negotiation);
-            Set<NegotiationBillingDetail> billingDetails = hirerContracts.stream()
-                .map(contract ->
-                        new NegotiationBillingDetail(contract, billing).defineValue()).collect(Collectors.toSet());
             if(!hirerContracts.isEmpty()) {
-                billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
-                billing.setInstallmentNumber(nextInstallment);
-                billingDetails.forEach(b -> billing.addValue(b.getValue()));
-                save(billing);
-                billingDetails.forEach(b -> billingDetailService.save(b));
+                createBilling(hirerContracts, negotiation, nextInstallment);
             }
        }
+    }
+
+    private void createBilling(Set<Contract> hirerContracts, HirerNegotiation negotiation, Integer nextInstallment) {
+        NegotiationBilling billing = new NegotiationBilling(negotiation, nextInstallment);
+        billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
+        createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
+    }
+
+    private void createBillingDetailsAndUpdateBillingValue(Set<Contract> hirerContracts, NegotiationBilling billing) {
+        hirerContracts.stream().map(NegotiationBillingDetail::new)
+        .forEach(details ->{
+                billing.addValue(details.defineBillingInformation(billing).getValue());
+                billingDetailService.save(details);
+        });
+        save(billing);
     }
 
     private Integer getNextInstallmentNumber(String hirerId) {

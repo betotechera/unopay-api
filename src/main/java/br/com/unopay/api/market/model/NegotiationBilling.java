@@ -26,17 +26,18 @@ public class NegotiationBilling {
 
     public NegotiationBilling(){}
 
-    public NegotiationBilling(HirerNegotiation negotiation){
-        billingWithCredits = negotiation.getBillingWithCredits();
-        defaultCreditValue = negotiation.getDefaultCreditValue();
-        defaultMemberCreditValue = negotiation.getDefaultMemberCreditValue();
-        freeInstallmentQuantity = negotiation.getFreeInstallmentQuantity();
-        installments = negotiation.getInstallments();
-        installmentValueByMember = negotiation.getInstallmentValueByMember();
-        hirerNegotiation = negotiation;
-        installmentValue = negotiation.getInstallmentValue();
-        status = PaymentStatus.WAITING_PAYMENT;
-        createdDateTime = new Date();
+    public NegotiationBilling(HirerNegotiation negotiation, Integer installmentNumber){
+        this.billingWithCredits = negotiation.getBillingWithCredits();
+        this.defaultCreditValue = negotiation.getDefaultCreditValue();
+        this.defaultMemberCreditValue = negotiation.getDefaultMemberCreditValue();
+        this.freeInstallmentQuantity = negotiation.getFreeInstallmentQuantity();
+        this.installments = negotiation.getInstallments();
+        this.installmentValueByMember = negotiation.getInstallmentValueByMember();
+        this.hirerNegotiation = negotiation;
+        this.installmentValue = negotiation.getInstallmentValue();
+        this.status = PaymentStatus.WAITING_PAYMENT;
+        this.installmentNumber = installmentNumber;
+        this.createdDateTime = new Date();
     }
 
     @Id

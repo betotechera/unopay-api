@@ -27,13 +27,8 @@ public class NegotiationBillingDetail {
 
     public NegotiationBillingDetail(){}
 
-    public NegotiationBillingDetail(Contract contract, NegotiationBilling billing){
+    public NegotiationBillingDetail(Contract contract){
         this.contract = contract;
-        this.creditValue = billing.getDefaultCreditValue();
-        this.memberCreditValue = billing.getDefaultMemberCreditValue();
-        this.installmentValue = billing.getInstallmentValue();
-        this.installmentValueByMember = billing.getInstallmentValueByMember();
-        this.negotiationBilling = billing;
         this.freeInstallment = Boolean.FALSE;
         this.createdDateTime = new Date();
     }
@@ -92,7 +87,17 @@ public class NegotiationBillingDetail {
     @JsonIgnore
     private Integer version;
 
-    public NegotiationBillingDetail defineValue() {
+    public NegotiationBillingDetail defineBillingInformation(NegotiationBilling billing) {
+        this.creditValue = billing.getDefaultCreditValue();
+        this.memberCreditValue = billing.getDefaultMemberCreditValue();
+        this.installmentValue = billing.getInstallmentValue();
+        this.installmentValueByMember = billing.getInstallmentValueByMember();
+        this.negotiationBilling = billing;
+        defineValue();
+        return this;
+    }
+
+    private NegotiationBillingDetail defineValue() {
         if(freeInstallment){
             BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
             this.value = this.creditValue.add(membersTotalValue);
@@ -103,5 +108,4 @@ public class NegotiationBillingDetail {
         this.value = this.creditValue.add(this.installmentValue).add(membersTotalValue);
         return this;
     }
-
 }
