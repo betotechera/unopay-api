@@ -36,7 +36,7 @@ public class NegotiationBilling {
         this.hirerNegotiation = negotiation;
         this.installmentValue = negotiation.getInstallmentValue();
         this.status = PaymentStatus.WAITING_PAYMENT;
-        this.billingWithCredits = Boolean.TRUE;
+        this.billingWithCredits = negotiation.getBillingWithCredits();
         this.installmentNumber = installmentNumber;
         this.createdDateTime = new Date();
     }

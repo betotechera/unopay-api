@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.transaction.Transactional;
+import lombok.Setter;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class NegotiationBillingService {
     private HirerNegotiationService hirerNegotiationService;
     private ContractService contractService;
     private NegotiationBillingDetailService billingDetailService;
-
+    @Setter private Integer memberTotal = 1;
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays;
 
@@ -83,6 +84,7 @@ public class NegotiationBillingService {
     private void createBillingDetailsAndUpdateBillingValue(Set<Contract> hirerContracts, NegotiationBilling billing) {
         hirerContracts.stream().map(NegotiationBillingDetail::new)
         .forEach(details ->{
+                details.setMemberTotal(this.memberTotal);
                 billing.addValue(details.defineBillingInformation(billing).getValue());
                 billingDetailService.save(details);
         });

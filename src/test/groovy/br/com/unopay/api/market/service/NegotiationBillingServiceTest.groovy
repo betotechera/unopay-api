@@ -177,6 +177,108 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         found.value == Rounder.round(total)
     }
 
+    def 'should negotiation without free installments and with billing credits should be created with full value'(){
+        given:
+        BigDecimal memberCreditValueUnderTest = memberCreditValue
+        BigDecimal installmentValueUnderTest = installmentValue
+        BigDecimal installmentValueByMemberUnderTest = installmentValueByMember
+        BigDecimal creditValueUnderTest = creditValue
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("defaultMemberCreditValue",memberCreditValueUnderTest)
+            add("installmentValue",installmentValueUnderTest)
+            add("installmentValueByMember",installmentValueByMemberUnderTest)
+            add("defaultCreditValue",creditValueUnderTest)
+            add("billingWithCredits", Boolean.TRUE)
+
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.memberTotal = members
+
+        when:
+        service.process(negotiation.hirerId())
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found.value == value as BigDecimal
+
+        where:
+        memberCreditValue | members | installmentValueByMember | installmentValue | creditValue | value
+        5                 | 1       | 5                        | 4                | 2           | 16
+        10                | 2       | 20                       | 3                | 5           | 68
+        3                 | 8       | 24                       | 5                | 8           | 229
+        5.3               | 4       | 21.2                     | 6                | 9           | 121
+    }
+
+    def 'should negotiation with free installments and with billing credits should be created without installment value'(){
+        BigDecimal memberCreditValueUnderTest = memberCreditValue
+        BigDecimal installmentValueUnderTest = installmentValue
+        BigDecimal installmentValueByMemberUnderTest = installmentValueByMember
+        BigDecimal creditValueUnderTest = creditValue
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("defaultMemberCreditValue",memberCreditValueUnderTest)
+            add("installmentValue",installmentValueUnderTest)
+            add("installmentValueByMember",installmentValueByMemberUnderTest)
+            add("defaultCreditValue",creditValueUnderTest)
+            add("freeInstallmentQuantity", 20)
+            add("billingWithCredits", Boolean.TRUE)
+
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.memberTotal = members
+
+        when:
+        service.process(negotiation.hirerId())
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found.value == value as BigDecimal
+
+        where:
+        memberCreditValue | members | installmentValueByMember | installmentValue | creditValue | value
+        5                 | 1       | 5                        | 4                | 2           | 7
+        10                | 2       | 20                       | 3                | 5           | 25
+        3                 | 8       | 24                       | 5                | 8           | 32
+        5.3               | 4       | 21.2                     | 6                | 9           | 30.2
+    }
+
+    def 'should negotiation without free installments and without billing credits should be created without credit value'(){
+        BigDecimal memberCreditValueUnderTest = memberCreditValue
+        BigDecimal installmentValueUnderTest = installmentValue
+        BigDecimal installmentValueByMemberUnderTest = installmentValueByMember
+        BigDecimal creditValueUnderTest = creditValue
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("defaultMemberCreditValue",memberCreditValueUnderTest)
+            add("installmentValue",installmentValueUnderTest)
+            add("installmentValueByMember",installmentValueByMemberUnderTest)
+            add("defaultCreditValue",creditValueUnderTest)
+            add("freeInstallmentQuantity", 0)
+            add("billingWithCredits", Boolean.FALSE)
+
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.memberTotal = members
+
+        when:
+        service.process(negotiation.hirerId())
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found.value == value as BigDecimal
+
+        where:
+        memberCreditValue | members | installmentValueByMember | installmentValue | creditValue | value
+        5                 | 1       | 5                        | 4                | 2           | 9
+        10                | 2       | 20                       | 3                | 5           | 43
+        3                 | 8       | 24                       | 5                | 8           | 197
+        5.3               | 4       | 21.2                     | 6                | 9           | 90.8
+    }
+
     def """given negotiation and contract with installments when process
             should create billing with billing details"""(){
         given:

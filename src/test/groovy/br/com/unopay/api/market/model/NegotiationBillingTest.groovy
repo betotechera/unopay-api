@@ -24,7 +24,7 @@ class NegotiationBillingTest extends FixtureApplicationTest {
         billing.hirerNegotiation.id == negotiation.id
         billing.installmentNumber == installmentNumber
         billing.status == PaymentStatus.WAITING_PAYMENT
-        billing.billingWithCredits == Boolean.TRUE
+        billing.billingWithCredits == negotiation.billingWithCredits
         timeComparator.compare(billing.createdDateTime, new Date()) == 0
     }
 
