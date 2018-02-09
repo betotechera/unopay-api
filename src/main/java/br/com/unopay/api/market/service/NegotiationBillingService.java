@@ -68,10 +68,8 @@ public class NegotiationBillingService {
         Set<Contract> hirerContracts = contractService.findByHirerId(hirerId);
         HirerNegotiation negotiation = hirerNegotiationService.findByHirerId(hirerId);
         Integer nextInstallment = getNextInstallmentNumber(hirerId);
-        if(nextInstallment <= negotiation.getInstallments()) {
-            if(!hirerContracts.isEmpty()) {
-                createBilling(hirerContracts, negotiation, nextInstallment);
-            }
+        if(nextInstallment <= negotiation.getInstallments() && !hirerContracts.isEmpty()) {
+            createBilling(hirerContracts, negotiation, nextInstallment);
        }
     }
 
