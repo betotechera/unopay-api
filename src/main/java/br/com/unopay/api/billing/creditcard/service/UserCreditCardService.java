@@ -1,11 +1,15 @@
 package br.com.unopay.api.billing.creditcard.service;
 
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
+import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -71,6 +75,10 @@ public class UserCreditCardService {
         credit.ifPresent(UserCreditCard::defineMonthAndYearBasedOnExpirationDate);
         return credit.orElseThrow(() ->
                 UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public Page<UserCreditCard> findByFilter(UserCreditCardFilter filter, UnovationPageRequest pageable){
+        return userCreditCardRepository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     public void setValidUser (UserCreditCard userCreditCard){

@@ -5,9 +5,15 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
+import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+
+import static org.hamcrest.Matchers.hasSize
+import static spock.util.matcher.HamcrestSupport.that
 
 class UserCreditCardServiceTest extends SpockApplicationTests {
 
@@ -68,6 +74,23 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'USER_NOT_FOUND'
+    }
+
+    def 'when find user credit card by known user should return'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        userCreditCardService.create(userCreditCard)
+        def userCreditCardSearch = new UserCreditCardFilter().with { user = userDetail.id; it }
+
+        when:
+        def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
+        Page<UserCreditCard> userCreditCards = userCreditCardService.findByFilter(userCreditCardSearch, page)
+
+        then:
+        that userCreditCards.content, hasSize(1)
     }
 
     def 'known user credit card should be deleted'(){
