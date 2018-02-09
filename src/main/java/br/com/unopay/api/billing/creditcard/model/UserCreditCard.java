@@ -113,13 +113,13 @@ public class UserCreditCard implements Serializable, Updatable {
         if (getExpirationMonth() == null
                 || getExpirationMonth() == ""
                 || !isInteger(getExpirationMonth(), BASE_10)
-                || !isMonthRangeValid()) {
+                || !MonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_MONTH.withOnlyArgument(getExpirationMonth()));
         }
     }
 
-    public boolean isMonthRangeValid(){
+    public boolean MonthRangeValid(){
         int month = Integer.parseInt(expirationMonth);
         return month >= JANUARY && month <= DECEMBER;
     }
@@ -133,13 +133,13 @@ public class UserCreditCard implements Serializable, Updatable {
         if (getExpirationYear() == null
                 || getExpirationYear() == ""
                 || !isInteger(getExpirationYear(), BASE_10)
-                || !isYearRangeValid()){
+                || !YearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_YEAR.withOnlyArgument(getExpirationYear()));
         }
     }
 
-    public boolean isYearRangeValid(){
+    public boolean YearRangeValid(){
         int year = Integer.parseInt(expirationYear);
         return year >= CURRENT_YEAR && year <= CURRENT_YEAR + SURPLUS_LIMIT;
     }

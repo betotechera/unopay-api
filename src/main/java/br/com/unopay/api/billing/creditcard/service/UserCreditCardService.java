@@ -79,6 +79,7 @@ public class UserCreditCardService {
 
     public Page<UserCreditCard> findByFilter(UserCreditCardFilter filter, UnovationPageRequest pageable){
         return userCreditCardRepository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+
     }
 
     public void setValidUser (UserCreditCard userCreditCard){
