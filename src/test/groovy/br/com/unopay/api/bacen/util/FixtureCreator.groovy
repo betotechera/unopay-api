@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
@@ -520,5 +521,17 @@ class FixtureCreator {
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {
         Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
+    }
+
+    AuthorizedMember createPersistedAuthorizedMember() {
+        return Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("paymentInstrument", createInstrumentToProduct())
+        }})
+    }
+
+    AuthorizedMember createAuthorizedMemberToPersist() {
+        return Fixture.from(AuthorizedMember.class).gimme("valid", new Rule() {{
+            add("paymentInstrument", createInstrumentToProduct())
+        }})
     }
 }
