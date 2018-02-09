@@ -3,11 +3,10 @@ package br.com.unopay.api.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.HirerNegotiation
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.ContractInstallment
-import br.com.unopay.api.model.Person
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.NotFoundException

@@ -2,7 +2,7 @@ package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
-public enum OrderStatus implements DescriptableEnum {
+public enum PaymentStatus implements DescriptableEnum {
 
     WAITING_PAYMENT("Aguardando pagamento"),
     PAYMENT_DENIED("Pagamento negado"),
@@ -11,7 +11,7 @@ public enum OrderStatus implements DescriptableEnum {
 
     private String description;
 
-    OrderStatus(String description){
+    PaymentStatus(String description){
         this.description = description;
     }
 

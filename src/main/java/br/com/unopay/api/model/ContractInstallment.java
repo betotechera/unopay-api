@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.HirerNegotiation;
+import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.util.Time;

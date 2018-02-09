@@ -1,7 +1,7 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.bacen.model.HirerNegotiation;
-import br.com.unopay.api.bacen.service.HirerNegotiationService;
+import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import javax.transaction.Transactional;
 import lombok.Setter;
