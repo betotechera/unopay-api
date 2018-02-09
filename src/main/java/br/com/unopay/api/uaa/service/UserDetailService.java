@@ -180,7 +180,7 @@ public class UserDetailService implements UserDetailsService {
         if (user.getPassword() != null) {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        current.updateAll(user);
+        current.updateMe(user);
         validateReferences(current);
         try {
             return userDetailRepository.save(current);

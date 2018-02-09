@@ -39,8 +39,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity
@@ -336,5 +338,17 @@ public class UserDetail implements Serializable, Updatable {
 
     public String contractorDocument() {
         return isContractorType() ? contractor.getDocumentNumber() : null;
+    }
+
+    public void updateMe(UserDetail source) {
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
+        institution = source.institution;
+        accreditedNetwork = source.accreditedNetwork;
+        establishment = source.establishment;
+        issuer = source.issuer;
+        hirer = source.hirer;
+        contractor = source.contractor;
+        partner = source.partner;
+        groups = source.groups;
     }
 }
