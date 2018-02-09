@@ -52,10 +52,6 @@ public class HirerNegotiationService {
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND));
     }
 
-    public HirerNegotiation findByHirerIdSilent(String hirerId) {
-        return repository.findFirstByHirerId(hirerId);
-    }
-
     public HirerNegotiation findByHirerDocument(String document, String productId) {
         Optional<HirerNegotiation> negotiation = repository
                                                     .findByHirerPersonDocumentNumberAndProductId(document, productId);

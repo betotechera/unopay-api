@@ -4,7 +4,6 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.util.Rounder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
@@ -20,7 +19,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
-import org.joda.time.DateTime;
 
 @Data
 @Entity

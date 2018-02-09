@@ -17,6 +17,8 @@ import javax.persistence.Version;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
+
 @Data
 @Entity
 @Table(name = "negotiation_billing")
@@ -102,5 +104,9 @@ public class NegotiationBilling {
 
     public void addValue(BigDecimal value) {
         this.value = this.value.add(value);
+    }
+
+    public Integer nextInstallmentNumber(){
+        return this.installmentNumber + ONE_INSTALLMENT;
     }
 }

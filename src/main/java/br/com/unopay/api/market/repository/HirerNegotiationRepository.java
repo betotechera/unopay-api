@@ -13,6 +13,4 @@ public interface HirerNegotiationRepository
     Optional<HirerNegotiation> findByIdAndHirerId(String id, String hirerId);
 
     Optional<HirerNegotiation> findByHirerId(String hirerId);
-
-    HirerNegotiation findFirstByHirerId(String hirerId);
 }

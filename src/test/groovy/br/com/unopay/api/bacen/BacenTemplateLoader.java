@@ -290,7 +290,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("hirer", one(Hirer.class, "valid"));
             add("defaultCreditValue", random(BigDecimal.class, range(2, 300)));
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
-            add("paymentDay", random(Integer.class, range(1, 31)));
+            add("paymentDay", random(Integer.class, range(1, 28)));
             add("installments", random(Integer.class, range(6, 24)));
             add("billingWithCredits", random(Boolean.class));
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
