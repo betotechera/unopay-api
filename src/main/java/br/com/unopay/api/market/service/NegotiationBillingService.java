@@ -90,9 +90,9 @@ public class NegotiationBillingService {
     }
 
     private Integer getNextInstallmentNumber(String hirerId) {
-        Optional<NegotiationBilling> lasPaid =  repository
+        Optional<NegotiationBilling> lastPaid =  repository
                 .findFirstByHirerNegotiationHirerIdAndStatusInOrderByCreatedDateTimeDesc(hirerId, singletonList(PAID));
-        return lasPaid.map(NegotiationBilling::nextInstallmentNumber).orElse(ONE_INSTALLMENT);
+        return lastPaid.map(NegotiationBilling::nextInstallmentNumber).orElse(ONE_INSTALLMENT);
     }
     private Date getInstallmentExpiration(HirerNegotiation negotiation) {
         if(negotiation.getEffectiveDate().after(new Date())){
