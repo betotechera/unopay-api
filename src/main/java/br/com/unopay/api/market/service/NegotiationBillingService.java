@@ -67,21 +67,23 @@ public class NegotiationBillingService {
     public void process(String hirerId) {
         Set<Contract> hirerContracts = contractService.findByHirerId(hirerId);
         HirerNegotiation negotiation = hirerNegotiationService.findByHirerId(hirerId);
-        NegotiationBilling billing = new NegotiationBilling(negotiation);
-        Set<NegotiationBillingDetail> billingDetails = hirerContracts.stream()
+        Integer nextInstallment = getNextInstallmentNumber(hirerId);
+        if(nextInstallment <= negotiation.getInstallments()) {
+            NegotiationBilling billing = new NegotiationBilling(negotiation);
+            Set<NegotiationBillingDetail> billingDetails = hirerContracts.stream()
                 .map(contract ->
                         new NegotiationBillingDetail(contract, billing).defineValue()).collect(Collectors.toSet());
-
-        if(!hirerContracts.isEmpty()) {
-            billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
-            billing.setInstallmentNumber(getNextPaymentNumber(hirerId));
-            billingDetails.forEach(b -> billing.addValue(b.getValue()));
-            save(billing);
-            billingDetails.forEach(b -> billingDetailService.save(b));
-        }
+            if(!hirerContracts.isEmpty()) {
+                billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
+                billing.setInstallmentNumber(nextInstallment);
+                billingDetails.forEach(b -> billing.addValue(b.getValue()));
+                save(billing);
+                billingDetails.forEach(b -> billingDetailService.save(b));
+            }
+       }
     }
 
-    private Integer getNextPaymentNumber(String hirerId) {
+    private Integer getNextInstallmentNumber(String hirerId) {
         Optional<NegotiationBilling> lasPaid =  repository
                 .findFirstByHirerNegotiationHirerIdAndStatusInOrderByCreatedDateTimeDesc(hirerId, singletonList(PAID));
         return lasPaid.map(NegotiationBilling::nextInstallmentNumber).orElse(ONE_INSTALLMENT);

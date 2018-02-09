@@ -103,6 +103,30 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         next.installmentNumber == 3
     }
 
+    def "given last billing installment paid when process should not be processed"(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("effectiveDate", new Date())
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.process(negotiation.hirerId())
+        paidBilling(negotiation.hirerId())
+
+        service.process(negotiation.hirerId())
+        paidBilling(negotiation.hirerId())
+
+        when:
+        service.process(negotiation.hirerId())
+
+        service.findLastNotPaidByHirer(negotiation.hirerId())
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
+    }
+
 
     def "given valid negotiation when process should create billing with negotiation payment day as installment expiration"(){
         given:
