@@ -16,7 +16,7 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.Order;
-import br.com.unopay.api.order.model.OrderStatus;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.order.model.OrderType;
 import java.math.BigDecimal;
 
@@ -61,7 +61,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("number", regex("\\d{10}"));
             add("paymentRequest", one(PaymentRequest.class, "valid"));
             add("type", random(OrderType.class));
-            add("status", random(OrderStatus.class));
+            add("status", random(PaymentStatus.class));
             add("value", random(BigDecimal.class, range(0.1, 500)));
             add("contract", one(Contract.class, "valid"));
         }});

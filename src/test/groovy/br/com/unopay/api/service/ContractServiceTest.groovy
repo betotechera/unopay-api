@@ -6,8 +6,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.*
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
@@ -67,6 +69,137 @@ class ContractServiceTest extends SpockApplicationTests {
         contractorUnderTest = fixtureCreator.createContractor()
         productUnderTest = fixtureCreator.createProduct()
         establishmentUnderTest = fixtureCreator.createHeadOffice()
+    }
+
+    void """given known negotiation for contract product and hirer
+            when create deal close with hirer should be created"""(){
+        given:
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        fixtureCreator.createNegotiation(hirer, product)
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = service.findById(created.id)
+
+        then:
+        result
+    }
+
+    void """given unknown negotiation for contract product and hirer
+            when deal close with hirer should not be created"""(){
+        given:
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        service.dealClose(person, product.code, hirer.documentNumber)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'HIRER_NEGOTIATION_NOT_FOUND'
+    }
+
+
+    void """given known negotiation for contract product and hirer
+            when dealClose should be created with negotiation installment value"""(){
+        given:
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def negotiation = fixtureCreator.createNegotiation(hirer, product)
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = service.findById(created.id)
+
+        then:
+        result.installmentValue() == negotiation.installmentValue
+    }
+
+    void """given known negotiation for contract product and hirer
+            when dealClose should be created with negotiation installments"""(){
+        given:
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def negotiation = fixtureCreator.createNegotiation(hirer, product)
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = installmentService.findByContractId(created.id)
+
+        then:
+        result.size() == negotiation.installments
+    }
+
+    void """given known negotiation for contract product and hirer with past effective date
+            when dealClose should be created without past installments"""(){
+        given:
+        def monthsAgo = 5
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def negotiation = fixtureCreator.createNegotiation(hirer, product, instant("5 months ago"))
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = installmentService.findByContractId(created.id)
+
+        then:
+        result.size() == negotiation.installments - monthsAgo
+    }
+
+    void """given known negotiation for contract product and hirer with free installments
+            when dealClose should be created firsts free contract installments
+            with negotiation installment number"""(){
+        given:
+        def freeInstallmentQuantity = 3
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("freeInstallmentQuantity", freeInstallmentQuantity)
+        }})
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = installmentService.findByContractId(created.id)
+
+        then:
+        def installments = 1..freeInstallmentQuantity
+        installments.every { number ->
+            result.find { it.installmentNumber == number }?.value == 0.0
+        }
+    }
+
+    void """given known negotiation for contract product and hirer with free installments
+            when dealClose should be created lasts contract installments
+            without discount"""(){
+        given:
+        def freeInstallmentQuantity = 4
+        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        HirerNegotiation negotiation =  Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("freeInstallmentQuantity", freeInstallmentQuantity - 1)
+        }})
+
+        when:
+        def created  = service.dealClose(person, product.code, hirer.documentNumber)
+        def result = installmentService.findByContractId(created.id)
+
+        then:
+        def installments = freeInstallmentQuantity..negotiation.installments
+        installments.every { number ->
+            result.find { it.installmentNumber == number }.value == negotiation.installmentValue
+        }
     }
 
     void 'when create a new contract the contract installments should be created'(){
@@ -273,6 +406,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def hirer = fixtureCreator.createHirer()
         def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        fixtureCreator.createNegotiation(hirer, product)
 
         when:
         service.dealClose(person, product.code, hirer.documentNumber)
@@ -313,7 +447,7 @@ class ContractServiceTest extends SpockApplicationTests {
     def'given known hirer should deal close from csv with persons in file'(){
         given:
         def hirerDocument = "75136542000195"
-        Fixture.from(Product.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
+        List<Product> products = Fixture.from(Product.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
             add("code", uniqueRandom("5102", "5105"))
         }})
 
@@ -321,12 +455,14 @@ class ContractServiceTest extends SpockApplicationTests {
             add("document.number", hirerDocument)
         }})
 
-        Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Hirer hirer = Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
         }})
 
         Resource csv  = resourceLoader.getResource("classpath:/clients.csv")
         MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
+        fixtureCreator.createNegotiation(hirer, products.find())
+        fixtureCreator.createNegotiation(hirer, products.last())
 
         when:
         service.dealCloseFromCsv(hirerDocument, file)

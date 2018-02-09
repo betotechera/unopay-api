@@ -20,7 +20,7 @@ class OrderTest extends FixtureApplicationTest {
         order.defineStatus(status)
 
         then:
-        order.status == OrderStatus.WAITING_PAYMENT
+        order.status == PaymentStatus.WAITING_PAYMENT
 
         where:
         _ | status
@@ -39,7 +39,7 @@ class OrderTest extends FixtureApplicationTest {
         order.defineStatus(status)
 
         then:
-        order.status == OrderStatus.PAID
+        order.status == PaymentStatus.PAID
 
         where:
         _ | status
@@ -56,7 +56,7 @@ class OrderTest extends FixtureApplicationTest {
         order.defineStatus(status)
 
         then:
-        order.status == OrderStatus.CANCELED
+        order.status == PaymentStatus.CANCELED
 
         where:
         _ | status
@@ -73,7 +73,7 @@ class OrderTest extends FixtureApplicationTest {
         order.defineStatus(TransactionStatus.DENIED)
 
         then:
-        order.status == OrderStatus.PAYMENT_DENIED
+        order.status == PaymentStatus.PAYMENT_DENIED
     }
 
 
@@ -95,7 +95,7 @@ class OrderTest extends FixtureApplicationTest {
         order.setValue(ONE)
 
         then:
-        order.status == OrderStatus.WAITING_PAYMENT
+        order.status == PaymentStatus.WAITING_PAYMENT
     }
 
     def 'should increment number without previous number'(){
@@ -113,13 +113,13 @@ class OrderTest extends FixtureApplicationTest {
     def 'when update me should update only status'(){
         given:
         Order orderA = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("status", OrderStatus.WAITING_PAYMENT)
+            add("status", PaymentStatus.WAITING_PAYMENT)
         }})
 
         Order cloned = BeanUtils.cloneBean(orderA)
 
         Order orderB = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
         }})
 
         when:
@@ -134,7 +134,7 @@ class OrderTest extends FixtureApplicationTest {
     def 'given a known order with status canceled when trying to validate update should return error' (){
         given:
         Order order = Fixture.from(Order.class)gimme("valid", new Rule() {{
-            add("status", OrderStatus.CANCELED)
+            add("status", PaymentStatus.CANCELED)
         }})
 
         when:

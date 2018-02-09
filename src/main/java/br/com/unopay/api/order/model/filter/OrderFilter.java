@@ -1,6 +1,6 @@
 package br.com.unopay.api.order.model.filter;
 
-import br.com.unopay.api.order.model.OrderStatus;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
@@ -22,7 +22,7 @@ public class OrderFilter {
     private OrderType type;
 
     @SearchableField
-    private OrderStatus status;
+    private PaymentStatus status;
 
     @SearchableField(field = "createDateTime")
     private Period createdAt;

@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.OrderStatus
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.service.ContractInstallmentService
@@ -67,9 +67,9 @@ class OrderControllerTest extends AuthServerApplicationTests {
 
     def 'given a known credit order with status waiting payment when status is changed should be updated'(){
         given:
-        def expectedStatus = OrderStatus.PAID
+        def expectedStatus = PaymentStatus.PAID
         String accessToken = getUserAccessToken()
-        Order order = createPersistedOrder(OrderType.CREDIT, OrderStatus.WAITING_PAYMENT)
+        Order order = createPersistedOrder(OrderType.CREDIT, PaymentStatus.WAITING_PAYMENT)
         def id = order.id
         Order orderForUpdate = BeanUtils.cloneBean(order)
         orderForUpdate.status = expectedStatus
@@ -100,7 +100,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.number', is(notNullValue())))
     }
-    private Order createPersistedOrder(OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
+    private Order createPersistedOrder(OrderType type = OrderType.CREDIT, PaymentStatus status = PaymentStatus.PAID){
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         def contract = fixtureCreator.createPersistedContract(contractor, product)

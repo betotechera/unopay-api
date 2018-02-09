@@ -534,6 +534,22 @@ public final class Errors {
             new UnovationError("HIRER_BELONG_TO_OTHER_CONTRACT", "" +
                     "Hirer belong to other contract");
 
+    /* Hirer Negotiation */
+    public static final UnovationError EFFECTIVE_DATE_IS_BEFORE_CREATION =
+            new UnovationError("EFFECTIVE_DATE_IS_BEFORE_CREATION", "" +
+                    "Effective date is before creation");
+
+    public static final UnovationError EFFECTIVE_DATE_REQUIRED =
+            new UnovationError("EFFECTIVE_DATE_REQUIRED", "" +
+                    "effective date required");
+
+    public static final UnovationError HIRER_NEGOTIATION_NOT_FOUND =
+            new UnovationError("HIRER_NEGOTIATION_NOT_FOUND", "" +
+                    "Hirer negotiation not found");
+
+
+
+
 
 
 

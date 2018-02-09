@@ -17,7 +17,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.OrderStatus
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PaymentInstrumentService
 import br.com.unopay.api.util.Rounder
@@ -72,7 +72,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("paymentInstrument", paymentInstrumentUnderTest)
         }})
 
@@ -92,7 +92,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("paymentInstrument", paymentInstrumentUnderTest)
         }})
 
@@ -110,7 +110,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractUnderTest.contractor.person)
             add("product", contractUnderTest.product)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("paymentInstrument", paymentInstrumentUnderTest)
         }})
         fixtureCreator.createCreditPaymentAccount(hirerUnderTest.documentNumber)
@@ -133,7 +133,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", contract.product)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("contract", contract)
             add("paymentInstrument", instrumentToProduct)
         }})
@@ -164,7 +164,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         Order creditOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
             add("paymentInstrument", null)
         }})
 

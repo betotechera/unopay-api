@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
@@ -17,9 +18,9 @@ import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.Credit
-import br.com.unopay.api.credit.model.CreditInsertionType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.Contract
@@ -32,7 +33,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.OrderStatus
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
@@ -426,13 +427,13 @@ class FixtureCreator {
         }})
     }
 
-    Order createPersistedOrderWithStatus(OrderStatus status, OrderType type = OrderType.CREDIT,
-                                                 Contractor contractor = createContractor("physical")){
+    Order createPersistedOrderWithStatus(PaymentStatus status, OrderType type = OrderType.CREDIT,
+                                         Contractor contractor = createContractor("physical")){
         return createPersistedPaidOrder(contractor, type, status)
     }
 
     Order createPersistedPaidOrder(Contractor contractor = createContractor("physical"),
-                                           OrderType type = OrderType.CREDIT, OrderStatus status = OrderStatus.PAID){
+                                   OrderType type = OrderType.CREDIT, PaymentStatus status = PaymentStatus.PAID){
         def product = createProduct()
         def user = createUser()
         def contract = createPersistedContract(contractor, product)
@@ -460,7 +461,18 @@ class FixtureCreator {
             add("product", product)
             add("type", OrderType.ADHESION)
             add("value", BigDecimal.ONE)
-            add("status", OrderStatus.PAID)
+            add("status", PaymentStatus.PAID)
+        }})
+    }
+
+
+    HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
+                                       Date effectiveDate = FixtureFunctions.instant("one day from now")){
+        return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("effectiveDate", effectiveDate)
+            add("freeInstallmentQuantity", 0)
         }})
     }
 

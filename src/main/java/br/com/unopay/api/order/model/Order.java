@@ -98,7 +98,7 @@ public class Order implements Updatable, Billable{
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
-    private OrderStatus status = OrderStatus.WAITING_PAYMENT;
+    private PaymentStatus status = PaymentStatus.WAITING_PAYMENT;
 
     @Column(name = "value")
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
@@ -128,7 +128,7 @@ public class Order implements Updatable, Billable{
     private Integer version;
 
     public void validateUpdate() {
-        if (this.status == OrderStatus.CANCELED)
+        if (this.status == PaymentStatus.CANCELED)
             throw UnovationExceptions.unauthorized().withErrors(Errors.UNABLE_TO_UPDATE_ORDER_STATUS);
     }
 
@@ -140,23 +140,23 @@ public class Order implements Updatable, Billable{
 
     public void defineStatus(TransactionStatus transactionStatus) {
         if(Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)){
-            this.status = OrderStatus.CANCELED;
+            this.status = PaymentStatus.CANCELED;
             return;
         }
         if(Arrays.asList(CAPTURED, CAPTURE_RECEIVED).contains(transactionStatus)){
-            this.status = OrderStatus.PAID;
+            this.status = PaymentStatus.PAID;
             return;
         }
         if(DENIED.equals(transactionStatus)){
-            this.status = OrderStatus.PAYMENT_DENIED;
+            this.status = PaymentStatus.PAYMENT_DENIED;
             return;
         }
-        this.status = OrderStatus.WAITING_PAYMENT;
+        this.status = PaymentStatus.WAITING_PAYMENT;
 
     }
 
     public boolean paid() {
-        return OrderStatus.PAID.equals(status);
+        return PaymentStatus.PAID.equals(status);
     }
 
     @JsonIgnore

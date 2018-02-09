@@ -6,10 +6,13 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditSituation
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
+import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
@@ -233,6 +236,34 @@ class HirerControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].value', is(notNullValue())))
+    }
+
+    void 'known me negotiation should be updated'() {
+        given:
+        UserDetail hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
+        def id = negotiation.id
+        when:
+        def result = this.mvc.perform(put('/hirers/me/negotiations/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(negotiation.with {  paymentDay = 5; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'known me negotiation should be found'() {
+        given:
+        UserDetail hirerUser = fixtureCreator.createHirerUser()
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
+        def id = negotiation.id
+        when:
+        def result = this.mvc.perform(get('/hirers/me/negotiations/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.paymentDay', is(notNullValue())))
     }
 
     Hirer getHirer() {

@@ -7,14 +7,11 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.HIRER_BELONG_TO_OTHER_CONTRACT;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_VALUE;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 
 @Service
@@ -51,7 +48,6 @@ public class ContractorCreditRecurrenceService {
         defineDefaultInstrumentWheRequired(creditRecurrence);
         return save(creditRecurrence);
     }
-
 
 
     private void defineDefaultInstrumentWheRequired(ContractorCreditRecurrence creditRecurrence) {

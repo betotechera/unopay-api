@@ -1,5 +1,7 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
@@ -9,12 +11,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import javax.transaction.Transactional;
 import lombok.Setter;
+import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.model.ContractInstallment.*;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FOUND;
 
@@ -22,20 +28,43 @@ import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FO
 public class ContractInstallmentService {
 
     private ContractInstallmentRepository repository;
+    private HirerNegotiationService hirerNegotiationService;
     @Setter private Date currentDate = new Date();
 
     @Autowired
-    public ContractInstallmentService(ContractInstallmentRepository repository) {
+    public ContractInstallmentService(ContractInstallmentRepository repository,
+                                      HirerNegotiationService hirerNegotiationService) {
         this.repository = repository;
+        this.hirerNegotiationService = hirerNegotiationService;
     }
 
     @Transactional
     public void create(Contract contract) {
         ContractInstallment firstInstallment = save(new ContractInstallment(contract, currentDate));
+        create(firstInstallment, contract.getPaymentInstallments(), number ->
+                save(new ContractInstallment(contract, currentDate))
+        );
+    }
+
+    @Transactional
+    public void createForHirer(Contract contract) {
+        HirerNegotiation negotiation = hirerNegotiationService
+                                            .findByHirerDocument(contract.hirerDocumentNumber(), contract.productId());
+        ContractInstallment firstInstallment = save(new ContractInstallment(contract,negotiation, currentDate));
+        int currentInstallmentNumber = getCurrentInstallmentNumber(negotiation);
+        create(firstInstallment, negotiation.getInstallments() - currentInstallmentNumber, currentNumber ->{
+            ContractInstallment installment = new ContractInstallment(contract,negotiation, currentDate);
+            installment.defineValue(negotiation ,currentNumber);
+            return installment;
+        });
+    }
+
+    private void create(ContractInstallment firstInstallment, int installments,
+                        Function<Integer, ContractInstallment> supplier) {
         final Date[] previousDate = { firstInstallment.getExpiration() };
         final int[] previousNumber = { firstInstallment.getInstallmentNumber() };
-        IntStream.rangeClosed(2, contract.getPaymentInstallments()).forEach(n->{
-            ContractInstallment installment = new ContractInstallment(contract, currentDate);
+        IntStream.rangeClosed(2, installments).forEach(n->{
+            ContractInstallment installment = supplier.apply(previousNumber[0]+ ONE_INSTALLMENT);
             installment.plusOneMonthInExpiration(previousDate[0]);
             installment.incrementNumber(previousNumber[0]);
             save(installment);
@@ -88,5 +117,10 @@ public class ContractInstallmentService {
         installment.setPaymentValue(paid);
         installment.setPaymentDateTime(new Date());
         update(installment.getId(), installment);
+    }
+
+    private int getCurrentInstallmentNumber(HirerNegotiation negotiation) {
+        return Months.monthsBetween(LocalDate.fromDateFields(negotiation.getEffectiveDate()),
+                LocalDate.fromDateFields(currentDate)).getMonths();
     }
 }

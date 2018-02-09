@@ -69,12 +69,16 @@ public class ContractorCreditRecurrence {
     private Integer version;
 
     public void validateMe() {
+        checkValue();
+        checkHirer();
+    }
+
+    public void checkValue() {
         if(getValue() == null ||
                 getValue().compareTo(BigDecimal.ZERO) == 0 ||
                 getValue().compareTo(BigDecimal.ZERO) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_VALUE.withOnlyArgument(getValue()));
         }
-        checkHirer();
     }
 
     public void checkHirer(){

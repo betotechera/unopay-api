@@ -20,6 +20,8 @@ import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditPaymentAccountService;
 import br.com.unopay.api.credit.service.CreditService;
+import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractFilter;
@@ -60,6 +62,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -76,6 +79,7 @@ public class HirerController {
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
     private TicketService ticketService;
     private TransactionService transactionService;
+    private HirerNegotiationService hirerNegotiationService;
 
     @Value("${unopay.api}")
     private String api;
@@ -88,7 +92,8 @@ public class HirerController {
                            CreditPaymentAccountService creditPaymentAccountService,
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
-                           TicketService ticketService, TransactionService transactionService) {
+                           TicketService ticketService, TransactionService transactionService,
+                           HirerNegotiationService hirerNegotiationService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -98,6 +103,7 @@ public class HirerController {
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
         this.ticketService = ticketService;
         this.transactionService = transactionService;
+        this.hirerNegotiationService = hirerNegotiationService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -111,6 +117,22 @@ public class HirerController {
                 .created(URI.create("/hirers/"+created.getId()))
                 .body(created);
 
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/negotiations/{id}", method = PUT)
+    public void update(Hirer hirer, @PathVariable String id,
+                       @Validated(Create.class) @RequestBody HirerNegotiation negotiation){
+        log.info("updating negotiation={}", negotiation);
+        hirerNegotiationService.updateForHirer(id,hirer, negotiation);
+    }
+
+    @JsonView(Views.HirerNegotiation.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "/hirers/me/negotiations/{id}", method = GET)
+    public HirerNegotiation get(Hirer hirer, @PathVariable String id) {
+        log.info("get negotiation={}", id);
+        return hirerNegotiationService.findByIdForHirer(id, hirer);
     }
 
     @JsonView(Views.Hirer.Detail.class)
