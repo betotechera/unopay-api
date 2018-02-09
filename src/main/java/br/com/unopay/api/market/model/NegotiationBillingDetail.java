@@ -93,14 +93,20 @@ public class NegotiationBillingDetail {
         this.installmentValue = billing.getInstallmentValue();
         this.installmentValueByMember = billing.getInstallmentValueByMember();
         this.negotiationBilling = billing;
-        defineValue();
+        this.freeInstallment = billing.withFreeInstallment();
+        defineValue(billing.getBillingWithCredits());
         return this;
     }
 
-    private NegotiationBillingDetail defineValue() {
+    private NegotiationBillingDetail defineValue(Boolean billingWithCredit) {
         if(freeInstallment){
             BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
             this.value = this.creditValue.add(membersTotalValue);
+            return this;
+        }
+        if(!billingWithCredit){
+            BigDecimal membersTotalValue = installmentValueByMember.multiply(new BigDecimal(this.memberTotal));
+            this.value = this.installmentValue.add(membersTotalValue);
             return this;
         }
         BigDecimal memberSum = this.memberCreditValue.add(this.installmentValueByMember);

@@ -7,7 +7,6 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.order.model.PaymentStatus
-import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
@@ -25,8 +24,8 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     @Autowired
     private FixtureCreator fixtureCreator
 
-    @Value("\${billing.hirer.tolerance.days}")
-    private Integer hirerBillingToleranceDays
+    @Value("\${unopay.boleto.deadline_in_days}")
+    private Integer ticketDeadLineInDays
 
     def "given valid negotiation billing should be created"(){
         given:
@@ -127,10 +126,31 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
     }
 
-
-    def "given valid negotiation when process should create billing with negotiation payment day as installment expiration"(){
+    def "given effective date in the future when process should create billing effective date as installment expiration"(){
         given:
-        def negotiation = fixtureCreator.createNegotiation()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("effectiveDate", new DateTime().plusMonths(1).toDate())
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+
+        when:
+        service.process(negotiation.hirerId())
+        def found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        timeComparator.compare(found.installmentExpiration, negotiation.effectiveDate) == 0
+    }
+
+    def """given negotiation with past effective date when process
+        should create billing with negotiation payment day as installment expiration"""(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("effectiveDate", new DateTime().minusDays(1).toDate())
+        }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
@@ -138,12 +158,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
-        def expectedDate = new DateTime().withDayOfMonth(negotiation.paymentDay).minusDays(hirerBillingToleranceDays)
+        def expectedDate = new DateTime().withDayOfMonth(negotiation.paymentDay).toDate()
         timeComparator.compare(found.installmentExpiration, expectedDate) == 0
     }
 
-    def """given negotiation and contract with installments when process
-            should create billing with negotiation payment day as installment expiration"""(){
+    def "given negotiation and contract with installments when process should create billing right value"(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)

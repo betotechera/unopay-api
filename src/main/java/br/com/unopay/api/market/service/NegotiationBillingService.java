@@ -34,8 +34,8 @@ public class NegotiationBillingService {
     private ContractService contractService;
     private NegotiationBillingDetailService billingDetailService;
 
-    @Value("${billing.hirer.tolerance.days}")
-    private Integer hirerBillingToleranceDays;
+    @Value("${unopay.boleto.deadline_in_days}")
+    private Integer ticketDeadLineInDays;
 
     @Autowired
     public NegotiationBillingService(NegotiationBillingRepository repository,
@@ -95,7 +95,10 @@ public class NegotiationBillingService {
         return lasPaid.map(NegotiationBilling::nextInstallmentNumber).orElse(ONE_INSTALLMENT);
     }
     private Date getInstallmentExpiration(HirerNegotiation negotiation) {
-        return new DateTime().withDayOfMonth(negotiation.getPaymentDay()).minusDays(hirerBillingToleranceDays).toDate();
+        if(negotiation.getEffectiveDate().after(new Date())){
+            return negotiation.getEffectiveDate();
+        }
+        return new DateTime().withDayOfMonth(negotiation.getPaymentDay()).toDate();
     }
 
     private NegotiationBilling checkReturn(Supplier<Optional<NegotiationBilling>> supplier) {

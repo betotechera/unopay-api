@@ -1,4 +1,3 @@
-billing.hirer.tolerance.days: 1
 server:
     tomcat:
         max-threads: 800

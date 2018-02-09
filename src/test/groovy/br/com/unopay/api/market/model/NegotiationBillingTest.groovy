@@ -24,7 +24,24 @@ class NegotiationBillingTest extends FixtureApplicationTest {
         billing.hirerNegotiation.id == negotiation.id
         billing.installmentNumber == installmentNumber
         billing.status == PaymentStatus.WAITING_PAYMENT
+        billing.billingWithCredits == Boolean.TRUE
         timeComparator.compare(billing.createdDateTime, new Date()) == 0
+    }
+
+    def """given billing with installment number less than negotiation free installments
+            should be created from hirer negotiation"""(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
+        negotiation.freeInstallmentQuantity = 5
+        def installmentNumber = 5
+        def billing = new NegotiationBilling(negotiation, installmentNumber)
+
+        when:
+        def withFreeInstallment = billing.withFreeInstallment()
+
+        then:
+        withFreeInstallment
+
     }
 
     def 'should be equals'(){

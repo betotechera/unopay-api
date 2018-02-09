@@ -36,6 +36,21 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
         detail.negotiationBilling.id == billing.id
     }
 
+    def 'given billing with free installment number should be defined from billing with free installment'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
+        billing.installmentNumber = 3
+        billing.freeInstallmentQuantity = 3
+        def detail = new NegotiationBillingDetail(contract)
+
+        when:
+        detail.defineBillingInformation(billing)
+
+        then:
+        detail.freeInstallment == Boolean.TRUE
+    }
+
     def 'should define valid detail value'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
@@ -47,6 +62,7 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
         billing.setInstallmentValue(installmentValue)
         billing.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
         billing.setDefaultCreditValue(creditValue)
+        billing.setBillingWithCredits(Boolean.TRUE)
 
         when:
         detail.defineBillingInformation(billing)
@@ -63,7 +79,7 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
 
     }
 
-    def 'given a free installment should define valid without installment value'(){
+    def 'given a free installment should define value without installment value'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
@@ -74,7 +90,9 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
         billing.setInstallmentValue(installmentValue)
         billing.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
         billing.setDefaultCreditValue(creditValue)
-        detail.setFreeInstallment(true)
+        billing.setInstallmentNumber(8)
+        billing.setFreeInstallmentQuantity(9)
+        billing.setBillingWithCredits(Boolean.TRUE)
 
         when:
         detail.defineBillingInformation(billing)
@@ -88,6 +106,35 @@ class NegotiationBillingDetailTest extends FixtureApplicationTest {
         10                | 2       | 20                       | 3                | 5           | 25
         3                 | 8       | 24                       | 5                | 8           | 32
         5.3               | 4       | 21.2                     | 6                | 9           | 30.2
+
+    }
+
+
+    def 'given a billing without credits flag should define value without credit value'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        NegotiationBilling billing = Fixture.from(NegotiationBilling.class).gimme("valid")
+        def detail = new NegotiationBillingDetail(contract)
+
+        detail.memberTotal = members
+        billing.setDefaultMemberCreditValue(memberCreditValue as BigDecimal)
+        billing.setInstallmentValue(installmentValue)
+        billing.setInstallmentValueByMember(installmentValueByMember as BigDecimal)
+        billing.setDefaultCreditValue(creditValue)
+        billing.setBillingWithCredits(Boolean.FALSE)
+
+        when:
+        detail.defineBillingInformation(billing)
+
+        then:
+        detail.value == value as BigDecimal
+
+        where:
+        memberCreditValue | members | installmentValueByMember | installmentValue | creditValue | value
+        5                 | 1       | 5                        | 4                | 2           | 9
+        10                | 2       | 20                       | 3                | 5           | 43
+        3                 | 8       | 24                       | 5                | 8           | 197
+        5.3               | 4       | 21.2                     | 6                | 9           | 90.8
 
     }
 

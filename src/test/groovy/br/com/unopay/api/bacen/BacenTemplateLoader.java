@@ -311,7 +311,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("installmentNumber", random(Integer.class, range(1, 5)));
             add("installmentExpiration", instant("one day from now"));
             add("installments", random(Integer.class, range(6, 24)));
-            add("billingWithCredits", random(Boolean.class));
+            add("billingWithCredits", Boolean.TRUE);
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
             add("freeInstallmentQuantity", 0);

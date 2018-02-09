@@ -36,6 +36,7 @@ public class NegotiationBilling {
         this.hirerNegotiation = negotiation;
         this.installmentValue = negotiation.getInstallmentValue();
         this.status = PaymentStatus.WAITING_PAYMENT;
+        this.billingWithCredits = Boolean.TRUE;
         this.installmentNumber = installmentNumber;
         this.createdDateTime = new Date();
     }
@@ -109,5 +110,9 @@ public class NegotiationBilling {
 
     public Integer nextInstallmentNumber(){
         return this.installmentNumber + ONE_INSTALLMENT;
+    }
+
+    public Boolean withFreeInstallment() {
+        return this.installmentNumber <= this.freeInstallmentQuantity;
     }
 }
