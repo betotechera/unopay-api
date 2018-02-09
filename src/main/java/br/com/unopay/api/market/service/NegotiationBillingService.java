@@ -81,10 +81,10 @@ public class NegotiationBillingService {
 
     private void createBillingDetailsAndUpdateBillingValue(Set<Contract> hirerContracts, NegotiationBilling billing) {
         hirerContracts.stream().map(NegotiationBillingDetail::new)
-        .forEach(details ->{
-                details.setMemberTotal(this.memberTotal);
-                billing.addValue(details.defineBillingInformation(billing).getValue());
-                billingDetailService.save(details);
+        .forEach(detail ->{
+                detail.setMemberTotal(this.memberTotal);
+                billing.addValue(detail.defineBillingInformation(billing).getValue());
+                billingDetailService.save(detail);
         });
         save(billing);
     }
