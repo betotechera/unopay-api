@@ -250,6 +250,7 @@ class TicketServiceTest extends SpockApplicationTests{
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
             add("issuerDocument", issuer.documentNumber())
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
