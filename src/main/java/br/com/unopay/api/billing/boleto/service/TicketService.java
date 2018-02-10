@@ -70,6 +70,7 @@ public class TicketService {
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     @Setter private NotificationService notificationService;
     @Setter private NumberGenerator numberGenerator;
+    @Setter private NegotiationBillingService negotiationBillingService;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -86,7 +87,8 @@ public class TicketService {
                          CobrancaOnlineService cobrancaOnlineService,
                          FileUploaderService fileUploaderService,
                          LayoutExtractorSelector layoutExtractorSelector,
-                         NotificationService notificationService) {
+                         NotificationService notificationService,
+                         NegotiationBillingService negotiationBillingService) {
         this.repository = repository;
         this.orderService = orderService;
         this.creditService = creditService;
@@ -94,6 +96,7 @@ public class TicketService {
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.notificationService = notificationService;
+        this.negotiationBillingService = negotiationBillingService;
         this.numberGenerator = new NumberGenerator(this.repository);
     }
 
@@ -123,8 +126,9 @@ public class TicketService {
 
     @Transactional
     public Ticket createForBilling(NegotiationBilling billing) {
-        Ticket ticket = create(billing);
-        notificationService.sendBoletoIssued(billing, ticket);
+        NegotiationBilling current = negotiationBillingService.findById(billing.getId());
+        Ticket ticket = create(current);
+        notificationService.sendBoletoIssued(current, ticket);
         return ticket;
     }
 
@@ -214,6 +218,11 @@ public class TicketService {
     private void processCreditAsPaid(Ticket ticket) {
         defineOccurrence(ticket, PAID);
         creditService.processAsPaid(ticket.getSourceId());
+    }
+
+    private void processHirerBillilngAsPaid(Ticket ticket){
+        defineOccurrence(ticket, PAID);
+        negotiationBillingService.processAsPaid(ticket.getSourceId());
     }
 
     private void defineOccurrence(Ticket ticket, String occurrenceCode) {

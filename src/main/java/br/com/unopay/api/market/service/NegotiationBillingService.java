@@ -1,14 +1,16 @@
 package br.com.unopay.api.market.service;
 
-import br.com.unopay.api.billing.boleto.service.TicketService;
+import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.market.repository.NegotiationBillingRepository;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Arrays;
@@ -43,21 +45,21 @@ public class NegotiationBillingService {
     @Setter private Integer memberTotal = 1;
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays;
-    @Setter private TicketService ticketService;
+    @Setter private Notifier notifier;
 
     @Autowired
     public NegotiationBillingService(NegotiationBillingRepository repository,
                                      HirerNegotiationService hirerNegotiationService,
                                      ContractService contractService,
                                      NegotiationBillingDetailService billingDetailService,
-                                     CreditService creditService, TicketService ticketService) {
+                                     CreditService creditService, Notifier notifier) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
         this.contractService = contractService;
         this.billingDetailService = billingDetailService;
         this.numberGenerator = new NumberGenerator(repository);
         this.creditService = creditService;
-        this.ticketService = ticketService;
+        this.notifier = notifier;
     }
 
     public NegotiationBilling save(NegotiationBilling billing) {
@@ -90,7 +92,7 @@ public class NegotiationBillingService {
         billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
         NegotiationBilling rightBilling = createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
         createCreditWhenRequired(rightBilling);
-        ticketService.createForBilling(rightBilling);
+        notifier.notify(Queues.HIRER_BILLING_CREATED,rightBilling);
     }
 
     private void createCreditWhenRequired(NegotiationBilling billing) {
@@ -129,4 +131,7 @@ public class NegotiationBillingService {
         return billing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_BILLING_NOT_FOUND));
     }
 
+    public void processAsPaid(String sourceId) {
+
+    }
 }

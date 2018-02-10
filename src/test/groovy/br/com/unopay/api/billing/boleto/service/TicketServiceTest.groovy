@@ -17,6 +17,7 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.infra.NumberGenerator
+import br.com.unopay.api.market.service.NegotiationBillingService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.service.OrderService
@@ -48,6 +49,7 @@ class TicketServiceTest extends SpockApplicationTests{
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
     CreditService creditServiceMock = Mock(CreditService)
+    NegotiationBillingService negotiationBillingServiceMock = Mock(NegotiationBillingService)
     NumberGenerator numberGeneratorMock = Mock(NumberGenerator)
 
     def cleanup() {
@@ -73,6 +75,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.cobrancaOnlineService = cobrancaOnlineServiceMock
         service.notificationService = notificationServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
+        service.negotiationBillingService = negotiationBillingServiceMock
         service.orderService = orderServiceMock
         service.creditService = creditServiceMock
         creditServiceMock.findById(_) >> credit
@@ -122,6 +125,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'when process a not paid ticket the occurrence code should not be paid'(){
@@ -166,6 +170,31 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
+    }
+
+    def 'given a hirer installment payment source when process paid ticket should call installment process'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
+        }})
+
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
+
+        when:
+        service.processTicketReturn(file)
+
+        then:
+        1 * negotiationBillingServiceMock.processAsPaid(_)
+        0 * creditServiceMock.processAsPaid(credit.id)
+        0 * orderServiceMock.processAsPaid(_)
+
     }
 
     def 'given a processed ticket should not be processed'(){
@@ -188,6 +217,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         0 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'given a processed ticket for issuer should not be processed'(){
@@ -212,6 +242,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         0 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'given a valid ticket should be created'(){
