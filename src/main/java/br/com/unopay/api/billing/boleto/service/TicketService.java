@@ -121,7 +121,7 @@ public class TicketService {
 
     private Ticket create(Billable order) {
         PaymentBankAccount paymentBankAccount = order.getIssuer().getPaymentAccount();
-        String number = getValidNumber(order);
+        String number = getValidNumber();
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
                 .payer(order.getPayer()).expirationDays(deadlineInDays)
                 .paymentBankAccount(paymentBankAccount)
@@ -141,8 +141,8 @@ public class TicketService {
         return createTicketModel(order, boletoStella, clearOurNumber);
     }
 
-    private String getValidNumber(Billable order) {
-        String number = numberGenerator.createNumber(order, SIZE);
+    private String getValidNumber() {
+        String number = numberGenerator.createNumber(SIZE);
         if(repository.countByNumber(number) > 0){
             throw UnovationExceptions.conflict().withErrors(TICKET_NUMBER_ALREADY_EXISTS.withOnlyArgument(number));
         }

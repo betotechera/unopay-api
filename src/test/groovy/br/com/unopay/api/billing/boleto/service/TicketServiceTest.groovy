@@ -78,7 +78,7 @@ class TicketServiceTest extends SpockApplicationTests{
         creditServiceMock.findById(_) >> credit
         orderServiceMock.findById(_) >> order
         orderServiceMock.findIdsByPersonEmail(_) >> []
-        numberGeneratorMock.createNumber(_,_) >> getNumberGenerator().createNumber(order, 10)
+        numberGeneratorMock.createNumber(_) >> getNumberGenerator().createNumber(10)
         service.numberGenerator = numberGeneratorMock
     }
 
@@ -376,7 +376,7 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'when create with known number should return error'(){
         given:
         service.createForOrder(order.id)
-        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+        numberGeneratorMock.createNumber(_) >>> ['1234', '1234']
 
         when:
         service.createForOrder(order.id)
@@ -455,7 +455,7 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'when create with known number for credit should return error'(){
         given:
         service.createForCredit(credit)
-        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+        numberGeneratorMock.createNumber(_) >>> ['1234', '1234']
 
         when:
         service.createForCredit(credit)

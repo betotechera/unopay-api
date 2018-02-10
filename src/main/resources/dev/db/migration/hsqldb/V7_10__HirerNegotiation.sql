@@ -22,6 +22,7 @@ create table hirer_negotiation (
 create table negotiation_billing (
     id VARCHAR(256) PRIMARY KEY,
     hirer_negotiation_id VARCHAR(256) not null,
+    "number" varchar(256) not null,
     installment_number integer not null,
     installment_expiration timestamp not null,
     installments integer not null,
@@ -32,10 +33,13 @@ create table negotiation_billing (
     default_member_credit_value decimal(20,2) not null,
     created_date_time Timestamp not null,
     billing_with_credits varchar(20) not null,
+    credit_id varchar(256),
     value decimal(20,2) not null,
+    credit_value decimal(20,2),
     status varchar(150) not null,
     version integer,
-    constraint fk_neg_billing_hirer foreign key(hirer_negotiation_id) references hirer_negotiation(id)
+    constraint fk_neg_billing_hirer foreign key(hirer_negotiation_id) references hirer_negotiation(id),
+    constraint fk_neg_billing_credit foreign key(credit_id) references credit(id)
 );
 
 create table negotiation_billing_detail (

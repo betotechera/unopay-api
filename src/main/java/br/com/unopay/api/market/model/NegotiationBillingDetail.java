@@ -114,4 +114,9 @@ public class NegotiationBillingDetail {
         this.value = this.creditValue.add(this.installmentValue).add(membersTotalValue);
         return this;
     }
+
+    public BigDecimal creditValue(){
+        BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
+        return this.creditValue.add(membersTotalValue);
+    }
 }

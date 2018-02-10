@@ -18,6 +18,7 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
+import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
@@ -319,6 +320,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
             add("createdDateTime", instant("now"));
             add("value",  random(BigDecimal.class, range(2, 300)));
+            add("creditValue",  random(BigDecimal.class, range(2, 300)));
             add("status", random(PaymentStatus.class));
         }});
 

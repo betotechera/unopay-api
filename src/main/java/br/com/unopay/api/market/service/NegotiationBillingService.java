@@ -1,5 +1,8 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.service.CreditService;
+import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.NegotiationBillingDetail;
@@ -34,6 +37,8 @@ public class NegotiationBillingService {
     private HirerNegotiationService hirerNegotiationService;
     private ContractService contractService;
     private NegotiationBillingDetailService billingDetailService;
+    private CreditService creditService;
+    private NumberGenerator numberGenerator;
     @Setter private Integer memberTotal = 1;
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays;
@@ -42,11 +47,14 @@ public class NegotiationBillingService {
     public NegotiationBillingService(NegotiationBillingRepository repository,
                                      HirerNegotiationService hirerNegotiationService,
                                      ContractService contractService,
-                                     NegotiationBillingDetailService billingDetailService) {
+                                     NegotiationBillingDetailService billingDetailService,
+                                     CreditService creditService) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
         this.contractService = contractService;
         this.billingDetailService = billingDetailService;
+        this.numberGenerator = new NumberGenerator(repository);
+        this.creditService = creditService;
     }
 
     public NegotiationBilling save(NegotiationBilling billing) {
@@ -75,18 +83,29 @@ public class NegotiationBillingService {
 
     private void createBilling(Set<Contract> hirerContracts, HirerNegotiation negotiation, Integer nextInstallment) {
         NegotiationBilling billing = new NegotiationBilling(negotiation, nextInstallment);
+        billing.setNumber(numberGenerator.createNumber());
         billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
-        createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
+        NegotiationBilling rightBilling = createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
+        createCreditWhenRequired(rightBilling);
     }
 
-    private void createBillingDetailsAndUpdateBillingValue(Set<Contract> hirerContracts, NegotiationBilling billing) {
+    private void createCreditWhenRequired(NegotiationBilling billing) {
+        if(billing.getBillingWithCredits()){
+            Credit credit = creditService.insert(new Credit(billing));
+            save(billing.withCredit(credit));
+        }
+    }
+
+    private NegotiationBilling createBillingDetailsAndUpdateBillingValue(Set<Contract> hirerContracts,
+                                                                         NegotiationBilling billing) {
         hirerContracts.stream().map(NegotiationBillingDetail::new)
         .forEach(detail ->{
                 detail.setMemberTotal(this.memberTotal);
                 billing.addValue(detail.defineBillingInformation(billing).getValue());
+                billing.addCreditValueWhenRequired(detail.defineBillingInformation(billing).creditValue());
                 billingDetailService.save(detail);
         });
-        save(billing);
+        return save(billing);
     }
 
     private Integer getNextInstallmentNumber(String hirerId) {

@@ -3,8 +3,10 @@ package br.com.unopay.api.market.model;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
+import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,6 +63,10 @@ public class NegotiationBilling implements Billable{
     @JsonView({Views.NegotiationBilling.Detail.class})
     private Integer installmentNumber;
 
+    @Column(name = "\"number\"")
+    @JsonView({Views.NegotiationBilling.Detail.class})
+    private String number;
+
     @Column(name = "installment_expiration")
     @JsonView({Views.NegotiationBilling.Detail.class})
     private Date installmentExpiration;
@@ -97,9 +103,18 @@ public class NegotiationBilling implements Billable{
     @JsonView({Views.NegotiationBilling.Detail.class})
     private BigDecimal value = BigDecimal.ZERO;
 
+    @Column(name = "credit_value")
+    @JsonView({Views.NegotiationBilling.Detail.class})
+    private BigDecimal creditValue = BigDecimal.ZERO;
+
     @Column(name = "status")
     @JsonView({Views.NegotiationBilling.Detail.class})
     private PaymentStatus status;
+
+    @ManyToOne
+    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JoinColumn(name="credit_id")
+    private Credit credit;
 
     @Column(name = "created_date_time")
     @JsonView({Views.NegotiationBilling.Detail.class})
@@ -113,6 +128,12 @@ public class NegotiationBilling implements Billable{
         this.value = this.value.add(value);
     }
 
+    public void addCreditValueWhenRequired(BigDecimal value) {
+        if(getBillingWithCredits()) {
+            this.creditValue = this.creditValue.add(value);
+        }
+    }
+
     public Integer nextInstallmentNumber(){
         return this.installmentNumber + ONE_INSTALLMENT;
     }
@@ -121,17 +142,24 @@ public class NegotiationBilling implements Billable{
         return this.installmentNumber <= this.freeInstallmentQuantity;
     }
 
-    public Hirer getHirer(){
+    public Hirer hirer(){
         if(getHirerNegotiation() != null){
             return getHirerNegotiation().getHirer();
         }
         return null;
     }
 
+    public Product product(){
+        if(getHirerNegotiation() != null){
+            return getHirerNegotiation().getProduct();
+        }
+        return null;
+    }
+
     @Override
     public Person getPayer() {
-        if(getHirer() != null) {
-            return getHirer().getPerson();
+        if(hirer() != null) {
+            return hirer().getPerson();
         }
         return null;
     }
@@ -145,19 +173,14 @@ public class NegotiationBilling implements Billable{
     }
 
     @Override
-    public String getNumber() {
-        return null;
-    }
-
-    @Override
     public Date getCreateDateTime() {
         return this.createdDateTime;
     }
 
     @Override
     public String getBillingMail() {
-        if(getHirer() != null) {
-            return getHirer().getFinancierMail();
+        if(hirer() != null) {
+            return hirer().getFinancierMail();
         }
         return null;
     }
@@ -165,5 +188,10 @@ public class NegotiationBilling implements Billable{
     @Override
     public TicketPaymentSource getPaymentSource() {
         return TicketPaymentSource.HIRER_INSTALLMENT;
+    }
+
+    public NegotiationBilling withCredit(Credit credit) {
+        this.credit = credit;
+        return this;
     }
 }

@@ -110,6 +110,10 @@ public class CreditService {
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
+    public Set<Credit> findForHirer(String hirerId) {
+        return repository.findByHirerId(hirerId);
+    }
+
     public Credit  findById(String id) {
         Optional<Credit> credit = repository.findById(id);
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
