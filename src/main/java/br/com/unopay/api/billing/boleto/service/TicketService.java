@@ -178,6 +178,7 @@ public class TicketService {
         Optional<Ticket> current = ticketSupplier.get();
         current.ifPresent(ticket -> {
             if(PAID.equals(occurrenceCode)){
+                log.info("ticket from={}", ticket.getPaymentSource());
                 if(ticket.fromContractor()){
                     processOrderAsPaid(ticket);
                 }
@@ -212,14 +213,11 @@ public class TicketService {
         repository.save(ticket);
     }
 
-
     private String getTicketNumber(String cnab240, int currentLine) {
         RemittanceExtractor remittanceExtractor = layoutExtractorSelector.define(getBatchSegmentT(), cnab240);
         String ticketNumber = remittanceExtractor.extractOnLine(IDENTIFICACAO_TITULO,currentLine);
         return numberGenerator.getNumberWithoutLeftPad(ticketNumber);
     }
-
-
 
     public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
