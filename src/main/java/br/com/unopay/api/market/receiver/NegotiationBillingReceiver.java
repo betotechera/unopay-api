@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Profile("!test")
 @Component
-public class NegotiationBillilngReceiver {
+public class NegotiationBillingReceiver {
 
     private GenericObjectMapper genericObjectMapper;
     private TicketService ticketService;
 
     @Autowired
-    public NegotiationBillilngReceiver(GenericObjectMapper genericObjectMapper,
-                                       TicketService ticketService) {
+    public NegotiationBillingReceiver(GenericObjectMapper genericObjectMapper,
+                                      TicketService ticketService) {
         this.genericObjectMapper = genericObjectMapper;
         this.ticketService = ticketService;
     }

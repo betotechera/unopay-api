@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class NegotiationBillingReceiverTest extends SpockApplicationTests {
 
-    private NegotiationBillilngReceiver negotiationBillingReceiver
+    private NegotiationBillingReceiver negotiationBillingReceiver
     private TicketService negotiationBillingService = Mock(TicketService)
     @Autowired
     private GenericObjectMapper genericObjectMapper
 
     @Override
     void setup() {
-        negotiationBillingReceiver = new NegotiationBillilngReceiver(genericObjectMapper, negotiationBillingService)
+        negotiationBillingReceiver = new NegotiationBillingReceiver(genericObjectMapper, negotiationBillingService)
     }
 
     def 'batchReceiptNotify'(){
