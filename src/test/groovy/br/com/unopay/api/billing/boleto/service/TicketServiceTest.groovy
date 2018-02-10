@@ -87,6 +87,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
@@ -128,6 +129,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
