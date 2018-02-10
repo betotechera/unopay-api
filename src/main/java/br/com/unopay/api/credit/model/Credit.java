@@ -283,7 +283,7 @@ public class Credit implements Serializable, Updatable, Billable {
 
     @Override
     public TicketPaymentSource getPaymentSource() {
-        return TicketPaymentSource.HIRER;
+        return TicketPaymentSource.HIRER_CREDIT;
     }
 
     public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {

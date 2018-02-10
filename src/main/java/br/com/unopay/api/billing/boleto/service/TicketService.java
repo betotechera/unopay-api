@@ -138,7 +138,7 @@ public class TicketService {
                 .value(order.getValue())
                 .ourNumber(clearOurNumber)
                 .build();
-        return createBoletoModel(order, boletoStella, clearOurNumber);
+        return createTicketModel(order, boletoStella, clearOurNumber);
     }
 
     private String getValidNumber(Billable order) {
@@ -240,7 +240,7 @@ public class TicketService {
         return fileUploaderService.uploadBytes(path, bytes);
     }
 
-    private Ticket createBoletoModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
+    private Ticket createTicketModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
                                      String ourNumber) {
         final String path = createFile(billable, boletoStella);
         Ticket ticket = new Ticket();

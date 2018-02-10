@@ -225,7 +225,7 @@ public class Order implements Updatable, Billable{
 
     @Override
     public TicketPaymentSource getPaymentSource() {
-        return TicketPaymentSource.CONTRACTOR;
+        return TicketPaymentSource.CONTRACTOR_CREDIT;
     }
 
     public void normalize() {

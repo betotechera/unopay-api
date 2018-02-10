@@ -113,10 +113,10 @@ public class Ticket {
     private Integer version;
 
     public boolean fromContractor() {
-        return TicketPaymentSource.CONTRACTOR.equals(paymentSource);
+        return TicketPaymentSource.CONTRACTOR_CREDIT.equals(paymentSource);
     }
 
     public boolean fromHirer() {
-        return TicketPaymentSource.HIRER.equals(paymentSource);
+        return TicketPaymentSource.HIRER_CREDIT.equals(paymentSource);
     }
 }

@@ -1,5 +1,10 @@
 package br.com.unopay.api.market.model;
 
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
+import br.com.unopay.api.model.Billable;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +27,7 @@ import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 @Data
 @Entity
 @Table(name = "negotiation_billing")
-public class NegotiationBilling {
+public class NegotiationBilling implements Billable{
 
     public NegotiationBilling(){}
 
@@ -114,5 +119,51 @@ public class NegotiationBilling {
 
     public Boolean withFreeInstallment() {
         return this.installmentNumber <= this.freeInstallmentQuantity;
+    }
+
+    public Hirer getHirer(){
+        if(getHirerNegotiation() != null){
+            return getHirerNegotiation().getHirer();
+        }
+        return null;
+    }
+
+    @Override
+    public Person getPayer() {
+        if(getHirer() != null) {
+            return getHirer().getPerson();
+        }
+        return null;
+    }
+
+    @Override
+    public Issuer getIssuer() {
+        if(getHirerNegotiation() != null && getHirerNegotiation().getProduct() != null) {
+            return getHirerNegotiation().getProduct().getIssuer();
+        }
+        return null;
+    }
+
+    @Override
+    public String getNumber() {
+        return null;
+    }
+
+    @Override
+    public Date getCreateDateTime() {
+        return this.createdDateTime;
+    }
+
+    @Override
+    public String getBillingMail() {
+        if(getHirer() != null) {
+            return getHirer().getFinancierMail();
+        }
+        return null;
+    }
+
+    @Override
+    public TicketPaymentSource getPaymentSource() {
+        return TicketPaymentSource.HIRER_INSTALLMENT;
     }
 }
