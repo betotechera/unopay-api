@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.boleto.service.TicketService
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.market.model.HirerNegotiation
@@ -28,6 +29,12 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     @Autowired
     private FixtureCreator fixtureCreator
 
+    TicketService ticketServiceMock = Mock(TicketService)
+
+    def setup(){
+        service.ticketService = ticketServiceMock
+    }
+
     @Value("\${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays
 
@@ -44,6 +51,18 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
 
         then:
         found
+    }
+
+    def "when process billing should create ticket"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+
+        when:
+        service.process(negotiation.hirerId())
+
+        then:
+        1 * ticketServiceMock.createForBilling(_)
     }
 
     def "given valid negotiation when process for hirer should create billing"(){

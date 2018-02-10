@@ -1,5 +1,6 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.infra.NumberGenerator;
@@ -42,19 +43,21 @@ public class NegotiationBillingService {
     @Setter private Integer memberTotal = 1;
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays;
+    @Setter private TicketService ticketService;
 
     @Autowired
     public NegotiationBillingService(NegotiationBillingRepository repository,
                                      HirerNegotiationService hirerNegotiationService,
                                      ContractService contractService,
                                      NegotiationBillingDetailService billingDetailService,
-                                     CreditService creditService) {
+                                     CreditService creditService, TicketService ticketService) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
         this.contractService = contractService;
         this.billingDetailService = billingDetailService;
         this.numberGenerator = new NumberGenerator(repository);
         this.creditService = creditService;
+        this.ticketService = ticketService;
     }
 
     public NegotiationBilling save(NegotiationBilling billing) {
@@ -87,6 +90,7 @@ public class NegotiationBillingService {
         billing.setInstallmentExpiration(getInstallmentExpiration(negotiation));
         NegotiationBilling rightBilling = createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
         createCreditWhenRequired(rightBilling);
+        ticketService.createForBilling(rightBilling);
     }
 
     private void createCreditWhenRequired(NegotiationBilling billing) {

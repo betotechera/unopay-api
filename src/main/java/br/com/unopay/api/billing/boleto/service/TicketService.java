@@ -17,6 +17,8 @@ import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.NumberGenerator;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
@@ -116,6 +118,13 @@ public class TicketService {
         Credit current = creditService.findById(credit.getId());
         Ticket ticket = create(current);
         notificationService.sendBoletoIssued(current, ticket);
+        return ticket;
+    }
+
+    @Transactional
+    public Ticket createForBilling(NegotiationBilling billing) {
+        Ticket ticket = create(billing);
+        notificationService.sendBoletoIssued(billing, ticket);
         return ticket;
     }
 
