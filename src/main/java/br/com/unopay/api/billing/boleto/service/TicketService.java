@@ -195,8 +195,11 @@ public class TicketService {
                 if(ticket.fromContractor()){
                     processOrderAsPaid(ticket);
                 }
-                if(ticket.fromHirer()){
+                if(ticket.fromCreditHirer()){
                     processCreditAsPaid(ticket);
+                }
+                if(ticket.fromBillingHirer()){
+                    processHirerBillingAsPaid(ticket);
                 }
             }else{
                 defineOccurrence(ticket, occurrenceCode);
@@ -220,9 +223,13 @@ public class TicketService {
         creditService.processAsPaid(ticket.getSourceId());
     }
 
-    private void processHirerBillilngAsPaid(Ticket ticket){
+    private void processHirerBillingAsPaid(Ticket ticket){
         defineOccurrence(ticket, PAID);
         negotiationBillingService.processAsPaid(ticket.getSourceId());
+        NegotiationBilling billing = negotiationBillingService.findById(ticket.getSourceId());
+        if(billing.getBillingWithCredits()) {
+            creditService.processAsPaid(billing.creditId());
+        }
     }
 
     private void defineOccurrence(Ticket ticket, String occurrenceCode) {

@@ -17,6 +17,7 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.infra.NumberGenerator
+import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.service.NegotiationBillingService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
@@ -186,13 +187,14 @@ class TicketServiceTest extends SpockApplicationTests{
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
+        negotiationBillingServiceMock.findById(_) >> Fixture.from(NegotiationBilling).gimme("valid")
 
         when:
         service.processTicketReturn(file)
 
         then:
         1 * negotiationBillingServiceMock.processAsPaid(_)
-        0 * creditServiceMock.processAsPaid(credit.id)
+        1 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
 
     }

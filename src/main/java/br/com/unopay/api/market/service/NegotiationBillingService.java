@@ -11,6 +11,7 @@ import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.market.repository.NegotiationBillingRepository;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.notification.service.NotificationService;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Arrays;
@@ -131,7 +132,9 @@ public class NegotiationBillingService {
         return billing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_BILLING_NOT_FOUND));
     }
 
-    public void processAsPaid(String sourceId) {
-
+    public void processAsPaid(String billingId) {
+        NegotiationBilling current = repository.findOne(billingId);
+        current.setStatus(PaymentStatus.PAID);
+        save(current);
     }
 }

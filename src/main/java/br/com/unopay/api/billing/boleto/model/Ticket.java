@@ -116,7 +116,11 @@ public class Ticket {
         return TicketPaymentSource.CONTRACTOR_CREDIT.equals(paymentSource);
     }
 
-    public boolean fromHirer() {
+    public boolean fromCreditHirer() {
         return TicketPaymentSource.HIRER_CREDIT.equals(paymentSource);
+    }
+
+    public boolean fromBillingHirer() {
+        return TicketPaymentSource.HIRER_INSTALLMENT.equals(paymentSource);
     }
 }
