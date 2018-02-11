@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -64,6 +65,7 @@ public class HirerNegotiation implements Updatable{
 
     @Column(name = "payment_day")
     @NotNull(groups = {Create.class, Update.class})
+    @Max(value = 28)
     @JsonView({Views.HirerNegotiation.Detail.class})
     private Integer paymentDay;
 
@@ -81,12 +83,6 @@ public class HirerNegotiation implements Updatable{
     @NotNull(groups = {Update.class})
     @JsonView({Views.HirerNegotiation.Detail.class})
     private BigDecimal installmentValueByMember;
-
-    @Column(name = "credit_recurrence_period")
-    @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
-    private RecurrencePeriod creditRecurrencePeriod;
 
     @Column(name = "auto_renewal")
     @NotNull(groups = {Create.class, Update.class})

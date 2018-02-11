@@ -32,7 +32,7 @@ create table transaction (
 );
 
 alter table contractor_instrument_credit drop column credit_insertion_type;
-alter table contractor_instrument_credit add credit_source varchar(100) default 'HIRER' not null;
+alter table contractor_instrument_credit add credit_source varchar(100) default 'HIRER_CREDIT' not null;
 alter table contractor_instrument_credit alter column service_type type varchar(150);
 alter table contractor_instrument_credit alter column service_type drop not null;
 

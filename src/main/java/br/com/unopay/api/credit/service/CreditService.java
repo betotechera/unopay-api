@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD;
 import static br.com.unopay.api.credit.model.CreditTarget.HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_CREDIT_NOT_FOUND;
@@ -109,6 +110,10 @@ public class CreditService {
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
+    public Set<Credit> findForHirer(String hirerId) {
+        return repository.findByHirerId(hirerId);
+    }
+
     public Credit  findById(String id) {
         Optional<Credit> credit = repository.findById(id);
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
@@ -168,17 +173,17 @@ public class CreditService {
         Credit credit = findById(creditId);
         credit.setSituation(CreditSituation.CONFIRMED);
         save(credit);
-        unblockCredit(credit);
+        unblockCredit(credit, BOLETO);
     }
 
     public void process(Credit credit, Transaction transaction) {
-        unblockCredit(credit);
+        unblockCredit(credit, CREDIT_CARD);
         updateStatus(credit, transaction);
     }
 
-    private void unblockCredit(Credit credit) {
+    private void unblockCredit(Credit credit, CreditInsertionType creditInsertionType) {
         CreditProcessed processed = new CreditProcessed(credit.getHirer().getDocumentNumber(),
-                credit.getValue(), CREDIT_CARD, HIRER);
+                credit.getValue(), creditInsertionType, HIRER);
         unblockCredit(processed);
     }
 

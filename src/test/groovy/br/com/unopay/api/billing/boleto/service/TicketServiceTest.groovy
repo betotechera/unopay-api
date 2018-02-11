@@ -17,6 +17,8 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.infra.NumberGenerator
+import br.com.unopay.api.market.model.NegotiationBilling
+import br.com.unopay.api.market.service.NegotiationBillingService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.service.OrderService
@@ -48,6 +50,7 @@ class TicketServiceTest extends SpockApplicationTests{
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
     CreditService creditServiceMock = Mock(CreditService)
+    NegotiationBillingService negotiationBillingServiceMock = Mock(NegotiationBillingService)
     NumberGenerator numberGeneratorMock = Mock(NumberGenerator)
 
     def cleanup() {
@@ -73,12 +76,13 @@ class TicketServiceTest extends SpockApplicationTests{
         service.cobrancaOnlineService = cobrancaOnlineServiceMock
         service.notificationService = notificationServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
+        service.negotiationBillingService = negotiationBillingServiceMock
         service.orderService = orderServiceMock
         service.creditService = creditServiceMock
         creditServiceMock.findById(_) >> credit
         orderServiceMock.findById(_) >> order
         orderServiceMock.findIdsByPersonEmail(_) >> []
-        numberGeneratorMock.createNumber(_,_) >> getNumberGenerator().createNumber(order, 10)
+        numberGeneratorMock.createNumber(_) >> getNumberGenerator().createNumber(10)
         service.numberGenerator = numberGeneratorMock
     }
 
@@ -87,6 +91,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
@@ -107,7 +112,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
-            add("paymentSource", TicketPaymentSource.CONTRACTOR)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
@@ -121,6 +126,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * orderServiceMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'when process a not paid ticket the occurrence code should not be paid'(){
@@ -128,6 +134,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
@@ -149,7 +156,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
-            add("paymentSource", TicketPaymentSource.HIRER)
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
         }})
 
         def extractor = Mock(RemittanceExtractor)
@@ -164,6 +171,32 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * creditServiceMock.processAsPaid(credit.id)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
+    }
+
+    def 'given a hirer installment payment source when process paid ticket should call installment process'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER_INSTALLMENT)
+        }})
+
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
+        negotiationBillingServiceMock.findById(_) >> Fixture.from(NegotiationBilling).gimme("valid")
+
+        when:
+        service.processTicketReturn(file)
+
+        then:
+        1 * negotiationBillingServiceMock.processAsPaid(_)
+        1 * creditServiceMock.processAsPaid(_)
+        0 * orderServiceMock.processAsPaid(_)
+
     }
 
     def 'given a processed ticket should not be processed'(){
@@ -171,7 +204,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
-            add("paymentSource", TicketPaymentSource.HIRER)
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
             add("processedAt", instant("1 second ago"))
         }})
 
@@ -186,6 +219,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         0 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'given a processed ticket for issuer should not be processed'(){
@@ -194,7 +228,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
-            add("paymentSource", TicketPaymentSource.HIRER)
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
             add("processedAt", instant("1 second ago"))
             add("issuerDocument", issuer.documentNumber())
         }})
@@ -210,6 +244,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         0 * creditServiceMock.processAsPaid(_)
         0 * orderServiceMock.processAsPaid(_)
+        0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
     def 'given a valid ticket should be created'(){
@@ -250,6 +285,7 @@ class TicketServiceTest extends SpockApplicationTests{
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
             add("issuerDocument", issuer.documentNumber())
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
         }})
         def extractor = Mock(RemittanceExtractor)
         extractorSelectorMock.define(batchSegmentT,_) >> extractor
@@ -271,7 +307,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", order.id)
-            add("paymentSource", TicketPaymentSource.CONTRACTOR)
+            add("paymentSource", TicketPaymentSource.CONTRACTOR_CREDIT)
             add("issuerDocument", issuer.documentNumber())
         }})
         def extractor = Mock(RemittanceExtractor)
@@ -317,7 +353,7 @@ class TicketServiceTest extends SpockApplicationTests{
         MockMultipartFile file = createCnabFile()
         Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("sourceId", credit.id)
-            add("paymentSource", TicketPaymentSource.HIRER)
+            add("paymentSource", TicketPaymentSource.HIRER_CREDIT)
             add("issuerDocument", issuer.documentNumber())
         }})
         def extractor = Mock(RemittanceExtractor)
@@ -375,7 +411,7 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'when create with known number should return error'(){
         given:
         service.createForOrder(order.id)
-        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+        numberGeneratorMock.createNumber(_) >>> ['1234', '1234']
 
         when:
         service.createForOrder(order.id)
@@ -454,7 +490,7 @@ class TicketServiceTest extends SpockApplicationTests{
     def 'when create with known number for credit should return error'(){
         given:
         service.createForCredit(credit)
-        numberGeneratorMock.createNumber(_,_) >>> ['1234', '1234']
+        numberGeneratorMock.createNumber(_) >>> ['1234', '1234']
 
         when:
         service.createForCredit(credit)

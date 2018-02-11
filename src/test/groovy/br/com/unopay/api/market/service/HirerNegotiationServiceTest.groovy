@@ -6,9 +6,13 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.HirerNegotiation
+import br.com.unopay.api.market.model.NegotiationBilling
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.util.ObjectUtils
 
 class HirerNegotiationServiceTest extends SpockApplicationTests{
 
@@ -49,6 +53,24 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'HIRER_NOT_FOUND'
+    }
+
+    def 'when try create more one negotiation for same product should return error'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+        }})
+        service.create(negotiation)
+
+        when:
+        service.create(negotiation)
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING'
     }
 
     def 'given a negotiation with past effective date should not be created'(){
@@ -204,6 +226,21 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         found.installments == negotiation.installments
     }
 
+    def 'should not update product and hirer'(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        def newProduct = fixtureCreator.createProduct()
+        def newHirer = fixtureCreator.createHirer()
+        HirerNegotiation cloned = BeanUtils.cloneBean(negotiation)
+        when:
+        service.update(negotiation.id, cloned.with { product = newProduct; hirer = newHirer; it })
+        HirerNegotiation found = service.findById(negotiation.id)
+
+        then:
+        found.hirer.id == negotiation.hirer.id
+        found.product.id == negotiation.product.id
+    }
+
     def 'given negotiation with past effect date should not be updated'(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
@@ -231,28 +268,4 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         ex.errors.find().logref == 'EFFECTIVE_DATE_REQUIRED'
     }
 
-
-    def 'given a known hirer negotiation when update with unknown hirer should not be updated'(){
-        given:
-        def negotiation = fixtureCreator.createNegotiation()
-
-        when:
-        service.update(negotiation.id, negotiation.with { installments = 40; hirer.id = ''; it })
-
-        then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'HIRER_NOT_FOUND'
-    }
-
-    def 'given a known hirer negotiation when update with unknown product should not be updated'(){
-        given:
-        def negotiation = fixtureCreator.createNegotiation()
-
-        when:
-        service.update(negotiation.id, negotiation.with { installments = 40; product.id = ''; it })
-
-        then:
-        def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'PRODUCT_NOT_FOUND'
-    }
 }

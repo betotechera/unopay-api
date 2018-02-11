@@ -7,7 +7,6 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -62,14 +61,6 @@ public class Hirer implements Serializable {
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     private RecurrencePeriod creditRecurrencePeriod;
-
-    @Column(name = "default_credit_value")
-    @NotNull(groups = {Create.class, Update.class})
-    private BigDecimal defaultCreditValue;
-
-    @Column(name = "default_member_credit_value")
-    @NotNull(groups = {Create.class, Update.class})
-    private BigDecimal defaultMemberCreditValue;
 
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {

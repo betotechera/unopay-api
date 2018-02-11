@@ -474,6 +474,7 @@ class FixtureCreator {
             add("product", product)
             add("effectiveDate", effectiveDate)
             add("freeInstallmentQuantity", 0)
+            add("billingWithCredits", Boolean.TRUE)
         }})
     }
 

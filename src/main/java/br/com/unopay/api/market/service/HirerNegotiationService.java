@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_NEGOTIATION_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING;
 
 @Service
 public class HirerNegotiationService {
@@ -46,11 +47,17 @@ public class HirerNegotiationService {
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public HirerNegotiation findByHirerId(String hirerId) {
+        Optional<HirerNegotiation> negotiation = repository.findByHirerId(hirerId);
+        return negotiation.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND));
+    }
+
     public HirerNegotiation findByHirerDocument(String document, String productId) {
         Optional<HirerNegotiation> negotiation = repository
                                                     .findByHirerPersonDocumentNumberAndProductId(document, productId);
         return negotiation.orElseThrow(()-> UnovationExceptions.notFound()
-                .withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(document)));
+                .withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArguments(document, productId)));
     }
 
     public void update(String id, HirerNegotiation negotiation) {
@@ -64,8 +71,7 @@ public class HirerNegotiationService {
     }
     private void update(HirerNegotiation negotiation, HirerNegotiation current) {
         negotiation.validateMe();
-        current.updateMe(negotiation);
-        defineValidReferences(current);
+        current.updateAllExcept(negotiation, "product", "hirer");
         save(current);
     }
 
@@ -77,8 +83,17 @@ public class HirerNegotiationService {
     public HirerNegotiation create(HirerNegotiation negotiation) {
         negotiation.validateMe();
         defineValidReferences(negotiation);
+        checkAlreadyExistsForProductAndHirer(negotiation);
         negotiation.setMeUp();
         return save(negotiation);
+    }
+
+    private void checkAlreadyExistsForProductAndHirer(HirerNegotiation negotiation) {
+        repository.findByHirerIdAndProductId(negotiation.hirerId(), negotiation.productId())
+        .ifPresent((ThrowingConsumer)-> {
+                throw UnovationExceptions.conflict().withErrors(NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING
+                        .withOnlyArguments(negotiation.hirerId(), negotiation.productId()));
+        });
     }
 
     public Page<HirerNegotiation> findByFilter(HirerNegotiationFilter filter, UnovationPageRequest pageable) {

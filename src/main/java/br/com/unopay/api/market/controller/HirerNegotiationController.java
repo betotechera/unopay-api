@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,18 +52,18 @@ public class HirerNegotiationController {
     @JsonView(Views.HirerNegotiation.Detail.class)
     @ResponseStatus(CREATED)
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_NEGOTIATION')")
-    @RequestMapping(value = "/hirers/negotiations", method = POST)
+    @RequestMapping(value = "/hirer-negotiations", method = POST)
     public ResponseEntity<HirerNegotiation> create(@Validated(Create.class) @RequestBody HirerNegotiation negotiation){
         log.info("creating negotiation={}", negotiation);
         HirerNegotiation created = service.create(negotiation);
         log.info("created negotiation={}", created);
         return created(URI.create(String
-                .format("/hirers/negotiations/%s",created.getId()))).body(created);
+                .format("/hirer-negotiations/%s",created.getId()))).body(created);
     }
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_NEGOTIATION')")
-    @RequestMapping(value = "/hirers/negotiations/{id}", method = PUT)
+    @RequestMapping(value = "/hirer-negotiations/{id}", method = PUT)
     public void update(@PathVariable String id,
                        @Validated(Create.class) @RequestBody HirerNegotiation negotiation){
         log.info("updating negotiation={}", negotiation);
@@ -74,7 +73,7 @@ public class HirerNegotiationController {
     @JsonView(Views.HirerNegotiation.Detail.class)
     @ResponseStatus(OK)
     @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION')")
-    @RequestMapping(value = "/hirers/negotiations/{id}", method = GET)
+    @RequestMapping(value = "/hirer-negotiations/{id}", method = GET)
     public HirerNegotiation get(@PathVariable String id) {
         log.info("get negotiation={}", id);
         return service.findById(id);
@@ -83,12 +82,12 @@ public class HirerNegotiationController {
     @JsonView(Views.HirerNegotiation.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION')")
-    @RequestMapping(value = "/hirers/negotiations", method = RequestMethod.GET)
+    @RequestMapping(value = "/hirer-negotiations", method = RequestMethod.GET)
     public Results<HirerNegotiation> getByParams(HirerNegotiationFilter filter,
                                                  @Validated UnovationPageRequest pageable) {
         log.info("search negotiation with filter={}", filter);
         Page<HirerNegotiation> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/negotiations", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer-negotiations", api));
     }
 }

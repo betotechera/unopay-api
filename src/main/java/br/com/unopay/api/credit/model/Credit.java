@@ -7,7 +7,9 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.model.Billable;
+import br.com.unopay.api.model.ContractOrigin;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
@@ -63,6 +65,15 @@ import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_
 public class Credit implements Serializable, Updatable, Billable {
 
     public Credit(){}
+
+    public Credit(NegotiationBilling billing){
+        this.value = billing.getCreditValue();
+        this.hirer = billing.hirer();
+        this.product = billing.product();
+        this.creditSource = ContractOrigin.APPLICATION.name();
+        this.creditInsertionType = CreditInsertionType.BOLETO;
+
+    }
 
     public static final long serialVersionUID = 1L;
 
@@ -283,7 +294,7 @@ public class Credit implements Serializable, Updatable, Billable {
 
     @Override
     public TicketPaymentSource getPaymentSource() {
-        return TicketPaymentSource.HIRER;
+        return TicketPaymentSource.HIRER_CREDIT;
     }
 
     public Optional<CreditPaymentAccount> filterLastByProductAndService(List<CreditPaymentAccount> creditPayment) {
