@@ -43,13 +43,13 @@ public class HirerNegotiation implements Updatable{
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     @JoinColumn(name="hirer_id")
     private Hirer hirer;
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     @JoinColumn(name="product_id")
     private Product product;
 
@@ -100,7 +100,7 @@ public class HirerNegotiation implements Updatable{
     private Integer freeInstallmentQuantity;
 
     @Column(name = "effective_date")
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     private Date effectiveDate;
 
     @Column(name = "billing_with_credits")
@@ -109,7 +109,7 @@ public class HirerNegotiation implements Updatable{
     private Boolean billingWithCredits;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     private Date createdDateTime;
 
     @Version

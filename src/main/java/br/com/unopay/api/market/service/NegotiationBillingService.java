@@ -1,5 +1,6 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
@@ -78,9 +79,19 @@ public class NegotiationBillingService {
     }
 
     @Transactional
+    public void processForIssuer(String hirerId, Issuer issuer) {
+        HirerNegotiation negotiation = hirerNegotiationService.findByIdForIssuer(hirerId, issuer);
+        process(hirerId, negotiation);
+    }
+
+    @Transactional
     public void process(String hirerId) {
-        Set<Contract> hirerContracts = contractService.findByHirerId(hirerId);
         HirerNegotiation negotiation = hirerNegotiationService.findByHirerId(hirerId);
+        process(hirerId, negotiation);
+    }
+
+    private void process(String hirerId, HirerNegotiation negotiation) {
+        Set<Contract> hirerContracts = contractService.findByHirerId(hirerId);
         Integer nextInstallment = getNextInstallmentNumber(hirerId);
         if(nextInstallment <= negotiation.getInstallments() && !hirerContracts.isEmpty()) {
             createBilling(hirerContracts, negotiation, nextInstallment);
