@@ -13,5 +13,9 @@ public interface NegotiationBillingRepository
     Optional<NegotiationBilling> findFirstByHirerNegotiationHirerIdAndStatusInOrderByCreatedDateTimeDesc(
             String hirerId, List<PaymentStatus> status);
 
+    Optional<NegotiationBilling> findById(String id);
+
+    Optional<NegotiationBilling> findByIdAndHirerNegotiationProductIssuerId(String id, String issuerId);
+
 
 }

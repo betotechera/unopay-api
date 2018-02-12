@@ -554,4 +554,9 @@ public final class Errors {
             new UnovationError("NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING", "" +
                     "Negotiation for product and hirer existing");
 
+    /*  Negotiation Billing */
+    public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
+            new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +
+                    "Negotiation billing not found");
+
 }

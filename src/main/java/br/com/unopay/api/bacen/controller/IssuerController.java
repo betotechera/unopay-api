@@ -18,8 +18,11 @@ import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
 import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
+import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.service.HirerNegotiationService;
+import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
@@ -80,6 +83,7 @@ public class IssuerController {
     private AccreditedNetworkIssuerService networkIssuerService;
     private AccreditedNetworkService networkService;
     private HirerNegotiationService hirerNegotiationService;
+    private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
 
     @Value("${unopay.api}")
@@ -95,6 +99,7 @@ public class IssuerController {
                             AccreditedNetworkIssuerService networkIssuerService,
                             AccreditedNetworkService networkService,
                             HirerNegotiationService hirerNegotiationService,
+                            NegotiationBillingService negotiationBillingService,
                             TicketService ticketService) {
         this.service = service;
         this.productService = productService;
@@ -105,6 +110,7 @@ public class IssuerController {
         this.networkIssuerService = networkIssuerService;
         this.networkService = networkService;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
     }
 
@@ -473,5 +479,32 @@ public class IssuerController {
                 String.format("%s/issuers/me/hirer-negotiations", api));
     }
 
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations/{id}/negotiation-billings", method = PUT)
+    public void processBilling(Issuer issuer,@PathVariable String id){
+        log.info("process negotiation={} billing for issuer={}",id, issuer.documentNumber());
+        negotiationBillingService.processForIssuer(id,issuer);
+    }
+
+    @JsonView(Views.HirerNegotiation.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "issuers/me/negotiation-billings/{id}", method = GET)
+    public NegotiationBilling getBilling(Issuer issuer, @PathVariable String id) {
+        log.info("get negotiation billing={} for issuer={}", id, issuer.documentNumber());
+        return negotiationBillingService.findByIdForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.HirerNegotiation.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/negotiation-billings", method = RequestMethod.GET)
+    public Results<NegotiationBilling> getByParamsBilling(Issuer issuer,NegotiationBillingFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search negotiation billing for issuer={} with filter={}", issuer.documentNumber(), filter);
+        filter.setIssuer(issuer.getId());
+        Page<NegotiationBilling> page =  negotiationBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/negotiation-billings", api));
+    }
 
 }

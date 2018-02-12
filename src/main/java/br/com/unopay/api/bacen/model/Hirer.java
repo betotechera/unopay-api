@@ -50,9 +50,6 @@ public class Hirer implements Serializable {
     @JoinColumn(name="bank_account_id")
     private BankAccount bankAccount;
 
-    @Column(name="document_email")
-    private String documentEmail;
-
     @Column(name = "financier_mail")
     @NotNull(groups = {Create.class, Update.class})
     private String financierMail;
@@ -70,7 +67,8 @@ public class Hirer implements Serializable {
             person.updatePhysical(hirer.getPerson(), (o) -> o.updateForHirer(o));
         }
 
-        this.documentEmail  = hirer.getDocumentEmail();
+        this.financierMail  = hirer.getFinancierMail();
+        this.creditRecurrencePeriod = hirer.getCreditRecurrencePeriod();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 
