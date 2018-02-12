@@ -133,6 +133,7 @@ public class HirerNegotiation implements Updatable{
         if(!withInstallmentValue()){
             installmentValue = product.getInstallmentValue();
         }
+        createdDateTime = new Date();
     }
 
     public String productId(){

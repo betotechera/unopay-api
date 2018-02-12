@@ -38,6 +38,24 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         found
     }
 
+    def 'when create negotiation should be created with created date time'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("createdDateTime", null)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        timeComparator.compare(found.createdDateTime, new Date()) == 0
+    }
+
     def 'given a negotiation with unknown hirer should not be created'(){
         given:
         def hirer = fixtureCreator.createHirer()
