@@ -72,6 +72,7 @@ public class Credit implements Updatable, Billable {
         this.product = billing.product();
         this.creditSource = ContractOrigin.APPLICATION.name();
         this.creditInsertionType = CreditInsertionType.BOLETO;
+        this.billable = false;
 
     }
 
@@ -150,6 +151,9 @@ public class Credit implements Updatable, Billable {
     @Valid
     @Transient
     private PaymentRequest paymentRequest;
+
+    @Transient
+    private boolean billable = true;
 
     @Version
     @JsonIgnore
@@ -357,5 +361,9 @@ public class Credit implements Updatable, Billable {
 
     public boolean confirmed() {
         return CreditSituation.CONFIRMED.equals(situation);
+    }
+
+    public boolean billable() {
+        return billable;
     }
 }
