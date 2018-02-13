@@ -3,6 +3,9 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.HirerFilter;
+import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
@@ -83,6 +86,7 @@ public class IssuerController {
     private AccreditedNetworkIssuerService networkIssuerService;
     private AccreditedNetworkService networkService;
     private HirerNegotiationService hirerNegotiationService;
+    private HirerService hirerService;
     private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
 
@@ -99,6 +103,7 @@ public class IssuerController {
                             AccreditedNetworkIssuerService networkIssuerService,
                             AccreditedNetworkService networkService,
                             HirerNegotiationService hirerNegotiationService,
+                            HirerService hirerService,
                             NegotiationBillingService negotiationBillingService,
                             TicketService ticketService) {
         this.service = service;
@@ -110,6 +115,7 @@ public class IssuerController {
         this.networkIssuerService = networkIssuerService;
         this.networkService = networkService;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.hirerService = hirerService;
         this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
     }
@@ -505,6 +511,34 @@ public class IssuerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/issuers/me/negotiation-billings", api));
+    }
+
+
+    @JsonView(Views.Hirer.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/hirers/{id}", method = RequestMethod.GET)
+    public Hirer getHirer(Issuer issuer, @PathVariable  String id) {
+        log.info("get Hirer={} for issuer={}", id, issuer.documentNumber());
+        return hirerService.getByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/hirers/{id}", method = RequestMethod.PUT)
+    public void updateHirer(Issuer issuer, @PathVariable String id, @Validated(Update.class) @RequestBody Hirer hirer){
+        hirer.setId(id);
+        log.info("updating hirer={} for issuer={}", hirer, issuer.documentNumber());
+        hirerService.updateForIssuer(id, issuer, hirer);
+    }
+
+    @JsonView(Views.Hirer.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/hirers", method = RequestMethod.GET)
+    public Results<Hirer> getHirerByParams(Issuer issuer, HirerFilter filter, @Validated UnovationPageRequest pageable){
+        log.info("search Hirer with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<Hirer> page =  hirerService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/hirers", api));
     }
 
 }

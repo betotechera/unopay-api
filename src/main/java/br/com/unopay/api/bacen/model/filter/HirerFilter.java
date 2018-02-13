@@ -19,4 +19,7 @@ public class HirerFilter implements Serializable {
     @SearchableField(field = "person.address.state")
     private State state;
 
+    @SearchableField(field = "negotiations.product.issuer.id")
+    private String issuer;
+
 }

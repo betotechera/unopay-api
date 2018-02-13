@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface HirerRepository extends UnovationFilterRepository<Hirer,String, HirerFilter> {
 
     Optional<Hirer> findById(String id);
+    Optional<Hirer> findByIdAndNegotiationsProductIssuerId(String id, String issuerId);
     Optional<Hirer> findByPersonDocumentNumber(String documentNumber);
 }

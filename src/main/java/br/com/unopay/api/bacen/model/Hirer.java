@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -7,6 +8,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,15 +17,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = "negotiations")
+@ToString(exclude = "negotiations")
 @Table(name = "hirer")
 public class Hirer implements Serializable {
 
@@ -58,6 +65,10 @@ public class Hirer implements Serializable {
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     private RecurrencePeriod creditRecurrencePeriod;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "hirer")
+    private Set<HirerNegotiation> negotiations;
 
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {

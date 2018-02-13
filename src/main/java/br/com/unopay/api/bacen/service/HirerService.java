@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
 import br.com.unopay.api.service.PersonService;
@@ -47,13 +48,27 @@ public class HirerService {
         }
     }
 
+    public Hirer getByIdForIssuer(String id, Issuer issuer) {
+        Optional<Hirer> hirer = repository.findByIdAndNegotiationsProductIssuerId(id, issuer.getId());
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
+    }
+
     public Hirer getById(String id) {
         Optional<Hirer> hirer = repository.findById(id);
         return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
     }
 
+    public void updateForIssuer(String id, Issuer issuer, Hirer hirer) {
+        Hirer current = getByIdForIssuer(id, issuer);
+        update(hirer, current);
+    }
+
     public void update(String id, Hirer hirer) {
-        Hirer current = repository.findOne(id);
+        Hirer current = getById(id);
+        update(hirer, current);
+    }
+
+    private void update(Hirer hirer, Hirer current) {
         current.updateModel(hirer);
         personService.save(hirer.getPerson());
         repository.save(current);
