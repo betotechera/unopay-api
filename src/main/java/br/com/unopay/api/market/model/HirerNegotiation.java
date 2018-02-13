@@ -116,11 +116,18 @@ public class HirerNegotiation implements Updatable{
     @JsonIgnore
     private Integer version;
 
-    public void validateMe(){
+    public void validateForCreate(){
         if(effectiveDate == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EFFECTIVE_DATE_REQUIRED);
         }
         if(effectiveDate.before(new Date())){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.EFFECTIVE_DATE_IS_BEFORE_CREATION.withOnlyArgument(effectiveDate));
+        }
+    }
+
+    public void validateForUpdate(){
+        if(effectiveDate != null && effectiveDate.before(new Date())){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.EFFECTIVE_DATE_IS_BEFORE_CREATION.withOnlyArgument(effectiveDate));
         }

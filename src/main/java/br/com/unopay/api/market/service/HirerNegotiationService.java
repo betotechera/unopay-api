@@ -80,7 +80,7 @@ public class HirerNegotiationService {
         update(negotiation, current);
     }
     private void update(HirerNegotiation negotiation, HirerNegotiation current) {
-        negotiation.validateMe();
+        negotiation.validateForUpdate();
         current.updateAllExcept(negotiation, "product", "hirer");
         save(current);
     }
@@ -100,7 +100,7 @@ public class HirerNegotiationService {
     }
 
     public HirerNegotiation create(HirerNegotiation negotiation) {
-        negotiation.validateMe();
+        negotiation.validateForCreate();
         defineValidReferences(negotiation);
         checkAlreadyExistsForProductAndHirer(negotiation);
         negotiation.setMeUp();

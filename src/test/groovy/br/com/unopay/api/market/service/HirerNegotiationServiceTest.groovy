@@ -274,16 +274,16 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         ex.errors.find().logref == 'EFFECTIVE_DATE_IS_BEFORE_CREATION'
     }
 
-    def 'given negotiation without effect date should not be updated'(){
+    def 'given negotiation without effect date should not change effective date'(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
+        HirerNegotiation cloned = BeanUtils.cloneBean(negotiation)
 
         when:
-        service.update(negotiation.id, negotiation.with { effectiveDate = null; it })
-
+        service.update(negotiation.id, cloned.with { effectiveDate = null; it })
+        HirerNegotiation found = service.findById(negotiation.id)
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'EFFECTIVE_DATE_REQUIRED'
+        timeComparator.compare(found.effectiveDate, negotiation.effectiveDate) == 0
     }
 
 }
