@@ -43,7 +43,7 @@ public class NegotiationBillingController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_NEGOATIATION_BILLING')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING')")
     @RequestMapping(value = "/hirer-negotiations/{id}/negotiation-billings", method = PUT)
     public void update(@PathVariable String id){
         log.info("updating negotiation={}", id);
@@ -52,7 +52,7 @@ public class NegotiationBillingController {
 
     @JsonView(Views.HirerNegotiation.Detail.class)
     @ResponseStatus(OK)
-    @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOATIATION_BILLING')")
+    @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION_BILLING')")
     @RequestMapping(value = "/negotiation-billings/{id}", method = GET)
     public NegotiationBilling get(@PathVariable String id) {
         log.info("get negotiation={}", id);
@@ -61,7 +61,7 @@ public class NegotiationBillingController {
 
     @JsonView(Views.HirerNegotiation.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOATIATION_BILLING')")
+    @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION_BILLING')")
     @RequestMapping(value = "/negotiation-billings", method = RequestMethod.GET)
     public Results<NegotiationBilling> getByParams(NegotiationBillingFilter filter,
                                                  @Validated UnovationPageRequest pageable) {

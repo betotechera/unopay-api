@@ -31,7 +31,7 @@ import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 @Data
 @Entity
 @Table(name = "negotiation_billing")
-public class NegotiationBilling implements Billable{
+public class NegotiationBilling implements Billable {
 
     public NegotiationBilling(){}
 

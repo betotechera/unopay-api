@@ -63,11 +63,11 @@ create table negotiation_billing_detail (
 insert into AUTHORITY(name, description) values('ROLE_LIST_HIRER_NEGOTIATION','Permite listar negociaçoes de contratos do contratante.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_NEGOTIATION','Permite gerenciar negociaçoes de contratos do contratante');
 
-insert into AUTHORITY(name, description) values('ROLE_LIST_HIRER_NEGOATIATION_BILLING','Permite listar os pagamentos negociaçoes de contratos do contratante.');
-insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_NEGOATIATION_BILLING','Permite gerenciar os pagamentos negociaçoes de contratos do contratante.');
+insert into AUTHORITY(name, description) values('ROLE_LIST_HIRER_NEGOTIATION_BILLING','Permite listar os pagamentos negociaçoes de contratos do contratante.');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING','Permite gerenciar os pagamentos negociaçoes de contratos do contratante.');
 
 insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION', '1');
 insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION', '1');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOATIATION_BILLING', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOATIATION_BILLING', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION_BILLING', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING', '1');

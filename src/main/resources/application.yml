@@ -55,7 +55,7 @@ unopay:
       'REMITTANCE_CREATED' : "Resumo de processamento – Remessa Débito"
       'PAYMENT_APPROVED' : "Pagamento aprovado!"
       'PAYMENT_DENIED' : 'Pagamento não aprovado.'
-      'BOLETO_ISSUED' : 'Seu boleto foi gerado.'
+      'BOLETO_ISSUED' : 'Boleto gerado para sua solicitação.'
     defaultMail:
       from: 'no-reply@unovation.com.br'
       personalFrom: 'Unopay'
