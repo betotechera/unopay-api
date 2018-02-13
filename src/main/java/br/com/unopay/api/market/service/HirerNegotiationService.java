@@ -93,7 +93,7 @@ public class HirerNegotiationService {
     @Transactional
     public HirerNegotiation crateHirerAndNegotiation(Issuer issuer, HirerForIssuer hirerForIssuer){
         HirerNegotiation negotiation = hirerForIssuer.getHirerNegotiation();
-        productService.findByIdForIssuer(negotiation.productId(), issuer);
+        productService.findByIdForIssuer(hirerForIssuer.productId(), issuer);
         Hirer hirer = hirerService.create(hirerForIssuer.getHirer());
         negotiation.setHirer(hirer);
         return create(negotiation);
