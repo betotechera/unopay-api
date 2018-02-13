@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
+import br.com.unopay.api.market.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
@@ -26,14 +27,19 @@ public class HirerService {
     private PersonService personService;
     private UserDetailService userDetailService;
     private BankAccountService bankAccountService;
+    private HirerNegotiationRepository hirerNegotiationRepository;
 
     @Autowired
-    public HirerService(HirerRepository repository, PersonService personService,
-                        UserDetailService userDetailService, BankAccountService bankAccountService) {
+    public HirerService(HirerRepository repository,
+                        PersonService personService,
+                        UserDetailService userDetailService,
+                        BankAccountService bankAccountService,
+                        HirerNegotiationRepository hirerNegotiationRepository) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailService = userDetailService;
         this.bankAccountService = bankAccountService;
+        this.hirerNegotiationRepository = hirerNegotiationRepository;
     }
 
     public Hirer create(Hirer hirer) {
@@ -78,6 +84,9 @@ public class HirerService {
         getById(id);
         if(userDetailService.hasHirer(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS.withOnlyArgument(id));
+        }
+        if(hirerNegotiationRepository.countByHirerId(id) > 0){
+            throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_NEGOTIATION.withOnlyArgument(id));
         }
         repository.delete(id);
     }

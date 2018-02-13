@@ -188,6 +188,10 @@ public final class Errors {
             new UnovationError("HIRER_WITH_USERS"," Hirer has Users");
     public static final UnovationError HIRER_DOCUMENT_NOT_FOUND =
             new UnovationError("HIRER_DOCUMENT_NOT_FOUND","Hirer document not found");
+    public static final UnovationError HIRER_WITH_NEGOTIATION =
+            new UnovationError("HIRER_WITH_NEGOTIATION","Hirer with negotiation");
+
+
 
 
     /* HirerBranch */
