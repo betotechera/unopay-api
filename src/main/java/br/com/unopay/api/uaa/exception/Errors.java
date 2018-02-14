@@ -188,6 +188,10 @@ public final class Errors {
             new UnovationError("HIRER_WITH_USERS"," Hirer has Users");
     public static final UnovationError HIRER_DOCUMENT_NOT_FOUND =
             new UnovationError("HIRER_DOCUMENT_NOT_FOUND","Hirer document not found");
+    public static final UnovationError HIRER_WITH_NEGOTIATION =
+            new UnovationError("HIRER_WITH_NEGOTIATION","Hirer with negotiation");
+
+
 
 
     /* HirerBranch */
@@ -547,71 +551,16 @@ public final class Errors {
             new UnovationError("HIRER_NEGOTIATION_NOT_FOUND", "" +
                     "Hirer negotiation not found");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public static final UnovationError HIRER_NEGOTIATION_BILLING_NOT_FOUND =
+            new UnovationError("HIRER_NEGOTIATION_BILLING_NOT_FOUND", "" +
+                    "Hirer negotiation billing not found");
+    public static final UnovationError NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING =
+            new UnovationError("NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING", "" +
+                    "Negotiation for product and hirer existing");
+
+    /*  Negotiation Billing */
+    public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
+            new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +
+                    "Negotiation billing not found");
 
 }

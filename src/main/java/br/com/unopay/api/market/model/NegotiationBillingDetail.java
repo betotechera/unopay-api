@@ -27,6 +27,12 @@ public class NegotiationBillingDetail {
 
     public NegotiationBillingDetail(){}
 
+    public NegotiationBillingDetail(Contract contract){
+        this.contract = contract;
+        this.freeInstallment = Boolean.FALSE;
+        this.createdDateTime = new Date();
+    }
+
     @Id
     @Column(name="id")
     @GeneratedValue(generator="system-uuid")
@@ -67,7 +73,7 @@ public class NegotiationBillingDetail {
 
     @Column(name = "member_total")
     @JsonView({Views.NegotiationBilling.Detail.class})
-    private Integer memberTotal;
+    private Integer memberTotal = 1;
 
     @Column(name = "value")
     @JsonView({Views.NegotiationBilling.Detail.class})
@@ -80,4 +86,37 @@ public class NegotiationBillingDetail {
     @Version
     @JsonIgnore
     private Integer version;
+
+    public NegotiationBillingDetail defineBillingInformation(NegotiationBilling billing) {
+        this.creditValue = billing.getDefaultCreditValue();
+        this.memberCreditValue = billing.getDefaultMemberCreditValue();
+        this.installmentValue = billing.getInstallmentValue();
+        this.installmentValueByMember = billing.getInstallmentValueByMember();
+        this.negotiationBilling = billing;
+        this.freeInstallment = billing.withFreeInstallment();
+        defineValue(billing.getBillingWithCredits());
+        return this;
+    }
+
+    private NegotiationBillingDetail defineValue(Boolean billingWithCredit) {
+        if(freeInstallment){
+            BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
+            this.value = this.creditValue.add(membersTotalValue);
+            return this;
+        }
+        if(!billingWithCredit){
+            BigDecimal membersTotalValue = installmentValueByMember.multiply(new BigDecimal(this.memberTotal));
+            this.value = this.installmentValue.add(membersTotalValue);
+            return this;
+        }
+        BigDecimal memberSum = this.memberCreditValue.add(this.installmentValueByMember);
+        BigDecimal membersTotalValue = memberSum.multiply(new BigDecimal(this.memberTotal));
+        this.value = this.creditValue.add(this.installmentValue).add(membersTotalValue);
+        return this;
+    }
+
+    public BigDecimal creditValue(){
+        BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
+        return this.creditValue.add(membersTotalValue);
+    }
 }

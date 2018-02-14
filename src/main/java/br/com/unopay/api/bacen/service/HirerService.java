@@ -1,8 +1,10 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
+import br.com.unopay.api.market.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
@@ -25,14 +27,19 @@ public class HirerService {
     private PersonService personService;
     private UserDetailService userDetailService;
     private BankAccountService bankAccountService;
+    private HirerNegotiationRepository hirerNegotiationRepository;
 
     @Autowired
-    public HirerService(HirerRepository repository, PersonService personService,
-                        UserDetailService userDetailService, BankAccountService bankAccountService) {
+    public HirerService(HirerRepository repository,
+                        PersonService personService,
+                        UserDetailService userDetailService,
+                        BankAccountService bankAccountService,
+                        HirerNegotiationRepository hirerNegotiationRepository) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailService = userDetailService;
         this.bankAccountService = bankAccountService;
+        this.hirerNegotiationRepository = hirerNegotiationRepository;
     }
 
     public Hirer create(Hirer hirer) {
@@ -47,13 +54,27 @@ public class HirerService {
         }
     }
 
+    public Hirer getByIdForIssuer(String id, Issuer issuer) {
+        Optional<Hirer> hirer = repository.findByIdAndNegotiationsProductIssuerId(id, issuer.getId());
+        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
+    }
+
     public Hirer getById(String id) {
         Optional<Hirer> hirer = repository.findById(id);
         return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
     }
 
+    public void updateForIssuer(String id, Issuer issuer, Hirer hirer) {
+        Hirer current = getByIdForIssuer(id, issuer);
+        update(hirer, current);
+    }
+
     public void update(String id, Hirer hirer) {
-        Hirer current = repository.findOne(id);
+        Hirer current = getById(id);
+        update(hirer, current);
+    }
+
+    private void update(Hirer hirer, Hirer current) {
         current.updateModel(hirer);
         personService.save(hirer.getPerson());
         repository.save(current);
@@ -63,6 +84,9 @@ public class HirerService {
         getById(id);
         if(userDetailService.hasHirer(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS.withOnlyArgument(id));
+        }
+        if(hirerNegotiationRepository.countByHirerId(id) > 0){
+            throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_NEGOTIATION.withOnlyArgument(id));
         }
         repository.delete(id);
     }

@@ -126,18 +126,6 @@ public class ContractorInstrumentCreditService {
         contractorInstrumentCredits.forEach(this::cancelInstrumentCredit);
     }
 
-    public void subtract(String id, BigDecimal value) {
-        ContractorInstrumentCredit instrumentCredit = findById(id);
-        instrumentCredit.subtract(value);
-        if(instrumentCredit.isDepleted()){
-            instrumentCredit.setSituation(PROCESSING);
-        }
-        else {
-            instrumentCredit.subtractValue(value);
-            createProcessingCredit(value, instrumentCredit);
-        }
-        repository.save(instrumentCredit);
-    }
 
     private Contract getValidContractorContract(String paymentInstrumentId, ContractorInstrumentCredit instrumentCredit) {
         PaymentInstrument paymentInstrument = paymentInstrumentService.findById(paymentInstrumentId);
@@ -180,10 +168,6 @@ public class ContractorInstrumentCreditService {
         CreditPaymentAccount account=creditPaymentAccountService.findById(instrumentCredit.getCreditPaymentAccountId());
         instrumentCredit.setPaymentInstrument(instrument);
         instrumentCredit.setCreditPaymentAccount(account);
-    }
-
-    private void createProcessingCredit(BigDecimal value, ContractorInstrumentCredit instrumentCredit) {
-        repository.save(instrumentCredit.createProcessingCredit(value));
     }
 
     private void cancelInstrumentCredit(ContractorInstrumentCredit instrumentCredit) {

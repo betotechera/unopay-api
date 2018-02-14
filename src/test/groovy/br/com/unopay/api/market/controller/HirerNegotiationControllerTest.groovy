@@ -39,7 +39,7 @@ class HirerNegotiationControllerTest extends AuthServerApplicationTests {
         HirerNegotiation negotiation = createNegotiation()
 
         when:
-        def result = this.mvc.perform(post('/hirers/negotiations?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(post('/hirer-negotiations?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(negotiation)))
         then:
@@ -52,7 +52,7 @@ class HirerNegotiationControllerTest extends AuthServerApplicationTests {
         HirerNegotiation negotiation = fixtureCreator.createNegotiation()
         def id = negotiation.id
         when:
-        def result = this.mvc.perform(put('/hirers/negotiations/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(put('/hirer-negotiations/{id}?access_token={access_token}',id, accessToken)
                 .content(toJson(negotiation.with {  paymentDay = 5; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
@@ -66,7 +66,7 @@ class HirerNegotiationControllerTest extends AuthServerApplicationTests {
         HirerNegotiation negotiation = fixtureCreator.createNegotiation()
         def id = negotiation.id
         when:
-        def result = this.mvc.perform(get('/hirers/negotiations/{id}?access_token={access_token}',id, accessToken)
+        def result = this.mvc.perform(get('/hirer-negotiations/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -74,7 +74,7 @@ class HirerNegotiationControllerTest extends AuthServerApplicationTests {
     }
 
     private HirerNegotiation createNegotiation() {
-        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule() {
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule() {
             {
                 add("hirer", fixtureCreator.createHirer())
                 add("product", fixtureCreator.createProduct())

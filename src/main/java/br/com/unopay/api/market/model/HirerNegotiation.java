@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -42,13 +43,13 @@ public class HirerNegotiation implements Updatable{
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     @JoinColumn(name="hirer_id")
     private Hirer hirer;
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     @JoinColumn(name="product_id")
     private Product product;
 
@@ -64,6 +65,7 @@ public class HirerNegotiation implements Updatable{
 
     @Column(name = "payment_day")
     @NotNull(groups = {Create.class, Update.class})
+    @Max(value = 28)
     @JsonView({Views.HirerNegotiation.Detail.class})
     private Integer paymentDay;
 
@@ -82,12 +84,6 @@ public class HirerNegotiation implements Updatable{
     @JsonView({Views.HirerNegotiation.Detail.class})
     private BigDecimal installmentValueByMember;
 
-    @Column(name = "credit_recurrence_period")
-    @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.HirerNegotiation.Detail.class})
-    private RecurrencePeriod creditRecurrencePeriod;
-
     @Column(name = "auto_renewal")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.HirerNegotiation.Detail.class})
@@ -104,7 +100,7 @@ public class HirerNegotiation implements Updatable{
     private Integer freeInstallmentQuantity;
 
     @Column(name = "effective_date")
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     private Date effectiveDate;
 
     @Column(name = "billing_with_credits")
@@ -113,18 +109,25 @@ public class HirerNegotiation implements Updatable{
     private Boolean billingWithCredits;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.HirerNegotiation.Detail.class})
+    @JsonView({Views.HirerNegotiation.List.class})
     private Date createdDateTime;
 
     @Version
     @JsonIgnore
     private Integer version;
 
-    public void validateMe(){
+    public void validateForCreate(){
         if(effectiveDate == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.EFFECTIVE_DATE_REQUIRED);
         }
         if(effectiveDate.before(new Date())){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.EFFECTIVE_DATE_IS_BEFORE_CREATION.withOnlyArgument(effectiveDate));
+        }
+    }
+
+    public void validateForUpdate(){
+        if(effectiveDate != null && effectiveDate.before(new Date())){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.EFFECTIVE_DATE_IS_BEFORE_CREATION.withOnlyArgument(effectiveDate));
         }
@@ -137,6 +140,7 @@ public class HirerNegotiation implements Updatable{
         if(!withInstallmentValue()){
             installmentValue = product.getInstallmentValue();
         }
+        createdDateTime = new Date();
     }
 
     public String productId(){

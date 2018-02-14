@@ -66,8 +66,8 @@ insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_NEGOTIATION',
 insert into AUTHORITY(name, description) values('ROLE_LIST_HIRER_NEGOTIATION_BILLING','Permite listar os pagamentos negociaçoes de contratos do contratante.');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING','Permite gerenciar os pagamentos negociaçoes de contratos do contratante.');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
 
-insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION_BILLING', '1');
-insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_HIRER_NEGOTIATION_BILLING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_HIRER_NEGOTIATION_BILLING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');

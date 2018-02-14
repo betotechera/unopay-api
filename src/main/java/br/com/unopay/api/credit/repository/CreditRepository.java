@@ -16,6 +16,8 @@ public interface CreditRepository extends UnovationFilterRepository<Credit,Strin
 
     Optional<Credit> findByIdAndHirerId(String id, String hirerId);
 
+    Set<Credit> findByHirerId(String hirerId);
+
     Set<Credit> findByIssuerIdAndSituationAndCreditInsertionType(String document,
                                                                  CreditSituation situation,
                                                                  CreditInsertionType insertionType);
