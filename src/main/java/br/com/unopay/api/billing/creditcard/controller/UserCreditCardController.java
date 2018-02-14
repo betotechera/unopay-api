@@ -53,4 +53,13 @@ public class UserCreditCardController {
         log.info("get user credit card={}", id);
         return userCreditCardService.findById(id);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_USER_CREDIT_CARD')")
+    @RequestMapping(value = "/credit-cards/{id}", method = RequestMethod.DELETE)
+    public void remove(@PathVariable  String id) {
+        log.info("removing user credit card id={}", id);
+        userCreditCardService.delete(id);
+    }
+
 }

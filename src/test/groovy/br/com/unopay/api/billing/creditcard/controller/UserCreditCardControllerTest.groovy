@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -68,5 +69,23 @@ class UserCreditCardControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.expirationYear', is(notNullValue())))
+    }
+
+    void 'know user credit card should be deleted'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        def id = created.id
+        String accessToken = getUserAccessToken()
+
+        when:
+        def result = this.mvc.perform(delete('/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isNoContent())
     }
 }
