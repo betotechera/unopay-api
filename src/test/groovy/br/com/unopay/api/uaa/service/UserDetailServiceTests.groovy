@@ -1,7 +1,13 @@
 package br.com.unopay.api.uaa.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.Institution
+import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.infra.PasswordTokenService
@@ -135,6 +141,33 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that updated.getAuthoritiesNames(), not(contains("ROLE_UNKNOWN"))
     }
 
+    void 'when update user adding userTypes should set userTypes'() {
+
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {{
+            add("hirer", Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid"))
+        }})
+
+        def institution = Fixture.from(Institution.class).uses(jpaProcessor).gimme("valid")
+        user.institution = institution
+        def issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid")
+        user.issuer = issuer
+        def accreditedNetwork = Fixture.from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
+        user.accreditedNetwork = accreditedNetwork
+        def establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        user.establishment = establishment
+        user.hirer = null
+
+        when:
+        def updated = service.update(user)
+
+        then:
+        updated.institution.id == institution.id
+        updated.issuer.id == issuer.id
+        updated.accreditedNetwork.id == accreditedNetwork.id
+        updated.establishment.id == establishment.id
+        updated.hirer == null
+    }
 
     void 'given user without group should be created'(){
         given:
