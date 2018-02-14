@@ -22,6 +22,8 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -278,7 +280,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
-    void 'know me user credit card should be found'(){
+    void 'known me user credit card should be found'(){
 
         given:
         UserDetail user = fixtureCreator.createUser()
@@ -296,6 +298,26 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.expirationMonth', is(notNullValue())))
+
+    }
+
+    void 'known me user credit card should be deleted'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken(user.email, user.password)
+        def id = userCreditCard.id
+
+        when:
+        def result = this.mvc.perform(delete('/users/me/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isNoContent())
 
     }
 

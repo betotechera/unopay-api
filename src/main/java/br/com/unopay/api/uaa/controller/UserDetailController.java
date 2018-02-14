@@ -237,4 +237,12 @@ public class UserDetailController {
         LOGGER.info("get user credit card={} for user={}", id, userDetail.getId());
         return userCreditCardService.findByIdForUser(id, userDetail);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.DELETE)
+    public void removeUserCreditCard(UserDetail userDetail, @PathVariable String id){
+        LOGGER.info("removing user credit card id={} for user={}", id, userDetail.getId());
+        userCreditCardService.deleteForUser(id, userDetail);
+    }
+
 }
