@@ -1,17 +1,5 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.Institution;
-import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.Partner;
-import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
-import br.com.unopay.api.bacen.repository.EstablishmentRepository;
-import br.com.unopay.api.bacen.repository.HirerRepository;
-import br.com.unopay.api.bacen.repository.InstitutionRepository;
-import br.com.unopay.api.bacen.repository.IssuerRepository;
-import br.com.unopay.api.bacen.repository.PartnerRepository;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.notification.engine.MailValidator;
@@ -22,6 +10,7 @@ import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserReferencesValidator;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
@@ -51,8 +40,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.ISSUER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.USER_NOT_FOUND;
 
 @Service
@@ -66,13 +53,6 @@ public class UserDetailService implements UserDetailsService {
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
 
     private UserDetailRepository userDetailRepository;
-    private UserTypeRepository userTypeRepository;
-    private IssuerRepository issuerRepository;
-    private AccreditedNetworkRepository accreditedNetworkRepository;
-    private InstitutionRepository institutionRepository;
-    private EstablishmentRepository establishmentRepository;
-    private HirerRepository hirerRepository;
-    private PartnerRepository partnerRepository;
     private UserTypeService userTypeService;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
@@ -81,31 +61,21 @@ public class UserDetailService implements UserDetailsService {
     private AccreditedNetworkService accreditedNetworkService;
     private MailValidator mailValidator;
     private ContractorService contractorService;
+    private UserReferencesValidator userReferencesValidator;
+    private UserTypeRepository userTypeRepository;
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository,
-                             UserTypeRepository userTypeRepository,
-                             IssuerRepository issuerRepository,
-                             AccreditedNetworkRepository accreditedNetworkRepository,
-                             InstitutionRepository institutionRepository,
-                             EstablishmentRepository establishmentRepository,
-                             HirerRepository hirerRepository,
-                             PartnerRepository partnerRepository,
                              PasswordEncoder passwordEncoder,
                              GroupService groupService,
                              NotificationService notificationService,
                              PasswordTokenService passwordTokenService,
                              UserTypeService userTypeService,
                              MailValidator mailValidator,
-                             ContractorService contractorService) {
+                             ContractorService contractorService,
+                             UserReferencesValidator userReferencesValidator,
+                             UserTypeRepository userTypeRepository) {
         this.userDetailRepository = userDetailRepository;
-        this.userTypeRepository = userTypeRepository;
-        this.issuerRepository = issuerRepository;
-        this.accreditedNetworkRepository = accreditedNetworkRepository;
-        this.institutionRepository = institutionRepository;
-        this.establishmentRepository = establishmentRepository;
-        this.hirerRepository = hirerRepository;
-        this.partnerRepository = partnerRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
         this.notificationService = notificationService;
@@ -113,6 +83,8 @@ public class UserDetailService implements UserDetailsService {
         this.userTypeService = userTypeService;
         this.mailValidator = mailValidator;
         this.contractorService = contractorService;
+        this.userReferencesValidator = userReferencesValidator;
+        this.userTypeRepository = userTypeRepository;
     }
 
     public UserDetailService(){}
@@ -181,7 +153,7 @@ public class UserDetailService implements UserDetailsService {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         current.updateMe(user);
-        validateReferences(current);
+        userReferencesValidator.defineValidReferences(current);
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
@@ -189,72 +161,6 @@ public class UserDetailService implements UserDetailsService {
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
                     .withArguments(user.getEmail());
         }
-    }
-
-    private void validateReferences(UserDetail user) {
-        userTypeService.validateUserType(user);
-
-        if(user.getInstitution() != null) {
-            user.setInstitution(findInstitutionById(user.institutionId()));
-        }
-
-        if(user.getAccreditedNetwork() != null) {
-            user.setAccreditedNetwork(findAccreditedNetworkById(user.accreditedNetworkId()));
-        }
-
-        if(user.getEstablishment() != null) {
-            user.setEstablishment(findEstablishmentById(user.establishmentId()));
-        }
-
-        if(user.getIssuer() != null) {
-            user.setIssuer(findIssuerById(user.issuerId()));
-        }
-        
-        if(user.getHirer() != null) {
-            user.setHirer(findHirerById(user.hirerId()));
-        }
-
-        if(user.getContractor() != null) {
-            user.setContractor(contractorService.getById(user.contractorId()));
-        }
-
-        if(user.getPartner() != null) {
-            user.setPartner(findPartnerById(user.partnerId()));
-        }
-
-        Set<Group> groups = groupService.loadKnownUserGroups(user);
-        user.setGroups(groups);
-    }
-
-    private Partner findPartnerById(String id) {
-        Optional<Partner> partner = partnerRepository.findById(id);
-        return partner.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.PARTNER_NOT_FOUND));
-    }
-
-    private Hirer findHirerById(String id) {
-        Optional<Hirer> hirer = hirerRepository.findById(id);
-        return hirer.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.HIRER_NOT_FOUND));
-    }
-
-    private Establishment findEstablishmentById(String id) {
-        Optional<Establishment> establishment = establishmentRepository.findById(id);
-        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
-    }
-
-    private Institution findInstitutionById(String id) {
-        Optional<Institution> institution = institutionRepository.findById(id);
-        return institution.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.INSTITUTION_NOT_FOUND));
-    }
-
-    public Issuer findIssuerById(String id) {
-        Optional<Issuer> issuer = issuerRepository.findById(id);
-        return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
-    }
-
-    public AccreditedNetwork findAccreditedNetworkById(String id) {
-        Optional<AccreditedNetwork> accreditedNetwork = accreditedNetworkRepository.findById(id);
-        return accreditedNetwork
-                .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.ACCREDITED_NETWORK_NOT_FOUND));
     }
 
     public UserDetail getByEmail(String email) {

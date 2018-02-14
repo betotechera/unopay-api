@@ -201,18 +201,6 @@ public class UserDetail implements Serializable, Updatable {
                 '}';
     }
 
-    public void updateModel(UserDetail user) {
-        if(user.getEmail() !=null) {
-            this.setEmail(user.getEmail());
-        }
-        if(user.getName() !=null) {
-            this.setName(user.getName());
-        }
-        if(user.getType() !=null) {
-            this.setType(user.getType());
-        }
-    }
-
     @JsonIgnore
     public boolean isEstablishmentType(){
         return  establishment != null;
@@ -223,60 +211,49 @@ public class UserDetail implements Serializable, Updatable {
     }
 
     public String institutionId(){
-        return institution == null ? null : getInstitution().getId();
+        return isInstitutionType() ? getInstitution().getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isInstitutionType() {
+        return institution != null;
     }
 
     public String partnerId() {
-        return partner == null ?  null : getPartner().getId();
+        return isPartnerType() ?  getPartner().getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isPartnerType() {
+        return partner != null;
     }
 
 
     public Optional<Establishment> myEstablishment() {
-        if (establishment != null) {
-            return Optional.ofNullable(getEstablishment());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getEstablishment());
     }
 
     public Optional<Contractor> myContractor() {
-        if (contractor != null) {
-            return Optional.ofNullable(getContractor());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getContractor());
     }
 
     public Optional<AccreditedNetwork> myNetWork() {
-        if (accreditedNetwork != null) {
-            return Optional.ofNullable(getAccreditedNetwork());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getAccreditedNetwork());
     }
     public Optional<Hirer> myHirer() {
-        if (accreditedNetwork != null) {
-            return Optional.ofNullable(getHirer());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getHirer());
     }
 
     public Optional<Issuer> myIssuer() {
-        if (issuer != null) {
-            return Optional.ofNullable(getIssuer());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getIssuer());
     }
 
     public Optional<Institution> myInstitution() {
-        if (issuer != null) {
-            return Optional.ofNullable(getInstitution());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getInstitution());
     }
 
     public Optional<Partner> myPartner() {
-        if (isIssuerType()) {
-            return Optional.ofNullable(getPartner());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getPartner());
     }
 
 
@@ -341,7 +318,7 @@ public class UserDetail implements Serializable, Updatable {
     }
 
     public void updateMe(UserDetail source) {
-        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
+        updateOnly(source,"email", "name", "type");
         institution = source.institution;
         accreditedNetwork = source.accreditedNetwork;
         establishment = source.establishment;
