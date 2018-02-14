@@ -1,5 +1,7 @@
 package br.com.unopay.api.uaa.service;
 
+import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -8,6 +10,7 @@ import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
 import br.com.unopay.api.uaa.model.UserDetail;
+import br.com.unopay.api.uaa.model.UserReferencesValidator;
 import br.com.unopay.api.uaa.model.UserType;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
@@ -50,31 +53,38 @@ public class UserDetailService implements UserDetailsService {
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
 
     private UserDetailRepository userDetailRepository;
-    private UserTypeRepository userTypeRepository;
     private UserTypeService userTypeService;
     private PasswordEncoder passwordEncoder;
     private GroupService groupService;
     private NotificationService notificationService;
     private PasswordTokenService passwordTokenService;
+    private AccreditedNetworkService accreditedNetworkService;
     private MailValidator mailValidator;
+    private ContractorService contractorService;
+    private UserReferencesValidator userReferencesValidator;
+    private UserTypeRepository userTypeRepository;
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository,
-                             UserTypeRepository userTypeRepository,
                              PasswordEncoder passwordEncoder,
                              GroupService groupService,
                              NotificationService notificationService,
                              PasswordTokenService passwordTokenService,
                              UserTypeService userTypeService,
-                             MailValidator mailValidator) {
+                             MailValidator mailValidator,
+                             ContractorService contractorService,
+                             UserReferencesValidator userReferencesValidator,
+                             UserTypeRepository userTypeRepository) {
         this.userDetailRepository = userDetailRepository;
-        this.userTypeRepository = userTypeRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
         this.notificationService = notificationService;
         this.passwordTokenService = passwordTokenService;
         this.userTypeService = userTypeService;
         this.mailValidator = mailValidator;
+        this.contractorService = contractorService;
+        this.userReferencesValidator = userReferencesValidator;
+        this.userTypeRepository = userTypeRepository;
     }
 
     public UserDetailService(){}
@@ -142,7 +152,8 @@ public class UserDetailService implements UserDetailsService {
         if (user.getPassword() != null) {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        current.updateModel(user);
+        current.updateMe(user);
+        userReferencesValidator.defineValidReferences(current);
         try {
             return userDetailRepository.save(current);
         } catch (DataIntegrityViolationException e) {
