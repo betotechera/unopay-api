@@ -14,5 +14,9 @@ public interface HirerNegotiationRepository
 
     Optional<HirerNegotiation> findByIdAndHirerId(String id, String hirerId);
 
-    Optional<HirerNegotiation> findByHirerId(String hirerId);
+    Optional<HirerNegotiation> findById(String id);
+
+    Integer countByHirerId(String id);
+
+    Optional<HirerNegotiation> findByIdAndProductIssuerId(String id, String issuerId);
 }

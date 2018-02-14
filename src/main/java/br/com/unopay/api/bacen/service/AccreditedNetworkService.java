@@ -21,11 +21,8 @@ import org.springframework.stereotype.Service;
 public class AccreditedNetworkService {
 
     private AccreditedNetworkRepository repository;
-
     private UserDetailService userDetailService;
-
     private PersonService personService;
-
     private BankAccountService bankAccountService;
 
 

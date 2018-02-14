@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -29,7 +31,7 @@ import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 @Data
 @Entity
 @Table(name = "negotiation_billing")
-public class NegotiationBilling implements Billable{
+public class NegotiationBilling implements Billable {
 
     public NegotiationBilling(){}
 
@@ -108,6 +110,7 @@ public class NegotiationBilling implements Billable{
     private BigDecimal creditValue = BigDecimal.ZERO;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     @JsonView({Views.NegotiationBilling.Detail.class})
     private PaymentStatus status;
 

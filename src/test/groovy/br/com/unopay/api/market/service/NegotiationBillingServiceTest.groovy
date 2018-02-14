@@ -59,7 +59,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
 
         then:
         1 * notifierMock.notify(Queues.HIRER_BILLING_CREATED,_)
@@ -71,7 +71,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -84,7 +84,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -97,7 +97,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -108,11 +108,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         given:
         def negotiation = fixtureCreator.createNegotiation()
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         paidBilling(negotiation.hirerId())
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling next = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -125,14 +125,14 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         def negotiation = fixtureCreator.createNegotiation()
         fixtureCreator
                 .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         paidBilling(negotiation.hirerId())
 
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         paidBilling(negotiation.hirerId())
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling next = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -148,14 +148,14 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("installments", 2)
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         paidBilling(negotiation.hirerId())
 
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         paidBilling(negotiation.hirerId())
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
 
         service.findLastNotPaidByHirer(negotiation.hirerId())
         then:
@@ -173,7 +173,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         def found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -191,7 +191,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -205,7 +205,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -234,7 +234,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         service.memberTotal = members
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
         def credits = creditService.findForHirer(negotiation.hirerId())
 
@@ -263,7 +263,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
         def credits = creditService.findForHirer(negotiation.hirerId())
         then:
@@ -292,7 +292,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         service.memberTotal = members
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -326,7 +326,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         service.memberTotal = members
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -360,7 +360,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         service.memberTotal = members
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:
@@ -381,7 +381,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
         def details = billingDetailService.findByBillingId(found.id)
 
@@ -394,7 +394,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         def negotiation = fixtureCreator.createNegotiation()
 
         when:
-        service.process(negotiation.hirerId())
+        service.process(negotiation.getId())
         service.findLastNotPaidByHirer(negotiation.hirerId())
 
         then:

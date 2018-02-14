@@ -3,7 +3,7 @@ package br.com.unopay.api.uaa.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.bacen.model.Contractor
-import org.apache.commons.lang3.RandomStringUtils
+import org.apache.commons.lang.RandomStringUtils
 
 class UserDetailTest extends FixtureApplicationTest {
 
@@ -62,7 +62,7 @@ class UserDetailTest extends FixtureApplicationTest {
                 type: new UserType(id: UUID.randomUUID().toString()),
             )
         when:
-            userDetail.updateModel(otherUser)
+            userDetail.updateMe(otherUser)
         then:
             assert userDetail.email == otherUser.email
             assert userDetail.name == otherUser.name
@@ -80,7 +80,7 @@ class UserDetailTest extends FixtureApplicationTest {
             )
             UserDetail otherUser = new UserDetail()
         when:
-            userDetail.updateModel(otherUser)
+            userDetail.updateMe(otherUser)
         then:
             assert userDetail.email == 'unovation@unovation.com.br'
             assert userDetail.name == 'Test Name'

@@ -1,6 +1,8 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.market.model.HirerForIssuer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
@@ -9,6 +11,7 @@ import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,8 +40,10 @@ public class HirerNegotiationService {
         return repository.save(negotiation);
     }
 
-    public HirerNegotiation findById(String id) {
-        return repository.findOne(id);
+    public HirerNegotiation findByIdForIssuer(String id, Issuer issuer) {
+        Optional<HirerNegotiation> negotiation = repository.findByIdAndProductIssuerId(id, issuer.getId());
+        return negotiation.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public HirerNegotiation findByIdForHirer(String id, Hirer hirer) {
@@ -47,8 +52,8 @@ public class HirerNegotiationService {
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(id)));
     }
 
-    public HirerNegotiation findByHirerId(String hirerId) {
-        Optional<HirerNegotiation> negotiation = repository.findByHirerId(hirerId);
+    public HirerNegotiation findById(String id) {
+        Optional<HirerNegotiation> negotiation = repository.findById(id);
         return negotiation.orElseThrow(()->
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND));
     }
@@ -65,12 +70,17 @@ public class HirerNegotiationService {
         update(negotiation, current);
     }
 
+    public void updateForIssuer(String id,Issuer issuer, HirerNegotiation negotiation) {
+        HirerNegotiation current = findByIdForIssuer(id, issuer);
+        update(negotiation, current);
+    }
+
     public void updateForHirer(String id,Hirer hirer, HirerNegotiation negotiation) {
         HirerNegotiation current = findByIdForHirer(id, hirer);
         update(negotiation, current);
     }
     private void update(HirerNegotiation negotiation, HirerNegotiation current) {
-        negotiation.validateMe();
+        negotiation.validateForUpdate();
         current.updateAllExcept(negotiation, "product", "hirer");
         save(current);
     }
@@ -80,8 +90,17 @@ public class HirerNegotiationService {
         negotiation.setProduct(productService.findById(negotiation.productId()));
     }
 
+    @Transactional
+    public HirerNegotiation crateHirerAndNegotiation(Issuer issuer, HirerForIssuer hirerForIssuer){
+        HirerNegotiation negotiation = hirerForIssuer.getHirerNegotiation();
+        productService.findByIdForIssuer(hirerForIssuer.productId(), issuer);
+        Hirer hirer = hirerService.create(hirerForIssuer.getHirer());
+        negotiation.setHirer(hirer);
+        return create(negotiation);
+    }
+
     public HirerNegotiation create(HirerNegotiation negotiation) {
-        negotiation.validateMe();
+        negotiation.validateForCreate();
         defineValidReferences(negotiation);
         checkAlreadyExistsForProductAndHirer(negotiation);
         negotiation.setMeUp();

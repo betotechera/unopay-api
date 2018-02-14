@@ -38,6 +38,24 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         found
     }
 
+    def 'when create negotiation should be created with created date time'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("createdDateTime", null)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        timeComparator.compare(found.createdDateTime, new Date()) == 0
+    }
+
     def 'given a negotiation with unknown hirer should not be created'(){
         given:
         def hirer = fixtureCreator.createHirer()
@@ -256,16 +274,16 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         ex.errors.find().logref == 'EFFECTIVE_DATE_IS_BEFORE_CREATION'
     }
 
-    def 'given negotiation without effect date should not be updated'(){
+    def 'given negotiation without effect date should not change effective date'(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
+        HirerNegotiation cloned = BeanUtils.cloneBean(negotiation)
 
         when:
-        service.update(negotiation.id, negotiation.with { effectiveDate = null; it })
-
+        service.update(negotiation.id, cloned.with { effectiveDate = null; it })
+        HirerNegotiation found = service.findById(negotiation.id)
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'EFFECTIVE_DATE_REQUIRED'
+        timeComparator.compare(found.effectiveDate, negotiation.effectiveDate) == 0
     }
 
 }

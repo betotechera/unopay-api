@@ -188,6 +188,10 @@ public final class Errors {
             new UnovationError("HIRER_WITH_USERS"," Hirer has Users");
     public static final UnovationError HIRER_DOCUMENT_NOT_FOUND =
             new UnovationError("HIRER_DOCUMENT_NOT_FOUND","Hirer document not found");
+    public static final UnovationError HIRER_WITH_NEGOTIATION =
+            new UnovationError("HIRER_WITH_NEGOTIATION","Hirer with negotiation");
+
+
 
 
     /* HirerBranch */
@@ -572,4 +576,9 @@ public final class Errors {
 
     public static final UnovationError AUTHORIZED_MEMBER_NOT_FOUND =
             new UnovationError("AUTHORIZED_MEMBER_NOT_FOUND", "Authorized member not founds");
+
+    /*  Negotiation Billing */
+    public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
+            new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +
+                    "Negotiation billing not found");
 }

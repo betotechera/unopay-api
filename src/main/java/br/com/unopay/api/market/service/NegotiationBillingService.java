@@ -1,5 +1,6 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
@@ -8,12 +9,13 @@ import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.NegotiationBillingDetail;
+import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.repository.NegotiationBillingRepository;
 import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -24,6 +26,8 @@ import lombok.Setter;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
@@ -32,6 +36,7 @@ import static br.com.unopay.api.order.model.PaymentStatus.PAID;
 import static br.com.unopay.api.order.model.PaymentStatus.PAYMENT_DENIED;
 import static br.com.unopay.api.order.model.PaymentStatus.WAITING_PAYMENT;
 import static br.com.unopay.api.uaa.exception.Errors.HIRER_NEGOTIATION_BILLING_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.NEGOTIATION_BILLING_NOT_FOUND;
 import static java.util.Collections.singletonList;
 
 @Service
@@ -68,7 +73,15 @@ public class NegotiationBillingService {
     }
 
     public NegotiationBilling findById(String id) {
-        return repository.findOne(id);
+        Optional<NegotiationBilling> billing = repository.findById(id);
+        return billing.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public NegotiationBilling findByIdForIssuer(String id, Issuer issuer) {
+        Optional<NegotiationBilling> billing = repository.findByIdAndHirerNegotiationProductIssuerId(id,issuer.getId());
+        return billing.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public NegotiationBilling findLastNotPaidByHirer(String hirerId) {
@@ -77,11 +90,31 @@ public class NegotiationBillingService {
                         Arrays.asList(CANCELED, PAYMENT_DENIED, WAITING_PAYMENT)));
     }
 
+    public Page<NegotiationBilling> findByFilter(NegotiationBillingFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public void processAsPaid(String billingId) {
+        NegotiationBilling current = repository.findOne(billingId);
+        current.setStatus(PaymentStatus.PAID);
+        save(current);
+    }
+
     @Transactional
-    public void process(String hirerId) {
-        Set<Contract> hirerContracts = contractService.findByHirerId(hirerId);
-        HirerNegotiation negotiation = hirerNegotiationService.findByHirerId(hirerId);
-        Integer nextInstallment = getNextInstallmentNumber(hirerId);
+    public void processForIssuer(String id, Issuer issuer) {
+        HirerNegotiation negotiation = hirerNegotiationService.findByIdForIssuer(id, issuer);
+        process(negotiation);
+    }
+
+    @Transactional
+    public void process(String id) {
+        HirerNegotiation negotiation = hirerNegotiationService.findById(id);
+        process(negotiation);
+    }
+
+    private void process(HirerNegotiation negotiation) {
+        Set<Contract> hirerContracts = contractService.findByHirerId(negotiation.hirerId());
+        Integer nextInstallment = getNextInstallmentNumber(negotiation.hirerId());
         if(nextInstallment <= negotiation.getInstallments() && !hirerContracts.isEmpty()) {
             createBilling(hirerContracts, negotiation, nextInstallment);
        }
@@ -132,9 +165,4 @@ public class NegotiationBillingService {
         return billing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_BILLING_NOT_FOUND));
     }
 
-    public void processAsPaid(String billingId) {
-        NegotiationBilling current = repository.findOne(billingId);
-        current.setStatus(PaymentStatus.PAID);
-        save(current);
-    }
 }

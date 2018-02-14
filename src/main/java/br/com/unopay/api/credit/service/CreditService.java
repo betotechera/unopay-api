@@ -76,7 +76,7 @@ public class CreditService {
         validateReferences(credit);
         credit.validateCreditValue();
         Credit inserted =  repository.save(credit);
-        if(!inserted.isDirectDebit()){
+        if(!inserted.isDirectDebit() && credit.billable()){
            notifier.notify(Queues.HIRER_CREDIT_CREATED, inserted);
         }
         return credit;

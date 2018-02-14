@@ -21,6 +21,7 @@ class CreditTest  extends FixtureApplicationTest {
         credit.product == negotiation.product()
         credit.creditSource == ContractOrigin.APPLICATION.name()
         credit.creditInsertionType == CreditInsertionType.BOLETO
+        !credit.billable
 
     }
 
