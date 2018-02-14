@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
@@ -255,6 +256,10 @@ public class ContractService {
             throw UnovationExceptions.notFound().withErrors(CONTRACT_HIRER_NOT_FOUND);
         }
         return contracts;
+    }
+
+    public Set<Contract> findByHirerId(String hirerId) {
+        return repository.findByHirerId(hirerId);
     }
 
     public Optional<Contract> findByContractorAndProduct(String document, String productId) {

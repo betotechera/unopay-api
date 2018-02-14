@@ -4,7 +4,7 @@ import br.com.unopay.bootcommons.http.DescriptableEnum;
 
 public enum TicketPaymentSource implements DescriptableEnum {
 
-    HIRER("contratante"), CONTRACTOR("favorecido");
+    HIRER_CREDIT("Contratante credito"), HIRER_INSTALLMENT("Contrante mensalidade"), CONTRACTOR_CREDIT("favorecido");
 
     private String description;
 

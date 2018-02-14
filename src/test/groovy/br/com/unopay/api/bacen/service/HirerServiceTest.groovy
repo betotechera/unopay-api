@@ -1,10 +1,13 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -14,9 +17,11 @@ import org.springframework.data.domain.Page
 class HirerServiceTest extends SpockApplicationTests {
 
     @Autowired
-    HirerService service
+    private HirerService service
     @Autowired
-    PaymentRuleGroupRepository repository
+    private FixtureCreator fixtureCreator
+    @Autowired
+    private PaymentRuleGroupRepository repository
 
     void 'should create Hirer'(){
         given:
@@ -56,6 +61,31 @@ class HirerServiceTest extends SpockApplicationTests {
 
         then:
         thrown(NotFoundException)
+    }
+
+
+    void 'when try delete hirer with negotiation should return error'(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation.class).uses(jpaProcessor).gimme("valid")
+
+        when:
+        service.delete(negotiation.hirerId())
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'HIRER_WITH_NEGOTIATION'
+    }
+
+    void 'when try delete hirer with user should return error'(){
+        given:
+        def hirerUser = fixtureCreator.createHirerUser()
+
+        when:
+        service.delete(hirerUser.hirerId())
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.first().logref == 'HIRER_WITH_USERS'
     }
 
     void 'unknown hirer should not be deleted'(){

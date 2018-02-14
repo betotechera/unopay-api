@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.infra.ReflectionHelper;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.PasswordRequired;
 import br.com.unopay.api.model.validation.group.Update;
@@ -38,15 +39,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity
 @Table(name = "oauth_user_details")
 @Data
 @EqualsAndHashCode(exclude = { "groups" })
-public class UserDetail implements Serializable {
+public class UserDetail implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -198,77 +201,59 @@ public class UserDetail implements Serializable {
                 '}';
     }
 
-    public void updateModel(UserDetail user) {
-        if(user.getEmail() !=null) {
-            this.setEmail(user.getEmail());
-        }
-        if(user.getName() !=null) {
-            this.setName(user.getName());
-        }
-        if(user.getType() !=null) {
-            this.setType(user.getType());
-        }
-    }
-
     @JsonIgnore
     public boolean isEstablishmentType(){
         return  establishment != null;
     }
 
     public String establishmentId(){
-        if(isEstablishmentType()){
-            return getEstablishment().getId();
-        }
-        return null;
+        return isEstablishmentType() ? getEstablishment().getId() : null;
+    }
+
+    public String institutionId(){
+        return isInstitutionType() ? getInstitution().getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isInstitutionType() {
+        return institution != null;
+    }
+
+    public String partnerId() {
+        return isPartnerType() ?  getPartner().getId() : null;
+    }
+
+    @JsonIgnore
+    public boolean isPartnerType() {
+        return partner != null;
     }
 
 
     public Optional<Establishment> myEstablishment() {
-        if (isEstablishmentType()) {
-            return Optional.ofNullable(getEstablishment());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getEstablishment());
     }
 
     public Optional<Contractor> myContractor() {
-        if (isContractorType()) {
-            return Optional.ofNullable(getContractor());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getContractor());
     }
 
     public Optional<AccreditedNetwork> myNetWork() {
-        if (isAccreditedNetworkType()) {
-            return Optional.ofNullable(getAccreditedNetwork());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getAccreditedNetwork());
     }
     public Optional<Hirer> myHirer() {
-        if (isAccreditedNetworkType()) {
-            return Optional.ofNullable(getHirer());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getHirer());
     }
 
     public Optional<Issuer> myIssuer() {
-        if (isIssuerType()) {
-            return Optional.ofNullable(getIssuer());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getIssuer());
     }
 
     public Optional<Institution> myInstitution() {
-        if (isIssuerType()) {
-            return Optional.ofNullable(getInstitution());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getInstitution());
     }
 
     public Optional<Partner> myPartner() {
-        if (isIssuerType()) {
-            return Optional.ofNullable(getPartner());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(getPartner());
     }
 
 
@@ -330,5 +315,17 @@ public class UserDetail implements Serializable {
 
     public String contractorDocument() {
         return isContractorType() ? contractor.getDocumentNumber() : null;
+    }
+
+    public void updateMe(UserDetail source) {
+        updateOnly(source,"email", "name", "type");
+        institution = source.institution;
+        accreditedNetwork = source.accreditedNetwork;
+        establishment = source.establishment;
+        issuer = source.issuer;
+        hirer = source.hirer;
+        contractor = source.contractor;
+        partner = source.partner;
+        groups = source.groups;
     }
 }

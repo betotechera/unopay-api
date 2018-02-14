@@ -17,7 +17,10 @@ class NegotiationBillingDetailServiceTest extends SpockApplicationTests{
 
     def "given valid negotiation billing detail should be created"(){
         given:
-        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling).uses(jpaProcessor).gimme("valid")
+        NegotiationBilling negotiationBilling = Fixture
+                .from(NegotiationBilling).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("number", regex("\\d{20}"))
+        }})
         NegotiationBillingDetail billingDetail = Fixture.from(NegotiationBillingDetail).gimme("valid", new Rule(){{
             add("contract", fixtureCreator.createPersistedContract())
             add("negotiationBilling", negotiationBilling)

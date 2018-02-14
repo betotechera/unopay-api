@@ -108,15 +108,19 @@ public class ContractInstallmentService {
     }
 
     public void markAsPaid(String contractId, BigDecimal paid) {
+        ContractInstallment installment = findFirstNotPaid(contractId);
+        installment.setPaymentValue(paid);
+        installment.setPaymentDateTime(new Date());
+        update(installment.getId(), installment);
+    }
+
+    public ContractInstallment findFirstNotPaid(String contractId) {
         Set<ContractInstallment> installments = findByContractId(contractId);
-        ContractInstallment installment = installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
+        return installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
                 .sorted(Comparator.comparing(ContractInstallment::getInstallmentNumber))
                 .findFirst().orElseThrow(() ->
                         UnovationExceptions.unprocessableEntity()
                                 .withErrors(CONTRACT_INSTALLMENT_NOT_FOUND.withOnlyArgument(contractId)));
-        installment.setPaymentValue(paid);
-        installment.setPaymentDateTime(new Date());
-        update(installment.getId(), installment);
     }
 
     private int getCurrentInstallmentNumber(HirerNegotiation negotiation) {

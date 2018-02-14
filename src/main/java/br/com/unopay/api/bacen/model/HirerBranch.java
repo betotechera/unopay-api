@@ -53,13 +53,9 @@ public class HirerBranch implements Serializable {
     @ManyToOne
     private BankAccount bankAccount;
 
-    @Column(name="document_email")
-    @JsonView({Views.HirerBranch.Detail.class})
-    private String documentEmail;
 
     public void updateMe(HirerBranch hirer) {
         person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
-        this.documentEmail  = hirer.getDocumentEmail();
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 }

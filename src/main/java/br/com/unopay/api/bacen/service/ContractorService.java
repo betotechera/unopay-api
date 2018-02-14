@@ -32,19 +32,16 @@ public class ContractorService {
     private PersonService personService;
     private UserDetailRepository userDetailRepository;
     private BankAccountService bankAccountService;
-    private ContractRepository contractRepository;
 
     @Autowired
     public ContractorService(ContractorRepository repository,
                              PersonService personService,
                              UserDetailRepository userDetailRepository,
-                             BankAccountService bankAccountService,
-                             ContractRepository contractRepository) {
+                             BankAccountService bankAccountService) {
         this.repository = repository;
         this.personService = personService;
         this.userDetailRepository = userDetailRepository;
         this.bankAccountService = bankAccountService;
-        this.contractRepository = contractRepository;
     }
 
     public Contractor create(Contractor contractor) {

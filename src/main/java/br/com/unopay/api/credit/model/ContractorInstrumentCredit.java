@@ -239,32 +239,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
     }
 
-    public ContractorInstrumentCredit createProcessingCredit(BigDecimal value) {
-        ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
-        instrumentCredit.setAvailableBalance(BigDecimal.ZERO);
-        instrumentCredit.setBlockedBalance(BigDecimal.ZERO);
-        instrumentCredit.setSituation(CreditSituation.PROCESSING);
-        instrumentCredit.setCreditPaymentAccount(this.creditPaymentAccount);
-        instrumentCredit.setContract(this.contract);
-        instrumentCredit.setCreatedDateTime(new Date());
-        instrumentCredit.setExpirationDateTime(this.expirationDateTime);
-        instrumentCredit.setCreditSource(this.creditSource);
-        instrumentCredit.setIssuerFee(this.issuerFee);
-        instrumentCredit.setPaymentInstrument(this.paymentInstrument);
-        instrumentCredit.setServiceType(this.serviceType);
-        instrumentCredit.setValue(value);
-        return instrumentCredit;
-    }
-
-    @JsonIgnore
-    public boolean isDepleted() {
-        return ZERO.equals(this.availableBalance);
-    }
-
-    public void subtractValue(BigDecimal value) {
-        this.value = this.value.subtract(value);
-    }
-
     public String productId(){
         if(getContract()!=null && getContract().getProduct() != null) {
             return getContract().getProduct().getId();

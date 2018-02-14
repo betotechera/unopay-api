@@ -3,8 +3,27 @@ package br.com.unopay.api.credit.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.market.model.NegotiationBilling
+import br.com.unopay.api.model.ContractOrigin
 
 class CreditTest  extends FixtureApplicationTest {
+
+    def 'should be crated from negotiation billing'(){
+        given:
+        NegotiationBilling negotiation = Fixture.from(NegotiationBilling.class).gimme("valid")
+
+        when:
+        def credit = new Credit(negotiation)
+
+        then:
+        credit.value == negotiation.creditValue
+        credit.hirer == negotiation.hirer()
+        credit.product == negotiation.product()
+        credit.creditSource == ContractOrigin.APPLICATION.name()
+        credit.creditInsertionType == CreditInsertionType.BOLETO
+        !credit.billable
+
+    }
 
     def 'should update me'(){
         given:

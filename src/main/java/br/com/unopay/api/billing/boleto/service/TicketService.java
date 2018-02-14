@@ -17,6 +17,8 @@ import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.NumberGenerator;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
@@ -68,6 +70,7 @@ public class TicketService {
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     @Setter private NotificationService notificationService;
     @Setter private NumberGenerator numberGenerator;
+    @Setter private NegotiationBillingService negotiationBillingService;
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -84,7 +87,8 @@ public class TicketService {
                          CobrancaOnlineService cobrancaOnlineService,
                          FileUploaderService fileUploaderService,
                          LayoutExtractorSelector layoutExtractorSelector,
-                         NotificationService notificationService) {
+                         NotificationService notificationService,
+                         NegotiationBillingService negotiationBillingService) {
         this.repository = repository;
         this.orderService = orderService;
         this.creditService = creditService;
@@ -92,6 +96,7 @@ public class TicketService {
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.notificationService = notificationService;
+        this.negotiationBillingService = negotiationBillingService;
         this.numberGenerator = new NumberGenerator(this.repository);
     }
 
@@ -119,9 +124,17 @@ public class TicketService {
         return ticket;
     }
 
+    @Transactional
+    public Ticket createForBilling(NegotiationBilling billing) {
+        NegotiationBilling current = negotiationBillingService.findById(billing.getId());
+        Ticket ticket = create(current);
+        notificationService.sendBoletoIssued(current, ticket);
+        return ticket;
+    }
+
     private Ticket create(Billable order) {
         PaymentBankAccount paymentBankAccount = order.getIssuer().getPaymentAccount();
-        String number = getValidNumber(order);
+        String number = getValidNumber();
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
                 .payer(order.getPayer()).expirationDays(deadlineInDays)
                 .paymentBankAccount(paymentBankAccount)
@@ -138,11 +151,11 @@ public class TicketService {
                 .value(order.getValue())
                 .ourNumber(clearOurNumber)
                 .build();
-        return createBoletoModel(order, boletoStella, clearOurNumber);
+        return createTicketModel(order, boletoStella, clearOurNumber);
     }
 
-    private String getValidNumber(Billable order) {
-        String number = numberGenerator.createNumber(order, SIZE);
+    private String getValidNumber() {
+        String number = numberGenerator.createNumber(SIZE);
         if(repository.countByNumber(number) > 0){
             throw UnovationExceptions.conflict().withErrors(TICKET_NUMBER_ALREADY_EXISTS.withOnlyArgument(number));
         }
@@ -178,11 +191,15 @@ public class TicketService {
         Optional<Ticket> current = ticketSupplier.get();
         current.ifPresent(ticket -> {
             if(PAID.equals(occurrenceCode)){
+                log.info("ticket from={}", ticket.getPaymentSource());
                 if(ticket.fromContractor()){
                     processOrderAsPaid(ticket);
                 }
-                if(ticket.fromHirer()){
+                if(ticket.fromCreditHirer()){
                     processCreditAsPaid(ticket);
+                }
+                if(ticket.fromBillingHirer()){
+                    processHirerBillingAsPaid(ticket);
                 }
             }else{
                 defineOccurrence(ticket, occurrenceCode);
@@ -206,20 +223,26 @@ public class TicketService {
         creditService.processAsPaid(ticket.getSourceId());
     }
 
+    private void processHirerBillingAsPaid(Ticket ticket){
+        defineOccurrence(ticket, PAID);
+        negotiationBillingService.processAsPaid(ticket.getSourceId());
+        NegotiationBilling billing = negotiationBillingService.findById(ticket.getSourceId());
+        if(billing.getBillingWithCredits()) {
+            creditService.processAsPaid(billing.creditId());
+        }
+    }
+
     private void defineOccurrence(Ticket ticket, String occurrenceCode) {
         ticket.setProcessedAt(new Date());
         ticket.setOccurrenceCode(occurrenceCode);
         repository.save(ticket);
     }
 
-
     private String getTicketNumber(String cnab240, int currentLine) {
         RemittanceExtractor remittanceExtractor = layoutExtractorSelector.define(getBatchSegmentT(), cnab240);
         String ticketNumber = remittanceExtractor.extractOnLine(IDENTIFICACAO_TITULO,currentLine);
         return numberGenerator.getNumberWithoutLeftPad(ticketNumber);
     }
-
-
 
     public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
         List<String> ids = orderService.findIdsByPersonEmail(email);
@@ -240,7 +263,7 @@ public class TicketService {
         return fileUploaderService.uploadBytes(path, bytes);
     }
 
-    private Ticket createBoletoModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
+    private Ticket createTicketModel(Billable billable, br.com.caelum.stella.boleto.Boleto boletoStella,
                                      String ourNumber) {
         final String path = createFile(billable, boletoStella);
         Ticket ticket = new Ticket();

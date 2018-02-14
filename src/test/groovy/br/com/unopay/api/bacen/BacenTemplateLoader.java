@@ -18,6 +18,7 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
+import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
@@ -89,8 +90,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("financierMail", "nome@teste.com");
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
-            add("defaultCreditValue", random(BigDecimal.class, range(1d,300d)));
-            add("defaultMemberCreditValue", random(BigDecimal.class, range(1d,300d)));
         }});
 
         Fixture.of(Partner.class).addTemplate("valid", new Rule(){{
@@ -292,12 +291,11 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("hirer", one(Hirer.class, "valid"));
             add("defaultCreditValue", random(BigDecimal.class, range(2, 300)));
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
-            add("paymentDay", random(Integer.class, range(1, 31)));
+            add("paymentDay", random(Integer.class, range(1, 28)));
             add("installments", random(Integer.class, range(6, 24)));
             add("billingWithCredits", random(Boolean.class));
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
-            add("creditRecurrencePeriod", random(RecurrencePeriod.class));
             add("autoRenewal", random(Boolean.class));
             add("effectiveDate", instant("one day from now"));
             add("freeInstallmentQuantity", 0);
@@ -314,7 +312,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("installmentNumber", random(Integer.class, range(1, 5)));
             add("installmentExpiration", instant("one day from now"));
             add("installments", random(Integer.class, range(6, 24)));
-            add("billingWithCredits", random(Boolean.class));
+            add("billingWithCredits", Boolean.TRUE);
             add("installmentValue", random(BigDecimal.class, range(2, 300)));
             add("installmentValueByMember", random(BigDecimal.class, range(2, 300)));
             add("freeInstallmentQuantity", 0);
@@ -322,6 +320,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("defaultMemberCreditValue", random(BigDecimal.class, range(2, 300)));
             add("createdDateTime", instant("now"));
             add("value",  random(BigDecimal.class, range(2, 300)));
+            add("creditValue",  random(BigDecimal.class, range(2, 300)));
             add("status", random(PaymentStatus.class));
         }});
 

@@ -3,6 +3,10 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.HirerFilter;
+import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
@@ -16,6 +20,12 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
+import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
+import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
+import br.com.unopay.api.market.service.HirerNegotiationService;
+import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
@@ -75,6 +85,9 @@ public class IssuerController {
     private OrderService orderService;
     private AccreditedNetworkIssuerService networkIssuerService;
     private AccreditedNetworkService networkService;
+    private HirerNegotiationService hirerNegotiationService;
+    private HirerService hirerService;
+    private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
 
     @Value("${unopay.api}")
@@ -89,6 +102,9 @@ public class IssuerController {
                             OrderService orderService,
                             AccreditedNetworkIssuerService networkIssuerService,
                             AccreditedNetworkService networkService,
+                            HirerNegotiationService hirerNegotiationService,
+                            HirerService hirerService,
+                            NegotiationBillingService negotiationBillingService,
                             TicketService ticketService) {
         this.service = service;
         this.productService = productService;
@@ -98,6 +114,9 @@ public class IssuerController {
         this.orderService = orderService;
         this.networkIssuerService = networkIssuerService;
         this.networkService = networkService;
+        this.hirerNegotiationService = hirerNegotiationService;
+        this.hirerService = hirerService;
+        this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
     }
 
@@ -425,5 +444,101 @@ public class IssuerController {
         ticketService.processTicketReturnForIssuer(issuer, file);
     }
 
+    @JsonView(Views.HirerNegotiation.Detail.class)
+    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations", method = POST)
+    public ResponseEntity<HirerNegotiation> create(Issuer issuer,
+                                                   @Validated(Create.class) @RequestBody HirerForIssuer negotiation){
+        log.info("creating hirer and negotiation={} for issuer={}", negotiation, issuer.documentNumber());
+        HirerNegotiation created = hirerNegotiationService.crateHirerAndNegotiation(issuer, negotiation);
+        log.info("created negotiation={}", created);
+        return created(URI.create(String
+                .format("/hirer-negotiations/%s",created.getId()))).body(created);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations/{id}", method = PUT)
+    public void update(Issuer issuer,@PathVariable String id,
+                       @Validated(Create.class) @RequestBody HirerNegotiation negotiation){
+        log.info("updating negotiation={} for issuer={}", negotiation, issuer.documentNumber());
+        hirerNegotiationService.updateForIssuer(id,issuer, negotiation);
+    }
+
+    @JsonView(Views.HirerNegotiation.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations/{id}", method = GET)
+    public HirerNegotiation getNegotiation(Issuer issuer, @PathVariable String id) {
+        log.info("get negotiation={} for issuer={}", id, issuer.documentNumber());
+        return hirerNegotiationService.findByIdForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.HirerNegotiation.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations", method = RequestMethod.GET)
+    public Results<HirerNegotiation> getByParams(Issuer issuer,HirerNegotiationFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search negotiation for issuer={} with filter={}", issuer.documentNumber(), filter);
+        filter.setIssuer(issuer.getId());
+        Page<HirerNegotiation> page =  hirerNegotiationService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/hirer-negotiations", api));
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/hirer-negotiations/{id}/negotiation-billings", method = PUT)
+    public void processBilling(Issuer issuer,@PathVariable String id){
+        log.info("process negotiation={} billing for issuer={}",id, issuer.documentNumber());
+        negotiationBillingService.processForIssuer(id,issuer);
+    }
+
+    @JsonView(Views.HirerNegotiation.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "issuers/me/negotiation-billings/{id}", method = GET)
+    public NegotiationBilling getBilling(Issuer issuer, @PathVariable String id) {
+        log.info("get negotiation billing={} for issuer={}", id, issuer.documentNumber());
+        return negotiationBillingService.findByIdForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.HirerNegotiation.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/negotiation-billings", method = RequestMethod.GET)
+    public Results<NegotiationBilling> getByParamsBilling(Issuer issuer,NegotiationBillingFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search negotiation billing for issuer={} with filter={}", issuer.documentNumber(), filter);
+        filter.setIssuer(issuer.getId());
+        Page<NegotiationBilling> page =  negotiationBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/negotiation-billings", api));
+    }
+
+
+    @JsonView(Views.Hirer.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/hirers/{id}", method = RequestMethod.GET)
+    public Hirer getHirer(Issuer issuer, @PathVariable  String id) {
+        log.info("get Hirer={} for issuer={}", id, issuer.documentNumber());
+        return hirerService.getByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/hirers/{id}", method = RequestMethod.PUT)
+    public void updateHirer(Issuer issuer, @PathVariable String id, @Validated(Update.class) @RequestBody Hirer hirer){
+        hirer.setId(id);
+        log.info("updating hirer={} for issuer={}", hirer, issuer.documentNumber());
+        hirerService.updateForIssuer(id, issuer, hirer);
+    }
+
+    @JsonView(Views.Hirer.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/hirers", method = RequestMethod.GET)
+    public Results<Hirer> getHirerByParams(Issuer issuer, HirerFilter filter, @Validated UnovationPageRequest pageable){
+        log.info("search Hirer with filter={} for issuer={}", filter, issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<Hirer> page =  hirerService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/hirers", api));
+    }
 
 }
