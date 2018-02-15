@@ -99,12 +99,21 @@ public class AuthorizedMember implements Serializable, Updatable{
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
         }
 
+        if(contract == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
+        }
+
+        validatePaymentInstrument();
+    }
+
+    private void validatePaymentInstrument() {
+
         if(paymentInstrument == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
         }
 
-        if(contract == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
+        if(!paymentInstrument.contractorId().equals(contract.getContractor().getId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
     }
 

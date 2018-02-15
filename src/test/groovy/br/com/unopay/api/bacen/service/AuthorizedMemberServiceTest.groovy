@@ -35,6 +35,17 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED'
     }
 
+    void "given AuthorizedMember with paymentInstrument that doesn't belong to it's contractor should return error"(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.paymentInstrument = fixtureCreator.createInstrumentToProduct()
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR'
+    }
+
     void 'given AuthorizedMember without contract should return error'(){
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()

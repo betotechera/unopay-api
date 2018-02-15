@@ -528,16 +528,18 @@ class FixtureCreator {
     }
 
     AuthorizedMember createPersistedAuthorizedMember() {
+        def contract = createPersistedContract()
         return Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("paymentInstrument", createInstrumentToProduct())
-            add("contract", createPersistedContract())
+            add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
+            add("contract", contract)
         }})
     }
 
     AuthorizedMember createAuthorizedMemberToPersist() {
+        def contract = createPersistedContract()
         return Fixture.from(AuthorizedMember.class).gimme("valid", new Rule() {{
-            add("paymentInstrument", createInstrumentToProduct())
-            add("contract", createPersistedContract())
+            add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
+            add("contract", contract)
         }})
     }
 }
