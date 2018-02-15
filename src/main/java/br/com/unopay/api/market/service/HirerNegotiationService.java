@@ -5,12 +5,15 @@ import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.PaymentDayCalculator;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.repository.HirerNegotiationRepository;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,14 +29,17 @@ public class HirerNegotiationService {
     private HirerNegotiationRepository repository;
     private HirerService hirerService;
     private ProductService productService;
+    private PaymentDayCalculator paymentDayCalculator;
 
     @Autowired
     public HirerNegotiationService(HirerNegotiationRepository repository,
                                    HirerService hirerService,
-                                   ProductService productService) {
+                                   ProductService productService,
+                                   PaymentDayCalculator paymentDayCalculator) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.productService = productService;
+        this.paymentDayCalculator = paymentDayCalculator;
     }
 
     public HirerNegotiation save(HirerNegotiation negotiation) {
@@ -56,6 +62,10 @@ public class HirerNegotiationService {
         Optional<HirerNegotiation> negotiation = repository.findById(id);
         return negotiation.orElseThrow(()->
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND));
+    }
+
+    public Set<HirerNegotiation> negotiationsNearOfPaymentDate(){
+        return repository.findByPaymentDayAndEffectiveDateBefore(paymentDayCalculator.getNear(), new Date());
     }
 
     public HirerNegotiation findByHirerDocument(String document, String productId) {

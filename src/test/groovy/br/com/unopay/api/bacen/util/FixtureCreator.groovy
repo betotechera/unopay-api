@@ -37,6 +37,7 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.model.UserDetail
+import org.joda.time.LocalDate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
@@ -468,13 +469,15 @@ class FixtureCreator {
 
 
     HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
-                                       Date effectiveDate = FixtureFunctions.instant("one day from now")){
+                                       Date effectiveDate = FixtureFunctions.instant("one day ago")){
+        def ticketDeadLineMoreOneDay = 4
         return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
             add("effectiveDate", effectiveDate)
             add("freeInstallmentQuantity", 0)
             add("billingWithCredits", Boolean.TRUE)
+            add("paymentDay", LocalDate.fromDateFields(effectiveDate).getDayOfMonth() + ticketDeadLineMoreOneDay)
         }})
     }
 

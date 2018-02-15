@@ -6,6 +6,8 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditSituation
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -242,7 +244,8 @@ class HirerControllerTest extends AuthServerApplicationTests {
         given:
         UserDetail hirerUser = fixtureCreator.createHirerUser()
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
-        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer, product, instant("one day from now"))
         def id = negotiation.id
         when:
         def result = this.mvc.perform(put('/hirers/me/negotiations/{id}?access_token={access_token}',id, accessToken)

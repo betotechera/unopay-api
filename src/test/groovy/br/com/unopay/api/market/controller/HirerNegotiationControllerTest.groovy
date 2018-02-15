@@ -6,6 +6,8 @@ import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
@@ -49,7 +51,9 @@ class HirerNegotiationControllerTest extends AuthServerApplicationTests {
     void 'known negotiation should be updated'() {
         given:
         String accessToken = getUserAccessToken()
-        HirerNegotiation negotiation = fixtureCreator.createNegotiation()
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirer, product, instant("one day from now"))
         def id = negotiation.id
         when:
         def result = this.mvc.perform(put('/hirer-negotiations/{id}?access_token={access_token}',id, accessToken)

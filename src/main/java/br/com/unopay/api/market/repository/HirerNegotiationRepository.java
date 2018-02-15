@@ -3,7 +3,9 @@ package br.com.unopay.api.market.repository;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 public interface HirerNegotiationRepository
         extends UnovationFilterRepository<HirerNegotiation, String, HirerNegotiationFilter> {
@@ -19,4 +21,6 @@ public interface HirerNegotiationRepository
     Integer countByHirerId(String id);
 
     Optional<HirerNegotiation> findByIdAndProductIssuerId(String id, String issuerId);
+
+    Set<HirerNegotiation> findByPaymentDayAndEffectiveDateBefore(Integer paymentDay, Date effectiveDate);
 }
