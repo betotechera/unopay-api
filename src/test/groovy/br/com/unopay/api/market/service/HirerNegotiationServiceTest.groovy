@@ -234,7 +234,9 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
 
     def 'given a known hirer negotiation should be updated'(){
         given:
-        def negotiation = fixtureCreator.createNegotiation()
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirer, product, instant("one day from now"))
 
         when:
         service.update(negotiation.id, negotiation.with { installments = 40; it })
@@ -246,7 +248,9 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
 
     def 'should not update product and hirer'(){
         given:
-        def negotiation = fixtureCreator.createNegotiation()
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirer, product, instant("one day from now"))
         def newProduct = fixtureCreator.createProduct()
         def newHirer = fixtureCreator.createHirer()
         HirerNegotiation cloned = BeanUtils.cloneBean(negotiation)
