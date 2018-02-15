@@ -1,7 +1,6 @@
 package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -13,23 +12,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = "billings")
+@ToString(exclude = "billings")
 @Table(name = "hirer_negotiation")
 public class HirerNegotiation implements Updatable{
 
@@ -111,6 +114,10 @@ public class HirerNegotiation implements Updatable{
     @Column(name = "created_date_time")
     @JsonView({Views.HirerNegotiation.List.class})
     private Date createdDateTime;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "hirerNegotiation")
+    private Set<NegotiationBilling> billings;
 
     @Version
     @JsonIgnore

@@ -25,7 +25,6 @@ import javax.transaction.Transactional;
 import lombok.Setter;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -49,8 +48,6 @@ public class NegotiationBillingService {
     private CreditService creditService;
     private NumberGenerator numberGenerator;
     @Setter private Integer memberTotal = 1;
-    @Value("${unopay.boleto.deadline_in_days}")
-    private Integer ticketDeadLineInDays;
     @Setter private Notifier notifier;
 
     @Autowired
@@ -90,6 +87,16 @@ public class NegotiationBillingService {
                         Arrays.asList(CANCELED, PAYMENT_DENIED, WAITING_PAYMENT)));
     }
 
+    public Optional<NegotiationBilling> findOptionalLastNotPaidByHirer(String hirerId) {
+        return repository
+                .findFirstByHirerNegotiationHirerIdAndStatusInOrderByCreatedDateTimeDesc(hirerId,
+                        Arrays.asList(CANCELED, PAYMENT_DENIED, WAITING_PAYMENT));
+    }
+
+    public Set<NegotiationBilling> findByHirerId(String hirerId) {
+        return repository.findByHirerNegotiationHirerId(hirerId);
+    }
+
     public Page<NegotiationBilling> findByFilter(NegotiationBillingFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
@@ -106,18 +113,25 @@ public class NegotiationBillingService {
         process(negotiation);
     }
 
+    public void process(){
+        Set<HirerNegotiation> negotiations = hirerNegotiationService.negotiationsNearOfPaymentDate();
+        negotiations.forEach(negotiation ->
+                findOptionalLastNotPaidByHirer(negotiation.hirerId()).orElseGet(() -> process(negotiation)));
+    }
+
     @Transactional
     public void process(String id) {
         HirerNegotiation negotiation = hirerNegotiationService.findById(id);
         process(negotiation);
     }
 
-    private void process(HirerNegotiation negotiation) {
+    private NegotiationBilling process(HirerNegotiation negotiation) {
         Set<Contract> hirerContracts = contractService.findByHirerId(negotiation.hirerId());
         Integer nextInstallment = getNextInstallmentNumber(negotiation.hirerId());
         if(nextInstallment <= negotiation.getInstallments() && !hirerContracts.isEmpty()) {
             createBilling(hirerContracts, negotiation, nextInstallment);
        }
+       return null;
     }
 
     private void createBilling(Set<Contract> hirerContracts, HirerNegotiation negotiation, Integer nextInstallment) {

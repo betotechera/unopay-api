@@ -9,11 +9,15 @@ import br.com.unopay.api.credit.service.CreditService
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
+import br.com.unopay.api.market.model.PaymentDayCalculator
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.LocalDate
+import org.joda.time.Months
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import static spock.util.matcher.HamcrestSupport.that
@@ -52,6 +56,102 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         then:
         found
     }
+
+
+    def "given known negotiations when process should create billings"(){
+        given:
+        def negotiationA = fixtureCreator.createNegotiation()
+        def negotiationB = fixtureCreator.createNegotiation()
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiationA.product,negotiationA.hirer)
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiationB.product,negotiationB.hirer)
+
+        when:
+        service.process()
+        NegotiationBilling foundA = service.findLastNotPaidByHirer(negotiationA.hirerId())
+        NegotiationBilling foundB = service.findLastNotPaidByHirer(negotiationB.hirerId())
+
+        then:
+        foundA
+        foundB
+    }
+
+    def "given known negotiations with known billing for current installment when process should not create billing"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+        service.process(negotiation.getId())
+
+        when:
+        service.process()
+        def billings = service.findByHirerId(negotiation.hirerId())
+
+        then:
+        that billings, hasSize(1)
+    }
+
+
+    def "given known negotiation with effective date in the future when process should not create billings"(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("effectiveDate", instant("one day from now"))
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+
+        when:
+        service.process()
+        service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
+    }
+
+    def """given known negotiation with payment day after ticket deadline and past effective date
+            when process should not create billings"""(){
+        given:
+        def delay = 1
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("paymentDay", getNear(delay))
+            add("effectiveDate", instant("one day ago"))
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+
+        when:
+        service.process()
+        service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
+    }
+
+    def """given known negotiation with payment day equals ticket deadline and past effective date
+            when process should create billings"""(){
+        given:
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("paymentDay", getNear())
+            add("effectiveDate", instant("one day ago"))
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+
+        when:
+        service.process()
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found
+    }
+
+
 
     def "when process billing should create ticket"(){
         given:
@@ -407,6 +507,15 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         NegotiationBilling toPaid = service.findLastNotPaidByHirer(hirerId)
         toPaid.status = PaymentStatus.PAID
         service.save(toPaid)
+    }
+
+
+    private getNear(delay=0){
+        def maxPaymentDay = 28
+        def firstPaymentDayOfNextMonth = 1
+        def currentDay = new DateTime().dayOfMonth().get()
+        def nearPaymentDay = currentDay + ticketDeadLineInDays + delay
+        return  nearPaymentDay > maxPaymentDay ? firstPaymentDayOfNextMonth : nearPaymentDay
     }
 
 
