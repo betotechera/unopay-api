@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -36,16 +37,19 @@ public class Address implements Serializable {
     private String id;
 
     @Column(name="zip_code")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class})
     @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
     private String zipCode;
 
     @Column(name="street_name")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String streetName;
 
     @Column(name="street_number")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class})
     @Size(max = 30, groups = {Create.class, Update.class})
     private String number;
@@ -56,17 +60,20 @@ public class Address implements Serializable {
     private String complement;
 
     @Column(name="district")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String district;
 
     @Column(name="city")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class,Views.AddressList.class})
     @Size(max = 250, groups = {Create.class, Update.class})
     private String city;
 
     @Enumerated(STRING)
     @Column(name="state")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class,Views.AddressList.class})
     private State state;
 

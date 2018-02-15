@@ -73,6 +73,7 @@ public class PaymentRemittanceItem  implements Serializable {
     private BigDecimal value;
 
     @Column(name = "situation")
+    @Enumerated(EnumType.STRING)
     @JsonView({Views.PaymentRemittance.Item.class})
     @NotNull(groups = {Create.class})
     private RemittanceSituation situation;

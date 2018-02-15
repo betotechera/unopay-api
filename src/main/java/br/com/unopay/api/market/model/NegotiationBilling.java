@@ -24,12 +24,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 
 @Data
 @Entity
+@ToString(exclude = "hirerNegotiation")
+@EqualsAndHashCode(exclude = "hirerNegotiation")
 @Table(name = "negotiation_billing")
 public class NegotiationBilling implements Billable {
 

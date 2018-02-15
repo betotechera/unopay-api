@@ -31,8 +31,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = "billings")
-@ToString(exclude = "billings")
+@EqualsAndHashCode(exclude = {"billings", "product"})
+@ToString(exclude = {"billings", "product"})
 @Table(name = "hirer_negotiation")
 public class HirerNegotiation implements Updatable{
 
