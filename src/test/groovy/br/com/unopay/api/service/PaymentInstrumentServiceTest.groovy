@@ -51,6 +51,30 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
         result != null
     }
 
+    def 'known Instrument should be found by number'(){
+        given:
+        PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
+        service.instrumentNumberGenerator = generator
+        PaymentInstrument created = service.save(instrument)
+
+        when:
+        PaymentInstrument result = service.findByNumber(created.number)
+
+        then:
+        result != null
+    }
+
+    def 'when find by unknown number should return error'(){
+        given:
+        def number = "123"
+        when:
+        PaymentInstrument result = service.findByNumber(number)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
+    }
+
     def 'a Instrument with unknown product id should be created'(){
         given:
         PaymentInstrument instrument = fixtureCreator.createPaymentInstrument("valid")
