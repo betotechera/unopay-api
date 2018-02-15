@@ -307,6 +307,7 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(AuthorizedMember.class).addTemplate("valid", new Rule(){{
             add("birthDate", instant("18 years ago"));
+            add("contract", one(Contract.class, "valid"));
             add("name",  regex("\\w{15}"));
             add("gender",  regex("\\w{15}"));
             add("relatedness",  regex("\\w{15}"));

@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Updatable;
@@ -47,6 +48,11 @@ public class AuthorizedMember implements Serializable, Updatable{
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date birthDate;
 
+    @ManyToOne
+    @NotNull(groups = {Create.class, Update.class})
+    @JoinColumn(name="contract_id")
+    private Contract contract;
+
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
     @Size(max=256)
@@ -91,9 +97,16 @@ public class AuthorizedMember implements Serializable, Updatable{
 
         if(paymentInstrument == null)
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
+
+        if(contract == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
     }
 
     public String paymentInstrumentId() {
         return paymentInstrument != null ? paymentInstrument.getId() : null;
+    }
+
+    public String contractId() {
+        return contract != null ? contract.getId() : null;
     }
 }

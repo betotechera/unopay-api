@@ -9,7 +9,9 @@ create table authorized_member(
     document_number VARCHAR(50),
     registry_entity VARCHAR(50),
     payment_instrument_id VARCHAR(256) not null,
-    constraint fk_auth_member_pay_inst foreign key(payment_instrument_id) references payment_instrument(id)
+    contract_id varchar(256) not null,
+    constraint fk_auth_member_pay_inst foreign key(payment_instrument_id) references payment_instrument(id),
+    constraint fk_auth_member_contract foreign key(contract_id) references contract(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_AUTHORIZED_MEMBER','Permite listar membros autorizados');

@@ -35,6 +35,17 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED'
     }
 
+    void 'given AuthorizedMember without contract should return error'(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.contract = null
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'CONTRACT_REQUIRED'
+    }
+
     void 'given AuthorizedMember without gender should return error'(){
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
