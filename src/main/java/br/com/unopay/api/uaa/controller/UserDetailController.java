@@ -1,5 +1,8 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
+import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.PasswordRequired;
 import br.com.unopay.api.model.validation.group.Update;
@@ -54,6 +57,7 @@ public class UserDetailController {
     private UserDetailService userDetailService;
     private TokenStore tokenStore;
     private GroupService groupService;
+    private UserCreditCardService userCreditCardService;
 
     @Value("${unopay.api}")
     private String api;
@@ -61,10 +65,12 @@ public class UserDetailController {
     @Autowired
     public UserDetailController(UserDetailService userDetailService,
                                 TokenStore tokenStore,
-                                GroupService groupService) {
+                                GroupService groupService,
+                                UserCreditCardService userCreditCardService) {
         this.userDetailService = userDetailService;
         this.tokenStore = tokenStore;
         this.groupService = groupService;
+        this.userCreditCardService = userCreditCardService;
     }
 
     @JsonView(Views.User.Detail.class)
@@ -210,4 +216,33 @@ public class UserDetailController {
         LOGGER.info("password reset request. to user={}", email);
         userDetailService.resetPasswordByEmail(email);
     }
+
+    @JsonView(Views.UserCreditCard.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.GET)
+    public Results<UserCreditCard> getUserCreditCardByParams(UserDetail userDetail,
+                                                             UserCreditCardFilter filter,
+                                                             @Validated UnovationPageRequest pageable) {
+        LOGGER.info("search user credit card with filter={} for user={}", filter, userDetail.getId());
+        filter.setUser(userDetail.getId());
+        Page<UserCreditCard> page = userCreditCardService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/users/me/credit-cards", api));
+    }
+
+    @JsonView(Views.UserCreditCard.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.GET)
+    public UserCreditCard getUserCreditCard(UserDetail userDetail, @PathVariable String id) {
+        LOGGER.info("get user credit card={} for user={}", id, userDetail.getId());
+        return userCreditCardService.findByIdForUser(id, userDetail);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.DELETE)
+    public void removeUserCreditCard(UserDetail userDetail, @PathVariable String id){
+        LOGGER.info("removing user credit card id={} for user={}", id, userDetail.getId());
+        userCreditCardService.deleteForUser(id, userDetail);
+    }
+
 }

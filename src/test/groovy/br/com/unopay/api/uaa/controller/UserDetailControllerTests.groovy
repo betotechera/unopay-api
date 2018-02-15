@@ -1,12 +1,20 @@
 package br.com.unopay.api.uaa.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.UserCreditCard
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
+import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.http.MediaType
@@ -14,6 +22,8 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -26,6 +36,12 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     private static final String USER_ME_ENDPOINT = '/users/me?access_token={access_token}'
     private static final String PROFILE_ENDPOINT = '/users/me/profile?access_token={access_token}'
     private static final String GROUP_ENDPOINT = '/users/{id}/groups?access_token={access_token}'
+
+    @Autowired
+    private UserCreditCardService userCreditCardService
+
+    @Autowired
+    private FixtureCreator fixtureCreator
 
     void should_create_user() throws Exception {
         given:
@@ -210,7 +226,6 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items[0].name', is(notNullValue())))
 
     }
-
    
     void 'should return error when associate groups without list'() {
         given:
@@ -243,6 +258,67 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.items', is(notNullValue())))
                 .andExpect(jsonPath('$.total', equalTo(1)))
                 .andExpect(jsonPath('$.items[0].name', equalTo(name)))
+    }
+
+    void 'should return all me user credit cards'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken(user.email, user.password)
+
+        when:
+        def result = this.mvc.perform(get('/users/me/credit-cards?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+    }
+
+    void 'known me user credit card should be found'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken(user.email, user.password)
+        def id = userCreditCard.id
+
+        when:
+        def result = this.mvc.perform(get('/users/me/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.expirationMonth', is(notNullValue())))
+
+    }
+
+    void 'known me user credit card should be deleted'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", user)
+        }})
+        userCreditCardService.create(userCreditCard)
+        String accessToken = getUserAccessToken(user.email, user.password)
+        def id = userCreditCard.id
+
+        when:
+        def result = this.mvc.perform(delete('/users/me/credit-cards/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isNoContent())
+
     }
 
     MockHttpServletRequestBuilder postToUserEndpoint(String accessToken, UserDetail user) {

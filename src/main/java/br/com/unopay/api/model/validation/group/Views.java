@@ -159,6 +159,11 @@ public interface Views {
         interface Private extends Detail {}
     }
 
+    interface UserCreditCard {
+        interface Detail extends List {}
+        interface List {}
+    }
+
     interface Order {
         interface Detail extends Billing, List, Person.Detail {}
         interface List {}

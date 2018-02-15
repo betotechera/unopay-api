@@ -5,12 +5,7 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
-import br.com.unopay.api.billing.creditcard.model.Amount;
-import br.com.unopay.api.billing.creditcard.model.CreditCard;
-import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
-import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
-import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.*;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
@@ -89,6 +84,17 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("number", random("123456", "65469798", "9878977", "84456546"));
             add("ourNumber", regex("\\d{8}"));
             add("paymentSource", random(TicketPaymentSource.class));
+        }});
+
+        Fixture.of(UserCreditCard.class).addTemplate("valid", new Rule() {{
+            add("holderName", regex("\\w{16}"));
+            add("brand", random(CardBrand.class));
+            add("lastFourDigits", regex("\\d{4}"));
+            add("expirationMonth", random("1","2","3","4","5","6","7","8","9","10","11","12"));
+            add("expirationYear", random("2020", "2050", "2030", "2028"));
+            add("gatewaySource", random(GatewaySource.class));
+            add("gatewayToken", regex("\\w{64}"));
+            add("createdDateTime", instant("1 second from now"));
         }});
     }
 }
