@@ -303,6 +303,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         given:
         def negotiation = fixtureCreator.createNegotiation()
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.memberTotal = 1
 
         when:
         service.process(negotiation.getId())
