@@ -83,23 +83,29 @@ public class AuthorizedMember implements Serializable, Updatable{
 
 
     public void validateMe() {
-        if(birthDate == null)
+        if(birthDate == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
+        }
 
-        if(name == null)
+        if(name == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
+        }
 
-        if(gender == null)
+        if(gender == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED);
+        }
 
-        if(relatedness == null)
+        if(relatedness == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
+        }
 
-        if(paymentInstrument == null)
+        if(paymentInstrument == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
+        }
 
-        if(contract == null)
+        if(contract == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
+        }
     }
 
     public String paymentInstrumentId() {
