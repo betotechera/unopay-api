@@ -469,7 +469,7 @@ class FixtureCreator {
 
     HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
                                        Date effectiveDate = FixtureFunctions.instant("one day ago")){
-        def ticketDeadLineMoreOneDay = 4;
+        def ticketDeadLineMoreOneDay = 4
         return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
