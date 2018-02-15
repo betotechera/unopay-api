@@ -135,6 +135,27 @@ class ContractServiceTest extends SpockApplicationTests {
         result.size() == negotiation.installments
     }
 
+    void 'given known contract should find by code'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        when:
+        def found = service.findByCode(contract.code)
+
+        then:
+        found
+    }
+
+    void 'given unknown code should return error'(){
+        given:
+        def code = 123L
+        when:
+        service.findByCode(code)
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+    }
+
     void """given known negotiation for contract product and hirer with past effective date
             when dealClose should be created without past installments"""(){
         given:

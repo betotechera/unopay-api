@@ -179,6 +179,11 @@ public class ContractService {
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
+    public Contract findByCode(Long code) {
+        Optional<Contract> contract = repository.findByCode(code);
+        return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
+    }
+
     public Contract findByIdForHirer(String id, Hirer hirer) {
         Optional<Contract> contract = repository.findByIdAndHirerId(id, hirer.getId());
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
