@@ -30,12 +30,12 @@ public class AuthorizedMemberService {
     ContractService contractService;
 
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
+        authorizedMember.validateMe();
+        validateReferences(authorizedMember);
         return save(authorizedMember);
     }
 
     private AuthorizedMember save(AuthorizedMember authorizedMember) {
-        authorizedMember.validateMe();
-        validateReferences(authorizedMember);
         return repository.save(authorizedMember);
     }
 
@@ -53,7 +53,9 @@ public class AuthorizedMemberService {
     public void update(String id, AuthorizedMember authorizedMember) {
         AuthorizedMember current = findById(id);
         current.updateMe(authorizedMember);
-        save(authorizedMember);
+        current.validateMe();
+        validateReferences(current);
+        save(current);
     }
 
     public void delete(String id) {
