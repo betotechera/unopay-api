@@ -203,6 +203,21 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         result.content.size() > 0
     }
 
+    void 'should find known AuthorizedMember by contractorDocumentNumber filter'(){
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        def documentNumber = authorizedMember.contract.contractor.documentNumber
+        when:
+        def filter = new AuthorizedMemberFilter() {{
+            contractorDocumentNumber = documentNumber
+        }}
+
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> result = service.findByFilter(filter, page)
+        then:
+        result.content.size() > 0
+    }
+
     Contract createPersistedContract(contractor, contractCode) {
         def product = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
