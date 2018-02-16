@@ -91,7 +91,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("brand", random(CardBrand.class));
             add("lastFourDigits", regex("\\d{4}"));
             add("expirationMonth", random("1","2","3","4","5","6","7","8","9","10","11","12"));
-            add("expirationYear", random("2020", "2050", "2030", "2028"));
+            add("expirationYear", random("2028", "2050", "2030", "2028"));
             add("gatewaySource", random(GatewaySource.class));
             add("gatewayToken", regex("\\w{64}"));
             add("createdDateTime", instant("1 second from now"));

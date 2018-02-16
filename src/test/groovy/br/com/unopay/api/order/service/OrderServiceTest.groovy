@@ -48,7 +48,8 @@ class OrderServiceTest extends SpockApplicationTests{
     @Autowired
     ContractorInstrumentCreditService instrumentCreditService
 
-    UserCreditCardService userCreditCardService = Mock(UserCreditCardService)
+    @Autowired
+    UserCreditCardService userCreditCardService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -683,17 +684,13 @@ class OrderServiceTest extends SpockApplicationTests{
         result.last().number != result.find().number
     }
 
-    def 'given a order not adhesion type, with storeCard and paymentRequest method card should call userCreditCardService.store'(){
+    def 'given a not adhesion type order with storeCard and paymentRequest method card should call userCreditCardService.store'(){
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("method", PaymentMethod.CARD)
-            add("storeCard", true)
-        }})
         def order = fixtureCreator.createOrder(contractUnderTest)
+        order.paymentRequest.setMethod(PaymentMethod.CARD)
+        order.paymentRequest.setStoreCard(true)
         order.type = OrderType.INSTALLMENT_PAYMENT
-        order.paymentRequest = paymentRequest
-
 
         when:
         service.create(order)
