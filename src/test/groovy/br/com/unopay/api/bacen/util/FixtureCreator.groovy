@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.util
 
+import static br.com.six2six.fixturefactory.Fixture.*
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
@@ -32,6 +33,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.model.ServiceAuthorizeEvent
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
@@ -52,7 +54,7 @@ class FixtureCreator {
 
     UserDetail createEstablishmentUser(establishmentUnderTest = createEstablishment()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
             {
                 add("establishment", establishmentUnderTest)
                 add("password", passwordEncoder.encode(generatePassword))
@@ -63,7 +65,7 @@ class FixtureCreator {
 
     UserDetail createInstitutionUser(institution = createInstitution()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
                 add("institution", institution)
                 add("password", passwordEncoder.encode(generatePassword))
@@ -74,7 +76,7 @@ class FixtureCreator {
 
     UserDetail createHirerUser(hirer = createHirer()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
                 add("hirer", hirer)
                 add("password", passwordEncoder.encode(generatePassword))
@@ -85,7 +87,7 @@ class FixtureCreator {
 
     UserDetail createAccreditedNetworkUser(network = createNetwork()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
                 add("accreditedNetwork", network)
                 add("password", passwordEncoder.encode(generatePassword))
@@ -96,7 +98,7 @@ class FixtureCreator {
 
     UserDetail createIssuerUser(issuerUnderTest = createIssuer()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
             {
                 add("issuer", issuerUnderTest)
                 add("password", passwordEncoder.encode(generatePassword))
@@ -107,7 +109,7 @@ class FixtureCreator {
 
     UserDetail createUser(String email = null) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
                 add("password", passwordEncoder.encode(generatePassword))
                 if (!email) {
@@ -121,7 +123,7 @@ class FixtureCreator {
     }
 
     PaymentInstrument createPaymentInstrument(String label = "valid") {
-        Fixture.from(PaymentInstrument.class).gimme(label, new Rule() {
+        from(PaymentInstrument.class).gimme(label, new Rule() {
             {
                 add("contractor", createContractor())
                 add("product", createProduct())
@@ -131,7 +133,7 @@ class FixtureCreator {
 
     PaymentInstrument createInstrumentToProduct(Product product = createProduct(), contractor = createContractor()) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        PaymentInstrument inst = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        PaymentInstrument inst = from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("product", product)
                 add("contractor", contractor)
@@ -144,7 +146,7 @@ class FixtureCreator {
     Credit createCredit(Product product = createProduct()) {
         def hirer = createHirer()
         def issuer = createIssuer()
-        Fixture.from(Credit.class).gimme("allFields", new Rule() {
+        from(Credit.class).gimme("allFields", new Rule() {
             {
                 add("hirer", hirer)
                 add("product", product)
@@ -158,7 +160,7 @@ class FixtureCreator {
 
     Contract createContract(contractorUnderTest = createContractor(),
                             Product productUnderTest = createProduct(), hirerUnderTest = createHirer()) {
-        Fixture.from(Contract.class).gimme("valid", new Rule() {
+        from(Contract.class).gimme("valid", new Rule() {
             {
                 add("hirer", hirerUnderTest)
                 add("contractor", contractorUnderTest)
@@ -176,7 +178,7 @@ class FixtureCreator {
     Contract createPersistedContract(contractor = createContractor(), Product product = createProduct(),
                                      hirer = createHirer(), situation = ContractSituation.ACTIVE,
                                      BigDecimal membershipFee = (Math.random() * 100)) {
-        Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("hirer", hirer)
                 add("contractor", contractor)
@@ -191,7 +193,7 @@ class FixtureCreator {
     List addContractsToEstablishment(Establishment establishment, Product product) {
         def contractA = createPersistedContract(createContractor(), product)
         def contractB = createPersistedContract(createContractor(), product)
-        Fixture.from(ContractEstablishment.class).uses(jpaProcessor).gimme(2, "valid", new Rule() {
+        from(ContractEstablishment.class).uses(jpaProcessor).gimme(2, "valid", new Rule() {
             {
                 add("establishment", establishment)
                 add("contract", uniqueRandom(contractA, contractB))
@@ -201,7 +203,7 @@ class FixtureCreator {
     }
 
     CreditPaymentAccount createCreditPaymentAccountFromContract(Contract contract = createContract()) {
-        Fixture.from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("product", contract.product)
                 add("issuer", contract.product.issuer)
@@ -213,7 +215,7 @@ class FixtureCreator {
     }
 
     CreditPaymentAccount createCreditPaymentAccount(String hirerDocument, Product product = createProduct()) {
-        Fixture.from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("product", product)
                 add("issuer", product.issuer)
@@ -227,7 +229,7 @@ class FixtureCreator {
     ContractorInstrumentCredit instrumentCredit(Contractor contractor = createContractor(), Contract contract = null) {
         contract = contract ?: createPersistedContract(contractor)
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contract)
-        Fixture.from(ContractorInstrumentCredit.class).gimme("toPersist", new Rule() {
+        from(ContractorInstrumentCredit.class).gimme("toPersist", new Rule() {
             {
                 add("paymentInstrument", createInstrumentToProduct(contract.product, contractor))
                 add("creditPaymentAccount", creditPaymentAccountUnderTest)
@@ -240,14 +242,14 @@ class FixtureCreator {
 
     ContractorInstrumentCredit createInstrumentToContract(Contract contract) {
         PaymentInstrument paymentInstrument = createInstrumentToProduct(contract.product, contract.contractor)
-        CreditPaymentAccount paymentAccount = Fixture.from(CreditPaymentAccount.class)
+        CreditPaymentAccount paymentAccount = from(CreditPaymentAccount.class)
                 .uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("hirerDocument", contract.hirerDocumentNumber())
                 add("product", contract.product)
             }
         })
-        ContractorInstrumentCredit instrumentCredit = Fixture.from(ContractorInstrumentCredit.class)
+        ContractorInstrumentCredit instrumentCredit = from(ContractorInstrumentCredit.class)
                 .uses(jpaProcessor).gimme("allFields", new Rule() {
             {
                 add("contract", contract)
@@ -261,7 +263,7 @@ class FixtureCreator {
 
     ContractorInstrumentCredit createContractorInstrumentCreditPersisted(Contract contractUnderTest = createPersistedContract()) {
         def creditPaymentAccountUnderTest = createCreditPaymentAccountFromContract(contractUnderTest)
-        Fixture.from(ContractorInstrumentCredit.class).uses(jpaProcessor).gimme("toPersist", new Rule() {
+        from(ContractorInstrumentCredit.class).uses(jpaProcessor).gimme("toPersist", new Rule() {
             {
                 add("paymentInstrument", createInstrumentToProduct(contractUnderTest.product, contractUnderTest.contractor))
                 add("creditPaymentAccount", creditPaymentAccountUnderTest)
@@ -274,34 +276,36 @@ class FixtureCreator {
 
     ServiceAuthorize createServiceAuthorize(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                             Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
-        Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {
-            {
-                def establishmentEvent = createEstablishmentEvent(establishment)
+
+        def establishmentEvent = createEstablishmentEvent(establishment)
+        ServiceAuthorize authorize = from(ServiceAuthorize.class).gimme("valid", new Rule() {{
                 createInstrumenBalance(credit.paymentInstrument, establishmentEvent.value)
                 add("contract", credit.contract)
                 add("contractor", credit.contract.contractor)
-                add("establishmentEvent", establishmentEvent)
-                add("event", establishmentEvent.event)
-                add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
-                add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
                 add("paymentInstrument", credit.paymentInstrument)
                 add("establishment", establishment)
                 add("paymentInstrument.password", credit.paymentInstrument.password)
-            }
-        })
+            }})
+
+        def authorizeEvent = from(ServiceAuthorizeEvent.class).uses(jpaProcessor).gimme(1,"valid", new Rule() {{
+            add("establishmentEvent", establishmentEvent)
+            add("event", establishmentEvent.event)
+            add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
+            add("eventValue", 0.1)
+        }})
+        authorize.authorizeEvents = authorizeEvent
+        authorize
     }
 
     ServiceAuthorize createServiceAuthorizePersisted(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                                      Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
-        Fixture.from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid", new Rule() {
+
+        ServiceAuthorize authorize = from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("contract", credit.contract)
                 add("contractor", credit.contract.contractor)
-                add("event", createEvent(ServiceType.DOCTORS_APPOINTMENTS))
-                add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
-                add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
                 add("paymentInstrument", credit.paymentInstrument)
@@ -310,12 +314,22 @@ class FixtureCreator {
                 add("paymentInstrument.password", credit.paymentInstrument.password)
             }
         })
+        def authorizeEvent = from(ServiceAuthorizeEvent.class).uses(jpaProcessor).gimme(1, "valid", new Rule() {{
+            def establishmentEvent = createEstablishmentEvent(establishment)
+            add("establishmentEvent", establishmentEvent)
+            add("serviceAuthorize", authorize)
+            add("event", createEvent(ServiceType.DOCTORS_APPOINTMENTS))
+            add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
+            add("eventValue", 0.1)
+        }})
+        authorize.authorizeEvents = authorizeEvent
+        authorize
     }
 
     EstablishmentEvent createEstablishmentEvent(Establishment establishment = createEstablishment(),
                                                 BigDecimal eventValue = null,
                                                 Event event = createEvent(ServiceType.DOCTORS_APPOINTMENTS)) {
-        return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
+        return from(EstablishmentEvent.class).uses(jpaProcessor)
                 .gimme("withoutReferences", new Rule() {
             {
                 add("event", event)
@@ -327,11 +341,11 @@ class FixtureCreator {
     }
 
     BatchClosing createBatchClosing() {
-        Fixture.from(BatchClosing.class).uses(jpaProcessor).gimme("valid")
+        from(BatchClosing.class).uses(jpaProcessor).gimme("valid")
     }
 
     BatchClosing createBatchToPersist() {
-        Fixture.from(BatchClosing.class).gimme("valid", new Rule() {
+        from(BatchClosing.class).gimme("valid", new Rule() {
             {
                 add("establishment", createEstablishment())
                 add("issuer", createIssuer())
@@ -343,16 +357,16 @@ class FixtureCreator {
     }
 
     Hirer createHirer() {
-        Fixture.from(Hirer.class).uses(jpaProcessor).gimme("valid")
+        from(Hirer.class).uses(jpaProcessor).gimme("valid")
     }
 
     Contractor createContractor(String label = "valid") {
-        Fixture.from(Contractor.class).uses(jpaProcessor).gimme(label)
+        from(Contractor.class).uses(jpaProcessor).gimme(label)
     }
 
     InstrumentBalance createInstrumenBalance(PaymentInstrument instrument = createInstrumentToProduct(),
                                                                                             BigDecimal value = null) {
-     return Fixture.from(InstrumentBalance.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+     return from(InstrumentBalance.class).uses(jpaProcessor).gimme("valid", new Rule() {{
                 add("paymentInstrument", instrument)
                 if(value){
                     add("value", value)
@@ -361,36 +375,36 @@ class FixtureCreator {
     }
 
     Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS) {
-        Service serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Service serviceUnderTest = from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
         }})
-        Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("service", serviceUnderTest)
         }})
     }
     Product createProduct(PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),
                           BigDecimal membershipFee = (Math.random() * 100)) {
-        Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("paymentRuleGroup", paymentRuleGroupUnderTest)
             add("membershipFee", membershipFee)
         }})
     }
 
     Product createProductWithIssuer(Issuer issuer = createIssuer()) {
-        Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+        from(Product.class).uses(jpaProcessor).gimme("valid", new Rule() {{
                 add("issuer", issuer)
        }})
     }
 
     Product crateProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
         def hirer = createHirer()
-        Person issuerPerson = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+        Person issuerPerson = from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
             add("document.number", hirer.documentNumber)
         }})
-        Issuer issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Issuer issuer = from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", issuerPerson)
         }})
-        Product product = Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        Product product = from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("issuer", issuer)
             add("membershipFee", membershipFee)
         }})
@@ -399,14 +413,14 @@ class FixtureCreator {
     }
 
     Product createProductWithCreditInsertionType(creditInsertionTypes) {
-        Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("creditInsertionTypes",creditInsertionTypes)
         }})
     }
 
     List<BatchClosingItem> createBatchItems(batchClosing) {
         def serviceAuthorize = createServiceAuthorizePersisted()
-        Fixture.from(BatchClosingItem.class).uses(jpaProcessor).gimme(2, "valid", new Rule() {
+        from(BatchClosingItem.class).uses(jpaProcessor).gimme(2, "valid", new Rule() {
             {
                 add("batchClosing", batchClosing)
                 add("serviceAuthorize", serviceAuthorize)
@@ -418,7 +432,7 @@ class FixtureCreator {
     Order createOrder(Contract contract = createPersistedContract()){
         def contractor = createContractor("physical")
         def instrument = createInstrumentToProduct(contract.product, contractor)
-        return Fixture.from(Order.class).gimme("valid", new Rule(){{
+        return from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("product", contract.product)
             add("contract", contract)
@@ -438,12 +452,12 @@ class FixtureCreator {
         def product = createProduct()
         def user = createUser()
         def contract = createPersistedContract(contractor, product)
-        Fixture.from(ContractInstallment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(ContractInstallment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", contract)
             add("paymentDateTime", null)
         }})
         def instrument = createInstrumentToProduct(product, contractor)
-        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        return from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", contractor.person)
             add("person.physicalPersonDetail.email", user.email)
             add("product", product)
@@ -457,7 +471,7 @@ class FixtureCreator {
 
     Order createPersistedAdhesionOrder(Person person){
         def product = crateProductWithSameIssuerOfHirer()
-        return Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        return from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
             add("type", OrderType.ADHESION)
@@ -470,7 +484,7 @@ class FixtureCreator {
     HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
                                        Date effectiveDate = FixtureFunctions.instant("one day ago")){
         def ticketDeadLineMoreOneDay = 4
-        return Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+        return from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
             add("effectiveDate", effectiveDate)
@@ -481,48 +495,48 @@ class FixtureCreator {
     }
 
     CreditPaymentAccount createCreditPaymentAccount() {
-        Fixture.from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid")
+        from(CreditPaymentAccount.class).uses(jpaProcessor).gimme("valid")
     }
 
     Product createProductWithOutDirectDebit() {
-        Fixture.from(Product.class).uses(jpaProcessor).gimme("creditWithoutDirectDebit")
+        from(Product.class).uses(jpaProcessor).gimme("creditWithoutDirectDebit")
     }
 
     Establishment createEstablishment(AccreditedNetwork network = createNetwork()) {
-        Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("network",network)
         }})
     }
 
     Establishment createHeadOffice() {
-        Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        from(Establishment.class).uses(jpaProcessor).gimme("valid")
     }
 
     AccreditedNetwork createNetwork() {
-        Fixture.from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
+        from(AccreditedNetwork.class).uses(jpaProcessor).gimme("valid")
     }
 
     Service createService(Establishment establishment = createEstablishment()) {
-        Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("establishments", Arrays.asList(establishment))
         }})
     }
 
     Issuer createIssuer() {
-        Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid")
+        from(Issuer.class).uses(jpaProcessor).gimme("valid")
     }
 
     Institution createInstitution() {
-        Fixture.from(Institution.class).uses(jpaProcessor).gimme("valid")
+        from(Institution.class).uses(jpaProcessor).gimme("valid")
     }
 
     PaymentRuleGroup createPaymentRuleGroup(Institution institution = createInstitution()) {
-        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+        from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("institution", institution)
         }})
     }
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {
-        Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
+        from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
     }
 }

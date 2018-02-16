@@ -17,8 +17,8 @@ create table event (
  constraint fk_service_event foreign key(service_id) REFERENCES service(id)
 );
 
-insert into service(id, code,type, name, fee_val, fee_percent) values ('1', 1,'ELECTRONIC_TOLL', 'Super servicço master', 2300.45, 0.3);
-insert into service(id, code,type, name, fee_val, fee_percent) values ('2', 2,'FREIGHT', 'Serviço teste', 5, 0.1);
+insert into service(id, code,type, name, fee_val, fee_percent) values ('1', 1,'DOCTORS_APPOINTMENTS', 'Super servicço master', 2300.45, 0.3);
+insert into service(id, code,type, name, fee_val, fee_percent) values ('2', 2,'MEDICINES', 'Serviço teste', 5, 0.1);
 insert into event(id, service_id,ncm_code, name, request_quantity) values ('1', '2','1','Evento',0);
 
 

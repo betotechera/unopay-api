@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -56,6 +57,7 @@ public class ServiceAuthorizeEvent {
     private EstablishmentEvent establishmentEvent;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="service_authorize_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private ServiceAuthorize serviceAuthorize;

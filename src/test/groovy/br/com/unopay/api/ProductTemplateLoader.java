@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static br.com.unopay.api.bacen.model.ServiceType.DIAGNOSIS_AND_THERAPY;
+import static br.com.unopay.api.bacen.model.ServiceType.DOCTORS_APPOINTMENTS;
 import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD;
 
@@ -38,7 +40,7 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentInstrumentEmissionFee", random(BigDecimal.class));
             add("paymentInstrumentSecondCopyFee", random(BigDecimal.class));
             add("administrationCreditInsertionFee", random(BigDecimal.class, range(0.00, 1)));
-            add("serviceTypes", Sets.newHashSet(ServiceType.values()));
+            add("serviceTypes", Arrays.asList(DIAGNOSIS_AND_THERAPY, DOCTORS_APPOINTMENTS));
             add("creditInsertionTypes", Arrays.asList(CreditInsertionType.values()));
             add("contractValidityDays", 360);
             add("paymentInstallments", random(Integer.class, range(2,12)));

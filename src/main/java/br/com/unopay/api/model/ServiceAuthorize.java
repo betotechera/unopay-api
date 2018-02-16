@@ -2,19 +2,15 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
-import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -31,7 +27,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -42,10 +37,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 
 @Slf4j
 @Data
@@ -129,6 +121,7 @@ public class ServiceAuthorize implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="service_authorize_id")
+    @JsonManagedReference
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Set<ServiceAuthorizeEvent> authorizeEvents;
 
@@ -195,7 +188,7 @@ public class ServiceAuthorize implements Serializable {
     public void setMeUp(PaymentInstrument paymentInstrument) {
         authorizationDateTime = new Date();
         setLastInstrumentCreditBalance(paymentInstrument.getAvailableBalance());
-        setCurrentInstrumentCreditBalance(paymentInstrument.getAvailableBalance().subtract(getEventValue()));
+        setCurrentInstrumentCreditBalance(paymentInstrument.getAvailableBalance().subtract(eventValue()));
         situation = TransactionSituation.AUTHORIZED;
     }
 
@@ -262,7 +255,7 @@ public class ServiceAuthorize implements Serializable {
         return ObjectUtils.clone(this.batchClosingDateTime);
     }
 
-    public BigDecimal getEventValue() {
+    public BigDecimal eventValue() {
         return authorizeEvents.stream()
                 .map(ServiceAuthorizeEvent::getEventValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }

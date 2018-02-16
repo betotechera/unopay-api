@@ -2,11 +2,10 @@ package br.com.unopay.api.credit.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.six2six.fixturefactory.base.Sequence
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.Hirer
-import static br.com.unopay.api.bacen.model.ServiceType.ELECTRONIC_TOLL
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
+import br.com.unopay.api.bacen.model.ServiceType
+import static br.com.unopay.api.bacen.model.ServiceType.DOCTORS_APPOINTMENTS
+import static br.com.unopay.api.bacen.model.ServiceType.MEDICINES
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditInsertionType
@@ -22,9 +21,6 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
-
-    @Autowired
-    CreditService creditService
 
     void setup(){
         Integer.mixin(TimeCategory)
@@ -130,7 +126,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("product", knownProduct)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", FREIGHT)
+            add("serviceType", ServiceType.MEDICINES)
         }})
         when:
         credits.each { service.register(it)}
@@ -148,14 +144,14 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", FREIGHT)
+            add("serviceType", DOCTORS_APPOINTMENTS)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
             add("hirer", hirer)
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", ELECTRONIC_TOLL)
+            add("serviceType", DOCTORS_APPOINTMENTS)
         }})
         when:
         credits.each { service.register(it)}
@@ -178,7 +174,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("product", null)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", ELECTRONIC_TOLL)
+            add("serviceType", DOCTORS_APPOINTMENTS)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
             add("hirer", hirer)
@@ -186,7 +182,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", ELECTRONIC_TOLL)
+            add("serviceType", DOCTORS_APPOINTMENTS)
         }})
         when:
         credits.each { service.register(it)}
@@ -194,10 +190,10 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
 
         then:
         service.findAll().find {
-            it.serviceType == ELECTRONIC_TOLL && it.product == null
+            it.serviceType == DOCTORS_APPOINTMENTS && it.product == null
         }?.availableBalance == credit.value
         service.findAll().find {
-            it.serviceType == ELECTRONIC_TOLL && it.product != null
+            it.serviceType == DOCTORS_APPOINTMENTS && it.product != null
         }?.availableBalance == (credit.value * 2)
     }
 
@@ -213,7 +209,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             add("value", value)
             add("availableValue", value)
             add("creditInsertionType", CreditInsertionType.BOLETO)
-            add("serviceType", ELECTRONIC_TOLL)
+            add("serviceType", DOCTORS_APPOINTMENTS)
         }})
         List<Credit> credits = Fixture.from(Credit.class).uses(jpaProcessor).gimme(2, "allFields", new Rule() {{
             add("hirer", hirer)
@@ -232,7 +228,7 @@ class CreditPaymentAccountServiceTest extends SpockApplicationTests {
             it.serviceType == null && it.product == null
         }?.availableBalance == (value * 2)
         service.findAll().find {
-            it.serviceType == ELECTRONIC_TOLL && it.product != null
+            it.serviceType == DOCTORS_APPOINTMENTS && it.product != null
         }?.availableBalance == value
     }
 

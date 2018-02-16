@@ -74,7 +74,7 @@ public class ServiceAuthorizeService {
         authorize.setReferences(currentUser, paymentInstrument, contract);
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
-        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getEventValue());
+        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.eventValue());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         return repository.save(authorize);
     }

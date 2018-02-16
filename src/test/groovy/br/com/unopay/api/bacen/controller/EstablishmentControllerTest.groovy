@@ -132,7 +132,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         def result = this.mvc.perform(
                 post('/establishments/me/service-authorizations?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(service)))
+                .content(toJson(service.with {authorizeEvents.find().id = null; it })))
         then:
         result.andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers
