@@ -366,4 +366,23 @@ class UserCreditCardTest extends FixtureApplicationTest {
               "11" | "2053"
 
     }
+
+    def 'when calling mapUserCreditCardFromCreditCard should return a user credit card with mapping following values from credit card'(){
+
+        given:
+        int NUMBER_OF_DIGITS = 4
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        UserCreditCard userCreditCard = new UserCreditCard()
+
+        when:
+        userCreditCard = userCreditCard.mapUserCreditCardFromCreditCard(creditCard)
+
+        then:
+        userCreditCard.expirationMonth.equals(creditCard.expiryMonth)
+        userCreditCard.expirationYear.equals(creditCard.expiryYear)
+        userCreditCard.lastFourDigits.equals(creditCard.number
+                .substring(creditCard.number.length() - NUMBER_OF_DIGITS))
+        userCreditCard.gatewayToken.equals(creditCard.cardReference)
+
+    }
 }

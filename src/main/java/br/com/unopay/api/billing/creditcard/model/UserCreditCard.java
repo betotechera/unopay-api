@@ -35,6 +35,7 @@ public class UserCreditCard implements Serializable, Updatable {
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
     private static final int SURPLUS_LIMIT = 100;
+    private static final int NUMBER_OF_DIGITS = 4;
 
     @Id
     @Column(name="id")
@@ -171,6 +172,19 @@ public class UserCreditCard implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_EXPIRATION_DATE.withOnlyArgument(getExpirationDate()));
         }
+    }
+
+    public UserCreditCard mapUserCreditCardFromCreditCard(CreditCard creditCard) {
+        UserCreditCard userCreditCard = new UserCreditCard();
+        userCreditCard.setHolderName(creditCard.getHolderName());
+        userCreditCard.setBrand(CardBrand.fromCardNumber(creditCard.getNumber()));
+        userCreditCard.setLastFourDigits(creditCard.getNumber()
+                .substring(creditCard.getNumber().length() - NUMBER_OF_DIGITS));
+        userCreditCard.setExpirationMonth(creditCard.getExpiryMonth());
+        userCreditCard.setExpirationYear(creditCard.getExpiryYear());
+        userCreditCard.setGatewaySource(GatewaySource.PAYZEN);
+        userCreditCard.setGatewayToken(creditCard.getCardReference());
+        return userCreditCard;
     }
 
     public String userId(){

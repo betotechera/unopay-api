@@ -171,7 +171,6 @@ public class OrderService {
         process(order);
     }
 
-
     public void process(Order order){
         if(order.paid()) {
             if(order.isType(CREDIT)) {
