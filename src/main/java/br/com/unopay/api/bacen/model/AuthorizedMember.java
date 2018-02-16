@@ -36,6 +36,7 @@ import java.util.Date;
 public class AuthorizedMember implements Serializable, Updatable{
 
     public static final long serialVersionUID = 1L;
+    public static final int YEAR_LIMIT = 150;
 
     @Id
     @Column(name="id")
@@ -93,30 +94,40 @@ public class AuthorizedMember implements Serializable, Updatable{
 
     public void validateMe() {
         validateBirthDate();
+        validateName();
+        validateGender();
+        validateRelatedness();
+        validateContract();
+        validatePaymentInstrument();
+    }
 
-
-        if(name == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
-        }
-
-        if(gender == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED);
-        }
-
-        if(relatedness == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
-        }
-
+    private void validateContract() {
         if(contract == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
         }
+    }
 
-        validatePaymentInstrument();
+    private void validateRelatedness() {
+        if(relatedness == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
+        }
+    }
+
+    private void validateName() {
+        if(name == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
+        }
+    }
+
+    private void validateGender() {
+        if(gender == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED);
+        }
     }
 
     private void validateBirthDate() {
         Date maximumDate = new Date();
-        Date minimumDate = new DateTime().minusYears(150).toDate();
+        Date minimumDate = new DateTime().minusYears(YEAR_LIMIT).toDate();
         if(birthDate == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
         }
