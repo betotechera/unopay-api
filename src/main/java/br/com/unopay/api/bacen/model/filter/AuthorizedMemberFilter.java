@@ -27,6 +27,9 @@ public class AuthorizedMemberFilter implements Serializable{
     @SearchableField(field = "contract.contractor.person.document.number")
     private String contractorDocumentNumber;
 
+    @SearchableField(field = "paymentInstrument.number")
+    private String paymentInstrumentNumber;
+
     @SearchableField
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date birthDate;
