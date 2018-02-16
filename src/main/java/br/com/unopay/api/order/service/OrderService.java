@@ -147,29 +147,12 @@ public class OrderService {
         incrementNumber(order);
         checkContractorRules(order);
         definePaymentValueWhenRequired(order);
-        storeCreditCardWhenRequired(order);
         order.setCreateDateTime(new Date());
         hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());
         notifyOrder(created);
         return created;
-    }
-
-    private void storeCreditCardWhenRequired(Order order) {
-        if (isStoreCreditCardRequired(order)) {
-            userCreditCardService.store(order);
-        }
-    }
-
-    private boolean isStoreCreditCardRequired(Order order) {
-        return order.getPaymentRequest() != null
-                && order.getPaymentRequest().getStoreCard() != null
-                && order.getPaymentRequest().getStoreCard()
-                && order.getPaymentRequest().getMethod() != null
-                && order.getPaymentRequest().getMethod() == PaymentMethod.CARD
-                && order.getType() != null
-                && order.getType() != ADHESION;
     }
 
     private void notifyOrder(Order created) {

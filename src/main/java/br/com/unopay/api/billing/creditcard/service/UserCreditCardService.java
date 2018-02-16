@@ -87,6 +87,4 @@ public class UserCreditCardService {
         userCreditCard.setUser(userDetailService.getById(userCreditCard.userId()));
     }
 
-    public void store(Order order) {
-    }
 }

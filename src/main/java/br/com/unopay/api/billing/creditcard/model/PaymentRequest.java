@@ -29,4 +29,24 @@ public class PaymentRequest {
         transaction.setAmount(new Amount(CurrencyCode.BRL, value));
         return transaction;
     }
+
+    private boolean isMethod(PaymentMethod method) {
+        return this.method.equals(method);
+    }
+
+    public boolean hasPaymentMethod() {
+        return method != null;
+    }
+
+    public boolean hasStoreCard() {
+        return storeCard != null;
+    }
+
+    public boolean shouldStoreCard() {
+        return hasPaymentMethod()
+                && isMethod(PaymentMethod.CARD)
+                && hasStoreCard()
+                && storeCard;
+    }
+
 }

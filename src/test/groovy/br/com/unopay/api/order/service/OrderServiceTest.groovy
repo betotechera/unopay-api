@@ -684,21 +684,4 @@ class OrderServiceTest extends SpockApplicationTests{
         result.last().number != result.find().number
     }
 
-    def 'given a not adhesion type order with storeCard and paymentRequest method card should call userCreditCardService.store'(){
-
-        given:
-        def order = fixtureCreator.createOrder(contractUnderTest)
-        order.paymentRequest.setMethod(PaymentMethod.CARD)
-        order.paymentRequest.setStoreCard(true)
-        order.type = OrderType.INSTALLMENT_PAYMENT
-
-        when:
-        service.create(order)
-
-        then:
-        userCreditCardService.store(order)
-
-    }
-
-
 }
