@@ -253,4 +253,12 @@ public class ContractorController {
         return authorizedMemberService.findByIdForContractor(id, contractor);
     }
 
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/contractors/me/authorized-members/{id}", method = RequestMethod.PUT)
+    public void updateAuthorizedMember(Contractor contractor, @PathVariable  String id, @Validated(Update.class)
+    @RequestBody AuthorizedMember authorizedMember) {
+        log.info("updating authorizedMember={} for contractor={}", id, contractor.getPerson().documentNumber());
+        authorizedMemberService.updateForContractor(id, contractor, authorizedMember);
+    }
 }

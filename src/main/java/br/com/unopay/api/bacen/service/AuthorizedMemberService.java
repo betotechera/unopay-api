@@ -78,11 +78,6 @@ public class AuthorizedMemberService {
         update(current, authorizedMember);
     }
 
-    public void updateForHirer(String id, Hirer hirer, AuthorizedMember authorizedMember) {
-        AuthorizedMember current = findByIdForHirer(id, hirer);
-        update(current, authorizedMember);
-    }
-
     public void updateForContractor(String id, Contractor contractor, AuthorizedMember authorizedMember) {
         AuthorizedMember current = findByIdForContractor(id, contractor);
         update(current, authorizedMember);
