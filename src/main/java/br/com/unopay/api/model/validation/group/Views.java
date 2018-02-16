@@ -185,5 +185,8 @@ public interface Views {
         interface List{}
     }
 
-
+    interface AuthorizedMember {
+        interface Detail extends List {}
+        interface List{}
+    }
 }

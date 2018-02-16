@@ -5,9 +5,11 @@ import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +39,7 @@ public class AuthorizedMemberController {
     AuthorizedMemberService service;
 
     @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Views.AuthorizedMember.Detail.class)
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
     @RequestMapping(value = "/authorized-members", method = RequestMethod.POST)
     public ResponseEntity<AuthorizedMember> create(@Validated(Create.class)
@@ -50,6 +53,7 @@ public class AuthorizedMemberController {
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
+    @JsonView(Views.AuthorizedMember.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/authorized-members/{id}", method = RequestMethod.GET)
     public AuthorizedMember get(@PathVariable String id) {
@@ -58,6 +62,7 @@ public class AuthorizedMemberController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @JsonView(Views.AuthorizedMember.Detail.class)
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
     @RequestMapping(value = "/authorized-members/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable String id,
@@ -67,6 +72,7 @@ public class AuthorizedMemberController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.AuthorizedMember.List.class)
     @PreAuthorize("hasRole('ROLE_LIST_AUTHORIZED_MEMBER')")
     @RequestMapping(value = "/authorized-members", method = RequestMethod.GET)
     public PageableResults<AuthorizedMember> getByParams(AuthorizedMemberFilter filter,
@@ -78,6 +84,7 @@ public class AuthorizedMemberController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @JsonView(Views.AuthorizedMember.Detail.class)
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
     @RequestMapping(value = "/authorized-members/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {

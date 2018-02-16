@@ -46,40 +46,48 @@ public class AuthorizedMember implements Serializable, Updatable{
 
     @Column(name="birth_date")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date birthDate;
 
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     @JoinColumn(name="contract_id")
     private Contract contract;
 
     @Column(name="name")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     @Size(max=256)
     private String name;
 
     @Column(name="gender")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     @Size(max=50)
     private String gender;
 
     @Column(name="relatedness")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     @Size(max=50)
     private String relatedness;
 
     @Column(name="email")
+    @JsonView({Views.AuthorizedMember.List.class})
     @Size(max=256)
     private String email;
 
     @Valid
+    @JsonView({Views.AuthorizedMember.List.class})
     @Embedded
     private Document document;
 
     @ManyToOne
     @JoinColumn(name="payment_instrument_id")
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.AuthorizedMember.List.class})
     private PaymentInstrument paymentInstrument;
 
 
