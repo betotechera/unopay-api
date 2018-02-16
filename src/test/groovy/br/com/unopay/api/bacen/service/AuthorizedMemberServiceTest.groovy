@@ -245,6 +245,16 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
+    void 'should delete AuthorizedMember by Contractor'(){
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        service.deleteForContractor(authorizedMember.id, authorizedMember.contract.contractor)
+        service.findById(authorizedMember.id)
+        then:
+        def ex = thrown(NotFoundException)
+    }
+
     void 'should create AuthorizedMembers from csv'() {
         given:
         def contractor = fixtureCreator.createContractor("valid")

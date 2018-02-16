@@ -83,6 +83,11 @@ public class AuthorizedMemberService {
         update(current, authorizedMember);
     }
 
+    public void deleteForContractor(String id, Contractor contractor) {
+        AuthorizedMember toBeDeleted = findByIdForContractor(id, contractor);
+        delete(toBeDeleted.getId());
+    }
+
     private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
         current.updateMe(authorizedMember);
         current.validateMe();
