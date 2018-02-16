@@ -1,9 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
+import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
@@ -80,6 +82,7 @@ public class HirerController {
     private TicketService ticketService;
     private TransactionService transactionService;
     private HirerNegotiationService hirerNegotiationService;
+    private AuthorizedMemberService authorizedMemberService;
 
     @Value("${unopay.api}")
     private String api;
@@ -93,7 +96,7 @@ public class HirerController {
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
                            TicketService ticketService, TransactionService transactionService,
-                           HirerNegotiationService hirerNegotiationService) {
+                           HirerNegotiationService hirerNegotiationService, AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -104,6 +107,7 @@ public class HirerController {
         this.ticketService = ticketService;
         this.transactionService = transactionService;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -387,4 +391,11 @@ public class HirerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
     }
 
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.GET)
+    public AuthorizedMember getAuthorizedMember(Hirer hirer, @PathVariable String id) {
+        log.info("get authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
+        return authorizedMemberService.findByIdForHirer(id, hirer);
+    }
 }
