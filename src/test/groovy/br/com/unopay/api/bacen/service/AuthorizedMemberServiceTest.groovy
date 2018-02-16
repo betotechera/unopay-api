@@ -14,6 +14,7 @@ import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
@@ -54,6 +55,28 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED'
+    }
+
+    void 'given AuthorizedMember with birthDate before minimum date should return error'(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.birthDate = new DateTime().minusYears(151).toDate()
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'INVALID_AUTHORIZED_MEMBER_BIRTH_DATE'
+    }
+
+    void 'given AuthorizedMember with birthDate after today should return error'(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.birthDate = new DateTime().plusDays(1).toDate()
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.first().logref == 'INVALID_AUTHORIZED_MEMBER_BIRTH_DATE'
     }
 
     void "given AuthorizedMember with paymentInstrument that doesn't belong to it's contractor should return error"(){

@@ -13,6 +13,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -83,9 +84,8 @@ public class AuthorizedMember implements Serializable, Updatable{
 
 
     public void validateMe() {
-        if(birthDate == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
-        }
+        validateBirthDate();
+
 
         if(name == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
@@ -104,6 +104,17 @@ public class AuthorizedMember implements Serializable, Updatable{
         }
 
         validatePaymentInstrument();
+    }
+
+    private void validateBirthDate() {
+        Date maximumDate = new Date();
+        Date minimumDate = new DateTime().minusYears(150).toDate();
+        if(birthDate == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
+        }
+        if(birthDate.before(minimumDate) || birthDate.after(maximumDate)) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_AUTHORIZED_MEMBER_BIRTH_DATE);
+        }
     }
 
     private void validatePaymentInstrument() {

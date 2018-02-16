@@ -577,6 +577,10 @@ public final class Errors {
             new UnovationError("AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED", "The authorized member " +
                     "birth date is required");
 
+    public static final UnovationError INVALID_AUTHORIZED_MEMBER_BIRTH_DATE =
+            new UnovationError("INVALID_AUTHORIZED_MEMBER_BIRTH_DATE", "The informed authorized " +
+                    "member birth date is invalid");
+
     public static final UnovationError AUTHORIZED_MEMBER_NAME_REQUIRED =
             new UnovationError("AUTHORIZED_MEMBER_NAME_REQUIRED", "The authorized member " +
                     "name is required");
