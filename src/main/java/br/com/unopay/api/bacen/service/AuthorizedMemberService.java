@@ -1,19 +1,30 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.csv.AuthorizedMemberCsv;
+import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
+import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import com.opencsv.bean.CsvToBeanBuilder;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -65,5 +76,32 @@ public class AuthorizedMemberService {
 
     public Page<AuthorizedMember> findByFilter(AuthorizedMemberFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    private PaymentInstrument findCsvPaymentInstrument(AuthorizedMemberCsv csv) {
+        if(csv.getPaymentInstrumentNumber() != null) {
+            String instrumentNumber = csv.getPaymentInstrumentNumber();
+            return paymentInstrumentService.findByNumber(instrumentNumber);
+        }
+
+        return paymentInstrumentService.findDigitalWalletByContractorDocument(csv.getDocumentNumber()).get();
+    }
+
+    @SneakyThrows
+    @Transactional
+    public void createFromCsv(MultipartFile multipartFile) {
+        List<AuthorizedMemberCsv> csvLines = getAuthorizedMemberCsvs(multipartFile);
+        csvLines.forEach(csvLine ->  {
+            AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
+            authorizedMember.setContract(contractService.findByCode(csvLine.getContractCode()));
+            authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvLine));
+            create(authorizedMember);
+        });
+    }
+
+    private List<AuthorizedMemberCsv> getAuthorizedMemberCsvs(MultipartFile multipartFile) throws IOException {
+        InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
+        return new CsvToBeanBuilder<AuthorizedMemberCsv>(inputStreamReader)
+                .withType(AuthorizedMemberCsv.class).build().parse();
     }
 }

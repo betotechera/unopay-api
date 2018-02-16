@@ -1,12 +1,26 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
+import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ResourceLoader
+import org.springframework.data.domain.Page
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.web.multipart.MultipartFile
+
 
 class AuthorizedMemberServiceTest extends SpockApplicationTests {
     @Autowired
@@ -14,6 +28,12 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    @Autowired
+    private PasswordEncoder passwordEncoder
+
+    @Autowired
+    ResourceLoader resourceLoader
 
     void 'given valid AuthorizedMember should create'(){
         given:
@@ -141,5 +161,61 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'should create AuthorizedMembers from csv'() {
+        given:
+        def contractor = fixtureCreator.createContractor("valid")
+        createPersistedContract(contractor, 123456L)
+        createPersistedContract(contractor, 123457L)
+        createPersistedContract(contractor, 123458L)
+
+        createInstrument(contractor, "123456")
+        createInstrument(contractor, "123457")
+        createInstrument(contractor, "123458")
+
+
+        Resource csv  = resourceLoader.getResource("classpath:/AuthorizedMember.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
+
+        when:
+        service.createFromCsv(file)
+
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> authorizedMembers = service.findByFilter(new AuthorizedMemberFilter(), page)
+
+        then:
+        authorizedMembers.content.size() == 3
+    }
+
+    Contract createPersistedContract(contractor, contractCode) {
+        def product = fixtureCreator.createProduct()
+        def hirer = fixtureCreator.createHirer()
+        def situation = ContractSituation.ACTIVE
+        Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("hirer", hirer)
+                add("contractor", contractor)
+                add("product", product)
+                add("serviceTypes", product.serviceTypes)
+                add("situation", situation)
+                add("code", contractCode)
+            }
+        })
+    }
+
+    PaymentInstrument createInstrument(contractor, number) {
+        def product = fixtureCreator.createProduct()
+
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        PaymentInstrument inst = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("product", product)
+                add("contractor", contractor)
+                add("password", passwordEncoder.encode(generatePassword))
+                add("number", number)
+            }
+        })
+        inst.with { password = generatePassword; it }
     }
 }
