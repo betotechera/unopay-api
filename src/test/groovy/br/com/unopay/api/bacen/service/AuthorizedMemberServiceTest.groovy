@@ -10,8 +10,9 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.PaymentInstrument
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -172,8 +173,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
         createInstrument(contractor, "123456")
         createInstrument(contractor, "123457")
-        createInstrument(contractor, "123458")
-
+        createInstrument(contractor, "123458", PaymentInstrumentType.DIGITAL_WALLET)
 
         Resource csv  = resourceLoader.getResource("classpath:/AuthorizedMember.csv")
         MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
@@ -204,7 +204,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         })
     }
 
-    PaymentInstrument createInstrument(contractor, number) {
+    PaymentInstrument createInstrument(contractor, number, type = PaymentInstrumentType.VIRTUAL_CARD) {
         def product = fixtureCreator.createProduct()
 
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
@@ -214,6 +214,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
                 add("contractor", contractor)
                 add("password", passwordEncoder.encode(generatePassword))
                 add("number", number)
+                add("type", type)
             }
         })
         inst.with { password = generatePassword; it }

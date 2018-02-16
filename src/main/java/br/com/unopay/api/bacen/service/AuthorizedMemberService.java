@@ -1,9 +1,7 @@
 package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
-import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.csv.AuthorizedMemberCsv;
-import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -79,12 +77,13 @@ public class AuthorizedMemberService {
     }
 
     private PaymentInstrument findCsvPaymentInstrument(AuthorizedMemberCsv csv) {
-        if(csv.getPaymentInstrumentNumber() != null) {
-            String instrumentNumber = csv.getPaymentInstrumentNumber();
-            return paymentInstrumentService.findByNumber(instrumentNumber);
-        }
+        String instrumentNumber = csv.getPaymentInstrumentNumber();
+        return paymentInstrumentService.findByNumber(instrumentNumber);
+    }
 
-        return paymentInstrumentService.findDigitalWalletByContractorDocument(csv.getDocumentNumber()).get();
+    private PaymentInstrument findDigitalWallet(AuthorizedMember authorizedMember) {
+        return paymentInstrumentService.findDigitalWalletByContractorDocument(
+                authorizedMember.getContract().getContractor().getDocumentNumber()).get();
     }
 
     @SneakyThrows
@@ -94,7 +93,13 @@ public class AuthorizedMemberService {
         csvLines.forEach(csvLine ->  {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
             authorizedMember.setContract(contractService.findByCode(csvLine.getContractCode()));
-            authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvLine));
+
+            if(csvLine.getPaymentInstrumentNumber() != null) {
+                authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvLine));
+            }
+            else {
+                authorizedMember.setPaymentInstrument(findDigitalWallet(authorizedMember));
+            }
             create(authorizedMember);
         });
     }
