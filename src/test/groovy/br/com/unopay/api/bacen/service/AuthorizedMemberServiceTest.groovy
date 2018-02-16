@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
@@ -141,6 +142,27 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         def found = service.findById(authorizedMember.id)
         then:
         found
+    }
+
+    void 'should find known AuthorizedMember by id and contractor id'(){
+        given:
+        AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        def found = service.findByIdForContractor(authorizedMember.id, authorizedMember.contract.contractor)
+        then:
+        found
+    }
+
+    void 'given unknown contractor id should return error when find by id and contractor id'(){
+        given:
+        AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
+        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+        contractor.id = "123"
+        when:
+        service.findByIdForContractor(authorizedMember.id, contractor)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
     void 'when trying to find unknown AuthorizedMember should return error'(){
