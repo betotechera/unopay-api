@@ -5,6 +5,9 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
@@ -26,6 +29,8 @@ import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
+import javax.mail.search.OrTerm
+
 class OrderServiceTest extends SpockApplicationTests{
 
     @Autowired
@@ -42,6 +47,8 @@ class OrderServiceTest extends SpockApplicationTests{
 
     @Autowired
     ContractorInstrumentCreditService instrumentCreditService
+
+    UserCreditCardService userCreditCardService = Mock(UserCreditCardService)
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -674,6 +681,26 @@ class OrderServiceTest extends SpockApplicationTests{
         result.find().number != null
         result.last().number != null
         result.last().number != result.find().number
+    }
+
+    def 'given a order not adhesion type, with storeCard and paymentRequest method card should call userCreditCardService.store'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", true)
+        }})
+        def order = fixtureCreator.createOrder(contractUnderTest)
+        order.type = OrderType.INSTALLMENT_PAYMENT
+        order.paymentRequest = paymentRequest
+
+
+        when:
+        service.create(order)
+
+        then:
+        userCreditCardService.store(order)
+
     }
 
 

@@ -3,6 +3,7 @@ package br.com.unopay.api.billing.creditcard.service;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -84,5 +85,8 @@ public class UserCreditCardService {
 
     public void setValidUser (UserCreditCard userCreditCard){
         userCreditCard.setUser(userDetailService.getById(userCreditCard.userId()));
+    }
+
+    public void store(Order order) {
     }
 }
