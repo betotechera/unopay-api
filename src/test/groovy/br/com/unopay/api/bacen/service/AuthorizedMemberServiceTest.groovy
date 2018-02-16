@@ -222,6 +222,19 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         found.name == authorizedMember.name
     }
 
+    void 'given knoen AuthorizedMember should update for contractor'() {
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        authorizedMember.name = "new name"
+        def contractor = authorizedMember.contract.contractor
+        when:
+        service.updateForContractor(authorizedMember.id, contractor, authorizedMember)
+
+        then:
+        def found = service.findById(authorizedMember.id)
+        found.name == authorizedMember.name
+    }
+
     void 'when trying to delete unknown AuthorizedMember should return error'(){
         given:
         def id = "123"

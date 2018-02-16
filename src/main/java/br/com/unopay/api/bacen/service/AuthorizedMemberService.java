@@ -83,6 +83,11 @@ public class AuthorizedMemberService {
         update(current, authorizedMember);
     }
 
+    public void updateForContractor(String id, Contractor contractor, AuthorizedMember authorizedMember) {
+        AuthorizedMember current = findByIdForContractor(id, contractor);
+        update(current, authorizedMember);
+    }
+
     private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
         current.updateMe(authorizedMember);
         current.validateMe();
