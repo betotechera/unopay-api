@@ -75,6 +75,15 @@ public class AuthorizedMemberService {
 
     public void update(String id, AuthorizedMember authorizedMember) {
         AuthorizedMember current = findById(id);
+        update(current, authorizedMember);
+    }
+
+    public void updateForHirer(String id, Hirer hirer, AuthorizedMember authorizedMember) {
+        AuthorizedMember current = findByIdForHirer(id, hirer);
+        update(current, authorizedMember);
+    }
+
+    private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
         current.updateMe(authorizedMember);
         current.validateMe();
         validateReferences(current);
