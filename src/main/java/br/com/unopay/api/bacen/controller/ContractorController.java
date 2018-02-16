@@ -261,4 +261,11 @@ public class ContractorController {
         log.info("updating authorizedMember={} for contractor={}", id, contractor.getPerson().documentNumber());
         authorizedMemberService.updateForContractor(id, contractor, authorizedMember);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/contractors/me/authorized-members/{id}", method = RequestMethod.DELETE)
+    public void removeAuthorizedNumber(Contractor contractor, @PathVariable  String id) {
+        log.info("removing authorized-member id={}", id);
+        authorizedMemberService.deleteForContractor(id, contractor);
+    }
 }
