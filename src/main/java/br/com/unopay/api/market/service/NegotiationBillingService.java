@@ -16,6 +16,7 @@ import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import static br.com.unopay.api.uaa.exception.Errors.HIRER_NEGOTIATION_BILLING_N
 import static br.com.unopay.api.uaa.exception.Errors.NEGOTIATION_BILLING_NOT_FOUND;
 import static java.util.Collections.singletonList;
 
+@Timed
 @Service
 public class NegotiationBillingService {
 
@@ -47,7 +49,7 @@ public class NegotiationBillingService {
     private NegotiationBillingDetailService billingDetailService;
     private CreditService creditService;
     private NumberGenerator numberGenerator;
-    @Setter private Integer memberTotal = 1;
+    @Setter private Integer memberTotal = 0;
     @Setter private Notifier notifier;
 
     @Autowired
@@ -113,6 +115,7 @@ public class NegotiationBillingService {
         process(negotiation);
     }
 
+    @Transactional
     public void process(){
         Set<HirerNegotiation> negotiations = hirerNegotiationService.negotiationsNearOfPaymentDate();
         negotiations.forEach(negotiation ->

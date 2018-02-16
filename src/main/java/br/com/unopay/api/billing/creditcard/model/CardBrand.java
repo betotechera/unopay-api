@@ -6,6 +6,7 @@ public enum CardBrand {
     MASTERCARD("Mastercard"),
     AMEX("American Express"),
     DINERS("Diners"),
+    ELO("Elo"),
     UNKNOWN("Unkown");
 
     private String name;

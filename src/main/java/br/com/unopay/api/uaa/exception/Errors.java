@@ -538,6 +538,20 @@ public final class Errors {
             new UnovationError("HIRER_BELONG_TO_OTHER_CONTRACT", "" +
                     "Hirer belong to other contract");
 
+
+    /* User Credit Card */
+    public static final UnovationError USER_CREDIT_CARD_NOT_FOUND =
+            new UnovationError("USER_CREDIT_CARD_NOT_FOUND","User credit card not found.");
+    public static final UnovationError INVALID_MONTH =
+            new UnovationError("INVALID_MONTH", "" +
+                    "Invalid month");
+    public static final UnovationError INVALID_YEAR =
+            new UnovationError("INVALID_YEAR", "" +
+                    "Invalid year");
+    public static final UnovationError INVALID_EXPIRATION_DATE =
+            new UnovationError("INVALID_EXPIRATION_DATE", "" +
+                    "Invalid expiration date");
+
     /* Hirer Negotiation */
     public static final UnovationError EFFECTIVE_DATE_IS_BEFORE_CREATION =
             new UnovationError("EFFECTIVE_DATE_IS_BEFORE_CREATION", "" +
