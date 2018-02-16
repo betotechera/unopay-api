@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.service;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.csv.AuthorizedMemberCsv;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
@@ -62,6 +63,12 @@ public class AuthorizedMemberService {
 
     public AuthorizedMember findByIdForContractor(String id, Contractor contractor) {
         Optional<AuthorizedMember> authorizedMember = repository.findByIdAndContractContractorId(id, contractor.getId());
+        return authorizedMember.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
+                Errors.AUTHORIZED_MEMBER_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public AuthorizedMember findByIdForHirer(String id, Hirer hirer) {
+        Optional<AuthorizedMember> authorizedMember = repository.findByIdAndContractHirerId(id, hirer.getId());
         return authorizedMember.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
                 Errors.AUTHORIZED_MEMBER_NOT_FOUND.withOnlyArgument(id)));
     }

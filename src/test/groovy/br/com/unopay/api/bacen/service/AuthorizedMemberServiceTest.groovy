@@ -6,6 +6,7 @@ import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
@@ -160,6 +161,27 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         contractor.id = "123"
         when:
         service.findByIdForContractor(authorizedMember.id, contractor)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'should find known AuthorizedMember by id and hirer id'(){
+        given:
+        AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        def found = service.findByIdForHirer(authorizedMember.id, authorizedMember.contract.hirer)
+        then:
+        found
+    }
+
+    void 'given unknown hirer should return error when find by id and hirer id'(){
+        given:
+        AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
+        Hirer hirer = Fixture.from(Hirer.class).gimme("valid")
+        hirer.id = "123"
+        when:
+        service.findByIdForHirer(authorizedMember.id, hirer)
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
