@@ -5,12 +5,14 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.model.ServiceAuthorizeEvent;
 import br.com.unopay.api.model.TransactionSituation;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
@@ -24,18 +26,12 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("establishment", one(Establishment.class, "valid"));
             add("contract",one(Contract.class, "valid"));
             add("contractor",one(Contractor.class, "valid"));
-            add("serviceType",uniqueRandom(ServiceType.class));
-            add("event",one(Event.class, "valid"));
-            add("eventQuantity",random(Double.class, range(1, 5)));
-            add("eventValue",random(BigDecimal.class, range(1, 20)));
-            add("solicitationDateTime",instant("now"));
-            add("creditInsertionType",random(CreditInsertionType.class));
+            add("value",random(BigDecimal.class, range(1, 20)));
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("lastInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("currentInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("cancellationDateTime",instant("one day from now"));
             add("authorizationNumber", regex("\\w{15}"));
-            add("valueFee", random(BigDecimal.class, range(1, 3)));
             add("situation", random(TransactionSituation.class));
             add("user",one(UserDetail.class, "without-group"));
         }});
@@ -46,6 +42,15 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("contractor", null);
             add("event",null);
             add("user", null);
+        }});
+
+        Fixture.of(ServiceAuthorizeEvent.class).addTemplate("valid", new Rule(){{
+            add("serviceAuthorize",one(ServiceAuthorize.class, "valid"));
+            add("establishmentEvent",one(EstablishmentEvent.class, "valid"));
+            add("serviceType",uniqueRandom(ServiceType.class));
+            add("event",one(Event.class, "valid"));
+            add("eventValue",random(BigDecimal.class, range(1, 20)));
+            add("valueFee", random(BigDecimal.class, range(1, 3)));
         }});
     }
 }

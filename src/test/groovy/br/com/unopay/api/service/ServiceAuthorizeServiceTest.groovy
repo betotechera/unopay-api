@@ -18,6 +18,7 @@ import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.model.ServiceAuthorizeEvent
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -96,7 +97,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.valueFee == Rounder.round(establishmentEventUnderTest.event.service.feeVal)
+        result.authorizeEvents.collect { it.valueFee }.sum() == Rounder.round(establishmentEventUnderTest.event.service.feeVal)
     }
 
     void 'when new service authorize created should generate authorization number'() {
@@ -123,25 +124,13 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         timeComparator.compare(result.authorizationDateTime, new Date()) == 0
     }
 
-    void 'new service authorize should be created with current solicitation date'() {
-        given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-
-        when:
-        def created = service.create(userUnderTest, serviceAuthorize)
-        def result = service.findById(created.id)
-
-        then:
-        timeComparator.compare(result.solicitationDateTime, new Date()) == 0
-    }
-
     void 'given a event value less than credit balance should archive last credit balance'() {
         given:
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
 
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventUnderTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest)]
         }
         when:
         def created = service.create(userUnderTest, serviceAuthorize)
@@ -158,7 +147,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
 
         serviceAuthorize.with {
-            establishmentEvent.id = establishmentEventUnderTest.id
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest)]
         }
         when:
         def created = service.create(userUnderTest, serviceAuthorize)
@@ -172,7 +161,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishmentEvent.id = establishmentEventUnderTest.id
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest)]
         }
         when:
         service.create(userUnderTest, serviceAuthorize)
@@ -189,7 +178,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
                                                             paymentInstrumentUnderTest.availableBalance + 0.1)
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
         }
         when:
         service.create(userUnderTest, serviceAuthorize)
@@ -199,45 +188,14 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
     }
 
-    @Unroll
-    void 'given a event with request quantity when validate event quantity equals #quantityUnderTest should return error'() {
-        given:
-        def serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("type", ServiceType.FUEL_ALLOWANCE)
-        }})
-        Event eventUnderTest = Fixture.from(Event.class).uses(jpaProcessor).gimme("withRequestQuantity", new Rule() {{
-            add("service", serviceUnderTest)
-        }})
-
-        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
-                paymentInstrumentUnderTest.availableBalance + 0.1, eventUnderTest)
-
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
-            eventQuantity = quantityUnderTest
-        }
-        when:
-        service.create(userUnderTest, serviceAuthorize)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED'
-
-        where:
-        _ | quantityUnderTest
-        _ | 0D
-        _ | -1D
-
-    }
 
     @Unroll
     void 'service #serviceTypeUnderTest should be authorized'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            serviceType = serviceTypeUnderTest
-            event = fixtureCreator.createEvent(serviceTypeUnderTest)
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest).with {
+                serviceType = serviceTypeUnderTest; event = fixtureCreator.createEvent(serviceTypeUnderTest); it}]
         }
 
         when:
@@ -249,30 +207,12 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
         where:
         _ | serviceTypeUnderTest
-        _ | ServiceType.FUEL_ALLOWANCE
-        _ | ServiceType.FREIGHT_RECEIPT
+        _ | ServiceType.DOCTORS_APPOINTMENTS
+        _ | ServiceType.MEDICINES
+        _ | ServiceType.DENTISTRY
+        _ | ServiceType.DIAGNOSIS_AND_THERAPY
     }
 
-    @Unroll
-    void 'service #serviceTypeUnderTest should not be authorized'() {
-        given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.with {
-            serviceType = serviceTypeUnderTest
-        }
-
-        when:
-        service.create(userUnderTest, serviceAuthorize)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'SERVICE_NOT_ACCEPTABLE'
-
-        where:
-        _ | serviceTypeUnderTest
-        _ | ServiceType.FREIGHT
-        _ | ServiceType.ELECTRONIC_TOLL
-    }
 
     void 'service authorize should be create with current user'() {
         given:
@@ -321,7 +261,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         instrumentBalanceService.add(paymentInstrumentUnderTest.id, establishmentEventTest.value)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishmentEvent.id = establishmentEventTest.id
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
         }
 
         when:
@@ -343,7 +283,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         serviceAuthorize.with {
             contract.id = contracts.find().id
             contractor = contracts.find().contractor
-            establishmentEvent.id = establishmentEventTest.id
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             paymentInstrument = instrument
             paymentInstrument.password = instrument.password
         }
@@ -366,7 +306,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest, instrument.availableBalance)
         serviceAuthorize.with {
             contract.id = anotherContract.id
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             contractor = anotherContract.contractor
             paymentInstrument = instrument
             paymentInstrument.password = instrument.password
@@ -490,7 +430,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         serviceAuthorize.with {
             contract = establishmentContracts.find()
             establishment = userEstablishment.establishment
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             contractor = establishmentContracts.find().contractor
             paymentInstrument = instrument
             paymentInstrument.password = instrument.password
@@ -566,7 +506,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def establishmentEvent = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         ServiceAuthorize serviceAuthorize = serviceAuthorizeWithoutPassword(userEstablishment, "1223456")
         instrumentBalanceService.add(serviceAuthorize.paymentInstrument.id,  establishmentEvent.value)
-        serviceAuthorize.establishmentEvent = establishmentEvent
+        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEvent)]
         when:
         def created = service.create(userEstablishment, serviceAuthorize)
         def result = service.findById(created.id)
@@ -583,7 +523,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             paymentInstrument.password = '123456'
         }
         instrumentBalanceService.add(serviceAuthorize.paymentInstrument.id, establishmentEventTest.value)
@@ -604,7 +544,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             contract = establishmentContracts.find()
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
@@ -686,7 +626,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             contract = establishmentContracts.find()
             establishment = userEstablishment.establishment
             contractor = establishmentContracts.find().contractor
@@ -711,7 +651,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def expectedPassword = '1235555AAAA'
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
-            establishmentEvent = establishmentEventTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             paymentInstrument.password = expectedPassword
         }
         instrumentBalanceService.add(serviceAuthorize.paymentInstrument.id,
@@ -730,9 +670,8 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             contract = contractUnderTest
             contractor = contractorUnderTest
             paymentInstrument = paymentInstrumentUnderTest
-            establishmentEvent = establishmentEventUnderTest
+            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest)]
             establishment = establishmentUnderTest
-            serviceType = ServiceType.FUEL_ALLOWANCE
             it
         }
     }

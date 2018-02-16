@@ -114,7 +114,7 @@ public class CreditTemplateLoader implements TemplateLoader {
         Fixture.of(ContractorInstrumentCredit.class).addTemplate("allFields", new Rule(){{
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("contract",one(Contract.class, "valid"));
-            add("serviceType", random(ServiceType.FUEL_ALLOWANCE, ServiceType.FREIGHT_RECEIPT));
+            add("serviceType", random(ServiceType.class));
             add("creditSource",InstrumentCreditSource.HIRER);
             add("value",random(BigDecimal.class, range(21, 200)));
             add("expirationDateTime",instant("1 day from now"));

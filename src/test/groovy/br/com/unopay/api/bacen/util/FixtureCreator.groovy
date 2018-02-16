@@ -282,7 +282,7 @@ class FixtureCreator {
                 add("contractor", credit.contract.contractor)
                 add("establishmentEvent", establishmentEvent)
                 add("event", establishmentEvent.event)
-                add("serviceType", ServiceType.FUEL_ALLOWANCE)
+                add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
                 add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
@@ -299,8 +299,8 @@ class FixtureCreator {
             {
                 add("contract", credit.contract)
                 add("contractor", credit.contract.contractor)
-                add("event", createEvent(ServiceType.FUEL_ALLOWANCE))
-                add("serviceType", ServiceType.FUEL_ALLOWANCE)
+                add("event", createEvent(ServiceType.DOCTORS_APPOINTMENTS))
+                add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
                 add("eventValue", 0.1)
                 add("user", createUser())
                 add("authorizationDateTime", instant(dateAsText))
@@ -314,7 +314,7 @@ class FixtureCreator {
 
     EstablishmentEvent createEstablishmentEvent(Establishment establishment = createEstablishment(),
                                                 BigDecimal eventValue = null,
-                                                Event event = createEvent(ServiceType.FUEL_ALLOWANCE)) {
+                                                Event event = createEvent(ServiceType.DOCTORS_APPOINTMENTS)) {
         return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
                 .gimme("withoutReferences", new Rule() {
             {
@@ -360,7 +360,7 @@ class FixtureCreator {
             }})
     }
 
-    Event createEvent(ServiceType serviceType = ServiceType.FUEL_ALLOWANCE) {
+    Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS) {
         Service serviceUnderTest = Fixture.from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
         }})

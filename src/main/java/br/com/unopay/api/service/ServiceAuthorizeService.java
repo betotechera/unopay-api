@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
+import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -12,7 +13,6 @@ import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -38,19 +38,17 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_NOT_FOUND
 @Service
 public class ServiceAuthorizeService {
 
-    public static final int NUMBER_SIZE = 12;
     private ServiceAuthorizeRepository repository;
-    private UserDetailService userDetailService;
     private EstablishmentService establishmentService;
     private ContractService contractService;
     private PaymentInstrumentService paymentInstrumentService;
     private UnopayEncryptor encryptor;
     private EstablishmentEventService establishmentEventService;
     private InstrumentBalanceService instrumentBalanceService;
+    private NumberGenerator numberGenerator;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
-                                   UserDetailService userDetailService,
                                    EstablishmentService establishmentService,
                                    ContractService contractService,
                                    PaymentInstrumentService paymentInstrumentService,
@@ -58,13 +56,13 @@ public class ServiceAuthorizeService {
                                    EstablishmentEventService establishmentEventService,
                                    InstrumentBalanceService instrumentBalanceService) {
         this.repository = repository;
-        this.userDetailService = userDetailService;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.encryptor = encryptor;
         this.establishmentEventService = establishmentEventService;
         this.instrumentBalanceService = instrumentBalanceService;
+        this.numberGenerator = new NumberGenerator(repository);
     }
 
     @Transactional
@@ -77,20 +75,11 @@ public class ServiceAuthorizeService {
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getEventValue());
-        authorize.setAuthorizationNumber(generateAuthorizationNumber(authorize));
+        authorize.setAuthorizationNumber(numberGenerator.createNumber());
         return repository.save(authorize);
     }
 
-    private String generateAuthorizationNumber(ServiceAuthorize serviceAuthorize) {
-        long count = repository.count();
-        String authorizationNumber =
-                String.valueOf(serviceAuthorize.getServiceType().ordinal()) + String.valueOf(count) +
-                        String.valueOf(serviceAuthorize.getAuthorizationDateTime().getTime());
-        return authorizationNumber.substring(0, Math.min(authorizationNumber.length(), NUMBER_SIZE));
-    }
-
     private Contract getValidContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
-        serviceAuthorize.validateServiceType();
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
         contract.checkValidFor(serviceAuthorize.getContractor());
@@ -99,10 +88,14 @@ public class ServiceAuthorizeService {
     }
 
     private void checkEventAndDefineValue(ServiceAuthorize serviceAuthorize) {
-        EstablishmentEvent establishmentEvent =
-                establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
-                        serviceAuthorize.establishmentEventId());
-        serviceAuthorize.setEventValues(establishmentEvent);
+        serviceAuthorize.getAuthorizeEvents().forEach(serviceAuthorizeEvent -> {
+            EstablishmentEvent establishmentEvent =
+                    establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
+                            serviceAuthorizeEvent.establishmentEventId());
+            serviceAuthorizeEvent.defineValidEventValues(establishmentEvent);
+            serviceAuthorize.validateEvent(serviceAuthorizeEvent.getEventValue());
+        });
+
     }
 
     private PaymentInstrument getValidContractorPaymentInstrument(ServiceAuthorize serviceAuthorize, Contract contract){

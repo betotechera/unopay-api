@@ -8,7 +8,7 @@ import static java.lang.String.valueOf;
 
 public class NumberGenerator {
 
-    private static final int DEFAULT_SIZE = 16;
+    private static final int DEFAULT_SIZE = 12;
     private CrudRepository repository;
     public static final String ZERO = "0";
 
