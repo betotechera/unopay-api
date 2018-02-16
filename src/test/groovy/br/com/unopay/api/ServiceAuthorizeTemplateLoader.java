@@ -45,7 +45,7 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(ServiceAuthorizeEvent.class).addTemplate("valid", new Rule(){{
-            add("establishmentEvent",one(EstablishmentEvent.class, "valid"));
+            add("establishmentEvent",one(EstablishmentEvent.class, "withoutReferences"));
             add("serviceType",uniqueRandom(ServiceType.class));
             add("event",one(Event.class, "valid"));
             add("eventValue",random(BigDecimal.class, range(1, 20)));
