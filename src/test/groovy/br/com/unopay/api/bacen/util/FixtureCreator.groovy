@@ -106,6 +106,17 @@ class FixtureCreator {
         user.with { password = generatePassword; it }
     }
 
+    UserDetail createContractorUser(contractorUnderTest = createContractor("valid")) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
+            {
+                add("contractor", contractorUnderTest)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
     UserDetail createUser(String email = null) {
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
         UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("with-group", new Rule() {
@@ -527,8 +538,8 @@ class FixtureCreator {
         Fixture.from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
     }
 
-    AuthorizedMember createPersistedAuthorizedMember() {
-        def contract = createPersistedContract()
+    AuthorizedMember createPersistedAuthorizedMember(contractor = createContractor("valid")) {
+        def contract = createPersistedContract(contractor)
         return Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
             add("contract", contract)

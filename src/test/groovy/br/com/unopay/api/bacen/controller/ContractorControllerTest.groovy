@@ -2,6 +2,8 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.six2six.fixturefactory.function.impl.RegexFunction
+import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
@@ -11,6 +13,9 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
+import org.springframework.security.crypto.password.PasswordEncoder
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -38,6 +43,9 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
+
+    @Autowired
+    PasswordEncoder passwordEncoder
 
     void 'should create contractor'() {
         given:
@@ -266,6 +274,20 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.items', notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].product', is(notNullValue())))
+    }
+
+    void 'should find my authorizedMember'() {
+        given:
+        def contractorUser = fixtureCreator.createContractorUser()
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember(contractorUser.contractor)
+        def id = authorizedMember.id
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        when:
+        def result = this.mvc.perform(get("/contractors/me/authorized-members/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(equalTo(authorizedMember.name))))
     }
 
     Contractor getContractor() {
