@@ -200,7 +200,12 @@ public class ServiceAuthorize implements Serializable {
         situation = TransactionSituation.AUTHORIZED;
     }
 
-
+    public boolean withoutEventQuantityWheRequired(){
+        return getAuthorizeEvents().stream()
+                .anyMatch(serviceAuthorizeEvent ->
+                        serviceAuthorizeEvent.eventRequestQuantity() &&
+                                serviceAuthorizeEvent.eventQuantityNotDefined());
+    }
     public ServiceAuthorize defineBatchClosingDate(){
         this.batchClosingDateTime = new Date();
         return this;

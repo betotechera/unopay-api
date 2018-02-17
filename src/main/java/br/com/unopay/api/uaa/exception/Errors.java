@@ -422,6 +422,10 @@ public final class Errors {
     public static final UnovationError INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
             new UnovationError("INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Instrument not qualified for this contract");
+    public static final UnovationError EVENT_QUANTITY_REQUIRED =
+            new UnovationError("EVENT_QUANTITY_REQUIRED",
+                    "Event quantity required");
+
 
 
     /* batch closing */

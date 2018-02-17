@@ -72,9 +72,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         establishmentUnderTest = fixtureCreator.createEstablishment()
         establishmentEventUnderTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
                 paymentInstrumentUnderTest.availableBalance)
-        instrumentBalanceService.add(paymentInstrumentUnderTest.id, establishmentEventUnderTest.value)
-        def balance = instrumentBalanceService.findByInstrumentId(paymentInstrumentUnderTest.id)
-        paymentInstrumentUnderTest.setBalance(balance)
+        updateBalance(paymentInstrumentUnderTest, establishmentEventUnderTest)
     }
 
     void 'new service authorize should be created'() {
@@ -87,6 +85,66 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'given a event with request quantity and service authorize event without quantity should return error'() {
+        given:
+        fixtureCreator.createNegotiation(contractUnderTest.hirer, contractUnderTest.product)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS, true)
+        def establishmentEvent = fixtureCreator.createEstablishmentEvent(establishmentUnderTest, null, event)
+        updateBalance(paymentInstrumentUnderTest, establishmentEvent)
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
+            add("contract",contractUnderTest)
+            add("contractor",contractorUnderTest)
+            add("paymentInstrument",paymentInstrumentUnderTest)
+            add("authorizeEvents",[new ServiceAuthorizeEvent(establishmentEvent)])
+            add("establishment",establishmentUnderTest)
+        }})
+        serviceAuthorize.authorizeEvents.each { it.eventQuantity = quantity }
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_QUANTITY_REQUIRED'
+
+        where:
+        _ | quantity
+        _ | null
+        _ | 0
+        _ | -1
+    }
+
+
+    void 'given a event with request quantity and service authorize event with quantity should be create with valid value'() {
+        given:
+        fixtureCreator.createNegotiation(contractUnderTest.hirer, contractUnderTest.product)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS, true)
+        def establishmentEvent = fixtureCreator.createEstablishmentEvent(establishmentUnderTest, null, event)
+        establishmentEvent.value = establishmentEvent.value * quantity
+        updateBalance(paymentInstrumentUnderTest, establishmentEvent)
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){{
+            add("contract",contractUnderTest)
+            add("contractor",contractorUnderTest)
+            add("paymentInstrument",paymentInstrumentUnderTest)
+            add("authorizeEvents",[new ServiceAuthorizeEvent(establishmentEvent)])
+            add("establishment",establishmentUnderTest)
+        }})
+
+        serviceAuthorize.authorizeEvents.find { it.eventQuantity = quantity }
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.value == Rounder.round(serviceAuthorize.authorizeEvents.find().eventValue * quantity)
+
+        where:
+        _ | quantity
+        _ | 5
+        _ | 15
+        _ | 2
     }
 
     void 'given a service authorize without active hirer negotiation should not be created'() {
@@ -839,5 +897,11 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             paymentInstrument.password = pwd
         }
         serviceAuthorize
+    }
+
+    private void updateBalance(PaymentInstrument paymentInstrumentUnderTest, EstablishmentEvent establishmentEventUnderTest) {
+        instrumentBalanceService.add(paymentInstrumentUnderTest.id, establishmentEventUnderTest.value)
+        def balance = instrumentBalanceService.findByInstrumentId(paymentInstrumentUnderTest.id)
+        paymentInstrumentUnderTest.setBalance(balance)
     }
 }

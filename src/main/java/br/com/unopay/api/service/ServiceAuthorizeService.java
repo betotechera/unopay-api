@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
@@ -107,7 +108,7 @@ public class ServiceAuthorizeService {
                     establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
                             serviceAuthorizeEvent.establishmentEventId());
             serviceAuthorizeEvent.defineValidEventValues(establishmentEvent);
-            serviceAuthorize.addEventValue(serviceAuthorizeEvent.getEventValue());
+            serviceAuthorize.addEventValue(serviceAuthorizeEvent.eventValueByQuantity());
         });
         serviceAuthorize.checkValueWhenRequired();
     }
@@ -115,6 +116,9 @@ public class ServiceAuthorizeService {
     private void checkEvents(ServiceAuthorize serviceAuthorize) {
         if(!serviceAuthorize.hasEvents()){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENTS_REQUIRED);
+        }
+        if(serviceAuthorize.withoutEventQuantityWheRequired()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_REQUIRED);
         }
     }
 

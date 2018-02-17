@@ -374,12 +374,13 @@ class FixtureCreator {
             }})
     }
 
-    Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS) {
+    Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS, Boolean requestQuantity = false) {
         Service serviceUnderTest = from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
         }})
         from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("service", serviceUnderTest)
+            add("requestQuantity", requestQuantity)
         }})
     }
     Product createProduct(PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),

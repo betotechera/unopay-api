@@ -6,6 +6,7 @@ create table service_authorize_event (
     service_type varchar(150) not null,
     event_value decimal(20,2) not null,
     value_fee decimal(20,2) not null,
+    event_quantity decimal(20,2),
     created_date_time TIMESTAMP not null,
     version INTEGER,
     constraint fk_serv_auth_events_event foreign key(establishment_event_id) references establishment_event(id),

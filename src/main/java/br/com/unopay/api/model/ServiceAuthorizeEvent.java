@@ -80,6 +80,10 @@ public class ServiceAuthorizeEvent {
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private BigDecimal valueFee;
 
+    @Column(name = "event_quantity")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private BigDecimal eventQuantity;
+
     @Column(name = "created_date_time")
     @Temporal(TemporalType.TIMESTAMP)
     @JsonView({Views.ServiceAuthorize.List.class})
@@ -105,5 +109,25 @@ public class ServiceAuthorizeEvent {
             log.info("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED {}", eventValue);
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
         }
+    }
+
+    public boolean eventQuantityNotDefined(){
+        return getEventQuantity() == null ||
+                getEventQuantity().compareTo(BigDecimal.ZERO) == 0 ||
+                getEventQuantity().compareTo(BigDecimal.ZERO) < 0 ;
+    }
+
+    public boolean eventRequestQuantity(){
+        if(getEstablishmentEvent() != null && getEstablishmentEvent().getEvent() != null){
+            return getEstablishmentEvent().getEvent().isRequestQuantity();
+        }
+        return false;
+    }
+
+    public BigDecimal eventValueByQuantity(){
+        if(eventQuantityNotDefined()){
+            return this.eventValue;
+        }
+        return this.eventValue.multiply(getEventQuantity());
     }
 }

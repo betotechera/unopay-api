@@ -29,7 +29,6 @@ class ServiceAuthorizeEventTest extends FixtureApplicationTest{
         _ | valueUnderTest
         _ | 0.0
         _ | -0.1
-
     }
 
     void 'should define authorize event from establishment event'(){
