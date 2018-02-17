@@ -25,6 +25,7 @@ class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getUserAccessToken()
         ServiceAuthorize authorize = fixtureCreator.createServiceAuthorize()
+        fixtureCreator.createNegotiation(authorize.getContract().getHirer(), authorize.getContract().product)
 
         when:
         def result = this.mvc.perform(post('/service-authorizations/?access_token={access_token}',accessToken)
@@ -38,6 +39,7 @@ class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {
         given:
         String accessToken = getUserAccessToken()
         ServiceAuthorize authorize = fixtureCreator.createServiceAuthorize()
+        fixtureCreator.createNegotiation(authorize.getContract().getHirer(), authorize.getContract().product)
 
         def mvcResult = this.mvc.perform(post('/service-authorizations?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
