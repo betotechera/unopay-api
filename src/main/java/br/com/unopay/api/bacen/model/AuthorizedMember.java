@@ -48,7 +48,6 @@ public class AuthorizedMember implements Serializable, Updatable{
     @Column(name="birth_date")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.AuthorizedMember.List.class})
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date birthDate;
 
     @ManyToOne

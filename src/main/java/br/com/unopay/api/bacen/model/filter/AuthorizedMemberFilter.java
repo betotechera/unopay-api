@@ -31,6 +31,5 @@ public class AuthorizedMemberFilter implements Serializable{
     private String paymentInstrumentNumber;
 
     @SearchableField
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date birthDate;
 }
