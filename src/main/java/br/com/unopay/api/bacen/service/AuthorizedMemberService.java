@@ -85,13 +85,13 @@ public class AuthorizedMemberService {
         save(current);
     }
 
-    public void updateForContractor(String id, Contractor contractor, AuthorizedMember authorizedMember) {
-        AuthorizedMember current = findByIdForContractor(id, contractor);
+    public void updateForHirer(String id, Hirer hirer, AuthorizedMember authorizedMember) {
+        AuthorizedMember current = findByIdForHirer(id, hirer);
         update(current, authorizedMember);
     }
 
-    public void deleteForContractor(String id, Contractor contractor) {
-        AuthorizedMember toBeDeleted = findByIdForContractor(id, contractor);
+    public void deleteForHirer(String id, Hirer hirer) {
+        AuthorizedMember toBeDeleted = findByIdForHirer(id, hirer);
         delete(toBeDeleted.getId());
     }
 

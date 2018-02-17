@@ -210,13 +210,13 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'given knoen AuthorizedMember should update for contractor'() {
+    void 'given knoen AuthorizedMember should update for hirer'() {
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         authorizedMember.name = "new name"
-        def contractor = authorizedMember.contract.contractor
+        def hirer = authorizedMember.contract.hirer
         when:
-        service.updateForContractor(authorizedMember.id, contractor, authorizedMember)
+        service.updateForHirer(authorizedMember.id, hirer, authorizedMember)
 
         then:
         def found = service.findById(authorizedMember.id)
@@ -245,11 +245,11 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
-    void 'should delete AuthorizedMember by Contractor'(){
+    void 'should delete AuthorizedMember by Hirer'(){
         given:
         def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         when:
-        service.deleteForContractor(authorizedMember.id, authorizedMember.contract.contractor)
+        service.deleteForHirer(authorizedMember.id, authorizedMember.contract.hirer)
         service.findById(authorizedMember.id)
         then:
         def ex = thrown(NotFoundException)
