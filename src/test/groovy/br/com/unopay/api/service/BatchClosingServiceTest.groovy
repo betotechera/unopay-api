@@ -782,7 +782,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             def establishment = contracts.size() != establishments.size() ? establishments.find() : establishments.get(index-1)
             def instrumentCredit = fixtureCreator.createInstrumentToContract(contracts.get(index-1))
             def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment, dateAsText)
-            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.sumEventsValues() * numberOfAuthorizations)
+            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.value * numberOfAuthorizations)
             (1..numberOfAuthorizations).each {
                 ServiceAuthorize cloned = BeanUtils.cloneBean(serviceAuthorize)
                 serviceAuthorizeService.save(cloned.with {id = null; authorizeEvents?.find()?.id = null;  it})
