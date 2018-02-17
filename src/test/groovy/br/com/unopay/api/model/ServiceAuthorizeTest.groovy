@@ -3,11 +3,8 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.bacen.model.EstablishmentEvent
-import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import spock.lang.Unroll
 
 class ServiceAuthorizeTest  extends FixtureApplicationTest {
 
@@ -24,9 +21,10 @@ class ServiceAuthorizeTest  extends FixtureApplicationTest {
 
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("paymentInstrument", paymentInstrument)
+            add("value", 100.0)
         }})
         when:
-        serviceAuthorize.validateEvent(100.0)
+        serviceAuthorize.checkValueWhenRequired()
 
         then:
         def ex = thrown(UnprocessableEntityException)
@@ -44,9 +42,10 @@ class ServiceAuthorizeTest  extends FixtureApplicationTest {
         }})
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("paymentInstrument", paymentInstrument)
+            add("value", 99.0)
         }})
         when:
-        serviceAuthorize.validateEvent(99.9)
+        serviceAuthorize.checkValueWhenRequired()
 
         then:
         notThrown(UnprocessableEntityException)

@@ -29,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
@@ -74,7 +75,7 @@ public class ServiceAuthorizeService {
         authorize.setReferences(currentUser, paymentInstrument, contract);
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
-        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.eventValue());
+        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.contextualValue());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         return repository.save(authorize);
     }
@@ -88,14 +89,22 @@ public class ServiceAuthorizeService {
     }
 
     private void checkEventAndDefineValue(ServiceAuthorize serviceAuthorize) {
+        checkEvents(serviceAuthorize);
+        serviceAuthorize.resetValue();
         serviceAuthorize.getAuthorizeEvents().forEach(serviceAuthorizeEvent -> {
             EstablishmentEvent establishmentEvent =
                     establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
                             serviceAuthorizeEvent.establishmentEventId());
             serviceAuthorizeEvent.defineValidEventValues(establishmentEvent);
-            serviceAuthorize.validateEvent(serviceAuthorizeEvent.getEventValue());
+            serviceAuthorize.addEventValue(serviceAuthorizeEvent.getEventValue());
         });
+        serviceAuthorize.checkValueWhenRequired();
+    }
 
+    private void checkEvents(ServiceAuthorize serviceAuthorize) {
+        if(!serviceAuthorize.hasEvents()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENTS_REQUIRED);
+        }
     }
 
     private PaymentInstrument getValidContractorPaymentInstrument(ServiceAuthorize serviceAuthorize, Contract contract){

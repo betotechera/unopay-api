@@ -88,6 +88,42 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void """given a service with event value greater than instrument balance
+                and partial payment defined should be created"""() {
+        given:
+        def additionalValue = 100
+        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
+                paymentInstrumentUnderTest.availableBalance + additionalValue)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
+        serviceAuthorize.partialPayment = true
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.paymentInstrument.availableBalance == BigDecimal.ZERO
+    }
+
+    void """given a service with event value greater than instrument balance
+                and partial payment not defined should not be created"""() {
+        given:
+        def additionalValue = 100
+        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
+                paymentInstrumentUnderTest.availableBalance + additionalValue)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
+        serviceAuthorize.partialPayment = false
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
+    }
+
     void 'new service authorize should be created with product fee value'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -97,7 +133,50 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.authorizeEvents.collect { it.valueFee }.sum() == Rounder.round(establishmentEventUnderTest.event.service.feeVal)
+        result.authorizeEvents.collect { it.valueFee }.sum() ==
+                Rounder.round(establishmentEventUnderTest.event.service.feeVal)
+    }
+
+    void 'new service authorize should be created total of events'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.value)
+    }
+
+    void 'given a service authorize with defined value should be created without defined value'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize().with { value = 100; it }
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.value)
+    }
+
+    void 'when try create authorize without events should return error'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.authorizeEvents = invalidVallue
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'EVENTS_REQUIRED'
+
+        where:
+        _ | invalidVallue
+        _ | null
+        _ | []
     }
 
     void 'when new service authorize created should generate authorization number'() {

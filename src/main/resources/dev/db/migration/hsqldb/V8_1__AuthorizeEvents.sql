@@ -20,3 +20,5 @@ alter table service_authorize drop event_id;
 alter table service_authorize drop service_type;
 alter table service_authorize drop event_value;
 alter table service_authorize add value decimal(20,2) not null;
+alter table service_authorize add partial_payment varchar(20);
+alter table service_authorize add exceptional_circumstance varchar(20);

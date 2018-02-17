@@ -2,12 +2,14 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -98,7 +100,7 @@ public class ServiceAuthorize implements Serializable {
 
     @Column(name = "value")
     @JsonView({Views.ServiceAuthorize.Detail.class})
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
 
     @Column(name = "cancellation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
@@ -124,6 +126,12 @@ public class ServiceAuthorize implements Serializable {
     @JsonManagedReference
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Set<ServiceAuthorizeEvent> authorizeEvents;
+
+    @Column(name = "partial_payment")
+    private Boolean partialPayment;
+
+    @Column(name = "exceptional_circumstance")
+    private Boolean exceptionalCircumstance;
 
     @JsonIgnore
     @Column(name = "typed_password")
@@ -217,12 +225,26 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
-    public void validateEvent(BigDecimal eventValue) {
-        if(getPaymentInstrument().getAvailableBalance().compareTo(eventValue) < 0){
+    public void addEventValue(BigDecimal value){
+        this.value = this.value.add(value);
+    }
+
+    public void checkValueWhenRequired() {
+        if(!hasPartialPayment() && balanceLessThanValue()){
             log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
-                    getPaymentInstrument().getAvailableBalance(), eventValue);
+                    getPaymentInstrument().getAvailableBalance(), value);
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
+    }
+
+    @JsonProperty
+    public BigDecimal eventValue(){
+        return this.value;
+    }
+
+    @JsonProperty
+    public Event event(){
+        return authorizeEvents.stream().map(ServiceAuthorizeEvent::getEvent).findFirst().orElse(null);
     }
 
     @SneakyThrows
@@ -255,8 +277,31 @@ public class ServiceAuthorize implements Serializable {
         return ObjectUtils.clone(this.batchClosingDateTime);
     }
 
-    public BigDecimal eventValue() {
+    public BigDecimal sumEventsValues() {
         return authorizeEvents.stream()
                 .map(ServiceAuthorizeEvent::getEventValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    public boolean hasEvents() {
+        return authorizeEvents != null && !authorizeEvents.isEmpty();
+    }
+
+    public void resetValue() {
+        this.value = BigDecimal.ZERO;
+    }
+
+    public BigDecimal contextualValue() {
+        if(hasPartialPayment() && balanceLessThanValue()){
+            return getPaymentInstrument().getAvailableBalance();
+        }
+        return this.value;
+    }
+
+    private boolean balanceLessThanValue() {
+        return getPaymentInstrument().getAvailableBalance().compareTo(value) < 0;
+    }
+
+    private boolean hasPartialPayment() {
+        return partialPayment != null && partialPayment;
     }
 }
