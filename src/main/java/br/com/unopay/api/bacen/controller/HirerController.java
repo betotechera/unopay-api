@@ -407,4 +407,11 @@ public class HirerController {
         log.info("updating authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
         authorizedMemberService.updateForHirer(id, hirer, authorizedMember);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.DELETE)
+    public void removeAuthorizedNumber(Hirer hirer, @PathVariable  String id) {
+        log.info("removing authorized-member id={}", id);
+        authorizedMemberService.deleteForHirer(id, hirer);
+    }
 }
