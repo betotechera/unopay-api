@@ -140,7 +140,7 @@ public class AuthorizedMember implements Serializable, Updatable{
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
         }
 
-        if(validInstrumentContractor()) {
+        if(!validInstrumentContractor()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
     }
