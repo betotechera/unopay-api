@@ -398,4 +398,13 @@ public class HirerController {
         log.info("get authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
         return authorizedMemberService.findByIdForHirer(id, hirer);
     }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.PUT)
+    public void updateAuthorizedMember(Hirer hirer, @PathVariable  String id, @Validated(Update.class)
+    @RequestBody AuthorizedMember authorizedMember) {
+        log.info("updating authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
+        authorizedMemberService.updateForHirer(id, hirer, authorizedMember);
+    }
 }
