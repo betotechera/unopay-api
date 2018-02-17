@@ -63,13 +63,13 @@ public class AuthorizedMember implements Serializable, Updatable{
 
     @Column(name="gender")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.AuthorizedMember.List.class})
+    @JsonView({Views.AuthorizedMember.Detail.class})
     @Size(max=50)
     private String gender;
 
     @Column(name="relatedness")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.AuthorizedMember.List.class})
+    @JsonView({Views.AuthorizedMember.Detail.class})
     @Size(max=50)
     private String relatedness;
 
