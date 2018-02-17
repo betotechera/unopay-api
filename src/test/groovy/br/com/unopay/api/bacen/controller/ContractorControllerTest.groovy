@@ -290,19 +290,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(equalTo(authorizedMember.name))))
     }
 
-    void 'should delete my authorizedMember'() {
-        given:
-        def contractorUser = fixtureCreator.createContractorUser()
-        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember(contractorUser.contractor)
-        def id = authorizedMember.id
-        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
-        when:
-        def result = this.mvc.perform(delete("/contractors/me/authorized-members/{id}?access_token={access_token}",id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isNoContent())
-    }
-
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
     }
