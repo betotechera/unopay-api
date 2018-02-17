@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -137,13 +136,21 @@ public class AuthorizedMember implements Serializable, Updatable{
 
     private void validatePaymentInstrument() {
 
-        if(paymentInstrument == null) {
+        if(instrumentRequired()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
         }
 
-        if(!paymentInstrument.contractorId().equals(contract.getContractor().getId())) {
+        if(validInstrumentContractor()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
+    }
+
+    private boolean instrumentRequired() {
+        return paymentInstrument == null;
+    }
+
+    private boolean validInstrumentContractor(){
+        return paymentInstrument.contractorId().equals(contract.getContractor().getId());
     }
 
     public String paymentInstrumentId() {
