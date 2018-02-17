@@ -2,6 +2,8 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
@@ -251,5 +253,14 @@ public class ContractorController {
     public AuthorizedMember getAuthorizedMember(Contractor contractor, @PathVariable String id) {
         log.info("get authorizedMember={} for contractor={}", id, contractor.getPerson().documentNumber());
         return authorizedMemberService.findByIdForContractor(id, contractor);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/authorized-members", method = RequestMethod.GET)
+    public Page<AuthorizedMember> getAuthorizedMember(Contractor contractor, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for contractor={}", contractor.getPerson().documentNumber());
+        filter.setContractorId(contractor.getId());
+        return authorizedMemberService.findByFilter(filter, pageable);
     }
 }
