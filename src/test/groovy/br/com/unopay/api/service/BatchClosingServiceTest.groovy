@@ -693,8 +693,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'should create batch closing value by establishment'(){
         given:
-        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(1, "valid")
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         Map totalByHirer = createServiceAuthorizations(contracts, establishment, 3)
 
         when:
@@ -707,8 +707,8 @@ class BatchClosingServiceTest extends SpockApplicationTests {
 
     def 'should create batch closing value by hirer'(){
         given:
-        List<Contract> contracts = Fixture.from(Contract.class).uses(jpaProcessor).gimme(2, "valid")
-        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        List<Contract> contracts = from(Contract.class).uses(jpaProcessor).gimme(2, "valid")
+        Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         Map totalByHirer = createServiceAuthorizations(contracts, establishment, 3)
 
         when:
@@ -782,10 +782,10 @@ class BatchClosingServiceTest extends SpockApplicationTests {
             def establishment = contracts.size() != establishments.size() ? establishments.find() : establishments.get(index-1)
             def instrumentCredit = fixtureCreator.createInstrumentToContract(contracts.get(index-1))
             def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment, dateAsText)
-            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.eventValue * numberOfAuthorizations)
+            sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.value * numberOfAuthorizations)
             (1..numberOfAuthorizations).each {
                 ServiceAuthorize cloned = BeanUtils.cloneBean(serviceAuthorize)
-                serviceAuthorizeService.save(cloned.with {id = null; it})
+                serviceAuthorizeService.save(cloned.with {id = null; authorizeEvents?.find()?.id = null;  it})
             }
         }
         return sumValueByHirer

@@ -260,7 +260,7 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(EstablishmentEvent.class).addTemplate("withoutReferences", new Rule(){{
-            add("value", random(BigDecimal.class, range(1,200)));
+            add("value", random(BigDecimal.class, range(1,10)));
             add("expiration", instant("1 day from now"));
         }});
 

@@ -48,7 +48,7 @@ class EstablishmentEventControllerTest extends AuthServerApplicationTests {
     void 'valid establishment should be created'() {
         given:
         String accessToken = getUserAccessToken()
-        def event = fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
         def establishment = fixtureCreator.createEstablishment()
         EstablishmentEvent establishmentEvent = Fixture.from(EstablishmentEvent.class)
                                                                         .gimme("withoutReferences", new Rule(){{

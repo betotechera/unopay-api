@@ -89,7 +89,7 @@ public class BatchClosingItem implements Serializable, Updatable {
 
     public BigDecimal eventValue(){
         if(getServiceAuthorize() != null) {
-            return getServiceAuthorize().getEventValue();
+            return getServiceAuthorize().eventValue();
         }
         return null;
     }

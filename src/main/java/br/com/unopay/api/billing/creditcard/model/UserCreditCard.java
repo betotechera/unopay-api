@@ -181,9 +181,10 @@ public class UserCreditCard implements Serializable, Updatable {
     }
 
     private static boolean isInteger(String s, int radix) {
-        Scanner sc = new Scanner(s.trim());
-        if(!sc.hasNextInt(radix)) return false;
-        sc.nextInt(radix);
-        return !sc.hasNext();
+        try(Scanner sc = new Scanner(s.trim())) {
+            if (!sc.hasNextInt(radix)) return false;
+            sc.nextInt(radix);
+            return !sc.hasNext();
+        }
     }
 }

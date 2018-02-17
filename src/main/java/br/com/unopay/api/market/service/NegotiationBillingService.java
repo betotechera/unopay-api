@@ -84,9 +84,7 @@ public class NegotiationBillingService {
     }
 
     public NegotiationBilling findLastNotPaidByHirer(String hirerId) {
-        return checkReturn(()->  repository
-                .findFirstByHirerNegotiationHirerIdAndStatusInOrderByCreatedDateTimeDesc(hirerId,
-                        Arrays.asList(CANCELED, PAYMENT_DENIED, WAITING_PAYMENT)));
+        return checkReturn(()-> findOptionalLastNotPaidByHirer(hirerId));
     }
 
     public Optional<NegotiationBilling> findOptionalLastNotPaidByHirer(String hirerId) {

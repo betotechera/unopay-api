@@ -2,32 +2,33 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -38,10 +39,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
-import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 
 @Slf4j
 @Data
@@ -51,7 +49,6 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTABLE;
 public class ServiceAuthorize implements Serializable {
 
     public static final long serialVersionUID = 1L;
-
 
     public ServiceAuthorize(){}
 
@@ -87,43 +84,6 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.ServiceAuthorize.List.class})
     private Contractor contractor;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "service_type")
-    @JsonView({Views.ServiceAuthorize.Detail.class, Views.ServiceAuthorize.List.class})
-    private ServiceType serviceType;
-
-    @ManyToOne
-    @JoinColumn(name="event_id")
-    @JsonView({Views.ServiceAuthorize.Detail.class, Views.ServiceAuthorize.List.class})
-    private Event event;
-
-    @Transient
-    @NotNull(groups = {Reference.class})
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private EstablishmentEvent establishmentEvent;
-
-    @Column(name = "event_quantity")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private Double eventQuantity;
-
-    @Column(name = "event_value")
-    @JsonView({Views.ServiceAuthorize.List.class})
-    private BigDecimal eventValue;
-
-    @Column(name = "value_fee")
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private BigDecimal valueFee;
-
-    @Column(name = "solicitation_date_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private Date solicitationDateTime;
-
-    @Column(name = "credit_insertion_type")
-    @Enumerated(EnumType.STRING)
-    @JsonView({Views.ServiceAuthorize.Detail.class})
-    private CreditInsertionType creditInsertionType;
-
     @ManyToOne
     @NotNull(groups = {Reference.class})
     @JoinColumn(name="payment_instrument_id")
@@ -137,6 +97,10 @@ public class ServiceAuthorize implements Serializable {
     @Column(name = "current_inst_credit_balance")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private BigDecimal currentInstrumentCreditBalance;
+
+    @Column(name = "value")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private BigDecimal value = BigDecimal.ZERO;
 
     @Column(name = "cancellation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
@@ -156,6 +120,18 @@ public class ServiceAuthorize implements Serializable {
     @Column(name = "batch_closing_date_time")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Date batchClosingDateTime;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="service_authorize_id")
+    @JsonManagedReference
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private Set<ServiceAuthorizeEvent> authorizeEvents;
+
+    @Column(name = "partial_payment")
+    private Boolean partialPayment;
+
+    @Column(name = "exceptional_circumstance")
+    private Boolean exceptionalCircumstance;
 
     @JsonIgnore
     @Column(name = "typed_password")
@@ -217,47 +193,13 @@ public class ServiceAuthorize implements Serializable {
         }
     }
 
-    public boolean unAuthorizeService(){
-        return Arrays.asList(ServiceType.ELECTRONIC_TOLL, ServiceType.FREIGHT).contains(serviceType);
-    }
-
-    public void validateServiceType(){
-        if(unAuthorizeService()){
-            throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_NOT_ACCEPTABLE);
-        }
-    }
-
-    public void validateEvent() {
-        if(event != null && event.isRequestQuantity() && (eventQuantity == null || eventQuantity <= 0)){
-            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED);
-        }
-        if(eventValue == null || eventValue.compareTo(BigDecimal.ZERO) < 0 ||
-                eventValue.compareTo(BigDecimal.ZERO) == 0){
-            log.info("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED {}", eventValue);
-            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED);
-        }
-        if(getPaymentInstrument().getAvailableBalance().compareTo(eventValue) < 0){
-            log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
-                    getPaymentInstrument().getAvailableBalance(), eventValue);
-            throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
-        }
-    }
-
     public void setMeUp(PaymentInstrument paymentInstrument) {
         authorizationDateTime = new Date();
-        solicitationDateTime = new Date();
         setLastInstrumentCreditBalance(paymentInstrument.getAvailableBalance());
-        setCurrentInstrumentCreditBalance(paymentInstrument.getAvailableBalance().subtract(getEventValue()));
+        setCurrentInstrumentCreditBalance(paymentInstrument.getAvailableBalance().subtract(eventValue()));
         situation = TransactionSituation.AUTHORIZED;
     }
 
-    public void setEventValues(EstablishmentEvent establishmentEvent) {
-        this.setEvent(establishmentEvent.getEvent());
-        this.setServiceType(establishmentEvent.serviceType());
-        this.setEventValue(establishmentEvent.getValue());
-        this.validateEvent();
-        this.setValueFee(event.serviceFeeVal());
-    }
 
     public ServiceAuthorize defineBatchClosingDate(){
         this.batchClosingDateTime = new Date();
@@ -283,6 +225,28 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public void addEventValue(BigDecimal value){
+        this.value = this.value.add(value);
+    }
+
+    public void checkValueWhenRequired() {
+        if(!hasPartialPayment() && balanceLessThanValue()){
+            log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
+                    getPaymentInstrument().getAvailableBalance(), value);
+            throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
+        }
+    }
+
+    @JsonProperty
+    public BigDecimal eventValue(){
+        return this.value;
+    }
+
+    @JsonProperty
+    public Event event(){
+        return authorizeEvents.stream().map(ServiceAuthorizeEvent::getEvent).findFirst().orElse(null);
+    }
+
     @SneakyThrows
     public byte[] paymentInstrumentPasswordAsByte(){
         return getPaymentInstrument().getPassword().getBytes();
@@ -290,10 +254,6 @@ public class ServiceAuthorize implements Serializable {
 
     public void setAuthorizationDateTime(Date dateTime){
         this.authorizationDateTime = ObjectUtils.clone(dateTime);
-    }
-
-    public void setSolicitationDateTime(Date dateTime){
-        this.solicitationDateTime = ObjectUtils.clone(dateTime);
     }
 
     public void setCancellationDateTime(Date dateTime){
@@ -308,9 +268,6 @@ public class ServiceAuthorize implements Serializable {
         return ObjectUtils.clone(this.authorizationDateTime);
     }
 
-    public Date getSolicitationDateTime(){
-        return ObjectUtils.clone(this.solicitationDateTime);
-    }
 
     public Date getCancellationDateTime(){
         return ObjectUtils.clone(this.cancellationDateTime);
@@ -320,8 +277,35 @@ public class ServiceAuthorize implements Serializable {
         return ObjectUtils.clone(this.batchClosingDateTime);
     }
 
-    public String establishmentEventId() {
-        return establishmentEvent != null ? establishmentEvent.getId() : "";
+    public BigDecimal sumEventsValues() {
+        return authorizeEvents.stream()
+                .map(ServiceAuthorizeEvent::getEventValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
+    public boolean hasEvents() {
+        return authorizeEvents != null && !authorizeEvents.isEmpty();
+    }
+
+    public void resetValue() {
+        this.value = BigDecimal.ZERO;
+    }
+
+    public BigDecimal contextualValue() {
+        if(hasPartialPayment() && balanceLessThanValue()){
+            return getPaymentInstrument().getAvailableBalance();
+        }
+        return this.value;
+    }
+
+    private boolean balanceLessThanValue() {
+        return getPaymentInstrument().getAvailableBalance().compareTo(value) < 0;
+    }
+
+    public boolean hasPartialPayment() {
+        return partialPayment != null && partialPayment;
+    }
+
+    public boolean hasExceptionalCircumstance() {
+        return exceptionalCircumstance != null && exceptionalCircumstance;
+    }
 }

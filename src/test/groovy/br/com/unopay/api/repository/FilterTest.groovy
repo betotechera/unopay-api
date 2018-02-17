@@ -6,9 +6,9 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Service
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT
-import static br.com.unopay.api.bacen.model.ServiceType.FREIGHT_RECEIPT
-import static br.com.unopay.api.bacen.model.ServiceType.FUEL_ALLOWANCE
+import static br.com.unopay.api.bacen.model.ServiceType.DIAGNOSIS_AND_THERAPY
+import static br.com.unopay.api.bacen.model.ServiceType.DOCTORS_APPOINTMENTS
+import static br.com.unopay.api.bacen.model.ServiceType.MEDICINES
 import br.com.unopay.api.bacen.model.filter.HirerFilter
 import br.com.unopay.api.bacen.model.filter.ServiceFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
@@ -139,11 +139,11 @@ class FilterTest extends SpockApplicationTests {
         given:
         Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
             add("serviceTypes",
-                    uniqueRandom([FUEL_ALLOWANCE,FREIGHT], [FREIGHT_RECEIPT,FREIGHT], [FUEL_ALLOWANCE,FREIGHT_RECEIPT]))
+                    uniqueRandom([DOCTORS_APPOINTMENTS, ], [DIAGNOSIS_AND_THERAPY, MEDICINES], [DOCTORS_APPOINTMENTS, DIAGNOSIS_AND_THERAPY]))
         }})
         def filter = new ContractFilter()
 
-        filter.with { serviceTypes = [FUEL_ALLOWANCE] }
+        filter.with { serviceTypes = [DOCTORS_APPOINTMENTS] as Set}
 
         when:
         def result = repository.findAll(filter)
