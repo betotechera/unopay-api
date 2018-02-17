@@ -2,8 +2,6 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.six2six.fixturefactory.function.impl.RegexFunction
-import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
@@ -13,7 +11,6 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.api.uaa.model.UserDetail
 import org.springframework.security.crypto.password.PasswordEncoder
 
 import static org.hamcrest.Matchers.equalTo

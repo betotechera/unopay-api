@@ -2,7 +2,6 @@ package br.com.unopay.api.bacen.model.filter;
 
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
