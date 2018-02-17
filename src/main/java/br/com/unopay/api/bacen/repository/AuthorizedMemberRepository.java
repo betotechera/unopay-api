@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface AuthorizedMemberRepository extends UnovationFilterRepository<AuthorizedMember,String, AuthorizedMemberFilter> {
     Optional<AuthorizedMember> findById(String id);
     Optional<AuthorizedMember> findByIdAndContractContractorId(String id, String contractorId);

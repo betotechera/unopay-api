@@ -78,6 +78,13 @@ public class AuthorizedMemberService {
         update(current, authorizedMember);
     }
 
+    private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
+        current.updateMe(authorizedMember);
+        current.validateMe();
+        validateReferences(current);
+        save(current);
+    }
+
     public void updateForContractor(String id, Contractor contractor, AuthorizedMember authorizedMember) {
         AuthorizedMember current = findByIdForContractor(id, contractor);
         update(current, authorizedMember);
@@ -86,13 +93,6 @@ public class AuthorizedMemberService {
     public void deleteForContractor(String id, Contractor contractor) {
         AuthorizedMember toBeDeleted = findByIdForContractor(id, contractor);
         delete(toBeDeleted.getId());
-    }
-
-    private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
-        current.updateMe(authorizedMember);
-        current.validateMe();
-        validateReferences(current);
-        save(current);
     }
 
     public void delete(String id) {
@@ -104,16 +104,6 @@ public class AuthorizedMemberService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private PaymentInstrument findCsvPaymentInstrument(AuthorizedMemberCsv csv) {
-        String instrumentNumber = csv.getPaymentInstrumentNumber();
-        return paymentInstrumentService.findByNumber(instrumentNumber);
-    }
-
-    private PaymentInstrument findDigitalWallet(AuthorizedMember authorizedMember) {
-        return paymentInstrumentService.findDigitalWalletByContractorDocument(
-                authorizedMember.getContract().getContractor().getDocumentNumber()).get();
-    }
-
     @SneakyThrows
     @Transactional
     public void createFromCsv(MultipartFile multipartFile) {
@@ -121,20 +111,32 @@ public class AuthorizedMemberService {
         csvLines.forEach(csvLine ->  {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
             authorizedMember.setContract(contractService.findByCode(csvLine.getContractCode()));
-
-            if(csvLine.getPaymentInstrumentNumber() != null) {
-                authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvLine));
-            }
-            else {
-                authorizedMember.setPaymentInstrument(findDigitalWallet(authorizedMember));
-            }
+            defineCsvAuthorizedMemberPaymentInstrument(csvLine, authorizedMember);
             create(authorizedMember);
         });
+    }
+
+    private void defineCsvAuthorizedMemberPaymentInstrument(AuthorizedMemberCsv csvSource, AuthorizedMember authorizedMember) {
+        if(csvSource.withInstrumentNumber()) {
+            authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvSource));
+            return;
+        }
+        authorizedMember.setPaymentInstrument(findDigitalWallet(authorizedMember));
+    }
+
+    private PaymentInstrument findDigitalWallet(AuthorizedMember authorizedMember) {
+        return paymentInstrumentService.findDigitalWalletByContractorDocument(
+                authorizedMember.getContract().getContractor().getDocumentNumber()).get();
     }
 
     private List<AuthorizedMemberCsv> getAuthorizedMemberCsvs(MultipartFile multipartFile) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         return new CsvToBeanBuilder<AuthorizedMemberCsv>(inputStreamReader)
                 .withType(AuthorizedMemberCsv.class).build().parse();
+    }
+
+    private PaymentInstrument findCsvPaymentInstrument(AuthorizedMemberCsv csv) {
+        String instrumentNumber = csv.getPaymentInstrumentNumber();
+        return paymentInstrumentService.findByNumber(instrumentNumber);
     }
 }

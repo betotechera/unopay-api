@@ -50,4 +50,8 @@ public class AuthorizedMemberCsv {
         authorizedMember.setEmail(email);
         return authorizedMember;
     }
+
+    public boolean withInstrumentNumber() {
+        return paymentInstrumentNumber != null;
+    }
 }
