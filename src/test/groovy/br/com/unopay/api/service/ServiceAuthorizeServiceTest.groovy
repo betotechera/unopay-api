@@ -88,6 +88,33 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert result.id != null
     }
 
+    void 'given a service authorize without password in exceptional circumstance should be created'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.paymentInstrument.password = null
+        serviceAuthorize.exceptionalCircumstance = true
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.id != null
+    }
+
+    void 'given a service authorize without password should not be created'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.paymentInstrument.password = null
+        serviceAuthorize.exceptionalCircumstance = false
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        thrown(UnauthorizedException)
+    }
+
     void """given a service with event value greater than instrument balance
                 and partial payment defined should be created"""() {
         given:

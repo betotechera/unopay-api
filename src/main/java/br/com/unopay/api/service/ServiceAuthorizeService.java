@@ -71,13 +71,19 @@ public class ServiceAuthorizeService {
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
         PaymentInstrument paymentInstrument = getValidContractorPaymentInstrument(authorize, contract);
-        authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));
+        defineTypedPasswordWhenRequired(authorize);
         authorize.setReferences(currentUser, paymentInstrument, contract);
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.contextualValue());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         return repository.save(authorize);
+    }
+
+    private void defineTypedPasswordWhenRequired(ServiceAuthorize authorize) {
+        if(!authorize.hasExceptionalCircumstance()) {
+            authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));
+        }
     }
 
     private Contract getValidContract(final ServiceAuthorize serviceAuthorize, final UserDetail currentUser) {
@@ -111,7 +117,9 @@ public class ServiceAuthorizeService {
         PaymentInstrument instrument = paymentInstrumentService.findById(serviceAuthorize.instrumentId());
         validateContractorInstrument(serviceAuthorize, instrument);
         updateValidPasswordWhenRequired(serviceAuthorize, instrument, contract);
-        paymentInstrumentService.checkPassword(instrument.getId(), serviceAuthorize.instrumentPassword());
+        if(!serviceAuthorize.hasExceptionalCircumstance()) {
+            paymentInstrumentService.checkPassword(instrument.getId(), serviceAuthorize.instrumentPassword());
+        }
         return instrument;
     }
 

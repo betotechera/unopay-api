@@ -301,7 +301,11 @@ public class ServiceAuthorize implements Serializable {
         return getPaymentInstrument().getAvailableBalance().compareTo(value) < 0;
     }
 
-    private boolean hasPartialPayment() {
+    public boolean hasPartialPayment() {
         return partialPayment != null && partialPayment;
+    }
+
+    public boolean hasExceptionalCircumstance() {
+        return exceptionalCircumstance != null && exceptionalCircumstance;
     }
 }
