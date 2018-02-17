@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.controller;
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
@@ -389,6 +390,15 @@ public class HirerController {
         Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.GET)
+    public Page<AuthorizedMember> getAuthorizedMember(Hirer hirer, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for hirer={}", hirer.getPerson().documentNumber());
+        filter.setHirerId(hirer.getId());
+        return authorizedMemberService.findByFilter(filter, pageable);
     }
 
     @JsonView(Views.AuthorizedMember.Detail.class)
