@@ -52,6 +52,13 @@ public class HirerNegotiationService {
                 UnovationExceptions.notFound().withErrors(HIRER_NEGOTIATION_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public HirerNegotiation findActiveByHirerAndProduct(String hirerId, String productId) {
+        Optional<HirerNegotiation> negotiation = repository.findByHirerIdAndProductIdAndActiveTrue(hirerId, productId);
+        return negotiation.orElseThrow(()->
+                UnovationExceptions.notFound()
+                        .withErrors(HIRER_NEGOTIATION_NOT_FOUND));
+    }
+
     public HirerNegotiation findByIdForHirer(String id, Hirer hirer) {
         Optional<HirerNegotiation> negotiation = repository.findByIdAndHirerId(id, hirer.getId());
         return negotiation.orElseThrow(()->

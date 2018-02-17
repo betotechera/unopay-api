@@ -13,6 +13,7 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.PaymentInstrument
@@ -86,6 +87,18 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
         then:
         assert result.id != null
+    }
+
+    void 'given a service authorize without active hirer negotiation should not be created'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize(fixtureCreator.createNegotiation())
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'HIRER_NEGOTIATION_NOT_FOUND'
     }
 
     void 'given a service authorize without password in exceptional circumstance should be created'() {
@@ -381,14 +394,16 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     void 'when user is establishment type then the contract should belongs to establishment'() {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+
         def contracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        def newContract = contracts.find()
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize(fixtureCreator.createNegotiation(newContract.hirer, newContract.product))
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
 
         def instrument = fixtureCreator.createInstrumentToProduct(contracts.find().product)
         serviceAuthorize.with {
-            contract.id = contracts.find().id
-            contractor = contracts.find().contractor
+            contract.id = newContract.id
+            contractor = newContract.contractor
             authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
             paymentInstrument = instrument
             paymentInstrument.password = instrument.password
@@ -407,7 +422,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def anotherContract = fixtureCreator
                 .createPersistedContract(fixtureCreator.createContractor(), contractUnderTest.product)
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize(fixtureCreator.createNegotiation(anotherContract.hirer, anotherContract.product))
         def instrument = fixtureCreator.createInstrumentToProduct(anotherContract.product)
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest, instrument.availableBalance)
         serviceAuthorize.with {
@@ -529,6 +544,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         instrumentBalanceService.add(instrument.id, establishmentEventTest.value)
@@ -573,7 +589,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
             contractor.person.physicalPersonDetail.birthDate = null
@@ -591,6 +607,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         Date.mixin(TimeCategory)
         Integer.mixin(TimeCategory)
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
@@ -626,7 +643,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
             authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
@@ -646,6 +663,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
@@ -672,7 +690,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
@@ -694,7 +712,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
             paymentInstrument.password = null
@@ -726,6 +744,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def expectedPassword = '1235555AAAA'
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         paymentInstrumentService.save(instrument.with { password = null; it })
@@ -754,6 +773,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def userEstablishment = fixtureCreator.createEstablishmentUser()
         def establishmentEventTest = fixtureCreator.createEstablishmentEvent(userEstablishment.establishment)
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def expectedPassword = '1235555AAAA'
         def serviceAuthorize = physicalContractorWithoutPassword(establishmentContracts.find(), userEstablishment)
         serviceAuthorize.with {
@@ -771,7 +791,10 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         passwordEncoder.matches(expectedPassword, result.password)
     }
 
-    private ServiceAuthorize createServiceAuthorize() {
+    private ServiceAuthorize createServiceAuthorize(HirerNegotiation hirerNegotiation = null) {
+        if(!hirerNegotiation) {
+            fixtureCreator.createNegotiation(contractUnderTest.hirer, contractUnderTest.product)
+        }
         return Fixture.from(ServiceAuthorize.class).gimme("valid").with {
             contract = contractUnderTest
             contractor = contractorUnderTest
@@ -804,7 +827,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
     private ServiceAuthorize serviceAuthorizeWithoutPassword(UserDetail userEstablishment, String pwd) {
         def establishmentContracts = fixtureCreator.addContractsToEstablishment(userEstablishment.establishment, productUnderTest)
-
+        establishmentContracts.each { fixtureCreator.createNegotiation(it.hirer, it.product)}
         def instrument = fixtureCreator.createInstrumentToProduct(establishmentContracts.find().product)
         paymentInstrumentService.save(instrument.with { password = null; it })
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()

@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
+import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
@@ -46,6 +47,7 @@ public class ServiceAuthorizeService {
     private UnopayEncryptor encryptor;
     private EstablishmentEventService establishmentEventService;
     private InstrumentBalanceService instrumentBalanceService;
+    private HirerNegotiationService hirerNegotiationService;
     private NumberGenerator numberGenerator;
 
     @Autowired
@@ -55,7 +57,8 @@ public class ServiceAuthorizeService {
                                    PaymentInstrumentService paymentInstrumentService,
                                    UnopayEncryptor encryptor,
                                    EstablishmentEventService establishmentEventService,
-                                   InstrumentBalanceService instrumentBalanceService) {
+                                   InstrumentBalanceService instrumentBalanceService,
+                                   HirerNegotiationService hirerNegotiationService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -64,6 +67,7 @@ public class ServiceAuthorizeService {
         this.establishmentEventService = establishmentEventService;
         this.instrumentBalanceService = instrumentBalanceService;
         this.numberGenerator = new NumberGenerator(repository);
+        this.hirerNegotiationService = hirerNegotiationService;
     }
 
     @Transactional
@@ -90,6 +94,7 @@ public class ServiceAuthorizeService {
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
         contract.checkValidFor(serviceAuthorize.getContractor());
+        hirerNegotiationService.findActiveByHirerAndProduct(contract.hirerId(), contract.productId());
         return contract;
 
     }
