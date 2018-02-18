@@ -97,7 +97,8 @@ public class HirerController {
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
                            TicketService ticketService, TransactionService transactionService,
-                           HirerNegotiationService hirerNegotiationService, AuthorizedMemberService authorizedMemberService) {
+                           HirerNegotiationService hirerNegotiationService,
+                           AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -390,6 +391,18 @@ public class HirerController {
         Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.POST)
+    public ResponseEntity<AuthorizedMember> create(Hirer hirer, @Validated(Create.class)
+                                                   @RequestBody AuthorizedMember authorizedMember) {
+        log.info("creating authorizedMember {}", authorizedMember);
+        AuthorizedMember created = authorizedMemberService.create(authorizedMember);
+        return ResponseEntity
+                .created(URI.create("/hirers/me/authorized-members/"+created.getId()))
+                .body(created);
     }
 
     @JsonView(Views.AuthorizedMember.Detail.class)

@@ -49,7 +49,6 @@ public class AuthorizedMemberController {
         return ResponseEntity
                 .created(URI.create("/authorized-members/"+created.getId()))
                 .body(created);
-
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")

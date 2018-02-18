@@ -297,6 +297,20 @@ class HirerControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.content[0].name', is(notNullValue())))
     }
 
+    void 'should create my authorizedMember'() {
+        given:
+        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        when:
+        def result = this.mvc.perform(post('/hirers/me/authorized-members?access_token={access_token}', accessToken)
+                .content(toJson(authorizedMember))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+    }
+
     void 'known me authorizedMember should be updated'() {
         given:
         def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
