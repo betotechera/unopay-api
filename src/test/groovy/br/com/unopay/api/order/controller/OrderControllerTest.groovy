@@ -34,7 +34,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
     void 'valid order should be created'() {
         given:
         String accessToken = getUserAccessToken()
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("type", OrderType.ADHESION)
@@ -51,7 +51,7 @@ class OrderControllerTest extends AuthServerApplicationTests {
     void 'valid adhesion order should be created'() {
         given:
         String accessToken = getClientAccessToken()
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("type", OrderType.ADHESION)

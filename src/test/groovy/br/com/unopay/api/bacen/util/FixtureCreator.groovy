@@ -369,7 +369,7 @@ class FixtureCreator {
     }
 
     Hirer createHirer() {
-        from(Hirer.class).uses(jpaProcessor).gimme("valid")
+        from(Hirer.class).uses(jpaProcessor).gimme("valid",  new Rule())
     }
 
     Contractor createContractor(String label = "valid") {
@@ -386,12 +386,13 @@ class FixtureCreator {
             }})
     }
 
-    Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS) {
+    Event createEvent(ServiceType serviceType = ServiceType.DOCTORS_APPOINTMENTS, Boolean requestQuantity = false) {
         Service serviceUnderTest = from(Service.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", serviceType)
         }})
         from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("service", serviceUnderTest)
+            add("requestQuantity", requestQuantity)
         }})
     }
     Product createProduct(PaymentRuleGroup paymentRuleGroupUnderTest = createPaymentRuleGroup(),
@@ -408,7 +409,7 @@ class FixtureCreator {
        }})
     }
 
-    Product crateProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
+    Product createProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
         def hirer = createHirer()
         Person issuerPerson = from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
             add("document.number", hirer.documentNumber)
@@ -422,6 +423,20 @@ class FixtureCreator {
         }})
         createCreditPaymentAccount(hirer.documentNumber, product)
         product
+    }
+
+    Hirer createHirerWithDocument(String document) {
+        Person hirerPerson = from(Person.class).uses(jpaProcessor).gimme("physical", new Rule() {{
+                if (document) {
+                    add("document.number", document)
+                }
+        }})
+        Hirer hirer = from(Hirer.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("person", hirerPerson)
+            }
+        })
+        hirer
     }
 
     Product createProductWithCreditInsertionType(creditInsertionTypes) {
@@ -482,7 +497,7 @@ class FixtureCreator {
     }
 
     Order createPersistedAdhesionOrder(Person person){
-        def product = crateProductWithSameIssuerOfHirer()
+        def product = createProductWithSameIssuerOfHirer()
         return from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -502,6 +517,7 @@ class FixtureCreator {
             add("effectiveDate", effectiveDate)
             add("freeInstallmentQuantity", 0)
             add("billingWithCredits", Boolean.TRUE)
+            add("active", Boolean.TRUE)
             add("paymentDay", LocalDate.fromDateFields(effectiveDate).getDayOfMonth() + ticketDeadLineMoreOneDay)
         }})
     }

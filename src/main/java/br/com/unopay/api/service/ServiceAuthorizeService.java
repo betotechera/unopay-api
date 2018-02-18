@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
+import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.INCORRECT_CONTRACTOR_BIRTH_DATE;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_PASSWORD_REQUIRED;
@@ -46,6 +48,7 @@ public class ServiceAuthorizeService {
     private UnopayEncryptor encryptor;
     private EstablishmentEventService establishmentEventService;
     private InstrumentBalanceService instrumentBalanceService;
+    private HirerNegotiationService hirerNegotiationService;
     private NumberGenerator numberGenerator;
 
     @Autowired
@@ -55,7 +58,8 @@ public class ServiceAuthorizeService {
                                    PaymentInstrumentService paymentInstrumentService,
                                    UnopayEncryptor encryptor,
                                    EstablishmentEventService establishmentEventService,
-                                   InstrumentBalanceService instrumentBalanceService) {
+                                   InstrumentBalanceService instrumentBalanceService,
+                                   HirerNegotiationService hirerNegotiationService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -64,6 +68,7 @@ public class ServiceAuthorizeService {
         this.establishmentEventService = establishmentEventService;
         this.instrumentBalanceService = instrumentBalanceService;
         this.numberGenerator = new NumberGenerator(repository);
+        this.hirerNegotiationService = hirerNegotiationService;
     }
 
     @Transactional
@@ -90,6 +95,7 @@ public class ServiceAuthorizeService {
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
         contract.checkValidFor(serviceAuthorize.getContractor());
+        hirerNegotiationService.findActiveByHirerAndProduct(contract.hirerId(), contract.productId());
         return contract;
 
     }
@@ -102,7 +108,7 @@ public class ServiceAuthorizeService {
                     establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
                             serviceAuthorizeEvent.establishmentEventId());
             serviceAuthorizeEvent.defineValidEventValues(establishmentEvent);
-            serviceAuthorize.addEventValue(serviceAuthorizeEvent.getEventValue());
+            serviceAuthorize.addEventValue(serviceAuthorizeEvent.eventValueByQuantity());
         });
         serviceAuthorize.checkValueWhenRequired();
     }
@@ -110,6 +116,9 @@ public class ServiceAuthorizeService {
     private void checkEvents(ServiceAuthorize serviceAuthorize) {
         if(!serviceAuthorize.hasEvents()){
             throw UnovationExceptions.unprocessableEntity().withErrors(EVENTS_REQUIRED);
+        }
+        if(serviceAuthorize.withoutEventQuantityWheRequired()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(EVENT_QUANTITY_REQUIRED);
         }
     }
 

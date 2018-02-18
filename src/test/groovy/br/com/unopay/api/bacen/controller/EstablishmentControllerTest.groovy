@@ -127,6 +127,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         ServiceAuthorize service = fixtureCreator
                 .createServiceAuthorize(fixtureCreator.createContractorInstrumentCreditPersisted(),
                 establishmentUser.establishment)
+        fixtureCreator.createNegotiation(service.getContract().getHirer(), service.getContract().product)
 
         when:
         def result = this.mvc.perform(

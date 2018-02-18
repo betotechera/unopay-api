@@ -13,7 +13,7 @@ create table hirer_negotiation (
     auto_renewal varchar(20) not null,
     effective_date timestamp not null,
     created_date_time Timestamp not null,
-    "active" varchar(20) not null,
+    "active" boolean not null,
     version integer,
     constraint fk_hirer_neg_hirer foreign key(hirer_id) references hirer(id),
     constraint fk_hirer_neg_product foreign key(product_id) references product(id)
