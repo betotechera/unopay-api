@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -125,7 +126,7 @@ public class ServiceAuthorize implements Serializable {
     @JoinColumn(name="service_authorize_id")
     @JsonManagedReference
     @JsonView({Views.ServiceAuthorize.Detail.class})
-    private Set<ServiceAuthorizeEvent> authorizeEvents;
+    private List<ServiceAuthorizeEvent> authorizeEvents;
 
     @Column(name = "partial_payment")
     private Boolean partialPayment;

@@ -24,3 +24,5 @@ alter table service_authorize drop solicitation_date_time;
 alter table service_authorize drop event_id;
 alter table service_authorize drop service_type;
 alter table service_authorize drop event_value;
+
+
