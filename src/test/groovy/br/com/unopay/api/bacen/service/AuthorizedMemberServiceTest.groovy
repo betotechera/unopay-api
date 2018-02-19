@@ -287,6 +287,31 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         authorizedMembers.content.size() == 3
     }
 
+    void 'should create AuthorizedMembers from csv for hirer'() {
+        given:
+        def contractor = createContractor("123456789")
+        def hirer = fixtureCreator.createHirerWithDocument("12345678")
+        createPersistedContract(hirer, contractor, 123456L, createProduct("123"))
+        createPersistedContract(hirer, contractor, 123457L, createProduct("1234"))
+        createPersistedContract(hirer, contractor, 123458L, createProduct("1235"))
+
+        createInstrument(contractor, "123456")
+        createInstrument(contractor, "123457")
+        createInstrument(contractor, "123458", PaymentInstrumentType.DIGITAL_WALLET)
+
+        Resource csv  = resourceLoader.getResource("classpath:/AuthorizedMember.csv")
+        MultipartFile file = new MockMultipartFile('file', csv.getInputStream())
+
+        when:
+        service.createFromCsvForHirer(hirer.documentNumber,file)
+
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> authorizedMembers = service.findByFilter(new AuthorizedMemberFilter(), page)
+
+        then:
+        authorizedMembers.content.size() == 3
+    }
+
     void 'should find known AuthorizedMember by hirerDocumentNumber filter'(){
         given:
         def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
