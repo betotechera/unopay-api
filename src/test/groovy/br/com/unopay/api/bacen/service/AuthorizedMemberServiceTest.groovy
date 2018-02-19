@@ -18,7 +18,6 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
-import br.com.unopay.api.service.ProductService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -46,9 +45,6 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     @Autowired
     ResourceLoader resourceLoader
-
-    @Autowired
-    ProductService productService
 
     void 'given valid AuthorizedMember should create'(){
         given:
@@ -269,13 +265,10 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     void 'should create AuthorizedMembers from csv'() {
         given:
         def contractor = createContractor("123456789")
-        createPersistedContract(contractor, 123456L, createProduct("123"))
-        createPersistedContract(contractor, 123457L, createProduct("1234"))
-        createPersistedContract(contractor, 123458L, createProduct("1235"))
-
-        def code = productService.findByCode("123")
-        def code1 = productService.findByCode("1234")
-        def code2 = productService.findByCode("1235")
+        def hirer = fixtureCreator.createHirerWithDocument("12345678")
+        createPersistedContract(hirer, contractor, 123456L, createProduct("123"))
+        createPersistedContract(hirer, contractor, 123457L, createProduct("1234"))
+        createPersistedContract(hirer, contractor, 123458L, createProduct("1235"))
 
         createInstrument(contractor, "123456")
         createInstrument(contractor, "123457")
@@ -352,8 +345,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         }})
     }
 
-    private Contract createPersistedContract(contractor, contractCode, product = createProduct()) {
-        def hirer = fixtureCreator.createHirer()
+    private Contract createPersistedContract(hirer, contractor, contractCode, product = createProduct()) {
         def situation = ContractSituation.ACTIVE
         from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {

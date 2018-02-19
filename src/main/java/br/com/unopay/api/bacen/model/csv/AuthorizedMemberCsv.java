@@ -40,6 +40,9 @@ public class AuthorizedMemberCsv {
     @CsvBindByName(column = "contractor")
     private String contractorDocumentNumber;
 
+    @CsvBindByName(column = "hirer")
+    private String hirerDocumentNumber;
+
     @CsvBindByName(column = "product")
     private String productCode;
 

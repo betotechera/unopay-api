@@ -128,8 +128,12 @@ public class AuthorizedMemberService {
 
     private Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
         Product product = productService.findByCode(csvSource.getProductCode());
-        return contractService.findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
+        Contract contract = contractService.findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
                 .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
+        if(!contract.hirerDocumentNumber().equals(csvSource.getHirerDocumentNumber())) {
+            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND);
+        }
+        return contract;
     }
 
     private void defineCsvAuthorizedMemberPaymentInstrument(AuthorizedMemberCsv csvSource, AuthorizedMember authorizedMember) {
