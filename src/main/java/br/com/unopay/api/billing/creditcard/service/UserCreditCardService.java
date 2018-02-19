@@ -4,6 +4,7 @@ import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -40,10 +41,8 @@ public class UserCreditCardService {
         return save(userCreditCard);
     }
 
-    public UserCreditCard store(CreditCard creditCard) {
-        UserCreditCard userCreditCard = new UserCreditCard();
-        userCreditCard = userCreditCard.mapUserCreditCardFromCreditCard(creditCard);
-        return create(userCreditCard);
+    public UserCreditCard store(UserDetail userDetail, Order order) {
+        return create(new UserCreditCard(userDetail, order));
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){

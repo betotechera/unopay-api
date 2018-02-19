@@ -125,7 +125,14 @@ public class OrderService {
         if(currentUser.isContractorType()) {
             order.setPerson(currentUser.getContractor().getPerson());
         }
+        storeCreditCardWhenRequired(currentUser, order);
         return create(order);
+    }
+
+    private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
+        if (order.shouldStoreCard()) {
+            userCreditCardService.store(userDetail, order);
+        }
     }
 
     @Transactional

@@ -3,6 +3,8 @@ package br.com.unopay.api.billing.creditcard.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.hsqldb.rights.User
 import org.joda.time.DateTime
@@ -367,17 +369,25 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
     }
 
-    def 'when calling mapUserCreditCardFromCreditCard should return a user credit card with mapping following values from credit card'(){
+    def 'when instantiating a UserCreditCard with a valid UserDetail and a valid Order with CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
 
         given:
         int NUMBER_OF_DIGITS = 4
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        UserCreditCard userCreditCard = new UserCreditCard()
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("creditCard", creditCard)
+        }})
+        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
+            add("paymentRequest", paymentRequest)
+        }})
+        UserDetail userDetail = Fixture.from(UserDetail).gimme("without-group")
+
 
         when:
-        userCreditCard = userCreditCard.mapUserCreditCardFromCreditCard(creditCard)
+        UserCreditCard userCreditCard = new UserCreditCard(userDetail, order)
 
         then:
+        userCreditCard.user.equals(userDetail)
         userCreditCard.expirationMonth.equals(creditCard.expiryMonth)
         userCreditCard.expirationYear.equals(creditCard.expiryYear)
         userCreditCard.lastFourDigits.equals(creditCard.number

@@ -4,6 +4,7 @@ import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -99,6 +100,21 @@ public class UserCreditCard implements Serializable, Updatable {
     @Version
     private Integer version;
 
+    public UserCreditCard() {}
+
+    public UserCreditCard(UserDetail userDetail, Order order) {
+        CreditCard creditCard = order.getPaymentRequest().getCreditCard();
+        user = userDetail;
+        holderName = creditCard.getHolderName();
+        brand = CardBrand.fromCardNumber(creditCard.getNumber());
+        lastFourDigits = creditCard.getNumber()
+                .substring(creditCard.getNumber().length() - NUMBER_OF_DIGITS);
+        expirationMonth = creditCard.getExpiryMonth();
+        expirationYear = creditCard.getExpiryYear();
+        gatewaySource = GatewaySource.PAYZEN;
+        gatewayToken = creditCard.getCardReference();
+    }
+
     public void setupMyCreate(){
         validateMe();
         defineExpirationDate();
@@ -172,19 +188,6 @@ public class UserCreditCard implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_EXPIRATION_DATE.withOnlyArgument(getExpirationDate()));
         }
-    }
-
-    public UserCreditCard mapUserCreditCardFromCreditCard(CreditCard creditCard) {
-        UserCreditCard userCreditCard = new UserCreditCard();
-        userCreditCard.setHolderName(creditCard.getHolderName());
-        userCreditCard.setBrand(CardBrand.fromCardNumber(creditCard.getNumber()));
-        userCreditCard.setLastFourDigits(creditCard.getNumber()
-                .substring(creditCard.getNumber().length() - NUMBER_OF_DIGITS));
-        userCreditCard.setExpirationMonth(creditCard.getExpiryMonth());
-        userCreditCard.setExpirationYear(creditCard.getExpiryYear());
-        userCreditCard.setGatewaySource(GatewaySource.PAYZEN);
-        userCreditCard.setGatewayToken(creditCard.getCardReference());
-        return userCreditCard;
     }
 
     public String userId(){
