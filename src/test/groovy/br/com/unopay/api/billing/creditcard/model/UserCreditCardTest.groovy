@@ -369,22 +369,16 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
     }
 
-    def 'when instantiating a UserCreditCard with a valid UserDetail and a valid Order with CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
+    def 'when instantiating a UserCreditCard with a valid UserDetail and a valid CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
 
         given:
         int NUMBER_OF_DIGITS = 4
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
-            add("creditCard", creditCard)
-        }})
-        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
-            add("paymentRequest", paymentRequest)
-        }})
         UserDetail userDetail = Fixture.from(UserDetail).gimme("without-group")
 
 
         when:
-        UserCreditCard userCreditCard = new UserCreditCard(userDetail, order)
+        UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard)
 
         then:
         userCreditCard.user.equals(userDetail)
