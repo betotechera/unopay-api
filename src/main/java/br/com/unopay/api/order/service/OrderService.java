@@ -129,12 +129,6 @@ public class OrderService {
         return create(order);
     }
 
-    private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
-        if (order.shouldStoreCard()) {
-            userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
-        }
-    }
-
     @Transactional
     public Order create(Order order) {
         validateProduct(order);
@@ -222,6 +216,12 @@ public class OrderService {
                 return;
             }
             order.setValue(order.getProductInstallmentValue());
+        }
+    }
+
+    private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
+        if (order.shouldStoreCard()) {
+            userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
         }
     }
 

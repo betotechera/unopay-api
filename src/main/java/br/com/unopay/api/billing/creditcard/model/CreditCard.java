@@ -18,6 +18,8 @@ import static br.com.unopay.api.model.Person.NOT_NUMBER;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
 
+    private static final int NUMBER_OF_DIGITS = 4;
+
     private String hash;
 
     boolean cseEncrypted = false;
@@ -45,5 +47,9 @@ public class CreditCard implements Serializable {
         if(this.number != null) {
             this.number = this.number.replaceAll(NOT_NUMBER, "");
         }
+    }
+
+    public String lastFourDigits() {
+        return number.substring(number.length() - NUMBER_OF_DIGITS);
     }
 }

@@ -372,7 +372,6 @@ class UserCreditCardTest extends FixtureApplicationTest {
     def 'when instantiating a UserCreditCard with a valid UserDetail and a valid CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
 
         given:
-        int NUMBER_OF_DIGITS = 4
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
         UserDetail userDetail = Fixture.from(UserDetail).gimme("without-group")
 
@@ -384,8 +383,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         userCreditCard.user.equals(userDetail)
         userCreditCard.expirationMonth.equals(creditCard.expiryMonth)
         userCreditCard.expirationYear.equals(creditCard.expiryYear)
-        userCreditCard.lastFourDigits.equals(creditCard.number
-                .substring(creditCard.number.length() - NUMBER_OF_DIGITS))
+        userCreditCard.lastFourDigits.equals(creditCard.lastFourDigits())
         userCreditCard.gatewayToken.equals(creditCard.cardReference)
 
     }

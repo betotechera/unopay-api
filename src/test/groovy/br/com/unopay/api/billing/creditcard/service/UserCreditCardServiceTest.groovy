@@ -252,7 +252,6 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     def 'given UserDetail and CreditCard should create UserCreditCard with their values'(){
 
         given:
-        int NUMBER_OF_DIGITS = 4
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
 
         when:
@@ -263,8 +262,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         found.userId().equals(userDetail.id)
         found.holderName.equals(creditCard.getHolderName())
         found.brand.equals(CardBrand.fromCardNumber(creditCard.getNumber()))
-        found.lastFourDigits.equals(creditCard.getNumber()
-                .substring(creditCard.getNumber().length() - NUMBER_OF_DIGITS))
+        found.lastFourDigits.equals(creditCard.lastFourDigits())
         found.expirationMonth.equals(creditCard.getExpiryMonth())
         found.expirationYear.equals(creditCard.getExpiryYear())
         found.gatewaySource.equals(GatewaySource.PAYZEN)
