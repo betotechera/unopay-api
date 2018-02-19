@@ -4,6 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.CardBrand
+import br.com.unopay.api.billing.creditcard.model.CreditCard
+import br.com.unopay.api.billing.creditcard.model.GatewaySource
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter
 import br.com.unopay.api.uaa.model.UserDetail
@@ -244,6 +247,29 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'given UserDetail and CreditCard should create UserCreditCard with their values'(){
+
+        given:
+        int NUMBER_OF_DIGITS = 4
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+
+        when:
+        UserCreditCard stored = userCreditCardService.storeForUser(userDetail, creditCard)
+        UserCreditCard found = userCreditCardService.findById(stored.id)
+
+        then:
+        found.userId().equals(userDetail.id)
+        found.holderName.equals(creditCard.getHolderName())
+        found.brand.equals(CardBrand.fromCardNumber(creditCard.getNumber()))
+        found.lastFourDigits.equals(creditCard.getNumber()
+                .substring(creditCard.getNumber().length() - NUMBER_OF_DIGITS))
+        found.expirationMonth.equals(creditCard.getExpiryMonth())
+        found.expirationYear.equals(creditCard.getExpiryYear())
+        found.gatewaySource.equals(GatewaySource.PAYZEN)
+        found.gatewayToken.equals(creditCard.getCardReference())
+
     }
 
 }
