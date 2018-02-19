@@ -151,6 +151,48 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         found
     }
 
+    def """given known negotiation with payment day not equals ticket deadline and effective date equals ticket deadline
+            when process should create billings"""(){
+        given:
+        def delay = 1
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("paymentDay", getNear(delay))
+            add("effectiveDate", instant("${ticketDeadLineInDays} days from now"))
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+
+        when:
+        service.process()
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found
+    }
+
+    def """given known negotiation with payment day not equals ticket deadline and
+            effective date not equals ticket deadline when process should not create billings"""(){
+        given:
+        def delay = 1
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("hirer", fixtureCreator.createHirer())
+            add("product", fixtureCreator.createProduct())
+            add("paymentDay", getNear(delay))
+            add("effectiveDate", instant("${ticketDeadLineInDays + delay} days from now"))
+            add("installments", 2)
+        }})
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
+
+        when:
+        service.process()
+        service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
+    }
 
 
     def "when process billing should create ticket"(){
@@ -176,6 +218,23 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
 
         then:
         found
+    }
+
+
+    def "given known negotiation when process as Paid should update status to paid"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.process(negotiation.getId())
+        NegotiationBilling foundBefore = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        when:
+        service.processAsPaid(foundBefore.getId())
+        NegotiationBilling foundAfter = service.findById(foundBefore.getId())
+
+        then:
+        foundBefore.status == PaymentStatus.WAITING_PAYMENT
+        foundAfter.status == PaymentStatus.PAID
     }
 
     def "given valid negotiation when process for hirer should be created with number"(){
@@ -268,7 +327,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
-            add("effectiveDate", new DateTime().plusMonths(1).toDate())
+            add("effectiveDate", new DateTime().plusMonths(1).withMillisOfDay(0).toDate())
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 

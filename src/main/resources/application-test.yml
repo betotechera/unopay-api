@@ -36,7 +36,18 @@ amazon:
     secretKey: djniXWE2aiClSqr/4TAHVPyyzdl2QQEQyI88k2AV
 multipart:
   max-file-size: 9000Kb
+logging:
+  level:
+    org:
+      hibernate:
+        type: info
 spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+
   encryptor:
     password: teste
   redis:

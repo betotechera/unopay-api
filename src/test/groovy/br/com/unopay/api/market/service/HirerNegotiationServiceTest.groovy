@@ -11,6 +11,8 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
+import org.joda.time.DateTimeComparator
+import org.joda.time.DateTimeFieldType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.util.ObjectUtils
 
@@ -287,6 +289,7 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         service.update(negotiation.id, cloned.with { effectiveDate = null; it })
         HirerNegotiation found = service.findById(negotiation.id)
         then:
+        DateTimeComparator timeComparator = DateTimeComparator.getInstance(DateTimeFieldType.dayOfMonth())
         timeComparator.compare(found.effectiveDate, negotiation.effectiveDate) == 0
     }
 

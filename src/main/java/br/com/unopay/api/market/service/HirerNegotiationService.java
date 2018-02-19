@@ -72,7 +72,8 @@ public class HirerNegotiationService {
     }
 
     public Set<HirerNegotiation> negotiationsNearOfPaymentDate(){
-        return repository.findByPaymentDayAndEffectiveDateBefore(paymentDayCalculator.getNear(), new Date());
+        return repository.findByPaymentDayAndEffectiveDateBeforeOrEffectiveDateIs(
+                paymentDayCalculator.getNearDay(), new Date(), paymentDayCalculator.getNearDate());
     }
 
     public HirerNegotiation findByHirerDocument(String document, String productId) {
