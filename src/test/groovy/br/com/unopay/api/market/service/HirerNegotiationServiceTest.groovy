@@ -11,6 +11,8 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.apache.commons.beanutils.BeanUtils
+import org.joda.time.DateTimeComparator
+import org.joda.time.DateTimeFieldType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.util.ObjectUtils
 
@@ -54,6 +56,24 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
 
         then:
         timeComparator.compare(found.createdDateTime, new Date()) == 0
+    }
+
+    def 'when create negotiation should be created inactive'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+            add("active", Boolean.TRUE)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        !found.active
     }
 
     def 'given a negotiation with unknown hirer should not be created'(){
@@ -246,6 +266,22 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         found.installments == negotiation.installments
     }
 
+    def 'given a known hirer negotiation should be active'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirer, product, instant("one day from now"))
+        negotiation.active = Boolean.FALSE
+        service.save(negotiation)
+
+        when:
+        service.defineActive(negotiation.getId())
+        HirerNegotiation found = service.findById(negotiation.id)
+
+        then:
+        found.active
+    }
+
     def 'should not update product and hirer'(){
         given:
         def hirer = fixtureCreator.createHirer()
@@ -287,6 +323,7 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         service.update(negotiation.id, cloned.with { effectiveDate = null; it })
         HirerNegotiation found = service.findById(negotiation.id)
         then:
+        DateTimeComparator timeComparator = DateTimeComparator.getInstance(DateTimeFieldType.dayOfMonth())
         timeComparator.compare(found.effectiveDate, negotiation.effectiveDate) == 0
     }
 
