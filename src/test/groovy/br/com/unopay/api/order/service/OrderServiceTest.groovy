@@ -5,8 +5,10 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.CreditCard
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
+import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
@@ -22,14 +24,13 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
-
-import javax.mail.search.OrTerm
 
 class OrderServiceTest extends SpockApplicationTests{
 
@@ -526,7 +527,6 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'USER_ALREADY_EXISTS'
     }
 
-
     def 'given a known contractor and order with instrument of other contractor should return error'(){
         given:
         def creditOrder = fixtureCreator.createOrder(contractUnderTest)
@@ -682,6 +682,29 @@ class OrderServiceTest extends SpockApplicationTests{
         result.find().number != null
         result.last().number != null
         result.last().number != result.find().number
+    }
+
+    def 'when creating not-adhesion Order with paymentRequest.method equals card and paymentRequest.storeCard equals true should create UserCreditCard for UserDetail and Order.creditCard'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", true)
+            add("creditCard", creditCard)
+        }})
+        Order order = fixtureCreator.createOrder(contractUnderTest)
+        order.type = OrderType.INSTALLMENT_PAYMENT
+        order.paymentRequest = paymentRequest
+        UserDetail userDetail = Fixture.from(UserDetail).uses(jpaProcessor).gimme("without-group")
+        service.create(userDetail.email, order)
+
+        when:
+        UserCreditCard found = userCreditCardService.findByNumberForUser(creditCard.number, userDetail)
+
+        then:
+        found
+
     }
 
 }
