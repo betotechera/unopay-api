@@ -24,5 +24,7 @@ public interface HirerNegotiationRepository
 
     Optional<HirerNegotiation> findByHirerIdAndProductIdAndActiveTrue(String hirerId, String productId);
 
-    Set<HirerNegotiation> findByPaymentDayAndEffectiveDateBefore(Integer paymentDay, Date effectiveDate);
+    Set<HirerNegotiation> findByPaymentDayAndEffectiveDateBeforeOrEffectiveDateIs(Integer paymentDate,
+                                                                                  Date pastEffectiveDate,
+                                                                                  Date effectiveDateForPayment);
 }

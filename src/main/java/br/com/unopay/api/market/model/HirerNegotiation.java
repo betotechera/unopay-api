@@ -21,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -103,6 +105,7 @@ public class HirerNegotiation implements Updatable{
     private Integer freeInstallmentQuantity;
 
     @Column(name = "effective_date")
+    @Temporal(TemporalType.DATE)
     @JsonView({Views.HirerNegotiation.List.class})
     private Date effectiveDate;
 
