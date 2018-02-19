@@ -116,8 +116,22 @@ public class AuthorizedMemberService {
 
     @SneakyThrows
     @Transactional
+    public void createFromCsvForHirer(String hirerDocument, MultipartFile multipartFile) {
+        List<AuthorizedMemberCsv> csvLines = getAuthorizedMemberCsvs(multipartFile);
+        csvLines.forEach(csvLine ->  {
+            csvLine.setHirerDocumentNumber(hirerDocument);
+        });
+        createFromCsvList(csvLines);
+    }
+
+    @SneakyThrows
+    @Transactional
     public void createFromCsv(MultipartFile multipartFile) {
         List<AuthorizedMemberCsv> csvLines = getAuthorizedMemberCsvs(multipartFile);
+        createFromCsvList(csvLines);
+    }
+
+    private void createFromCsvList(List<AuthorizedMemberCsv> csvLines) {
         csvLines.forEach(csvLine ->  {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
             authorizedMember.setContract(getContractByCsv(csvLine));

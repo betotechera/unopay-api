@@ -437,4 +437,14 @@ public class HirerController {
         log.info("removing authorized-member id={}", id);
         authorizedMemberService.deleteForHirer(id, hirer);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createAuthorizedMembersFromCsv(Hirer hirer, @RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading authorized members csv file {}", fileName);
+        authorizedMemberService.createFromCsvForHirer(hirer.getDocumentNumber(), file);
+    }
+
 }
