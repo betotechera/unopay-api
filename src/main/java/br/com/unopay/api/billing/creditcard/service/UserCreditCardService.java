@@ -21,6 +21,8 @@ import static br.com.unopay.api.uaa.exception.Errors.USER_CREDIT_CARD_NOT_FOUND;
 @Service
 public class UserCreditCardService {
 
+    private static final int NUMBER_OF_DIGITS = 4;
+
     private UserCreditCardRepository userCreditCardRepository;
     private UserDetailService userDetailService;
 
@@ -74,6 +76,15 @@ public class UserCreditCardService {
 
     public UserCreditCard findByIdForUser(String id, UserDetail user){
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
+    }
+
+    public UserCreditCard findByNumberForUser(String number, UserDetail user) {
+        return findByLastFourDigitsForUser(number.substring(number.length() - NUMBER_OF_DIGITS), user);
+    }
+
+    private UserCreditCard findByLastFourDigitsForUser(String lastFourDigits, UserDetail user) {
+        return getUserCreditCardWithMonthAndYear
+                (lastFourDigits, () -> userCreditCardRepository.findByLastFourDigitsAndUserId(lastFourDigits, user.getId()));
     }
 
     private UserCreditCard getUserCreditCardWithMonthAndYear(String id, Supplier<Optional<UserCreditCard>> userCreditCard){

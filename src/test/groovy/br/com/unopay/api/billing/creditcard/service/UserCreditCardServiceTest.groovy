@@ -270,4 +270,55 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
 
     }
 
+    def 'given valid UserCreditCard and its User should be found by its number'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+
+        when:
+        UserCreditCard found = userCreditCardService.findByNumberForUser(created.lastFourDigits, userDetail)
+
+        then:
+        found.lastFourDigits == created.lastFourDigits
+        found.userId() == userDetail.id
+    }
+
+    def 'given valid UserCreditCard and a different User should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        UserDetail differentUser = fixtureCreator.createUser()
+
+        when:
+        userCreditCardService.findByNumberForUser(created.lastFourDigits, differentUser)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'given invalid UserCreditCard number should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "1234")
+        }})
+        userCreditCardService.create(userCreditCard)
+        String differentNumber = "4321"
+
+        when:
+        userCreditCardService.findByNumberForUser(differentNumber, userDetail)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
 }
