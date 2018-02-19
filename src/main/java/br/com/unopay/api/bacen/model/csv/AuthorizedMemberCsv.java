@@ -34,8 +34,14 @@ public class AuthorizedMemberCsv {
     @CsvBindByName
     private String documentNumber;
 
-    @CsvBindByName(column = "paymentInstrument")
+    @CsvBindByName(column = "instrumentNumber")
     private String paymentInstrumentNumber;
+
+    @CsvBindByName(column = "contractor")
+    private String contractorDocumentNumber;
+
+    @CsvBindByName(column = "product")
+    private String productCode;
 
     public AuthorizedMember toAuthorizedMember () {
         Document authorizedMemberDocument = new Document();

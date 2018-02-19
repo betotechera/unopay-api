@@ -1,4 +1,4 @@
-birthDate,contract,name,gender,relatedness,email,documentNumber,paymentInstrument
-22/02/2002,123456,test,female,cousin,test@test.com,123456,123456
-22/02/2002,123457,tset,female,testes,test@test.bra,123457,123457
-22/02/2002,123458,sete,aaaaaa,cousin,test@sett.com,123458,
+birthDate,contract,name,gender,relatedness,email,documentNumber,instrumentNumber,contractor,product
+22/02/2002,123456,test,female,cousin,test@test.com,123456,123456,123456789,123
+22/02/2002,123457,tset,female,testes,test@test.bra,123457,123457,123456789,1234
+22/02/2002,123458,sete,aaaaaa,cousin,test@sett.com,123458,,123456789,1235

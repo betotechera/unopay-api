@@ -6,9 +6,12 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.csv.AuthorizedMemberCsv;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.repository.AuthorizedMemberRepository;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
+import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -31,14 +34,21 @@ import java.util.Optional;
 @Service
 public class AuthorizedMemberService {
 
-    @Autowired
-    AuthorizedMemberRepository repository;
+    private AuthorizedMemberRepository repository;
+    private PaymentInstrumentService paymentInstrumentService;
+    private ContractService contractService;
+    private ProductService productService;
 
     @Autowired
-    PaymentInstrumentService paymentInstrumentService;
-
-    @Autowired
-    ContractService contractService;
+    public AuthorizedMemberService(AuthorizedMemberRepository repository,
+                                   PaymentInstrumentService paymentInstrumentService,
+                                   ContractService contractService,
+                                   ProductService productService) {
+        this.repository = repository;
+        this.paymentInstrumentService = paymentInstrumentService;
+        this.contractService = contractService;
+        this.productService = productService;
+    }
 
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
         authorizedMember.validateMe();
@@ -110,10 +120,16 @@ public class AuthorizedMemberService {
         List<AuthorizedMemberCsv> csvLines = getAuthorizedMemberCsvs(multipartFile);
         csvLines.forEach(csvLine ->  {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
-            authorizedMember.setContract(contractService.findByCode(csvLine.getContractCode()));
+            authorizedMember.setContract(getContractByCsv(csvLine));
             defineCsvAuthorizedMemberPaymentInstrument(csvLine, authorizedMember);
             create(authorizedMember);
         });
+    }
+
+    private Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
+        Product product = productService.findByCode(csvSource.getProductCode());
+        return contractService.findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
+                .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
     }
 
     private void defineCsvAuthorizedMemberPaymentInstrument(AuthorizedMemberCsv csvSource, AuthorizedMember authorizedMember) {

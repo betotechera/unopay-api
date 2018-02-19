@@ -7,12 +7,18 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.Document
+import br.com.unopay.api.model.DocumentType
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.PaymentInstrumentType
+import br.com.unopay.api.model.Person
+import br.com.unopay.api.model.Product
+import br.com.unopay.api.service.ProductService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -24,6 +30,8 @@ import org.springframework.data.domain.Page
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.multipart.MultipartFile
+
+import static br.com.six2six.fixturefactory.Fixture.from
 
 
 class AuthorizedMemberServiceTest extends SpockApplicationTests {
@@ -38,6 +46,9 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     @Autowired
     ResourceLoader resourceLoader
+
+    @Autowired
+    ProductService productService
 
     void 'given valid AuthorizedMember should create'(){
         given:
@@ -157,7 +168,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     void 'given unknown contractor id should return error when find by id and contractor id'(){
         given:
         AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
-        Contractor contractor = Fixture.from(Contractor.class).gimme("valid")
+        Contractor contractor = from(Contractor.class).gimme("valid")
         contractor.id = "123"
         when:
         service.findByIdForContractor(authorizedMember.id, contractor)
@@ -178,7 +189,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     void 'given unknown hirer should return error when find by id and hirer id'(){
         given:
         AuthorizedMember authorizedMember =  fixtureCreator.createPersistedAuthorizedMember()
-        Hirer hirer = Fixture.from(Hirer.class).gimme("valid")
+        Hirer hirer = from(Hirer.class).gimme("valid")
         hirer.id = "123"
         when:
         service.findByIdForHirer(authorizedMember.id, hirer)
@@ -252,15 +263,19 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         service.deleteForHirer(authorizedMember.id, authorizedMember.contract.hirer)
         service.findById(authorizedMember.id)
         then:
-        def ex = thrown(NotFoundException)
+        thrown(NotFoundException)
     }
 
     void 'should create AuthorizedMembers from csv'() {
         given:
-        def contractor = fixtureCreator.createContractor("valid")
-        createPersistedContract(contractor, 123456L)
-        createPersistedContract(contractor, 123457L)
-        createPersistedContract(contractor, 123458L)
+        def contractor = createContractor("123456789")
+        createPersistedContract(contractor, 123456L, createProduct("123"))
+        createPersistedContract(contractor, 123457L, createProduct("1234"))
+        createPersistedContract(contractor, 123458L, createProduct("1235"))
+
+        def code = productService.findByCode("123")
+        def code1 = productService.findByCode("1234")
+        def code2 = productService.findByCode("1235")
 
         createInstrument(contractor, "123456")
         createInstrument(contractor, "123457")
@@ -324,11 +339,23 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         result.content.size() > 0
     }
 
-    Contract createPersistedContract(contractor, contractCode) {
-        def product = fixtureCreator.createProduct()
+    private Contractor createContractor(String documentNumber) {
+        Document document = new Document() {{
+            type = DocumentType.CNPJ
+            number = documentNumber
+        }}
+        def person = from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
+            add("document", document)
+        }})
+        from(Contractor.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("person", person)
+        }})
+    }
+
+    private Contract createPersistedContract(contractor, contractCode, product = createProduct()) {
         def hirer = fixtureCreator.createHirer()
         def situation = ContractSituation.ACTIVE
-        Fixture.from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("hirer", hirer)
                 add("contractor", contractor)
@@ -340,11 +367,21 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         })
     }
 
-    PaymentInstrument createInstrument(contractor, number, type = PaymentInstrumentType.VIRTUAL_CARD) {
+    private Product createProduct(code) {
+        PaymentRuleGroup paymentRuleGroupUnderTest = fixtureCreator.createPaymentRuleGroup()
+        BigDecimal membershipFee = (Math.random() * 100)
+        return from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+            add("membershipFee", membershipFee)
+            add("code", code)
+        }})
+    }
+
+    private PaymentInstrument createInstrument(contractor, number, type = PaymentInstrumentType.VIRTUAL_CARD) {
         def product = fixtureCreator.createProduct()
 
         String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        PaymentInstrument inst = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
+        PaymentInstrument inst = from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("product", product)
                 add("contractor", contractor)
