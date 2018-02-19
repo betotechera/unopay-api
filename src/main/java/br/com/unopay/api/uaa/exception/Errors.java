@@ -410,15 +410,9 @@ public final class Errors {
             new UnovationError("ESTABLISHMENT_REQUIRED","Establishment required.");
     public static final UnovationError SERVICE_AUTHORIZE_NOT_FOUND =
             new UnovationError("SERVICE_AUTHORIZE_NOT_FOUND","Service authorize not found.");
-    public static final UnovationError ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
-            new UnovationError("ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
-                    "Establishment not qualified for this contract.");
-    public static final UnovationError SERVICE_NOT_ACCEPTABLE =
-            new UnovationError("SERVICE_NOT_ACCEPTABLE",
-                    "Service not acceptable.");
-    public static final UnovationError EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED =
-            new UnovationError("EVENT_QUANTITY_GREATER_THAN_ZERO_REQUIRED",
-                    "Event quantity greater than zero required");
+    public static final UnovationError EVENTS_REQUIRED =
+            new UnovationError("EVENTS_REQUIRED",
+                    "Events required");
     public static final UnovationError EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED =
             new UnovationError("EVENT_VALUE_GREATER_THAN_ZERO_REQUIRED",
                     "Event value greater than zero required");
@@ -428,6 +422,10 @@ public final class Errors {
     public static final UnovationError INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
             new UnovationError("INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Instrument not qualified for this contract");
+    public static final UnovationError EVENT_QUANTITY_REQUIRED =
+            new UnovationError("EVENT_QUANTITY_REQUIRED",
+                    "Event quantity required");
+
 
 
     /* batch closing */

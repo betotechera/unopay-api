@@ -111,7 +111,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     def 'a valid establishment event should be created'(){
         given:
-        def event = fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
         def establishment = fixtureCreator.createEstablishment()
         EstablishmentEvent establishmentEvent = Fixture.from(EstablishmentEvent.class)
                                                                             .gimme("withoutReferences", new Rule(){{
@@ -126,7 +126,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     def 'a unknown establishment the event should not be created'(){
         given:
-        def event = fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
         EstablishmentEvent establishmentEvent = Fixture.from(EstablishmentEvent.class)
                 .gimme("withoutReferences", new Rule(){{
             add("event", event)
@@ -291,7 +291,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
     }
 
     private EstablishmentEvent create(Establishment establishment = fixtureCreator.createEstablishment()){
-        def event = fixtureCreator.createEvent(ServiceType.FUEL_ALLOWANCE)
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
         return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
                 .gimme("withoutReferences", new Rule(){{
             add("event", event)

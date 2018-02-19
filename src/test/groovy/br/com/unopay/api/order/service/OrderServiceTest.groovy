@@ -62,7 +62,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def setup(){
         contractUnderTest = fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),
-                fixtureCreator.crateProductWithSameIssuerOfHirer())
+                fixtureCreator.createProductWithSameIssuerOfHirer())
         installmentService.create(contractUnderTest)
         installmentUnderTest = installmentService.findByContractId(contractUnderTest.id).find()
         service.notifier = notifierMock
@@ -310,7 +310,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known contractor and INSTALLMENT_PAYMENT order without payment instrument should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
@@ -330,7 +330,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known contractor and installment payment order then the payment value should be contract installment value'(){
         given:
         def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
@@ -352,7 +352,7 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         BigDecimal membershipFee = fee
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer(membershipFee)
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer(membershipFee)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -376,7 +376,7 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         BigDecimal membershipFee = 25.0
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer(membershipFee)
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer(membershipFee)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -394,7 +394,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a unknown contractor and ADHESION order without payment instrument should be created'(){
         given:
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -413,7 +413,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a unknown contractor and ADHESION order without value should be created'(){
         given:
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", person)
             add("product", product)
@@ -432,7 +432,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known contractor and INSTALLMENT_PAYMENT order without value should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -475,7 +475,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a unknown contractor and order without payment instrument should be created'(){
         given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("paymentInstrument", null)
@@ -562,7 +562,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'given a unknown document should create person when create order'(){
         given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("type", OrderType.ADHESION)
@@ -620,7 +620,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'a order without payment request should not be created'(){
         given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("product", product)
             add("paymentRequest", null)
@@ -662,7 +662,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     def 'when create order should increment order number'(){
         given:
-        def product = fixtureCreator.crateProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         List<Person> persons = Fixture.from(Person.class).gimme(2,"physical", new Rule(){{
             add("document.number", uniqueRandom("92505722803", "87023146300", "15173351160"))
         }})

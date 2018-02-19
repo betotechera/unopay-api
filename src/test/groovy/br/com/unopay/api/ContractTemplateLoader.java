@@ -16,6 +16,7 @@ import br.com.unopay.api.model.Product;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static br.com.unopay.api.bacen.model.ServiceType.*;
 import static java.util.Collections.singletonList;
 
 public class ContractTemplateLoader implements TemplateLoader {
@@ -29,7 +30,7 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("hirer", one(Hirer.class, "valid"));
             add("contractor", one(Contractor.class, "valid"));
             add("paymentInstrumentType", random(PaymentInstrumentType.class));
-            add("serviceTypes",Arrays.asList(ServiceType.values()));
+            add("serviceTypes",Arrays.asList(DIAGNOSIS_AND_THERAPY, MEDICINES));
             add("creditInsertionTypes", singletonList(CreditInsertionType.CREDIT_CARD));
             add("begin", instant("now"));
             add("end", instant("2 days from now"));

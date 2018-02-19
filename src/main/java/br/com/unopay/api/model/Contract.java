@@ -261,6 +261,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public String hirerId(){
+        if(getHirer() != null){
+            return  getHirer().getId();
+        }
+        return null;
+    }
+
     public boolean isProductCodeEquals(String code){
         if(getProduct() != null){
             return Objects.equals(getProduct().getCode(), code);

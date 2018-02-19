@@ -24,12 +24,13 @@ class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {
     void 'valid service authorize credit should be created'() {
         given:
         String accessToken = getUserAccessToken()
-        ServiceAuthorize credit = fixtureCreator.createServiceAuthorize()
+        ServiceAuthorize authorize = fixtureCreator.createServiceAuthorize()
+        fixtureCreator.createNegotiation(authorize.getContract().getHirer(), authorize.getContract().product)
 
         when:
         def result = this.mvc.perform(post('/service-authorizations/?access_token={access_token}',accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(credit)))
+                .content(toJson(authorize.with { authorizeEvents.find().id = null; it })))
         then:
         result.andExpect(status().isCreated())
     }
@@ -37,11 +38,12 @@ class ServiceAuthorizeControllerTest extends AuthServerApplicationTests {
     void 'known contracts should be found'() {
         given:
         String accessToken = getUserAccessToken()
-        ServiceAuthorize credit = fixtureCreator.createServiceAuthorize()
+        ServiceAuthorize authorize = fixtureCreator.createServiceAuthorize()
+        fixtureCreator.createNegotiation(authorize.getContract().getHirer(), authorize.getContract().product)
 
         def mvcResult = this.mvc.perform(post('/service-authorizations?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(credit)))
+                .content(toJson(authorize.with { authorizeEvents.find().id = null; it })))
                 .andReturn()
 
         def location = getLocationHeader(mvcResult)

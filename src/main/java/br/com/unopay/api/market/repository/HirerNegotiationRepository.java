@@ -22,5 +22,7 @@ public interface HirerNegotiationRepository
 
     Optional<HirerNegotiation> findByIdAndProductIssuerId(String id, String issuerId);
 
+    Optional<HirerNegotiation> findByHirerIdAndProductIdAndActiveTrue(String hirerId, String productId);
+
     Set<HirerNegotiation> findByPaymentDayAndEffectiveDateBefore(Integer paymentDay, Date effectiveDate);
 }

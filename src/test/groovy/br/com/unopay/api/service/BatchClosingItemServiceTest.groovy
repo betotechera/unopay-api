@@ -22,8 +22,11 @@ class BatchClosingItemServiceTest extends SpockApplicationTests {
     def 'should create batch closing item'(){
         given:
         def batchClosing = fixtureCreator.createBatchClosing()
-        def serviceAuthorize = fixtureCreator.createServiceAuthorize()
-        serviceAuthorizeService.create(fixtureCreator.createUser(), serviceAuthorize)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorize().with { authorizeEvents.find().id = null; it }
+        fixtureCreator.createNegotiation(serviceAuthorize.getContract().getHirer(), serviceAuthorize.getContract().product)
+        serviceAuthorizeService.create(fixtureCreator.createUser(), serviceAuthorize.with {
+            authorizeEvents.find().id = null; it
+        })
         BatchClosingItem batchClosingItem = Fixture.from(BatchClosingItem.class).gimme("valid", new Rule(){{
             add("batchClosing", batchClosing)
             add("serviceAuthorize", serviceAuthorize)
