@@ -122,12 +122,14 @@ public class AuthorizedMemberService {
             authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(instrumentNumber));
             return;
         }
-        authorizedMember.setPaymentInstrument(findDigitalWallet(authorizedMember));
+        authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
+                .contractorDocumentNumber()));
     }
 
-    private PaymentInstrument findDigitalWallet(AuthorizedMember authorizedMember) {
-        return paymentInstrumentService.findDigitalWalletByContractorDocument(
-                authorizedMember.getContract().getContractor().getDocumentNumber()).get();
+    private PaymentInstrument findDigitalWalletByContractorDocument(String document) {
+        return paymentInstrumentService.findDigitalWalletByContractorDocument(document)
+                .orElseThrow(() -> UnovationExceptions.notFound()
+                .withErrors(Errors.PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
     private List<AuthorizedMemberCsv> getAuthorizedMemberCsvs(MultipartFile multipartFile) throws IOException {
