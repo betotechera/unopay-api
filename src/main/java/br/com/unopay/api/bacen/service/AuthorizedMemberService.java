@@ -118,7 +118,8 @@ public class AuthorizedMemberService {
 
     private void defineCsvAuthorizedMemberPaymentInstrument(AuthorizedMemberCsv csvSource, AuthorizedMember authorizedMember) {
         if(csvSource.withInstrumentNumber()) {
-            authorizedMember.setPaymentInstrument(findCsvPaymentInstrument(csvSource));
+            String instrumentNumber = csvSource.getPaymentInstrumentNumber();
+            authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(instrumentNumber));
             return;
         }
         authorizedMember.setPaymentInstrument(findDigitalWallet(authorizedMember));
@@ -135,8 +136,7 @@ public class AuthorizedMemberService {
                 .withType(AuthorizedMemberCsv.class).build().parse();
     }
 
-    private PaymentInstrument findCsvPaymentInstrument(AuthorizedMemberCsv csv) {
-        String instrumentNumber = csv.getPaymentInstrumentNumber();
-        return paymentInstrumentService.findByNumber(instrumentNumber);
+    private PaymentInstrument findPaymentInstrumentByNumber(String number) {
+        return paymentInstrumentService.findByNumber(number);
     }
 }
