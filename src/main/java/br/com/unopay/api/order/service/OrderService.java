@@ -131,7 +131,7 @@ public class OrderService {
 
     private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
         if (order.shouldStoreCard()) {
-            userCreditCardService.store(userDetail, order);
+            userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
         }
     }
 

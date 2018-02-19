@@ -41,8 +41,8 @@ public class UserCreditCardService {
         return save(userCreditCard);
     }
 
-    public UserCreditCard store(UserDetail userDetail, Order order) {
-        return create(new UserCreditCard(userDetail, order));
+    public UserCreditCard storeForUser(UserDetail userDetail, CreditCard creditCard) {
+        return create(new UserCreditCard(userDetail, creditCard));
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){

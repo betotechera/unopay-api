@@ -102,8 +102,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     public UserCreditCard() {}
 
-    public UserCreditCard(UserDetail userDetail, Order order) {
-        CreditCard creditCard = order.getPaymentRequest().getCreditCard();
+    public UserCreditCard(UserDetail userDetail, CreditCard creditCard) {
         user = userDetail;
         holderName = creditCard.getHolderName();
         brand = CardBrand.fromCardNumber(creditCard.getNumber());
