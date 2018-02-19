@@ -145,12 +145,13 @@ public class HirerNegotiation implements Updatable{
 
     public void setMeUp(){
         if(!withInstallments()){
-            installments = product.getPaymentInstallments();
+            this.installments = product.getPaymentInstallments();
         }
         if(!withInstallmentValue()){
-            installmentValue = product.getInstallmentValue();
+            this.installmentValue = product.getInstallmentValue();
         }
-        createdDateTime = new Date();
+        this.createdDateTime = new Date();
+        this.active = Boolean.FALSE;
     }
 
     public String productId(){

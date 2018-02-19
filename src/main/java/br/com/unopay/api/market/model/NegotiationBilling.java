@@ -156,6 +156,10 @@ public class NegotiationBilling implements Billable {
         return null;
     }
 
+    public String negotiationId(){
+        return  getHirerNegotiation() != null ? getHirerNegotiation().getId() : null;
+    }
+
     public String creditId(){
         if(getCredit() != null){
             return getCredit().getId();

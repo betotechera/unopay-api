@@ -31,6 +31,8 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     @Autowired
     private CreditService creditService
     @Autowired
+    private HirerNegotiationService hirerNegotiationService
+    @Autowired
     private FixtureCreator fixtureCreator
 
     private Notifier notifierMock = Mock(Notifier)
@@ -235,6 +237,24 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         then:
         foundBefore.status == PaymentStatus.WAITING_PAYMENT
         foundAfter.status == PaymentStatus.PAID
+    }
+
+    def "given known negotiation when process as Paid should update negotiation to active"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        negotiation.setActive(Boolean.FALSE)
+        hirerNegotiationService.save(negotiation)
+        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
+        service.process(negotiation.getId())
+        NegotiationBilling billing = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        when:
+        service.processAsPaid(billing.getId())
+
+        HirerNegotiation negotiationFound = hirerNegotiationService.findById(negotiation.getId())
+
+        then:
+        negotiationFound.active
     }
 
     def "given valid negotiation when process for hirer should be created with number"(){

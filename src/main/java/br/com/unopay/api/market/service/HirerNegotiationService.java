@@ -137,4 +137,9 @@ public class HirerNegotiationService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    public void defineActive(String id) {
+        HirerNegotiation negotiation = findById(id);
+        negotiation.setActive(Boolean.TRUE);
+        save(negotiation);
+    }
 }
