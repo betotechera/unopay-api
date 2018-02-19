@@ -433,7 +433,7 @@ public class HirerController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.DELETE)
-    public void removeAuthorizedNumber(Hirer hirer, @PathVariable  String id) {
+    public void removeAuthorizedMember(Hirer hirer, @PathVariable  String id) {
         log.info("removing authorized-member id={}", id);
         authorizedMemberService.deleteForHirer(id, hirer);
     }
