@@ -95,7 +95,7 @@ public class HirerNegotiation implements Updatable{
     private Boolean autoRenewal;
 
     @Column(name = "\"active\"")
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     @JsonView({Views.HirerNegotiation.Detail.class})
     private Boolean active;
 
