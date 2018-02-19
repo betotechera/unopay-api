@@ -275,7 +275,8 @@ public class Order implements Updatable, Billable{
 
     public boolean shouldStoreCard() {
         return hasPaymentRequest()
-                && paymentRequest.shouldStoreCard()
+                && paymentRequest.hasPaymentMethod() && paymentRequest.isMethod(PaymentMethod.CARD)
+                && paymentRequest.hasStoreCard() && paymentRequest.getStoreCard()
                 && !isType(OrderType.ADHESION);
     }
 
