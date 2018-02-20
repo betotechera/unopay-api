@@ -99,6 +99,28 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR'
     }
 
+    void "given AuthorizedMember with unknown paymentInstrument should return error"(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.paymentInstrument.id = "123"
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'PAYMENT_INSTRUMENT_NOT_FOUND'
+    }
+
+    void "given AuthorizedMember with unknown contract should return error"(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.contract.id = "123"
+        when:
+        service.create(authorizedMember)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+    }
+
     void 'given AuthorizedMember without contract should return error'(){
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
@@ -143,7 +165,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED'
     }
 
-    void 'given AuthorizedMember without paymentInstrument and contractor with digital wallet should define paymentInstrument'(){
+    void 'given AuthorizedMember without paymentInstrument and contractor with digital wallet should define paymentInstrument as digital wallet'(){
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         createInstrument(authorizedMember.contract.contractor, "123458", PaymentInstrumentType.DIGITAL_WALLET)
@@ -152,7 +174,8 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         when:
         def created = service.create(authorizedMember)
         then:
-        created.paymentInstrument
+        created.paymentInstrument.type == PaymentInstrumentType.DIGITAL_WALLET
+        created.paymentInstrument.number == "123458"
     }
 
     void 'should find known AuthorizedMember'(){
