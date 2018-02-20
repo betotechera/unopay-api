@@ -51,6 +51,10 @@ public class AuthorizedMemberService {
     }
 
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
+        if(!authorizedMember.withInstrument()) {
+            authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
+                    .contractorDocumentNumber()));
+        }
         authorizedMember.validateMe();
         validateReferences(authorizedMember);
         return save(authorizedMember);
@@ -156,14 +160,12 @@ public class AuthorizedMemberService {
             authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(instrumentNumber));
             return;
         }
-        authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
-                .contractorDocumentNumber()));
     }
 
     private PaymentInstrument findDigitalWalletByContractorDocument(String document) {
         return paymentInstrumentService.findDigitalWalletByContractorDocument(document)
-                .orElseThrow(() -> UnovationExceptions.notFound()
-                .withErrors(Errors.PAYMENT_INSTRUMENT_NOT_FOUND));
+                .orElseThrow(() -> UnovationExceptions.unprocessableEntity()
+                .withErrors(Errors.PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED));
     }
 
     private List<AuthorizedMemberCsv> getAuthorizedMemberCsvs(MultipartFile multipartFile) throws IOException {

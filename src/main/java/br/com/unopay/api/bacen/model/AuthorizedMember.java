@@ -162,4 +162,8 @@ public class AuthorizedMember implements Serializable, Updatable{
     public String contractorDocumentNumber() {
         return contract.getContractor().getDocumentNumber();
     }
+
+    public boolean withInstrument() {
+        return paymentInstrument != null;
+    }
 }

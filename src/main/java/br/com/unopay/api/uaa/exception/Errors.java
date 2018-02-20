@@ -593,6 +593,10 @@ public final class Errors {
     public static final UnovationError AUTHORIZED_MEMBER_NOT_FOUND =
             new UnovationError("AUTHORIZED_MEMBER_NOT_FOUND", "Authorized member not founds");
 
+    public static final UnovationError PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED =
+            new UnovationError("PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED", "The " +
+                    "previous digital wallet or payment instrument is required");
+
     /*  Negotiation Billing */
     public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
             new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +

@@ -132,7 +132,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED'
     }
 
-    void 'given AuthorizedMember without paymentInstrument should return error'(){
+    void 'given AuthorizedMember without paymentInstrument and contractor without digital wallet should return error'(){
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
         authorizedMember.paymentInstrument = null
@@ -140,7 +140,19 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         service.create(authorizedMember)
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'PAYMENT_INSTRUMENT_REQUIRED'
+        ex.errors.first().logref == 'PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED'
+    }
+
+    void 'given AuthorizedMember without paymentInstrument and contractor with digital wallet should define paymentInstrument'(){
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        createInstrument(authorizedMember.contract.contractor, "123458", PaymentInstrumentType.DIGITAL_WALLET)
+
+        authorizedMember.paymentInstrument = null
+        when:
+        def created = service.create(authorizedMember)
+        then:
+        created.paymentInstrument
     }
 
     void 'should find known AuthorizedMember'(){
