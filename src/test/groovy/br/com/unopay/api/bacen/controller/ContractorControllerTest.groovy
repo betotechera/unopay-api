@@ -286,8 +286,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].product', is(notNullValue())))
     }
 
-
-    void 'given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true should create UserCreditCard for UserDetail and Order.creditCard'(){
+    void 'given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true should create UserCreditCard of UserDetail and Order.creditCard'(){
 
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
@@ -322,7 +321,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         found
 
     }
-
 
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")

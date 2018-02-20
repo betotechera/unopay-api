@@ -11,6 +11,7 @@ import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -321,4 +322,18 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
+    def 'given Credit Card with number length smaller than minimum should return error'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard", new Rule(){{
+            add("number", "123")
+        }})
+
+        when:
+        userCreditCardService.storeForUser(userDetail, creditCard)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVALID_NUMBER'
+    }
 }
