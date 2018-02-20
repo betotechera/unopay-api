@@ -139,7 +139,9 @@ public class AuthorizedMemberService {
         csvLines.forEach(csvLine ->  {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
             authorizedMember.setContract(getContractByCsv(csvLine));
-            defineCsvAuthorizedMemberPaymentInstrument(csvLine, authorizedMember);
+            if(csvLine.withInstrumentNumber()) {
+                authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(csvLine.getPaymentInstrumentNumber()));
+            }
             create(authorizedMember);
         });
     }
@@ -152,14 +154,6 @@ public class AuthorizedMemberService {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND);
         }
         return contract;
-    }
-
-    private void defineCsvAuthorizedMemberPaymentInstrument(AuthorizedMemberCsv csvSource, AuthorizedMember authorizedMember) {
-        if(csvSource.withInstrumentNumber()) {
-            String instrumentNumber = csvSource.getPaymentInstrumentNumber();
-            authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(instrumentNumber));
-            return;
-        }
     }
 
     private PaymentInstrument findDigitalWalletByContractorDocument(String document) {
