@@ -6,6 +6,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
@@ -101,6 +102,17 @@ class FixtureCreator {
         UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
             {
                 add("issuer", issuerUnderTest)
+                add("password", passwordEncoder.encode(generatePassword))
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
+    UserDetail createContractorUser(contractorUnderTest = createContractor("valid")) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
+            {
+                add("contractor", contractorUnderTest)
                 add("password", passwordEncoder.encode(generatePassword))
             }
         })
@@ -554,5 +566,21 @@ class FixtureCreator {
 
     PaymentRuleGroup createPaymentRuleGroupDefault() {
         from(PaymentRuleGroup.class).uses(jpaProcessor).gimme("default")
+    }
+
+    AuthorizedMember createPersistedAuthorizedMember(contractor = createContractor("valid")) {
+        def contract = createPersistedContract(contractor)
+        return Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
+            add("contract", contract)
+        }})
+    }
+
+    AuthorizedMember createAuthorizedMemberToPersist() {
+        def contract = createPersistedContract()
+        return Fixture.from(AuthorizedMember.class).gimme("valid", new Rule() {{
+            add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
+            add("contract", contract)
+        }})
     }
 }

@@ -570,9 +570,35 @@ public final class Errors {
             new UnovationError("NEGOTIATION_FOR_PRODUCT_AND_HIRER_EXISTING", "" +
                     "Negotiation for product and hirer existing");
 
+    /* Authorized Member*/
+    public static final UnovationError AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED", "The authorized member " +
+                    "birth date is required");
+
+    public static final UnovationError INVALID_AUTHORIZED_MEMBER_BIRTH_DATE =
+            new UnovationError("INVALID_AUTHORIZED_MEMBER_BIRTH_DATE", "The informed authorized " +
+                    "member birth date is invalid");
+
+    public static final UnovationError AUTHORIZED_MEMBER_NAME_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_NAME_REQUIRED", "The authorized member " +
+                    "name is required");
+
+    public static final UnovationError AUTHORIZED_MEMBER_GENDER_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_GENDER_REQUIRED", "The authorized member " +
+                    "gender is required");
+    public static final UnovationError AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED =
+            new UnovationError("AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED", "The authorized member " +
+                    "relatedness with a hirer is required");
+
+    public static final UnovationError AUTHORIZED_MEMBER_NOT_FOUND =
+            new UnovationError("AUTHORIZED_MEMBER_NOT_FOUND", "Authorized member not founds");
+
+    public static final UnovationError PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED =
+            new UnovationError("PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED", "The " +
+                    "previous digital wallet or payment instrument is required");
+
     /*  Negotiation Billing */
     public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
             new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +
                     "Negotiation billing not found");
-
 }

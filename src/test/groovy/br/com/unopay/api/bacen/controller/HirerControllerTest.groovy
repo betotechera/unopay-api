@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
@@ -267,6 +268,74 @@ class HirerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.paymentDay', is(notNullValue())))
+    }
+
+    void 'known me authorizedMember should be found'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        def id = authorizedMember.id
+        when:
+        def result = this.mvc.perform(get('/hirers/me/authorized-members/{id}?access_token={access_token}',id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+    }
+
+    void 'all me authorizedMember should be found'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        when:
+        def result = this.mvc.perform(get('/hirers/me/authorized-members?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.content[0].name', is(notNullValue())))
+    }
+
+    void 'should create my authorizedMember'() {
+        given:
+        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        when:
+        def result = this.mvc.perform(post('/hirers/me/authorized-members?access_token={access_token}', accessToken)
+                .content(toJson(authorizedMember))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+    }
+
+    void 'known me authorizedMember should be updated'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        def id = authorizedMember.id
+        when:
+        def result = this.mvc.perform(put('/hirers/me/authorized-members/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(authorizedMember.with {  name = "new name"; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'should delete my authorizedMember'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        UserDetail hirerUser = fixtureCreator.createHirerUser(authorizedMember.contract.hirer)
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        def id = authorizedMember.id
+        when:
+        def result = this.mvc.perform(delete("/hirers/me/authorized-members/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
     }
 
     Hirer getHirer() {

@@ -20,6 +20,6 @@ public interface PaymentInstrumentRepository
 
     Optional<PaymentInstrument> findFirstByContractorPersonDocumentNumberAndType(String contractorDocumentNumber,
                                                                              PaymentInstrumentType type);
-
+    Optional<PaymentInstrument> findByNumber(String number);
     Integer countByNumber(String instrumentNumber);
 }

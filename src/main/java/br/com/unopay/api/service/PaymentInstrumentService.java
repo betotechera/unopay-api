@@ -101,6 +101,11 @@ public class PaymentInstrumentService {
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
+    public PaymentInstrument findByNumber(String number) {
+        Optional<PaymentInstrument> instrument = repository.findByNumber(number);
+        return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
+    }
+
     public Optional<PaymentInstrument> getById(String id) {
         return repository.findById(id);
     }
