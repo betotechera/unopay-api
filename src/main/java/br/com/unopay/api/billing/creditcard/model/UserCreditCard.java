@@ -18,7 +18,6 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Scanner;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -31,11 +30,9 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 public class UserCreditCard implements Serializable, Updatable {
 
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
-    private static final int BASE_10 = 10;
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
     private static final int SURPLUS_LIMIT = 100;
-
     @Id
     @Column(name="id")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
@@ -98,6 +95,20 @@ public class UserCreditCard implements Serializable, Updatable {
     @Version
     private Integer version;
 
+    public UserCreditCard() {}
+
+    public UserCreditCard(UserDetail userDetail, CreditCard creditCard) {
+        creditCard.checkMe();
+        user = userDetail;
+        holderName = creditCard.getHolderName();
+        brand = CardBrand.fromCardNumber(creditCard.getNumber());
+        lastFourDigits = creditCard.lastFourDigits();
+        expirationMonth = creditCard.getExpiryMonth();
+        expirationYear = creditCard.getExpiryYear();
+        gatewaySource = GatewaySource.PAYZEN;
+        gatewayToken = creditCard.getCardReference();
+    }
+
     public void setupMyCreate(){
         validateMe();
         defineExpirationDate();
@@ -112,7 +123,7 @@ public class UserCreditCard implements Serializable, Updatable {
     public void validateMonth(){
         if (getExpirationMonth() == null
                 || getExpirationMonth() == ""
-                || !isInteger(getExpirationMonth(), BASE_10)
+                || !isNumber(getExpirationMonth())
                 || !MonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_MONTH.withOnlyArgument(getExpirationMonth()));
@@ -120,7 +131,7 @@ public class UserCreditCard implements Serializable, Updatable {
     }
 
     public boolean MonthRangeValid(){
-        int month = Integer.parseInt(expirationMonth);
+        int month = Integer.parseUnsignedInt(expirationMonth);
         return month >= JANUARY && month <= DECEMBER;
     }
 
@@ -132,7 +143,7 @@ public class UserCreditCard implements Serializable, Updatable {
     public void validateYear(){
         if (getExpirationYear() == null
                 || getExpirationYear() == ""
-                || !isInteger(getExpirationYear(), BASE_10)
+                || !isNumber(getExpirationYear())
                 || !YearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_YEAR.withOnlyArgument(getExpirationYear()));
@@ -140,7 +151,7 @@ public class UserCreditCard implements Serializable, Updatable {
     }
 
     public boolean YearRangeValid(){
-        int year = Integer.parseInt(expirationYear);
+        int year = Integer.parseUnsignedInt(expirationYear);
         return year >= CURRENT_YEAR && year <= CURRENT_YEAR + SURPLUS_LIMIT;
     }
 
@@ -158,8 +169,8 @@ public class UserCreditCard implements Serializable, Updatable {
         validateMonth();
         validateYear();
         this.expirationDate = DateTime.now()
-                .withYear(Integer.parseInt(getExpirationYear()))
-                .withMonthOfYear(Integer.parseInt(getExpirationMonth()))
+                .withYear(Integer.parseUnsignedInt(getExpirationYear()))
+                .withMonthOfYear(Integer.parseUnsignedInt(getExpirationMonth()))
                 .withDayOfMonth(1)
                 .withTime(0, 0, 0, 0)
                 .toDate();
@@ -180,11 +191,7 @@ public class UserCreditCard implements Serializable, Updatable {
         return null;
     }
 
-    private static boolean isInteger(String s, int radix) {
-        try(Scanner sc = new Scanner(s.trim())) {
-            if (!sc.hasNextInt(radix)) return false;
-            sc.nextInt(radix);
-            return !sc.hasNext();
-        }
+    private static boolean isNumber(String number) {
+        return number.matches("\\d+");
     }
 }

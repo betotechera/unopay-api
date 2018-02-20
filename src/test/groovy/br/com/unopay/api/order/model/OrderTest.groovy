@@ -3,6 +3,8 @@ package br.com.unopay.api.order.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import static java.math.BigDecimal.ONE
@@ -167,4 +169,75 @@ class OrderTest extends FixtureApplicationTest {
         !shouldBeEquals
 
     }
+
+    def 'given an order with payment request hasPaymentRequest should return true'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid")
+        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
+            add("paymentRequest", paymentRequest)
+        }})
+
+        when:
+        boolean result = order.hasPaymentRequest()
+
+        then:
+        result
+    }
+
+    def 'given an order without payment request hasPaymentRequest should return false'(){
+
+        given:
+        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
+            add("paymentRequest", null)
+        }})
+
+        when:
+        boolean result = order.hasPaymentRequest()
+
+        then:
+        !result
+
+    }
+
+    def 'given an order with type other than adhesion and with payment request with storeCard equals true and method equals card shouldStoreCard should return true'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
+            add("storeCard", true)
+            add("method", PaymentMethod.CARD)
+        }})
+        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
+            add("paymentRequest", paymentRequest)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+        }})
+
+        when:
+        boolean result = order.shouldStoreCard()
+
+        then:
+        result
+
+    }
+
+    def 'given an order with type adhesion shouldStoreCard should return false'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
+            add("storeCard", true)
+            add("method", PaymentMethod.CARD)
+        }})
+        Order order = Fixture.from(Order).gimme("valid", new Rule(){{
+            add("paymentRequest", paymentRequest)
+            add("type", OrderType.ADHESION)
+        }})
+
+        when:
+        boolean result = order.shouldStoreCard()
+
+        then:
+        !result
+
+    }
+
 }

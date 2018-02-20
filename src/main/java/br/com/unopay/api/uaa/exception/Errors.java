@@ -549,6 +549,15 @@ public final class Errors {
     public static final UnovationError INVALID_EXPIRATION_DATE =
             new UnovationError("INVALID_EXPIRATION_DATE", "" +
                     "Invalid expiration date");
+    public static final UnovationError INVALID_NUMBER =
+            new UnovationError("INVALID_NUMBER", "" +
+                    "Invalid number");
+    public static final UnovationError INVALID_CARD_REFERENCE =
+            new UnovationError("INVALID_CARD_REFERENCE", "" +
+                    "Invalid card reference");
+    public static final UnovationError INVALID_HOLDER_NAME =
+            new UnovationError("INVALID_HOLDER_NAME", "" +
+                    "Invalid holder name");
 
     /* Hirer Negotiation */
     public static final UnovationError EFFECTIVE_DATE_IS_BEFORE_CREATION =

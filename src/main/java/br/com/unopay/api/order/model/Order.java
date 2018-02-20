@@ -268,4 +268,16 @@ public class Order implements Updatable, Billable{
         }
         return null;
     }
+
+    public boolean hasPaymentRequest() {
+        return paymentRequest != null;
+    }
+
+    public boolean shouldStoreCard() {
+        return hasPaymentRequest()
+                && paymentRequest.hasPaymentMethod() && paymentRequest.isMethod(PaymentMethod.CARD)
+                && paymentRequest.hasStoreCard() && paymentRequest.getStoreCard()
+                && !isType(OrderType.ADHESION);
+    }
+
 }

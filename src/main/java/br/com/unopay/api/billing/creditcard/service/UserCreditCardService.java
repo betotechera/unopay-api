@@ -1,8 +1,10 @@
 package br.com.unopay.api.billing.creditcard.service;
 
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -18,6 +20,8 @@ import static br.com.unopay.api.uaa.exception.Errors.USER_CREDIT_CARD_NOT_FOUND;
 
 @Service
 public class UserCreditCardService {
+
+    private static final int NUMBER_OF_DIGITS = 4;
 
     private UserCreditCardRepository userCreditCardRepository;
     private UserDetailService userDetailService;
@@ -37,6 +41,10 @@ public class UserCreditCardService {
         userCreditCard.setupMyCreate();
         setValidUser(userCreditCard);
         return save(userCreditCard);
+    }
+
+    public UserCreditCard storeForUser(UserDetail userDetail, CreditCard creditCard) {
+        return create(new UserCreditCard(userDetail, creditCard));
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){
@@ -70,6 +78,15 @@ public class UserCreditCardService {
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
     }
 
+    public UserCreditCard findByNumberForUser(String number, UserDetail user) {
+        return findByLastFourDigitsForUser(number.substring(number.length() - NUMBER_OF_DIGITS), user);
+    }
+
+    private UserCreditCard findByLastFourDigitsForUser(String lastFourDigits, UserDetail user) {
+        return getUserCreditCardWithMonthAndYear
+                (lastFourDigits, () -> userCreditCardRepository.findByLastFourDigitsAndUserId(lastFourDigits, user.getId()));
+    }
+
     private UserCreditCard getUserCreditCardWithMonthAndYear(String id, Supplier<Optional<UserCreditCard>> userCreditCard){
         Optional<UserCreditCard> credit = userCreditCard.get();
         credit.ifPresent(UserCreditCard::defineMonthAndYearBasedOnExpirationDate);
@@ -85,4 +102,5 @@ public class UserCreditCardService {
     public void setValidUser (UserCreditCard userCreditCard){
         userCreditCard.setUser(userDetailService.getById(userCreditCard.userId()));
     }
+
 }

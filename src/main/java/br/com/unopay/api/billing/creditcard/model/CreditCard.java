@@ -2,8 +2,10 @@ package br.com.unopay.api.billing.creditcard.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
@@ -12,11 +14,19 @@ import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.Length;
 
 import static br.com.unopay.api.model.Person.NOT_NUMBER;
+import static br.com.unopay.api.uaa.exception.Errors.*;
+import static org.joda.time.DateTimeConstants.DECEMBER;
+import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
 @ToString(exclude = {"number", "hash"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
+
+    private static final int NUMBER_OF_DIGITS = 4;
+    private static final int SURPLUS_LIMIT = 100;
+    private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+    private static final int MIN_LENGTH = 4;
 
     private String hash;
 
@@ -46,4 +56,77 @@ public class CreditCard implements Serializable {
             this.number = this.number.replaceAll(NOT_NUMBER, "");
         }
     }
+
+    public String lastFourDigits() {
+        return number.substring(number.length() - NUMBER_OF_DIGITS);
+    }
+
+    public void checkMe() {
+        checkExpiryMonth();
+        checkExpiryYear();
+        checkNumber();
+        checkCardReference();
+        checkHolderName();
+    }
+
+    public void checkExpiryMonth() {
+        if (getExpiryMonth() == null
+                || getExpiryMonth() == ""
+                || !isNumber(getExpiryMonth())
+                || !MonthRangeValid()) {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_MONTH.withOnlyArgument(getExpiryMonth()));
+        }
+    }
+
+    public boolean MonthRangeValid(){
+        int month = Integer.parseUnsignedInt(expiryMonth);
+        return month >= JANUARY && month <= DECEMBER;
+    }
+
+    public void checkExpiryYear(){
+        if (getExpiryYear() == null
+                || getExpiryYear() == ""
+                || !isNumber(getExpiryYear())
+                || !YearRangeValid()){
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_YEAR.withOnlyArgument(getExpiryYear()));
+        }
+    }
+
+    public boolean YearRangeValid(){
+        int year = Integer.parseUnsignedInt(expiryYear);
+        return year >= CURRENT_YEAR && year <= CURRENT_YEAR + SURPLUS_LIMIT;
+    }
+
+    public void checkNumber() {
+        if (getNumber() == null
+                || getNumber() == ""
+                || !isNumber(getNumber())
+                || getNumber().length() < MIN_LENGTH) {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_NUMBER.withOnlyArgument(getNumber()));
+        }
+    }
+
+    public void checkCardReference() {
+        if (getCardReference() == null
+                || getCardReference() == "") {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_CARD_REFERENCE.withOnlyArgument(getCardReference()));
+        }
+    }
+
+    public void checkHolderName() {
+        if (getHolderName() == null
+                || getHolderName() == "") {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_HOLDER_NAME.withOnlyArgument(getHolderName()));
+        }
+    }
+
+    private static boolean isNumber(String number) {
+        return number.matches("\\d+");
+    }
+
 }

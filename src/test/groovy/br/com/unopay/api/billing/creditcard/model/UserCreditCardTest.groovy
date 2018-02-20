@@ -3,8 +3,8 @@ package br.com.unopay.api.billing.creditcard.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
-import org.hsqldb.rights.User
 import org.joda.time.DateTime
 import spock.lang.Unroll
 
@@ -193,9 +193,11 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '2017'
     }
 
-    def 'when creating UserCreditCard with year value after current year plus 100 should return error'() {
+    @Unroll
+    def 'when creating UserCreditCard with year value after current year plus #surplusLimit should return error'() {
 
         given:
+        def limit = surplusLimit
         String expirationYear = value
         UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
             {
@@ -211,10 +213,10 @@ class UserCreditCardTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_YEAR'
 
         where:
-        _ | value
-        _ | '2300'
-        _ | '10000'
-        _ | '123123213'
+        surplusLimit | value
+        100 | '2300'
+        100 | '10000'
+        100 | '123123213'
     }
 
     def 'when calling validateMe with month value before January should return error'() {
@@ -267,7 +269,8 @@ class UserCreditCardTest extends FixtureApplicationTest {
         _ | '-18299898'
     }
 
-    def 'when calling validateContainsExpirationDate with value #blankOrNull should return error'() {
+    @Unroll
+    def 'when calling validateContainsExpirationDate with value "#blankOrNull" should return error'() {
 
         given:
         Date invalidValue = blankOrNull
@@ -364,6 +367,25 @@ class UserCreditCardTest extends FixtureApplicationTest {
                "5" | "2030"
                "3" | "2029"
               "11" | "2053"
+
+    }
+
+    def 'when instantiating a UserCreditCard with a valid UserDetail and a valid CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        UserDetail userDetail = Fixture.from(UserDetail).gimme("without-group")
+
+
+        when:
+        UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard)
+
+        then:
+        userCreditCard.user.equals(userDetail)
+        userCreditCard.expirationMonth.equals(creditCard.expiryMonth)
+        userCreditCard.expirationYear.equals(creditCard.expiryYear)
+        userCreditCard.lastFourDigits.equals(creditCard.lastFourDigits())
+        userCreditCard.gatewayToken.equals(creditCard.cardReference)
 
     }
 }

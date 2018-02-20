@@ -4,10 +4,14 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.CardBrand
+import br.com.unopay.api.billing.creditcard.model.CreditCard
+import br.com.unopay.api.billing.creditcard.model.GatewaySource
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -246,4 +250,90 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
+    def 'given UserDetail and CreditCard should create UserCreditCard with their values'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+
+        when:
+        UserCreditCard stored = userCreditCardService.storeForUser(userDetail, creditCard)
+        UserCreditCard found = userCreditCardService.findById(stored.id)
+
+        then:
+        found.userId().equals(userDetail.id)
+        found.holderName.equals(creditCard.getHolderName())
+        found.brand.equals(CardBrand.fromCardNumber(creditCard.getNumber()))
+        found.lastFourDigits.equals(creditCard.lastFourDigits())
+        found.expirationMonth.equals(creditCard.getExpiryMonth())
+        found.expirationYear.equals(creditCard.getExpiryYear())
+        found.gatewaySource.equals(GatewaySource.PAYZEN)
+        found.gatewayToken.equals(creditCard.getCardReference())
+
+    }
+
+    def 'given valid UserCreditCard and its User should be found by its number'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+
+        when:
+        UserCreditCard found = userCreditCardService.findByNumberForUser(created.lastFourDigits, userDetail)
+
+        then:
+        found.lastFourDigits == created.lastFourDigits
+        found.userId() == userDetail.id
+    }
+
+    def 'given valid UserCreditCard and a different User should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+        }})
+        UserCreditCard created = userCreditCardService.create(userCreditCard)
+        UserDetail differentUser = fixtureCreator.createUser()
+
+        when:
+        userCreditCardService.findByNumberForUser(created.lastFourDigits, differentUser)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'given invalid UserCreditCard number should return error'(){
+
+        given:
+        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+            add("user", userDetail)
+            add("lastFourDigits", "1234")
+        }})
+        userCreditCardService.create(userCreditCard)
+        String differentNumber = "4321"
+
+        when:
+        userCreditCardService.findByNumberForUser(differentNumber, userDetail)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    def 'given Credit Card with number length smaller than minimum should return error'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard", new Rule(){{
+            add("number", "123")
+        }})
+
+        when:
+        userCreditCardService.storeForUser(userDetail, creditCard)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'INVALID_NUMBER'
+    }
 }

@@ -12,4 +12,6 @@ public interface UserCreditCardRepository
     Optional<UserCreditCard> findById(String id);
 
     Optional<UserCreditCard> findByIdAndUserId(String id, String userId);
+
+    Optional<UserCreditCard> findByLastFourDigitsAndUserId(String lastFourDigits, String userId);
 }

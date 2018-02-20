@@ -1,6 +1,7 @@
 package br.com.unopay.api.billing.creditcard.model
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 
 class PaymentRequestTest extends FixtureApplicationTest {
@@ -45,4 +46,71 @@ class PaymentRequestTest extends FixtureApplicationTest {
         !shouldBeEquals
 
     }
+
+    def 'given a payment request with payment method hasPaymentMethod should return true'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", PaymentMethod.CARD)
+        }})
+
+        when:
+        boolean result = paymentRequest.hasPaymentMethod()
+
+        then:
+        result
+
+    }
+
+    def 'given a payment request without payment method hasPaymentMethod should return false'(){
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", null)
+        }})
+
+        when:
+        boolean result = paymentRequest.hasPaymentMethod()
+
+        then:
+        !result
+
+    }
+
+    def 'given a payment request with store card hasStoreCard should return true'(){
+
+        given:
+        boolean value = valid
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("storeCard", value)
+        }})
+
+        when:
+        boolean result = paymentRequest.hasStoreCard()
+
+        then:
+        result
+
+        where:
+        _ | valid
+        _ | true
+        _ | false
+
+    }
+
+    def 'given a payment request without store card hasStoreCard should return false'() {
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
+                add("storeCard", null)
+        }})
+
+        when:
+        boolean result = paymentRequest.hasStoreCard()
+
+        then:
+        !result
+
+    }
+
 }

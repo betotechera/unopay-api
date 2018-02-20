@@ -4,6 +4,8 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
@@ -68,6 +70,7 @@ public class OrderService {
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
     private MailValidator mailValidator;
+    private UserCreditCardService userCreditCardService;
 
     public OrderService(){}
 
@@ -80,7 +83,8 @@ public class OrderService {
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
                         UserDetailService userDetailService, HirerService hirerService, Notifier notifier,
-                        NotificationService notificationService, MailValidator mailValidator){
+                        NotificationService notificationService, MailValidator mailValidator,
+                        UserCreditCardService userCreditCardService){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
@@ -93,6 +97,7 @@ public class OrderService {
         this.notifier = notifier;
         this.notificationService = notificationService;
         this.mailValidator = mailValidator;
+        this.userCreditCardService = userCreditCardService;
     }
 
     public Order save(Order order) {
@@ -120,6 +125,7 @@ public class OrderService {
         if(currentUser.isContractorType()) {
             order.setPerson(currentUser.getContractor().getPerson());
         }
+        storeCreditCardWhenRequired(currentUser, order);
         return create(order);
     }
 
@@ -166,7 +172,6 @@ public class OrderService {
         process(order);
     }
 
-
     public void process(Order order){
         if(order.paid()) {
             if(order.isType(CREDIT)) {
@@ -211,6 +216,12 @@ public class OrderService {
                 return;
             }
             order.setValue(order.getProductInstallmentValue());
+        }
+    }
+
+    private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
+        if (order.shouldStoreCard()) {
+            userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
         }
     }
 
