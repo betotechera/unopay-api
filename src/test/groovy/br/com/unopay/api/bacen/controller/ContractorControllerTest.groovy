@@ -19,6 +19,7 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.service.UserDetailService
+import org.springframework.security.crypto.password.PasswordEncoder
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
@@ -56,6 +57,9 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     ContractInstallmentService contractInstallmentService
+
+    @Autowired
+    PasswordEncoder passwordEncoder
 
     void 'should create contractor'() {
         given:
@@ -286,29 +290,33 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].product', is(notNullValue())))
     }
 
-    void 'given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true should create UserCreditCard of UserDetail and Order.creditCard'(){
+    void 'given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true should create UserCreditCard of UserDetail and Order.creditCard'() {
 
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
-            add("method", PaymentMethod.CARD)
-            add("storeCard", true)
-            add("creditCard", creditCard)
-        }})
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {
+            {
+                add("method", PaymentMethod.CARD)
+                add("storeCard", true)
+                add("creditCard", creditCard)
+            }
+        })
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
         def contract = fixtureCreator.createPersistedContract(contractor, product)
         contractInstallmentService.create(contract)
         def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("product", product)
-            add("type", OrderType.INSTALLMENT_PAYMENT)
-            add("paymentRequest", paymentRequest)
-            add("person", contractor.person)
-            add("contract", contract)
-            add("paymentInstrument", instrument)
-            add("value", BigDecimal.ONE)
-        }})
+        Order order = Fixture.from(Order.class).gimme("valid", new Rule() {
+            {
+                add("product", product)
+                add("type", OrderType.INSTALLMENT_PAYMENT)
+                add("paymentRequest", paymentRequest)
+                add("person", contractor.person)
+                add("contract", contract)
+                add("paymentInstrument", instrument)
+                add("value", BigDecimal.ONE)
+            }
+        })
         String accessToken = getUserAccessToken()
         this.mvc.perform(post('/contractors/me/orders?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -319,7 +327,33 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
         then:
         found
+    }
 
+    void 'should find my authorizedMember'() {
+        given:
+        def contractorUser = fixtureCreator.createContractorUser()
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember(contractorUser.contractor)
+        def id = authorizedMember.id
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        when:
+        def result = this.mvc.perform(get("/contractors/me/authorized-members/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(equalTo(authorizedMember.name))))
+    }
+
+    void 'all my authorizedMembers should be found'() {
+        given:
+        def contractorUser = fixtureCreator.createContractorUser()
+        fixtureCreator.createPersistedAuthorizedMember(contractorUser.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        when:
+        def result = this.mvc.perform(get('/contractors/me/authorized-members?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.content[0].name', is(notNullValue())))
     }
 
     Contractor getContractor() {

@@ -1,9 +1,12 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
+import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
@@ -80,6 +83,7 @@ public class HirerController {
     private TicketService ticketService;
     private TransactionService transactionService;
     private HirerNegotiationService hirerNegotiationService;
+    private AuthorizedMemberService authorizedMemberService;
 
     @Value("${unopay.api}")
     private String api;
@@ -93,7 +97,8 @@ public class HirerController {
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
                            TicketService ticketService, TransactionService transactionService,
-                           HirerNegotiationService hirerNegotiationService) {
+                           HirerNegotiationService hirerNegotiationService,
+                           AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -104,6 +109,7 @@ public class HirerController {
         this.ticketService = ticketService;
         this.transactionService = transactionService;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -385,6 +391,60 @@ public class HirerController {
         Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.POST)
+    public ResponseEntity<AuthorizedMember> create(Hirer hirer, @Validated(Create.class)
+                                                   @RequestBody AuthorizedMember authorizedMember) {
+        log.info("creating authorizedMember {}", authorizedMember);
+        AuthorizedMember created = authorizedMemberService.create(authorizedMember);
+        return ResponseEntity
+                .created(URI.create("/hirers/me/authorized-members/"+created.getId()))
+                .body(created);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.GET)
+    public Page<AuthorizedMember> getAuthorizedMember(Hirer hirer, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for hirer={}", hirer.getPerson().documentNumber());
+        filter.setHirerId(hirer.getId());
+        return authorizedMemberService.findByFilter(filter, pageable);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.GET)
+    public AuthorizedMember getAuthorizedMember(Hirer hirer, @PathVariable String id) {
+        log.info("get authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
+        return authorizedMemberService.findByIdForHirer(id, hirer);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.PUT)
+    public void updateAuthorizedMember(Hirer hirer, @PathVariable  String id, @Validated(Update.class)
+    @RequestBody AuthorizedMember authorizedMember) {
+        log.info("updating authorizedMember={} for hirer={}", id, hirer.getPerson().documentNumber());
+        authorizedMemberService.updateForHirer(id, hirer, authorizedMember);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members/{id}", method = RequestMethod.DELETE)
+    public void removeAuthorizedMember(Hirer hirer, @PathVariable  String id) {
+        log.info("removing authorized-member id={}", id);
+        authorizedMemberService.deleteForHirer(id, hirer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createAuthorizedMembersFromCsv(Hirer hirer, @RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading authorized members csv file {}", fileName);
+        authorizedMemberService.createFromCsvForHirer(hirer.getDocumentNumber(), file);
     }
 
 }

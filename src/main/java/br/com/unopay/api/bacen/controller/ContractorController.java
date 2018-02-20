@@ -1,7 +1,10 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
+import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
@@ -61,6 +64,7 @@ public class ContractorController {
     private PaymentInstrumentService paymentInstrumentService;
     private TransactionService transactionService;
     private TicketService ticketService;
+    private AuthorizedMemberService authorizedMemberService;
 
     @Value("${unopay.api}")
     private String api;
@@ -72,7 +76,7 @@ public class ContractorController {
                                 ContractorInstrumentCreditService contractorInstrumentCreditService,
                                 PaymentInstrumentService paymentInstrumentService,
                                 TransactionService transactionService,
-                                TicketService ticketService) {
+                                TicketService ticketService, AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -80,6 +84,7 @@ public class ContractorController {
         this.paymentInstrumentService = paymentInstrumentService;
         this.transactionService = transactionService;
         this.ticketService = ticketService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -241,5 +246,20 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/transactions", api));
     }
 
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/authorized-members/{id}", method = RequestMethod.GET)
+    public AuthorizedMember getAuthorizedMember(Contractor contractor, @PathVariable String id) {
+        log.info("get authorizedMember={} for contractor={}", id, contractor.getPerson().documentNumber());
+        return authorizedMemberService.findByIdForContractor(id, contractor);
+    }
 
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/authorized-members", method = RequestMethod.GET)
+    public Page<AuthorizedMember> getAuthorizedMember(Contractor contractor, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for contractor={}", contractor.getPerson().documentNumber());
+        filter.setContractorId(contractor.getId());
+        return authorizedMemberService.findByFilter(filter, pageable);
+    }
 }

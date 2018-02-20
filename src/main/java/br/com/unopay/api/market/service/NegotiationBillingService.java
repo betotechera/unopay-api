@@ -101,8 +101,10 @@ public class NegotiationBillingService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    @Transactional
     public void processAsPaid(String billingId) {
         NegotiationBilling current = repository.findOne(billingId);
+        hirerNegotiationService.defineActive(current.negotiationId());
         current.setStatus(PaymentStatus.PAID);
         save(current);
     }
