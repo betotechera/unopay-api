@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
@@ -49,7 +50,7 @@ public class NegotiationBillingService {
     private NegotiationBillingDetailService billingDetailService;
     private CreditService creditService;
     private NumberGenerator numberGenerator;
-    @Setter private Integer memberTotal = 0;
+    private AuthorizedMemberService authorizedMemberService;
     @Setter private Notifier notifier;
 
     @Autowired
@@ -57,13 +58,16 @@ public class NegotiationBillingService {
                                      HirerNegotiationService hirerNegotiationService,
                                      ContractService contractService,
                                      NegotiationBillingDetailService billingDetailService,
-                                     CreditService creditService, Notifier notifier) {
+                                     CreditService creditService,
+                                     AuthorizedMemberService authorizedMemberService,
+                                     Notifier notifier) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
         this.contractService = contractService;
         this.billingDetailService = billingDetailService;
         this.numberGenerator = new NumberGenerator(repository);
         this.creditService = creditService;
+        this.authorizedMemberService = authorizedMemberService;
         this.notifier = notifier;
     }
 
@@ -157,7 +161,7 @@ public class NegotiationBillingService {
                                                                          NegotiationBilling billing) {
         hirerContracts.stream().map(NegotiationBillingDetail::new)
         .forEach(detail ->{
-                detail.setMemberTotal(this.memberTotal);
+                detail.setMemberTotal(authorizedMemberService.countByContract(detail.contractId()));
                 billing.addValue(detail.defineBillingInformation(billing).getValue());
                 billing.addCreditValueWhenRequired(detail.defineBillingInformation(billing).creditValue());
                 billingDetailService.save(detail);

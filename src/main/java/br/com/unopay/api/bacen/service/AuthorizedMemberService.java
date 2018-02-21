@@ -65,7 +65,7 @@ public class AuthorizedMemberService {
     }
 
     private void validateReferences(AuthorizedMember authorizedMember) {
-        authorizedMember.setPaymentInstrument(paymentInstrumentService.findById(authorizedMember.paymentInstrumentId()));
+        authorizedMember.setPaymentInstrument(paymentInstrumentService.findById(authorizedMember.instrumentId()));
         authorizedMember.setContract(contractService.findById(authorizedMember.contractId()));
     }
 
@@ -75,8 +75,12 @@ public class AuthorizedMemberService {
                 Errors.AUTHORIZED_MEMBER_NOT_FOUND));
     }
 
+    public Integer countByContract(String contractId) {
+        return repository.countByContractId(contractId);
+    }
+
     public AuthorizedMember findByIdForContractor(String id, Contractor contractor) {
-        Optional<AuthorizedMember> authorizedMember = repository.findByIdAndContractContractorId(id, contractor.getId());
+        Optional<AuthorizedMember> authorizedMember = repository.findByIdAndContractContractorId(id,contractor.getId());
         return authorizedMember.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
                 Errors.AUTHORIZED_MEMBER_NOT_FOUND.withOnlyArgument(id)));
     }
@@ -122,9 +126,7 @@ public class AuthorizedMemberService {
     @Transactional
     public void createFromCsvForHirer(String hirerDocument, MultipartFile multipartFile) {
         List<AuthorizedMemberCsv> csvLines = getAuthorizedMemberCsvs(multipartFile);
-        csvLines.forEach(csvLine ->  {
-            csvLine.setHirerDocumentNumber(hirerDocument);
-        });
+        csvLines.forEach(csvLine -> csvLine.setHirerDocumentNumber(hirerDocument));
         createFromCsvList(csvLines);
     }
 
@@ -140,7 +142,8 @@ public class AuthorizedMemberService {
             AuthorizedMember authorizedMember = csvLine.toAuthorizedMember();
             authorizedMember.setContract(getContractByCsv(csvLine));
             if(csvLine.withInstrumentNumber()) {
-                authorizedMember.setPaymentInstrument(findPaymentInstrumentByNumber(csvLine.getPaymentInstrumentNumber()));
+                authorizedMember
+                        .setPaymentInstrument(findPaymentInstrumentByNumber(csvLine.getPaymentInstrumentNumber()));
             }
             create(authorizedMember);
         });
@@ -148,8 +151,11 @@ public class AuthorizedMemberService {
 
     private Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
         Product product = productService.findByCode(csvSource.getProductCode());
-        Contract contract = contractService.findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
-                .orElseThrow(()-> UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
+        Contract contract = contractService
+                .findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
+                .orElseThrow(()->
+                        UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
+
         if(!contract.hirerDocumentNumber().equals(csvSource.getHirerDocumentNumber())) {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND);
         }

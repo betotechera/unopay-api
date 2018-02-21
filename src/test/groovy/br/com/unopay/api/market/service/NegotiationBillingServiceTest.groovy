@@ -10,6 +10,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.model.PaymentDayCalculator
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -381,8 +382,9 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     def "given negotiation and contract with installments when process should create billing right value"(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
-        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.memberTotal = 1
+        def contract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
+        fixtureCreator.createAuthorizedMemberForContract(contract)
 
         when:
         service.process(negotiation.getId())
@@ -410,8 +412,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("billingWithCredits", Boolean.TRUE)
 
         }})
-        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.memberTotal = members
+        def contract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
+        (1..members).each {
+            fixtureCreator.createAuthorizedMemberForContract(contract)
+        }
 
         when:
         service.process(negotiation.getId())
@@ -468,8 +473,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("billingWithCredits", Boolean.TRUE)
 
         }})
-        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.memberTotal = members
+        def contract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
+        (1..members).each {
+            fixtureCreator.createAuthorizedMemberForContract(contract)
+        }
 
         when:
         service.process(negotiation.getId())
@@ -502,8 +510,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("billingWithCredits", Boolean.TRUE)
 
         }})
-        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.memberTotal = members
+        def contract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
+        (1..members).each {
+            fixtureCreator.createAuthorizedMemberForContract(contract)
+        }
 
         when:
         service.process(negotiation.getId())
@@ -536,8 +547,11 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("billingWithCredits", Boolean.FALSE)
 
         }})
-        fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
-        service.memberTotal = members
+        def contract = fixtureCreator
+                .createPersistedContract(fixtureCreator.createContractor(), negotiation.product, negotiation.hirer)
+        (1..members).each {
+            fixtureCreator.createAuthorizedMemberForContract(contract)
+        }
 
         when:
         service.process(negotiation.getId())

@@ -151,7 +151,7 @@ public class AuthorizedMember implements Serializable, Updatable{
         return paymentInstrument.contractorId().equals(contract.getContractor().getId());
     }
 
-    public String paymentInstrumentId() {
+    public String instrumentId() {
         return paymentInstrument != null ? paymentInstrument.getId() : null;
     }
 

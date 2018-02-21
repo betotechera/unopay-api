@@ -119,4 +119,8 @@ public class NegotiationBillingDetail {
         BigDecimal membersTotalValue = memberCreditValue.multiply(new BigDecimal(this.memberTotal));
         return this.creditValue.add(membersTotalValue);
     }
+
+    public String contractId() {
+        return getContract() != null ? getContract().getId() : null;
+    }
 }
