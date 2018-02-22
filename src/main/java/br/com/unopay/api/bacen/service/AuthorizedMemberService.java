@@ -55,8 +55,9 @@ public class AuthorizedMemberService {
             authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
                     .contractorDocumentNumber()));
         }
-        validateReferences(authorizedMember);
         authorizedMember.validateMe();
+        validateReferences(authorizedMember);
+        authorizedMember.validatePaymentInstrument();
         return save(authorizedMember);
     }
 

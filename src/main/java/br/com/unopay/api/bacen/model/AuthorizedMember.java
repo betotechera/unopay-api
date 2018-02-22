@@ -96,10 +96,9 @@ public class AuthorizedMember implements Serializable, Updatable{
         validateGender();
         validateRelatedness();
         validateContract();
-        validatePaymentInstrument();
     }
 
-    private void validateContract() {
+    public void validateContract() {
         if(contract == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_REQUIRED);
         }
@@ -134,7 +133,7 @@ public class AuthorizedMember implements Serializable, Updatable{
         }
     }
 
-    private void validatePaymentInstrument() {
+    public void validatePaymentInstrument() {
         if(instrumentRequired()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYMENT_INSTRUMENT_REQUIRED);
         }
