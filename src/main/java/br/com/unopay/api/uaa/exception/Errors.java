@@ -419,6 +419,9 @@ public final class Errors {
     public static final UnovationError EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE =
             new UnovationError("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE",
                     "Event value greater than credit balance");
+    public static final UnovationError CREDIT_BALANCE_REQUIRED =
+            new UnovationError("CREDIT_BALANCE_REQUIRED",
+                    "Credit balance required when authorize event");
     public static final UnovationError INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT =
             new UnovationError("INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT",
                     "Instrument not qualified for this contract");

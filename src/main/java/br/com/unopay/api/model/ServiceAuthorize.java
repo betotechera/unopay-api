@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_BALANCE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
 
@@ -99,9 +99,13 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private BigDecimal currentInstrumentCreditBalance;
 
-    @Column(name = "value")
+    @Column(name = "paid")
     @JsonView({Views.ServiceAuthorize.Detail.class})
-    private BigDecimal value = BigDecimal.ZERO;
+    private BigDecimal paid = BigDecimal.ZERO;
+
+    @Column(name = "total")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private BigDecimal total = BigDecimal.ZERO;
 
     @Column(name = "cancellation_date_time")
     @Temporal(TemporalType.TIMESTAMP)
@@ -231,21 +235,21 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
-    public void addEventValue(BigDecimal value){
-        this.value = this.value.add(value);
+    public void addEventValueToTotal(BigDecimal value){
+        this.total = this.total.add(value);
     }
 
     public void checkValueWhenRequired() {
-        if(!hasPartialPayment() && balanceLessThanValue()){
-            log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} event-value={}",
-                    getPaymentInstrument().getAvailableBalance(), value);
+        if(!hasPartialPayment() && balanceLessThanTotal()){
+            log.info("EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE balance={} total={}",
+                    getPaymentInstrument().getAvailableBalance(), total);
             throw  UnovationExceptions.unprocessableEntity().withErrors(EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE);
         }
     }
 
     @JsonProperty
     public BigDecimal eventValue(){
-        return this.value;
+        return this.total;
     }
 
     @JsonProperty
@@ -292,19 +296,20 @@ public class ServiceAuthorize implements Serializable {
         return authorizeEvents != null && !authorizeEvents.isEmpty();
     }
 
-    public void resetValue() {
-        this.value = BigDecimal.ZERO;
+    public void resetTotal() {
+        this.total = BigDecimal.ZERO;
     }
 
-    public BigDecimal contextualValue() {
-        if(hasPartialPayment() && balanceLessThanValue()){
+    public BigDecimal validPaidValue() {
+
+        if(hasPartialPayment() && balanceLessThanTotal()){
             return getPaymentInstrument().getAvailableBalance();
         }
-        return this.value;
+        return this.paid;
     }
 
-    private boolean balanceLessThanValue() {
-        return getPaymentInstrument().getAvailableBalance().compareTo(value) < 0;
+    private boolean balanceLessThanTotal() {
+        return getPaymentInstrument().getAvailableBalance().compareTo(total) < 0;
     }
 
     public boolean hasPartialPayment() {
@@ -313,5 +318,13 @@ public class ServiceAuthorize implements Serializable {
 
     public boolean hasExceptionalCircumstance() {
         return exceptionalCircumstance != null && exceptionalCircumstance;
+    }
+
+    public void definePaidValue() {
+        if(hasPartialPayment() && balanceLessThanTotal()){
+            this.paid = getPaymentInstrument().getAvailableBalance();
+            return;
+        }
+        this.paid = this.total;
     }
 }

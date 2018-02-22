@@ -26,7 +26,8 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("establishment", one(Establishment.class, "valid"));
             add("contract",one(Contract.class, "valid"));
             add("contractor",one(Contractor.class, "valid"));
-            add("value",random(BigDecimal.class, range(1, 20)));
+            add("paid",random(BigDecimal.class, range(1, 20)));
+            add("total",random(BigDecimal.class, range(1, 20)));
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
             add("lastInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("currentInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));

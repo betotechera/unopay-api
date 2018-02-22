@@ -80,7 +80,7 @@ public class ServiceAuthorizeService {
         authorize.setReferences(currentUser, paymentInstrument, contract);
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
-        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.contextualValue());
+        instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         return repository.save(authorize);
     }
@@ -102,15 +102,16 @@ public class ServiceAuthorizeService {
 
     private void checkEventAndDefineValue(ServiceAuthorize serviceAuthorize) {
         checkEvents(serviceAuthorize);
-        serviceAuthorize.resetValue();
+        serviceAuthorize.resetTotal();
         serviceAuthorize.getAuthorizeEvents().forEach(serviceAuthorizeEvent -> {
             EstablishmentEvent establishmentEvent =
                     establishmentEventService.findByEstablishmentIdAndId(serviceAuthorize.establishmentId(),
                             serviceAuthorizeEvent.establishmentEventId());
             serviceAuthorizeEvent.defineValidEventValues(establishmentEvent);
-            serviceAuthorize.addEventValue(serviceAuthorizeEvent.eventValueByQuantity());
+            serviceAuthorize.addEventValueToTotal(serviceAuthorizeEvent.eventValueByQuantity());
         });
         serviceAuthorize.checkValueWhenRequired();
+        serviceAuthorize.definePaidValue();
     }
 
     private void checkEvents(ServiceAuthorize serviceAuthorize) {

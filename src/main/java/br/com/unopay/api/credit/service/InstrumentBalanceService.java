@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_BALANCE_REQUIRED;
+
 @Service
 public class InstrumentBalanceService {
 
@@ -52,8 +54,15 @@ public class InstrumentBalanceService {
 
     public void subtract(String instrumentId, BigDecimal value) {
         InstrumentBalance current = findByInstrumentId(instrumentId);
+        checkBalance(current);
         current.subtract(value);
         save(current);
+    }
+
+    private void checkBalance(InstrumentBalance current) {
+        if(BigDecimal.ZERO.compareTo(current.getValue()) >= 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_BALANCE_REQUIRED);
+        }
     }
 
     public InstrumentBalance findByInstrumentIdAndDocument(String instrumentId, String documentNumber) {

@@ -13,7 +13,8 @@ create table service_authorize_event (
     constraint fk_serv_auth_events_service foreign key(service_authorize_id) references service_authorize(id)
 );
 
-alter table service_authorize add value decimal(20,2) not null;
+alter table service_authorize add paid decimal(20,2) not null;
+alter table service_authorize add total decimal(20,2) not null;
 alter table service_authorize add partial_payment varchar(20);
 alter table service_authorize add exceptional_circumstance varchar(20);
 

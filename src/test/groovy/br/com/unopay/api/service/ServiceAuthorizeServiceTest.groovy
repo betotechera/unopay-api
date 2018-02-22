@@ -6,8 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
-import br.com.unopay.api.bacen.model.Event
-import br.com.unopay.api.bacen.model.Service
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
@@ -26,6 +24,7 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
+import org.apache.commons.lang3.ObjectUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
@@ -117,7 +116,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'given a event with request quantity and service authorize event with quantity should be create with valid value'() {
+    void 'given a event with request quantity and service authorize event with quantity should be create with valid total'() {
         given:
         fixtureCreator.createNegotiation(contractUnderTest.hirer, contractUnderTest.product)
         def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS, true)
@@ -138,7 +137,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.value == Rounder.round(serviceAuthorize.authorizeEvents.find().eventValue * quantity)
+        result.total == Rounder.round(serviceAuthorize.authorizeEvents.find().eventValue * quantity)
 
         where:
         _ | quantity
@@ -205,6 +204,24 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     }
 
     void """given a service with event value greater than instrument balance
+                and partial payment defined should be created with partial as paid value"""() {
+        given:
+        def additionalValue = 100
+        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
+                paymentInstrumentUnderTest.availableBalance + additionalValue)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
+        serviceAuthorize.partialPayment = true
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.paid == paymentInstrumentUnderTest.availableBalance
+    }
+
+    void """given a service with event value greater than instrument balance
                 and partial payment not defined should not be created"""() {
         given:
         def additionalValue = 100
@@ -220,6 +237,27 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
+    }
+
+    void """given a payment instrument without balance partial payment defined should not be created"""() {
+        given:
+        def additionalValue = 100
+        def paymentInstrument = fixtureCreator.createInstrumentToProduct(contractUnderTest.product)
+        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
+                paymentInstrument.availableBalance + additionalValue)
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.paymentInstrument = paymentInstrument
+        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
+        serviceAuthorize.partialPayment = true
+        updateBalance(paymentInstrument, establishmentEventTest)
+        instrumentBalanceService.subtract(paymentInstrument.id, paymentInstrument.availableBalance)
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'CREDIT_BALANCE_REQUIRED'
     }
 
     void 'new service authorize should be created with product fee value'() {
@@ -244,19 +282,31 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.value)
+        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.total)
     }
 
-    void 'given a service authorize with defined value should be created without defined value'() {
+    void 'given a service authorize with defined total should be created without defined total'() {
         given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize().with { value = 100; it }
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize().with { total = 100; it }
 
         when:
         def created = service.create(userUnderTest, serviceAuthorize)
         def result = service.findById(created.id)
 
         then:
-        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.value)
+        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.total)
+    }
+
+    void 'given a service authorize with defined paid should be created without defined paid'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize().with { paid = 100; it }
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.authorizeEvents.collect { it.eventValue }.sum() == Rounder.round(created.paid)
     }
 
     void 'when try create authorize without events should return error'() {
