@@ -164,17 +164,22 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'PREVIOUS_DIGITAL_WALLET_OR_PAYMENT_INSTRUMENT_REQUIRED'
     }
 
-    void 'given AuthorizedMember without paymentInstrument and contractor with digital wallet should define paymentInstrument as digital wallet'(){
+    void """given AuthorizedMember without paymentInstrument and contractor with digital wallet
+            should define paymentInstrument as digital wallet"""(){
         given:
-        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
-        createInstrument(authorizedMember.contract.contractor, "123458", PaymentInstrumentType.DIGITAL_WALLET)
+        def expectedInstrumentNumber = "54646546"
+        AuthorizedMember authorizedMember = from(AuthorizedMember.class).gimme("valid", new Rule() {{
+            add("paymentInstrument", null)
+            add("contract", fixtureCreator.createPersistedContract())
+        }})
+        createInstrument(authorizedMember.contract.contractor,
+                expectedInstrumentNumber, PaymentInstrumentType.DIGITAL_WALLET)
 
-        authorizedMember.paymentInstrument = null
         when:
         def created = service.create(authorizedMember)
         then:
         created.paymentInstrument.type == PaymentInstrumentType.DIGITAL_WALLET
-        created.paymentInstrument.number == "123458"
+        created.paymentInstrument.number == expectedInstrumentNumber
     }
 
     void 'should find known AuthorizedMember'(){
