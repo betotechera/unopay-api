@@ -20,6 +20,7 @@ public class TokenStoreConfig {
     @Profile({"qa", "hm", "prod"})
     public TokenStore redisTokenStore(RedisConnectionFactory connectionFactory, DataSource dataSource) {
         UnopayRedisTokenStore redisTokenStore = new UnopayRedisTokenStore(connectionFactory);
+        redisTokenStore.setPrefix("api");
         JdbcTokenStore jdbcTokenStore = new JdbcTokenStore(dataSource);
         return new UnovationTokenStore(redisTokenStore, jdbcTokenStore);
     }
