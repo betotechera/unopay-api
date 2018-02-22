@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.service
 
-import br.com.six2six.fixturefactory.Fixture
+import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.SpockApplicationTests
@@ -29,9 +29,6 @@ import org.springframework.data.domain.Page
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.multipart.MultipartFile
-
-import static br.com.six2six.fixturefactory.Fixture.from
-
 
 class AuthorizedMemberServiceTest extends SpockApplicationTests {
     @Autowired
@@ -156,8 +153,10 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
 
     void 'given AuthorizedMember without paymentInstrument and contractor without digital wallet should return error'(){
         given:
-        AuthorizedMember authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
-        authorizedMember.paymentInstrument = null
+        AuthorizedMember authorizedMember = from(AuthorizedMember.class).gimme("valid", new Rule() {{
+            add("paymentInstrument", null)
+            add("contract", fixtureCreator.createContract())
+        }})
         when:
         service.create(authorizedMember)
         then:
