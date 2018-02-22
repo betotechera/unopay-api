@@ -21,7 +21,7 @@ class ServiceAuthorizeTest  extends FixtureApplicationTest {
 
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("paymentInstrument", paymentInstrument)
-            add("value", 100.0)
+            add("total", 100.0)
         }})
         when:
         serviceAuthorize.checkValueWhenRequired()
@@ -42,7 +42,7 @@ class ServiceAuthorizeTest  extends FixtureApplicationTest {
         }})
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule() {{
             add("paymentInstrument", paymentInstrument)
-            add("value", 99.0)
+            add("total", 99.0)
         }})
         when:
         serviceAuthorize.checkValueWhenRequired()
