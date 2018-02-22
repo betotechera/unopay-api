@@ -104,19 +104,19 @@ public class Contract implements Serializable {
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Contract.List.class, Views.ServiceAuthorize.List.class})
+    @JsonView({Views.Contract.List.class, Views.ServiceAuthorize.List.class, Views.AuthorizedMember.Detail.class})
     private Product product;
 
     @ManyToOne
     @JoinColumn(name="hirer_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Contract.Detail.class})
+    @JsonView({Views.Contract.Detail.class, Views.AuthorizedMember.List.class})
     private Hirer hirer;
 
     @ManyToOne
     @NotNull(groups = {Create.class})
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.Contract.Detail.class})
+    @JsonView({Views.Contract.List.class, Views.AuthorizedMember.List.class})
     private Contractor contractor;
 
     @Enumerated(EnumType.STRING)

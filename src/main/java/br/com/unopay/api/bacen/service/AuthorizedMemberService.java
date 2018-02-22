@@ -55,8 +55,8 @@ public class AuthorizedMemberService {
             authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
                     .contractorDocumentNumber()));
         }
-        authorizedMember.validateMe();
         validateReferences(authorizedMember);
+        authorizedMember.validateMe();
         return save(authorizedMember);
     }
 
@@ -98,8 +98,8 @@ public class AuthorizedMemberService {
 
     private void update(AuthorizedMember current, AuthorizedMember authorizedMember) {
         current.updateMe(authorizedMember);
-        current.validateMe();
         validateReferences(current);
+        current.validateMe();
         save(current);
     }
 
