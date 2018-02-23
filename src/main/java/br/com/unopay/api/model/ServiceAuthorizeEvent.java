@@ -8,6 +8,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
@@ -36,7 +37,9 @@ import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_ZE
 @EqualsAndHashCode(exclude = {"establishmentEvent", "serviceAuthorize"})
 @ToString(exclude = {"establishmentEvent", "serviceAuthorize"})
 @Table(name = "service_authorize_event")
-public class ServiceAuthorizeEvent {
+public class ServiceAuthorizeEvent implements Serializable {
+
+    private static final long serialVersionUID = -5614959827525635394L;
 
     public ServiceAuthorizeEvent(EstablishmentEvent establishmentEvent){
         this.establishmentEvent = establishmentEvent;

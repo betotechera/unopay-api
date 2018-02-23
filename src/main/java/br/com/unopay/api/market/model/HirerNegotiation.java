@@ -10,6 +10,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
@@ -36,7 +37,9 @@ import org.hibernate.annotations.GenericGenerator;
 @EqualsAndHashCode(exclude = {"billings", "product"})
 @ToString(exclude = {"billings", "product"})
 @Table(name = "hirer_negotiation")
-public class HirerNegotiation implements Updatable{
+public class HirerNegotiation implements Updatable, Serializable{
+
+    private static final long serialVersionUID = 3824002733097296428L;
 
     public HirerNegotiation(){}
 

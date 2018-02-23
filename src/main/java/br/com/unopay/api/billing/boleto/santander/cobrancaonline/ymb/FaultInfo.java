@@ -1,5 +1,6 @@
 package br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -10,8 +11,9 @@ import javax.xml.bind.annotation.XmlType;
     "code",
     "message"
 },namespace = "faultInfo")
-public class FaultInfo {
+public class FaultInfo implements Serializable{
 
+    private static final long serialVersionUID = -4781206094318139949L;
     protected Integer code;
     protected String message;
 
