@@ -31,7 +31,7 @@ public class PaymentRequest {
     }
 
     public boolean isMethod(PaymentMethod method) {
-        return this.method.equals(method);
+        return hasPaymentMethod() && this.method.equals(method);
     }
 
     public boolean hasPaymentMethod() {
@@ -40,6 +40,11 @@ public class PaymentRequest {
 
     public boolean hasStoreCard() {
         return storeCard != null;
+    }
+
+    public boolean shouldStoreCard() {
+        return isMethod(PaymentMethod.CARD)
+                && hasStoreCard() && storeCard;
     }
 
 }
