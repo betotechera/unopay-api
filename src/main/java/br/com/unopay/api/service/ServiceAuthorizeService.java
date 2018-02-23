@@ -86,8 +86,18 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
+    public void cancelForEstablishment(String id, Establishment establishment) {
+        ServiceAuthorize current = findByIdForEstablishment(id, establishment);
+        cancel(current);
+    }
+
+    @Transactional
     public void cancel(String id) {
         ServiceAuthorize current = findById(id);
+        cancel(current);
+    }
+
+    private void cancel(ServiceAuthorize current) {
         current.validateCancellation();
         current.setupCancellation();
         instrumentBalanceService.giveBack(current.instrumentId(),current.getPaid());

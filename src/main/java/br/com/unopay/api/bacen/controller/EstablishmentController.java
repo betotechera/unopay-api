@@ -170,6 +170,14 @@ public class EstablishmentController {
                 String.format("%s/establishments/me/service-authorizations", api));
     }
 
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/service-authorizations/{id}", method = RequestMethod.DELETE)
+    public void cancel(Establishment establishment, @PathVariable String id) {
+        log.info("cancel serviceAuthorize={} for establishment={}", id, establishment.documentNumber());
+        authorizeService.cancelForEstablishment(id,establishment);
+    }
+
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/me/contractors/{id}", method = RequestMethod.GET)
