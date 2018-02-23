@@ -11,6 +11,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
@@ -35,7 +36,9 @@ import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 @ToString(exclude = "hirerNegotiation")
 @EqualsAndHashCode(exclude = "hirerNegotiation")
 @Table(name = "negotiation_billing")
-public class NegotiationBilling implements Billable {
+public class NegotiationBilling implements Billable, Serializable {
+
+    private static final long serialVersionUID = -6488062036501643514L;
 
     public NegotiationBilling(){}
 

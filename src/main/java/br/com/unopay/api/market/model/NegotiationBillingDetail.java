@@ -6,6 +6,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
@@ -23,7 +24,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Entity
 @Table(name = "negotiation_billing_detail")
-public class NegotiationBillingDetail {
+public class NegotiationBillingDetail implements Serializable{
+
+    private static final long serialVersionUID = 4560319743100939164L;
 
     public NegotiationBillingDetail(){}
 
