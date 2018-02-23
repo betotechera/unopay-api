@@ -3,10 +3,11 @@ package br.com.unopay.api.billing.creditcard.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import spock.lang.Unroll
 
 class PaymentRequestTest extends FixtureApplicationTest {
 
-    def 'should transform to transaction'(){
+    def 'should transform to transaction'() {
         given:
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid")
 
@@ -47,7 +48,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
     }
 
-    def 'given a payment request with payment method hasPaymentMethod should return true'(){
+    def 'given a payment request with payment method hasPaymentMethod should return true'() {
 
         given:
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
@@ -62,7 +63,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
     }
 
-    def 'given a payment request without payment method hasPaymentMethod should return false'(){
+    def 'given a payment request without payment method hasPaymentMethod should return false'() {
 
         given:
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
@@ -77,7 +78,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
     }
 
-    def 'given a payment request with store card hasStoreCard should return true'(){
+    def 'given a payment request with store card hasStoreCard should return true'() {
 
         given:
         boolean value = valid
@@ -101,12 +102,104 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a payment request without store card hasStoreCard should return false'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
-                add("storeCard", null)
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("storeCard", null)
         }})
 
         when:
         boolean result = paymentRequest.hasStoreCard()
+
+        then:
+        !result
+
+    }
+
+    def 'given a PaymentRequest with Method equals card and storeCard equals true, shouldStoreCard should return true'() {
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", true)
+        }})
+
+        when:
+        boolean result = paymentRequest.shouldStoreCard()
+
+        then:
+        result
+
+    }
+
+    def 'given a PaymentRequest without Method, shouldStoreCard should return false'() {
+
+        given:
+        boolean value = trueOrFalse
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", null)
+            add("storeCard", value)
+        }})
+
+        when:
+        boolean result = paymentRequest.shouldStoreCard()
+
+        then:
+        !result
+
+        where:
+        _ | trueOrFalse
+        _ | true
+        _ | false
+
+    }
+
+    @Unroll
+    def 'given a PaymentRequest with Method equals "#notCard", shouldStoreCard should return false'() {
+
+        given:
+        boolean value = trueOrFalse
+        PaymentMethod paymentMethod = notCard
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("method", paymentMethod)
+            add("storeCard", value)
+        }})
+
+        when:
+        boolean result = paymentRequest.shouldStoreCard()
+
+        then:
+        !result
+
+        where:
+        notCard                    | trueOrFalse
+        PaymentMethod.BOLETO       | true
+        PaymentMethod.DIRECT_DEBIT | false
+
+    }
+
+    def 'given a PaymentRequest without storeCard, shouldStoreCard should return false'() {
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("storeCard", null)
+        }})
+
+        when:
+        boolean result = paymentRequest.shouldStoreCard()
+
+        then:
+        !result
+
+    }
+
+    def 'given a PaymentRequest with storeCard equals false, shouldStoreCard should return false'() {
+
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+            add("storeCard", false)
+        }})
+
+        when:
+        boolean result = paymentRequest.shouldStoreCard()
 
         then:
         !result
