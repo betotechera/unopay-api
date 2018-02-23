@@ -62,7 +62,9 @@ import static br.com.unopay.api.uaa.exception.Errors.MINIMUM_PAYMENT_RULE_GROUP_
 @EqualsAndHashCode(exclude = {"paymentRuleGroup", "product"})
 @ToString(exclude = {"paymentRuleGroup", "product"})
 @Table(name = "credit")
-public class Credit implements Updatable, Billable {
+public class Credit implements Updatable, Billable, Serializable {
+
+    private static final long serialVersionUID = -6537120024031518385L;
 
     public Credit(){}
 
