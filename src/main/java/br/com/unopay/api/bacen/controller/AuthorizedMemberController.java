@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -89,5 +91,15 @@ public class AuthorizedMemberController {
     public void remove(@PathVariable  String id) {
         log.info("removing authorizedMember id={}", id);
         service.delete(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @RequestMapping(value = "/authorized-members", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createFromCsv(@RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading authorized members csv file {}", fileName);
+        service.createFromCsv(file);
     }
 }
