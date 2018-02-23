@@ -428,6 +428,12 @@ public final class Errors {
     public static final UnovationError EVENT_QUANTITY_REQUIRED =
             new UnovationError("EVENT_QUANTITY_REQUIRED",
                     "Event quantity required");
+    public static final UnovationError AUTHORIZATION_IN_BATCH_PROCESSING =
+            new UnovationError("AUTHORIZATION_IN_BATCH_PROCESSING",
+                    "The ServiceAuthorize is in batch process.");
+    public static final UnovationError AUTHORIZATION_CANNOT_BE_CANCELLED =
+            new UnovationError("AUTHORIZATION_CANNOT_BE_CANCELLED",
+                    "The ServiceAuthorize cannot be cancelled.");
 
 
 

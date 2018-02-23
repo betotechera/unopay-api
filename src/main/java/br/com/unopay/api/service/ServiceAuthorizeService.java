@@ -85,6 +85,15 @@ public class ServiceAuthorizeService {
         return repository.save(authorize);
     }
 
+    @Transactional
+    public void cancel(String id) {
+        ServiceAuthorize current = findById(id);
+        current.validateCancellation();
+        current.setupCancellation();
+        instrumentBalanceService.giveBack(current.instrumentId(),current.getPaid());
+        repository.save(current);
+    }
+
     private void defineTypedPasswordWhenRequired(ServiceAuthorize authorize) {
         if(!authorize.hasExceptionalCircumstance()) {
             authorize.setTypedPassword(encryptor.encrypt(authorize.paymentInstrumentPasswordAsByte()));

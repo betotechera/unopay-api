@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.uaa.exception.Errors.*;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_BALANCE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
@@ -290,6 +292,21 @@ public class ServiceAuthorize implements Serializable {
     public BigDecimal sumEventsValues() {
         return authorizeEvents.stream()
                 .map(ServiceAuthorizeEvent::getEventValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    public void setupCancellation() {
+        this.cancellationDateTime = new Date();
+        this.situation = TransactionSituation.CANCELED;
+    }
+
+    public void validateCancellation() {
+        if(TransactionSituation.CLOSED_PAYMENT_BATCH.equals(getSituation())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(AUTHORIZATION_IN_BATCH_PROCESSING);
+        }
+        if(!TransactionSituation.AUTHORIZED.equals(getSituation())){
+            throw UnovationExceptions.unprocessableEntity().withErrors(AUTHORIZATION_CANNOT_BE_CANCELLED);
+        }
+
     }
 
     public boolean hasEvents() {

@@ -3,8 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.http.DescriptableEnum;
 
 public enum TransactionSituation implements DescriptableEnum {
-    AUTHORIZED("Autorizada"),UNDETERMINED("Indeterminada"),
-    AUTHORIZATION_ERROR("Erro na autorizaçao"), FINALIZED("Finalizada"), LOADING_ERROR("Erro na carga");
+    AUTHORIZED("Autorizada"), CLOSED_PAYMENT_BATCH("Lote de Pagamento Fechado"), CANCELED("Cancelada");
 
     private String description;
 
