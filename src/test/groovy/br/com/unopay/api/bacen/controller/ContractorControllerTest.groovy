@@ -353,7 +353,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.content[0].name', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
     }
 
     Contractor getContractor() {

@@ -257,9 +257,11 @@ public class ContractorController {
     @JsonView(Views.AuthorizedMember.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/authorized-members", method = RequestMethod.GET)
-    public Page<AuthorizedMember> getAuthorizedMember(Contractor contractor, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+    public PageableResults<AuthorizedMember> getAuthorizedMember(Contractor contractor, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("get authorizedMembers for contractor={}", contractor.getPerson().documentNumber());
         filter.setContractorId(contractor.getId());
-        return authorizedMemberService.findByFilter(filter, pageable);
+        Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
     }
 }
