@@ -2,11 +2,14 @@ package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.model.validation.group.Create;
+import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class HirerForIssuer {
+public class HirerForIssuer implements Serializable{
+
+    private static final long serialVersionUID = 1920216437182443246L;
 
     @NotNull(groups = {Create.class})
     private Hirer hirer;

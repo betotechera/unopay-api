@@ -104,4 +104,9 @@ public class InstrumentBalance  implements Serializable {
         }
         this.value = Rounder.round(this.value.subtract(value));
     }
+
+    public void giveBack(BigDecimal value) {
+        add(value);
+    }
+
 }

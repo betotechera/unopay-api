@@ -27,6 +27,7 @@ public class CreditCard implements Serializable {
     private static final int SURPLUS_LIMIT = 100;
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int MIN_LENGTH = 4;
+    private static final long serialVersionUID = -1060942228795287069L;
 
     private String hash;
 

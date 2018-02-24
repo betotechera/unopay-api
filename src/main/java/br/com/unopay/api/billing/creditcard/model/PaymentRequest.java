@@ -1,12 +1,15 @@
 package br.com.unopay.api.billing.creditcard.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class PaymentRequest {
+public class PaymentRequest implements Serializable{
+
+    private static final long serialVersionUID = 6206327161119974478L;
 
     public static final int DEFAULT_INSTALLMENT = 1;
     private PaymentMethod method;

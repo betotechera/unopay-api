@@ -59,6 +59,10 @@ public class InstrumentBalanceService {
         save(current);
     }
 
+    public void giveBack(String id, BigDecimal value) {
+        add(id, value);
+    }
+
     private void checkBalance(InstrumentBalance current) {
         if(BigDecimal.ZERO.compareTo(current.getValue()) >= 0){
             throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_BALANCE_REQUIRED);

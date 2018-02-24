@@ -18,6 +18,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.ServiceAuthorizeEvent
+import br.com.unopay.api.model.TransactionSituation
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -28,6 +29,8 @@ import org.apache.commons.lang3.ObjectUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
+
+import javax.transaction.Transactional
 
 class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
@@ -85,6 +88,71 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         then:
         assert result.id != null
     }
+
+    void 'given a known service authorize when cancel should be cancelled'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def created = service.create(userUnderTest, serviceAuthorize)
+
+        when:
+        service.cancel(created.id)
+        def result = service.findById(created.id)
+
+        then:
+        result.situation == TransactionSituation.CANCELED
+    }
+
+    void 'given a known service authorize when cancel should give back instrument credit'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def previousBalance = instrumentBalanceService.findByInstrumentId(serviceAuthorize.instrumentId()).value
+        def created = service.create(userUnderTest, serviceAuthorize)
+
+        when:
+        service.cancel(created.id)
+
+        then:
+        instrumentBalanceService.findByInstrumentId(created.instrumentId()).value == previousBalance
+    }
+
+    void 'given a known service authorize with closed batch when cancel should return error'() {
+        given:
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
+            add("contract",contractUnderTest)
+            add("contractor",contractorUnderTest)
+            add("paymentInstrument",paymentInstrumentUnderTest)
+            add("situation",TransactionSituation.CLOSED_PAYMENT_BATCH)
+            add("establishment",establishmentUnderTest)
+        }})
+
+        when:
+        service.cancel(serviceAuthorize.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'AUTHORIZATION_IN_BATCH_PROCESSING'
+    }
+
+    void 'given a known service authorize already cancelled situation when cancel should return error'() {
+        given:
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
+                    add("contract",contractUnderTest)
+                    add("contractor",contractorUnderTest)
+                    add("paymentInstrument",paymentInstrumentUnderTest)
+                    add("situation",TransactionSituation.CANCELED)
+                    add("establishment",establishmentUnderTest)
+                }})
+
+        when:
+        service.cancel(serviceAuthorize.id)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'AUTHORIZATION_CANNOT_BE_CANCELLED'
+    }
+
 
     void 'given a event with request quantity and service authorize event without quantity should return error'() {
         given:
