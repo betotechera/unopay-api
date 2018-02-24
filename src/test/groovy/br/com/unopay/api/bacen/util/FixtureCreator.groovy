@@ -514,7 +514,6 @@ class FixtureCreator {
 
     HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
                                        Date effectiveDate = FixtureFunctions.instant("one day ago")){
-        def moreOneDay = 1
         return from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
@@ -522,7 +521,7 @@ class FixtureCreator {
             add("freeInstallmentQuantity", 0)
             add("billingWithCredits", Boolean.TRUE)
             add("active", Boolean.TRUE)
-            add("paymentDay", paymentDayCalculator.nearDay + moreOneDay)
+            add("paymentDay", paymentDayCalculator.nearDay)
         }})
     }
 
