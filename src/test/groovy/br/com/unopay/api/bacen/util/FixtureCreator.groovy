@@ -23,6 +23,7 @@ import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.api.function.FixtureFunctions
+import br.com.unopay.api.market.model.PaymentDayCalculator
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
 import br.com.unopay.api.model.Contract
@@ -49,6 +50,9 @@ class FixtureCreator {
 
     @Autowired
     private PasswordEncoder passwordEncoder
+
+    @Autowired
+    private PaymentDayCalculator paymentDayCalculator
 
     @Autowired
     private JpaProcessor jpaProcessor
@@ -510,7 +514,7 @@ class FixtureCreator {
 
     HirerNegotiation createNegotiation(hirer = createHirer(), product = createProduct(),
                                        Date effectiveDate = FixtureFunctions.instant("one day ago")){
-        def ticketDeadLineMoreOneDay = 4
+        def moreOneDay = 1
         return from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", hirer)
             add("product", product)
@@ -518,7 +522,7 @@ class FixtureCreator {
             add("freeInstallmentQuantity", 0)
             add("billingWithCredits", Boolean.TRUE)
             add("active", Boolean.TRUE)
-            add("paymentDay", LocalDate.fromDateFields(effectiveDate).getDayOfMonth() + ticketDeadLineMoreOneDay)
+            add("paymentDay", paymentDayCalculator.nearDay + moreOneDay)
         }})
     }
 
