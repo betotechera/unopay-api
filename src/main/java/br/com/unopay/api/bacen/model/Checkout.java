@@ -42,6 +42,7 @@ public class Checkout implements Serializable {
     @Min(0)
     @JsonView({Views.AccreditedNetwork.Detail.class, Views.Establishment.Detail.class, Views.Branch.Detail.class})
     @Column(name="closing_payment_days")
+    @NotNull(groups = {Create.class, Update.class})
     private Integer closingPaymentDays;
 
     public Checkout(){}
