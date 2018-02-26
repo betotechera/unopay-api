@@ -609,7 +609,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         def firstPaymentDayOfNextMonth = 1
         def currentDay = new DateTime().dayOfMonth().get()
         def nearPaymentDay = currentDay + ticketDeadLineInDays + delay
-        return  nearPaymentDay > maxPaymentDay ? firstPaymentDayOfNextMonth + delay : nearPaymentDay
+        return  nearPaymentDay > maxPaymentDay ? firstPaymentDayOfNextMonth : nearPaymentDay
     }
 
 
