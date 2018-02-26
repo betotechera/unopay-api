@@ -1,6 +1,6 @@
 package br.com.unopay.api.model.filter;
 
-import br.com.unopay.api.model.TransactionSituation;
+import br.com.unopay.api.model.AuthorizationSituation;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
@@ -35,7 +35,7 @@ public class ServiceAuthorizeFilter implements Serializable {
     private Period authorizationDateTime;
 
     @SearchableField
-    private TransactionSituation situation;
+    private AuthorizationSituation situation;
 
     @SearchableField
     private String authorizationNumber;
