@@ -37,7 +37,7 @@ class TransactionServiceTest extends SpockApplicationTests{
 
     def 'when create transaction should use payment gateway'(){
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid")
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard")
 
         when:
         service.create(paymentRequest)
@@ -48,7 +48,7 @@ class TransactionServiceTest extends SpockApplicationTests{
 
     def 'when create transaction should saved'(){
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid")
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard")
 
         when:
         Transaction created = service.create(paymentRequest)
@@ -63,7 +63,7 @@ class TransactionServiceTest extends SpockApplicationTests{
         Transaction transaction = Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("status", TransactionStatus.PENDING)
         }})
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
             add("orderId", transaction.orderId)
         }})
         when:
@@ -79,7 +79,7 @@ class TransactionServiceTest extends SpockApplicationTests{
         Transaction transaction = Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("status", TransactionStatus.AUTHORIZED)
         }})
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
             add("orderId", transaction.orderId)
         }})
         when:
@@ -93,7 +93,7 @@ class TransactionServiceTest extends SpockApplicationTests{
 
     def 'given a payment request without order id should not be created'(){
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
             add("orderId", null)
         }})
         when:
@@ -118,7 +118,7 @@ class TransactionServiceTest extends SpockApplicationTests{
     'given a transaction with #invalidValue value should not be processed'(){
         given:
         def value = invalidValue
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
             add("value", value)
         }})
         when:

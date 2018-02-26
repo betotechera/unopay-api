@@ -173,7 +173,7 @@ class OrderTest extends FixtureApplicationTest {
     def 'given an order with payment request hasPaymentRequest should return true'(){
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid")
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard")
         Order order = Fixture.from(Order).gimme("valid", new Rule(){{
             add("paymentRequest", paymentRequest)
         }})
@@ -203,7 +203,7 @@ class OrderTest extends FixtureApplicationTest {
     def 'given an order with type other than adhesion and with payment request with storeCard equals true and method equals card shouldStoreCard should return true'(){
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
             add("storeCard", true)
             add("method", PaymentMethod.CARD)
         }})
@@ -223,7 +223,7 @@ class OrderTest extends FixtureApplicationTest {
     def 'given an order with type adhesion shouldStoreCard should return false'(){
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
             add("storeCard", true)
             add("method", PaymentMethod.CARD)
         }})

@@ -9,7 +9,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
     def 'should transform to transaction'() {
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("valid")
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard")
 
         when:
         Transaction transaction = paymentRequest.toTransaction()
@@ -22,13 +22,12 @@ class PaymentRequestTest extends FixtureApplicationTest {
         paymentRequest.orderId == transaction.orderId
         paymentRequest.installments == transaction.installments
         paymentRequest.method == transaction.paymentMethod
-        paymentRequest.value == transaction.amount.value
 
     }
 
     def 'should be equals'() {
         given:
-        PaymentRequest a = Fixture.from(PaymentRequest.class).gimme("valid")
+        PaymentRequest a = Fixture.from(PaymentRequest.class).gimme("creditCard")
 
         when:
         def shouldBeEquals = a == a
@@ -38,7 +37,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     }
 
     def 'should not be equals'() {
-        List list = Fixture.from(PaymentRequest.class).gimme(2, "valid")
+        List list = Fixture.from(PaymentRequest.class).gimme(2, "creditCard")
 
         when:
         def shouldBeEquals = list.head() == list.tail()
@@ -51,7 +50,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a payment request with payment method hasPaymentMethod should return true'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("method", PaymentMethod.CARD)
         }})
 
@@ -66,7 +65,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a payment request without payment method hasPaymentMethod should return false'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("method", null)
         }})
 
@@ -82,7 +81,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
         given:
         boolean value = valid
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("storeCard", value)
         }})
 
@@ -102,7 +101,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a payment request without store card hasStoreCard should return false'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("storeCard", null)
         }})
 
@@ -117,7 +116,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a PaymentRequest with Method equals card and storeCard equals true, shouldStoreCard should return true'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("method", PaymentMethod.CARD)
             add("storeCard", true)
         }})
@@ -134,7 +133,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
 
         given:
         boolean value = trueOrFalse
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("method", null)
             add("storeCard", value)
         }})
@@ -158,7 +157,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
         given:
         boolean value = trueOrFalse
         PaymentMethod paymentMethod = notCard
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("method", paymentMethod)
             add("storeCard", value)
         }})
@@ -179,7 +178,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a PaymentRequest without storeCard, shouldStoreCard should return false'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("storeCard", null)
         }})
 
@@ -194,7 +193,7 @@ class PaymentRequestTest extends FixtureApplicationTest {
     def 'given a PaymentRequest with storeCard equals false, shouldStoreCard should return false'() {
 
         given:
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule(){{
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
             add("storeCard", false)
         }})
 

@@ -35,11 +35,15 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("creditCard", one(CreditCard.class, "payzenCard"));
         }});
 
-        Fixture.of(Transaction.class).addTemplate("ticket").inherits("creditCard", new Rule() {{
+        Fixture.of(PaymentRequest.class).addTemplate("ticket").inherits("creditCard", new Rule() {{
+            add("method", PaymentMethod.BOLETO);
+        }});
+
+        Fixture.of(Transaction.class).addTemplate("ticket").inherits("valid", new Rule() {{
             add("paymentMethod", PaymentMethod.BOLETO);
         }});
 
-        Fixture.of(Transaction.class).addTemplate("directDebit").inherits("creditCard", new Rule() {{
+        Fixture.of(Transaction.class).addTemplate("directDebit").inherits("valid", new Rule() {{
             add("paymentMethod", PaymentMethod.DIRECT_DEBIT);
         }});
 

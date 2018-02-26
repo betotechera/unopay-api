@@ -294,7 +294,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("valid", new Rule() {
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {
             {
                 add("method", PaymentMethod.CARD)
                 add("storeCard", true)
