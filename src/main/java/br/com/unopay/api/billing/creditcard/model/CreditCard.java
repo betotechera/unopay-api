@@ -6,6 +6,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class CreditCard implements Serializable {
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int MIN_LENGTH = 4;
     private static final long serialVersionUID = -1060942228795287069L;
+    public static final String ENPYT = "";
 
     private String hash;
 
@@ -101,8 +103,9 @@ public class CreditCard implements Serializable {
     }
 
     public void checkNumber() {
+        normalize();
         if (getNumber() == null
-                || getNumber() == ""
+                || Objects.equals(getNumber(), ENPYT)
                 || !isNumber(getNumber())
                 || getNumber().length() < MIN_LENGTH) {
             throw UnovationExceptions.unprocessableEntity()

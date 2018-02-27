@@ -163,7 +163,7 @@ class CreditCardTest extends FixtureApplicationTest {
     }
 
     @Unroll
-    def 'when creating CreditCard with number value "#notANumber" should return error'(){
+    'when creating CreditCard with number value "#notANumber" should return error'(){
 
         given:
         String number = notANumber
@@ -182,8 +182,6 @@ class CreditCardTest extends FixtureApplicationTest {
         _ | notANumber
         _ | null
         _ | ""
-        _ | "-123123"
-        _ | "19132 a"
         _ | "kaowkdoaw"
 
     }
