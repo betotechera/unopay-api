@@ -381,11 +381,11 @@ class UserCreditCardTest extends FixtureApplicationTest {
         UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard)
 
         then:
-        userCreditCard.user.equals(userDetail)
-        userCreditCard.expirationMonth.equals(creditCard.expiryMonth)
-        userCreditCard.expirationYear.equals(creditCard.expiryYear)
-        userCreditCard.lastFourDigits.equals(creditCard.lastFourDigits())
-        userCreditCard.gatewayToken.equals(creditCard.cardReference)
+        userCreditCard.user == userDetail
+        userCreditCard.expirationMonth == creditCard.expiryMonth
+        userCreditCard.expirationYear == creditCard.expiryYear
+        userCreditCard.lastFourDigits == creditCard.lastFourDigits()
+        userCreditCard.gatewayToken == creditCard.cardReference
 
     }
 }

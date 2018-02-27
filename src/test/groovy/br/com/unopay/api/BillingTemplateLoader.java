@@ -28,19 +28,23 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("creditCard", one(CreditCard.class, "payzenCard"));
         }});
 
-        Fixture.of(PaymentRequest.class).addTemplate("valid", new Rule() {{
+        Fixture.of(PaymentRequest.class).addTemplate("creditCard", new Rule() {{
             add("method", PaymentMethod.CARD);
             add("value", random(BigDecimal.class, range(40,1000)));
             add("orderId", regex("\\d{8}"));
             add("creditCard", one(CreditCard.class, "payzenCard"));
         }});
 
-        Fixture.of(Transaction.class).addTemplate("withCard").inherits("valid", new Rule() {{
-            add("paymentMethod", PaymentMethod.CARD);
+        Fixture.of(PaymentRequest.class).addTemplate("ticket").inherits("creditCard", new Rule() {{
+            add("method", PaymentMethod.BOLETO);
         }});
 
-        Fixture.of(Transaction.class).addTemplate("withTicket").inherits("valid", new Rule() {{
-            add("paymentMethod", PaymentMethod.CARD);
+        Fixture.of(Transaction.class).addTemplate("ticket").inherits("valid", new Rule() {{
+            add("paymentMethod", PaymentMethod.BOLETO);
+        }});
+
+        Fixture.of(Transaction.class).addTemplate("directDebit").inherits("valid", new Rule() {{
+            add("paymentMethod", PaymentMethod.DIRECT_DEBIT);
         }});
 
         Fixture.of(Amount.class).addTemplate("valid", new Rule() {{
@@ -54,7 +58,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("product", one(Product.class, "valid"));
             add("person", one(Person.class, "physical"));
             add("number", regex("\\d{10}"));
-            add("paymentRequest", one(PaymentRequest.class, "valid"));
+            add("paymentRequest", one(PaymentRequest.class, "ticket"));
             add("type", random(OrderType.class));
             add("status", random(PaymentStatus.class));
             add("value", random(BigDecimal.class, range(0.1, 500)));

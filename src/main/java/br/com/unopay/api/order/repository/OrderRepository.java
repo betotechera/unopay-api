@@ -5,6 +5,7 @@ import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface OrderRepository extends UnovationFilterRepository<Order,String,OrderFilter> {
 
@@ -12,5 +13,5 @@ public interface OrderRepository extends UnovationFilterRepository<Order,String,
     Optional<Order> findFirstByOrderByCreateDateTimeDesc();
     Optional<Order> findById(String id);
     Optional<Order> findByIdAndProductIssuerId(String id, String issuerId);
-    List<Order> findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(String email);
+    Set<Order> findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(String email);
 }

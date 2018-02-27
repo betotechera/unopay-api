@@ -6,6 +6,8 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.CreditService
+import static br.com.unopay.api.function.FixtureFunctions.*
+import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
@@ -25,6 +27,7 @@ import static spock.util.matcher.HamcrestSupport.that
 
 class NegotiationBillingServiceTest extends SpockApplicationTests{
 
+    public static final int FIRST_PAYMENT_DAY_OF_NEX_TMONTH = 1
     @Autowired
     private NegotiationBillingService service
     @Autowired
@@ -158,11 +161,13 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             when process should create billings"""(){
         given:
         def delay = 1
+        def effectiveDate = getNear() == FIRST_PAYMENT_DAY_OF_NEX_TMONTH ? new DateTime()
+                .plusMonths(1).withDayOfMonth(1).toDate() : instant("${ticketDeadLineInDays} days from now")
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
             add("paymentDay", getNear(delay))
-            add("effectiveDate", instant("${ticketDeadLineInDays} days from now"))
+            add("effectiveDate", effectiveDate)
             add("installments", 2)
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
@@ -606,10 +611,9 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
 
     private getNear(delay=0){
         def maxPaymentDay = 28
-        def firstPaymentDayOfNextMonth = 1
         def currentDay = new DateTime().dayOfMonth().get()
         def nearPaymentDay = currentDay + ticketDeadLineInDays + delay
-        return  nearPaymentDay > maxPaymentDay ? firstPaymentDayOfNextMonth : nearPaymentDay
+        return  nearPaymentDay > maxPaymentDay ? FIRST_PAYMENT_DAY_OF_NEX_TMONTH + delay : nearPaymentDay
     }
 
 

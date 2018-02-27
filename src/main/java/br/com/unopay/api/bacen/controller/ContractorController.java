@@ -30,6 +30,7 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -241,7 +242,9 @@ public class ContractorController {
     public Results<Transaction> findTransactions(OAuth2Authentication authentication,
                                            TransactionFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find transactions for={} with filter={}", authentication.getName(), filter);
-        Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
+        Set<String> myOrderIds = orderService.getMyOrderIds(authentication.getName(), filter.getOrderId());
+        filter.setOrderId(myOrderIds);
+        Page<Transaction> page = transactionService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/transactions", api));
     }

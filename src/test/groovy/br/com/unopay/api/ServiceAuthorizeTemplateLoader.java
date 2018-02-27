@@ -8,12 +8,11 @@ import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.ServiceAuthorizeEvent;
-import br.com.unopay.api.model.TransactionSituation;
+import br.com.unopay.api.model.AuthorizationSituation;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
 
@@ -33,7 +32,7 @@ public class ServiceAuthorizeTemplateLoader implements TemplateLoader {
             add("currentInstrumentCreditBalance",random(BigDecimal.class, range(21, 200)));
             add("cancellationDateTime",instant("one day from now"));
             add("authorizationNumber", regex("\\w{15}"));
-            add("situation", random(TransactionSituation.class));
+            add("situation", random(AuthorizationSituation.class));
             add("user",one(UserDetail.class, "without-group"));
         }});
 

@@ -31,16 +31,14 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_REQUEST_REQUIRED;
 public class TransactionService {
 
     private TransactionRepository repository;
-    private OrderService orderService;
     @Setter private Gateway gateway;
 
     public TransactionService(){}
 
     @Autowired
     public TransactionService(TransactionRepository repository,
-                              OrderService orderService, Gateway gateway){
+                              Gateway gateway){
         this.repository = repository;
-        this.orderService = orderService;
         this.gateway = gateway;
     }
 
@@ -59,14 +57,6 @@ public class TransactionService {
         Transaction created = save(transaction);
         gateway.createTransaction(created);
         return save(created);
-    }
-
-    public Page<Transaction> findMyByFilter(String email, TransactionFilter filter, UnovationPageRequest pageable) {
-        List<String> ids = orderService.findIdsByPersonEmail(email);
-        List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
-        ids = filter.getOrderId().isEmpty() ? ids : intersection;
-        filter.setOrderId(ids);
-        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     public Page<Transaction> findByFilter(TransactionFilter filter, UnovationPageRequest pageable) {

@@ -129,7 +129,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         1 * transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.CAPTURED)}}
 
         then:
-        1 * orderServiceMock.process(creditOrder)
+        1 * orderServiceMock.processWithStatus(creditOrder.id, TransactionStatus.CAPTURED)
     }
 
     @Unroll
@@ -155,30 +155,6 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         _ | type
         _ | OrderType.INSTALLMENT_PAYMENT
         _ | OrderType.ADHESION
-    }
-
-    def 'given a credit card order should ever save order'(){
-        given:
-        def receiver = createOrderReceiver()
-        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("paymentRequest.method", PaymentMethod.CARD)
-        }})
-        def valueAsString = objectMapper.writeValueAsString(creditOrder)
-        def paymentStatus = status
-
-        when:
-        receiver.transactionNotify(valueAsString)
-
-        then:
-        1 * transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(paymentStatus)}}
-
-        then:
-        1 * orderServiceMock.save(creditOrder)
-
-        where:
-        _ | status
-        _ | TransactionStatus.CAPTURED
-        _ | TransactionStatus.DENIED
     }
 
     private OrderReceiver createOrderReceiver() {

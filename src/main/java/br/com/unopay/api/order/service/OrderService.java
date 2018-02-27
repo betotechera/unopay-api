@@ -4,7 +4,10 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
+import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
+import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
@@ -31,6 +34,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
@@ -67,6 +71,7 @@ public class OrderService {
     private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
     private HirerService hirerService;
+    private TransactionService transactionService;
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
     private MailValidator mailValidator;
@@ -82,7 +87,8 @@ public class OrderService {
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
-                        UserDetailService userDetailService, HirerService hirerService, Notifier notifier,
+                        UserDetailService userDetailService, HirerService hirerService,
+                        TransactionService transactionService, Notifier notifier,
                         NotificationService notificationService, MailValidator mailValidator,
                         UserCreditCardService userCreditCardService){
         this.repository = repository;
@@ -94,6 +100,7 @@ public class OrderService {
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
         this.hirerService = hirerService;
+        this.transactionService = transactionService;
         this.notifier = notifier;
         this.notificationService = notificationService;
         this.mailValidator = mailValidator;
@@ -114,10 +121,16 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
-    public List<String> findIdsByPersonEmail(String email) {
-        List<Order> orders = repository
+    public Set<String> findIdsByPersonEmail(String email) {
+        Set<Order> orders = repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
-        return orders.stream().map(Order::getId).collect(Collectors.toList());
+        return orders.stream().map(Order::getId).collect(Collectors.toSet());
+    }
+
+    public Set<String> getMyOrderIds(String email, Set<String> ordersIds) {
+        Set<String> ids = findIdsByPersonEmail(email);
+        Set<String> intersection = ordersIds.stream().filter(ids::contains).collect(Collectors.toSet());
+        return ordersIds.isEmpty() ? ids : intersection;
     }
 
     public Order create(String userEmail, Order order){
@@ -152,6 +165,7 @@ public class OrderService {
         hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());
+
         notifyOrder(created);
         return created;
     }
@@ -170,6 +184,13 @@ public class OrderService {
         order.setStatus(PaymentStatus.PAID);
         save(order);
         process(order);
+    }
+
+    public void processWithStatus(String id, TransactionStatus status){
+        Order current = findById(id);
+        current.defineStatus(status);
+        save(current);
+        process(current);
     }
 
     public void process(Order order){

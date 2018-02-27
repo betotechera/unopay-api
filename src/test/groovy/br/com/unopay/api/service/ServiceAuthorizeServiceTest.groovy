@@ -18,19 +18,16 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.ServiceAuthorizeEvent
-import br.com.unopay.api.model.TransactionSituation
+import br.com.unopay.api.model.AuthorizationSituation
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import groovy.time.TimeCategory
-import org.apache.commons.lang3.ObjectUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Unroll
-
-import javax.transaction.Transactional
 
 class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
@@ -99,7 +96,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        result.situation == TransactionSituation.CANCELED
+        result.situation == AuthorizationSituation.CANCELED
     }
 
     void 'given a known service authorize when cancel should give back instrument credit'() {
@@ -122,7 +119,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
             add("contract",contractUnderTest)
             add("contractor",contractorUnderTest)
             add("paymentInstrument",paymentInstrumentUnderTest)
-            add("situation",TransactionSituation.CLOSED_PAYMENT_BATCH)
+            add("situation",AuthorizationSituation.CLOSED_PAYMENT_BATCH)
             add("establishment",establishmentUnderTest)
         }})
 
@@ -141,7 +138,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
                     add("contract",contractUnderTest)
                     add("contractor",contractorUnderTest)
                     add("paymentInstrument",paymentInstrumentUnderTest)
-                    add("situation",TransactionSituation.CANCELED)
+                    add("situation",AuthorizationSituation.CANCELED)
                     add("establishment",establishmentUnderTest)
                 }})
 

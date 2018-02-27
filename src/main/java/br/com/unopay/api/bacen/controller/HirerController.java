@@ -382,17 +382,6 @@ public class HirerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/boletos", api));
     }
 
-    @JsonView(Views.Billing.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hirers/me/transactions", method = RequestMethod.GET)
-    public Results<Transaction> findTransactions(OAuth2Authentication authentication,
-                                                 TransactionFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find transactions for={} with filter={}", authentication.getName(), filter);
-        Page<Transaction> page = transactionService.findMyByFilter(authentication.getName(), filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/transactions", api));
-    }
-
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Views.AuthorizedMember.Detail.class)
     @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.POST)

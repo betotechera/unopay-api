@@ -4,9 +4,9 @@ import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -16,7 +16,7 @@ public class TransactionFilter implements Serializable {
 
 
     @SearchableField
-    private List<String> orderId;
+    private Set<String> orderId;
 
     @SearchableField
     private Period createDateTime;
@@ -25,8 +25,8 @@ public class TransactionFilter implements Serializable {
     private TransactionStatus status;
 
 
-    public List<String> getOrderId(){
-        Optional<List<String>> list = Optional.ofNullable(this.orderId);
-        return list.orElse(new ArrayList<>());
+    public Set<String> getOrderId(){
+        Optional<Set<String>> list = Optional.ofNullable(this.orderId);
+        return list.orElse(new HashSet<>());
     }
 }
