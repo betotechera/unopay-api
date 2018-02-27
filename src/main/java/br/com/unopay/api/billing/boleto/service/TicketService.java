@@ -28,6 +28,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -245,8 +246,8 @@ public class TicketService {
     }
 
     public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
-        List<String> ids = orderService.findIdsByPersonEmail(email);
-        List<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toList());
+        Set<String> ids = orderService.findIdsByPersonEmail(email);
+        Set<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toSet());
         ids = filter.getOrderId().isEmpty() ? ids : intersection;
         filter.setOrderId(ids);
         return findByFilter(filter, pageable);

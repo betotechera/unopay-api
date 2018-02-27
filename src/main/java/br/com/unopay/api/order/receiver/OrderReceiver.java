@@ -43,12 +43,9 @@ public class OrderReceiver {
         log.info("creating payment for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
         if(order.is(PaymentMethod.CARD)) {
-            Order current = orderService.findById(order.getId());
-            order.getPaymentRequest().setValue(current.getValue());
+            order.getPaymentRequest().setValue(order.getValue());
             Transaction transaction = transactionService.create(order.getPaymentRequest());
-            current.defineStatus(transaction.getStatus());
-            orderService.save(current);
-            orderService.process(current);
+            orderService.processWithStatus(order.getId(), transaction.getStatus());
         }
         if(order.is(PaymentMethod.BOLETO)){
             ticketService.createForOrder(order.getId());
