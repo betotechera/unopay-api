@@ -397,10 +397,12 @@ public class HirerController {
     @JsonView(Views.AuthorizedMember.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hirers/me/authorized-members", method = RequestMethod.GET)
-    public Page<AuthorizedMember> getAuthorizedMember(Hirer hirer, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
+    public PageableResults<AuthorizedMember> getAuthorizedMember(Hirer hirer, AuthorizedMemberFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("get authorizedMembers for hirer={}", hirer.getPerson().documentNumber());
         filter.setHirerId(hirer.getId());
-        return authorizedMemberService.findByFilter(filter, pageable);
+        Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
     }
 
     @JsonView(Views.AuthorizedMember.Detail.class)
