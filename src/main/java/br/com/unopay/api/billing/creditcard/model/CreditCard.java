@@ -36,7 +36,7 @@ public class CreditCard implements Serializable {
     boolean cseEncrypted = false;
 
     @NotNull
-    @Pattern(message = "invalid expiration month format", regexp = "^([1-9]|[0-1][0-2])", groups = {Create.class, Update.class})
+    @Pattern(message = "invalid expiration month format", regexp = "^(0?[1-9])|(1[0-2])", groups = {Create.class, Update.class})
     private String expiryMonth;
 
     @NotNull
