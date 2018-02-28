@@ -101,7 +101,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
-            add("effectiveDate", instant("one day from now"))
+            add("effectiveDate", instant("2 days from now"))
             add("installments", 2)
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
