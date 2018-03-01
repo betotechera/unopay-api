@@ -8,6 +8,7 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 import lombok.Data;
 
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Data
@@ -24,6 +25,7 @@ public class AuthorizedMemberCsv {
     private String name;
 
     @CsvBindByName
+    @Pattern(message = "invalid gender (F|M)", regexp = "^(F|M)")
     private String gender;
 
     @CsvBindByName
@@ -57,18 +59,8 @@ public class AuthorizedMemberCsv {
         authorizedMember.setName(name);
         authorizedMember.setRelatedness(relatedness);
         authorizedMember.setEmail(email);
-        defineGender(authorizedMember);
+        authorizedMember.setGender(Gender.fromPt(gender));
         return authorizedMember;
-    }
-
-    private void defineGender(AuthorizedMember authorizedMember) {
-        if(gender.equals(Gender.FEMALE.getDescription())) {
-            authorizedMember.setGender(Gender.FEMALE);
-        }
-
-        if(gender.equals(Gender.MALE.getDescription())) {
-            authorizedMember.setGender(Gender.MALE);
-        }
     }
 
     public boolean withInstrumentNumber() {
