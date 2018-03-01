@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.model.csv;
 import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.DocumentType;
+import br.com.unopay.api.model.Gender;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 import lombok.Data;
@@ -54,10 +55,20 @@ public class AuthorizedMemberCsv {
         authorizedMember.setDocument(authorizedMemberDocument);
         authorizedMember.setBirthDate(birthDate);
         authorizedMember.setName(name);
-        authorizedMember.setGender(gender);
         authorizedMember.setRelatedness(relatedness);
         authorizedMember.setEmail(email);
+        defineGender(authorizedMember);
         return authorizedMember;
+    }
+
+    private void defineGender(AuthorizedMember authorizedMember) {
+        if(gender.equals(Gender.FEMALE.getDescription())) {
+            authorizedMember.setGender(Gender.FEMALE);
+        }
+
+        if(gender.equals(Gender.MALE.getDescription())) {
+            authorizedMember.setGender(Gender.MALE);
+        }
     }
 
     public boolean withInstrumentNumber() {
