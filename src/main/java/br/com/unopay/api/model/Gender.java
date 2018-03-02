@@ -18,6 +18,7 @@ public enum Gender implements DescriptableEnum {
     }
 
     public static Gender fromPt(String gender){
-        return gender.startsWith("F") ? FEMALE : MALE;
+        String lowerCaseGender = gender.toLowerCase();
+        return (lowerCaseGender.startsWith("f")) ? FEMALE : MALE;
     }
 }

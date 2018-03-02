@@ -22,7 +22,7 @@ public class AuthorizedMemberCsv {
     private String name;
 
     @CsvBindByName
-    @Pattern(message = "invalid gender (F|M)", regexp = "^(F|M)")
+    @Pattern(message = "invalid gender (F|M)", regexp = "^(f|m|F|M)")
     private String gender;
 
     @CsvBindByName

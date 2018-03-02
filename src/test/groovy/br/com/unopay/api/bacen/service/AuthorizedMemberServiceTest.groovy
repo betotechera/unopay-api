@@ -1,5 +1,7 @@
 package br.com.unopay.api.bacen.service
 
+import br.com.unopay.api.model.Gender
+
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
@@ -320,10 +322,26 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         service.createFromCsv(file)
 
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
-        Page<AuthorizedMember> authorizedMembers = service.findByFilter(new AuthorizedMemberFilter(), page)
+        Page<AuthorizedMember> member1 = service.findByFilter(new AuthorizedMemberFilter(name: "test"), page)
+        Page<AuthorizedMember> member2 = service.findByFilter(new AuthorizedMemberFilter(name: "tset"), page)
+        Page<AuthorizedMember> member3 = service.findByFilter(new AuthorizedMemberFilter(name: "sete"), page)
 
         then:
-        authorizedMembers.content.size() == 3
+        member1.first().relatedness == "Primo(a)"
+        member2.first().relatedness == "Pai"
+        member3.first().relatedness == "Mãe"
+        member1.first().email == "test@test.com"
+        member2.first().email == "test@test.bra"
+        member3.first().email == "test@sett.com"
+        member1.first().document.number == "123456"
+        member2.first().document.number == "123457"
+        member3.first().document.number == "123458"
+        member1.first().paymentInstrument.number == "123456"
+        member2.first().paymentInstrument.number == "123457"
+        member3.first().paymentInstrument.number == "123458"
+        member1.first().gender == Gender.FEMALE
+        member2.first().gender == Gender.FEMALE
+        member3.first().gender == Gender.MALE
     }
 
     void 'should create AuthorizedMembers from csv for hirer'() {
