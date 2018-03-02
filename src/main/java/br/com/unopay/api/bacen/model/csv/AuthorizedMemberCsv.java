@@ -18,9 +18,6 @@ public class AuthorizedMemberCsv {
     @CsvBindByName
     private Date birthDate;
 
-    @CsvBindByName(column = "contract")
-    private Long contractCode;
-
     @CsvBindByName
     private String name;
 
