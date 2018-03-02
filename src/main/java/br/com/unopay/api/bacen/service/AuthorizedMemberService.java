@@ -150,7 +150,7 @@ public class AuthorizedMemberService {
         });
     }
 
-    private Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
+    public Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
         Product product = productService.findByCode(csvSource.getProductCode());
         Contract contract = getContractByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId());
 
