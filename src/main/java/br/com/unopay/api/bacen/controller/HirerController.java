@@ -438,4 +438,13 @@ public class HirerController {
         authorizedMemberService.createFromCsvForHirer(hirer.getDocumentNumber(), file);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_AUTHORIZED_MEMBER')")
+    @RequestMapping(value = "/hirers/{document}/authorized-members", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createFromCsvByDocument(@PathVariable  String document, @RequestParam MultipartFile file){
+        String fileName = file.getOriginalFilename();
+        log.info("reading clients from csv file {}", fileName);
+        authorizedMemberService.createFromCsvForHirer(document, file);
+    }
 }
