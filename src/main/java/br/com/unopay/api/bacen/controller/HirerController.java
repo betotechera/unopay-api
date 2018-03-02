@@ -444,7 +444,7 @@ public class HirerController {
             consumes = "multipart/form-data")
     public void createFromCsvByDocument(@PathVariable  String document, @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
-        log.info("reading clients from csv file {}", fileName);
+        log.info("reading authorized members from csv file {}", fileName);
         authorizedMemberService.createFromCsvForHirer(document, file);
     }
 }
