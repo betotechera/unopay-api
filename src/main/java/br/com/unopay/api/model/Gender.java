@@ -18,6 +18,6 @@ public enum Gender implements DescriptableEnum {
     }
 
     public static Gender fromPt(String gender){
-        return "F".equals(gender) ? FEMALE : MALE;
+        return gender.startsWith("F") ? FEMALE : MALE;
     }
 }

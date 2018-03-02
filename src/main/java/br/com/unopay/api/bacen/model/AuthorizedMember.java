@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Document;
+import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -18,6 +19,7 @@ import org.joda.time.DateTime;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +30,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
@@ -61,11 +65,11 @@ public class AuthorizedMember implements Serializable, Updatable{
     @Size(max=256)
     private String name;
 
+    @Enumerated(STRING)
     @Column(name="gender")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.AuthorizedMember.Detail.class})
-    @Size(max=50)
-    private String gender;
+    private Gender gender;
 
     @Column(name="relatedness")
     @NotNull(groups = {Create.class, Update.class})

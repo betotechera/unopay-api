@@ -39,6 +39,7 @@ import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
@@ -309,7 +310,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("birthDate", instant("18 years ago"));
             add("contract", one(Contract.class, "valid"));
             add("name",  regex("\\w{15}"));
-            add("gender",  regex("\\w{15}"));
+            add("gender",  random(Gender.class));
             add("relatedness",  regex("\\w{15}"));
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
         }});
