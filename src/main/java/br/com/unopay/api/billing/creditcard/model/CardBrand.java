@@ -1,22 +1,24 @@
 package br.com.unopay.api.billing.creditcard.model;
 
-public enum CardBrand {
+import br.com.unopay.api.http.DescriptableEnum;
+
+public enum CardBrand implements DescriptableEnum {
 
     VISA("Visa"),
     MASTERCARD("Mastercard"),
     AMEX("American Express"),
     DINERS("Diners"),
     ELO("Elo"),
-    UNKNOWN("Unkown");
+    UNKNOWN("Unknown");
 
-    private String name;
+    private String description;
 
-    private CardBrand(String name) {
-        this.name = name;
+    CardBrand(String description) {
+        this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
     public static CardBrand fromCardNumber(final String creditCardNumber) {
