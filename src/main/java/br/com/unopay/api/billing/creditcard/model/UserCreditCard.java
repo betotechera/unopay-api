@@ -47,7 +47,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     @Column(name = "holder_name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String holderName;
 
     @Column(name = "brand")
