@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.NewPassword
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -158,6 +159,27 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.groups',is(notNullValue())))
                 .andExpect(jsonPath('$.groups[0].authorities', is(notNullValue())))
+    }
+
+    void 'should update my password'() {
+        given:
+        UserDetail user = getUserWithGroup()
+
+        MvcResult mvcResult = expectUserCreatedAndPasswordFlowOk(getUserAccessToken(), user)
+        String userAccessToken = getAccessToken(mvcResult)
+
+        NewPassword newPassword = new NewPassword() {{
+            password = "123123"
+        }}
+
+        when:
+        def result = this.mvc.perform(
+                put("/users/me/password?access_token={access_token}", userAccessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(newPassword)))
+
+        then:
+        result.andExpect(status().isNoContent())
     }
 
     void 'should return groups authorities inline when get profile'() {
