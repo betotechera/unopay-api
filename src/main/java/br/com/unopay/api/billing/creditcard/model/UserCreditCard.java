@@ -18,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -33,6 +34,8 @@ public class UserCreditCard implements Serializable, Updatable {
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
     private static final int SURPLUS_LIMIT = 100;
+    public static final String EMPTY = "";
+
     @Id
     @Column(name="id")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
@@ -189,6 +192,21 @@ public class UserCreditCard implements Serializable, Updatable {
             return getUser().getId();
         }
         return null;
+    }
+
+    private boolean hasContractorPersonName() {
+        return getUser() != null
+                && getUser().getContractor() != null
+                && getUser().getContractor().getPerson() != null
+                && !Objects.equals(getUser().getContractor().getPerson().getName(), EMPTY);
+    }
+
+    @JsonView({Views.UserCreditCard.List.class})
+    public String contractorPersonName() {
+        if (hasContractorPersonName()) {
+            return getUser().getContractor().getPerson().getName();
+        }
+        return EMPTY;
     }
 
     private static boolean isNumber(String number) {
