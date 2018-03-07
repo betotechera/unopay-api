@@ -15,7 +15,8 @@ payment:
         enviroment: 'T'
 unopay:
   resetPassword:
-        url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
+        backofficeUrl: 'http://backoffice.qa.unovation.com.br/#/page/password/'
+        unopayUrl: 'https://unopay.qa.unovation.com.br/recover-password'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unvlocal.com.br:8080

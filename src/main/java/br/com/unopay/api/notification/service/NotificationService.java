@@ -10,6 +10,7 @@ import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,12 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Data
 @ConfigurationProperties("unopay.resetPassword")
 public class NotificationService {
+    public static final String UNOPAY = "unopay";
+    public static final String BACKOFFICE = "backoffice";
 
-    private String url;
+    private String backofficeUrl;
+
+    private String unopayUrl;
 
     private Notifier notifier;
 
@@ -40,18 +45,27 @@ public class NotificationService {
         this.notifier = notifier;
     }
 
-    public void sendNewPassword(UserDetail user, EventType eventType) {
+    public void sendNewPassword(UserDetail user, EventType eventType, RequestOrigin requestOrigin) {
         user.setPassword(null);
         Email email = new Email(user.getEmail());
         String token = passwordTokenService.createToken(user);
-        Map<String, Object> payload = buildPayload(user, token);
+
+        Map<String,Object> payload = new HashMap<>();
+        payload.put("user",user);
+        payload.put("link",linkForOrigin(requestOrigin));
+        payload.put("token",token);
+
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.NOTIFICATION, notification);
         log.info("reset password message sent to the queue for {}", user);
     }
 
+    private String linkForOrigin(RequestOrigin requestOrigin) {
+        return UNOPAY.equals(requestOrigin.getDescription()) ? unopayUrl : backofficeUrl;
+    }
+
     public void sendNewPassword(UserDetail user) {
-        sendNewPassword(user, CREATE_PASSWORD);
+        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.BACKOFFICE);
     }
 
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
@@ -76,10 +90,10 @@ public class NotificationService {
         sendEmailToQueue(billable.getBillingMail(), payload, EventType.BOLETO_ISSUED);
     }
 
-    private Map<String, Object> buildPayload(UserDetail user, String token) {
+    private Map<String, Object> buildPasswordPayload(UserDetail user, String token) {
         Map<String,Object> payload = new HashMap<>();
         payload.put("user",user);
-        payload.put("link",url);
+        payload.put("link",backofficeUrl);
         payload.put("token",token);
         return payload;
     }
