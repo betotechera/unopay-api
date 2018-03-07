@@ -51,6 +51,9 @@ public class UserDetailService implements UserDetailsService {
 
     public static final String CONTRACTOR = "CONTRATADO";
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
+    public static final String UNOPAY = "unopay";
+    public static final String BACKOFFICE = "backoffice";
+
 
     private UserDetailRepository userDetailRepository;
     private UserTypeService userTypeService;
@@ -193,11 +196,28 @@ public class UserDetailService implements UserDetailsService {
 
     public void resetPasswordById(String userId) {
         UserDetail user = getById(userId);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, BACKOFFICE);
     }
-    public void resetPasswordByEmail(String email) {
+
+    public void resetPasswordByEmail(String email, String requestOrigin) {
+        validateRequestOrigin(requestOrigin);
         UserDetail user = getByEmail(email);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, requestOrigin);
+    }
+
+    private void validateRequestOrigin(String requestOrigin) {
+        if(requestOrigin == null) {
+            throw UnovationExceptions.badRequest()
+                    .withErrors(Errors.PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED);
+        }
+        if(!validRequestOrigin(requestOrigin)) {
+            throw UnovationExceptions.badRequest()
+                    .withErrors(Errors.INVALID_PASSWORD_RESET_REQUEST_ORIGIN);
+        }
+    }
+
+    private boolean validRequestOrigin(String requestOrigin) {
+        return requestOrigin.equalsIgnoreCase(UNOPAY) || requestOrigin.equalsIgnoreCase(BACKOFFICE);
     }
 
     @Transactional(rollbackOn = Throwable.class)
