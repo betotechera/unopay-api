@@ -334,4 +334,8 @@ public class Contract implements Serializable {
         }
         return false;
     }
+
+    public boolean hirerDocumentEquals(String hirerDocument) {
+        return hirerDocumentNumber().equals(hirerDocument);
+    }
 }
