@@ -9,6 +9,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserReferencesValidator;
 import br.com.unopay.api.uaa.model.UserType;
@@ -196,28 +197,20 @@ public class UserDetailService implements UserDetailsService {
 
     public void resetPasswordById(String userId) {
         UserDetail user = getById(userId);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, BACKOFFICE);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, RequestOrigin.BACKOFFICE);
     }
 
-    public void resetPasswordByEmail(String email, String requestOrigin) {
+    public void resetPasswordByEmail(String email, RequestOrigin requestOrigin) {
         validateRequestOrigin(requestOrigin);
         UserDetail user = getByEmail(email);
         notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, requestOrigin);
     }
 
-    private void validateRequestOrigin(String requestOrigin) {
+    private void validateRequestOrigin(RequestOrigin requestOrigin) {
         if(requestOrigin == null) {
             throw UnovationExceptions.badRequest()
-                    .withErrors(Errors.PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED);
+                    .withErrors(Errors.VALID_PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED);
         }
-        if(!validRequestOrigin(requestOrigin)) {
-            throw UnovationExceptions.badRequest()
-                    .withErrors(Errors.INVALID_PASSWORD_RESET_REQUEST_ORIGIN);
-        }
-    }
-
-    private boolean validRequestOrigin(String requestOrigin) {
-        return requestOrigin.equalsIgnoreCase(UNOPAY) || requestOrigin.equalsIgnoreCase(BACKOFFICE);
     }
 
     @Transactional(rollbackOn = Throwable.class)

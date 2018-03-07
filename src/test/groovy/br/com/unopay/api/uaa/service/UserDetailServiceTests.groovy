@@ -13,6 +13,7 @@ import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.infra.PasswordTokenService
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.NewPassword
+import br.com.unopay.api.uaa.model.RequestOrigin
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.model.filter.UserFilter
@@ -385,9 +386,8 @@ class UserDetailServiceTests extends SpockApplicationTests {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         def created = service.create(user)
-        String unopay = "unopay"
         when:
-        service.resetPasswordByEmail(created.getEmail(), unopay)
+        service.resetPasswordByEmail(created.getEmail(), RequestOrigin.UNOPAY)
 
         then:
         1 * notificationService.sendNewPassword(_, EventType.PASSWORD_RESET,_)
@@ -398,7 +398,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
 
         when:
-        service.resetPasswordByEmail(user.getEmail(), "unopay")
+        service.resetPasswordByEmail(user.getEmail(), RequestOrigin.UNOPAY)
 
         then:
         thrown(NotFoundException)
@@ -426,21 +426,17 @@ class UserDetailServiceTests extends SpockApplicationTests {
         thrown(NotFoundException)
     }
 
-    void 'when reset password by email with #requestOrigin requestOrigin should return error'() {
+    void 'when reset password by email without requestOrigin should return error'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         service.create(user)
 
         when:
-        service.resetPasswordByEmail(user.getEmail(), requestOrigin)
+        service.resetPasswordByEmail(user.getEmail(), null)
 
         then:
         thrown(BadRequestException)
 
-        where:
-        _ | requestOrigin
-        _ | "invalid"
-        _ | null
     }
 
     void 'given a known user when update password by token with valid token should updated'() {
