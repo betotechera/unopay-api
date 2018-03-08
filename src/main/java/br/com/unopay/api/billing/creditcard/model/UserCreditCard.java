@@ -45,7 +45,7 @@ public class UserCreditCard implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="user_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private UserDetail user;
 
     @Column(name = "holder_name")
@@ -192,21 +192,6 @@ public class UserCreditCard implements Serializable, Updatable {
             return getUser().getId();
         }
         return null;
-    }
-
-    private boolean hasContractorPersonName() {
-        return getUser() != null
-                && getUser().getContractor() != null
-                && getUser().getContractor().getPerson() != null
-                && !Objects.equals(getUser().getContractor().getPerson().getName(), EMPTY);
-    }
-
-    @JsonView({Views.UserCreditCard.List.class})
-    public String contractorPersonName() {
-        if (hasContractorPersonName()) {
-            return getUser().getContractor().getPerson().getName();
-        }
-        return EMPTY;
     }
 
     private static boolean isNumber(String number) {
