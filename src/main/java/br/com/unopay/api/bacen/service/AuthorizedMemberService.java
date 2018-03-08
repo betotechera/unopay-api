@@ -150,17 +150,21 @@ public class AuthorizedMemberService {
         });
     }
 
-    private Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
+    public Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
         Product product = productService.findByCode(csvSource.getProductCode());
-        Contract contract = contractService
-                .findByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId())
-                .orElseThrow(()->
-                        UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
+        Contract contract = getContractByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId());
 
-        if(!contract.hirerDocumentNumber().equals(csvSource.getHirerDocumentNumber())) {
+        if(!contract.hirerDocumentEquals(csvSource.getHirerDocumentNumber())) {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND);
         }
+
         return contract;
+    }
+
+    private Contract getContractByContractorAndProduct(String contractorDocumentNumber, String productId) {
+        return contractService.findByContractorAndProduct(contractorDocumentNumber, productId)
+                .orElseThrow(()->
+                        UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
     }
 
     private PaymentInstrument findDigitalWalletByContractorDocument(String document) {
