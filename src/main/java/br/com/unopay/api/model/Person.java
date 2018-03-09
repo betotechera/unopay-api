@@ -51,20 +51,17 @@ public class Person implements Serializable{
     @Column(name="short_name")
     @NotNull(groups = {Create.class, Update.class})
     @Size(min=2,max = 50, groups = {Create.class, Update.class})
-    @JsonView({Views.Person.List.class, Views.UserCreditCard.List.class})
     private String shortName;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="type")
-    @JsonView({Views.Person.List.class})
     private PersonType type;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @Embedded
-    @JsonView({Views.Person.List.class})
     private Document document;
 
     @Valid

@@ -56,7 +56,6 @@ public class Contractor implements Serializable {
     @JoinColumn(name="person_id")
     @ManyToOne
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Contractor.List.class, Views.UserCreditCard.List.class})
     private Person person;
 
     @ManyToOne

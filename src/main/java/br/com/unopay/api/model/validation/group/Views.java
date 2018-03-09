@@ -15,7 +15,7 @@ public interface Views {
 
 
     interface AccreditedNetwork {
-        interface Detail extends Person.List,BankAccount,Address,List {}
+        interface Detail extends Person,BankAccount,Address,List {}
         interface List {}
     }
 
@@ -83,12 +83,12 @@ public interface Views {
     }
 
     interface Hirer {
-        interface Detail extends Person.List,Address,BankAccount,List {}
+        interface Detail extends Person,Address,BankAccount,List {}
         interface List {}
     }
 
     interface HirerBranch {
-        interface Detail extends Person.List,Address,BankAccount,List {}
+        interface Detail extends Person,Address,BankAccount,List {}
         interface List {}
     }
 
@@ -103,7 +103,7 @@ public interface Views {
     }
 
     interface Institution {
-        interface Detail extends Person.List,Address,List {}
+        interface Detail extends Person,Address,List {}
         interface List {}
     }
 
@@ -114,7 +114,7 @@ public interface Views {
     }
 
     interface Partner {
-        interface Detail extends Person.List,Address,List,BankAccount {}
+        interface Detail extends Person,Address,List,BankAccount {}
         interface List extends AddressList {}
     }
 
