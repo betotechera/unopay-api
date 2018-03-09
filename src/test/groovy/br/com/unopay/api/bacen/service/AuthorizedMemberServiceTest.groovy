@@ -304,7 +304,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         thrown(NotFoundException)
     }
 
-    void 'should create AuthorizedMembers from csv'() {
+    void    'should create AuthorizedMembers from csv'() {
         given:
         def contractor = createContractor("123456789")
         def hirer = fixtureCreator.createHirerWithDocument("12345678")

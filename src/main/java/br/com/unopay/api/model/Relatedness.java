@@ -2,6 +2,9 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Relatedness implements DescriptableEnum {
     GRANDPARENT("Avô(ó)"),AUNT_UNCLE("Tio(a)"), MOTHER("Mãe"), FATHER("Pai"), SIBLING("Irmão(ã)"),
     DAUGHTER_SON("Filho(a)"), NIECE_NEPHEW("Sobrinho(a)"), GRANDCHILD("Neto(a)");
@@ -18,28 +21,14 @@ public enum Relatedness implements DescriptableEnum {
     }
 
     public static Relatedness fromPt(String relatedness){
-        String lowerCaseGender = relatedness.toLowerCase();
-        if(lowerCaseGender.startsWith("av")) {
-            return GRANDPARENT;
+        String lowerCaseRelatedness = relatedness.toLowerCase();
+        List<Relatedness> values = Arrays.asList(Relatedness.values());
+        for(Relatedness value : values) {
+            String prefix = value.getDescription().substring(0, 1).toLowerCase();
+            if(lowerCaseRelatedness.startsWith(prefix)) {
+                return value;
+            }
         }
-        if(lowerCaseGender.startsWith("ti")) {
-            return AUNT_UNCLE;
-        }
-        if(lowerCaseGender.startsWith("m")) {
-            return MOTHER;
-        }
-        if(lowerCaseGender.equals("pai")) {
-            return FATHER;
-        }
-        if(lowerCaseGender.startsWith("irm")) {
-            return SIBLING;
-        }
-        if(lowerCaseGender.startsWith("filh")) {
-            return DAUGHTER_SON;
-        }
-        if(lowerCaseGender.startsWith("sobrinh")) {
-            return NIECE_NEPHEW;
-        }
-        return GRANDCHILD;
+        return null;
     }
 }
