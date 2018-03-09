@@ -18,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -33,6 +34,8 @@ public class UserCreditCard implements Serializable, Updatable {
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
     private static final int SURPLUS_LIMIT = 100;
+    public static final String EMPTY = "";
+
     @Id
     @Column(name="id")
     @GenericGenerator(name="system-uuid", strategy="uuid2")
@@ -42,12 +45,12 @@ public class UserCreditCard implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="user_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private UserDetail user;
 
     @Column(name = "holder_name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String holderName;
 
     @Column(name = "brand")

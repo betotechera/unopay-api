@@ -112,7 +112,7 @@ public class UserDetail implements Serializable, Updatable {
 
     @ManyToOne
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.User.Detail.class})
+    @JsonView({Views.User.Detail.class, Views.UserCreditCard.List.class})
     private Contractor contractor;
 
     @ManyToOne
