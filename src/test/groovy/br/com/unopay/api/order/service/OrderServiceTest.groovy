@@ -508,6 +508,35 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'HIRER_DOCUMENT_NOT_FOUND'
     }
 
+
+    def 'given a non adhesion order and issuer without hirer document should be created'(){
+        given:
+        def contractor = contractUnderTest.contractor
+        def product = fixtureCreator.createProduct()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        def orderType = type
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("type", orderType)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", instrument)
+            add("value", 20.0)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        notThrown(NotFoundException)
+
+        where:
+        _ | type
+        _ | OrderType.INSTALLMENT_PAYMENT
+        _ | OrderType.CREDIT
+
+    }
+
     def 'given a adhesion order for an unknown contractor with known email should return error'(){
         given:
         def user = fixtureCreator.createUser()

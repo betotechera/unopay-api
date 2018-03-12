@@ -71,7 +71,6 @@ public class OrderService {
     private ContractorInstrumentCreditService instrumentCreditService;
     private UserDetailService userDetailService;
     private HirerService hirerService;
-    private TransactionService transactionService;
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
     private MailValidator mailValidator;
@@ -88,7 +87,7 @@ public class OrderService {
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
                         UserDetailService userDetailService, HirerService hirerService,
-                        TransactionService transactionService, Notifier notifier,
+                        Notifier notifier,
                         NotificationService notificationService, MailValidator mailValidator,
                         UserCreditCardService userCreditCardService){
         this.repository = repository;
@@ -100,7 +99,6 @@ public class OrderService {
         this.instrumentCreditService = instrumentCreditService;
         this.userDetailService = userDetailService;
         this.hirerService = hirerService;
-        this.transactionService = transactionService;
         this.notifier = notifier;
         this.notificationService = notificationService;
         this.mailValidator = mailValidator;
@@ -162,12 +160,17 @@ public class OrderService {
         checkContractorRules(order);
         definePaymentValueWhenRequired(order);
         order.setCreateDateTime(new Date());
-        hirerService.findByDocumentNumber(order.issuerDocumentNumber());
+        checkHirerWhenRequired(order);
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());
-
         notifyOrder(created);
         return created;
+    }
+
+    private void checkHirerWhenRequired(Order order) {
+        if(order.isType(OrderType.ADHESION)) {
+            hirerService.findByDocumentNumber(order.issuerDocumentNumber());
+        }
     }
 
     private void notifyOrder(Order created) {
