@@ -50,7 +50,7 @@ public class RemittancePayee implements Serializable {
         this.state = establishment.getPerson().getAddress().getState();
         this.zipCode = establishment.getPerson().getAddress().getZipCode();
         this.payerBankCode = payerBankCode;
-        this.name = establishment.getPerson().getName();
+        this.name = establishment.getPerson().getShortName();
         this.receivable = receivable;
     }
 
@@ -69,7 +69,7 @@ public class RemittancePayee implements Serializable {
         this.state = hirer.getPerson().getAddress().getState();
         this.zipCode = hirer.getPerson().getAddress().getZipCode();
         this.payerBankCode = payerBankCode;
-        this.name = hirer.getPerson().getName();
+        this.name = hirer.getPerson().getShortName();
         this.receivable = receivable;
     }
 

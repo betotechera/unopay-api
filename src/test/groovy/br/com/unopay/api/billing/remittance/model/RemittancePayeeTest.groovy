@@ -31,7 +31,7 @@ class RemittancePayeeTest  extends FixtureApplicationTest{
         payee.state == establishment.person.address.state
         payee.bankCode == establishment.bankAccount.bacenCode()
         payee.payerBankCode == paymentAccountBank
-        payee.name == establishment.person.name
+        payee.name == establishment.person.shortName
         payee.receivable == receivable
     }
 
@@ -59,7 +59,7 @@ class RemittancePayeeTest  extends FixtureApplicationTest{
         payee.state == hirer.person.address.state
         payee.bankCode == hirer.bankAccount.bacenCode()
         payee.payerBankCode == paymentAccountBank
-        payee.name == hirer.person.name
+        payee.name == hirer.person.shortName
         payee.receivable == receivable
     }
 
