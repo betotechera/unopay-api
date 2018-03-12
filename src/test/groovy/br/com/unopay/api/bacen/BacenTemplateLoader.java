@@ -44,6 +44,7 @@ import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.Relatedness;
 import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.math.BigDecimal;
@@ -311,7 +312,7 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("contract", one(Contract.class, "valid"));
             add("name",  regex("\\w{15}"));
             add("gender",  random(Gender.class));
-            add("relatedness",  regex("\\w{15}"));
+            add("relatedness",  random(Relatedness.class));
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
         }});
 

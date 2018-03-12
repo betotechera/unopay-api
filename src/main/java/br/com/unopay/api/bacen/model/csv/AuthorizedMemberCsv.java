@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.AuthorizedMember;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.DocumentType;
 import br.com.unopay.api.model.Gender;
+import br.com.unopay.api.model.Relatedness;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 import lombok.Data;
@@ -22,10 +23,11 @@ public class AuthorizedMemberCsv {
     private String name;
 
     @CsvBindByName
-    @Pattern(message = "invalid gender (F|M)", regexp = "^(f|m|F|M)")
+    @Pattern(message = "invalid gender (F|M)", regexp = "^(?i)(f|m)")
     private String gender;
 
     @CsvBindByName
+    @Pattern(message = "invalid relatedness (F|M)", regexp = "^(?i)(av|ti|m|pai|irm|filh|sobrinh)")
     private String relatedness;
 
     @CsvBindByName
@@ -54,7 +56,7 @@ public class AuthorizedMemberCsv {
         authorizedMember.setDocument(authorizedMemberDocument);
         authorizedMember.setBirthDate(birthDate);
         authorizedMember.setName(name);
-        authorizedMember.setRelatedness(relatedness);
+        authorizedMember.setRelatedness(Relatedness.fromPt(relatedness));
         authorizedMember.setEmail(email);
         authorizedMember.setGender(Gender.fromPt(gender));
         return authorizedMember;
