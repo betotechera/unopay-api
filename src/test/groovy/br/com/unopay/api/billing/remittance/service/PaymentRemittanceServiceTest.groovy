@@ -242,7 +242,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         result.find().operationType == PaymentOperationType.CREDIT
     }
 
-    def 'should not send email when a new batch remittance is created'(){
+    def 'should send email when a new batch remittance is created'(){
         given:
         Issuer issuer = fixtureCreator.createIssuer()
         def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
@@ -252,7 +252,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.createForBatch(issuer.id)
 
         then:
-        0 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
+        1 * notificationServiceMock.sendRemittanceCreatedMail(issuer.financierMailForRemittance,_)
     }
 
     def 'when try create remittance when has running should return error'(){
