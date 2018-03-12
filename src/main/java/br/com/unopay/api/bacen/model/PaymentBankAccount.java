@@ -64,7 +64,7 @@ public class PaymentBankAccount implements Serializable{
     @JsonView({Views.BankAccount.class})
     private Integer prePaidPaymentDays;
 
-    @Size(max = 7)
+    @Size(max = 20)
     @Column(name = "bank_agreement_number_credit")
     @JsonView({Views.BankAccount.class})
     @NotNull(groups = {Create.class, Update.class})
