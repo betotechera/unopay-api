@@ -135,7 +135,7 @@ public class RemittancePayee implements Serializable {
 
     @Column(name = "complement")
     @JsonView({Views.PaymentRemittance.Payee.class})
-    @Size(max = 250, groups = {Create.class, Update.class})
+    @Size(max = 15, groups = {Create.class, Update.class})
     private String complement;
 
     @Column(name = "district")
