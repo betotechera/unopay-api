@@ -49,7 +49,7 @@ public class RemittancePayer implements Serializable {
         this.bankCode = issuer.getPaymentAccount().getBankAccount().bacenCode();
         this.bankName = issuer.getPaymentAccount().getBankAccount().getBank().getName();
         this.zipCode = issuer.getPerson().getAddress().getZipCode();
-        this.name = issuer.getPerson().getName();
+        this.name = issuer.getPerson().getShortName();
     }
 
     @Id
