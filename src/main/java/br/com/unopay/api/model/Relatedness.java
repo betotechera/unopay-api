@@ -5,6 +5,8 @@ import br.com.unopay.api.http.DescriptableEnum;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum Relatedness implements DescriptableEnum {
     GRANDPARENT("Avô(ó)"),AUNT_UNCLE("Tio(a)"), MOTHER("Mãe"), FATHER("Pai"), SIBLING("Irmão(ã)"),
@@ -24,18 +26,25 @@ public enum Relatedness implements DescriptableEnum {
     public static Relatedness fromPt(String relatedness){
         String normalizedRelatedness = normalize(relatedness);
         List<Relatedness> values = Arrays.asList(Relatedness.values());
-        values.stream().map(value -> normalize(value)).filter()
-        for(Relatedness value : values) {
-            String prefix = normalize(value.getDescription().substring(0, 2));
-            if(normalizedRelatedness.startsWith(prefix)) {
-                return value;
-            }
+
+        List<Relatedness> relatednessess = values.stream()
+                .filter(value -> normalizedRelatedness.startsWith(prefix(value.description)))
+                .collect(Collectors.toList());
+
+        if(relatednessess.isEmpty()) {
+            return null;
         }
-        return null;
+
+        return relatednessess.get(0);
+    }
+
+    private static String prefix(String relatedness) {
+        return normalize(relatedness.substring(0, 2));
     }
 
     private static String normalize(String src) {
-        String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
         return unaccented.toLowerCase();
     }
 }
