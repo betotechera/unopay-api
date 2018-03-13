@@ -187,9 +187,7 @@ public class PaymentRemittanceService {
         String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
         remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);
-        if(remittance.forDebit()) {
-            notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
-        }
+        notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
     }
 
     public List<PaymentRemittance> findByPayerDocument(String payerDocument){
@@ -213,6 +211,7 @@ public class PaymentRemittanceService {
     private PaymentRemittance createRemittance(Issuer currentIssuer, Set<PaymentRemittanceItem> remittanceItems) {
         PaymentRemittance paymentRemittance = new PaymentRemittance(currentIssuer, getTotal());
         paymentRemittance.setRemittanceItems(remittanceItems);
+        remittanceItems.forEach(i-> i.setPaymentRemittance(paymentRemittance));
         return save(paymentRemittance);
     }
 

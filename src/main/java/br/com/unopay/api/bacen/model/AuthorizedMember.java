@@ -4,6 +4,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.Relatedness;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;
@@ -71,11 +72,11 @@ public class AuthorizedMember implements Serializable, Updatable{
     @JsonView({Views.AuthorizedMember.Detail.class})
     private Gender gender;
 
+    @Enumerated(STRING)
     @Column(name="relatedness")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.AuthorizedMember.Detail.class})
-    @Size(max=50)
-    private String relatedness;
+    private Relatedness relatedness;
 
     @Column(name="email")
     @JsonView({Views.AuthorizedMember.List.class})

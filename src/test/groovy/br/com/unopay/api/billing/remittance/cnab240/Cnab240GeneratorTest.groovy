@@ -85,6 +85,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceReco
 import br.com.unopay.api.billing.remittance.model.PaymentOperationType
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem
+import br.com.unopay.api.billing.remittance.model.RemittancePayer
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
 import spock.lang.Unroll
@@ -181,7 +182,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def payer = remittance.payer
+        RemittancePayer payer = remittance.payer
         def record = new FilledRecord(batchHeader) {{
             fill(BANCO_COMPENSACAO, payer.getBankCode()).
             defaultFill(LOTE_SERVICO)

@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.unopay.api.model.Gender
+import br.com.unopay.api.model.Relatedness
 
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
@@ -303,7 +304,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         thrown(NotFoundException)
     }
 
-    void 'should create AuthorizedMembers from csv'() {
+    void    'should create AuthorizedMembers from csv'() {
         given:
         def contractor = createContractor("123456789")
         def hirer = fixtureCreator.createHirerWithDocument("12345678")
@@ -327,9 +328,9 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         Page<AuthorizedMember> member3 = service.findByFilter(new AuthorizedMemberFilter(name: "sete"), page)
 
         then:
-        member1.first().relatedness == "Primo(a)"
-        member2.first().relatedness == "Pai"
-        member3.first().relatedness == "Mãe"
+        member1.first().relatedness == Relatedness.SIBLING
+        member2.first().relatedness == Relatedness.FATHER
+        member3.first().relatedness == Relatedness.MOTHER
         member1.first().email == "test@test.com"
         member2.first().email == "test@test.bra"
         member3.first().email == "test@sett.com"
