@@ -13,6 +13,9 @@ public enum Relatedness implements DescriptableEnum {
     DAUGHTER_SON("Filho(a)"), NIECE_NEPHEW("Sobrinho(a)"), GRANDCHILD("Neto(a)");
 
     private String description;
+    private static String REMOVE_ACCENT = "[^\\p{ASCII}]";
+    private static int FIRST = 0;
+    private static int SECOND = 2;
 
     Relatedness(String description){
         this.description = description;
@@ -34,12 +37,12 @@ public enum Relatedness implements DescriptableEnum {
     }
 
     private static String prefix(String relatedness) {
-        return normalize(relatedness.substring(0, 2));
+        return normalize(relatedness.substring(FIRST, SECOND));
     }
 
     private static String normalize(String src) {
         String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD)
-                .replaceAll("[^\\p{ASCII}]", "");
+                .replaceAll(REMOVE_ACCENT, "");
         return unaccented.toLowerCase();
     }
 }
