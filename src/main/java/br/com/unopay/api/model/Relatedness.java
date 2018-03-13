@@ -27,15 +27,10 @@ public enum Relatedness implements DescriptableEnum {
         String normalizedRelatedness = normalize(relatedness);
         List<Relatedness> values = Arrays.asList(Relatedness.values());
 
-        List<Relatedness> relatednessess = values.stream()
+        return values.stream()
                 .filter(value -> normalizedRelatedness.startsWith(prefix(value.description)))
-                .collect(Collectors.toList());
-
-        if(relatednessess.isEmpty()) {
-            return null;
-        }
-
-        return relatednessess.get(0);
+                .findFirst()
+                .get();
     }
 
     private static String prefix(String relatedness) {
