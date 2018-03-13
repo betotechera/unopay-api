@@ -33,7 +33,7 @@ public enum Relatedness implements DescriptableEnum {
         return values.stream()
                 .filter(value -> normalizedRelatedness.startsWith(prefix(value.description)))
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 
     private static String prefix(String relatedness) {
