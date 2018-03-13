@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,14 +22,20 @@ public enum Relatedness implements DescriptableEnum {
     }
 
     public static Relatedness fromPt(String relatedness){
-        String lowerCaseRelatedness = relatedness.toLowerCase();
+        String normalizedRelatedness = normalize(relatedness);
         List<Relatedness> values = Arrays.asList(Relatedness.values());
+        values.stream().map(value -> normalize(value)).filter()
         for(Relatedness value : values) {
-            String prefix = value.getDescription().substring(0, 1).toLowerCase();
-            if(lowerCaseRelatedness.startsWith(prefix)) {
+            String prefix = normalize(value.getDescription().substring(0, 2));
+            if(normalizedRelatedness.startsWith(prefix)) {
                 return value;
             }
         }
         return null;
+    }
+
+    private static String normalize(String src) {
+        String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return unaccented.toLowerCase();
     }
 }
