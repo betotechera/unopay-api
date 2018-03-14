@@ -214,10 +214,10 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
-    public void resetPasswordByEmail(HttpServletRequest request, @RequestParam RequestOrigin requestOrigin) {
+    public void resetPasswordByEmail(HttpServletRequest request, @RequestParam RequestOrigin origin) {
         String email = request.getParameter("email");
-        LOGGER.info("password reset request. to user={} on {}", email, requestOrigin.getDescription());
-        userDetailService.resetPasswordByEmail(email, requestOrigin);
+        LOGGER.info("password reset request. to user={} on {}", email, origin.getDescription());
+        userDetailService.resetPasswordByEmail(email, origin);
     }
 
     @JsonView(Views.UserCreditCard.List.class)
