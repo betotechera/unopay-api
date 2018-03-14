@@ -90,13 +90,6 @@ public class NotificationService {
         sendEmailToQueue(billable.getBillingMail(), payload, EventType.BOLETO_ISSUED);
     }
 
-    private Map<String, Object> buildPasswordPayload(UserDetail user, String token) {
-        Map<String,Object> payload = new HashMap<>();
-        payload.put("user",user);
-        payload.put("link",backofficeUrl);
-        payload.put("token",token);
-        return payload;
-    }
 
     private void sendEmailToQueue(String emailAsText, final Map<String,Object>  payload, EventType eventType) {
         Email email = new Email(emailAsText);
