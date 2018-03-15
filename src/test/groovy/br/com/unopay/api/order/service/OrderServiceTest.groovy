@@ -713,20 +713,11 @@ class OrderServiceTest extends SpockApplicationTests{
         result.last().number != result.find().number
     }
 
-    def 'when creating not-adhesion Order with paymentRequest.method equals card and paymentRequest.storeCard equals true should create UserCreditCard for UserDetail and Order.creditCard'(){
-
+    def """when creating not-adhesion Order with paymentRequest.method equals card and paymentRequest.storeCard
+                    equals true should create UserCreditCard for UserDetail and Order.creditCard"""(){
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule(){{
-            add("method", PaymentMethod.CARD)
-            add("storeCard", true)
-            add("creditCard", creditCard)
-        }})
-        Order order = fixtureCreator.createOrder(contractUnderTest)
-        order.type = OrderType.INSTALLMENT_PAYMENT
-        order.paymentRequest = paymentRequest
-        UserDetail userDetail = Fixture.from(UserDetail).uses(jpaProcessor).gimme("without-group")
-        service.create(userDetail.email, order)
+        UserDetail userDetail = crateOrderWithStoreCard(creditCard)
 
         when:
         UserCreditCard found = userCreditCardService.findByNumberForUser(creditCard.number, userDetail)
@@ -734,6 +725,20 @@ class OrderServiceTest extends SpockApplicationTests{
         then:
         found
 
+    }
+
+    private UserDetail crateOrderWithStoreCard(creditCard) {
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
+                add("method", PaymentMethod.CARD)
+                add("storeCard", true)
+                add("creditCard", creditCard)
+        }})
+        Order order = fixtureCreator.createOrder(contractUnderTest)
+        order.type = OrderType.INSTALLMENT_PAYMENT
+        order.paymentRequest = paymentRequest
+        UserDetail userDetail = fixtureCreator.createContractorUser()
+        service.create(userDetail.email, order)
+        userDetail
     }
 
 }

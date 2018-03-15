@@ -131,11 +131,11 @@ public class OrderService {
         return ordersIds.isEmpty() ? ids : intersection;
     }
 
+    @Transactional
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        if(currentUser.isContractorType()) {
-            order.setPerson(currentUser.getContractor().getPerson());
-        }
+        order.setPerson(currentUser.myContractor()
+                .map(Contractor::getPerson).orElseThrow(UnovationExceptions::unauthorized));
         storeCreditCardWhenRequired(currentUser, order);
         return create(order);
     }
@@ -260,7 +260,7 @@ public class OrderService {
         }
         List<PaymentInstrument> instruments = paymentInstrumentService
                                                                 .findByContractorDocument(order.getDocumentNumber());
-        if (!contractor.isPresent()) {
+        if (!contractor.isPresent() || order.isType(INSTALLMENT_PAYMENT)) {
             order.setPaymentInstrument(null);
         }
         if(order.isType(OrderType.CREDIT)) {

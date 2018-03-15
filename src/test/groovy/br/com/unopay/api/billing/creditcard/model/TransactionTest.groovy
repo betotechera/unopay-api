@@ -40,7 +40,7 @@ class TransactionTest extends FixtureApplicationTest {
         Transaction transaction = Fixture.from(Transaction.class).gimme("valid")
 
         when:
-        CardBrand brand = transaction.getCardBrand()
+        CardBrand brand = transaction.getCreditCard().getCardBrand()
 
         then:
         brand == fromCardNumber(transaction.getCreditCard().getNumber())

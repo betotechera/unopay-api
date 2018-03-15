@@ -37,6 +37,8 @@ import static br.com.unopay.api.billing.creditcard.model.CardBrand.fromCardNumbe
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction {
 
+    public static final int PAYZEN_DECIMAL_PLACES = 100;
+
     public Transaction(){
         this.createDateTime = new Date();
     }
@@ -99,12 +101,7 @@ public class Transaction {
     private Integer version;
 
     public long getLongAmountValue() {
-        return getAmount().getValue().multiply(new BigDecimal(100)).longValue();
-    }
-
-    @JsonIgnore
-    public CardBrand getCardBrand() {
-        return fromCardNumber(getCreditCard().getNumber());
+        return getAmount().getValue().multiply(new BigDecimal(PAYZEN_DECIMAL_PLACES)).longValue();
     }
 
     public int getAmountCurrencyIsoCode() {

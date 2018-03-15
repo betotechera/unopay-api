@@ -13,7 +13,7 @@ public class UserCreditCardFilter implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
-    UserCreditCardFilter(){}
+    public UserCreditCardFilter(){}
 
     @SearchableField(field = "user.id")
     private String user;

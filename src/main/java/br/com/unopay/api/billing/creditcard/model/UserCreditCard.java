@@ -18,7 +18,6 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -105,7 +104,7 @@ public class UserCreditCard implements Serializable, Updatable {
         user = userDetail;
         holderName = creditCard.getHolderName();
         brand = CardBrand.fromCardNumber(creditCard.getNumber());
-        lastFourDigits = creditCard.lastFourDigits();
+        lastFourDigits = creditCard.lastValidFourDigits();
         expirationMonth = creditCard.getExpiryMonth();
         expirationYear = creditCard.getExpiryYear();
         gatewaySource = GatewaySource.PAYZEN;

@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.CardBrand
 import br.com.unopay.api.billing.creditcard.model.CreditCard
+import br.com.unopay.api.billing.creditcard.model.Gateway
 import br.com.unopay.api.billing.creditcard.model.GatewaySource
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter
@@ -13,10 +14,9 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-
-import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
 class UserCreditCardServiceTest extends SpockApplicationTests {
@@ -27,10 +27,13 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
     @Autowired
     private FixtureCreator fixtureCreator
 
+    private Gateway gatewayMock = Mock(Gateway)
+
     private UserDetail userDetail
 
     void setup(){
         userDetail = fixtureCreator.createUser()
+        userCreditCardService.gateway = gatewayMock
     }
 
     def 'given a valid user credit card should be created'(){
@@ -260,14 +263,14 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         UserCreditCard found = userCreditCardService.findById(stored.id)
 
         then:
-        found.userId().equals(userDetail.id)
-        found.holderName.equals(creditCard.getHolderName())
-        found.brand.equals(CardBrand.fromCardNumber(creditCard.getNumber()))
-        found.lastFourDigits.equals(creditCard.lastFourDigits())
-        found.expirationMonth.equals(creditCard.getExpiryMonth())
-        found.expirationYear.equals(creditCard.getExpiryYear())
-        found.gatewaySource.equals(GatewaySource.PAYZEN)
-        found.gatewayToken.equals(creditCard.getCardReference())
+        found.userId() == userDetail.id
+        found.holderName == creditCard.getHolderName()
+        found.brand == CardBrand.fromCardNumber(creditCard.getNumber())
+        found.lastFourDigits == creditCard.lastValidFourDigits()
+        found.expirationMonth == creditCard.getExpiryMonth()
+        found.expirationYear == creditCard.getExpiryYear()
+        found.gatewaySource == GatewaySource.PAYZEN
+        found.gatewayToken == creditCard.getCardReference()
 
     }
 
@@ -285,6 +288,33 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         then:
         found.lastFourDigits == created.lastFourDigits
         found.userId() == userDetail.id
+    }
+
+    def 'given valid known credit card should not be stored'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        userCreditCardService.storeForUser(userDetail, creditCard)
+
+        when:
+        userCreditCardService.storeForUser(userDetail, creditCard)
+        UserCreditCard found = userCreditCardService.findByNumberForUser(creditCard.number, userDetail)
+
+        then:
+        found.lastFourDigits == creditCard.lastValidFourDigits()
+    }
+
+
+    def 'when store card should call gateway store card'(){
+
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+
+        when:
+        userCreditCardService.storeForUser(userDetail, creditCard)
+
+        then:
+        1 * gatewayMock.storeCard(userDetail, creditCard)
     }
 
     def 'given valid UserCreditCard and a different User should return error'(){

@@ -28,8 +28,10 @@ public class PayzenService implements Gateway {
     }
 
     @Override
-    public CreditCard storeCard(UserDetail user, CreditCard card, Address billingAddress) {
-        return null;
+    public CreditCard storeCard(UserDetail user, CreditCard card) {
+        String token = payzen.storeCard(user, card);
+        card.setCardReference(token);
+        return card;
     }
 
     @Override
