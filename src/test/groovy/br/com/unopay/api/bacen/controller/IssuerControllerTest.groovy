@@ -4,7 +4,9 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer
 import br.com.unopay.api.bacen.model.Issuer
+import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
@@ -23,6 +25,15 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    @Autowired
+    IssuerService issuerService
+
+    UnopayScheduler schedulerMock = Mock(UnopayScheduler)
+
+    void setup(){
+        issuerService.scheduler = schedulerMock
+    }
 
     void 'valid issuer should be created'() {
         given:

@@ -37,7 +37,7 @@ class CobrancaOnlineBuilderTest extends FixtureApplicationTest{
         entries.find { it.key == 'PAGADOR.UF' }.value == payer.address.state.name()
 
         entries.find { it.key == 'CONVENIO.COD-CONVENIO' }.value == paymentAccount.bankAgreementNumberForDebit
-        entries.find { it.key == 'CONVENIO.COD-BANCO' }.value == paymentAccount.bankAccount.bacenCode().toString()
+        entries.find { it.key == 'CONVENIO.COD-BANCO' }.value == String.valueOf(paymentAccount.bankAccount.bacenCode())
 
         entries.find { it.key == 'TITULO.SEU-NUMERO' }.value == yourNumber
         entries.find { it.key == 'TITULO.DT-VENCTO' }.value == new DateTime()

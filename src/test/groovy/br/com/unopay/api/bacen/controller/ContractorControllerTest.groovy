@@ -39,9 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContractorControllerTest extends AuthServerApplicationTests {
+
     private static final String CONTRACTOR_ENDPOINT = '/contractors?access_token={access_token}'
     private static final String CONTRACTOR_ID_ENDPOINT = '/contractors/{id}?access_token={access_token}'
-
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -57,9 +57,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     ContractInstallmentService contractInstallmentService
-
-    @Autowired
-    PasswordEncoder passwordEncoder
 
     void 'should create contractor'() {
         given:
