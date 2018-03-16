@@ -92,7 +92,6 @@ public class Transaction {
     @JsonView({Views.Billing.List.class})
     private Date cancellationRequestedAt;
 
-    @Valid
     @Transient
     private CreditCard creditCard;
 
