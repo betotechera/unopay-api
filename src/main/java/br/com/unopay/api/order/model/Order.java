@@ -285,4 +285,16 @@ public class Order implements Updatable, Billable{
                 && !isType(OrderType.ADHESION);
     }
 
+    public boolean hasCardToken() {
+        return hasPaymentRequest() &&
+                getPaymentRequest().getCreditCard() != null &&
+                getPaymentRequest().getCreditCard().getCardReference() != null;
+    }
+
+    public String creditCardToken() {
+        if(hasPaymentRequest() && getPaymentRequest().getCreditCard() != null) {
+            return getPaymentRequest().getCreditCard().getCardReference();
+        }
+        return null;
+    }
 }

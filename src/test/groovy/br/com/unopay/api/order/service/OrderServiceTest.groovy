@@ -19,8 +19,8 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
@@ -29,8 +29,10 @@ import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
+import static spock.util.matcher.HamcrestSupport.that
 
 class OrderServiceTest extends SpockApplicationTests{
 
@@ -727,16 +729,44 @@ class OrderServiceTest extends SpockApplicationTests{
 
     }
 
-    private UserDetail crateOrderWithStoreCard(creditCard) {
+    def 'when create order with known card token should be created'(){
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        creditCard.cardReference = 'DSDSFSDFDSFSD'
+        def user = crateOrderWithStoreCard(creditCard, true)
+
+        when:
+        crateOrderWithStoreCard(creditCard, false, user)
+
+        then:
+        that userCreditCardService.findAll(), hasSize(1)
+    }
+
+    def 'when create order with unknown card token should not be created'(){
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        creditCard.cardReference = null
+        def user = crateOrderWithStoreCard(creditCard, false)
+        creditCard.cardReference = 'DSDSFSDFDSFSD'
+
+        when:
+        crateOrderWithStoreCard(creditCard, false,user)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
+    }
+
+    private UserDetail crateOrderWithStoreCard(creditCard, Boolean storeCard = true,
+                                               UserDetail userDetail = fixtureCreator.createContractorUser()) {
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
                 add("method", PaymentMethod.CARD)
-                add("storeCard", true)
+                add("storeCard", storeCard)
                 add("creditCard", creditCard)
         }})
         Order order = fixtureCreator.createOrder(contractUnderTest)
         order.type = OrderType.INSTALLMENT_PAYMENT
         order.paymentRequest = paymentRequest
-        UserDetail userDetail = fixtureCreator.createContractorUser()
         service.create(userDetail.email, order)
         userDetail
     }

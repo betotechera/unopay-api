@@ -82,6 +82,11 @@ public class UserCreditCardService {
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findById(id));
     }
 
+    public UserCreditCard findByTokenForUser(String token, UserDetail user) {
+        return getUserCreditCardWithMonthAndYear(token, () ->
+                userCreditCardRepository.findByGatewayTokenAndUserId(token, user.getId()));
+    }
+
     public UserCreditCard findByIdForUser(String id, UserDetail user){
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
     }

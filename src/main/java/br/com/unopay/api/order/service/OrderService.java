@@ -2,7 +2,6 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.csv.ContractorCsv;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
@@ -145,7 +144,7 @@ public class OrderService {
         order.setPerson(currentUser.myContractor()
                 .map(Contractor::getPerson).orElseThrow(UnovationExceptions::unauthorized));
         storeCreditCardWhenRequired(currentUser, order);
-        checkCreditCardWhenRequired(order);
+        checkCreditCardWhenRequired(currentUser, order);
         return create(order);
     }
 
@@ -377,8 +376,8 @@ public class OrderService {
         repository.save(current);
     }
 
-    private void checkCreditCardWhenRequired(Order order) {
-        if(!order.shouldStoreCard()){
+    private void checkCreditCardWhenRequired(UserDetail user, Order order) {
+        if(!order.hasCardToken()){
             Set<ConstraintViolation<PaymentRequest>> violations = validator.validate(order.getPaymentRequest());
             if(!violations.isEmpty()){
                 BadRequestException badRequestException = new BadRequestException();
@@ -388,6 +387,8 @@ public class OrderService {
                         .collect(Collectors.toList());
                 throw badRequestException.withErrors(errors);
             }
+            return;
         }
+        userCreditCardService.findByTokenForUser(order.creditCardToken(), user);
     }
 }
