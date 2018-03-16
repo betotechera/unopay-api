@@ -5,6 +5,7 @@ import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.uaa.model.UserDetail;
 import com.lyra.vads.ws.v5.BillingDetailsRequest;
+import com.lyra.vads.ws.v5.CardRequest;
 import com.lyra.vads.ws.v5.CreatePayment;
 import com.lyra.vads.ws.v5.CreateTokenResponse;
 import com.lyra.vads.ws.v5.CustomerRequest;
@@ -36,24 +37,30 @@ public class Payzen {
                 .orderId(transaction.getOrderId());
 
         PaymentRequestBuilder paymentRequestBuilder = getPaymentRequestBuilder(transaction);
-        CardRequestBuilder cardRequestBuilder = getCardRequestBuilder(transaction.getCreditCard());
+        CardRequest cardRequest = getCardRequest(transaction);
 
         return create(PaymentBuilder
                         .getBuilder()
                         .order(orderRequestBuilder.build())
                         .payment(paymentRequestBuilder.build())
-                        .card(cardRequestBuilder.build())
+                        .card(cardRequest)
                         .buildCreate(), new HashMap<>(payzenConfig.getConfig()));
     }
 
+    private CardRequest getCardRequest(Transaction transaction) {
+        if(transaction.hasCardToken()) {
+            return getCardTokenRequest(transaction.getCreditCard());
+        }
+        return getCardRequest(transaction.getCreditCard());
+    }
 
 
     public String storeCard(UserDetail user, CreditCard creditCard){
-        CardRequestBuilder cardRequestBuilder = getCardRequestBuilder(creditCard);
+        CardRequest cardRequest = getCardRequest(creditCard);
         HashMap<String, String> config = new HashMap<>(payzenConfig.getConfig());
         CreatePayment createPayment = PaymentBuilder
                 .getBuilder()
-                .card(cardRequestBuilder.build())
+                .card(cardRequest)
                 .buildCreate();
         CustomerRequest customerRequest = new CustomerRequest();
         BillingDetailsRequest billingDetailsRequest = new BillingDetailsRequest() {{
@@ -66,14 +73,20 @@ public class Payzen {
         return tokenResult.getCommonResponse().getPaymentToken();
     }
 
-    private CardRequestBuilder getCardRequestBuilder(CreditCard creditCard) {
+    private CardRequest getCardRequest(CreditCard creditCard) {
         return CardRequestBuilder
                 .create()
                 .number(creditCard.getNumber())
                 .scheme(creditCard.getCardBrand().name())
                 .expiryMonth(Integer.valueOf(creditCard.getExpiryMonth()))
                 .expiryYear(Integer.valueOf(creditCard.getExpiryYear()))
-                .cardSecurityCode(creditCard.getSecurityCode());
+                .cardSecurityCode(creditCard.getSecurityCode()).build();
+    }
+
+    private CardRequest getCardTokenRequest(CreditCard creditCard) {
+        return CardRequestBuilder
+                .create()
+                .paymentToken(creditCard.getCardReference()).build();
     }
 
     private PaymentRequestBuilder getPaymentRequestBuilder(Transaction transaction) {
@@ -87,7 +100,6 @@ public class Payzen {
     private CreateTokenResponse.CreateTokenResult createToken(Map<String, String> config,
                                                               CreatePayment createPaymentRequest) {
         PaymentAPI api = new ClientV5(config).getPaymentAPIImplPort();
-
         return api.createToken(
                 createPaymentRequest.getCommonRequest(),
                 createPaymentRequest.getCardRequest(),

@@ -107,4 +107,8 @@ public class Transaction {
     public int getAmountCurrencyIsoCode() {
         return getAmount().getCurrency().getIso();
     }
+
+    public boolean hasCardToken() {
+        return getCreditCard() != null && getCreditCard().getCardReference() != null;
+    }
 }

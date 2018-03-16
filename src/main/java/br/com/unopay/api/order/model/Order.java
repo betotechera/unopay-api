@@ -119,7 +119,6 @@ public class Order implements Updatable, Billable{
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
 
-    @Valid
     @Transient
     private PaymentRequest paymentRequest;
 
@@ -153,6 +152,13 @@ public class Order implements Updatable, Billable{
         }
         this.status = PaymentStatus.WAITING_PAYMENT;
 
+    }
+
+    public boolean hasPaymentInstrument(String id){
+        if(id != null && getPaymentInstrument() != null) {
+            return id.equals(getPaymentInstrument().getId());
+        }
+        return false;
     }
 
     public boolean paid() {
