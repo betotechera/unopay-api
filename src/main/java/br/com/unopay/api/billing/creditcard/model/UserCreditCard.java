@@ -44,7 +44,7 @@ public class UserCreditCard implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="user_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.UserCreditCard.Detail.class})
     private UserDetail user;
 
     @Column(name = "holder_name")
@@ -86,7 +86,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     @Column(name = "gateway_token")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String gatewayToken;
 
     @Column(name = "created_date_time")
