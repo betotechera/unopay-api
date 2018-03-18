@@ -29,6 +29,7 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 @Table(name = "user_credit_card")
 public class UserCreditCard implements Serializable, Updatable {
 
+    private static final long serialVersionUID = 5937994323928296733L;
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
