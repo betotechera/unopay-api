@@ -732,7 +732,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'when create order with known card token should be created'(){
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        creditCard.cardReference = 'DSDSFSDFDSFSD'
+        creditCard.token = 'DSDSFSDFDSFSD'
         def user = crateOrderWithStoreCard(creditCard, true)
 
         when:
@@ -745,9 +745,9 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'when create order with unknown card token should not be created'(){
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        creditCard.cardReference = null
+        creditCard.token = null
         def user = crateOrderWithStoreCard(creditCard, false)
-        creditCard.cardReference = 'DSDSFSDFDSFSD'
+        creditCard.token = 'DSDSFSDFDSFSD'
 
         when:
         crateOrderWithStoreCard(creditCard, false,user)

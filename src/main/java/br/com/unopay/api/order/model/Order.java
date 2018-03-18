@@ -288,12 +288,12 @@ public class Order implements Updatable, Billable{
     public boolean hasCardToken() {
         return hasPaymentRequest() &&
                 getPaymentRequest().getCreditCard() != null &&
-                getPaymentRequest().getCreditCard().getCardReference() != null;
+                getPaymentRequest().getCreditCard().getToken() != null;
     }
 
     public String creditCardToken() {
         if(hasPaymentRequest() && getPaymentRequest().getCreditCard() != null) {
-            return getPaymentRequest().getCreditCard().getCardReference();
+            return getPaymentRequest().getCreditCard().getToken();
         }
         return null;
     }

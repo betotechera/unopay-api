@@ -385,7 +385,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         userCreditCard.expirationMonth == creditCard.expiryMonth
         userCreditCard.expirationYear == creditCard.expiryYear
         userCreditCard.lastFourDigits == creditCard.lastValidFourDigits()
-        userCreditCard.gatewayToken == creditCard.cardReference
+        userCreditCard.gatewayToken == creditCard.token
 
     }
 }

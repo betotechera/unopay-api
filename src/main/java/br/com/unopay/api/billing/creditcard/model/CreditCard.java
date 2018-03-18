@@ -22,7 +22,7 @@ import static org.joda.time.DateTimeConstants.DECEMBER;
 import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
-@ToString(exclude = {"number", "hash"})
+@ToString(exclude = {"number", "token"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
 
@@ -32,10 +32,6 @@ public class CreditCard implements Serializable {
     private static final int MIN_LENGTH = 4;
     private static final long serialVersionUID = -1060942228795287069L;
     public static final String EMPTY = "";
-
-    private String hash;
-
-    boolean cseEncrypted = false;
 
     @NotNull
     @Pattern(message = "invalid expiration month format", regexp = "^(0?[1-9])|(1[0-2])", groups = {Create.class, Update.class})
@@ -54,7 +50,7 @@ public class CreditCard implements Serializable {
     @Length(min=2, max=4, groups = {Create.class, Update.class})
     private String securityCode;
 
-    private String cardReference;
+    private String token;
 
     public void normalize() {
         if(this.number != null) {
@@ -117,10 +113,10 @@ public class CreditCard implements Serializable {
     }
 
     public void checkCardReference() {
-        if (getCardReference() == null
-                || Objects.equals(getCardReference(), EMPTY)) {
+        if (getToken() == null
+                || Objects.equals(getToken(), EMPTY)) {
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(INVALID_CARD_REFERENCE.withOnlyArgument(getCardReference()));
+                    .withErrors(INVALID_CARD_REFERENCE.withOnlyArgument(getToken()));
         }
     }
 

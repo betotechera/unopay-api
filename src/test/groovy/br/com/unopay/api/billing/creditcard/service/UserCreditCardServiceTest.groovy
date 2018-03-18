@@ -270,7 +270,7 @@ class UserCreditCardServiceTest extends SpockApplicationTests {
         found.expirationMonth == creditCard.getExpiryMonth()
         found.expirationYear == creditCard.getExpiryYear()
         found.gatewaySource == GatewaySource.PAYZEN
-        found.gatewayToken == creditCard.getCardReference()
+        found.gatewayToken == creditCard.getToken()
 
     }
 

@@ -108,7 +108,7 @@ public class UserCreditCard implements Serializable, Updatable {
         expirationMonth = creditCard.getExpiryMonth();
         expirationYear = creditCard.getExpiryYear();
         gatewaySource = GatewaySource.PAYZEN;
-        gatewayToken = creditCard.getCardReference();
+        gatewayToken = creditCard.getToken();
     }
 
     public void setupMyCreate(){

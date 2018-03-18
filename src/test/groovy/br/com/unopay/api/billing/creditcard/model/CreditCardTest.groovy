@@ -216,7 +216,7 @@ class CreditCardTest extends FixtureApplicationTest {
         given:
         def invalid = blankOrNull
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard", new Rule(){{
-            add("cardReference", invalid)
+            add("token", invalid)
         }})
 
         when:

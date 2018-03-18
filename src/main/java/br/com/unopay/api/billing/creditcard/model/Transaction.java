@@ -25,8 +25,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.billing.creditcard.model.CardBrand.fromCardNumber;
-
 @Data
 @Entity
 @Table(name = "transaction",
@@ -108,6 +106,6 @@ public class Transaction {
     }
 
     public boolean hasCardToken() {
-        return getCreditCard() != null && getCreditCard().getCardReference() != null;
+        return getCreditCard() != null && getCreditCard().getToken() != null;
     }
 }

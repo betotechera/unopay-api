@@ -86,7 +86,7 @@ public class Payzen {
     private CardRequest getCardTokenRequest(CreditCard creditCard) {
         return CardRequestBuilder
                 .create()
-                .paymentToken(creditCard.getCardReference()).build();
+                .paymentToken(creditCard.getToken()).build();
     }
 
     private PaymentRequestBuilder getPaymentRequestBuilder(Transaction transaction) {
