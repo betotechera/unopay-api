@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
@@ -13,6 +14,7 @@ import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -378,7 +380,8 @@ public class OrderService {
 
     private void checkCreditCardWhenRequired(UserDetail user, Order order) {
         if(!order.hasCardToken()){
-            Set<ConstraintViolation<PaymentRequest>> violations = validator.validate(order.getPaymentRequest());
+            Set<ConstraintViolation<PaymentRequest>> violations = validator
+                                                                    .validate(order.getPaymentRequest(),Create.class);
             if(!violations.isEmpty()){
                 BadRequestException badRequestException = new BadRequestException();
                 List<UnovationError> errors = violations.stream()
