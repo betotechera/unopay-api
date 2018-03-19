@@ -4,10 +4,8 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
-import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
-import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
-import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
@@ -29,6 +27,8 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.bootcommons.exception.BadRequestException;
+import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +76,7 @@ public class OrderService {
     @Setter private Notifier notifier;
     @Setter private NotificationService notificationService;
     private MailValidator mailValidator;
+    private Validator validator;
     private UserCreditCardService userCreditCardService;
 
     public OrderService(){}
@@ -86,9 +89,12 @@ public class OrderService {
                         ContractService contractService,
                         PaymentInstrumentService paymentInstrumentService,
                         ContractorInstrumentCreditService instrumentCreditService,
-                        UserDetailService userDetailService, HirerService hirerService,
+                        UserDetailService userDetailService,
+                        HirerService hirerService,
                         Notifier notifier,
-                        NotificationService notificationService, MailValidator mailValidator,
+                        NotificationService notificationService,
+                        MailValidator mailValidator,
+                        Validator validator,
                         UserCreditCardService userCreditCardService){
         this.repository = repository;
         this.personService = personService;
@@ -102,6 +108,7 @@ public class OrderService {
         this.notifier = notifier;
         this.notificationService = notificationService;
         this.mailValidator = mailValidator;
+        this.validator = validator;
         this.userCreditCardService = userCreditCardService;
     }
 
@@ -131,12 +138,13 @@ public class OrderService {
         return ordersIds.isEmpty() ? ids : intersection;
     }
 
+    @Transactional
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
-        if(currentUser.isContractorType()) {
-            order.setPerson(currentUser.getContractor().getPerson());
-        }
+        order.setPerson(currentUser.myContractor()
+                .map(Contractor::getPerson).orElseThrow(UnovationExceptions::unauthorized));
         storeCreditCardWhenRequired(currentUser, order);
+        checkCreditCardWhenRequired(currentUser, order);
         return create(order);
     }
 
@@ -251,45 +259,57 @@ public class OrderService {
 
     private void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
-        if(order.isType(OrderType.ADHESION) && existingUser.isPresent()){
-            throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
-        }
-        if(order.isType(OrderType.ADHESION) && contractor.isPresent()){
-            throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
-        }
-        List<PaymentInstrument> instruments = paymentInstrumentService
-                                                                .findByContractorDocument(order.getDocumentNumber());
-        if (!contractor.isPresent()) {
+        checkAdhesionWhenRequired(order, contractor.orElse(null));
+
+        if (!contractor.isPresent() || order.isType(INSTALLMENT_PAYMENT)) {
             order.setPaymentInstrument(null);
         }
         if(order.isType(OrderType.CREDIT)) {
-            contractor.ifPresent(it -> checkCreditRules(order, instruments));
+            contractor.ifPresent(it -> checkCreditRules(order));
         }
         contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
-        if(order.isType(OrderType.ADHESION)) {
-            this.mailValidator.check(order.getBillingMail());
-        }
+
     }
 
-    private void checkCreditRules(Order order, List<PaymentInstrument> instruments) {
+    private void checkAdhesionWhenRequired(Order order, Contractor contractor) {
+        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
+        if(order.isType(OrderType.ADHESION)) {
+            if (existingUser.isPresent()) {
+                throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
+            }
+            if (contractor!=null) {
+                throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
+            }
+            this.mailValidator.check(order.getBillingMail());
+        }
+
+    }
+
+    private void checkCreditRules(Order order) {
         if(order.getValue() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_REQUIRED);
         }
+        checkPaymentInstrument(order);
+    }
+
+    private void checkPaymentInstrument(Order order) {
+        List<PaymentInstrument> contractorInstruments = paymentInstrumentService
+                .findByContractorDocument(order.getDocumentNumber());
         if (order.getPaymentInstrument() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(PAYMENT_INSTRUMENT_REQUIRED);
         }
-        Optional<PaymentInstrument> instrumentOptional = instruments.stream()
-                                    .filter(instrument ->
-                                            instrument.getId()
-                                                    .equals(order.getPaymentInstrument().getId())).findFirst();
-        if (!instrumentOptional.isPresent()) {
+        Optional<PaymentInstrument> firstInstrument = getFirstInstrument(order, contractorInstruments);
+        if (!firstInstrument.isPresent()) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR);
         }
-        if (instruments.stream().noneMatch(instrument -> instrument.getProduct().equals(order.getProduct()))) {
+        if (contractorInstruments.stream().noneMatch(instrument -> instrument.hasProduct(order.getProduct()))){
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_IS_NOT_FOR_PRODUCT);
         }
-        instrumentOptional.ifPresent(order::setPaymentInstrument);
+        firstInstrument.ifPresent(order::setPaymentInstrument);
+    }
+
+    private Optional<PaymentInstrument> getFirstInstrument(Order order, List<PaymentInstrument> instruments) {
+        return instruments.stream().filter(instrument -> order.hasPaymentInstrument(instrument.getId())).findFirst();
     }
 
     private void validateReferences(Order order) {
@@ -354,5 +374,21 @@ public class OrderService {
             process(current);
         }
         repository.save(current);
+    }
+
+    private void checkCreditCardWhenRequired(UserDetail user, Order order) {
+        if(!order.hasCardToken()){
+            Set<ConstraintViolation<PaymentRequest>> violations = validator.validate(order.getPaymentRequest());
+            if(!violations.isEmpty()){
+                BadRequestException badRequestException = new BadRequestException();
+                List<UnovationError> errors = violations.stream()
+                        .map(constraint ->
+                                new UnovationError(constraint.getPropertyPath().toString(), constraint.getMessage()))
+                        .collect(Collectors.toList());
+                throw badRequestException.withErrors(errors);
+            }
+            return;
+        }
+        userCreditCardService.findByTokenForUser(order.creditCardToken(), user);
     }
 }

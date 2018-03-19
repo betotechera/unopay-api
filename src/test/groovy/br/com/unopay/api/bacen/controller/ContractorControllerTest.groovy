@@ -6,6 +6,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.creditcard.model.CreditCard
+import br.com.unopay.api.billing.creditcard.model.Gateway
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
 import br.com.unopay.api.billing.creditcard.model.Transaction
@@ -18,9 +19,8 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
-import org.springframework.security.crypto.password.PasswordEncoder
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -57,6 +57,10 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     ContractInstallmentService contractInstallmentService
+
+    def setup(){
+        userCreditCardService.gateway = Mock(Gateway)
+    }
 
     void 'should create contractor'() {
         given:
@@ -287,41 +291,20 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].product', is(notNullValue())))
     }
 
-    void 'given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true should create UserCreditCard of UserDetail and Order.creditCard'() {
-
+    void """given a non-Adhesion Order with paymentRequest.method equals Card and paymentRequest.storeCard equals true
+            should create UserCreditCard of UserDetail and Order.creditCard"""() {
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {
-            {
-                add("method", PaymentMethod.CARD)
-                add("storeCard", true)
-                add("creditCard", creditCard)
-            }
-        })
-        def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.createProduct()
-        def contract = fixtureCreator.createPersistedContract(contractor, product)
-        contractInstallmentService.create(contract)
-        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
-        Order order = Fixture.from(Order.class).gimme("valid", new Rule() {
-            {
-                add("product", product)
-                add("type", OrderType.INSTALLMENT_PAYMENT)
-                add("paymentRequest", paymentRequest)
-                add("person", contractor.person)
-                add("contract", contract)
-                add("paymentInstrument", instrument)
-                add("value", BigDecimal.ONE)
-            }
-        })
-        String accessToken = getUserAccessToken()
+        Order order = createOrderWithStoreCard(creditCard)
+        def user = fixtureCreator.createContractorUser()
+        String accessToken = getUserAccessToken(user.email, user.password)
         this.mvc.perform(post('/contractors/me/orders?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(order)))
 
         when:
-        UserCreditCard found = userCreditCardService.findByNumberForUser(creditCard.number, userDetailService.getByEmail('test@test.com'))
-
+        UserCreditCard found = userCreditCardService
+                .findByNumberForUser(creditCard.number, user)
         then:
         found
     }
@@ -355,5 +338,27 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
+    }
+
+    private Order createOrderWithStoreCard(creditCard) {
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", true)
+            add("creditCard", creditCard)
+        }})
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProduct()
+        def contract = fixtureCreator.createPersistedContract(contractor, product)
+        contractInstallmentService.create(contract)
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        Fixture.from(Order.class).gimme("valid", new Rule() {{
+            add("product", product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+            add("paymentRequest", paymentRequest)
+            add("person", contractor.person)
+            add("contract", contract)
+            add("paymentInstrument", instrument)
+            add("value", BigDecimal.ONE)
+        }})
     }
 }

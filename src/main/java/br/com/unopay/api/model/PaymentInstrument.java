@@ -141,6 +141,11 @@ public class PaymentInstrument implements Serializable, Updatable {
         return !StringUtils.isEmpty(password);
     }
 
+
+    public boolean hasProduct(Product product){
+        return getProduct().equals(product);
+    }
+
     public String contractorId(){
         if(getContractor() != null){
             return getContractor().getId();

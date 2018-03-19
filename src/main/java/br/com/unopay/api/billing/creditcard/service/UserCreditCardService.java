@@ -1,14 +1,15 @@
 package br.com.unopay.api.billing.creditcard.service;
 
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
+import br.com.unopay.api.billing.creditcard.model.Gateway;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
-import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,12 +26,14 @@ public class UserCreditCardService {
 
     private UserCreditCardRepository userCreditCardRepository;
     private UserDetailService userDetailService;
+    @Setter private Gateway gateway;
 
     @Autowired
     public UserCreditCardService(UserCreditCardRepository repository,
-                                 UserDetailService userDetailService) {
+                                 UserDetailService userDetailService, Gateway gateway) {
         this.userCreditCardRepository = repository;
         this.userDetailService = userDetailService;
+        this.gateway = gateway;
     }
 
     public UserCreditCard save(UserCreditCard userCreditCard) {
@@ -44,7 +47,12 @@ public class UserCreditCardService {
     }
 
     public UserCreditCard storeForUser(UserDetail userDetail, CreditCard creditCard) {
-        return create(new UserCreditCard(userDetail, creditCard));
+        Optional<UserCreditCard> found = findOptionalByLastFourDigitsForUser(creditCard.lastValidFourDigits(), userDetail);
+        return found.orElseGet(() -> {
+            gateway.storeCard(userDetail, creditCard);
+            UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard);
+            return create(userCreditCard);
+        });
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){
@@ -74,6 +82,11 @@ public class UserCreditCardService {
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findById(id));
     }
 
+    public UserCreditCard findByTokenForUser(String token, UserDetail user) {
+        return getUserCreditCardWithMonthAndYear(token, () ->
+                userCreditCardRepository.findByGatewayTokenAndUserId(token, user.getId()));
+    }
+
     public UserCreditCard findByIdForUser(String id, UserDetail user){
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findByIdAndUserId(id, user.getId()));
     }
@@ -84,7 +97,11 @@ public class UserCreditCardService {
 
     private UserCreditCard findByLastFourDigitsForUser(String lastFourDigits, UserDetail user) {
         return getUserCreditCardWithMonthAndYear
-                (lastFourDigits, () -> userCreditCardRepository.findByLastFourDigitsAndUserId(lastFourDigits, user.getId()));
+                (lastFourDigits, () -> findOptionalByLastFourDigitsForUser(lastFourDigits, user));
+    }
+
+    public Optional<UserCreditCard> findOptionalByLastFourDigitsForUser(String lastFourDigits, UserDetail user){
+        return userCreditCardRepository.findByLastFourDigitsAndUserId(lastFourDigits, user.getId());
     }
 
     private UserCreditCard getUserCreditCardWithMonthAndYear(String id, Supplier<Optional<UserCreditCard>> userCreditCard){

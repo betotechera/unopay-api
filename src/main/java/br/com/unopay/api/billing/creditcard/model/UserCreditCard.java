@@ -18,7 +18,6 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 import static br.com.unopay.api.uaa.exception.Errors.*;
 import static javax.persistence.EnumType.STRING;
@@ -30,6 +29,7 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 @Table(name = "user_credit_card")
 public class UserCreditCard implements Serializable, Updatable {
 
+    private static final long serialVersionUID = 5937994323928296733L;
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     private static final int MONTH_OFFSET = 1;
     private static final int YEAR_OFFSET = 1900;
@@ -45,7 +45,7 @@ public class UserCreditCard implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name="user_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.UserCreditCard.Detail.class})
     private UserDetail user;
 
     @Column(name = "holder_name")
@@ -87,7 +87,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     @Column(name = "gateway_token")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.UserCreditCard.List.class})
     private String gatewayToken;
 
     @Column(name = "created_date_time")
@@ -105,11 +105,11 @@ public class UserCreditCard implements Serializable, Updatable {
         user = userDetail;
         holderName = creditCard.getHolderName();
         brand = CardBrand.fromCardNumber(creditCard.getNumber());
-        lastFourDigits = creditCard.lastFourDigits();
+        lastFourDigits = creditCard.lastValidFourDigits();
         expirationMonth = creditCard.getExpiryMonth();
         expirationYear = creditCard.getExpiryYear();
         gatewaySource = GatewaySource.PAYZEN;
-        gatewayToken = creditCard.getCardReference();
+        gatewayToken = creditCard.getToken();
     }
 
     public void setupMyCreate(){

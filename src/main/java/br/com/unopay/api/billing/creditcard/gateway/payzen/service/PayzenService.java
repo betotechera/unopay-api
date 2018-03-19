@@ -7,7 +7,6 @@ import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.Gateway;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
-import br.com.unopay.api.model.Address;
 import br.com.unopay.api.uaa.model.UserDetail;
 import eu.payzen.webservices.sdk.ServiceResult;
 import java.util.Set;
@@ -28,8 +27,10 @@ public class PayzenService implements Gateway {
     }
 
     @Override
-    public CreditCard storeCard(UserDetail user, CreditCard card, Address billingAddress) {
-        return null;
+    public CreditCard storeCard(UserDetail user, CreditCard card) {
+        String token = payzen.storeCard(user, card);
+        card.setToken(token);
+        return card;
     }
 
     @Override

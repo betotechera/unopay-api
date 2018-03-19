@@ -25,8 +25,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.billing.creditcard.model.CardBrand.fromCardNumber;
-
 @Data
 @Entity
 @Table(name = "transaction",
@@ -36,6 +34,8 @@ import static br.com.unopay.api.billing.creditcard.model.CardBrand.fromCardNumbe
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction {
+
+    public static final int PAYZEN_DECIMAL_PLACES = 100;
 
     public Transaction(){
         this.createDateTime = new Date();
@@ -90,7 +90,6 @@ public class Transaction {
     @JsonView({Views.Billing.List.class})
     private Date cancellationRequestedAt;
 
-    @Valid
     @Transient
     private CreditCard creditCard;
 
@@ -99,15 +98,14 @@ public class Transaction {
     private Integer version;
 
     public long getLongAmountValue() {
-        return getAmount().getValue().multiply(new BigDecimal(100)).longValue();
-    }
-
-    @JsonIgnore
-    public CardBrand getCardBrand() {
-        return fromCardNumber(getCreditCard().getNumber());
+        return getAmount().getValue().multiply(new BigDecimal(PAYZEN_DECIMAL_PLACES)).longValue();
     }
 
     public int getAmountCurrencyIsoCode() {
         return getAmount().getCurrency().getIso();
+    }
+
+    public boolean hasCardToken() {
+        return getCreditCard() != null && getCreditCard().getToken() != null;
     }
 }

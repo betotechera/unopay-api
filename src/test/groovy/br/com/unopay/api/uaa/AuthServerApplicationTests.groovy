@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-abstract class AuthServerApplicationTests  extends SpockApplicationTests {
+abstract class AuthServerApplicationTests extends SpockApplicationTests {
 
     protected String getClientAccessToken() throws Exception {
         MvcResult result = clientCredentials()
@@ -25,8 +25,8 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         return getAccessToken(result)
     }
 
-    protected String getUserAccessToken(String user='test@test.com',String pwd='test') throws Exception {
-        MvcResult result = passwordFlow(user,pwd)
+    protected String getUserAccessToken(String user = 'test@test.com', String pwd = 'test') throws Exception {
+        MvcResult result = passwordFlow(user, pwd)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath('$.access_token', is(notNullValue())))
                 .andReturn()
@@ -37,7 +37,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
     protected ResultActions clientCredentials() throws Exception {
         return this.mvc.perform(post("/oauth/token")
                 .contentType(
-                        MediaType.APPLICATION_FORM_URLENCODED)
+                MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "client_credentials")
                 .param("client_id", "client")
                 .param("client_secret", "secret"))
@@ -47,7 +47,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
     protected ResultActions passwordFlow(String username, String password) throws Exception {
         return this.mvc.perform(post("/oauth/token")
                 .contentType(
-                        MediaType.APPLICATION_FORM_URLENCODED)
+                MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "password")
                 .param("client_id", "client")
                 .param("client_secret", "secret")
@@ -59,7 +59,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
     protected ResultActions uaaManagerClientCredentials() throws Exception {
         return this.mvc.perform(post("/oauth/token")
                 .contentType(
-                        MediaType.APPLICATION_FORM_URLENCODED)
+                MediaType.APPLICATION_FORM_URLENCODED)
                 .param("grant_type", "client_credentials")
                 .param("client_id", "manager")
                 .param("client_secret", "secret"))
@@ -92,7 +92,7 @@ abstract class AuthServerApplicationTests  extends SpockApplicationTests {
         }
     }
 
-    protected String toJsonFromView(Object object,Class view) {
+    protected String toJsonFromView(Object object, Class view) {
         try {
             ObjectMapper objectMapper = new ObjectMapper()
             return objectMapper.writerWithView(view).writeValueAsString(object)

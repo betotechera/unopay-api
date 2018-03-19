@@ -73,7 +73,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("holderName", firstName());
             add("number", random("36000000000008", "378282000000008"));
             add("securityCode", regex("\\d{3}"));
-            add("cardReference", regex("\\w{64}"));
+            add("token", regex("\\w{64}"));
         }});
 
         Fixture.of(Ticket.class).addTemplate("valid", new Rule() {{
