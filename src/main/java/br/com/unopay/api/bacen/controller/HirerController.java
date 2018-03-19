@@ -24,7 +24,10 @@ import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditPaymentAccountService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.service.HirerNegotiationService;
+import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractFilter;
@@ -84,6 +87,7 @@ public class HirerController {
     private TransactionService transactionService;
     private HirerNegotiationService hirerNegotiationService;
     private AuthorizedMemberService authorizedMemberService;
+    private NegotiationBillingService negotiationBillingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -98,7 +102,8 @@ public class HirerController {
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
                            TicketService ticketService, TransactionService transactionService,
                            HirerNegotiationService hirerNegotiationService,
-                           AuthorizedMemberService authorizedMemberService) {
+                           AuthorizedMemberService authorizedMemberService,
+                           NegotiationBillingService negotiationBillingService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -110,6 +115,7 @@ public class HirerController {
         this.transactionService = transactionService;
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
+        this.negotiationBillingService = negotiationBillingService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -446,5 +452,17 @@ public class HirerController {
         String fileName = file.getOriginalFilename();
         log.info("reading authorized members from csv file {}", fileName);
         authorizedMemberService.createFromCsvForHirer(document, file);
+    }
+
+    @ResponseStatus(OK)
+    @JsonView(Views.NegotiationBilling.List.class)
+    @RequestMapping(value = "/hirers/me/negotiation-billings", method = GET)
+    public Results<NegotiationBilling> getNegotiationBillingByParams(Hirer hirer, NegotiationBillingFilter filter,
+                                                                           @Validated UnovationPageRequest pageable) {
+        log.info("search Negotiation Billing with filter={} for hirer={}", filter, hirer.getDocumentNumber());
+        filter.setHirer(hirer.getId());
+        Page<NegotiationBilling> page = negotiationBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/negotiation-billings", api));
     }
 }

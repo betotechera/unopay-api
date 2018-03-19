@@ -8,4 +8,7 @@ public class NegotiationBillingFilter {
 
     @SearchableField(field = "hirerNegotiation.product.issuer.id")
     private String issuer;
+
+    @SearchableField(field = "hirerNegotiation.hirer.id")
+    private String hirer;
 }
