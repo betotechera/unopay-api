@@ -1,5 +1,6 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.config.Queues;
@@ -83,6 +84,12 @@ public class NegotiationBillingService {
 
     public NegotiationBilling findByIdForIssuer(String id, Issuer issuer) {
         Optional<NegotiationBilling> billing = repository.findByIdAndHirerNegotiationProductIssuerId(id,issuer.getId());
+        return billing.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public NegotiationBilling findByIdForHirer(String id, Hirer hirer) {
+        Optional<NegotiationBilling> billing = repository.findByIdAndHirerNegotiationHirerId(id, hirer.getId());
         return billing.orElseThrow(()->
                 UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(id)));
     }

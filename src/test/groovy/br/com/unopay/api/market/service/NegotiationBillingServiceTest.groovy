@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.CreditService
@@ -599,6 +600,44 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'HIRER_NEGOTIATION_BILLING_NOT_FOUND'
+    }
+
+    def "given negotiation billing id and its hirer should be found"() {
+        given:
+        Hirer hirer = fixtureCreator.createHirer()
+        HirerNegotiation hirerNegotiation = fixtureCreator.createNegotiation(hirer)
+        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor)
+                .gimme("valid",
+                new Rule(){{
+                    add("hirerNegotiation", hirerNegotiation)
+                    add("number", "123")
+                }})
+
+        when:
+        NegotiationBilling found = service.findByIdForHirer(negotiationBilling.id, hirer)
+
+        then:
+        found
+    }
+
+    def "given negotiation billing id and a different hirer should return error"() {
+        given:
+        Hirer otherHirer = fixtureCreator.createHirer()
+        Hirer hirer = fixtureCreator.createHirer()
+        HirerNegotiation hirerNegotiation = fixtureCreator.createNegotiation(hirer)
+        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor)
+                .gimme("valid",
+                new Rule(){{
+                    add("hirerNegotiation", hirerNegotiation)
+                    add("number", "123")
+                }})
+
+        when:
+        service.findByIdForHirer(negotiationBilling.id, otherHirer)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'NEGOTIATION_BILLING_NOT_FOUND'
     }
 
 
