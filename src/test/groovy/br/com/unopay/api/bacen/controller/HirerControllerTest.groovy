@@ -348,7 +348,8 @@ class HirerControllerTest extends AuthServerApplicationTests {
         given:
         UserDetail hirerUser = fixtureCreator.createHirerUser()
         HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
-        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor).gimme("valid",
+        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor)
+                .gimme("valid",
                 new Rule(){{
                     add("hirerNegotiation", negotiation)
                     add("number", "123")
@@ -361,5 +362,25 @@ class HirerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+    }
+
+    void 'known me negotiationBilling should be found'(){
+        given:
+        UserDetail hirerUser = fixtureCreator.createHirerUser()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
+        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor)
+                .gimme("valid",
+                new Rule(){{
+                    add("hirerNegotiation", negotiation)
+                    add("number", "123")
+                }})
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        when:
+        def result = this.mvc.perform(get('/hirers/me/negotiation-billings/{id}?access_token={access_token}',
+                negotiationBilling.id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.number', is(notNullValue())))
     }
 }

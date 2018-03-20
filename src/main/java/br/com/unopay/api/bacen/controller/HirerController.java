@@ -465,4 +465,12 @@ public class HirerController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/negotiation-billings", api));
     }
+
+    @JsonView(Views.NegotiationBilling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/negotiation-billings/{id}", method = RequestMethod.GET)
+    public NegotiationBilling getNegotiationBilling(Hirer hirer, @PathVariable String id) {
+        log.info("get negotiationBilling={} for hirer={}", id, hirer.getPerson().documentNumber());
+        return negotiationBillingService.findByIdForHirer(id, hirer);
+    }
 }
