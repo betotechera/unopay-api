@@ -7,6 +7,8 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditSituation
+import br.com.unopay.api.market.model.NegotiationBilling
+
 import static br.com.unopay.api.function.FixtureFunctions.*
 import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.market.model.HirerNegotiation
@@ -340,5 +342,24 @@ class HirerControllerTest extends AuthServerApplicationTests {
 
     Hirer getHirer() {
         Fixture.from(Hirer.class).gimme("valid")
+    }
+
+    void 'all me negotiationBilling should be found'(){
+        given:
+        UserDetail hirerUser = fixtureCreator.createHirerUser()
+        HirerNegotiation negotiation = fixtureCreator.createNegotiation(hirerUser.hirer)
+        NegotiationBilling negotiationBilling = Fixture.from(NegotiationBilling.class).uses(jpaProcessor).gimme("valid",
+                new Rule(){{
+                    add("hirerNegotiation", negotiation)
+                    add("number", "123")
+                }})
+        String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
+        when:
+        def result = this.mvc.perform(get('/hirers/me/negotiation-billings?access_token={access_token}',
+                accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 }
