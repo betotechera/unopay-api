@@ -98,6 +98,7 @@ dependencies {
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.0'
 	compile group: 'br.com.caelum.stella', name: 'caelum-stella-boleto', version: '2.1.2'
 	compile group: 'com.lowagie', name: 'itext', version: '2.1.7'
+	compile group: 'com.newrelic.agent.java', name: 'newrelic-agent', version: '3.48.0'
 
 
 
