@@ -76,7 +76,7 @@ public class UserDetail implements Serializable, Updatable {
     @Column(name="name")
     @NotNull(groups = Create.class)
     @JsonView({Views.User.List.class})
-    @Size(min=2, max = 50, groups = {Create.class, Update.class})
+    @Size(min=2, max = 20, groups = {Create.class, Update.class})
     private String name;
 
     @ManyToOne
