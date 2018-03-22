@@ -28,6 +28,8 @@ public class EstablishmentEventService {
     private EstablishmentService establishmentService;
     private EventService eventService;
 
+    private static final char SEMICOLON = ';';
+
     @Autowired
     public EstablishmentEventService(EstablishmentEventRepository repository,
                                      EstablishmentService establishmentService,
@@ -115,7 +117,7 @@ public class EstablishmentEventService {
     private List<EstablishmentEventFeeCsv> getEstablishmentEventFeeCsvs(MultipartFile multipartFile) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         return new CsvToBeanBuilder<EstablishmentEventFeeCsv>(inputStreamReader)
-                .withType(EstablishmentEventFeeCsv.class).build().parse();
+                .withType(EstablishmentEventFeeCsv.class).withSeparator(SEMICOLON).build().parse();
     }
 
 }

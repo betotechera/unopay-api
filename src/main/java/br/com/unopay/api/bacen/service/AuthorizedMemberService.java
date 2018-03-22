@@ -38,6 +38,7 @@ public class AuthorizedMemberService {
     private PaymentInstrumentService paymentInstrumentService;
     private ContractService contractService;
     private ProductService productService;
+    private static final char SEMICOLON = ';';
 
     @Autowired
     public AuthorizedMemberService(AuthorizedMemberRepository repository,
@@ -176,7 +177,7 @@ public class AuthorizedMemberService {
     private List<AuthorizedMemberCsv> getAuthorizedMemberCsvs(MultipartFile multipartFile) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         return new CsvToBeanBuilder<AuthorizedMemberCsv>(inputStreamReader)
-                .withType(AuthorizedMemberCsv.class).build().parse();
+                .withType(AuthorizedMemberCsv.class).withSeparator(SEMICOLON).build().parse();
     }
 
     private PaymentInstrument findPaymentInstrumentByNumber(String number) {

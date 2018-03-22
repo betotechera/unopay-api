@@ -2,14 +2,20 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum Relatedness implements DescriptableEnum {
     GRANDPARENT("Avô(ó)"),AUNT_UNCLE("Tio(a)"), MOTHER("Mãe"), FATHER("Pai"), SIBLING("Irmão(ã)"),
     DAUGHTER_SON("Filho(a)"), NIECE_NEPHEW("Sobrinho(a)"), GRANDCHILD("Neto(a)");
 
     private String description;
+    private static String REMOVE_ACCENT = "[^\\p{ASCII}]";
+    private static int FIRST = 0;
+    private static int SECOND = 2;
 
     Relatedness(String description){
         this.description = description;
@@ -21,14 +27,22 @@ public enum Relatedness implements DescriptableEnum {
     }
 
     public static Relatedness fromPt(String relatedness){
-        String lowerCaseRelatedness = relatedness.toLowerCase();
+        String normalizedRelatedness = normalize(relatedness);
         List<Relatedness> values = Arrays.asList(Relatedness.values());
-        for(Relatedness value : values) {
-            String prefix = value.getDescription().substring(0, 1).toLowerCase();
-            if(lowerCaseRelatedness.startsWith(prefix)) {
-                return value;
-            }
-        }
-        return null;
+
+        return values.stream()
+                .filter(value -> normalizedRelatedness.startsWith(prefix(value.description)))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static String prefix(String relatedness) {
+        return normalize(relatedness.substring(FIRST, SECOND));
+    }
+
+    private static String normalize(String src) {
+        String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD)
+                .replaceAll(REMOVE_ACCENT, "");
+        return unaccented.toLowerCase();
     }
 }
