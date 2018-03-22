@@ -63,6 +63,8 @@ public class ContractService {
     private ContractInstallmentService installmentService;
     private Validator validator;
 
+    private static final char SEMICOLON = ';';
+
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
                            ContractorService contractorService, ProductService productService,
@@ -333,6 +335,6 @@ public class ContractService {
     private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         return new CsvToBeanBuilder<ContractorCsv>(inputStreamReader)
-                .withType(ContractorCsv.class).withSeparator(';').build().parse();
+                .withType(ContractorCsv.class).withSeparator(SEMICOLON).build().parse();
     }
 }
