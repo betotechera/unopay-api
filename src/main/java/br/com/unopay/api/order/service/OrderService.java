@@ -44,10 +44,14 @@ import javax.validation.Validator;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_ORDERS;
+import static br.com.unopay.api.config.CacheConfig.INSTRUMENTS;
 import static br.com.unopay.api.order.model.OrderType.ADHESION;
 import static br.com.unopay.api.order.model.OrderType.CREDIT;
 import static br.com.unopay.api.order.model.OrderType.INSTALLMENT_PAYMENT;
@@ -118,6 +122,7 @@ public class OrderService {
         return repository.save(order);
     }
 
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order findById(String id) {
         Optional<Order> order = repository.findById(id);
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
@@ -128,12 +133,14 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email")
     public Set<String> findIdsByPersonEmail(String email) {
         Set<Order> orders = repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
         return orders.stream().map(Order::getId).collect(Collectors.toSet());
     }
 
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#ordersIds)")
     public Set<String> getMyOrderIds(String email, Set<String> ordersIds) {
         Set<String> ids = findIdsByPersonEmail(email);
         Set<String> intersection = ordersIds.stream().filter(ids::contains).collect(Collectors.toSet());
@@ -141,6 +148,7 @@ public class OrderService {
     }
 
     @Transactional
+    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         order.setPerson(currentUser.myContractor()
@@ -151,12 +159,14 @@ public class OrderService {
     }
 
     @Transactional
+    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order create(Order order) {
         validateProduct(order);
         return createOrder(order);
     }
 
     @Transactional
+    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order createForIssuer(Issuer issuer, Order order) {
         validateProductForIssuer(issuer, order);
         return createOrder(order);
@@ -175,6 +185,29 @@ public class OrderService {
         created.getPaymentRequest().setOrderId(order.getId());
         notifyOrder(created);
         return created;
+    }
+
+    @Transactional
+    @CachePut(value = CONTRACTOR_ORDERS, key = "#id")
+    public void update(String id, Order order) {
+        Order current = findById(id);
+        update(order, current);
+    }
+
+    @Transactional
+    @CachePut(value = CONTRACTOR_ORDERS, key = "#id")
+    public void updateForIssuer(String id,Issuer issuer, Order order) {
+        Order current = findByIdForIssuer(id, issuer);
+        update(order, current);
+    }
+
+    private void update(Order order, Order current) {
+        current.validateUpdate();
+        current.updateOnly(order,"status");
+        if (current.paid()) {
+            process(current);
+        }
+        repository.save(current);
     }
 
     private void checkHirerWhenRequired(Order order) {
@@ -357,26 +390,6 @@ public class OrderService {
         return repository.findAllByOrderByCreateDateTimeDesc();
     }
 
-    @Transactional
-    public void update(String id, Order order) {
-        Order current = findById(id);
-        update(order, current);
-    }
-
-    @Transactional
-    public void updateForIssuer(String id,Issuer issuer, Order order) {
-        Order current = findByIdForIssuer(id, issuer);
-        update(order, current);
-    }
-
-    private void update(Order order, Order current) {
-        current.validateUpdate();
-        current.updateOnly(order,"status");
-        if (current.paid()) {
-            process(current);
-        }
-        repository.save(current);
-    }
 
     private void checkCreditCardWhenRequired(UserDetail user, Order order) {
         if(!order.hasCardToken()){

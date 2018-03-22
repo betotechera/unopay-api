@@ -54,7 +54,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUN
 @Data
 @Entity
 @Table(name = "\"order\"")
-@ToString
+@ToString(exclude = "product")
 @EqualsAndHashCode(of = {"id"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

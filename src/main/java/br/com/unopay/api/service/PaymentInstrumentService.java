@@ -17,13 +17,15 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_INSTRUMENTS;
+import static br.com.unopay.api.config.CacheConfig.INSTRUMENTS;
 import static br.com.unopay.api.model.PaymentInstrumentType.DIGITAL_WALLET;
 import static br.com.unopay.api.uaa.exception.Errors.EXTERNAL_ID_OF_PAYMENT_INSTRUMENT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
@@ -55,13 +57,13 @@ public class PaymentInstrumentService {
         this.userDetailService = userDetailService;
     }
 
-    @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
+    @CachePut(value = INSTRUMENTS, key = "#instrument.id")
     public PaymentInstrument save(PaymentInstrument instrument) {
         validateReference(instrument);
         return create(instrument);
     }
 
-    @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
+    @CachePut(value = INSTRUMENTS, key = "#instrument.id + '_' + #instrument.product.issuer.id")
     public PaymentInstrument createForIssuer(Issuer issuer, PaymentInstrument instrument) {
         validateReferenceForIssuer(issuer, instrument);
         return create(instrument);
@@ -91,11 +93,13 @@ public class PaymentInstrumentService {
         return repository.countByNumber(instrumentNumber) > 0;
     }
 
+    @Cacheable(value = INSTRUMENTS, key = "#instrument.contractor.id")
     public PaymentInstrument findById(String id) {
         Optional<PaymentInstrument> instrument = getById(id);
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
+    @CachePut(value = INSTRUMENTS, key = "#id + '_' + #issuer.id")
     public PaymentInstrument findByIdForIssuer(String id, Issuer issuer) {
         Optional<PaymentInstrument> instrument = repository.findByIdAndProductIssuerId(id, issuer.getId());
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
@@ -135,12 +139,13 @@ public class PaymentInstrumentService {
         return repository.findFirstByContractorPersonDocumentNumberAndType(documentNumber, DIGITAL_WALLET);
     }
 
-    @CacheEvict(value = CONTRACTOR_INSTRUMENTS, key = "#instrument.contractor.id")
+    @CachePut(value = INSTRUMENTS, key = "#id")
     public void update(String id, PaymentInstrument instrument) {
         PaymentInstrument current = findById(id);
         update(instrument, current);
     }
 
+    @CachePut(value = INSTRUMENTS, key = "#id + '_' + #issuer.id")
     public void updateForIssuer(String id, Issuer issuer, PaymentInstrument instrument) {
         PaymentInstrument current = findByIdForIssuer(id, issuer);
         update(instrument, current);

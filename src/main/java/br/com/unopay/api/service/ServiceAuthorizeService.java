@@ -25,10 +25,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_ORDERS;
+import static br.com.unopay.api.config.CacheConfig.SERVICE_AUTHORIZES;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_REQUIRED;
@@ -72,6 +77,7 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
+    @CachePut(value = SERVICE_AUTHORIZES, key = "#authorize.id")
     public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
@@ -86,12 +92,14 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
+    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
     public void cancelForEstablishment(String id, Establishment establishment) {
         ServiceAuthorize current = findByIdForEstablishment(id, establishment);
         cancel(current);
     }
 
     @Transactional
+    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
     public void cancel(String id) {
         ServiceAuthorize current = findById(id);
         cancel(current);
@@ -194,6 +202,7 @@ public class ServiceAuthorizeService {
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
     }
 
+    @Cacheable(value = SERVICE_AUTHORIZES, key = "#id")
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
@@ -212,10 +221,13 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
+    @Cacheable(value = SERVICE_AUTHORIZES, key = "T(java.util.Objects).hash(#filter)")
     public Page<ServiceAuthorize> findByFilter(ServiceAuthorizeFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter,new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    @Cacheable(value = SERVICE_AUTHORIZES,
+            key = "#currentUser.contractor.id + '_' + T(java.util.Objects).hash(#filter)")
     public Page<ServiceAuthorize> findMyByFilter(UserDetail currentUser, ServiceAuthorizeFilter filter,
                                                  UnovationPageRequest pageable) {
         return findByFilter(buildFilterBy(filter,currentUser),pageable);

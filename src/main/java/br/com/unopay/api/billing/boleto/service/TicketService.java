@@ -245,14 +245,6 @@ public class TicketService {
         return numberGenerator.getNumberWithoutLeftPad(ticketNumber);
     }
 
-    public Page<Ticket> findMyByFilter(String email, TicketFilter filter, UnovationPageRequest pageable) {
-        Set<String> ids = orderService.findIdsByPersonEmail(email);
-        Set<String> intersection = filter.getOrderId().stream().filter(ids::contains).collect(Collectors.toSet());
-        ids = filter.getOrderId().isEmpty() ? ids : intersection;
-        filter.setOrderId(ids);
-        return findByFilter(filter, pageable);
-    }
-
     public Page<Ticket> findByFilter(TicketFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }

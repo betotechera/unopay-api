@@ -34,12 +34,15 @@ import javax.validation.Validator;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import static br.com.unopay.api.config.CacheConfig.CONTRACTS;
+import static br.com.unopay.api.config.CacheConfig.SERVICE_AUTHORIZES;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
@@ -174,16 +177,19 @@ public class ContractService {
         }
     }
 
+    @Cacheable(value = CONTRACTS, key = "#id")
     public Contract findById(String id) {
         Optional<Contract> contract = repository.findById(id);
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
+    @Cacheable(value = CONTRACTS, key = "#code")
     public Contract findByCode(Long code) {
         Optional<Contract> contract = repository.findByCode(code);
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
+    @Cacheable(value = CONTRACTS, key = "#id + '_' + #hirer.id")
     public Contract findByIdForHirer(String id, Hirer hirer) {
         Optional<Contract> contract = repository.findByIdAndHirerId(id, hirer.getId());
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
@@ -203,6 +209,7 @@ public class ContractService {
         repository.delete(id);
     }
 
+    @Cacheable(value = SERVICE_AUTHORIZES, key = "T(java.util.Objects).hash(#filter)")
     public Page<Contract> findByFilter(ContractFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }

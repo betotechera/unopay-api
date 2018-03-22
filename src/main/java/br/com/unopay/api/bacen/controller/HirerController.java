@@ -40,6 +40,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -376,10 +377,7 @@ public class HirerController {
     public Results<Ticket> findBoletos(OAuth2Authentication authentication,
                                        TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = ticketService
-                                                        .findMyByFilter(authentication.getName(),filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/boletos", api));
+        return PageableResults.create(pageable, new ArrayList<>(), String.format("%s/hirers/me/boletos", api));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
