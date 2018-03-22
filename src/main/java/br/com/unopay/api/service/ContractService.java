@@ -211,7 +211,6 @@ public class ContractService {
         repository.delete(id);
     }
 
-    @Cacheable(value = SERVICE_AUTHORIZES, key = "T(java.util.Objects).hash(#filter)")
     public Page<Contract> findByFilter(ContractFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }

@@ -77,7 +77,7 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
-    @CachePut(value = SERVICE_AUTHORIZES, key = "#authorize.id")
+    @CachePut(value = SERVICE_AUTHORIZES, key = "#result.id")
     public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
@@ -221,13 +221,10 @@ public class ServiceAuthorizeService {
         return repository.save(serviceAuthorize);
     }
 
-    @Cacheable(value = SERVICE_AUTHORIZES, key = "T(java.util.Objects).hash(#filter)")
     public Page<ServiceAuthorize> findByFilter(ServiceAuthorizeFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter,new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    @Cacheable(value = SERVICE_AUTHORIZES,
-            key = "#currentUser.contractor.id + '_' + T(java.util.Objects).hash(#filter)")
     public Page<ServiceAuthorize> findMyByFilter(UserDetail currentUser, ServiceAuthorizeFilter filter,
                                                  UnovationPageRequest pageable) {
         return findByFilter(buildFilterBy(filter,currentUser),pageable);
