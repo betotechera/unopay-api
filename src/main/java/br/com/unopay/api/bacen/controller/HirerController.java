@@ -456,19 +456,19 @@ public class HirerController {
 
     @ResponseStatus(OK)
     @JsonView(Views.NegotiationBilling.List.class)
-    @RequestMapping(value = "/hirers/me/negotiation-billings", method = GET)
+    @RequestMapping(value = "/hirers/me/hirer-negotiation-billings", method = GET)
     public Results<NegotiationBilling> getNegotiationBillingByParams(Hirer hirer, NegotiationBillingFilter filter,
                                                                            @Validated UnovationPageRequest pageable) {
         log.info("search Negotiation Billing with filter={} for hirer={}", filter, hirer.getDocumentNumber());
         filter.setHirer(hirer.getId());
         Page<NegotiationBilling> page = negotiationBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/negotiation-billings", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/hirer-negotiation-billings", api));
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hirers/me/negotiation-billings/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/hirers/me/hirer-negotiation-billings/{id}", method = RequestMethod.GET)
     public NegotiationBilling getNegotiationBilling(Hirer hirer, @PathVariable String id) {
         log.info("get negotiationBilling={} for hirer={}", id, hirer.getPerson().documentNumber());
         return negotiationBillingService.findByIdForHirer(id, hirer);

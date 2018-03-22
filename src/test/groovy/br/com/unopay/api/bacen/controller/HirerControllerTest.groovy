@@ -356,7 +356,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
                 }})
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         when:
-        def result = this.mvc.perform(get('/hirers/me/negotiation-billings?access_token={access_token}',
+        def result = this.mvc.perform(get('/hirers/me/hirer-negotiation-billings?access_token={access_token}',
                 accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
@@ -376,7 +376,7 @@ class HirerControllerTest extends AuthServerApplicationTests {
                 }})
         String accessToken = getUserAccessToken(hirerUser.email, hirerUser.password)
         when:
-        def result = this.mvc.perform(get('/hirers/me/negotiation-billings/{id}?access_token={access_token}',
+        def result = this.mvc.perform(get('/hirers/me/hirer-negotiation-billings/{id}?access_token={access_token}',
                 negotiationBilling.id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
