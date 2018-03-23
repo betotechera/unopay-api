@@ -77,7 +77,6 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
-    @CachePut(value = SERVICE_AUTHORIZES, key = "#result.id")
     public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
@@ -92,14 +91,12 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
-    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
     public void cancelForEstablishment(String id, Establishment establishment) {
         ServiceAuthorize current = findByIdForEstablishment(id, establishment);
         cancel(current);
     }
 
     @Transactional
-    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
     public void cancel(String id) {
         ServiceAuthorize current = findById(id);
         cancel(current);
@@ -202,7 +199,6 @@ public class ServiceAuthorizeService {
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));
     }
 
-    @Cacheable(value = SERVICE_AUTHORIZES, key = "#id")
     public ServiceAuthorize findById(String id) {
         Optional<ServiceAuthorize> serviceAuthorize =  repository.findById(id);
         return serviceAuthorize.orElseThrow(()->UnovationExceptions.notFound().withErrors(SERVICE_AUTHORIZE_NOT_FOUND));

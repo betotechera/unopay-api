@@ -179,19 +179,16 @@ public class ContractService {
         }
     }
 
-    @Cacheable(value = CONTRACTS, key = "#id")
     public Contract findById(String id) {
         Optional<Contract> contract = repository.findById(id);
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    @Cacheable(value = CONTRACTS, key = "#code")
     public Contract findByCode(Long code) {
         Optional<Contract> contract = repository.findByCode(code);
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    @Cacheable(value = CONTRACTS, key = "#id + '_' + #hirer.id")
     public Contract findByIdForHirer(String id, Hirer hirer) {
         Optional<Contract> contract = repository.findByIdAndHirerId(id, hirer.getId());
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));

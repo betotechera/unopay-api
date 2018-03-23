@@ -57,13 +57,11 @@ public class PaymentInstrumentService {
         this.userDetailService = userDetailService;
     }
 
-    @CachePut(value = INSTRUMENTS, key = "#instrument.id")
     public PaymentInstrument save(PaymentInstrument instrument) {
         validateReference(instrument);
         return create(instrument);
     }
 
-    @CachePut(value = INSTRUMENTS, key = "#instrument.id + '_' + #instrument.product.issuer.id")
     public PaymentInstrument createForIssuer(Issuer issuer, PaymentInstrument instrument) {
         validateReferenceForIssuer(issuer, instrument);
         return create(instrument);
@@ -93,13 +91,11 @@ public class PaymentInstrumentService {
         return repository.countByNumber(instrumentNumber) > 0;
     }
 
-    @Cacheable(value = INSTRUMENTS, key = "#instrument.contractor.id")
     public PaymentInstrument findById(String id) {
         Optional<PaymentInstrument> instrument = getById(id);
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
     }
 
-    @CachePut(value = INSTRUMENTS, key = "#id + '_' + #issuer.id")
     public PaymentInstrument findByIdForIssuer(String id, Issuer issuer) {
         Optional<PaymentInstrument> instrument = repository.findByIdAndProductIssuerId(id, issuer.getId());
         return  instrument.orElseThrow(()->UnovationExceptions.notFound().withErrors(PAYMENT_INSTRUMENT_NOT_FOUND));
@@ -139,13 +135,11 @@ public class PaymentInstrumentService {
         return repository.findFirstByContractorPersonDocumentNumberAndType(documentNumber, DIGITAL_WALLET);
     }
 
-    @CachePut(value = INSTRUMENTS, key = "#id")
     public void update(String id, PaymentInstrument instrument) {
         PaymentInstrument current = findById(id);
         update(instrument, current);
     }
 
-    @CachePut(value = INSTRUMENTS, key = "#id + '_' + #issuer.id")
     public void updateForIssuer(String id, Issuer issuer, PaymentInstrument instrument) {
         PaymentInstrument current = findByIdForIssuer(id, issuer);
         update(instrument, current);

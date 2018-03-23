@@ -122,7 +122,6 @@ public class OrderService {
         return repository.save(order);
     }
 
-    @Cacheable(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order findById(String id) {
         Optional<Order> order = repository.findById(id);
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
@@ -133,14 +132,12 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
-    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email")
     public Set<String> findIdsByPersonEmail(String email) {
         Set<Order> orders = repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
         return orders.stream().map(Order::getId).collect(Collectors.toSet());
     }
 
-    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#ordersIds)")
     public Set<String> getMyOrderIds(String email, Set<String> ordersIds) {
         Set<String> ids = findIdsByPersonEmail(email);
         Set<String> intersection = ordersIds.stream().filter(ids::contains).collect(Collectors.toSet());
@@ -148,7 +145,6 @@ public class OrderService {
     }
 
     @Transactional
-    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         order.setPerson(currentUser.myContractor()
@@ -159,14 +155,12 @@ public class OrderService {
     }
 
     @Transactional
-    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order create(Order order) {
         validateProduct(order);
         return createOrder(order);
     }
 
     @Transactional
-    @CachePut(value = CONTRACTOR_ORDERS, key = "#order.id")
     public Order createForIssuer(Issuer issuer, Order order) {
         validateProductForIssuer(issuer, order);
         return createOrder(order);
@@ -188,14 +182,12 @@ public class OrderService {
     }
 
     @Transactional
-    @CachePut(value = CONTRACTOR_ORDERS, key = "#id")
     public void update(String id, Order order) {
         Order current = findById(id);
         update(order, current);
     }
 
     @Transactional
-    @CachePut(value = CONTRACTOR_ORDERS, key = "#id")
     public void updateForIssuer(String id,Issuer issuer, Order order) {
         Order current = findByIdForIssuer(id, issuer);
         update(order, current);
