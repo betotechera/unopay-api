@@ -129,6 +129,7 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email")
     public Set<String> findIdsByPersonEmail(String email) {
         Set<Order> orders = repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);

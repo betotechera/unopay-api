@@ -100,7 +100,6 @@ public class ServiceAuthorizeService {
     }
 
     @Transactional
-    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
     public void rate(String id,Integer rating) {
         ServiceAuthorize current = findById(id);
         current.canBeRated();
