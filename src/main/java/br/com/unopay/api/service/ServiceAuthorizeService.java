@@ -105,6 +105,16 @@ public class ServiceAuthorizeService {
         cancel(current);
     }
 
+    @Transactional
+    @CacheEvict(value = SERVICE_AUTHORIZES, key = "#id")
+    public void rate(String id,Integer rating) {
+        ServiceAuthorize current = findById(id);
+        current.canBeRated();
+        current.setRating(rating);
+        repository.save(current);
+    }
+
+
     private void cancel(ServiceAuthorize current) {
         current.validateCancellation();
         current.setupCancellation();

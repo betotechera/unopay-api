@@ -92,6 +92,14 @@ public class ServiceAuthorizeController {
         service.cancel(id);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
+    @RequestMapping(value = "/service-authorizations/{id}/ratings", method = RequestMethod.PATCH)
+    public void rate(@PathVariable String id,@RequestBody ServiceAuthorize serviceAuthorize) {
+        log.info("rating serviceAuthorize={}", id);
+        service.rate(id,serviceAuthorize.getRating());
+    }
+
     @ResponseStatus(OK)
     @JsonView(Views.ServiceAuthorize.List.class)
     @RequestMapping(value = "/service-authorizations/my", method = GET)
