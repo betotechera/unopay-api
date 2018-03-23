@@ -88,13 +88,14 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     void 'new service authorize is created should be able to rate'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def created = service.create(userUnderTest, serviceAuthorize)
 
         when:
-        def created = service.create(userUnderTest, serviceAuthorize)
+        service.rate(created.id,35)
         def result = service.findById(created.id)
 
         then:
-        assert result.id != null
+        assert result.rating != null
     }
 
 
