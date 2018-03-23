@@ -16,7 +16,6 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.credit.model.CreditSituation.PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;

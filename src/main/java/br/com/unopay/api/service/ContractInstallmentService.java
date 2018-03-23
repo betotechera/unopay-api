@@ -20,7 +20,7 @@ import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.model.ContractInstallment.*;
+import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FOUND;
 

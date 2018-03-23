@@ -35,8 +35,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
@@ -44,7 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_CANNOT_BE_CANCELLED;
+import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_IN_BATCH_PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
 

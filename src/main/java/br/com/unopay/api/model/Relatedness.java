@@ -1,12 +1,9 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
-
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public enum Relatedness implements DescriptableEnum {
     GRANDPARENT("Avô(ó)"),AUNT_UNCLE("Tio(a)"), MOTHER("Mãe"), FATHER("Pai"), SIBLING("Irmão(ã)"),

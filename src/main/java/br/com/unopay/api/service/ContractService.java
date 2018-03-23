@@ -34,15 +34,12 @@ import javax.validation.Validator;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static br.com.unopay.api.config.CacheConfig.CONTRACTS;
-import static br.com.unopay.api.config.CacheConfig.SERVICE_AUTHORIZES;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;

@@ -7,10 +7,9 @@ import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.Relatedness;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
-import lombok.Data;
-
-import javax.validation.constraints.Pattern;
 import java.util.Date;
+import javax.validation.constraints.Pattern;
+import lombok.Data;
 
 @Data
 public class AuthorizedMemberCsv {

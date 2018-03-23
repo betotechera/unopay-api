@@ -1,6 +1,5 @@
 package br.com.unopay.api.billing.boleto.santander.translate;
 
-import br.com.caelum.stella.boleto.bancos.gerador.GeradorDeDigitoSantander;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;

@@ -12,8 +12,6 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.service.TicketService;
-import br.com.unopay.api.billing.creditcard.model.Transaction;
-import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;

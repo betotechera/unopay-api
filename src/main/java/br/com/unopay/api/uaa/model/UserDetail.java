@@ -39,10 +39,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity

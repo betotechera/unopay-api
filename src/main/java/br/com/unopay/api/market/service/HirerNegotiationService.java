@@ -1,9 +1,9 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.PaymentDayCalculator;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;

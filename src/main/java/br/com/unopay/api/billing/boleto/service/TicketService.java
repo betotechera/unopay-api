@@ -3,8 +3,8 @@ package br.com.unopay.api.billing.boleto.service;
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
-import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
+import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.repository.TicketRepository;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
@@ -28,9 +28,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +47,6 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR;
 import static br.com.unopay.api.uaa.exception.Errors.TICKET_NUMBER_ALREADY_EXISTS;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
 @Slf4j
 @Service

@@ -17,7 +17,11 @@ import org.hibernate.validator.constraints.Length;
 
 import static br.com.unopay.api.billing.creditcard.model.CardBrand.fromCardNumber;
 import static br.com.unopay.api.model.Person.NOT_NUMBER;
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_CARD_REFERENCE;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_HOLDER_NAME;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_MONTH;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_NUMBER;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_YEAR;
 import static org.joda.time.DateTimeConstants.DECEMBER;
 import static org.joda.time.DateTimeConstants.JANUARY;
 

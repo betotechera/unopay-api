@@ -26,13 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_ORDERS;
 import static br.com.unopay.api.config.CacheConfig.SERVICE_AUTHORIZES;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;

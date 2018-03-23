@@ -3,7 +3,6 @@ package br.com.unopay.api.billing.creditcard.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

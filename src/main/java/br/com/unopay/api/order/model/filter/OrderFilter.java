@@ -1,7 +1,7 @@
 package br.com.unopay.api.order.model.filter;
 
-import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.order.model.OrderType;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import lombok.Data;

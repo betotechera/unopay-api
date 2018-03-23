@@ -6,7 +6,6 @@ import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -17,8 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import static br.com.unopay.api.uaa.exception.Errors.CANNOT_INVOKE_TYPE;
 
 @Slf4j
 @Service

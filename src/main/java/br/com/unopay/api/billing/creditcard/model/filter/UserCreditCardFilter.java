@@ -2,10 +2,9 @@ package br.com.unopay.api.billing.creditcard.model.filter;
 
 import br.com.unopay.api.billing.creditcard.model.CardBrand;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.ToString;
-
-import java.io.Serializable;
 
 @Data
 @ToString
