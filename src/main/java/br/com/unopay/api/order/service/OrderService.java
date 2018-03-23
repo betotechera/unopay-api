@@ -43,10 +43,12 @@ import javax.validation.Validator;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.config.CacheConfig.CONTRACTOR_ORDERS;
 import static br.com.unopay.api.order.model.OrderType.ADHESION;
 import static br.com.unopay.api.order.model.OrderType.CREDIT;
 import static br.com.unopay.api.order.model.OrderType.INSTALLMENT_PAYMENT;
@@ -133,6 +135,7 @@ public class OrderService {
         return orders.stream().map(Order::getId).collect(Collectors.toSet());
     }
 
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#ordersIds)")
     public Set<String> getMyOrderIds(String email, Set<String> ordersIds) {
         Set<String> ids = findIdsByPersonEmail(email);
         Set<String> intersection = ordersIds.stream().filter(ids::contains).collect(Collectors.toSet());
