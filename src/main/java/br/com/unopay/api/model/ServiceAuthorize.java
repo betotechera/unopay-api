@@ -147,9 +147,9 @@ public class ServiceAuthorize implements Serializable {
     @Column(name = "typed_password")
     private String typedPassword;
 
-    @Min(1)
     @Column
-    @Max(100)
+    @Min(value = 10,groups = {Rating.class})
+    @Max(value = 50,groups = {Rating.class})
     @NotNull(groups = {Rating.class})
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Integer rating;
