@@ -3,8 +3,10 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.model.validation.group.Rating;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +32,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
@@ -141,6 +147,13 @@ public class ServiceAuthorize implements Serializable {
     @JsonIgnore
     @Column(name = "typed_password")
     private String typedPassword;
+
+    @Min(1)
+    @Column
+    @Max(100)
+    @NotNull(groups = {Rating.class})
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private Integer rating;
 
     @Version
     @JsonIgnore
@@ -341,5 +354,14 @@ public class ServiceAuthorize implements Serializable {
             return;
         }
         this.paid = this.total;
+    }
+
+    public void canBeRated() {
+        if(this.rating != null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZATION_ALREADY_RATED);
+
+        if(!AuthorizationSituation.AUTHORIZED.equals(getSituation()))
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZATION_SHOULD_BE_AUTHORIZED);
+
     }
 }

@@ -435,6 +435,14 @@ public final class Errors {
             new UnovationError("AUTHORIZATION_CANNOT_BE_CANCELLED",
                     "The ServiceAuthorize cannot be cancelled.");
 
+    public static final UnovationError AUTHORIZATION_SHOULD_BE_AUTHORIZED =
+            new UnovationError("AUTHORIZATION_SHOULD_BE_AUTHORIZED",
+                    "The ServiceAuthorize should be authorized.");
+
+    public static final UnovationError AUTHORIZATION_ALREADY_RATED =  new UnovationError("AUTHORIZATION_ALREADY_RATED",
+            "The ServiceAuthorize is already rated.");
+
+
 
 
     /* batch closing */
