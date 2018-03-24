@@ -44,7 +44,7 @@ public class AmazonS3Service {
 
         } catch (InterruptedException e) {
             log.info("Error on upload", e);
-            throw  new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
