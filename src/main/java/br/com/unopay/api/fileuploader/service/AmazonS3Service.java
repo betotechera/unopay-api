@@ -1,6 +1,5 @@
 package br.com.unopay.api.fileuploader.service;
 
-import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -8,7 +7,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
-import com.google.common.base.Throwables;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.SneakyThrows;
