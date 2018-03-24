@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.google.common.base.Throwables;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.SneakyThrows;
@@ -45,7 +46,7 @@ public class AmazonS3Service {
 
         } catch (InterruptedException e) {
             log.info("Error on upload", e);
-            throw UnovationExceptions.internalError();
+            throw  new RuntimeException(e);
         }
     }
 
