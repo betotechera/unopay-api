@@ -38,6 +38,9 @@ public enum Relatedness implements DescriptableEnum {
     }
 
     private static String normalize(String src) {
+        if(src == null) {
+            return "";
+        }
         String unaccented = Normalizer.normalize(src, Normalizer.Form.NFD)
                 .replaceAll(REMOVE_ACCENT, "");
         return unaccented.toLowerCase();
