@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 @Configuration
 public class DataSourceConfig {
 
-    @Profile({"qa", "hm", "prod"})
+    @Profile({"qa", "dev", "prod"})
     @Primary
     @Bean(name = "datasource")
     @ConfigurationProperties(prefix="spring.datasource")
@@ -23,7 +23,7 @@ public class DataSourceConfig {
     }
 
     @Primary
-    @Profile({"dev", "test"})
+    @Profile({"test"})
     @Bean(name = "spring.datasource", destroyMethod = "shutdown")
     public DataSource dataSourceDevTest() {
         EmbeddedDatabase embeddedDatabase = new EmbeddedDatabaseBuilder()

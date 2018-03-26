@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <property name="suffixPattern" value="${LOG_LEVEL_PATTERN:-%5p} [%thread] [%X{application:-anonymous}] %-40.40logger{39} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/unopay-api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SYSLOG_PROD" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>splunk.unvlocal.com.br</syslogHost>
+        <port>5502</port>
+        <facility>LOCAL0</facility>
+        <suffixPattern>${suffixPattern}</suffixPattern>
+        <throwableExcluded>true</throwableExcluded>
+    </appender>
+
+    <logger name="br.com.unopay" level="INFO" />
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="dailyRollingFile" />
+        <springProfile name="prod">
+            <appender-ref ref="SYSLOG_PROD" />
+        </springProfile>
+    </root>
+
+
+</configuration>

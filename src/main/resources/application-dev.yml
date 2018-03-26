@@ -42,8 +42,8 @@ multipart:
   max-file-size: 9000Kb
 spring:
   datasource:
-      url: jdbc:postgresql://localhost:5432/unopay?currentSchema=unovation
-      username: adm
+      url: jdbc:postgresql://localhost:5432/postgres?currentSchema=administrator
+      username: postgres
       password: 123456
       initialSize: 5
       min-idle: 5
