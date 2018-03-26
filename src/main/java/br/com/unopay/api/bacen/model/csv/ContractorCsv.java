@@ -37,7 +37,7 @@ public class ContractorCsv {
     private String email;
 
     @NotNull
-    @Size(max = 25)
+    @Size(max = 20)
     @CsvBindByName
     private String shortName;
 
