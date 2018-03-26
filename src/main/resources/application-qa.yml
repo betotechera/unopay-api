@@ -45,6 +45,16 @@ spring:
       url: jdbc:postgresql://unopay-qa.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:5432/unopay?currentSchema=unovation
       username: administrator
       password: LVTQB5MkBuH0
+      initialSize: 5
+      min-idle: 5
+      max-idle: 12
+      max-active: 12
+      max-wait: 10000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+      time-between-eviction-runs-millis: 20000
       driverClassName: org.postgresql.Driver
   encryptor:
     password: vEexq7mVjQj948B7
