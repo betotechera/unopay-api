@@ -7,7 +7,7 @@ import java.util.List;
 
 public enum Relatedness implements DescriptableEnum {
     GRANDPARENT("Avô(ó)"),AUNT_UNCLE("Tio(a)"), MOTHER("Mãe"), FATHER("Pai"), SIBLING("Irmão(ã)"),
-    DAUGHTER_SON("Filho(a)"), NIECE_NEPHEW("Sobrinho(a)"), GRANDCHILD("Neto(a)");
+    DAUGHTER_SON("Filho(a)"), NIECE_NEPHEW("Sobrinho(a)"), GRANDCHILD("Neto(a)"), SPOUSE("Cônjuge");
 
     private String description;
     private static String REMOVE_ACCENT = "[^\\p{ASCII}]";
