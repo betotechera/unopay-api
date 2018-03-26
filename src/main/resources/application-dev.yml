@@ -6,25 +6,31 @@ payment:
       mode: TEST
       endpointHost: secure.payzen.com.br
   soap:
-      santander:
-        cobranca-online:
-          dlb-wsdl-location: classpath:wsdl/DLB/TicketEndpointService.wsdl
-          dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
-          ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
-          ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
-          enviroment: 'T'
+    santander:
+      cobranca-online:
+        dlb-wsdl-location: classpath:wsdl/DLB/TicketEndpointService.wsdl
+        dlb-transacional-service: "http://impl.webservice.dl.app.bsbr.altec.com/"
+        ymb-wsdl-location: classpath:wsdl/YMB/CobrancaEndpointService.wsdl
+        ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
+        enviroment: 'T'
 unopay:
+  resetPassword:
+        url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
-  api: localhost:8080
-  resetPassword:
-    url: 'http://unopay.qa.unvlocal.com.br/#/page/password/'
+  api: api.qa.unovation.com.br:8080
   file-uploader:
     configs:
       avatar:
         folder: avatar
       ciot:
         folder: ciot
+      receipt:
+        folder: nfe
+      logo:
+        folder: logo
+      facade:
+        folder: establishment-facades
 amazon:
   s3:
     bucketName: unopay-files
@@ -35,21 +41,39 @@ amazon:
 multipart:
   max-file-size: 9000Kb
 spring:
+  datasource:
+      url: jdbc:postgresql://localhost:5432/unopay?currentSchema=unovation
+      username: adm
+      password: 123456
+      initialSize: 5
+      min-idle: 5
+      max-idle: 12
+      max-active: 12
+      max-wait: 10000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+      time-between-eviction-runs-millis: 20000
+      driverClassName: org.postgresql.Driver
   encryptor:
     password: vEexq7mVjQj948B7
   jpa:
-    hibernate.ddl-auto: nones
-  datasource:
-    platform: hsqldb
-    continueOnError: true
+    properties:
+      hibernate:
+        ddl-auto: none
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    generate-ddl: false
   redis:
     host: localhost
     port: 6379
   rabbitmq:
-    host: rabbit.unvlocal.com.br
+    host: localhost
     port: 5672
-    username: user
-    password: user
+    username: guest
+    password: guest
   mail:
     default-encoding: UTF-8
     host: smtp.unvlocal.com.br
