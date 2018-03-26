@@ -26,7 +26,7 @@ class UserDetailTest extends FixtureApplicationTest {
         def userDetail = new UserDetail(contractor)
 
         then:
-        userDetail.name == contractor.person.name
+        userDetail.name == contractor.person.shortName
     }
 
     def 'when create from contractor should define email'(){
