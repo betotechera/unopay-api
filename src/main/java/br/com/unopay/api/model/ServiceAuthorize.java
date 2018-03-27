@@ -151,7 +151,7 @@ public class ServiceAuthorize implements Serializable {
     @Min(value = 10,groups = {Rating.class})
     @Max(value = 50,groups = {Rating.class})
     @NotNull(groups = {Rating.class})
-    @JsonView({Views.ServiceAuthorize.Detail.class})
+    @JsonView({Views.ServiceAuthorize.List.class})
     private Integer rating;
 
     @Version
