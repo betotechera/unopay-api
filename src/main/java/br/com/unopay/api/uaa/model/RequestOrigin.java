@@ -24,4 +24,8 @@ public enum RequestOrigin implements DescriptableEnum {
         }
         return null;
     }
+
+    public boolean isUnopay() {
+        return this.equals(UNOPAY);
+    }
 }

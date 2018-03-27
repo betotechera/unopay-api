@@ -27,8 +27,6 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Data
 @ConfigurationProperties("unopay.resetPassword")
 public class NotificationService {
-    public static final String UNOPAY = "unopay";
-    public static final String BACKOFFICE = "backoffice";
 
     private String backofficeUrl;
 
@@ -61,7 +59,7 @@ public class NotificationService {
     }
 
     private String linkForOrigin(RequestOrigin requestOrigin) {
-        return UNOPAY.equals(requestOrigin.getDescription()) ? unopayUrl : backofficeUrl;
+        return requestOrigin.isUnopay() ? unopayUrl : backofficeUrl;
     }
 
     public void sendNewPassword(UserDetail user) {
