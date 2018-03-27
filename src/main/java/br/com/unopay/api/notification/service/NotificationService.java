@@ -65,7 +65,7 @@ public class NotificationService {
     }
 
     public void sendNewPassword(UserDetail user) {
-        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.BACKOFFICE);
+        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.UNOPAY);
     }
 
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
