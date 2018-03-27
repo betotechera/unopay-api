@@ -9,6 +9,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.service.GroupService;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -195,9 +197,10 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/users/me/password", method = DELETE)
-    public void resetPassword(OAuth2Authentication authentication) {
-        LOGGER.info("password reset request. to user={}", authentication.getName());
-        userDetailService.resetPasswordByEmail(authentication.getName());
+    public void resetPassword(OAuth2Authentication authentication, HttpServletRequest request,
+                              @RequestParam RequestOrigin requestOrigin) {
+        LOGGER.info("password reset request. to user={} on {}", authentication.getName(), requestOrigin.getDescription());
+        userDetailService.resetPasswordByEmail(authentication.getName(), requestOrigin);
     }
 
     @ResponseStatus(NO_CONTENT)
@@ -211,10 +214,10 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
-    public void resetPasswordByEmail(HttpServletRequest request) {
+    public void resetPasswordByEmail(HttpServletRequest request, @RequestParam RequestOrigin origin) {
         String email = request.getParameter("email");
-        LOGGER.info("password reset request. to user={}", email);
-        userDetailService.resetPasswordByEmail(email);
+        LOGGER.info("password reset request. to user={} on {}", email, origin.getDescription());
+        userDetailService.resetPasswordByEmail(email, origin);
     }
 
     @JsonView(Views.UserCreditCard.List.class)

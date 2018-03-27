@@ -118,6 +118,8 @@ public final class Errors {
             new UnovationError("UNKNOWN_GROUP_FOUND","Unknown group found in group list");
     public static final UnovationError USER_EMAIL_ALREADY_EXISTS =
             new UnovationError("USER_EMAIL_ALREADY_EXISTS","User email already exists");
+    public static final UnovationError VALID_PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED =
+            new UnovationError("VALID_PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED","Valid password reset request origin required");
 
     /* payment rule group */
     public static final UnovationError PAYMENT_RULE_GROUP_CODE_ALREADY_EXISTS =

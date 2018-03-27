@@ -5,8 +5,12 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.NewPassword
+import br.com.unopay.api.uaa.model.RequestOrigin
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.uaa.service.UserDetailService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -42,6 +46,15 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
 
     @Autowired
     private FixtureCreator fixtureCreator
+
+    @Autowired
+    UserDetailService service
+
+    NotificationService notificationService = Mock(NotificationService)
+
+    def setup(){
+        service.notificationService = notificationService
+    }
 
     void should_create_user() throws Exception {
         given:
@@ -158,6 +171,27 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
             result.andExpect(status().isOk())
                 .andExpect(jsonPath('$.groups',is(notNullValue())))
                 .andExpect(jsonPath('$.groups[0].authorities', is(notNullValue())))
+    }
+
+    void 'should update my password'() {
+        given:
+        UserDetail user = getUserWithGroup()
+
+        MvcResult mvcResult = expectUserCreatedAndPasswordFlowOk(getUserAccessToken(), user)
+        String userAccessToken = getAccessToken(mvcResult)
+
+        NewPassword newPassword = new NewPassword() {{
+            password = "123123"
+        }}
+
+        when:
+        def result = this.mvc.perform(
+                put("/users/me/password?access_token={access_token}", userAccessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(newPassword)))
+
+        then:
+        result.andExpect(status().isNoContent())
     }
 
     void 'should return groups authorities inline when get profile'() {
@@ -298,6 +332,21 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.expirationMonth', is(notNullValue())))
+
+    }
+
+    void 'given known user should reset password'(){
+
+        given:
+        UserDetail user = fixtureCreator.createUser()
+        String accessToken = getClientAccessToken()
+        RequestOrigin origin = RequestOrigin.BACKOFFICE
+        when:
+        def result = this.mvc.perform(get('/users/password/?access_token={access_token}&email={email}&origin={origin}', accessToken, user.email, origin.name())
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isNoContent())
 
     }
 

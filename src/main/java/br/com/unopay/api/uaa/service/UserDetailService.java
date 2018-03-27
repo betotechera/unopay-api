@@ -9,6 +9,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.UserReferencesValidator;
 import br.com.unopay.api.uaa.model.UserType;
@@ -51,6 +52,9 @@ public class UserDetailService implements UserDetailsService {
 
     public static final String CONTRACTOR = "CONTRATADO";
     public static final String CONTRACTOR_ROLE = "ROLE_CONTRACTOR";
+    public static final String UNOPAY = "unopay";
+    public static final String BACKOFFICE = "backoffice";
+
 
     private UserDetailRepository userDetailRepository;
     private UserTypeService userTypeService;
@@ -193,11 +197,20 @@ public class UserDetailService implements UserDetailsService {
 
     public void resetPasswordById(String userId) {
         UserDetail user = getById(userId);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, RequestOrigin.BACKOFFICE);
     }
-    public void resetPasswordByEmail(String email) {
+
+    public void resetPasswordByEmail(String email, RequestOrigin requestOrigin) {
+        validateRequestOrigin(requestOrigin);
         UserDetail user = getByEmail(email);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, requestOrigin);
+    }
+
+    private void validateRequestOrigin(RequestOrigin requestOrigin) {
+        if(requestOrigin == null) {
+            throw UnovationExceptions.badRequest()
+                    .withErrors(Errors.VALID_PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED);
+        }
     }
 
     @Transactional(rollbackOn = Throwable.class)

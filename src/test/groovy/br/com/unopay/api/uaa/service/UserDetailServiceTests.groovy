@@ -13,10 +13,12 @@ import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.infra.PasswordTokenService
 import br.com.unopay.api.uaa.model.Group
 import br.com.unopay.api.uaa.model.NewPassword
+import br.com.unopay.api.uaa.model.RequestOrigin
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.model.UserType
 import br.com.unopay.api.uaa.model.filter.UserFilter
 import br.com.unopay.api.uaa.repository.UserTypeRepository
+import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -385,10 +387,10 @@ class UserDetailServiceTests extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         def created = service.create(user)
         when:
-        service.resetPasswordByEmail(created.getEmail())
+        service.resetPasswordByEmail(created.getEmail(), RequestOrigin.UNOPAY)
 
         then:
-        1 * notificationService.sendNewPassword(_, EventType.PASSWORD_RESET)
+        1 * notificationService.sendNewPassword(_, EventType.PASSWORD_RESET,_)
     }
 
     void 'given a unknown user when set reset password by email should return error'() {
@@ -396,7 +398,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
 
         when:
-        service.resetPasswordByEmail(user.getEmail())
+        service.resetPasswordByEmail(user.getEmail(), RequestOrigin.UNOPAY)
 
         then:
         thrown(NotFoundException)
@@ -410,7 +412,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         service.resetPasswordById(created.getId())
 
         then:
-        1 * notificationService.sendNewPassword(_,EventType.PASSWORD_RESET)
+        1 * notificationService.sendNewPassword(_,EventType.PASSWORD_RESET,_)
     }
 
     void 'given a unknown user when set reset password by id should return error'() {
@@ -422,6 +424,19 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
         then:
         thrown(NotFoundException)
+    }
+
+    void 'when reset password by email without requestOrigin should return error'() {
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        service.create(user)
+
+        when:
+        service.resetPasswordByEmail(user.getEmail(), null)
+
+        then:
+        thrown(BadRequestException)
+
     }
 
     void 'given a known user when update password by token with valid token should updated'() {
