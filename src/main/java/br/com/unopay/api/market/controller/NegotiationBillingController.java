@@ -50,24 +50,24 @@ public class NegotiationBillingController {
         service.process(id);
     }
 
-    @JsonView(Views.HirerNegotiation.Detail.class)
+    @JsonView(Views.NegotiationBilling.Detail.class)
     @ResponseStatus(OK)
     @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION_BILLING')")
-    @RequestMapping(value = "/negotiation-billings/{id}", method = GET)
+    @RequestMapping(value = "/hirer-negotiation-billings/{id}", method = GET)
     public NegotiationBilling get(@PathVariable String id) {
         log.info("get negotiation={}", id);
         return service.findById(id);
     }
 
-    @JsonView(Views.HirerNegotiation.List.class)
+    @JsonView(Views.NegotiationBilling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_HIRER_NEGOTIATION_BILLING')")
-    @RequestMapping(value = "/negotiation-billings", method = RequestMethod.GET)
+    @RequestMapping(value = "/hirer-negotiation-billings", method = RequestMethod.GET)
     public Results<NegotiationBilling> getByParams(NegotiationBillingFilter filter,
                                                  @Validated UnovationPageRequest pageable) {
         log.info("search negotiation with filter={}", filter);
         Page<NegotiationBilling> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/negotiation-billings", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer-negotiation-billings", api));
     }
 }
