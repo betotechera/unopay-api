@@ -188,7 +188,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
             add("paymentDay", getNear(delay))
-            add("effectiveDate", instant("${ticketDeadLineInDays + delay} days from now"))
+            add("effectiveDate", instant("${getNear(delay)} days from now"))
             add("installments", 2)
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
