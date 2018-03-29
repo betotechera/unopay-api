@@ -27,7 +27,7 @@ class CobrancaOnlineBuilderTest extends FixtureApplicationTest{
                 .build()
 
         then:
-        entries.find { it.key == 'PAGADOR.NOME' }.value == payer.name
+        entries.find { it.key == 'PAGADOR.NOME' }.value == payer.shortName
         entries.find { it.key == 'PAGADOR.TP-DOC' }.value == payer.documentType()
         entries.find { it.key == 'PAGADOR.NUM-DOC' }.value == payer.documentNumber()
         entries.find { it.key == 'PAGADOR.BAIRRO' }.value == payer.address.district
