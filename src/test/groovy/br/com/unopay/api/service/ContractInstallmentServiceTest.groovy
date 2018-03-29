@@ -363,6 +363,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         def monthsAgo = 5
         def contract = fixtureCreator.createPersistedContract()
         def negotiation = fixtureCreator.createNegotiation(contract.hirer, contract.product, instant("5 months ago"))
+        service.setCurrentDate(new Date())
 
         when:
         service.createForHirer(contract)

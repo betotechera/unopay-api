@@ -163,6 +163,7 @@ class ContractServiceTest extends SpockApplicationTests {
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         def hirer = fixtureCreator.createHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        installmentService.setCurrentDate(new Date())
         def negotiation = fixtureCreator.createNegotiation(hirer, product, instant("5 months ago"))
 
         when:
