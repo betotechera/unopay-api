@@ -51,7 +51,7 @@ public class CobrancaOlnineBuilder {
     public List<TicketRequest.Dados.Entry> build() {
         List<TicketRequest.Dados.Entry> entries = new ArrayList<>();
         new TicketRequest.Dados.Entry();
-        entries.add(entry("PAGADOR.NOME", payer.getName()));
+        entries.add(entry("PAGADOR.NOME", payer.getShortName()));
         entries.add(entry("PAGADOR.TP-DOC", payer.documentType()));
         entries.add(entry("PAGADOR.NUM-DOC", payer.documentNumber()));
         entries.add(entry("PAGADOR.BAIRRO", payer.getAddress().getDistrict()));
