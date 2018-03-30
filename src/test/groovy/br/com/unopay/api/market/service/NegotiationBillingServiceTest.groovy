@@ -96,13 +96,13 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         that billings, hasSize(1)
     }
 
-
     def "given known negotiation with effective date in the future when process should not create billings"(){
         given:
+        def delay = 5
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
-            add("effectiveDate", instant("2 days from now"))
+            add("effectiveDate", instant("${getNear(delay)} days from now"))
             add("installments", 2)
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),negotiation.product,negotiation.hirer)
@@ -119,7 +119,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     def """given known negotiation with payment day after ticket deadline and past effective date
             when process should not create billings"""(){
         given:
-        def delay = 1
+        def delay = 5
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
@@ -184,7 +184,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
     def """given known negotiation with payment day not equals ticket deadline and
             effective date not equals ticket deadline when process should not create billings"""(){
         given:
-        def delay = 1
+        def delay = 5
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
