@@ -10,6 +10,7 @@ import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.market.service.DealCloseService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.DealClose;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -34,7 +35,6 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -83,6 +83,7 @@ public class OrderService {
     private MailValidator mailValidator;
     private Validator validator;
     private UserCreditCardService userCreditCardService;
+    private DealCloseService dealCloseService;
 
     public OrderService(){}
 
@@ -100,7 +101,7 @@ public class OrderService {
                         NotificationService notificationService,
                         MailValidator mailValidator,
                         Validator validator,
-                        UserCreditCardService userCreditCardService){
+                        UserCreditCardService userCreditCardService, DealCloseService dealCloseService){
         this.repository = repository;
         this.personService = personService;
         this.productService = productService;
@@ -115,6 +116,7 @@ public class OrderService {
         this.mailValidator = mailValidator;
         this.validator = validator;
         this.userCreditCardService = userCreditCardService;
+        this.dealCloseService = dealCloseService;
     }
 
     public Order save(Order order) {
@@ -250,7 +252,7 @@ public class OrderService {
             }
             if(order.isType(ADHESION)){
                 DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode());
-                contractService.dealCloseWithIssuerAsHirer(dealClose);
+                dealCloseService.dealCloseWithIssuerAsHirer(dealClose);
                 log.info("adhesion paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
                 notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);

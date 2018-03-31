@@ -1,6 +1,6 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.market.model.AuthorizedMember;
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class DealClose {
         this.members = new HashSet<>();
     }
 
-    public DealClose(Person person, String productCode, Set<AuthorizedMember> members) {
+    public DealClose(Person person, String productCode, Set<AuthorizedMemberCandidate> members) {
         this.person = person;
         this.productCode = productCode;
         this.members = members;
@@ -30,7 +30,7 @@ public class DealClose {
     private Person person;
     private String hirerDocument;
     private String productCode;
-    private Set<AuthorizedMember> members;
+    private Set<AuthorizedMemberCandidate> members;
 
     public Boolean hasHirerDocument() {
         return this.hirerDocument != null;
