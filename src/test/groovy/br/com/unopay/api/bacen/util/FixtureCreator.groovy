@@ -12,6 +12,7 @@ import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Event
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
@@ -590,6 +591,19 @@ class FixtureCreator {
         from(AuthorizedMember.class).gimme("valid", new Rule() {{
             add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
             add("contract", contract)
+        }})
+    }
+
+    AuthorizedMemberCandidate createAuthorizedMemberCandidateToPersist() {
+        def order = createPersistedAdhesionOrder(createContractor().person)
+        from(AuthorizedMemberCandidate.class).gimme("valid", new Rule() {{
+            add("order", order)
+        }})
+    }
+
+    AuthorizedMemberCandidate createAuthorizedMemberCandidateForOrder(Order order = createPersistedAdhesionOrder(createContractor().person)) {
+        from(AuthorizedMemberCandidate.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("order", order)
         }})
     }
 }

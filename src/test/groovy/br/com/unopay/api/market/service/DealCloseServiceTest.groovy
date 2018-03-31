@@ -5,7 +5,6 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.service.AuthorizedMemberService
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant

@@ -1,5 +1,6 @@
-package br.com.unopay.api.bacen.service
+package br.com.unopay.api.market.service
 
+import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.model.Gender
 import br.com.unopay.api.model.Relatedness
 
@@ -34,17 +35,15 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.multipart.MultipartFile
 
 class AuthorizedMemberServiceTest extends SpockApplicationTests {
-    @Autowired
-    AuthorizedMemberService service
 
     @Autowired
-    FixtureCreator fixtureCreator
-
+    private AuthorizedMemberService service
+    @Autowired
+    private FixtureCreator fixtureCreator
     @Autowired
     private PasswordEncoder passwordEncoder
-
     @Autowired
-    ResourceLoader resourceLoader
+    private ResourceLoader resourceLoader
 
     void 'given valid AuthorizedMember should create'(){
         given:

@@ -6,36 +6,21 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.bacen.service.AuthorizedMemberService
-import br.com.unopay.api.market.model.AuthorizedMemberCandidate
-import br.com.unopay.api.market.model.HirerNegotiation
-import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
-import static br.com.unopay.api.function.FixtureFunctions.*
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.model.DealClose
-import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.exception.Errors
-import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.service.UserDetailService
-import br.com.unopay.api.util.Time
-import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.Resource
-import org.springframework.core.io.ResourceLoader
-import org.springframework.mock.web.MockMultipartFile
-import org.springframework.web.multipart.MultipartFile
 import static spock.util.matcher.HamcrestSupport.that
 
 class ContractServiceTest extends SpockApplicationTests {
