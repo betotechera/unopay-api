@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.service;
 
-import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.csv.AuthorizedMemberCsv;

@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.market.model.AuthorizedMember
 
 class AuthorizedMemberTest extends FixtureApplicationTest{
     

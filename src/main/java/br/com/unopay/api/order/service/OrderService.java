@@ -11,6 +11,7 @@ import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.DealClose;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
@@ -33,6 +34,7 @@ import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -247,7 +249,8 @@ public class OrderService {
                 return;
             }
             if(order.isType(ADHESION)){
-                contractService.dealCloseWithIssuerAsHirer(order.getPerson(), order.getProductCode());
+                DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode());
+                contractService.dealCloseWithIssuerAsHirer(dealClose);
                 log.info("adhesion paid for order={} type={} of value={}",
                         order.getId(),order.getType(), order.getValue());
                 notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);

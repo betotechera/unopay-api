@@ -1,4 +1,4 @@
-package br.com.unopay.api.bacen.model;
+package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Document;

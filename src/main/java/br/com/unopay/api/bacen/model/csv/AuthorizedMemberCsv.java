@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.model.csv;
 
-import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.model.Document;
 import br.com.unopay.api.model.DocumentType;
 import br.com.unopay.api.model.Gender;

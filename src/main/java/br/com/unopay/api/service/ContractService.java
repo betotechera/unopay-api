@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractSituation;
+import br.com.unopay.api.model.DealClose;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
@@ -123,28 +124,34 @@ public class ContractService {
     }
 
     @Transactional
-    public Contract dealCloseWithIssuerAsHirer(Person person, String productCode){
-        return dealClose(person, productCode, null);
+    public Contract dealCloseWithIssuerAsHirer(final DealClose dealClose){
+        checkContractor(dealClose.getPerson().documentNumber());
+        Contractor contractor = contractorService.create(new Contractor(dealClose.getPerson()));
+        return dealClose(dealClose, contractor);
     }
 
     @Transactional
-    public Contract dealClose(Person person, String productCode, String hirerDocument){
+    public Contract doDealClose(final Person person, final String productCode, final String hirerDocument){
+        DealClose dealClose = new DealClose(person, hirerDocument, productCode);
         checkContractor(person.documentNumber());
-        Product product = productService.findByCode(productCode);
         Contractor contractor = contractorService.create(new Contractor(person));
-        Hirer hirer = getHirer(hirerDocument, product);
-        Contract contract = new Contract(product);
+        return dealClose(dealClose, contractor);
+    }
+
+    private Contract dealClose(DealClose dealClose, Contractor contractor) {
+        Product product = productService.findByCode(dealClose.getProductCode());
+        Hirer hirer = getHirer(dealClose.getHirerDocument(), product);
+        Contract contract = new Contract(product,dealClose.getMembers().size());
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor));
-        Contract created = create(contract, hirerDocument != null);
+        Contract created = create(contract, dealClose.hasHirerDocument());
         if(!contract.withMembershipFee()) {
             installmentService.markAsPaid(created.getId(), product.getInstallmentValue());
         }
         return contract;
     }
-
 
 
     private Hirer getHirer(String hirerDocument, Product product) {
@@ -325,7 +332,7 @@ public class ContractService {
         dealCloseCsvs.forEach(line -> {
             lineNumber[0]++;
             line.validate(validator, lineNumber[0]);
-            dealClose(line.toPerson(), line.getProduct(), hirerDocument);
+            doDealClose(line.toPerson(), line.getProduct(), hirerDocument);
         });
         if(dealCloseCsvs.isEmpty()){
             throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);

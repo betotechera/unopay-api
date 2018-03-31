@@ -102,7 +102,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
     def 'given a valid contract should create the installments with annuity by installment number'(){
         given:
         def contract = fixtureCreator.createPersistedContract()
-        def installmentExpected = Rounder.round(contract.annuity / contract.paymentInstallments)
+        def installmentExpected = Rounder.round(contract.annuityTotal() / contract.paymentInstallments)
         when:
         service.create(contract)
         Set<ContractInstallment> result = service.findByContractId(contract.id)

@@ -6,7 +6,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.bacen.model.AccreditedNetwork
-import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
@@ -40,7 +40,6 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.model.UserDetail
-import org.joda.time.LocalDate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
