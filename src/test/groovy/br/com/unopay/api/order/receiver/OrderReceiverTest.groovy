@@ -11,7 +11,7 @@ import br.com.unopay.api.billing.creditcard.service.TransactionService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
-import br.com.unopay.api.order.service.OrderService
+import br.com.unopay.api.order.service.OrderProcessor
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.util.GenericObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -23,13 +23,9 @@ class OrderReceiverTest extends  FixtureApplicationTest {
     GenericObjectMapper genericObjectMapper = new GenericObjectMapper(objectMapper)
     TransactionService transactionalServiceMock = Mock(TransactionService)
     ContractorInstrumentCreditService instrumentCreditServiceMock = Mock(ContractorInstrumentCreditService)
-    OrderService orderServiceMock = Mock(OrderService)
+    OrderProcessor orderProcessorMock = Mock(OrderProcessor)
     ContractService contractServiceMock = Mock(ContractService)
     TicketService boletoServiceMock = Mock(TicketService)
-
-    def setup(){
-        orderServiceMock.findById(_) >> Fixture.from(Order.class).gimme("valid")
-    }
 
     def 'when receive boleto order should call boleto service'(){
         given:
@@ -39,7 +35,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         }})
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         0 * transactionalServiceMock.create(_)
@@ -54,7 +50,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         }})
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         1 * transactionalServiceMock.create(_)  >> new Transaction()
@@ -70,7 +66,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         }})
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         0 * transactionalServiceMock.create(_)  >> new Transaction()
@@ -92,7 +88,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
 
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         0 * contractServiceMock.markInstallmentAsPaidFrom(creditOrder)
@@ -108,7 +104,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.DENIED)}}
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         0 * instrumentCreditServiceMock.processOrder(creditOrder)
@@ -123,13 +119,13 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         }})
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         1 * transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.CAPTURED)}}
 
         then:
-        1 * orderServiceMock.processWithStatus(creditOrder.id, TransactionStatus.CAPTURED)
+        1 * orderProcessorMock.processWithStatus(creditOrder.id, TransactionStatus.CAPTURED)
     }
 
     @Unroll
@@ -143,7 +139,7 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         }})
         def valueAsString = objectMapper.writeValueAsString(creditOrder)
         when:
-        receiver.transactionNotify(valueAsString)
+        receiver.orderCreated(valueAsString)
 
         then:
         1 * transactionalServiceMock.create(_) >> new Transaction() {{ setStatus(TransactionStatus.CAPTURED)}}
@@ -157,7 +153,25 @@ class OrderReceiverTest extends  FixtureApplicationTest {
         _ | OrderType.ADHESION
     }
 
+    def 'when update order should call order service'(){
+        given:
+        def receiver = createOrderReceiver()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("paymentRequest.method", PaymentMethod.CARD)
+            add("type", OrderType.CREDIT)
+        }})
+        def valueAsString = objectMapper.writeValueAsString(creditOrder)
+        when:
+        receiver.orderUpdated(valueAsString)
+
+        then:
+        0 * transactionalServiceMock.create(_)
+
+        then:
+        1 * orderProcessorMock.process(creditOrder)
+    }
+
     private OrderReceiver createOrderReceiver() {
-        new OrderReceiver(transactionalServiceMock, genericObjectMapper, orderServiceMock, boletoServiceMock)
+        new OrderReceiver(transactionalServiceMock, genericObjectMapper, orderProcessorMock, boletoServiceMock)
     }
 }

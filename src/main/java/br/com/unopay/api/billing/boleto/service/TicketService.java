@@ -22,6 +22,7 @@ import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.service.OrderProcessor;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -62,6 +63,7 @@ public class TicketService {
 
     @Getter private TicketRepository repository;
     @Setter private OrderService orderService;
+    @Setter private OrderProcessor orderProcessor;
     @Setter private CreditService creditService;
     @Setter private CobrancaOnlineService cobrancaOnlineService;
     @Setter private FileUploaderService fileUploaderService;
@@ -81,7 +83,7 @@ public class TicketService {
     @Autowired
     public TicketService(TicketRepository repository,
                          OrderService orderService,
-                         CreditService creditService,
+                         OrderProcessor orderProcessor, CreditService creditService,
                          CobrancaOnlineService cobrancaOnlineService,
                          FileUploaderService fileUploaderService,
                          LayoutExtractorSelector layoutExtractorSelector,
@@ -89,6 +91,7 @@ public class TicketService {
                          NegotiationBillingService negotiationBillingService) {
         this.repository = repository;
         this.orderService = orderService;
+        this.orderProcessor = orderProcessor;
         this.creditService = creditService;
         this.cobrancaOnlineService = cobrancaOnlineService;
         this.fileUploaderService = fileUploaderService;
@@ -213,7 +216,7 @@ public class TicketService {
 
     private void processOrderAsPaid(Ticket ticket) {
         defineOccurrence(ticket, PAID);
-        orderService.processAsPaid(ticket.getSourceId());
+        orderProcessor.processAsPaid(ticket.getSourceId());
     }
 
     private void processCreditAsPaid(Ticket ticket) {

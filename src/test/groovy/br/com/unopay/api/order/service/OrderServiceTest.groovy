@@ -11,18 +11,14 @@ import br.com.unopay.api.billing.creditcard.model.PaymentRequest
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
-import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.Person
-import br.com.unopay.api.notification.model.EventType
-import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
-import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.ConflictException
@@ -37,31 +33,20 @@ import static spock.util.matcher.HamcrestSupport.that
 class OrderServiceTest extends SpockApplicationTests{
 
     @Autowired
-    OrderService service
-
+    private OrderService service
     @Autowired
-    PersonService personService
-
+    private PersonService personService
     @Autowired
-    ContractInstallmentService installmentService
-
+    private ContractInstallmentService installmentService
     @Autowired
-    ContractService contractService
-
+    private UserCreditCardService userCreditCardService
     @Autowired
-    ContractorInstrumentCreditService instrumentCreditService
+    private FixtureCreator fixtureCreator
 
-    @Autowired
-    UserCreditCardService userCreditCardService
+    private Contract contractUnderTest
+    private ContractInstallment installmentUnderTest
 
-    @Autowired
-    FixtureCreator fixtureCreator
-
-    Contract contractUnderTest
-    ContractInstallment installmentUnderTest
-
-    NotificationService notificationServiceMock = Mock(NotificationService)
-    Notifier notifierMock = Mock(Notifier)
+    private Notifier notifierMock = Mock(Notifier)
 
     def setup(){
         contractUnderTest = fixtureCreator.createPersistedContract(fixtureCreator.createContractor(),
@@ -69,7 +54,6 @@ class OrderServiceTest extends SpockApplicationTests{
         installmentService.create(contractUnderTest)
         installmentUnderTest = installmentService.findByContractId(contractUnderTest.id).find()
         service.notifier = notifierMock
-        service.notificationService = notificationServiceMock
     }
 
     def 'a valid order with known person should be created'(){
@@ -82,45 +66,6 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result != null
-    }
-
-    def 'given a credit order with paid status and credit type should call credit service'(){
-        given:
-        Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID, OrderType.CREDIT, contractor)
-
-        when:
-        service.process(paid)
-
-        then:
-        def result = instrumentCreditService.findByContractorId(contractor.id)
-        result.availableBalance == paid.value
-    }
-
-    def 'given a adhesion order with paid status should create contract'(){
-        given:
-        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
-
-        when:
-        service.process(paid)
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
-
-        then:
-        contract.isPresent()
-    }
-
-    def 'given a installment payment order with paid status should mark installment as paid'(){
-        given:
-        Contractor contractor = fixtureCreator.createContractor("physical")
-        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID, OrderType.INSTALLMENT_PAYMENT, contractor)
-
-        when:
-        service.process(paid)
-
-        then:
-        def result = installmentService.findByContractId(paid.getContractId())
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
     }
 
     def 'given a known credit order with status waiting payment should update to paid status'(){
@@ -138,52 +83,7 @@ class OrderServiceTest extends SpockApplicationTests{
         def result = service.findById(orderA.id)
 
         then:
-        result.status == PaymentStatus.PAID
-    }
-
-    def 'given a credit order with paid status should send payment approved email'(){
-        given:
-        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAID)
-
-        when:
-        service.process(paid)
-
-        then:
-        1 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_APPROVED)
-        0 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_DENIED)
-    }
-
-    def 'given a credit order with payment denied status should send payment denied email'(){
-        given:
-        def paid = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.PAYMENT_DENIED)
-
-        when:
-        service.process(paid)
-
-        then:
-        1 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_DENIED)
-        0 * notificationServiceMock.sendPaymentEmail(_, EventType.PAYMENT_APPROVED)
-    }
-
-    def 'given a known credit order with status waiting payment when update status to paid should insert credit to payment instrument'() {
-        given:
-        Contractor contractor = fixtureCreator.createContractor("physical")
-
-        def orderA = fixtureCreator.createPersistedOrderWithStatus(PaymentStatus.WAITING_PAYMENT, OrderType.CREDIT, contractor)
-
-        Order orderB = Fixture.from(Order.class).gimme("valid", new Rule() {{
-            add("status", PaymentStatus.PAID)
-            add("contract", orderA.contract)
-        }})
-
-        when:
-
-        service.update(orderA.id, orderB)
-        def credit = instrumentCreditService.findByContractorId(contractor.id)
-
-        then:
-        orderA.value == credit.value
-
+        notifierMock.notify(Queues.ORDER_UPDATED, result)
     }
 
     def 'given a known order with status canceled when trying to update should return error'(){
@@ -200,7 +100,6 @@ class OrderServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(UnauthorizedException)
         ex.errors.first().logref == 'UNABLE_TO_UPDATE_ORDER_STATUS'
-
     }
 
     def 'given a unknown order with status waiting payment should return error'(){

@@ -6,6 +6,7 @@ import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,10 @@ public class AuthorizedMemberCandidateService {
         Optional<AuthorizedMemberCandidate> authorizedMember = repository.findById(id);
         return authorizedMember.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
                 Errors.AUTHORIZED_MEMBER_NOT_FOUND));
+    }
+
+    public Set<AuthorizedMemberCandidate> findByOrderId(String orderId) {
+        return repository.findByOrderId(orderId);
     }
 
     public void update(String id, AuthorizedMemberCandidate authorizedMember) {
