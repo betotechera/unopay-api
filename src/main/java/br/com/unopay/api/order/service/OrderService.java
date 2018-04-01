@@ -123,7 +123,7 @@ public class OrderService {
         incrementNumber(order);
         orderValidator.checkContractorRules(order);
         definePaymentValueWhenRequired(order);
-        order.setCreateDateTime(new Date());
+        order.setMeUp();
         orderValidator.checkHirerWhenRequired(order);
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());

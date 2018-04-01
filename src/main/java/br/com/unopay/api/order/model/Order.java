@@ -5,6 +5,7 @@ import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -25,6 +26,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -33,6 +37,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -118,6 +123,10 @@ public class Order implements Updatable, Billable{
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="order_id")
+    private Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
 
     @Transient
     private PaymentRequest paymentRequest;
@@ -220,6 +229,13 @@ public class Order implements Updatable, Billable{
         return null;
     }
 
+    public void setMeUp(){
+        setCreateDateTime(new Date());
+        if(!isType(OrderType.ADHESION)) {
+            setCandidates(new HashSet<>());
+        }
+
+    }
 
     @JsonIgnore
     public String getBillingMail() {

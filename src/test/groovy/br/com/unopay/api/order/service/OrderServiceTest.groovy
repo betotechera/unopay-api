@@ -12,6 +12,8 @@ import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate
+import br.com.unopay.api.market.service.AuthorizedMemberCandidateService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.Person
@@ -42,6 +44,8 @@ class OrderServiceTest extends SpockApplicationTests{
     private UserCreditCardService userCreditCardService
     @Autowired
     private FixtureCreator fixtureCreator
+    @Autowired
+    private AuthorizedMemberCandidateService candidateService
 
     private Contract contractUnderTest
     private ContractInstallment installmentUnderTest
@@ -272,6 +276,54 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | fee
         _ | null
         _ | 0
+    }
+
+    def 'given a adhesion order with candidates should create member candidates'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+        }})
+        def candidate = fixtureCreator.createAuthorizedMemberCandidateToPersist()
+        creditOrder.candidates = [candidate] as Set
+
+        when:
+        def created = service.create(creditOrder)
+        def candidates = candidateService.findByOrderId(created.id)
+
+        then:
+        that candidates, hasSize(1)
+    }
+
+    def 'given a non adhesion order with candidates should not create member candidates'(){
+        given:
+        def type = orderType
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", type)
+            add("contract", contractUnderTest)
+        }})
+        def candidate = fixtureCreator.createAuthorizedMemberCandidateToPersist()
+        creditOrder.candidates = [candidate] as Set
+
+        when:
+        def created = service.create(creditOrder)
+        def candidates = candidateService.findByOrderId(created.id)
+
+        then:
+        that candidates, hasSize(0)
+
+        where:
+        _ | orderType
+        _ | OrderType.CREDIT
+        _ | OrderType.INSTALLMENT_PAYMENT
     }
 
     def 'given a adhesion order for product with membership fee then the payment value should be membership fee value'(){
