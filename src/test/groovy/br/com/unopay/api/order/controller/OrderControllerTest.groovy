@@ -4,8 +4,8 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests

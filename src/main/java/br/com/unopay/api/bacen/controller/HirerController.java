@@ -1,18 +1,16 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.bacen.model.AuthorizedMember;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
-import br.com.unopay.api.bacen.service.AuthorizedMemberService;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
-import br.com.unopay.api.billing.boleto.service.TicketService;
-import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
@@ -24,6 +22,7 @@ import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
+import br.com.unopay.api.market.service.DealCloseService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Contract;
@@ -82,11 +81,10 @@ public class HirerController {
     private CreditPaymentAccountService creditPaymentAccountService;
     private PaymentInstrumentService paymentInstrumentService;
     private ContractorInstrumentCreditService contractorInstrumentCreditService;
-    private TicketService ticketService;
-    private TransactionService transactionService;
     private HirerNegotiationService hirerNegotiationService;
     private AuthorizedMemberService authorizedMemberService;
     private NegotiationBillingService negotiationBillingService;
+    private DealCloseService dealCloseService;
 
     @Value("${unopay.api}")
     private String api;
@@ -99,10 +97,10 @@ public class HirerController {
                            CreditPaymentAccountService creditPaymentAccountService,
                            PaymentInstrumentService paymentInstrumentService,
                            ContractorInstrumentCreditService contractorInstrumentCreditService,
-                           TicketService ticketService, TransactionService transactionService,
                            HirerNegotiationService hirerNegotiationService,
                            AuthorizedMemberService authorizedMemberService,
-                           NegotiationBillingService negotiationBillingService) {
+                           NegotiationBillingService negotiationBillingService,
+                           DealCloseService dealCloseService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -110,11 +108,10 @@ public class HirerController {
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractorInstrumentCreditService = contractorInstrumentCreditService;
-        this.ticketService = ticketService;
-        this.transactionService = transactionService;
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
         this.negotiationBillingService = negotiationBillingService;
+        this.dealCloseService = dealCloseService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -189,7 +186,7 @@ public class HirerController {
     public void createFromCsvById(@PathVariable  String document, @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file {}", fileName);
-        contractService.dealCloseFromCsv(document, file);
+        dealCloseService.dealCloseFromCsv(document, file);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -199,7 +196,7 @@ public class HirerController {
                                     @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file={} for={}", fileName, authentication.getName());
-        contractService.dealCloseFromCsvForCurrentUser(authentication.getName(), file);
+        dealCloseService.dealCloseFromCsvForCurrentUser(authentication.getName(), file);
     }
 
     @ResponseStatus(OK)

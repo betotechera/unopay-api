@@ -157,6 +157,11 @@ public class Product implements Serializable, Updatable {
     @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private BigDecimal annuity;
 
+    @Column(name = "member_annuity")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
+    private BigDecimal memberAnnuity;
+
     @Column(name = "payment_installments")
     @JsonView({Views.Product.Detail.class, Views.Product.List.class})
     private Integer paymentInstallments;
@@ -207,6 +212,11 @@ public class Product implements Serializable, Updatable {
 
     @JsonProperty
     public BigDecimal getInstallmentValue(){
-        return Rounder.round(new BigDecimal(getAnnuity().doubleValue() / getPaymentInstallments()));
+        return Rounder.round(new BigDecimal(annuityTotal().doubleValue() / getPaymentInstallments()));
+    }
+
+    @JsonProperty
+    public BigDecimal annuityTotal() {
+        return this.getMemberAnnuity() == null ? this.annuity : this.annuity.add(this.getMemberAnnuity());
     }
 }

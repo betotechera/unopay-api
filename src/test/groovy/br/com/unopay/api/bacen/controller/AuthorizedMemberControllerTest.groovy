@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.controller
 
-import br.com.unopay.api.bacen.model.AuthorizedMember
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired

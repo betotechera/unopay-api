@@ -62,7 +62,12 @@ public class Contract implements Serializable {
     public Contract(){}
 
     public Contract(Product product){
+        this(product, 0);
+    }
+
+    public Contract(Product product, Integer memberTotal){
         this.product = product;
+        this.memberTotal = memberTotal;
         this.creditInsertionTypes = Collections.unmodifiableSet(product.getCreditInsertionTypes());
         this.code = Long.valueOf(RandomStringUtils.randomNumeric(10));
         this.name = product.getName();
@@ -168,6 +173,16 @@ public class Contract implements Serializable {
     @Column(name = "annuity")
     @JsonView({Views.Contract.Detail.class})
     private BigDecimal annuity;
+
+    @Column(name = "member_annuity")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
+    private BigDecimal memberAnnuity;
+
+    @Column(name = "member_total")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
+    private Integer memberTotal = 0;
 
     @Column(name = "membership_fee")
     @JsonView({Views.Contract.Detail.class})
@@ -313,6 +328,7 @@ public class Contract implements Serializable {
 
     public void setupMeUp() {
         this.annuity = product.getAnnuity();
+        this.memberAnnuity = product.getMemberAnnuity();
         this.membershipFee = product.getMembershipFee();
         this.paymentInstallments = product.getPaymentInstallments();
         this.createdDateTime = new Date();
@@ -336,5 +352,10 @@ public class Contract implements Serializable {
 
     public boolean hirerDocumentEquals(String hirerDocument) {
         return hirerDocumentNumber().equals(hirerDocument);
+    }
+
+    public BigDecimal annuityTotal() {
+        return this.getMemberAnnuity() == null ? this.annuity :
+                this.annuity.add(this.getMemberAnnuity().multiply(new BigDecimal(this.memberTotal)));
     }
 }

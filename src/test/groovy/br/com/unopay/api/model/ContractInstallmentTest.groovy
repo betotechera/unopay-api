@@ -119,7 +119,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         def installment = new ContractInstallment(contract,currentDate)
 
         then:
-        installment.value == Rounder.round(contract.annuity / contract.paymentInstallments)
+        installment.value == Rounder.round(contract.annuityTotal() / contract.paymentInstallments)
     }
 
     def 'when create from contract the contract should be the contract param'(){

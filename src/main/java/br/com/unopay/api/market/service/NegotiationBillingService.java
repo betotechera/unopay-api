@@ -2,7 +2,6 @@ package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.service.AuthorizedMemberService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;

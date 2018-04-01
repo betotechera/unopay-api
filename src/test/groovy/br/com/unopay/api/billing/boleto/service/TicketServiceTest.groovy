@@ -21,6 +21,7 @@ import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.service.NegotiationBillingService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.order.service.OrderProcessor
 import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.ConflictException
@@ -49,6 +50,7 @@ class TicketServiceTest extends SpockApplicationTests{
     NotificationService notificationServiceMock = Mock(NotificationService)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
+    OrderProcessor orderProcessorMock = Mock(OrderProcessor)
     CreditService creditServiceMock = Mock(CreditService)
     NegotiationBillingService negotiationBillingServiceMock = Mock(NegotiationBillingService)
     NumberGenerator numberGeneratorMock = Mock(NumberGenerator)
@@ -79,6 +81,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.negotiationBillingService = negotiationBillingServiceMock
         service.orderService = orderServiceMock
         service.creditService = creditServiceMock
+        service.orderProcessor = orderProcessorMock
         creditServiceMock.findById(_) >> credit
         orderServiceMock.findById(_) >> order
         orderServiceMock.findIdsByPersonEmail(_) >> []
@@ -124,7 +127,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.processTicketReturn(file)
 
         then:
-        1 * orderServiceMock.processAsPaid(order.id)
+        1 * orderProcessorMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
         0 * negotiationBillingServiceMock.processAsPaid(_)
     }
@@ -170,7 +173,7 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         1 * creditServiceMock.processAsPaid(credit.id)
-        0 * orderServiceMock.processAsPaid(_)
+        0 * orderProcessorMock.processAsPaid(_)
         0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
@@ -195,7 +198,7 @@ class TicketServiceTest extends SpockApplicationTests{
         then:
         1 * negotiationBillingServiceMock.processAsPaid(_)
         1 * creditServiceMock.processAsPaid(_)
-        0 * orderServiceMock.processAsPaid(_)
+        0 * orderProcessorMock.processAsPaid(_)
 
     }
 
@@ -218,7 +221,7 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         0 * creditServiceMock.processAsPaid(_)
-        0 * orderServiceMock.processAsPaid(_)
+        0 * orderProcessorMock.processAsPaid(_)
         0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
@@ -243,7 +246,7 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         0 * creditServiceMock.processAsPaid(_)
-        0 * orderServiceMock.processAsPaid(_)
+        0 * orderProcessorMock.processAsPaid(_)
         0 * negotiationBillingServiceMock.processAsPaid(_)
     }
 
@@ -320,7 +323,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.processTicketReturnForIssuer(issuer, file)
 
         then:
-        1 * orderServiceMock.processAsPaid(order.id)
+        1 * orderProcessorMock.processAsPaid(order.id)
         0 * creditServiceMock.processAsPaid(_)
     }
 
@@ -367,7 +370,7 @@ class TicketServiceTest extends SpockApplicationTests{
 
         then:
         1 * creditServiceMock.processAsPaid(credit.id)
-        0 * orderServiceMock.processAsPaid(_)
+        0 * orderProcessorMock.processAsPaid(_)
     }
 
 

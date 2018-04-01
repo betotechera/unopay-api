@@ -47,11 +47,11 @@ public class ContractInstallmentService {
     }
 
     @Transactional
-    public void createForHirer(Contract contract) {
+    public void createForHirer(final Contract contract) {
         HirerNegotiation negotiation = hirerNegotiationService
                                             .findByHirerDocument(contract.hirerDocumentNumber(), contract.productId());
         ContractInstallment firstInstallment = save(new ContractInstallment(contract,negotiation, currentDate));
-        int currentInstallmentNumber = getCurrentInstallmentNumber(negotiation);
+        final int currentInstallmentNumber = getCurrentInstallmentNumber(negotiation);
         create(firstInstallment, negotiation.getInstallments() - currentInstallmentNumber, currentNumber ->{
             ContractInstallment installment = new ContractInstallment(contract,negotiation, currentDate);
             installment.defineValue(negotiation ,currentNumber);
@@ -59,8 +59,8 @@ public class ContractInstallmentService {
         });
     }
 
-    private void create(ContractInstallment firstInstallment, int installments,
-                        Function<Integer, ContractInstallment> supplier) {
+    private void create(final ContractInstallment firstInstallment, final int installments,
+                        final Function<Integer, ContractInstallment> supplier) {
         final Date[] previousDate = { firstInstallment.getExpiration() };
         final int[] previousNumber = { firstInstallment.getInstallmentNumber() };
         IntStream.rangeClosed(2, installments).forEach(n->{
@@ -77,7 +77,7 @@ public class ContractInstallmentService {
         return repository.save(installment);
     }
 
-    public void update(String id, ContractInstallment installment) {
+    public void update(final String id,final ContractInstallment installment) {
         ContractInstallment current = findById(id);
         current.updateMe(installment);
         repository.save(current);

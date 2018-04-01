@@ -41,7 +41,7 @@ public class ContractInstallment implements Serializable, Updatable {
     public ContractInstallment(){}
 
     public ContractInstallment(Contract contract, Date currentDate) {
-        this.value = contract.getAnnuity()
+        this.value = contract.annuityTotal()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_EVEN);
         this.currentDate = currentDate;
         this.installmentNumber = ONE_INSTALLMENT;

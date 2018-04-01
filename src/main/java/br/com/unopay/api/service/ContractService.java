@@ -1,16 +1,11 @@
 package br.com.unopay.api.service;
 
-import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.csv.ContractorCsv;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractSituation;
-import br.com.unopay.api.model.PaymentInstrument;
-import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
@@ -21,32 +16,24 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
-import com.opencsv.bean.CsvToBeanBuilder;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-import javax.validation.Validator;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_HIRER_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
-import static br.com.unopay.api.uaa.exception.Errors.FILE_WIHOUT_LINES_OR_HEADER;
 
 @Timed
 @Slf4j
@@ -58,30 +45,22 @@ public class ContractService {
     private ContractorService contractorService;
     private ProductService productService;
     private ContractEstablishmentRepository contractEstablishmentRepository;
-    private PaymentInstrumentService paymentInstrumentService;
     private UserDetailService userDetailService;
     private ContractInstallmentService installmentService;
-    private Validator validator;
-
-    private static final char SEMICOLON = ';';
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
                            ContractorService contractorService, ProductService productService,
                            ContractEstablishmentRepository contractEstablishmentRepository,
-                           PaymentInstrumentService paymentInstrumentService,
                            UserDetailService userDetailService,
-                           ContractInstallmentService installmentService,
-                           Validator validator) {
+                           ContractInstallmentService installmentService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
         this.productService = productService;
         this.contractEstablishmentRepository = contractEstablishmentRepository;
-        this.paymentInstrumentService = paymentInstrumentService;
         this.userDetailService = userDetailService;
         this.installmentService = installmentService;
-        this.validator = validator;
     }
 
     public Contract create(Contract contract) {
@@ -119,45 +98,6 @@ public class ContractService {
         contractOptional.ifPresent((ThrowingConsumer)-> {
             throw UnovationExceptions.conflict()
                     .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
-        });
-    }
-
-    @Transactional
-    public Contract dealCloseWithIssuerAsHirer(Person person, String productCode){
-        return dealClose(person, productCode, null);
-    }
-
-    @Transactional
-    public Contract dealClose(Person person, String productCode, String hirerDocument){
-        checkContractor(person.documentNumber());
-        Product product = productService.findByCode(productCode);
-        Contractor contractor = contractorService.create(new Contractor(person));
-        Hirer hirer = getHirer(hirerDocument, product);
-        Contract contract = new Contract(product);
-        contract.setHirer(hirer);
-        contract.setContractor(contractor);
-        paymentInstrumentService.save(new PaymentInstrument(contractor, product));
-        userDetailService.create(new UserDetail(contractor));
-        Contract created = create(contract, hirerDocument != null);
-        if(!contract.withMembershipFee()) {
-            installmentService.markAsPaid(created.getId(), product.getInstallmentValue());
-        }
-        return contract;
-    }
-
-
-
-    private Hirer getHirer(String hirerDocument, Product product) {
-        if(hirerDocument != null) {
-            return hirerService.findByDocumentNumber(hirerDocument);
-        }
-        return hirerService.findByDocumentNumber(product.getIssuer().documentNumber());
-    }
-
-    private void checkContractor(String documentNumber) {
-        Optional<Contractor> contractor = contractorService.getOptionalByDocument(documentNumber);
-        contractor.ifPresent(c -> {
-            throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR.withOnlyArgument(documentNumber));
         });
     }
 
@@ -292,7 +232,6 @@ public class ContractService {
         return findByFilter(contractFilter, new UnovationPageRequest());
     }
 
-
     private ContractFilter createContractActiveFilter(String contractorId, String productCode) {
         ContractFilter contractFilter = new ContractFilter();
         contractFilter.setSituation(ContractSituation.ACTIVE);
@@ -311,30 +250,4 @@ public class ContractService {
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    @Transactional
-    public void dealCloseFromCsvForCurrentUser(String email, MultipartFile file){
-        UserDetail currentUser = userDetailService.getByEmail(email);
-        dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(""), file);
-    }
-
-    @SneakyThrows
-    @Transactional
-    public void dealCloseFromCsv(String hirerDocument, MultipartFile file) {
-        List<ContractorCsv> dealCloseCsvs = getDealCloseCsvs(file);
-        final int[] lineNumber = {0};
-        dealCloseCsvs.forEach(line -> {
-            lineNumber[0]++;
-            line.validate(validator, lineNumber[0]);
-            dealClose(line.toPerson(), line.getProduct(), hirerDocument);
-        });
-        if(dealCloseCsvs.isEmpty()){
-            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
-        }
-    }
-
-    private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
-        InputStreamReader inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
-        return new CsvToBeanBuilder<ContractorCsv>(inputStreamReader)
-                .withType(ContractorCsv.class).withSeparator(SEMICOLON).build().parse();
-    }
 }
