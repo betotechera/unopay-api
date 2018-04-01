@@ -234,7 +234,6 @@ public class Order implements Updatable, Billable{
         if(!isType(OrderType.ADHESION)) {
             setCandidates(new HashSet<>());
         }
-
     }
 
     @JsonIgnore
