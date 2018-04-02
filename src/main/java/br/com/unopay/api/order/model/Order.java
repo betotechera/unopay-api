@@ -247,7 +247,7 @@ public class Order implements Updatable, Billable, Serializable {
         if (isType(OrderType.ADHESION)) {
             candidates.forEach(candidate -> {
                 candidate.validateMe();
-                setMeUp();
+                candidate.setMeUp();
             });
         }
     }
