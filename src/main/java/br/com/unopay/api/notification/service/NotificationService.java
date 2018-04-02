@@ -17,6 +17,7 @@ import java.util.Map;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,10 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Service
 @Slf4j
 @Data
-@ConfigurationProperties("unopay.resetPassword")
+@ConfigurationProperties("unopay")
 public class NotificationService {
 
-    private String backofficeUrl;
-
-    private String unopayUrl;
+    private Map<String, String> resetPassword = new HashMap<>();
 
     private Notifier notifier;
 
@@ -52,6 +51,7 @@ public class NotificationService {
         payload.put("user",user);
         payload.put("link",linkForOrigin(requestOrigin));
         payload.put("token",token);
+        payload.put("requestOrigin", requestOrigin.name());
 
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.NOTIFICATION, notification);
@@ -59,11 +59,11 @@ public class NotificationService {
     }
 
     private String linkForOrigin(RequestOrigin requestOrigin) {
-        return requestOrigin.isUnopay() ? unopayUrl : backofficeUrl;
+        return resetPassword.get(requestOrigin.name());
     }
 
     public void sendNewPassword(UserDetail user) {
-        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.UNOPAY);
+        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.SUPER_SAUDE);
     }
 
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){
@@ -93,5 +93,9 @@ public class NotificationService {
         Email email = new Email(emailAsText);
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.NOTIFICATION, notification);
+    }
+
+    public Map<String, String> getResetPassword(){
+        return this.resetPassword;
     }
 }

@@ -15,8 +15,8 @@ payment:
         enviroment: 'T'
 unopay:
   resetPassword:
-        backofficeUrl: 'http://backoffice.qa.unovation.com.br/#/page/password/'
-        unopayUrl: 'https://unopay.qa.unovation.com.br/recover-password'
+        SUPER_SAUDE: 'http://backoffice.qa.unovation.com.br/#/page/password/SUPER_SAUDE/'
+        BACKOFFICE: 'http://backoffice.qa.unovation.com.br/#/page/password/BACKOFFICE/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unvlocal.com.br:8080
