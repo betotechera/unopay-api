@@ -10,6 +10,8 @@ create table authorized_member(
     registry_entity VARCHAR(50),
     payment_instrument_id VARCHAR(256) not null,
     contract_id varchar(256) not null,
+    created_date_time TIMESTAMP not null,
+    version INTEGER,
     constraint fk_auth_member_pay_inst foreign key(payment_instrument_id) references payment_instrument(id),
     constraint fk_auth_member_contract foreign key(contract_id) references contract(id)
 );

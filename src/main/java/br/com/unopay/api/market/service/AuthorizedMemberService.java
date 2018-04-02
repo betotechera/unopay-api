@@ -18,6 +18,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -55,6 +56,7 @@ public class AuthorizedMemberService {
             authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
                     .contractorDocumentNumber()));
         }
+        authorizedMember.setCreatedDateTime(new Date());
         authorizedMember.validateMe();
         validateReferences(authorizedMember);
         authorizedMember.validatePaymentInstrument();

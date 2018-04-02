@@ -12,6 +12,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -24,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -82,6 +84,10 @@ public class AuthorizedMember implements Serializable, Updatable{
     @Size(max=256)
     private String email;
 
+    @Column(name = "created_date_time")
+    @JsonView({Views.AuthorizedMember.List.class})
+    private Date createdDateTime;
+
     @Valid
     @JsonView({Views.AuthorizedMember.List.class})
     @Embedded
@@ -93,6 +99,9 @@ public class AuthorizedMember implements Serializable, Updatable{
     @JsonView({Views.AuthorizedMember.List.class})
     private PaymentInstrument paymentInstrument;
 
+    @Version
+    @JsonIgnore
+    private Integer version;
 
     public void validateMe() {
         validateBirthDate();

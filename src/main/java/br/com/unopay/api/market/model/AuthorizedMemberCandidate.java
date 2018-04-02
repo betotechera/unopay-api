@@ -14,7 +14,6 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -92,6 +91,10 @@ public class AuthorizedMemberCandidate implements Serializable, Updatable{
     @JoinColumn(name="order_id")
     private Order order;
 
+    @Column(name = "created_date_time")
+    @JsonView({Views.Order.List.class})
+    private Date createdDateTime;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -116,27 +119,35 @@ public class AuthorizedMemberCandidate implements Serializable, Updatable{
         validateOrder();
     }
 
+    public void setMeUp(){
+        setCreatedDateTime(new Date());
+    }
+
     public void validateOrder() {
         if(order == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ORDER_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.ORDER_REQUIRED.withOnlyArgument(this.name));
         }
     }
 
     private void validateRelatedness() {
         if(relatedness == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.AUTHORIZED_MEMBER_RELATEDNESS_REQUIRED.withOnlyArgument(this.name));
         }
     }
 
     private void validateName() {
         if(name == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.AUTHORIZED_MEMBER_NAME_REQUIRED.withOnlyArgument(this.name));
         }
     }
 
     private void validateGender() {
         if(gender == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.AUTHORIZED_MEMBER_GENDER_REQUIRED.withOnlyArgument(this.name));
         }
     }
 
@@ -144,10 +155,12 @@ public class AuthorizedMemberCandidate implements Serializable, Updatable{
         Date maximumDate = new Date();
         Date minimumDate = new DateTime().minusYears(YEAR_LIMIT).toDate();
         if(birthDate == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.AUTHORIZED_MEMBER_BIRTH_DATE_REQUIRED.withOnlyArgument(this.name));
         }
         if(birthDate.before(minimumDate) || birthDate.after(maximumDate)) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_AUTHORIZED_MEMBER_BIRTH_DATE);
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.INVALID_AUTHORIZED_MEMBER_BIRTH_DATE.withOnlyArgument(this.name));
         }
     }
 

@@ -61,7 +61,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUN
 @Data
 @Entity
 @Table(name = "\"order\"")
-@ToString(exclude = "product")
+@ToString(exclude = { "product", "candidates"})
 @EqualsAndHashCode(of = {"id"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -236,6 +236,15 @@ public class Order implements Updatable, Billable{
         setCreateDateTime(new Date());
         if(!isType(OrderType.ADHESION)) {
             setCandidates(new HashSet<>());
+        }
+    }
+    public void validateMe(){
+        setCreateDateTime(new Date());
+        if(isType(OrderType.ADHESION)) {
+            candidates.forEach(candidate -> {
+                candidate.validateMe();
+                setMeUp();
+            });
         }
     }
 

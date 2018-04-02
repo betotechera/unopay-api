@@ -77,6 +77,7 @@ public class MarketTemplateLoader implements TemplateLoader {
             add("name",  regex("\\w{15}"));
             add("gender",  random(Gender.class));
             add("relatedness",  random(Relatedness.class));
+            add("createdDateTime", instant("now"));
             add("paymentInstrument",one(PaymentInstrument.class, "valid"));
         }});
 
@@ -84,6 +85,7 @@ public class MarketTemplateLoader implements TemplateLoader {
             add("birthDate", instant("18 years ago"));
             add("name",  regex("\\w{15}"));
             add("gender",  random(Gender.class));
+            add("createdDateTime", instant("now"));
             add("relatedness",  random(Relatedness.class));
         }});
 

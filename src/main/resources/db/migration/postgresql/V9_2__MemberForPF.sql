@@ -13,6 +13,7 @@ create table authorized_member_candidate(
     document_number VARCHAR(50),
     registry_entity VARCHAR(50),
     order_id varchar(256),
+    created_date_time TIMESTAMP not null,
     version INTEGER,
     constraint fk_auth_member_cand_order foreign key(order_id) references "order"(id)
 );
