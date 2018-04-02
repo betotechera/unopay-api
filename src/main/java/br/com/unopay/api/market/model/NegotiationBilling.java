@@ -85,7 +85,7 @@ public class NegotiationBilling implements Billable, Serializable {
     private Integer installments;
 
     @Column(name = "installment_value")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private BigDecimal installmentValue;
 
     @Column(name = "installment_value_by_member")
@@ -97,11 +97,11 @@ public class NegotiationBilling implements Billable, Serializable {
     private Integer freeInstallmentQuantity;
 
     @Column(name = "default_credit_value")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private BigDecimal defaultCreditValue;
 
     @Column(name = "default_member_credit_value")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private BigDecimal defaultMemberCreditValue;
 
     @Column(name = "billing_with_credits")
@@ -118,7 +118,7 @@ public class NegotiationBilling implements Billable, Serializable {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private PaymentStatus status;
 
     @ManyToOne
@@ -127,7 +127,7 @@ public class NegotiationBilling implements Billable, Serializable {
     private Credit credit;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private Date createdDateTime;
 
     @Version
