@@ -18,6 +18,7 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
+import br.com.unopay.api.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 
 class OrderProcessorTest extends SpockApplicationTests{
@@ -36,6 +37,8 @@ class OrderProcessorTest extends SpockApplicationTests{
     private AuthorizedMemberService authorizedMemberService
     @Autowired
     private FixtureCreator fixtureCreator
+    @Autowired
+    private ProductService productService
 
     private Contract contractUnderTest
     private ContractInstallment installmentUnderTest
@@ -109,7 +112,7 @@ class OrderProcessorTest extends SpockApplicationTests{
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def paid = fixtureCreator.createPersistedAdhesionOrder(person)
-        paid.setProduct(paid.product.with {membershipFee = null; it })
+        productService.save(paid.product.with {membershipFee = null; it })
 
         when:
         processor.process(paid)
@@ -117,7 +120,7 @@ class OrderProcessorTest extends SpockApplicationTests{
         then:
         def contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId)
         def result = installmentService.findByContractId(contract.get().id)
-        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue
     }
 
     def 'given a adhesion order with membership fee should not mark installment as paid'(){

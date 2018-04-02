@@ -212,11 +212,16 @@ public class Product implements Serializable, Updatable {
 
     @JsonProperty
     public BigDecimal getInstallmentValue(){
-        return Rounder.round(new BigDecimal(annuityTotal().doubleValue() / getPaymentInstallments()));
+        return annuity.divide(new BigDecimal(getPaymentInstallments()),2, Rounder.ROUND_STRATEGY);
     }
 
-    @JsonProperty
-    public BigDecimal annuityTotal() {
-        return this.getMemberAnnuity() == null ? this.annuity : this.annuity.add(this.getMemberAnnuity());
+    public BigDecimal installmentTotal(Integer memberTotal) {
+        return this.getMemberAnnuity() == null ? getInstallmentValue() : installmentWithMembers(memberTotal);
+    }
+
+    private BigDecimal installmentWithMembers(Integer memberTotal) {
+        return this.annuity.add(this.getMemberAnnuity()
+                .multiply(new BigDecimal(memberTotal)))
+                .divide(new BigDecimal(getPaymentInstallments()),2, Rounder.ROUND_STRATEGY);
     }
 }

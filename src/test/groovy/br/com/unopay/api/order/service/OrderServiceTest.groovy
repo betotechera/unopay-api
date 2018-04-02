@@ -12,7 +12,6 @@ import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.service.AuthorizedMemberCandidateService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
@@ -23,6 +22,7 @@ import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
@@ -297,6 +297,29 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         that candidates, hasSize(1)
+    }
+
+    def 'given a adhesion order with candidates should be created including candidates annuity total in value'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def membershipFee = 0.0
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer(membershipFee)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+        }})
+        def candidateA = fixtureCreator.createAuthorizedMemberCandidateToPersist()
+        def candidateB = fixtureCreator.createAuthorizedMemberCandidateToPersist()
+        creditOrder.candidates = [candidateA, candidateB] as Set
+
+        when:
+        def created = service.create(creditOrder)
+
+
+        then:
+        created.value == Rounder.round((product.annuity + (product.memberAnnuity * 2)) / product.paymentInstallments)
     }
 
     def 'given a non adhesion order with candidates should not create member candidates'(){

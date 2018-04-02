@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 
 public class Rounder {
 
+    public static final int ROUND_STRATEGY = BigDecimal.ROUND_HALF_EVEN;
+
     private Rounder(){}
 
     public static BigDecimal round(BigDecimal value){
-        return value.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        return value.setScale(2, ROUND_STRATEGY);
     }
 
     public static BigDecimal zero(){
@@ -15,6 +17,6 @@ public class Rounder {
     }
 
     public static String roundToString(BigDecimal value){
-        return value.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+        return value.setScale(2, ROUND_STRATEGY).toString();
     }
 }

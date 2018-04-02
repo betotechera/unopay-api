@@ -355,7 +355,7 @@ public class Contract implements Serializable {
     }
 
     public BigDecimal annuityTotal() {
-        return this.getMemberAnnuity() == null ? this.annuity :
+        return this.getMemberAnnuity() == null || this.memberTotal <= 0 ? this.annuity :
                 this.annuity.add(this.getMemberAnnuity().multiply(new BigDecimal(this.memberTotal)));
     }
 }

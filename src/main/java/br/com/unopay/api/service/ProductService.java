@@ -46,12 +46,17 @@ public class ProductService {
             product.validate();
             checkName(product);
             validateReferences(product);
-            return repository.save(product);
+            return save(product);
         }catch (DataIntegrityViolationException e){
             log.info("Product with code={} already exists", product.getName(), product.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);
         }
     }
+
+    public Product save(Product product) {
+        return repository.save(product);
+    }
+
     public void updateForIssuer(String id,Issuer issuer, Product product) {
         Product current = findByIdForIssuer(id, issuer);
         update(product, current);
@@ -67,7 +72,7 @@ public class ProductService {
         checkName(current, product);
         current.updateMe(product);
         try {
-            repository.save(current);
+            save(current);
         }catch (DataIntegrityViolationException e){
             log.info("Product with name={} or code={} already exists", product.getName(), product.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(PRODUCT_ALREADY_EXISTS);

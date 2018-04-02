@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.util.Rounder;
 import br.com.unopay.api.util.Time;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,7 +43,7 @@ public class ContractInstallment implements Serializable, Updatable {
 
     public ContractInstallment(Contract contract, Date currentDate) {
         this.value = contract.annuityTotal()
-                .divide(new BigDecimal(contract.getPaymentInstallments()), 2, RoundingMode.HALF_EVEN);
+                .divide(new BigDecimal(contract.getPaymentInstallments()), 2, Rounder.ROUND_STRATEGY);
         this.currentDate = currentDate;
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;

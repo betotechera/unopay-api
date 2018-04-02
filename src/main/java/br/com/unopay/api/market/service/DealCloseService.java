@@ -119,7 +119,7 @@ public class DealCloseService {
         userDetailService.create(new UserDetail(contractor));
         Contract created = contractService.create(contract, dealClose.hasHirerDocument());
         if(!contract.withMembershipFee()) {
-            installmentService.markAsPaid(created.getId(), product.getInstallmentValue());
+            installmentService.markAsPaid(created.getId(), product.installmentTotal(contract.getMemberTotal()));
         }
         dealClose.getMembers().forEach(candidate ->
                 authorizedMemberService.create(candidate.toAuthorizedMember(contract)));

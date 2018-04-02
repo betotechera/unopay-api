@@ -81,9 +81,6 @@ public class OrderProcessor {
         Set<AuthorizedMemberCandidate> candidates = authorizedMemberCandidateService.findByOrderId(order.getId());
         DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode(), candidates);
         dealCloseService.dealCloseWithIssuerAsHirer(dealClose);
-        if(!order.productWithMembershipFee()){
-            contractService.markInstallmentAsPaidFrom(order);
-        }
         log.info("adhesion paid for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
         notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);

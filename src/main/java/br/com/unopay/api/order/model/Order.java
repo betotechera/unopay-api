@@ -18,7 +18,6 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -231,6 +230,14 @@ public class Order implements Updatable, Billable, Serializable {
     public BigDecimal getProductInstallmentValue() {
         if (getProduct() != null) {
             return getProduct().getInstallmentValue();
+        }
+        return null;
+    }
+
+    @JsonProperty
+    public BigDecimal getProductInstallmentTotal(Integer memberTotal) {
+        if (getProduct() != null) {
+            return getProduct().installmentTotal(memberTotal);
         }
         return null;
     }

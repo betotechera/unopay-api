@@ -74,7 +74,7 @@ public class ContractService {
             contract.validate();
             contract.checkFields();
             contract.setupMeUp();
-            Contract created = repository.save(contract);
+            Contract created = save(contract);
             createInstallment(forHirer, created);
             return created;
         }catch (DataIntegrityViolationException e){
@@ -82,6 +82,10 @@ public class ContractService {
             throw UnovationExceptions.conflict()
                     .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
         }
+    }
+
+    public Contract save(Contract contract) {
+        return repository.save(contract);
     }
 
     private void createInstallment(Boolean forHirer, Contract created) {
@@ -109,7 +113,7 @@ public class ContractService {
         contract.checkFields();
 
         try {
-            repository.save(current);
+            save(current);
         }catch (DataIntegrityViolationException e){
             log.info("Product code={} already exists", contract.getCode(), e);
             throw UnovationExceptions.conflict().withErrors(CONTRACT_ALREADY_EXISTS);
@@ -169,14 +173,14 @@ public class ContractService {
         contractEstablishment.setMeUpBy(contract);
         contractEstablishment = contractEstablishmentRepository.save(contractEstablishment);
         contract.addContractEstablishment(contractEstablishment);
-        repository.save(contract);
+        save(contract);
         return contractEstablishment;
     }
 
     public void removeEstablishment(String id, String contractEstablishmentId) {
         Contract contract = findById(id);
         contract.removeContractEstablishmentBy(contractEstablishmentId);
-        repository.save(contract);
+        save(contract);
         findContractEstablishmentById(contractEstablishmentId);
         contractEstablishmentRepository.delete(contractEstablishmentId);
     }
