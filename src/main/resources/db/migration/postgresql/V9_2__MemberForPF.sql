@@ -12,7 +12,7 @@ create table authorized_member_candidate(
     document_type VARCHAR(50),
     document_number VARCHAR(50),
     registry_entity VARCHAR(50),
-    order_id varchar(256) not null,
+    order_id varchar(256),
     version INTEGER,
     constraint fk_auth_member_cand_order foreign key(order_id) references "order"(id)
 );

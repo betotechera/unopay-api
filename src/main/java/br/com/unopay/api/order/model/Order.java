@@ -18,6 +18,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -124,6 +125,7 @@ public class Order implements Updatable, Billable{
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
 
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id")
     private Set<AuthorizedMemberCandidate> candidates = new HashSet<>();

@@ -13,6 +13,7 @@ import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.Date;
@@ -84,6 +85,7 @@ public class AuthorizedMemberCandidate implements Serializable, Updatable{
     private Document document;
 
     @ManyToOne
+    @JsonManagedReference
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Order.Detail.class})
     @JoinColumn(name="order_id")
