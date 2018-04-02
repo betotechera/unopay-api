@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.math.BigDecimal;
@@ -125,7 +126,7 @@ public class Order implements Updatable, Billable{
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
 
-    @JsonBackReference
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id")
     private Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
