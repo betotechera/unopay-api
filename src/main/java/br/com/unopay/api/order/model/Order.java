@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,10 +66,11 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUN
 @EqualsAndHashCode(of = {"id"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order implements Updatable, Billable {
+public class Order implements Updatable, Billable, Serializable {
 
-    public Order() {
-    }
+    private static final long serialVersionUID = 2732233885546623588L;
+
+    public Order() {}
 
     @Id
     @Column(name = "id")
