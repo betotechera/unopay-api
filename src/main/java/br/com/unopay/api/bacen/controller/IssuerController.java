@@ -492,7 +492,7 @@ public class IssuerController {
         negotiationBillingService.processForIssuer(id,issuer);
     }
 
-    @JsonView(Views.HirerNegotiation.Detail.class)
+    @JsonView(Views.NegotiationBilling.Detail.class)
     @ResponseStatus(OK)
     @RequestMapping(value = "issuers/me/negotiation-billings/{id}", method = GET)
     public NegotiationBilling getBilling(Issuer issuer, @PathVariable String id) {
@@ -500,7 +500,7 @@ public class IssuerController {
         return negotiationBillingService.findByIdForIssuer(id, issuer);
     }
 
-    @JsonView(Views.HirerNegotiation.List.class)
+    @JsonView(Views.NegotiationBilling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/negotiation-billings", method = RequestMethod.GET)
     public Results<NegotiationBilling> getByParamsBilling(Issuer issuer,NegotiationBillingFilter filter,
