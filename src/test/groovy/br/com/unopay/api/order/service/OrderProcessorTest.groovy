@@ -3,6 +3,7 @@ package br.com.unopay.api.order.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
@@ -10,6 +11,7 @@ import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.Person
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.OrderType
@@ -101,6 +103,36 @@ class OrderProcessorTest extends SpockApplicationTests{
         then:
         def result = installmentService.findByContractId(paid.getContractId())
         result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+    }
+
+    def 'given a adhesion order without membership fee should mark installment as paid'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
+        paid.setProduct(paid.product.with {membershipFee = null; it })
+
+        when:
+        processor.process(paid)
+
+        then:
+        def contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId)
+        def result = installmentService.findByContractId(contract.get().id)
+        result.sort{ it.installmentNumber }.find().paymentValue == paid.value
+    }
+
+    def 'given a adhesion order with membership fee should not mark installment as paid'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
+        paid.setProduct(paid.product.with {membershipFee = 150.0; it })
+
+        when:
+        processor.process(paid)
+
+        then:
+        def contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId)
+        def result = installmentService.findByContractId(contract.get().id)
+        !result.sort{ it.installmentNumber }.find().paymentValue
     }
 
     def 'given a known credit order with paid status when process should insert credit to payment instrument'() {

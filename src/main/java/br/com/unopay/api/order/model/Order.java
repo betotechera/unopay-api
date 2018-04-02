@@ -65,32 +65,33 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUN
 @EqualsAndHashCode(of = {"id"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order implements Updatable, Billable{
+public class Order implements Updatable, Billable {
 
-    public Order(){}
+    public Order() {
+    }
 
     @Id
-    @Column(name="id")
-    @GeneratedValue(generator="system-uuid")
+    @Column(name = "id")
+    @GeneratedValue(generator = "system-uuid")
     @JsonView({Views.Order.List.class})
-    @GenericGenerator(name="system-uuid", strategy="uuid2")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     @ManyToOne
     @NotNull(groups = {Reference.class, Create.Order.Adhesion.class})
-    @JoinColumn(name="product_id")
+    @JoinColumn(name = "product_id")
     @JsonView({Views.Order.List.class})
     private Product product;
 
     @Valid
     @ManyToOne
-    @JoinColumn(name="person_id")
+    @JoinColumn(name = "person_id")
     @JsonView({Views.Order.List.class})
     @NotNull(groups = {Create.Order.Adhesion.class, Update.class})
     private Person person;
 
     @ManyToOne
-    @JoinColumn(name="payment_instrument_id")
+    @JoinColumn(name = "payment_instrument_id")
     @JsonView({Views.Order.Detail.class})
     private PaymentInstrument paymentInstrument;
 
@@ -128,7 +129,7 @@ public class Order implements Updatable, Billable{
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="order_id")
+    @JoinColumn(name = "order_id")
     private Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
 
     @Transient
@@ -146,19 +147,19 @@ public class Order implements Updatable, Billable{
     public void incrementNumber(String lastNumber) {
         Long number = lastNumber == null ? 0 : Long.valueOf(lastNumber);
         number++;
-        this.number = StringUtils.leftPad(String.valueOf(number),10,"0");
+        this.number = StringUtils.leftPad(String.valueOf(number), 10, "0");
     }
 
     public void defineStatus(TransactionStatus transactionStatus) {
-        if(Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)){
+        if (Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)) {
             this.status = PaymentStatus.CANCELED;
             return;
         }
-        if(Arrays.asList(CAPTURED, CAPTURE_RECEIVED).contains(transactionStatus)){
+        if (Arrays.asList(CAPTURED, CAPTURE_RECEIVED).contains(transactionStatus)) {
             this.status = PaymentStatus.PAID;
             return;
         }
-        if(DENIED.equals(transactionStatus)){
+        if (DENIED.equals(transactionStatus)) {
             this.status = PaymentStatus.PAYMENT_DENIED;
             return;
         }
@@ -166,8 +167,8 @@ public class Order implements Updatable, Billable{
 
     }
 
-    public boolean hasPaymentInstrument(String id){
-        if(id != null && getPaymentInstrument() != null) {
+    public boolean hasPaymentInstrument(String id) {
+        if (id != null && getPaymentInstrument() != null) {
             return id.equals(getPaymentInstrument().getId());
         }
         return false;
@@ -178,39 +179,39 @@ public class Order implements Updatable, Billable{
     }
 
     @JsonIgnore
-    public String getDocumentNumber(){
-        if(this.person != null){
+    public String getDocumentNumber() {
+        if (this.person != null) {
             return person.getDocument().getNumber();
         }
         return null;
     }
 
     @JsonIgnore
-    public String getProductId(){
-        if(this.product != null){
+    public String getProductId() {
+        if (this.product != null) {
             return product.getId();
         }
         return null;
     }
 
     @JsonIgnore
-    public String getContractId(){
-        if(this.contract != null){
+    public String getContractId() {
+        if (this.contract != null) {
             return contract.getId();
         }
         return null;
     }
 
     @JsonIgnore
-    public String getProductCode(){
-        if(this.product != null){
+    public String getProductCode() {
+        if (this.product != null) {
             return product.getCode();
         }
         return null;
     }
 
-    public String instrumentId(){
-        if(this.getPaymentInstrument() != null){
+    public String instrumentId() {
+        if (this.getPaymentInstrument() != null) {
             return this.getPaymentInstrument().getId();
         }
         return null;
@@ -225,22 +226,23 @@ public class Order implements Updatable, Billable{
     }
 
     @JsonProperty
-    public BigDecimal getProductInstallmentValue(){
-        if(getProduct() != null){
+    public BigDecimal getProductInstallmentValue() {
+        if (getProduct() != null) {
             return getProduct().getInstallmentValue();
         }
         return null;
     }
 
-    public void setMeUp(){
+    public void setMeUp() {
         setCreateDateTime(new Date());
-        if(!isType(OrderType.ADHESION)) {
+        if (!isType(OrderType.ADHESION)) {
             setCandidates(new HashSet<>());
         }
     }
-    public void validateMe(){
+
+    public void validateMe() {
         setCreateDateTime(new Date());
-        if(isType(OrderType.ADHESION)) {
+        if (isType(OrderType.ADHESION)) {
             candidates.forEach(candidate -> {
                 candidate.validateMe();
                 setMeUp();
@@ -250,7 +252,7 @@ public class Order implements Updatable, Billable{
 
     @JsonIgnore
     public String getBillingMail() {
-        if(this.person != null && this.person.getPhysicalPersonDetail() != null){
+        if (this.person != null && this.person.getPhysicalPersonDetail() != null) {
             return this.person.getPhysicalPersonDetail().getEmail();
         }
         return null;
@@ -262,16 +264,16 @@ public class Order implements Updatable, Billable{
     }
 
     public void normalize() {
-        if(this.person != null){
+        if (this.person != null) {
             this.person.normalize();
         }
-        if(this.paymentRequest != null && this.paymentRequest.getCreditCard() != null){
+        if (this.paymentRequest != null && this.paymentRequest.getCreditCard() != null) {
             this.paymentRequest.getCreditCard().normalize();
         }
     }
 
-    public String issuerDocumentNumber(){
-        if(this.getProduct() != null && this.getProduct().getIssuer() != null){
+    public String issuerDocumentNumber() {
+        if (this.getProduct() != null && this.getProduct().getIssuer() != null) {
             return getProduct().getIssuer().documentNumber();
         }
         return null;
@@ -279,11 +281,11 @@ public class Order implements Updatable, Billable{
 
     public boolean productWithMembershipFee() {
         return this.product != null && this.product.getMembershipFee() != null
-                && this.product.getMembershipFee().compareTo(BigDecimal.ZERO) !=0;
+                && this.product.getMembershipFee().compareTo(BigDecimal.ZERO) != 0;
     }
 
     public BigDecimal getProductMembershipFee() {
-        if(this.product != null){
+        if (this.product != null) {
             return this.product.getMembershipFee();
         }
         return null;
@@ -296,7 +298,7 @@ public class Order implements Updatable, Billable{
 
     @Override
     public Issuer getIssuer() {
-        if(this.getProduct() != null) {
+        if (this.getProduct() != null) {
             return this.getProduct().getIssuer();
         }
         return null;
@@ -319,7 +321,7 @@ public class Order implements Updatable, Billable{
     }
 
     public String creditCardToken() {
-        if(hasPaymentRequest() && getPaymentRequest().getCreditCard() != null) {
+        if (hasPaymentRequest() && getPaymentRequest().getCreditCard() != null) {
             return getPaymentRequest().getCreditCard().getToken();
         }
         return null;

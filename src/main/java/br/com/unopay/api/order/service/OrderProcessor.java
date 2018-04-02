@@ -62,29 +62,44 @@ public class OrderProcessor {
     public void process(Order order){
         if(order.paid()) {
             if(order.isType(CREDIT)) {
-                instrumentCreditService.processOrder(order);
-                log.info("credit processed for order={} type={} of value={}",
-                        order.getId(),order.getType(), order.getValue());
-                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+                processCredit(order);
                 return;
             }
             if(order.isType(INSTALLMENT_PAYMENT)){
-                contractService.markInstallmentAsPaidFrom(order);
-                log.info("contract paid for order={} type={} of value={}",
-                        order.getId(),order.getType(), order.getValue());
-                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+                processInstallment(order);
                 return;
             }
             if(order.isType(ADHESION)){
-                Set<AuthorizedMemberCandidate> candidates = authorizedMemberCandidateService.findByOrderId(order.getId());
-                DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode(), candidates);
-                dealCloseService.dealCloseWithIssuerAsHirer(dealClose);
-                log.info("adhesion paid for order={} type={} of value={}",
-                        order.getId(),order.getType(), order.getValue());
-                notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+                processAdhesion(order);
                 return;
             }
         }
         notificationService.sendPaymentEmail(order,  EventType.PAYMENT_DENIED);
+    }
+
+    private void processAdhesion(Order order) {
+        Set<AuthorizedMemberCandidate> candidates = authorizedMemberCandidateService.findByOrderId(order.getId());
+        DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode(), candidates);
+        dealCloseService.dealCloseWithIssuerAsHirer(dealClose);
+        if(!order.productWithMembershipFee()){
+            contractService.markInstallmentAsPaidFrom(order);
+        }
+        log.info("adhesion paid for order={} type={} of value={}",
+                order.getId(),order.getType(), order.getValue());
+        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+    }
+
+    private void processInstallment(Order order) {
+        contractService.markInstallmentAsPaidFrom(order);
+        log.info("contract paid for order={} type={} of value={}",
+                order.getId(),order.getType(), order.getValue());
+        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+    }
+
+    private void processCredit(Order order) {
+        instrumentCreditService.processOrder(order);
+        log.info("credit processed for order={} type={} of value={}",
+                order.getId(),order.getType(), order.getValue());
+        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
     }
 }
