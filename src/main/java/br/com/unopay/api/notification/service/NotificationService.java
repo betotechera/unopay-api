@@ -62,8 +62,8 @@ public class NotificationService {
         return resetPassword.get(requestOrigin.name());
     }
 
-    public void sendNewPassword(UserDetail user) {
-        sendNewPassword(user, CREATE_PASSWORD, RequestOrigin.SUPER_SAUDE);
+    public void sendNewPassword(UserDetail user, RequestOrigin requestOrigin) {
+        sendNewPassword(user, CREATE_PASSWORD, requestOrigin);
     }
 
     public void sendBatchClosedMail(String emailAsText, BatchClosing batchClosing){

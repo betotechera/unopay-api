@@ -94,6 +94,10 @@ public class UserDetailService implements UserDetailsService {
     public UserDetailService(){}
 
     public UserDetail create(UserDetail user) {
+        return create(user, RequestOrigin.BACKOFFICE);
+    }
+
+    public UserDetail create(UserDetail user, RequestOrigin requestOrigin) {
         try {
             checkUser(user);
             if(user.getPassword() != null) {
@@ -107,7 +111,7 @@ public class UserDetailService implements UserDetailsService {
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
             UserDetail created =  this.userDetailRepository.save(user);
-            notificationService.sendNewPassword(created);
+            notificationService.sendNewPassword(created, requestOrigin);
             return created;
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("user already exists %s", user.toString()), e);
