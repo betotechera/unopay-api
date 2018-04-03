@@ -84,7 +84,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.Detail.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/establishments/{establishmentId}/event-fees/{id}", method = RequestMethod.GET)
     public EstablishmentEvent get(@PathVariable  String establishmentId, @PathVariable  String id) {
         log.info("get establishment event={}", id);
@@ -110,7 +110,7 @@ public class EstablishmentEventController {
 
     @JsonView({Views.EstablishmentEvent.List.class})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE')")
+    @PreAuthorize("hasRole('ROLE_LIST_ESTABLISHMENT_EVENT_VALUE') || hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
     @RequestMapping(value = "/establishments/{id}/event-fees", method = RequestMethod.GET)
     public Results<EstablishmentEvent> getByParams(@PathVariable  String id) {
         log.info("find establishment events of establishment={}", id);
