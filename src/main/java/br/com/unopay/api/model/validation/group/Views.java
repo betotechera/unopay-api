@@ -98,7 +98,7 @@ public interface Views {
     }
 
     interface NegotiationBilling {
-        interface Detail extends List {}
+        interface Detail extends List, HirerNegotiation.List, Product.List {}
         interface List {}
     }
 
