@@ -69,6 +69,19 @@ class DealCloseServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    void 'when deal close with issuer as hirer should create contract with issuer as hirer'(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        Contract contract =  service.dealCloseWithIssuerAsHirer(new DealClose(person, product.code))
+        Contract result  = contractService.findById(contract.getId())
+
+        then:
+        result.product.issuer.documentNumber() == contract.hirerDocumentNumber()
+    }
+
     void 'when deal close the contract period should be of one year'(){
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()

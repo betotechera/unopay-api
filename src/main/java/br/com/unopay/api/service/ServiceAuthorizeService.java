@@ -125,7 +125,9 @@ public class ServiceAuthorizeService {
         serviceAuthorize.checkEstablishmentIdWhenRequired(currentUser);
         Contract contract = contractService.findById(serviceAuthorize.getContract().getId());
         contract.checkValidFor(serviceAuthorize.getContractor());
-        hirerNegotiationService.findActiveByHirerAndProduct(contract.hirerId(), contract.productId());
+        if(!contract.withIssuerAsHirer()) {
+            hirerNegotiationService.findActiveByHirerAndProduct(contract.hirerId(), contract.productId());
+        }
         return contract;
 
     }

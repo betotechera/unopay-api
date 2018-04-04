@@ -14,6 +14,7 @@ import br.com.unopay.api.service.ContractInstallmentService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ProductService;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -116,7 +117,7 @@ public class DealCloseService {
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
-        userDetailService.create(new UserDetail(contractor));
+        userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
         Contract created = contractService.create(contract, dealClose.hasHirerDocument());
         if(!contract.withMembershipFee()) {
             installmentService.markAsPaid(created.getId(), product.installmentTotal(contract.getMemberTotal()));

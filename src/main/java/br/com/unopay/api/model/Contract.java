@@ -358,4 +358,8 @@ public class Contract implements Serializable {
         return this.getMemberAnnuity() == null || this.memberTotal <= 0 ? this.annuity :
                 this.annuity.add(this.getMemberAnnuity().multiply(new BigDecimal(this.memberTotal)));
     }
+
+    public boolean withIssuerAsHirer() {
+        return this.product.getIssuer().documentNumber().equals(this.hirerDocumentNumber());
+    }
 }

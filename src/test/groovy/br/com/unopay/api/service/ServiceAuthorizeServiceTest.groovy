@@ -12,9 +12,12 @@ import br.com.unopay.api.credit.service.InstrumentBalanceService
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.market.model.HirerNegotiation
+import br.com.unopay.api.market.service.DealCloseService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.DealClose
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.ServiceAuthorizeEvent
@@ -39,6 +42,9 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
     @Autowired
     ContractService contractService
+
+    @Autowired
+    private DealCloseService dealCloseService
 
     @Autowired
     PaymentInstrumentService paymentInstrumentService
@@ -234,6 +240,29 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'HIRER_NEGOTIATION_NOT_FOUND'
+    }
+
+    void 'given a service authorize without active hirer negotiation and issuer as hirer should be created'() {
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        Contract contract =  dealCloseService.dealCloseWithIssuerAsHirer(new DealClose(person, product.code))
+        def instrument = fixtureCreator.createInstrumentToProduct(product)
+        updateBalance(instrument, establishmentEventUnderTest)
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {
+            add("contract",contract)
+            add("contractor",contract.contractor)
+            add("paymentInstrument",instrument)
+            add("authorizeEvents", [new ServiceAuthorizeEvent(establishmentEventUnderTest)])
+            add("establishment",establishmentUnderTest)
+        }})
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def found = service.findById(created.id)
+
+        then:
+        found
     }
 
     void 'given a service authorize without password in exceptional circumstance should be created'() {
@@ -981,14 +1010,13 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         if(!hirerNegotiation) {
             fixtureCreator.createNegotiation(contractUnderTest.hirer, contractUnderTest.product)
         }
-        return Fixture.from(ServiceAuthorize.class).gimme("valid").with {
-            contract = contractUnderTest
-            contractor = contractorUnderTest
-            paymentInstrument = paymentInstrumentUnderTest
-            authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventUnderTest)]
-            establishment = establishmentUnderTest
-            it
-        }
+        return Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {
+            add("contract",contractUnderTest)
+            add("contractor",contractorUnderTest)
+            add("paymentInstrument",paymentInstrumentUnderTest)
+            add("authorizeEvents", [new ServiceAuthorizeEvent(establishmentEventUnderTest)])
+            add("establishment",establishmentUnderTest)
+        }})
     }
 
     private Contract addPhysicalContractorToContract(Contract contract) {

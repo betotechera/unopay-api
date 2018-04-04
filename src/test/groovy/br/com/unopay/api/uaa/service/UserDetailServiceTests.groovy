@@ -87,7 +87,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         service.create(user)
 
         then:
-        1 * notificationService.sendNewPassword(user)
+        1 * notificationService.sendNewPassword(user, _)
     }
 
 
