@@ -3,10 +3,12 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.UnopayScheduler
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
@@ -222,5 +224,20 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+    }
+    void 'known me contracts should be found'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+        Product product = fixtureCreator.createProductWithIssuer(issuerUser.issuer)
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContract(contractor, product)
+        fixtureCreator.createPersistedContract(contractor, product)
+        when:
+        def result = this.mvc.perform(get('/issuers/me/contracts?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 }
