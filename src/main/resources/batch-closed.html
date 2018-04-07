@@ -395,9 +395,15 @@
             <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="email-masthead">
-                        <a href="https://example.com" class="email-masthead_name">
+                        {% if batch.issuer.logoUri %}
+                        <a href="#" class="email-masthead_name">
+                            <img  src="{{batch.issuer.logoUri}}"  width="25%" height="50%"/>
+                        </a>
+                        {% else %}
+                        <a href="https://unopay.unovation.com.br" class="email-masthead_name">
                             <img  src="http://backoffice.qa.unovation.com.br/app/img/logo_unopay.svg"  width="25%" height="80%"/>
                         </a>
+                        {% endif %}
                     </td>
                 </tr>
                 <!-- Email Body -->
