@@ -17,6 +17,7 @@ unopay:
   resetPassword:
         SUPER_SAUDE: 'http://backoffice.unovation.com.br/#/page/password/SUPER_SAUDE/'
         BACKOFFICE: 'http://backoffice.unovation.com.br/#/page/password/BACKOFFICE/'
+        UNOPAY: 'https://unopay.qa.unovation.com.br/recover-password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: unopay.api.unovation.com.br
