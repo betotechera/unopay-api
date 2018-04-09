@@ -549,7 +549,7 @@ public class IssuerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/hirers", api));
     }
 
-    @JsonView(Views.Contract.Detail.class)
+    @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/contracts", method = RequestMethod.GET)
     public Results<Contract> getContracts(Issuer issuer, ContractFilter filter, @Validated UnovationPageRequest pageable) {
@@ -561,7 +561,7 @@ public class IssuerController {
                 String.format("%s/issuers/me/contracts", api));
     }
 
-    @JsonView(Views.Contract.Detail.class)
+    @JsonView(Views.Contract.List.class)
     @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/{id}/contracts", method = RequestMethod.GET)
