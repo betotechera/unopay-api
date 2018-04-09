@@ -510,7 +510,7 @@ public class IssuerController {
         Page<NegotiationBilling> page =  negotiationBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/issuers/me/negotiation-billings", api));
+                String.format("%s/issuers/me/hirer-negotiation-billings", api));
     }
 
 

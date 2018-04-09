@@ -456,7 +456,7 @@ public class HirerController {
         filter.setHirer(hirer.getId());
         Page<NegotiationBilling> page = negotiationBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/hirer-negotiation-billings", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirer/me/negotiation-billings", api));
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)
