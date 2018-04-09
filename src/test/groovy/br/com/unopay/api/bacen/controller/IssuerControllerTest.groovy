@@ -240,4 +240,20 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
+
+    void 'known given known issuer should find its contracts'() {
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        String accessToken = getUserAccessToken()
+        Product product = fixtureCreator.createProductWithIssuer(issuer)
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContract(contractor, product)
+        fixtureCreator.createPersistedContract(contractor, product)
+        when:
+        def result = this.mvc.perform(get('/issuers/{id}/contracts?access_token={access_token}', issuer.id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+    }
 }

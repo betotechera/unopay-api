@@ -552,12 +552,25 @@ public class IssuerController {
     @JsonView(Views.Contract.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/contracts", method = RequestMethod.GET)
-    public Results<Contract> getContract(Issuer issuer, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Contract> getContracts(Issuer issuer, ContractFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("get contracts for issuer={}", issuer.documentNumber());
         filter.setIssuers(Collections.singleton(issuer.getId()));
         Page<Contract> page = contractService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/issuers/me/contracts", api));
+    }
+
+    @JsonView(Views.Contract.Detail.class)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/{id}/contracts", method = RequestMethod.GET)
+    public Results<Contract> getContracts(@PathVariable String id, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get contracts for issuer={}", id);
+        filter.setIssuers(Collections.singleton(id));
+        Page<Contract> page = contractService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/%s/contracts", api, id));
     }
 }
