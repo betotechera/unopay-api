@@ -494,7 +494,7 @@ public class IssuerController {
 
     @JsonView(Views.NegotiationBilling.Detail.class)
     @ResponseStatus(OK)
-    @RequestMapping(value = "issuers/me/negotiation-billings/{id}", method = GET)
+    @RequestMapping(value = "issuers/me/hirer-negotiation-billings/{id}", method = GET)
     public NegotiationBilling getBilling(Issuer issuer, @PathVariable String id) {
         log.info("get negotiation billing={} for issuer={}", id, issuer.documentNumber());
         return negotiationBillingService.findByIdForIssuer(id, issuer);
@@ -502,7 +502,7 @@ public class IssuerController {
 
     @JsonView(Views.NegotiationBilling.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/issuers/me/negotiation-billings", method = RequestMethod.GET)
+    @RequestMapping(value = "/issuers/me/hirer-negotiation-billings", method = RequestMethod.GET)
     public Results<NegotiationBilling> getByParamsBilling(Issuer issuer,NegotiationBillingFilter filter,
                                                  @Validated UnovationPageRequest pageable) {
         log.info("search negotiation billing for issuer={} with filter={}", issuer.documentNumber(), filter);
