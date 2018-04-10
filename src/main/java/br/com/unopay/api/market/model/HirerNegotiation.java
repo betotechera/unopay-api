@@ -40,6 +40,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class HirerNegotiation implements Updatable, Serializable{
 
     private static final long serialVersionUID = 3824002733097296428L;
+    public static final String EMPTY = "";
 
     public HirerNegotiation(){}
 
@@ -125,6 +126,14 @@ public class HirerNegotiation implements Updatable, Serializable{
     @OneToMany(mappedBy = "hirerNegotiation")
     private Set<NegotiationBilling> billings;
 
+    @Column(name = "hirer_document_number")
+    @JsonView({Views.HirerNegotiation.Detail.class})
+    private String hirerDocumentNumber;
+
+    @Column(name = "issuer_document_number")
+    @JsonView({Views.HirerNegotiation.Detail.class})
+    private String issuerDocumentNumber;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -155,6 +164,8 @@ public class HirerNegotiation implements Updatable, Serializable{
         }
         this.createdDateTime = new Date();
         this.active = Boolean.FALSE;
+        setHirerDocumentNumber();
+        setIssuerDocumentNumber();
     }
 
     public String productId(){
@@ -182,5 +193,13 @@ public class HirerNegotiation implements Updatable, Serializable{
 
     public boolean withFreeInstallments() {
         return freeInstallmentQuantity != null && freeInstallmentQuantity != 0;
+    }
+
+    public void setHirerDocumentNumber() {
+        hirerDocumentNumber = getHirer().getDocumentNumber();
+    }
+
+    public void setIssuerDocumentNumber() {
+        issuerDocumentNumber = getProduct().getIssuer().documentNumber();
     }
 }
