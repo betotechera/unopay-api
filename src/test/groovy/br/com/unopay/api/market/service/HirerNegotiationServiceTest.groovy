@@ -327,4 +327,38 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         timeComparator.compare(found.effectiveDate, negotiation.effectiveDate) == 0
     }
 
+    def 'when create negotiation should be created with hirerDocumentNumber'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        found.hirerDocumentNumber == hirer.person.document.number
+    }
+
+    def 'when create negotiation should be created with issuerDocumentNumber'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProduct()
+        HirerNegotiation negotiation = Fixture.from(HirerNegotiation).gimme("valid", new Rule(){{
+            add("hirer", hirer)
+            add("product", product)
+        }})
+
+        when:
+        HirerNegotiation created = service.create(negotiation)
+        HirerNegotiation found = service.findById(created.id)
+
+        then:
+        found.issuerDocumentNumber == product.issuer.documentNumber()
+    }
+
 }
