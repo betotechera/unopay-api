@@ -183,4 +183,11 @@ public class HirerNegotiation implements Updatable, Serializable{
     public boolean withFreeInstallments() {
         return freeInstallmentQuantity != null && freeInstallmentQuantity != 0;
     }
+
+    public boolean hasHirerDocumentNumber() {
+        return getHirer() != null &&
+                getHirer().getPerson() != null &&
+                getHirer().getPerson().getDocument() != null &&
+                !getHirer().getPerson().getDocument().getNumber().equals("");
+    }
 }
