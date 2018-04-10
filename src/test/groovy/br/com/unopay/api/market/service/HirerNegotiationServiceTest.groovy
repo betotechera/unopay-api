@@ -341,7 +341,7 @@ class HirerNegotiationServiceTest extends SpockApplicationTests{
         HirerNegotiation found = service.findById(created.id)
 
         then:
-        found.hirerDocumentNumber == hirer.person.document.number
+        found.hirerDocumentNumber == hirer.getDocumentNumber()
     }
 
     def 'when create negotiation should be created with issuerDocumentNumber'(){

@@ -195,31 +195,11 @@ public class HirerNegotiation implements Updatable, Serializable{
         return freeInstallmentQuantity != null && freeInstallmentQuantity != 0;
     }
 
-    public boolean hasHirerDocumentNumber() {
-        return getHirer() != null &&
-                getHirer().getPerson() != null &&
-                getHirer().getPerson().getDocument() != null &&
-                !getHirer().getPerson().getDocument().getNumber().equals(EMPTY);
-    }
-
-    public boolean hasIssuerDocumentNumber() {
-        return getProduct() != null &&
-                getProduct().getIssuer() != null &&
-                getProduct().getIssuer().getPerson() != null &&
-                getProduct().getIssuer().getPerson().getDocument() != null &&
-                !getProduct().getIssuer().getPerson().getDocument().getNumber().equals(EMPTY);
-    }
-
     public void setHirerDocumentNumber() {
-        if (hasHirerDocumentNumber()) {
-            hirerDocumentNumber = getHirer().getPerson().getDocument().getNumber();
-        }
-        else { hirerDocumentNumber = EMPTY; }
+        hirerDocumentNumber = getHirer().getDocumentNumber();
     }
 
     public void setIssuerDocumentNumber() {
-        if (hasIssuerDocumentNumber()) {
-            issuerDocumentNumber = getProduct().getIssuer().getPerson().getDocument().getNumber();
-        } else { issuerDocumentNumber = EMPTY; }
+        issuerDocumentNumber = getProduct().getIssuer().documentNumber();
     }
 }
