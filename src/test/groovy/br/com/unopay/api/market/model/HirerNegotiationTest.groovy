@@ -61,4 +61,46 @@ class HirerNegotiationTest extends FixtureApplicationTest {
         !hasIssuerDocumentNumber
 
     }
+
+    def 'given Hirer Negotiation should set hirerDocumentNumber'() {
+
+        given:
+        String hirerDocumentNumber = value
+        HirerNegotiation hirerNegotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("hirer.person.document.number", hirerDocumentNumber)
+        }})
+
+        when:
+        hirerNegotiation.setHirerDocumentNumber()
+
+        then:
+        hirerNegotiation.hirerDocumentNumber == hirerNegotiation.hirer.person.document.number
+
+        where:
+        _ | value
+        _ | ""
+        _ | "45214521459"
+
+    }
+
+    def 'given Hirer Negotiation should set issuerDocumentNumber'() {
+
+        given:
+        String issuerDocumentNumber = value
+        HirerNegotiation hirerNegotiation = Fixture.from(HirerNegotiation.class).gimme("valid", new Rule(){{
+            add("product.issuer.person.document.number", issuerDocumentNumber)
+        }})
+
+        when:
+        hirerNegotiation.setIssuerDocumentNumber()
+
+        then:
+        hirerNegotiation.issuerDocumentNumber == hirerNegotiation.product.issuer.person.document.number
+
+        where:
+        _ | value
+        _ | ""
+        _ | "85963256978"
+
+    }
 }

@@ -40,6 +40,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class HirerNegotiation implements Updatable, Serializable{
 
     private static final long serialVersionUID = 3824002733097296428L;
+    public static final String EMPTY = "";
 
     public HirerNegotiation(){}
 
@@ -125,6 +126,14 @@ public class HirerNegotiation implements Updatable, Serializable{
     @OneToMany(mappedBy = "hirerNegotiation")
     private Set<NegotiationBilling> billings;
 
+    @Column(name = "hirer_document_number")
+    @JsonView({Views.HirerNegotiation.Detail.class})
+    private String hirerDocumentNumber;
+
+    @Column(name = "issuer_document_number")
+    @JsonView({Views.HirerNegotiation.Detail.class})
+    private String issuerDocumentNumber;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -188,7 +197,7 @@ public class HirerNegotiation implements Updatable, Serializable{
         return getHirer() != null &&
                 getHirer().getPerson() != null &&
                 getHirer().getPerson().getDocument() != null &&
-                !getHirer().getPerson().getDocument().getNumber().equals("");
+                !getHirer().getPerson().getDocument().getNumber().equals(EMPTY);
     }
 
     public boolean hasIssuerDocumentNumber() {
@@ -196,6 +205,19 @@ public class HirerNegotiation implements Updatable, Serializable{
                 getProduct().getIssuer() != null &&
                 getProduct().getIssuer().getPerson() != null &&
                 getProduct().getIssuer().getPerson().getDocument() != null &&
-                !getProduct().getIssuer().getPerson().getDocument().getNumber().equals("");
+                !getProduct().getIssuer().getPerson().getDocument().getNumber().equals(EMPTY);
+    }
+
+    public void setHirerDocumentNumber() {
+        if (hasHirerDocumentNumber()) {
+            hirerDocumentNumber = getHirer().getPerson().getDocument().getNumber();
+        }
+        else { hirerDocumentNumber = EMPTY; }
+    }
+
+    public void setIssuerDocumentNumber() {
+        if (hasIssuerDocumentNumber()) {
+            issuerDocumentNumber = getProduct().getIssuer().getPerson().getDocument().getNumber();
+        } else { issuerDocumentNumber = EMPTY; }
     }
 }
