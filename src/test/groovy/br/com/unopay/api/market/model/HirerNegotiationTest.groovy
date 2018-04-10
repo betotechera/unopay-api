@@ -103,4 +103,30 @@ class HirerNegotiationTest extends FixtureApplicationTest {
         _ | "85963256978"
 
     }
+
+    def 'given Hirer Negotiation setMeUp should set hirerDocumentNumber'() {
+
+        given:
+        HirerNegotiation hirerNegotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
+
+        when:
+        hirerNegotiation.setMeUp()
+
+        then:
+        hirerNegotiation.hirerDocumentNumber == hirerNegotiation.hirer.person.document.number
+
+    }
+
+    def 'given Hirer Negotiation setMeUp should set issuerDocumentNumber'() {
+
+        given:
+        HirerNegotiation hirerNegotiation = Fixture.from(HirerNegotiation.class).gimme("valid")
+
+        when:
+        hirerNegotiation.setMeUp()
+
+        then:
+        hirerNegotiation.issuerDocumentNumber == hirerNegotiation.product.issuer.person.document.number
+
+    }
 }

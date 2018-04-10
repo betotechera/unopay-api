@@ -164,6 +164,8 @@ public class HirerNegotiation implements Updatable, Serializable{
         }
         this.createdDateTime = new Date();
         this.active = Boolean.FALSE;
+        setHirerDocumentNumber();
+        setIssuerDocumentNumber();
     }
 
     public String productId(){
