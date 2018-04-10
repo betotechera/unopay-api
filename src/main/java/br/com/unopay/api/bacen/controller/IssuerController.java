@@ -26,8 +26,10 @@ import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.model.validation.group.Create;
@@ -36,6 +38,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.service.OrderService;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -45,6 +48,8 @@ import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import java.net.URI;
+import java.util.Collections;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,6 +94,7 @@ public class IssuerController {
     private HirerService hirerService;
     private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
+    private ContractService contractService;
 
     @Value("${unopay.api}")
     private String api;
@@ -105,7 +111,8 @@ public class IssuerController {
                             HirerNegotiationService hirerNegotiationService,
                             HirerService hirerService,
                             NegotiationBillingService negotiationBillingService,
-                            TicketService ticketService) {
+                            TicketService ticketService,
+                            ContractService contractService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
@@ -118,6 +125,7 @@ public class IssuerController {
         this.hirerService = hirerService;
         this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
+        this.contractService = contractService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -541,4 +549,28 @@ public class IssuerController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/issuers/me/hirers", api));
     }
 
+    @JsonView(Views.Contract.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/contracts", method = RequestMethod.GET)
+    public Results<Contract> getContracts(Issuer issuer, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get contracts for issuer={}", issuer.documentNumber());
+        filter.setIssuers(Collections.singleton(issuer.getId()));
+        Page<Contract> page = contractService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/contracts", api));
+    }
+
+    @JsonView(Views.Contract.List.class)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/{id}/contracts", method = RequestMethod.GET)
+    public Results<Contract> getContracts(@PathVariable String id, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get contracts for issuer={}", id);
+        filter.setIssuers(Collections.singleton(id));
+        Page<Contract> page = contractService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/%s/contracts", api, id));
+    }
 }
