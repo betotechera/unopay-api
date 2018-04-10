@@ -14,11 +14,11 @@ public class NegotiationBillingFilter {
     @SearchableField(field = "hirerNegotiation.hirer.id")
     private String hirer;
 
-    @SearchableField(field = "hirerNegotiation.product.issuer.person.document.number")
-    private String issuerDocument;
+    @SearchableField(field = "hirerNegotiation.issuerDocumentNumber")
+    private String issuerDocumentNumber;
 
-    @SearchableField(field = "hirerNegotiation.hirer.person.document.number")
-    private String hirerDocument;
+    @SearchableField(field = "hirerNegotiation.hirerDocumentNumber")
+    private String hirerDocumentNumber;
 
     @SearchableField
     private PaymentStatus status;
