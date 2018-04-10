@@ -190,4 +190,12 @@ public class HirerNegotiation implements Updatable, Serializable{
                 getHirer().getPerson().getDocument() != null &&
                 !getHirer().getPerson().getDocument().getNumber().equals("");
     }
+
+    public boolean hasIssuerDocumentNumber() {
+        return getProduct() != null &&
+                getProduct().getIssuer() != null &&
+                getProduct().getIssuer().getPerson() != null &&
+                getProduct().getIssuer().getPerson().getDocument() != null &&
+                !getProduct().getIssuer().getPerson().getDocument().getNumber().equals("");
+    }
 }
