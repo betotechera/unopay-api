@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.model.validation.group.Rating;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
@@ -153,6 +154,11 @@ public class ServiceAuthorize implements Serializable {
     @NotNull(groups = {Rating.class})
     @JsonView({Views.ServiceAuthorize.List.class})
     private Integer rating;
+
+    @ManyToOne
+    @JoinColumn(name="authorized_member_id")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private AuthorizedMember authorizedMember;
 
     @Version
     @JsonIgnore
