@@ -23,8 +23,8 @@ public class NegotiationBillingFilter {
     @SearchableField
     private PaymentStatus status;
 
-    @SearchableField
-    private Period createdDateTime;
+    @SearchableField(field = "createdDateTime")
+    private Period createdDateTimePeriod;
 
     @SearchableField
     private Integer installmentNumber;
