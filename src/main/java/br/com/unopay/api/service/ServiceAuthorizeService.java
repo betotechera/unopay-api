@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.EstablishmentEvent;
 import br.com.unopay.api.bacen.service.EstablishmentEventService;
@@ -113,7 +114,8 @@ public class ServiceAuthorizeService {
     private void validateAuthorizedMember(ServiceAuthorize authorize) {
         if(authorize.withAuthorizedMember()) {
             String id = authorize.authorizedMemberId();
-            authorize.setAuthorizedMember(authorizedMemberService.findById(id));
+            Contractor contractor = authorize.getContractor();
+            authorize.setAuthorizedMember(authorizedMemberService.findByIdForContractor(id, contractor));
         }
     }
 
