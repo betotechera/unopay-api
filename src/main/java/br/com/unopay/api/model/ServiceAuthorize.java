@@ -199,6 +199,13 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public String authorizedMemberId() {
+        if(withAuthorizedMember()) {
+            return authorizedMember.getId();
+        }
+        return null;
+    }
+
     public boolean withEstablishmentId(){
         return establishmentId() != null;
     }
@@ -368,5 +375,9 @@ public class ServiceAuthorize implements Serializable {
         if(!AuthorizationSituation.AUTHORIZED.equals(getSituation()))
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZATION_SHOULD_BE_AUTHORIZED);
 
+    }
+
+    public boolean withAuthorizedMember() {
+        return authorizedMember != null;
     }
 }

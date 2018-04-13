@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -25,12 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import static br.com.unopay.api.config.CacheConfig.SERVICE_AUTHORIZES;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BIRTH_DATE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENTS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_QUANTITY_REQUIRED;
@@ -52,6 +51,7 @@ public class ServiceAuthorizeService {
     private InstrumentBalanceService instrumentBalanceService;
     private HirerNegotiationService hirerNegotiationService;
     private NumberGenerator numberGenerator;
+    private AuthorizedMemberService authorizedMemberService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -61,7 +61,8 @@ public class ServiceAuthorizeService {
                                    UnopayEncryptor encryptor,
                                    EstablishmentEventService establishmentEventService,
                                    InstrumentBalanceService instrumentBalanceService,
-                                   HirerNegotiationService hirerNegotiationService) {
+                                   HirerNegotiationService hirerNegotiationService,
+                                   AuthorizedMemberService authorizedMemberService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -71,6 +72,7 @@ public class ServiceAuthorizeService {
         this.instrumentBalanceService = instrumentBalanceService;
         this.numberGenerator = new NumberGenerator(repository);
         this.hirerNegotiationService = hirerNegotiationService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @Transactional
@@ -80,6 +82,7 @@ public class ServiceAuthorizeService {
         PaymentInstrument paymentInstrument = getValidContractorPaymentInstrument(authorize, contract);
         defineTypedPasswordWhenRequired(authorize);
         authorize.setReferences(currentUser, paymentInstrument, contract);
+        validateAuthorizedMember(authorize);
         checkEventAndDefineValue(authorize);
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
@@ -105,6 +108,13 @@ public class ServiceAuthorizeService {
         current.canBeRated();
         current.setRating(rating);
         repository.save(current);
+    }
+
+    private void validateAuthorizedMember(ServiceAuthorize authorize) {
+        if(authorize.withAuthorizedMember()) {
+            String id = authorize.authorizedMemberId();
+            authorize.setAuthorizedMember(authorizedMemberService.findById(id));
+        }
     }
 
 
