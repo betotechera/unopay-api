@@ -1011,16 +1011,15 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     void 'given service authorize with known authorizedMember should save it'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
-        authorizedMember.id = '123'
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         serviceAuthorize.authorizedMember = authorizedMember
 
         when:
-        service.create(userUnderTest, serviceAuthorize)
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
 
         then:
-        def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+        result.id
     }
 
     void 'given service authorize with unknown authorizedMember should throw error'() {
