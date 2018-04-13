@@ -215,4 +215,20 @@ public class NegotiationBilling implements Billable, Serializable {
         this.credit = credit;
         return this;
     }
+
+    @JsonView({Views.NegotiationBilling.List.class})
+    public String getHirerNegotiationHirerPersonShortName() {
+        if (getHirerNegotiation() != null) {
+            return getHirerNegotiation().hirerPersonShortName();
+        }
+        return null;
+    }
+
+    @JsonView({Views.NegotiationBilling.List.class})
+    public String getHirerNegotiationProductIssuerPersonShortName() {
+        if (getHirerNegotiation() != null) {
+            return getHirerNegotiation().productIssuerPersonShortName();
+        }
+        return null;
+    }
 }
