@@ -1008,7 +1008,22 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         passwordEncoder.matches(expectedPassword, result.password)
     }
 
-    void 'given service authorize with unknown should throw error'() {
+    void 'given service authorize with known authorizedMember should save it'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.id = '123'
+        serviceAuthorize.authorizedMember = authorizedMember
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'given service authorize with unknown authorizedMember should throw error'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
