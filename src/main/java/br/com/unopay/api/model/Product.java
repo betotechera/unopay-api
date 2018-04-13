@@ -224,4 +224,11 @@ public class Product implements Serializable, Updatable {
                 .multiply(new BigDecimal(memberTotal)))
                 .divide(new BigDecimal(getPaymentInstallments()),2, Rounder.ROUND_STRATEGY);
     }
+
+    public String issuerPersonShortName() {
+        if (getIssuer() != null) {
+            return getIssuer().personShortName();
+        }
+        return null;
+    }
 }

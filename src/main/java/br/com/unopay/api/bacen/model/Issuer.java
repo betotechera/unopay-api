@@ -177,4 +177,11 @@ public class Issuer implements Serializable{
     public boolean hasPaymentRuleGroup(){
         return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();
     }
+
+    public String personShortName() {
+        if (getPerson() != null) {
+            return getPerson().getShortName();
+        }
+        return null;
+    }
 }

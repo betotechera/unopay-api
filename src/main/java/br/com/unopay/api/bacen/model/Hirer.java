@@ -90,4 +90,11 @@ public class Hirer implements Serializable {
         }
         return null;
     }
+
+    public String personShortName() {
+        if (getPerson() != null) {
+            return getPerson().getShortName();
+        }
+        return null;
+    }
 }
