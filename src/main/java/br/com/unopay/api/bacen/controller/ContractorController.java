@@ -269,4 +269,18 @@ public class ContractorController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
     }
+
+    @JsonView(Views.AuthorizedMember.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
+    @RequestMapping(value = "/contractors/{contractorDocument}/authorized-members", method = RequestMethod.GET)
+    public Results<AuthorizedMember> getAuthorizedMembers(@PathVariable String contractorDocument, AuthorizedMemberFilter filter,
+                                                          @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for contractor={}", contractorDocument);
+        Contractor contractor = service.getByDocument(contractorDocument);
+        filter.setContractorId(contractor.getId());
+        Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
+    }
 }
