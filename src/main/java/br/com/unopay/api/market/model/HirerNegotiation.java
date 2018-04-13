@@ -202,4 +202,18 @@ public class HirerNegotiation implements Updatable, Serializable{
     public void setIssuerDocumentNumber() {
         issuerDocumentNumber = getProduct().getIssuer().documentNumber();
     }
+
+    public String hirerPersonShortName() {
+        if (getHirer() != null) {
+            return getHirer().personShortName();
+        }
+        return null;
+    }
+
+    public String productIssuerPersonShortName() {
+        if (getProduct() != null) {
+            return getProduct().issuerPersonShortName();
+        }
+        return null;
+    }
 }
