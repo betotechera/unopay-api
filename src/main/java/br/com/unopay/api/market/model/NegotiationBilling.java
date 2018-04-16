@@ -85,7 +85,7 @@ public class NegotiationBilling implements Billable, Serializable {
     private Integer installments;
 
     @Column(name = "installment_value")
-    @JsonView({Views.NegotiationBilling.List.class})
+    @JsonView({Views.NegotiationBilling.Detail.class})
     private BigDecimal installmentValue;
 
     @Column(name = "installment_value_by_member")
@@ -109,7 +109,7 @@ public class NegotiationBilling implements Billable, Serializable {
     private Boolean billingWithCredits;
 
     @Column(name = "value")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private BigDecimal value = BigDecimal.ZERO;
 
     @Column(name = "credit_value")
