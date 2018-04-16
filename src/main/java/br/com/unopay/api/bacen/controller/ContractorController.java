@@ -281,6 +281,7 @@ public class ContractorController {
         filter.setContractorId(contractor.getId());
         Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/%s/authorized-members"
+                , api, contractorDocument));
     }
 }
