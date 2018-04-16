@@ -336,7 +336,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
     }
 
-    void 'given contractor\'s document number all its authorizedMembers should be found'() {
+    void "given contractor's document number all its authorizedMembers should be found"() {
         given:
         def documentNumber = fixtureCreator.createPersistedAuthorizedMember().contractorDocumentNumber()
         String accessToken = getUserAccessToken()
