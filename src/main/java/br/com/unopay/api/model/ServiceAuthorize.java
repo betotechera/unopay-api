@@ -3,6 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.model.validation.group.Rating;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
@@ -154,6 +155,11 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.ServiceAuthorize.List.class})
     private Integer rating;
 
+    @ManyToOne
+    @JoinColumn(name="authorized_member_id")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private AuthorizedMember authorizedMember;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -189,6 +195,13 @@ public class ServiceAuthorize implements Serializable {
     public String hirerId(){
         if(getContract() != null && getContract().getHirer() != null) {
             return getContract().getHirer().getId();
+        }
+        return null;
+    }
+
+    public String authorizedMemberId() {
+        if(withAuthorizedMember()) {
+            return authorizedMember.getId();
         }
         return null;
     }
@@ -362,5 +375,9 @@ public class ServiceAuthorize implements Serializable {
         if(!AuthorizationSituation.AUTHORIZED.equals(getSituation()))
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.AUTHORIZATION_SHOULD_BE_AUTHORIZED);
 
+    }
+
+    public boolean withAuthorizedMember() {
+        return authorizedMember != null;
     }
 }

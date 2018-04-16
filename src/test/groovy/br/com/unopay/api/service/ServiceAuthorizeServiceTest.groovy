@@ -9,6 +9,8 @@ import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
+import br.com.unopay.api.market.model.AuthorizedMember
+
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.market.model.HirerNegotiation
@@ -1004,6 +1006,50 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         then:
         def result = paymentInstrumentService.findById(serviceAuthorize.paymentInstrument.id)
         passwordEncoder.matches(expectedPassword, result.password)
+    }
+
+    void 'given service authorize with known authorizedMember should save it'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember(serviceAuthorize.contractor)
+        serviceAuthorize.authorizedMember = authorizedMember
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        result.id
+    }
+
+    void """given serviceAuthorize with authorizedMember that doesn't belong to serviceAuthorize
+            contract should throw error"""() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        serviceAuthorize.authorizedMember = authorizedMember
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'given service authorize with unknown authorizedMember should throw error'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        authorizedMember.id = '123'
+        serviceAuthorize.authorizedMember = authorizedMember
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
     private ServiceAuthorize createServiceAuthorize(HirerNegotiation hirerNegotiation = null) {

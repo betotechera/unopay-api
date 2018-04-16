@@ -336,6 +336,19 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
     }
 
+    void "given contractor's document number all its authorizedMembers should be found"() {
+        given:
+        def documentNumber = fixtureCreator.createPersistedAuthorizedMember().contractorDocumentNumber()
+        String accessToken = getUserAccessToken()
+        when:
+        def result = this.mvc.perform(get('/contractors/{documentNumber}/authorized-members?access_token={access_token}'
+                , documentNumber, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
+    }
+
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
     }
