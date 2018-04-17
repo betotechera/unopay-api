@@ -203,7 +203,9 @@ public class TicketService {
                     processHirerBillingAsPaid(ticket);
                 }
             }else{
-                defineOccurrence(ticket, occurrenceCode);
+                if(!PAID.equals(ticket.getOccurrenceCode())) {
+                    defineOccurrence(ticket, occurrenceCode);
+                }
             }
         });
         log.info("found={} paymentSource={}", current.isPresent(), current.map(Ticket::getPaymentSource).orElse(null));

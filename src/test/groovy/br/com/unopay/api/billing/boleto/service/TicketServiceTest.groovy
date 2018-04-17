@@ -216,6 +216,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
 
+
         when:
         service.processTicketReturn(file)
 
@@ -223,6 +224,31 @@ class TicketServiceTest extends SpockApplicationTests{
         0 * creditServiceMock.processAsPaid(_)
         0 * orderProcessorMock.processAsPaid(_)
         0 * negotiationBillingServiceMock.processAsPaid(_)
+    }
+
+    def 'given a paid ticket not processed should not be processed'(){
+        given:
+        MockMultipartFile file = createCnabFile()
+        Ticket ticket = Fixture.from(Ticket.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("sourceId", credit.id)
+            add("paymentSource", TicketPaymentSource.HIRER_INSTALLMENT)
+            add("occurrenceCode", PAID)
+            add("processedAt", null)
+        }})
+
+        def extractor = Mock(RemittanceExtractor)
+        extractorSelectorMock.define(batchSegmentT,_) >> extractor
+        extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> "02"
+        extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
+        numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
+
+        when:
+        service.processTicketReturn(file)
+
+        def result = service.findById(ticket.id)
+
+        then:
+        result.occurrenceCode == PAID
     }
 
     def 'given a processed ticket for issuer should not be processed'(){
