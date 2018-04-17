@@ -191,7 +191,7 @@ public class TicketService {
     private void processTicket(String occurrenceCode, Supplier<Optional<Ticket>> ticketSupplier) {
         Optional<Ticket> current = ticketSupplier.get();
         current.ifPresent(ticket -> {
-            if(PAID.equals(occurrenceCode)){
+            if(PAID.equals(occurrenceCode) && !PAID.equals(ticket.getOccurrenceCode())){
                 log.info("ticket from={}", ticket.getPaymentSource());
                 if(ticket.fromContractor()){
                     processOrderAsPaid(ticket);
