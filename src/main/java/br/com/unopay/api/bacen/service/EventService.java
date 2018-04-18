@@ -77,12 +77,14 @@ public class EventService {
 
     public Event findById(String id) {
         Optional<Event> event = repository.findById(id);
-        return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
+        return event.orElseThrow(()->UnovationExceptions.notFound()
+                .withErrors(EVENT_NOT_FOUND.withOnlyArgument(String.format("id: %s", id))));
     }
 
     public Event findByNcmCode(String code) {
         Optional<Event> event = repository.findByNcmCode(code);
-        return event.orElseThrow(()->UnovationExceptions.notFound().withErrors(EVENT_NOT_FOUND));
+        return event.orElseThrow(()->UnovationExceptions.notFound()
+                .withErrors(EVENT_NOT_FOUND.withOnlyArgument(String.format("codigo: %s", code))));
     }
 
     public void delete(String id) {
