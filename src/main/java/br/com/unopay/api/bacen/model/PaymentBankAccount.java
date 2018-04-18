@@ -55,11 +55,13 @@ public class PaymentBankAccount implements Serializable{
     private RecurrencePeriod depositPeriod;
 
     @Min(0)
+    @NotNull
     @JsonView({Views.BankAccount.class})
     @Column(name = "post_paid_payment_days")
     private Integer postPaidPaymentDays;
 
     @Min(0)
+    @NotNull
     @Column(name = "pre_paid_payment_days")
     @JsonView({Views.BankAccount.class})
     private Integer prePaidPaymentDays;
