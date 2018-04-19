@@ -230,7 +230,14 @@ public class Contract implements Serializable {
     }
 
     public boolean inProgress(){
-        return end.after(new Date()) && begin.before(new Date());
+        if(begin != null && begin.after(new Date())) {
+            return false;
+        }
+        if(end != null && end.before(new Date())) {
+            return false;
+        }
+
+        return true;
     }
 
     public void checkFields() {
