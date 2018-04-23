@@ -95,6 +95,20 @@ class ContractTest extends FixtureApplicationTest {
         inProgress
     }
 
+    void 'contract without period should be in progress'(){
+        given:
+        Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
+            add("begin", null)
+            add("end", null)
+        }})
+
+        when:
+        def inProgress = contract.inProgress()
+
+        then:
+        inProgress
+    }
+
     void 'should not be in progress'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
