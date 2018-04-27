@@ -124,7 +124,6 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.ContractorInstrumentCredit.Detail.class})
     private ContractorInstrumentCreditType type;
 
@@ -148,6 +147,12 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
         if(creditSourceIsHirer() && creditPaymentAccount.getAvailableBalance().compareTo(value) == -1){
             throw UnovationExceptions.unprocessableEntity().withErrors(VALUE_GREATER_THAN_BALANCE);
+        }
+    }
+
+    public void validateType() {
+        if(type == null) {
+            type = ContractorInstrumentCreditType.NORMAL;
         }
     }
 
