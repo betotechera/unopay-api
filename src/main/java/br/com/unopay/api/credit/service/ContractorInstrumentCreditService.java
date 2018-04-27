@@ -2,6 +2,7 @@ package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
+import br.com.unopay.api.credit.model.ContractorInstrumentCreditType;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
@@ -95,6 +96,7 @@ public class ContractorInstrumentCreditService {
         validateCreditPaymentAccount(instrumentCredit, contract);
         instrumentCredit.setupMyCreate(contract);
         instrumentCredit.validateValue();
+        instrumentCredit.validateType();
         if(instrumentCredit.creditSourceIsHirer()) {
             subtractPaymentAccountBalance(instrumentCredit);
         }
