@@ -122,6 +122,12 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private Date createdDateTime;
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
+    private ContractorInstrumentCreditType type;
+
     @Version
     @JsonIgnore
     private Integer version;
