@@ -1,6 +1,8 @@
-package br.com.unopay.api.model;
+package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,7 +15,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static br.com.unopay.api.model.BonusSituation.FOR_PROCESSING;
+import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
 
 @Data
 @Entity
