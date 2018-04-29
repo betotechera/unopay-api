@@ -150,7 +150,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
     }
 
-    public void validateType() {
+    public void defineTypeWhenRequired() {
         if(type == null) {
             type = ContractorInstrumentCreditType.NORMAL;
         }
@@ -164,7 +164,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
         }
     }
-
+ 
     public void setupMyCreate(Contract contract){
         this.createdDateTime = new Date();
         this.contract = contract;
@@ -173,6 +173,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.situation = CreditSituation.AVAILABLE;
         this.issuerFee = contract.productCreditInsertFee();
         this.creditSource = this.creditSource == null? InstrumentCreditSource.HIRER : this.creditSource;
+        defineTypeWhenRequired();
     }
 
     public String getPaymentInstrumentId() {
