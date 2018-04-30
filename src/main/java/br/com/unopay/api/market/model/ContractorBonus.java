@@ -5,6 +5,7 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,6 +17,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
+import static br.com.unopay.api.market.model.BonusSituation.PROCESSED;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_PROCESSED_AT;
 
 @Data
 @Entity
@@ -65,4 +69,26 @@ public class ContractorBonus implements Serializable {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public void validateMe() {
+        validateProcessedAtWhenSituationProcessed();
+        validateSituationWhenProcessedAtNotNull();
+    }
+
+    public void validateProcessedAtWhenSituationProcessed() {
+        if (getSituation() != null
+                && getSituation().equals(PROCESSED)
+                && (getProcessedAt() == null || getProcessedAt().toString().equals(""))) {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_PROCESSED_AT.withOnlyArgument(getProcessedAt()));
+        }
+    }
+
+    public void validateSituationWhenProcessedAtNotNull() {
+        if (getProcessedAt() != null
+                && (getSituation() == null || !getSituation().equals(PROCESSED))) {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(INVALID_BONUS_SITUATION.withOnlyArgument(getSituation()));
+        }
+    }
 }
