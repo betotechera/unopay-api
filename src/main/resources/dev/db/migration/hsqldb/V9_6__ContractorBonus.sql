@@ -5,7 +5,7 @@ create table contractor_bonus(
     contractor_id VARCHAR(256) not null,
     earned_bonus decimal(20,2) not null,
     situation VARCHAR(150) not null,
-    processed_at TIMESTAMP not null,
+    processed_at TIMESTAMP,
     created_date_time TIMESTAMP not null,
     version INTEGER,
 
