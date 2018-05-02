@@ -231,4 +231,11 @@ public class Product implements Serializable, Updatable {
         }
         return null;
     }
+
+    public String issuerDocumentNumber() {
+        if (getIssuer() != null && !getIssuer().documentNumber().equals("")){
+            return getIssuer().documentNumber();
+        }
+        return null;
+    }
 }

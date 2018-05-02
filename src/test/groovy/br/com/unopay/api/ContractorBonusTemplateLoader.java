@@ -17,7 +17,7 @@ public class ContractorBonusTemplateLoader implements TemplateLoader {
     public void load() {
         Fixture.of(ContractorBonus.class).addTemplate("valid", new Rule(){{
             add("product", one(Product.class, "valid"));
-            add("person", one(Person.class, "legal"));
+            add("payer", one(Person.class, "legal"));
             add("contractor", one(Contractor.class, "valid"));
             add("earnedBonus", random(BigDecimal.class, range(10,300)));
             add("createdDateTime", instant("now"));

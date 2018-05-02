@@ -5,8 +5,10 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
+import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -39,31 +41,38 @@ public class ContractorBonus implements Serializable {
     @ManyToOne
     @JoinColumn(name="product_id")
     @NotNull(groups = {Create.class})
+    @JsonView({Views.ContractorBonus.List.class})
     private Product product;
 
     @ManyToOne
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class})
-    private Person person;
+    @JsonView({Views.ContractorBonus.List.class})
+    private Person payer;
 
     @ManyToOne
     @JoinColumn(name="contractor_id")
     @NotNull(groups = {Create.class})
+    @JsonView({Views.ContractorBonus.Detail.class})
     private Contractor contractor;
 
     @Column(name = "earned_bonus")
     @NotNull(groups = {Create.class})
+    @JsonView({Views.ContractorBonus.List.class})
     private BigDecimal earnedBonus;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.ContractorBonus.List.class})
     private BonusSituation situation = FOR_PROCESSING;
 
     @Column(name = "processed_at")
+    @JsonView({Views.ContractorBonus.Detail.class})
     private Date processedAt;
 
     @Column(name = "created_date_time")
+    @JsonView({Views.ContractorBonus.Detail.class})
     private Date createdDateTime;
 
     @JsonIgnore
@@ -90,5 +99,13 @@ public class ContractorBonus implements Serializable {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(INVALID_BONUS_SITUATION.withOnlyArgument(getSituation()));
         }
+    }
+
+    @JsonView({Views.ContractorBonus.List.class})
+    public String getContractorPersonShortName() {
+        if (getContractor() != null) {
+            return getContractor().personShortName();
+        }
+        return null;
     }
 }
