@@ -201,6 +201,19 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.type == ContractorInstrumentCreditType.NORMAL
     }
 
+    def "given a instrument credit with type should be inserted with it's type"(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.type = ContractorInstrumentCreditType.BONUS
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.type == ContractorInstrumentCreditType.BONUS
+    }
+
     def 'given a valid instrument credit when create should be subtract payment account balance'(){
         given:
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
