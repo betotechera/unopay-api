@@ -7,8 +7,12 @@ import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+
+import static org.hamcrest.Matchers.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTests {
@@ -71,5 +75,21 @@ class ContractorInstrumentCreditControllerTest extends AuthServerApplicationTest
                         .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
+    }
+
+    void 'should find ContractorInstrumentCredit by filter'() {
+
+        given:
+        String accessToken = getUserAccessToken()
+
+        def type = fixtureCreator.createContractorInstrumentCreditPersisted().type.name()
+
+        when:
+        def result = this.mvc.perform(get('/payment-instruments/credits?type={type}&access_token={access_token}', type, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+
+        then:
+        result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].paymentInstrument', notNullValue()))
     }
 }
