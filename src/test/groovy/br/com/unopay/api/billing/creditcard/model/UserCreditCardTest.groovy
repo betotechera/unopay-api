@@ -317,7 +317,8 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
     }
 
-    def "when calling defineYearBasedOnExpirationDate with given expirationDate, expirationYear should be equal to expirationDate's year"() {
+    def """when calling defineYearBasedOnExpirationDate with given expirationDate, expirationYear
+             should be equal to expirationDate's year"""() {
 
         given:
         def expYear = value
@@ -342,7 +343,8 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
     }
 
-    def "when calling defineMonthAdnYearBasedOnExpirationDate with given expirationDate, expirationMonth should be equal to expirationDate's month and expirationYear should be equal to expirationDate's year"(){
+    def """when calling defineMonthAdnYearBasedOnExpirationDate with given expirationDate, expirationMonth
+        should be equal to expirationDate's month and expirationYear should be equal to expirationDate's year"""(){
 
         given:
         def expMonth = monthValue
@@ -366,11 +368,12 @@ class UserCreditCardTest extends FixtureApplicationTest {
         monthValue | yearValue
                "5" | "2030"
                "3" | "2029"
-              "11" | "2053"
+              "9" | "2053"
 
     }
 
-    def 'when instantiating a UserCreditCard with a valid UserDetail and a valid CreditCard should return a UserCreditCard with mapping following values from CreditCard and UserDetail'(){
+    def """when instantiating a UserCreditCard with a valid UserDetail and a valid CreditCard
+        should return a UserCreditCard with mapping following values from CreditCard and UserDetail"""(){
 
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
