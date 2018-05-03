@@ -37,8 +37,6 @@ import static br.com.unopay.api.uaa.exception.Errors.CREDIT_ALREADY_CANCELED;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_UNAVAILABLE;
 import static br.com.unopay.api.uaa.exception.Errors.EXPIRATION_DATA_GREATER_THAN_NOW_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EXPIRED_CREDIT;
-import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
-import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 import static br.com.unopay.api.uaa.exception.Errors.SERVICE_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_BALANCE;
 import static br.com.unopay.api.uaa.exception.Errors.VALUE_GREATER_THAN_ZERO_REQUIRED;
@@ -122,6 +120,11 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private Date createdDateTime;
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    @JsonView({Views.ContractorInstrumentCredit.Detail.class})
+    private ContractorInstrumentCreditType type;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -145,15 +148,16 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         }
     }
 
-    private void validateProduct(Contract contract) {
-        if(!Objects.equals(paymentInstrument.getProduct().getCode(), contract.getProduct().getCode())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
-        }
-        if(!Objects.equals(paymentInstrument.getProduct().getId(), contract.getProduct().getId())){
-            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
+    public void defineTypeWhenRequired() {
+        if(type == null) {
+            type = ContractorInstrumentCreditType.NORMAL;
         }
     }
 
+    private void validateProduct(Contract contract) {
+        paymentInstrument.validateContractProduct(contract);
+    }
+ 
     public void setupMyCreate(Contract contract){
         this.createdDateTime = new Date();
         this.contract = contract;
@@ -162,6 +166,7 @@ public class ContractorInstrumentCredit implements Serializable, Updatable {
         this.situation = CreditSituation.AVAILABLE;
         this.issuerFee = contract.productCreditInsertFee();
         this.creditSource = this.creditSource == null? InstrumentCreditSource.HIRER : this.creditSource;
+        defineTypeWhenRequired();
     }
 
     public String getPaymentInstrumentId() {
