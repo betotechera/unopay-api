@@ -25,6 +25,9 @@ public class AuthorizedMemberFilter implements Serializable{
     @SearchableField(field = "contract.contractor.id")
     private String contractorId;
 
+    @SearchableField(field = "contract.id")
+    private String contractId;
+
     @SearchableField(field = "paymentInstrument.number")
     private String paymentInstrumentNumber;
 

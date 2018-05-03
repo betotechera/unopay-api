@@ -92,6 +92,19 @@ class AuthorizedMemberControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
     }
 
+    def 'known AuthorizedMembers should be found by contractor code filter'() {
+        given:
+        def accessToken = getUserAccessToken()
+        def contractId = fixtureCreator.createPersistedAuthorizedMember().contract.id
+        when:
+        def result = this.mvc.perform(get('/authorized-members?contractId={contractId}&access_token={access_token}', contractId, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+
+        then:
+        result.andExpect(status().isOk()).andExpect(jsonPath('$.items[0].name', notNullValue()))
+    }
+
     def 'known AuthorizedMember should be deleted'() {
         given:
         def accessToken = getUserAccessToken()
