@@ -46,7 +46,6 @@ import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUI
 import static br.com.unopay.api.uaa.exception.Errors.BONUS_EXPIRY_MONTH_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
 import static br.com.unopay.api.uaa.exception.Errors.DISCOUNT_BONUS_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_EXPIRY_MONTH;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
 
@@ -187,9 +186,9 @@ public class Product implements Serializable, Updatable {
 
     @Min(0)
     @Max(12)
-    @Column(name="bonus_expiry_month")
+    @Column(name="months_to_expire_bonus")
     @JsonView(Views.Product.Detail.class)
-    private Integer bonusExpiryMonth;
+    private Integer monthsToExpireBonus;
 
     @Version
     @JsonIgnore
@@ -213,14 +212,11 @@ public class Product implements Serializable, Updatable {
     }
 
     private void validateBonus() {
-        if(discountBonus != null && bonusExpiryMonth == null) {
+        if(discountBonus != null && monthsToExpireBonus == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BONUS_EXPIRY_MONTH_REQUIRED);
         }
-        if(discountBonus == null && bonusExpiryMonth != null) {
+        if(discountBonus == null && monthsToExpireBonus != null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(DISCOUNT_BONUS_REQUIRED);
-        }
-        if(bonusExpiryMonth != null && (bonusExpiryMonth < JANUARY || bonusExpiryMonth > DECEMBER)) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_BONUS_EXPIRY_MONTH);
         }
     }
 

@@ -392,7 +392,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product with valid bonusExpiryMonth and with discountBonus should be created'(){
         given:
         Product product = createProduct()
-        product.bonusExpiryMonth = 12
+        product.monthsToExpireBonus = 12
         product.discountBonus = 0.1
 
         when:
@@ -402,24 +402,10 @@ class ProductServiceTest extends SpockApplicationTests {
         created.id
     }
 
-    void 'given product with invalid bonusExpiryMonth should not be created'(){
-        given:
-        Product product = createProduct()
-        product.bonusExpiryMonth = 122
-        product.discountBonus = 0.1
-
-        when:
-        service.create(product)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'INVALID_BONUS_EXPIRY_MONTH'
-    }
-
     void 'given product with valid bonusExpiryMonth and without discountBonus should not be created'(){
         given:
         Product product = createProduct()
-        product.bonusExpiryMonth = 12
+        product.monthsToExpireBonus = 12
 
         when:
         service.create(product)
