@@ -2,11 +2,15 @@ package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -57,6 +61,11 @@ public class ContractorBonusService {
 
     public ContractorBonus findById(String id) {
         return getContractorBonus(id, () -> contractorBonusRepository.findById(id));
+    }
+
+    public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){
+        return contractorBonusRepository
+                .findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
     private void defineValidProduct(ContractorBonus contractorBonus) {
