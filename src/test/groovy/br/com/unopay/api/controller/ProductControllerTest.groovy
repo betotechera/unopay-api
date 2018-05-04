@@ -102,7 +102,7 @@ class ProductControllerTest extends AuthServerApplicationTests {
                 add("paymentRuleGroup", paymentRuleGroupUnderTest)
             }
         })
-        product.discountBonus = 0.15
+        product.bonusPercentage = 0.15
         product.monthsToExpireBonus = 23
 
         when:

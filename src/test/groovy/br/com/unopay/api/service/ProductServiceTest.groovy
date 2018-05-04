@@ -389,11 +389,11 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
 
-    void 'given product with monthsToExpireBonus and with discountBonus should be created'(){
+    void 'given product with monthsToExpireBonus and with bonusPercentage should be created'(){
         given:
         Product product = createProduct()
         product.monthsToExpireBonus = 12
-        product.discountBonus = 0.1
+        product.bonusPercentage = 0.1
 
         when:
         def created = service.create(product)
@@ -402,7 +402,7 @@ class ProductServiceTest extends SpockApplicationTests {
         created.id
     }
 
-    void 'given product with monthsToExpireBonus and without discountBonus should not be created'(){
+    void 'given product with monthsToExpireBonus and without bonusPercentage should not be created'(){
         given:
         Product product = createProduct()
         product.monthsToExpireBonus = 22
@@ -412,13 +412,13 @@ class ProductServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'DISCOUNT_BONUS_REQUIRED'
+        assert ex.errors.first().logref == 'BONUS_PERCENTAGE_REQUIRED'
     }
 
-    void 'given product with discountBonus and without monthsToExpireBonus should not be created'(){
+    void 'given product with bonusPercentage and without monthsToExpireBonus should not be created'(){
         given:
         Product product = createProduct()
-        product.discountBonus = 0.1
+        product.bonusPercentage = 0.1
 
         when:
         service.create(product)

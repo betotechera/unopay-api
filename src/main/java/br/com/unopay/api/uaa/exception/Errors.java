@@ -310,12 +310,10 @@ public final class Errors {
             new UnovationError("PRODUCT_NOT_FOUND","Product not found.");
     public static final UnovationError PRODUCT_ALREADY_EXISTS =
             new UnovationError("PRODUCT_ALREADY_EXISTS","Product already exists.");
-    public static final UnovationError INVALID_BONUS_EXPIRY_MONTH =
-            new UnovationError("INVALID_BONUS_EXPIRY_MONTH","Invalid bonus expiry month.");
-    public static final UnovationError DISCOUNT_BONUS_REQUIRED =
-            new UnovationError("DISCOUNT_BONUS_REQUIRED","Discount bonus required.");
-    public static final UnovationError BONUS_EXPIRY_MONTH_REQUIRED =
-            new UnovationError("BONUS_EXPIRY_MONTH_REQUIRED","Bonus expiry month required.");
+    public static final UnovationError BONUS_PERCENTAGE_REQUIRED =
+            new UnovationError("BONUS_PERCENTAGE_REQUIRED","Bonus percentage required.");
+    public static final UnovationError MONTHS_TO_EXPIRE_BONUS_REQUIRED =
+            new UnovationError("MONTHS_TO_EXPIRE_BONUS_REQUIRED","Months to expire bonus required.");
     /* Contract */
     public static final UnovationError CONTRACT_NOT_FOUND =
             new UnovationError("CONTRACT_NOT_FOUND","Contract not found.");

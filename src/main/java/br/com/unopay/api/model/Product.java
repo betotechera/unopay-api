@@ -43,10 +43,10 @@ import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.uaa.exception.Errors.ACCREDITED_NETWORK_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.BONUS_EXPIRY_MONTH_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.BONUS_PERCENTAGE_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CODE_LENGTH_NOT_ACCEPTED;
-import static br.com.unopay.api.uaa.exception.Errors.DISCOUNT_BONUS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ISSUER_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.MONTHS_TO_EXPIRE_BONUS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUIRED;
 
 @Data
@@ -182,7 +182,7 @@ public class Product implements Serializable, Updatable {
     @Min(0)
     @Column(name = "bonus_percentage")
     @JsonView(Views.Product.Detail.class)
-    private Double discountBonus;
+    private Double bonusPercentage;
 
     @Min(0)
     @Column(name="months_to_expire_bonus")
@@ -211,11 +211,11 @@ public class Product implements Serializable, Updatable {
     }
 
     private void validateBonus() {
-        if(discountBonus != null && monthsToExpireBonus == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(BONUS_EXPIRY_MONTH_REQUIRED);
+        if(bonusPercentage != null && monthsToExpireBonus == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(MONTHS_TO_EXPIRE_BONUS_REQUIRED);
         }
-        if(discountBonus == null && monthsToExpireBonus != null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(DISCOUNT_BONUS_REQUIRED);
+        if(bonusPercentage == null && monthsToExpireBonus != null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(BONUS_PERCENTAGE_REQUIRED);
         }
     }
 
