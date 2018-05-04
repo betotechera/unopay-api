@@ -180,7 +180,7 @@ public class Product implements Serializable, Updatable {
 
     @Max(1)
     @Min(0)
-    @Column(name = "discount_bonus")
+    @Column(name = "bonus_percentage")
     @JsonView(Views.Product.Detail.class)
     private Double discountBonus;
 
