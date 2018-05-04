@@ -425,7 +425,7 @@ class ProductServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'BONUS_EXPIRY_MONTH_REQUIRED'
+        assert ex.errors.first().logref == 'MONTHS_TO_EXPIRE_BONUS_REQUIRED'
     }
 
     private Object createProduct(newName='name') {
