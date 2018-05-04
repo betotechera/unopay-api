@@ -44,6 +44,11 @@ public class ContractorBonusService {
         return save(current);
     }
 
+    public void delete(String id) {
+        findById(id);
+        contractorBonusRepository.delete(id);
+    }
+
     private ContractorBonus getContractorBonus(String id, Supplier<Optional<ContractorBonus>> contractorBonus){
         Optional<ContractorBonus> bonus = contractorBonus.get();
         return bonus.orElseThrow(() ->

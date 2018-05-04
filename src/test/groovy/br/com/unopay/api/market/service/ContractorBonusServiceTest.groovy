@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
 class ContractorBonusServiceTest extends SpockApplicationTests {
@@ -60,6 +61,31 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         then:
         updated.earnedBonus == newEarnedBonus
 
+    }
+
+    def 'known Contractor Bonus should be deleted'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        ContractorBonus saved = contractorBonusService.save(contractorBonus)
+
+        when:
+        contractorBonusService.delete(saved.id)
+        contractorBonusService.findById(saved.id)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+    }
+
+    def 'unknown Contractor Bonus should not be deleted'(){
+
+        when:
+        contractorBonusService.delete('')
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
     }
 
     private ContractorBonus createContractorBonus() {
