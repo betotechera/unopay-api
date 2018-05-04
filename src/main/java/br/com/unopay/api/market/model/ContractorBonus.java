@@ -3,6 +3,7 @@ package br.com.unopay.api.market.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -26,7 +27,7 @@ import static br.com.unopay.api.uaa.exception.Errors.INVALID_PROCESSED_AT;
 @Data
 @Entity
 @Table(name = "contractor_bonus")
-public class ContractorBonus implements Serializable {
+public class ContractorBonus implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -105,6 +106,27 @@ public class ContractorBonus implements Serializable {
     public String getContractorPersonShortName() {
         if (getContractor() != null) {
             return getContractor().personShortName();
+        }
+        return null;
+    }
+
+    public String productId() {
+        if (getProduct() != null) {
+           return getProduct().getId();
+        }
+        return null;
+    }
+
+    public String contractorId() {
+        if (getContractor() != null) {
+            return getContractor().getId();
+        }
+        return null;
+    }
+
+    public String payerId() {
+        if (getPayer() != null) {
+            return getPayer().getId();
         }
         return null;
     }

@@ -43,12 +43,31 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
+    def 'known Contractor Bonus should be updated'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.earnedBonus = 99.99
+        ContractorBonus saved = contractorBonusService.save(contractorBonus)
+
+        BigDecimal newEarnedBonus = 1.99
+        contractorBonus.earnedBonus = newEarnedBonus
+
+        when:
+        contractorBonusService.update(saved.id, contractorBonus)
+        ContractorBonus updated = contractorBonusService.findById(saved.id)
+
+        then:
+        updated.earnedBonus == newEarnedBonus
+
+    }
+
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
             product = productUnderTest
             contractor = contractorUnderTest
-            person = personUnderTest
+            payer = personUnderTest
             it
         }
         contractorBonus
