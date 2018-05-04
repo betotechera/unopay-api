@@ -56,6 +56,7 @@ public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
     public static final int MAX_CODE_LENGTH = 4;
+    public static final String EMPTY = "";
 
     public Product(){}
 
@@ -233,7 +234,7 @@ public class Product implements Serializable, Updatable {
     }
 
     public String issuerDocumentNumber() {
-        if (getIssuer() != null && !getIssuer().documentNumber().equals("")){
+        if (getIssuer() != null && !EMPTY.equals(getIssuer().documentNumber())){
             return getIssuer().documentNumber();
         }
         return null;

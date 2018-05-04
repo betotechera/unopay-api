@@ -54,19 +54,19 @@ public class ContractorBonusService {
         return getContractorBonus(id, () -> contractorBonusRepository.findById(id));
     }
 
-    public void defineValidProduct(ContractorBonus contractorBonus) {
+    private void defineValidProduct(ContractorBonus contractorBonus) {
         contractorBonus.setProduct(productService.findById(contractorBonus.productId()));
     }
 
-    public void defineValidContractor(ContractorBonus contractorBonus) {
+    private void defineValidContractor(ContractorBonus contractorBonus) {
        contractorBonus.setContractor(contractorService.getById(contractorBonus.contractorId()));
     }
 
-    public void defineValidPayer(ContractorBonus contractorBonus) {
+    private void defineValidPayer(ContractorBonus contractorBonus) {
         contractorBonus.setPayer(personService.findById(contractorBonus.payerId()));
     }
 
-    public void defineValidReferences(ContractorBonus contractorBonus) {
+    private void defineValidReferences(ContractorBonus contractorBonus) {
         defineValidProduct(contractorBonus);
         defineValidContractor(contractorBonus);
         defineValidPayer(contractorBonus);
