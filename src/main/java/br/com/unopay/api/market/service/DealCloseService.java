@@ -116,11 +116,8 @@ public class DealCloseService {
         Contract contract = createContract(dealClose, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
-        if(!contract.withMembershipFee()) {
-            installmentService.markAsPaid(contract.getId(), product.installmentTotal(contract.getMemberTotal()));
-        }
-        dealClose.getMembers().forEach(candidate ->
-                authorizedMemberService.create(candidate.toAuthorizedMember(contract)));
+        markInstallmentAsPaidWhenRequired(product, contract);
+        createMembers(dealClose, contract);
         return contract;
     }
 
@@ -130,6 +127,17 @@ public class DealCloseService {
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         return contractService.create(contract, dealClose.hasHirerDocument());
+    }
+
+    private void createMembers(DealClose dealClose, Contract contract) {
+        dealClose.getMembers().forEach(candidate ->
+                authorizedMemberService.create(candidate.toAuthorizedMember(contract)));
+    }
+
+    private void markInstallmentAsPaidWhenRequired(Product product, Contract contract) {
+        if(!contract.withMembershipFee()) {
+            installmentService.markAsPaid(contract.getId(), product.installmentTotal(contract.getMemberTotal()));
+        }
     }
 
     private Hirer getHirer(String hirerDocument, Product product) {
