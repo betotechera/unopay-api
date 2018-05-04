@@ -92,6 +92,27 @@ class ProductControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
     }
 
+    void 'valid product with bonus should be created'() {
+        given:
+        String accessToken = getUserAccessToken()
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule() {
+            {
+                add("accreditedNetwork", networkUnderTest)
+                add("issuer", issuerUnderTest)
+                add("paymentRuleGroup", paymentRuleGroupUnderTest)
+            }
+        })
+        product.discountBonus = 0.15
+        product.monthsToExpireBonus = 23
+
+        when:
+        def result = this.mvc.perform(post('/products?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(product)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
     private Product createProduct() {
          Fixture.from(Product.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {

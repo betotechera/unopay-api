@@ -185,7 +185,6 @@ public class Product implements Serializable, Updatable {
     private Double discountBonus;
 
     @Min(0)
-    @Max(12)
     @Column(name="months_to_expire_bonus")
     @JsonView(Views.Product.Detail.class)
     private Integer monthsToExpireBonus;

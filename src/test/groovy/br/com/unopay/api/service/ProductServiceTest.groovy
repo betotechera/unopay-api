@@ -389,7 +389,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
 
-    void 'given product with valid bonusExpiryMonth and with discountBonus should be created'(){
+    void 'given product with monthsToExpireBonus and with discountBonus should be created'(){
         given:
         Product product = createProduct()
         product.monthsToExpireBonus = 12
@@ -402,10 +402,10 @@ class ProductServiceTest extends SpockApplicationTests {
         created.id
     }
 
-    void 'given product with valid bonusExpiryMonth and without discountBonus should not be created'(){
+    void 'given product with monthsToExpireBonus and without discountBonus should not be created'(){
         given:
         Product product = createProduct()
-        product.monthsToExpireBonus = 12
+        product.monthsToExpireBonus = 22
 
         when:
         service.create(product)
@@ -415,7 +415,7 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'DISCOUNT_BONUS_REQUIRED'
     }
 
-    void 'given product with discountBonus and without bonusExpiryMonth should not be created'(){
+    void 'given product with discountBonus and without monthsToExpireBonus should not be created'(){
         given:
         Product product = createProduct()
         product.discountBonus = 0.1
