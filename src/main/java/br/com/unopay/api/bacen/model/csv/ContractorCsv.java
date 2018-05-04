@@ -139,7 +139,7 @@ public class ContractorCsv {
             List<UnovationError> errors = constraintViolations.stream()
                     .map(constraint ->
                             new UnovationError(constraint.getPropertyPath().toString(),
-                                    constraint.getMessage()).withOnlyArgument(String.format("linha: %s", line)))
+                                    constraint.getMessage()).withOnlyArgument(String.format("linha: %s valor: %s", line, constraint.getInvalidValue())))
                     .collect(Collectors.toList());
             throw badRequestException.withErrors(errors);
         }

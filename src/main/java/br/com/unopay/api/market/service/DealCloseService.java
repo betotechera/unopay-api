@@ -88,15 +88,19 @@ public class DealCloseService {
     @Transactional
     public void dealCloseFromCsv(String hirerDocument, MultipartFile file) {
         List<ContractorCsv> dealCloseCsvs = getDealCloseCsvs(file);
+        validate(dealCloseCsvs);
+        dealCloseCsvs.forEach(line -> doDealClose(line.toPerson(), line.getProduct(), hirerDocument));
+    }
+
+    private void validate(List<ContractorCsv> dealCloseCsvs) {
+        if(dealCloseCsvs.isEmpty()){
+            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
+        }
         final int[] lineNumber = {0};
         dealCloseCsvs.forEach(line -> {
             lineNumber[0]++;
             line.validate(validator, lineNumber[0]);
-            doDealClose(line.toPerson(), line.getProduct(), hirerDocument);
         });
-        if(dealCloseCsvs.isEmpty()){
-            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
-        }
     }
 
     @Transactional
