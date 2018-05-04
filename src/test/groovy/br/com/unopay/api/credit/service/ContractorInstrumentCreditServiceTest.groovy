@@ -9,6 +9,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
+import br.com.unopay.api.credit.model.ContractorInstrumentCreditType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.credit.model.InstrumentCreditSource
@@ -185,6 +186,32 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         result.id != null
+    }
+
+    def 'given a instrument credit without type should be inserted with type normal'(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.type = null
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.type == ContractorInstrumentCreditType.NORMAL
+    }
+
+    def "given a instrument credit with type should be inserted with it's type"(){
+        given:
+        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
+        instrumentCredit.type = ContractorInstrumentCreditType.BONUS
+        when:
+        ContractorInstrumentCredit created = service.insert(paymentInstrumentUnderTest.id, instrumentCredit)
+        ContractorInstrumentCredit result = service.findById(created.id)
+
+        then:
+        result.id != null
+        result.type == ContractorInstrumentCreditType.BONUS
     }
 
     def 'given a valid instrument credit when create should be subtract payment account balance'(){

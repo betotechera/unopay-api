@@ -1,6 +1,7 @@
 package br.com.unopay.api.credit.model.filter;
 
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.credit.model.ContractorInstrumentCreditType;
 import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
@@ -38,4 +39,6 @@ public class ContractorInstrumentCreditFilter  implements Serializable {
     @SearchableField(field = "expirationDateTime")
     private Period expirationDateTimePeriod;
 
+    @SearchableField(field = "type")
+    private ContractorInstrumentCreditType type;
 }

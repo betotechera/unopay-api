@@ -36,6 +36,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.StringUtils;
 
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_CODE_NOT_MET;
+import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
+
 @Data
 @Entity
 @EqualsAndHashCode(of = {"id", "number"})
@@ -199,5 +202,16 @@ public class PaymentInstrument implements Serializable, Updatable {
             return this.type.equals(type);
         }
         return false;
+    }
+
+    public void validateContractProduct(Contract contract) {
+        if(!Objects.equals(contract.getProduct().getCode(), product.getCode())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_CODE_NOT_MET);
+        }
+
+        if(!Objects.equals(contract.getProduct().getId(), product.getId())) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
+        }
+
     }
 }

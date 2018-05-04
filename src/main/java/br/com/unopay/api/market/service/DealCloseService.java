@@ -46,6 +46,7 @@ public class DealCloseService {
     private AuthorizedMemberService authorizedMemberService;
     private Validator validator;
 
+    public static final String EMPTY = "";
     private static final char SEMICOLON = ';';
 
     @Autowired
@@ -101,7 +102,7 @@ public class DealCloseService {
     @Transactional
     public void dealCloseFromCsvForCurrentUser(String email, MultipartFile file){
         UserDetail currentUser = userDetailService.getByEmail(email);
-        dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(""), file);
+        dealCloseFromCsv(currentUser.myHirer().map(Hirer::getDocumentNumber).orElse(EMPTY), file);
     }
 
     private List<ContractorCsv> getDealCloseCsvs(MultipartFile multipartFile) throws IOException {
@@ -112,19 +113,23 @@ public class DealCloseService {
 
     private Contract dealClose(DealClose dealClose, Contractor contractor) {
         Product product = productService.findByCode(dealClose.getProductCode());
-        Hirer hirer = getHirer(dealClose.getHirerDocument(), product);
-        Contract contract = new Contract(product,dealClose.getMembers().size());
-        contract.setHirer(hirer);
-        contract.setContractor(contractor);
+        Contract contract = createContract(dealClose, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
-        Contract created = contractService.create(contract, dealClose.hasHirerDocument());
         if(!contract.withMembershipFee()) {
-            installmentService.markAsPaid(created.getId(), product.installmentTotal(contract.getMemberTotal()));
+            installmentService.markAsPaid(contract.getId(), product.installmentTotal(contract.getMemberTotal()));
         }
         dealClose.getMembers().forEach(candidate ->
                 authorizedMemberService.create(candidate.toAuthorizedMember(contract)));
         return contract;
+    }
+
+    private Contract createContract(DealClose dealClose, Contractor contractor, Product product) {
+        Hirer hirer = getHirer(dealClose.getHirerDocument(), product);
+        Contract contract = new Contract(product,dealClose.getMembers().size());
+        contract.setHirer(hirer);
+        contract.setContractor(contractor);
+        return contractService.create(contract, dealClose.hasHirerDocument());
     }
 
     private Hirer getHirer(String hirerDocument, Product product) {
