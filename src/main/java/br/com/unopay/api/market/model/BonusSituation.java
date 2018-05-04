@@ -4,9 +4,9 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum BonusSituation implements DescriptableEnum {
 
-    FOR_PROCESSING("À processar"),
-    PROCESSED("Para processar"),
-    BLOCKED("Aguardando processamento");
+    FOR_PROCESSING("Aguardando processamento"),
+    PROCESSED("Processado"),
+    BLOCKED("Bloqueado");
 
     private String description;
 
