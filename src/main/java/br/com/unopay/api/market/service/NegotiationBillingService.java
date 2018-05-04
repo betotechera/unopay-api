@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.transaction.Transactional;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,7 @@ import static br.com.unopay.api.uaa.exception.Errors.NEGOTIATION_BILLING_NOT_FOU
 import static java.util.Collections.singletonList;
 
 @Timed
+@Slf4j
 @Service
 public class NegotiationBillingService {
 
@@ -141,6 +143,8 @@ public class NegotiationBillingService {
     private NegotiationBilling process(HirerNegotiation negotiation) {
         Set<Contract> hirerContracts = contractService.findByHirerId(negotiation.hirerId());
         Integer nextInstallment = getNextInstallmentNumber(negotiation.hirerId());
+        log.info("creating billing for hirer={}, found={} contract(s) and the next billing installment is={}",
+                negotiation.hirerPersonShortName(), hirerContracts.size(), nextInstallment);
         if(nextInstallment <= negotiation.getInstallments() && !hirerContracts.isEmpty()) {
             createBilling(hirerContracts, negotiation, nextInstallment);
        }
@@ -154,6 +158,7 @@ public class NegotiationBillingService {
         NegotiationBilling rightBilling = createBillingDetailsAndUpdateBillingValue(hirerContracts, save(billing));
         createCreditWhenRequired(rightBilling);
         notifier.notify(Queues.HIRER_BILLING_CREATED,rightBilling);
+        log.info("Billing for hirer={} created!", negotiation.getHirerDocumentNumber());
     }
 
     private void createCreditWhenRequired(NegotiationBilling billing) {
