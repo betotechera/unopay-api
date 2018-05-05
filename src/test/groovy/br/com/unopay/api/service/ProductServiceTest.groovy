@@ -389,7 +389,46 @@ class ProductServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'PRODUCT_NOT_FOUND'
     }
 
-    private Object createProduct(newName) {
+    void 'given product with monthsToExpireBonus and with bonusPercentage should be created'(){
+        given:
+        Product product = createProduct()
+        product.monthsToExpireBonus = 12
+        product.bonusPercentage = 0.1
+
+        when:
+        def created = service.create(product)
+
+        then:
+        created.id
+    }
+
+    void 'given product with monthsToExpireBonus and without bonusPercentage should not be created'(){
+        given:
+        Product product = createProduct()
+        product.monthsToExpireBonus = 22
+
+        when:
+        service.create(product)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'BONUS_PERCENTAGE_REQUIRED'
+    }
+
+    void 'given product with bonusPercentage and without monthsToExpireBonus should not be created'(){
+        given:
+        Product product = createProduct()
+        product.bonusPercentage = 0.1
+
+        when:
+        service.create(product)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'MONTHS_TO_EXPIRE_BONUS_REQUIRED'
+    }
+
+    private Object createProduct(newName='name') {
         Fixture.from(Product.class).gimme("valid")
                 .with {
             accreditedNetwork = networkUnderTest
