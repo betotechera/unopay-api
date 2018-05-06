@@ -41,6 +41,12 @@ public class ContractorBonusService {
         return contractorBonusRepository.save(contractorBonus);
     }
 
+    public ContractorBonus create(ContractorBonus contractorBonus) {
+        defineValidReferences(contractorBonus);
+        contractorBonus.setupMyCreate();
+        return save(contractorBonus);
+    }
+
     public ContractorBonus update(String id, ContractorBonus contractorBonus){
         defineValidReferences(contractorBonus);
         ContractorBonus current = findById(id);

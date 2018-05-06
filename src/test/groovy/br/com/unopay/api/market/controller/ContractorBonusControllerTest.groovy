@@ -42,7 +42,7 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
-        contractorBonusService.save(contractorBonus)
+        contractorBonusService.create(contractorBonus)
         String accessToken = getUserAccessToken()
 
         when:
@@ -60,7 +60,7 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
-        contractorBonusService.save(contractorBonus)
+        contractorBonusService.create(contractorBonus)
         String accessToken = getUserAccessToken()
         def id = contractorBonus.id
 
@@ -71,6 +71,7 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.contractor', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.createdDateTime', is(notNullValue())))
     }
 
     private ContractorBonus createContractorBonus() {

@@ -80,6 +80,11 @@ public class ContractorBonus implements Serializable, Updatable {
     @Version
     private Integer version;
 
+    public void setupMyCreate() {
+        setCreatedDateTime(new Date());
+        validateMe();
+    }
+
     public void validateMe() {
         validateProcessedAtWhenSituationProcessed();
         validateSituationWhenProcessedAtNotNull();

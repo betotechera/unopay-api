@@ -49,14 +49,14 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         given:
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.earnedBonus = 99.99
-        ContractorBonus saved = contractorBonusService.save(contractorBonus)
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
 
         BigDecimal newEarnedBonus = 1.99
         contractorBonus.earnedBonus = newEarnedBonus
 
         when:
-        contractorBonusService.update(saved.id, contractorBonus)
-        ContractorBonus updated = contractorBonusService.findById(saved.id)
+        contractorBonusService.update(created.id, contractorBonus)
+        ContractorBonus updated = contractorBonusService.findById(created.id)
 
         then:
         updated.earnedBonus == newEarnedBonus
@@ -67,11 +67,11 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
-        ContractorBonus saved = contractorBonusService.save(contractorBonus)
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
 
         when:
-        contractorBonusService.delete(saved.id)
-        contractorBonusService.findById(saved.id)
+        contractorBonusService.delete(created.id)
+        contractorBonusService.findById(created.id)
 
         then:
         def ex = thrown(NotFoundException)
@@ -86,6 +86,21 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+    }
+
+    def 'given a Contractor Bonus without creation date should be created'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.createdDateTime = null
+
+        when:
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(created.id)
+
+        then:
+        timeComparator.compare(found.createdDateTime, new Date()) == 0
+
     }
 
     private ContractorBonus createContractorBonus() {
