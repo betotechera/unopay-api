@@ -87,8 +87,7 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isCreated())
     }
-
-
+    
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
