@@ -88,15 +88,19 @@ public class DealCloseService {
     @Transactional
     public void dealCloseFromCsv(String hirerDocument, MultipartFile file) {
         List<ContractorCsv> dealCloseCsvs = getDealCloseCsvs(file);
+        validate(dealCloseCsvs);
+        dealCloseCsvs.forEach(line -> doDealClose(line.toPerson(), line.getProduct(), hirerDocument));
+    }
+
+    private void validate(List<ContractorCsv> dealCloseCsvs) {
+        if(dealCloseCsvs.isEmpty()){
+            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
+        }
         final int[] lineNumber = {0};
         dealCloseCsvs.forEach(line -> {
             lineNumber[0]++;
             line.validate(validator, lineNumber[0]);
-            doDealClose(line.toPerson(), line.getProduct(), hirerDocument);
         });
-        if(dealCloseCsvs.isEmpty()){
-            throw UnovationExceptions.badRequest().withErrors(FILE_WIHOUT_LINES_OR_HEADER);
-        }
     }
 
     @Transactional
@@ -116,11 +120,8 @@ public class DealCloseService {
         Contract contract = createContract(dealClose, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
-        if(!contract.withMembershipFee()) {
-            installmentService.markAsPaid(contract.getId(), product.installmentTotal(contract.getMemberTotal()));
-        }
-        dealClose.getMembers().forEach(candidate ->
-                authorizedMemberService.create(candidate.toAuthorizedMember(contract)));
+        markInstallmentAsPaidWhenRequired(product, contract);
+        createMembers(dealClose, contract);
         return contract;
     }
 
@@ -130,6 +131,17 @@ public class DealCloseService {
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         return contractService.create(contract, dealClose.hasHirerDocument());
+    }
+
+    private void createMembers(DealClose dealClose, Contract contract) {
+        dealClose.getMembers().forEach(candidate ->
+                authorizedMemberService.create(candidate.toAuthorizedMember(contract)));
+    }
+
+    private void markInstallmentAsPaidWhenRequired(Product product, Contract contract) {
+        if(!contract.withMembershipFee()) {
+            installmentService.markAsPaid(contract.getId(), product.installmentTotal(contract.getMemberTotal()));
+        }
     }
 
     private Hirer getHirer(String hirerDocument, Product product) {

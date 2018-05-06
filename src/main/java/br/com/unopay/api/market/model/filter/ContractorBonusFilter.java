@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class ContractorBonusFilter implements Serializable {
     public ContractorBonusFilter(){}
 
-    @SearchableField(field = "product.name")
+    @SearchableField(field = "product.code")
     private String product;
 
     @SearchableField(field = "payer.document.number")
