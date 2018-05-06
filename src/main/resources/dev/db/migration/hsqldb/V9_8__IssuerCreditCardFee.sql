@@ -1,0 +1,1 @@
+alter table issuer add credit_card_fee numeric(9,2);

@@ -5,7 +5,6 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
-import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.BankAccountType;
@@ -19,7 +18,6 @@ import br.com.unopay.api.bacen.model.Event;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
-import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
 import br.com.unopay.api.bacen.model.InvoiceReceiptType;
@@ -33,19 +31,12 @@ import br.com.unopay.api.bacen.model.Scope;
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
-import br.com.unopay.api.market.model.NegotiationBilling;
-import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
-import br.com.unopay.api.model.Contract;
-import br.com.unopay.api.model.Gender;
 import br.com.unopay.api.model.IssueInvoiceType;
-import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.model.Product;
-import br.com.unopay.api.model.Relatedness;
-import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.uaa.model.UserDetail;
+
 import java.math.BigDecimal;
 
 
@@ -132,6 +123,7 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(Issuer.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
+            add("creditCardFee", new BigDecimal(0.1));
             add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
             add("fee", random(Double.class));
             add("paymentAccount", one(PaymentBankAccount.class, "valid"));
