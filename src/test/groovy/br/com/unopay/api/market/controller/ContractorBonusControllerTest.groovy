@@ -56,6 +56,22 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
 
     }
 
+    void 'known Contractor Bonus should be found'(){
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonusService.save(contractorBonus)
+        String accessToken = getUserAccessToken()
+        def id = contractorBonus.id
+
+        when:
+        def result = this.mvc.perform(get('/contractor-bonuses/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.contractor', is(notNullValue())))
+    }
 
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")

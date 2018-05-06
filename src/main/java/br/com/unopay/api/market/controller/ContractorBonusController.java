@@ -16,10 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -46,5 +43,14 @@ public class ContractorBonusController {
         Page<ContractorBonus> page = contractorBonusService.findByFilter(contractorBonusFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractor-bonuses", api));
+    }
+
+    @JsonView(Views.ContractorBonus.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR_BONUS')")
+    @RequestMapping(value = "/contractor-bonuses/{id}", method = RequestMethod.GET)
+    public ContractorBonus get(@PathVariable String id) {
+        log.info("get contractor bonus={}", id);
+        return contractorBonusService.findById(id);
     }
 }
