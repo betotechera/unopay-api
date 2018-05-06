@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContractorBonusControllerTest extends AuthServerApplicationTests {
@@ -73,6 +74,20 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.contractor', is(notNullValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.createdDateTime', is(notNullValue())))
     }
+
+    void 'valid Contractor Bonus should be created'() {
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        String accessToken = getUserAccessToken()
+
+        when:
+        def result = this.mvc.perform(post('/contractor-bonuses?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(contractorBonus)))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
 
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
