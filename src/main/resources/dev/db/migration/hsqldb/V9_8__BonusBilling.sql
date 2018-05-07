@@ -10,3 +10,10 @@ create table bonus_billing (
     status varchar(100) not null
     constraint fk_bonus_bill_person foreign key(contract_id) references person(id)
 );
+
+create table contractor_bonus_billing (
+    bonus_billing_id VARCHAR(256),
+    contractor_bonus_id VARCHAR(256),
+    constraint fk_cbb_bonus_billing foreign key(bonus_billing_id) references bonus_billing(id),
+    constraint fk_cbb_contractor foreign key(contractor_bonus_id) references contractor(id)
+);
