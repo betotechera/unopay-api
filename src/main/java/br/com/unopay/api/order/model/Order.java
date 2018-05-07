@@ -24,12 +24,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,11 +45,12 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCELED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCEL_PENDING;
@@ -112,6 +113,9 @@ public class Order implements Updatable, Billable, Serializable {
     @Column(name = "value")
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private BigDecimal value;
+
+    @Column(name = "fee")
+    private BigDecimal fee = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "contract_id")
@@ -247,6 +251,17 @@ public class Order implements Updatable, Billable, Serializable {
         if (!isType(OrderType.ADHESION)) {
             setCandidates(new HashSet<>());
         }
+        if(shouldApplyFee()){
+            this.fee = getIssuer().getCreditCardFee();
+        }else{
+            this.fee = BigDecimal.ZERO;
+        }
+    }
+
+    private boolean shouldApplyFee() {
+        return type.shouldApplyFee() &&
+                this.is(PaymentMethod.CARD) &&
+                (getIssuer() != null && getIssuer().getCreditCardFee() != null);
     }
 
     public void validateMe() {
@@ -334,5 +349,9 @@ public class Order implements Updatable, Billable, Serializable {
             return getPaymentRequest().getCreditCard().getToken();
         }
         return null;
+    }
+
+    public BigDecimal paymentValue() {
+        return value.add(fee);
     }
 }
