@@ -59,7 +59,7 @@ public class BonusBilling {
     @JsonView({Views.BonusBilling.Detail.class})
     private Date processedAt;
 
-    @Column(name = "\"number\"")
+    @Column(name = "number")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.BonusBilling.Detail.class})
     private String number;

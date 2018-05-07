@@ -1,5 +1,7 @@
 package br.com.unopay.api.bacen.util
 
+import br.com.unopay.api.market.model.BonusBilling
+
 import static br.com.six2six.fixturefactory.Fixture.*
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
@@ -604,6 +606,13 @@ class FixtureCreator {
     AuthorizedMemberCandidate createAuthorizedMemberCandidateForOrder(Order order = createPersistedAdhesionOrder(createContractor().person)) {
         from(AuthorizedMemberCandidate.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("order", order)
+        }})
+    }
+
+    BonusBilling createBonusBillingToPersist() {
+        def person = from(Person.class).uses(jpaProcessor).gimme("physical")
+        from(BonusBilling).gimme("valid", new Rule() {{
+            add("person", person)
         }})
     }
 }

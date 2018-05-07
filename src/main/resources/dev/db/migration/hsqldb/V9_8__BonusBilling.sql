@@ -6,8 +6,8 @@ create table bonus_billing (
     processed_at timestamp,
     number varchar(100) not null,
     expiration timestamp not null,
-    status varchar(100) not null
-    constraint fk_bonus_bill_person foreign key(contract_id) references person(id)
+    status varchar(100) not null,
+    constraint fk_bonus_bill_person foreign key(person_id) references person(id)
 );
 
 create table contractor_bonus_billing (
