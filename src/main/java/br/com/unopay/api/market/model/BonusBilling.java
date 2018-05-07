@@ -26,7 +26,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "\"order\"")
+@Table(name = "bonus_billing")
 public class BonusBilling {
 
     private static final long serialVersionUID = 2732233885546623588L;
@@ -39,13 +39,6 @@ public class BonusBilling {
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
-    @Valid
-    @ManyToOne
-    @JoinColumn(name = "contract_id")
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.BonusBilling.Detail.class})
-    private Contract contract;
-    
     @Column(name = "created_date_time")
     @JsonView({Views.BonusBilling.Detail.class})
     private Date createdDateTime;
