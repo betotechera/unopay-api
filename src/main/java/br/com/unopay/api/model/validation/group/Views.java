@@ -189,4 +189,9 @@ public interface Views {
         interface Detail extends List {}
         interface List{}
     }
+
+    interface BonusBilling {
+        interface Detail extends List {}
+        interface List{}
+    }
 }
