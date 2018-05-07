@@ -76,10 +76,9 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class})
     private Double fee;
 
-    @Column(name = "credit_card_fee")
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Issuer.Detail.class})
     @DecimalMin("0.0")
+    @Column(name = "credit_card_fee")
+    @JsonView({Views.Issuer.Detail.class})
     private BigDecimal creditCardFee;
 
     @Valid
