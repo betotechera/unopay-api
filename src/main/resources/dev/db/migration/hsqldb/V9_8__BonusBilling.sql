@@ -16,3 +16,9 @@ create table contractor_bonus_billing (
     constraint fk_cbb_bonus_billing foreign key(bonus_billing_id) references bonus_billing(id),
     constraint fk_cbb_contractor foreign key(contractor_bonus_id) references contractor(id)
 );
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_BONUS_BILLING','Permite listar Faturamentos de bonus');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_BONUS_BILLING','Permite gerenciar Faturamentos de bonus');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_BONUS_BILLING', '1');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_BONUS_BILLING', '1');
