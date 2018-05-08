@@ -2,7 +2,6 @@ package br.com.unopay.api.market.service
 
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -92,6 +91,27 @@ class BonusBillingServiceTest extends SpockApplicationTests {
         given:
         def id = '123'
         when:
+        service.findById(id)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'BONUS_BILLING_NOT_FOUND'
+    }
+
+    void 'should not delete unknown BonusBilling'(){
+        given:
+        def id = '123'
+        when:
+        service.delete(id)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'BONUS_BILLING_NOT_FOUND'
+    }
+
+    void 'should delete known BonusBilling'(){
+        given:
+        def id = fixtureCreator.createPersistedBonusBilling().id
+        when:
+        service.delete(id)
         service.findById(id)
         then:
         def ex = thrown(NotFoundException)

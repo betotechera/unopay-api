@@ -55,4 +55,9 @@ public class BonusBillingService {
         current.validateMe();
         save(current);
     }
+
+    public void delete(String id) {
+        findById(id);
+        repository.delete(id);
+    }
 }
