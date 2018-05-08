@@ -11,4 +11,6 @@ public interface ContractorBonusRepository
 
     Optional<ContractorBonus> findById(String id);
 
+    Optional<ContractorBonus> findByIdAndContractorId(String id, String contratorId);
+
 }

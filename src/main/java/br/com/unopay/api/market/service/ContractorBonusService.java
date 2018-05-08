@@ -1,5 +1,6 @@
 package br.com.unopay.api.market.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
@@ -67,6 +68,10 @@ public class ContractorBonusService {
 
     public ContractorBonus findById(String id) {
         return getContractorBonus(id, () -> contractorBonusRepository.findById(id));
+    }
+
+    public ContractorBonus findByIdForContractor(String id, Contractor contractor) {
+        return getContractorBonus(id, () -> contractorBonusRepository.findByIdAndContractorId(id, contractor.getId()));
     }
 
     public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){

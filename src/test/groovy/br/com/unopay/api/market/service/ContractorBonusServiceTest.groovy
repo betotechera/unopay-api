@@ -103,6 +103,39 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
+    def 'known Contractor Bonus should be found for its Contractor'(){
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        Contractor contractor = contractorBonus.contractor
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+
+        when:
+        ContractorBonus found = contractorBonusService.findByIdForContractor(created.id, contractor)
+
+        then:
+        created.id == found.id
+
+    }
+
+    def 'known Contractor Bonus for a different Contractor should return error'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        Contractor contractor = contractorBonus.contractor
+        Contractor differentContractor = fixtureCreator.createContractor()
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+
+        when:
+        contractorBonusService.findByIdForContractor(created.id, differentContractor)
+
+        then:
+        contractor != differentContractor
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+
+    }
+
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
