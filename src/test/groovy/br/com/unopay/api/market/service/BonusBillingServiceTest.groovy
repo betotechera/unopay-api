@@ -1,10 +1,16 @@
 package br.com.unopay.api.market.service
 
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.AuthorizedMember
+import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 
 import java.time.Year
 
@@ -127,5 +133,15 @@ class BonusBillingServiceTest extends SpockApplicationTests {
         def found = service.findById(bonus.id)
         then:
         found.total == 123
+    }
+
+    void 'should find BonusBilling by filter'() {
+        given:
+        def document = fixtureCreator.createPersistedBonusBilling().person.documentNumber()
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        when:
+        Page<BonusBilling> bonus = service.findByFilter(new BonusBillingFilter(document: document), page)
+        then:
+        bonus.first()
     }
 }
