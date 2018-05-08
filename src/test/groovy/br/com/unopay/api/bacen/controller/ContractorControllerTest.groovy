@@ -371,6 +371,27 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     }
 
+    void 'should return all me Contractor Bonus'(){
+
+        given:
+        UserDetail contractorUser = fixtureCreator.createContractorUser()
+        fixtureCreator.createPersistedContractorBonusForContractor(contractorUser.contractor)
+        fixtureCreator.createPersistedContractorBonusForContractor(contractorUser.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        when:
+        def result = this.mvc
+                .perform(get('/contractors/me/bonuses?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].id', is(notNullValue())))
+
+    }
+
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
     }
