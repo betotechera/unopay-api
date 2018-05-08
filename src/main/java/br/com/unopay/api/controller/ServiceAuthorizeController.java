@@ -94,7 +94,7 @@ public class ServiceAuthorizeController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_SERVICE_AUTHORIZE')")
-    @RequestMapping(value = "/service-authorizations/{id}/ratings", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/service-authorizations/{id}/ratings", method = RequestMethod.PUT)
     public void rate(@PathVariable String id,@RequestBody ServiceAuthorize serviceAuthorize) {
         log.info("rating serviceAuthorize={}", id);
         service.rate(id,serviceAuthorize.getRating());

@@ -62,6 +62,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("type", random(OrderType.class));
             add("status", random(PaymentStatus.class));
             add("value", random(BigDecimal.class, range(0.1, 500)));
+            add("fee", BigDecimal.ZERO);
             add("contract", one(Contract.class, "valid"));
         }});
 

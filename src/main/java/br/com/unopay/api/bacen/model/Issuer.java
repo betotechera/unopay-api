@@ -7,10 +7,12 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,13 +26,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static br.com.unopay.api.uaa.exception.Errors.MOVEMENT_ACCOUNT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_ACCOUNT_REQUIRED;
@@ -68,11 +71,15 @@ public class Issuer implements Serializable{
             inverseJoinColumns = { @JoinColumn(name = "payment_rule_group_id") })
     private Set<PaymentRuleGroup> paymentRuleGroups;
 
-
     @Column(name = "fee")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Issuer.Detail.class})
     private Double fee;
+
+    @DecimalMin("0.0")
+    @Column(name = "credit_card_fee")
+    @JsonView({Views.Issuer.Detail.class})
+    private BigDecimal creditCardFee;
 
     @Valid
     @NotNull(groups = {Create.class, Update.class})
@@ -121,6 +128,7 @@ public class Issuer implements Serializable{
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
         this.bin = other.getBin();
+        this.creditCardFee = other.getCreditCardFee();
         this.financierMailForRemittance = other.getFinancierMailForRemittance();
         this.logoUri = other.logoUri;
         this.backgroundColor = other.backgroundColor;

@@ -7,14 +7,15 @@ import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderProcessor;
-import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.util.GenericObjectMapper;
-import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
 
 @Profile("!test")
 @Slf4j
@@ -44,7 +45,7 @@ public class OrderReceiver {
         log.info("creating payment for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
         if(order.is(PaymentMethod.CARD)) {
-            order.getPaymentRequest().setValue(order.getValue());
+            order.getPaymentRequest().setValue(order.paymentValue());
             Transaction transaction = transactionService.create(order.getPaymentRequest());
             orderProcessor.processWithStatus(order.getId(), transaction.getStatus());
         }
