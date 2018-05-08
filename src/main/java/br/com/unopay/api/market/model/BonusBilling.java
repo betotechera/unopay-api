@@ -1,14 +1,14 @@
 package br.com.unopay.api.market.model;
 
-import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.PaymentStatus;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -74,4 +74,32 @@ public class BonusBilling {
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Order.Detail.class, Views.Order.Detail.class})
     private PaymentStatus status;
+
+    public void validateMe() {
+        if(person == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PERSON_REQUIRED);
+        }
+
+        if(total == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.BONUS_BILLING_TOTAL_REQUIRED);
+        }
+
+        validateDates();
+    }
+
+    private void validateDates() {
+        Date today = new Date();
+
+        if(processedAt.after(today)) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_BONUS_BILLING_PROCESS_DATE);
+        }
+
+        if(expiration.before(today)) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_BONUS_BILLING_EXPIRATION_DATE);
+        }
+    }
+
+    public String personId() {
+        return person != null ? person.getId() : null;
+    }
 }
