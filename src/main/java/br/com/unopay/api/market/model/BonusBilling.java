@@ -49,7 +49,7 @@ public class BonusBilling implements Serializable, Updatable {
     @ManyToOne
     @JoinColumn(name = "person_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.BonusBilling.Detail.class})
+    @JsonView({Views.BonusBilling.List.class})
     private Person person;
 
     @Column(name = "total")
