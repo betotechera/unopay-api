@@ -13,6 +13,7 @@ import br.com.unopay.api.billing.creditcard.model.Transaction
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
+import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
@@ -347,6 +348,27 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
+    }
+
+    void 'known me Contractor Bonus should be found'(){
+
+        given:
+        UserDetail contractorUser = fixtureCreator.createContractorUser()
+        ContractorBonus contractorBonus = fixtureCreator
+                .createPersistedContractorBonusForContractor(contractorUser.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        String id = contractorBonus.id
+
+        when:
+        def result = this.mvc
+                .perform(get('/contractors/me/bonuses/{id}?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.earnedBonus', is(notNullValue())))
+
     }
 
     Contractor getContractor() {
