@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -22,12 +23,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "bonus_billing")
-public class BonusBilling {
+public class BonusBilling implements Serializable, Updatable {
 
     private static final long serialVersionUID = 2732233885546623588L;
 

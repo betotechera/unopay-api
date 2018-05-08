@@ -43,4 +43,16 @@ public class BonusBillingService {
         return BonusBilling.orElseThrow(()-> UnovationExceptions.notFound().withErrors(
                 Errors.BONUS_BILLING_NOT_FOUND));
     }
+
+    public void update(String id, BonusBilling bonusBilling) {
+        BonusBilling current = findById(id);
+        update(current, bonusBilling);
+    }
+
+    private void update(BonusBilling current, BonusBilling bonusBilling) {
+        current.updateMe(bonusBilling);
+        validateReferences(current);
+        current.validateMe();
+        save(current);
+    }
 }
