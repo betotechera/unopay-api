@@ -78,14 +78,22 @@ class BonusBillingServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'INVALID_BONUS_BILLING_PROCESS_DATE'
     }
 
-    void 'given BonusBilling with invalid bonus expiration date should return error'(){
+    void 'should find known BonusBilling'(){
         given:
-        def bonusBilling = fixtureCreator.createBonusBillingToPersist()
-        bonusBilling.expiration = new Date('12/12/2015')
+        def id = fixtureCreator.createPersistedBonusBilling().id
         when:
-        service.create(bonusBilling)
+        def found = service.findById(id)
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.first().logref == 'INVALID_BONUS_BILLING_EXPIRATION_DATE'
+        found
+    }
+
+    void 'should not find unknown BonusBilling'(){
+        given:
+        def id = '123'
+        when:
+        def found = service.findById(id)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'BONUS_BILLING_NOT_FOUND'
     }
 }

@@ -640,4 +640,7 @@ public final class Errors {
     public static final UnovationError INVALID_BONUS_BILLING_EXPIRATION_DATE =
             new UnovationError("INVALID_BONUS_BILLING_EXPIRATION_DATE", "Invalid Bonus Billing " +
                     "expiration date");
+
+    public static final UnovationError BONUS_BILLING_NOT_FOUND =
+            new UnovationError("BONUS_BILLING_NOT_FOUND", "Bonus billing not found");
 }
