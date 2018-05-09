@@ -14,4 +14,8 @@ public enum OrderType implements DescriptableEnum{
     public String getDescription() {
         return description;
     }
+
+    public boolean shouldApplyFee() {
+        return CREDIT.equals(this);
+    }
 }
