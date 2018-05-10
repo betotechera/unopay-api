@@ -131,7 +131,7 @@ public class Issuer implements Serializable{
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
-        setServicePasswordRequired(other.servicePasswordRequired);
+        updateServicePasswordRequired(other.servicePasswordRequired);
         this.bin = other.getBin();
         this.creditCardFee = other.getCreditCardFee();
         this.financierMailForRemittance = other.getFinancierMailForRemittance();
@@ -197,7 +197,7 @@ public class Issuer implements Serializable{
         return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();
     }
 
-    public void setServicePasswordRequired(Boolean isRequired) {
+    public void updateServicePasswordRequired(Boolean isRequired) {
         if(isRequired != null) {
             this.servicePasswordRequired = isRequired;
         }

@@ -77,6 +77,12 @@ public class IssuerService {
     }
 
     @Transactional
+    public Issuer updateMe(String id, Issuer issuer) {
+        issuer.setServicePasswordRequired(null);
+        return update(id, issuer);
+    }
+
+    @Transactional
     public Issuer update(String id, Issuer issuer) {
         issuer.validate();
         Issuer current = findById(id);
