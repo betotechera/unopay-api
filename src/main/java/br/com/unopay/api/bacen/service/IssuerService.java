@@ -81,7 +81,6 @@ public class IssuerService {
         issuer.validate();
         Issuer current = findById(id);
         validateReferences(issuer);
-        issuer.setMeUp();
         current.updateMe(issuer);
         personService.save(current.getPerson());
         bankAccountService.update(issuer.getMomentAccountId(),issuer.getMovementAccount());
