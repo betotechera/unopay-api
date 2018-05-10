@@ -118,9 +118,9 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String textColor;
 
-    @Column(name = "contractor_password_required")
+    @Column(name = "service_password_required")
     @JsonView({Views.Issuer.Detail.class})
-    private Boolean contractorPasswordRequired;
+    private Boolean servicePasswordRequired;
 
     @Version
     @JsonIgnore
@@ -138,6 +138,12 @@ public class Issuer implements Serializable{
         this.backgroundColor = other.backgroundColor;
         this.textColor = other.textColor;
         person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
+    }
+
+    public void setMeUp() {
+        if(servicePasswordRequired == null) {
+            servicePasswordRequired = true;
+        }
     }
 
     public void validate(){

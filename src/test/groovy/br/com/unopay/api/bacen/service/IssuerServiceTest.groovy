@@ -53,6 +53,32 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
     }
+
+    def 'when creating issuer without servicePasswordRequired should define it required'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        Issuer created = service.create(issuer)
+        Issuer result = service.findById(created.getId())
+
+        then:
+        result.servicePasswordRequired
+    }
+
+    def 'should create issuer with unrequired service password'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        issuer.servicePasswordRequired = false
+
+        when:
+        Issuer created = service.create(issuer)
+        Issuer result = service.findById(created.getId())
+
+        then:
+        !result.servicePasswordRequired
+    }
+
     def 'a valid issuer with the same document number should not be created'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")

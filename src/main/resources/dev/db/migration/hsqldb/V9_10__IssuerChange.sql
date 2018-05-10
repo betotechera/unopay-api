@@ -1,1 +1,1 @@
-alter table issuer add contractor_password_required boolean;
+alter table issuer add service_password_required boolean;

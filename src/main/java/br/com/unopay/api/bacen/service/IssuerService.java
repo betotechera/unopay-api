@@ -58,6 +58,7 @@ public class IssuerService {
     public Issuer create(Issuer issuer) {
         try {
         issuer.validate();
+        issuer.setMeUp();
         createRequiredReferences(issuer);
         validateReferences(issuer);
         Issuer created = repository.save(issuer);
