@@ -234,7 +234,10 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         Issuer created = service.create(issuer)
 
-        issuer.with { fee = 0.3 }
+        issuer.with {
+            fee = 0.3
+            servicePasswordRequired = Boolean.FALSE
+        }
         when:
         service.update(created.id, issuer)
         Issuer result = service.findById(created.id)
@@ -242,6 +245,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
         result.fee == 0.3d
+        !result.servicePasswordRequired
     }
 
     def 'a person issuer should be updated'(){
