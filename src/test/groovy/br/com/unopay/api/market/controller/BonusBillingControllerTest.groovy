@@ -45,24 +45,6 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
         result.andExpect(status().isOk()).andExpect(jsonPath('$.total', notNullValue()))
     }
 
-    def 'known BonusBilling should be updated'() {
-        given:
-        def accessToken = getUserAccessToken()
-        def bonusBilling = fixtureCreator.createPersistedBonusBilling()
-        bonusBilling.number = "123"
-        def id = bonusBilling.id
-        when:
-        def result = this.mvc.perform(put('/bonus-billings/{id}?access_token={access_token}', id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(bonusBilling)))
-
-        def found = this.mvc.perform(get('/bonus-billings/{id}?access_token={access_token}', id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isNoContent())
-        found.andExpect(status().isOk()).andExpect(jsonPath('$.number', equalTo("123")))
-    }
-
     def 'all BonusBillings should be found'() {
         given:
         def accessToken = getUserAccessToken()

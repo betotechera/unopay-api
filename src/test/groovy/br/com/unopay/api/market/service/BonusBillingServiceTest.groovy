@@ -124,17 +124,6 @@ class BonusBillingServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'BONUS_BILLING_NOT_FOUND'
     }
 
-    void 'should update known BonusBilling'(){
-        given:
-        def bonus = fixtureCreator.createPersistedBonusBilling()
-        bonus.total = 123
-        when:
-        service.update(bonus.id, bonus)
-        def found = service.findById(bonus.id)
-        then:
-        found.total == 123
-    }
-
     void 'should find BonusBilling by filter'() {
         given:
         def document = fixtureCreator.createPersistedBonusBilling().person.documentNumber()

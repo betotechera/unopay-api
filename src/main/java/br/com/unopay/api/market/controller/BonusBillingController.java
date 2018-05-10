@@ -64,15 +64,6 @@ public class BonusBillingController {
                 .format("/bonus-billings/%s",created.getId()))).body(created);
     }
 
-    @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
-    @RequestMapping(value = "/bonus-billings/{id}", method = PUT)
-    public void update(@PathVariable String id,
-                       @Validated(Create.class) @RequestBody BonusBilling bonusBilling){
-        log.info("updating bonus billing={}", bonusBilling);
-        service.update(id, bonusBilling);
-    }
-
     @JsonView(Views.BonusBilling.Detail.class)
     @ResponseStatus(OK)
     @PreAuthorize("hasRole('ROLE_LIST_BONUS_BILLING')")

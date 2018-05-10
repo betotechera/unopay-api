@@ -52,18 +52,6 @@ public class BonusBillingService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    public void update(String id, BonusBilling bonusBilling) {
-        BonusBilling current = findById(id);
-        update(current, bonusBilling);
-    }
-
-    private void update(BonusBilling current, BonusBilling bonusBilling) {
-        current.updateMe(bonusBilling);
-        validateReferences(current);
-        current.validateMe();
-        save(current);
-    }
-
     public void delete(String id) {
         findById(id);
         repository.delete(id);
