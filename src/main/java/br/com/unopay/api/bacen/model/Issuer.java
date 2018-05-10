@@ -118,6 +118,10 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String textColor;
 
+    @Column(name = "contractor_password_required")
+    @JsonView({Views.Issuer.Detail.class})
+    private Boolean contractorPasswordRequired;
+
     @Version
     @JsonIgnore
     Long version;
