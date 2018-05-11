@@ -1,8 +1,8 @@
 package br.com.unopay.api.util
 
-import scala.collection.JavaConverters._
-
 import br.com.unopay.api.ScalaApplicationTest
+
+import scala.collection.JavaConverters._
 
 class StringJoinerTest extends ScalaApplicationTest {
     
