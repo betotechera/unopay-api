@@ -15,7 +15,7 @@ create table contractor_bonus_billing (
     bonus_billing_id VARCHAR(256),
     contractor_bonus_id VARCHAR(256),
     constraint fk_cbb_bonus_billing foreign key(bonus_billing_id) references bonus_billing(id),
-    constraint fk_cbb_contractor_bonus foreign key(contractor_bonus_id) references contractor_bonus(id)
+    --constraint fk_cbb_contractor_bonus foreign key(contractor_bonus_id) references contractor_bonus(id)
 );
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_BONUS_BILLING','Permite listar Faturamentos de bonus');

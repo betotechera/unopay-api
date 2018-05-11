@@ -1,7 +1,6 @@
 package br.com.unopay.api
 
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
-import br.com.unopay.api.util.JpaProcessorScala
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
 import org.junit.runner.RunWith
