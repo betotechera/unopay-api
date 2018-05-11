@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -72,6 +73,10 @@ public class ContractorBonusService {
 
     public ContractorBonus findByIdForContractor(String id, Contractor contractor) {
         return getContractorBonus(id, () -> contractorBonusRepository.findByIdAndContractorId(id, contractor.getId()));
+    }
+
+    public ContractorBonus findByIdForPerson(String id, Person person) {
+        return getContractorBonus(id, () -> contractorBonusRepository.findByIdAndPayerId(id, person.getId()));
     }
 
     public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){
