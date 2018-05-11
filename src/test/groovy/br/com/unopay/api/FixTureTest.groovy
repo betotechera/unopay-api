@@ -20,7 +20,6 @@ class FixTureTest  extends SpockApplicationTests{
         contract.product.id != null
         contract.contractor.id != null
         contract.hirer.id != null
-        contract.establishments.every { it.id != null }
         result.isPresent()
     }
 
