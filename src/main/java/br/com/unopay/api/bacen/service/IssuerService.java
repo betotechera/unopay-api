@@ -78,7 +78,7 @@ public class IssuerService {
 
     @Transactional
     public Issuer updateMe(String id, Issuer issuer) {
-        issuer.setServicePasswordRequired(null);
+        issuer.setAuthorizeServiceWithoutContractorPassword(null);
         return update(id, issuer);
     }
 

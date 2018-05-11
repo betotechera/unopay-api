@@ -54,7 +54,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         result != null
     }
 
-    def 'when creating issuer without servicePasswordRequired should define it required'(){
+    def 'when creating issuer without authorizeServiceWithoutContractorPassword should define it false'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
 
@@ -63,20 +63,20 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer result = service.findById(created.getId())
 
         then:
-        result.servicePasswordRequired
+        !result.authorizeServiceWithoutContractorPassword
     }
 
-    def 'should create issuer with unrequired service password'(){
+    def 'should create issuer with authorizeServiceWithoutContractorPassword'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
-        issuer.servicePasswordRequired = false
+        issuer.authorizeServiceWithoutContractorPassword = true
 
         when:
         Issuer created = service.create(issuer)
         Issuer result = service.findById(created.getId())
 
         then:
-        !result.servicePasswordRequired
+        result.authorizeServiceWithoutContractorPassword
     }
 
     def 'a valid issuer with the same document number should not be created'(){
@@ -236,7 +236,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         issuer.with {
             fee = 0.3
-            servicePasswordRequired = Boolean.FALSE
+            authorizeServiceWithoutContractorPassword = Boolean.TRUE
         }
         when:
         service.update(created.id, issuer)
@@ -245,16 +245,16 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
         result.fee == 0.3d
-        !result.servicePasswordRequired
+        result.authorizeServiceWithoutContractorPassword
     }
 
-    def 'given me issuer should be update servicePasswordRequired'(){
+    def 'given me issuer should not update authorizeServiceWithoutContractorPassword'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         Issuer created = service.create(issuer)
 
         issuer.with {
-            servicePasswordRequired = Boolean.FALSE
+            authorizeServiceWithoutContractorPassword = Boolean.TRUE
         }
         when:
         service.updateMe(created.id, issuer)
@@ -262,7 +262,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         then:
         result != null
-        result.servicePasswordRequired
+        !result.authorizeServiceWithoutContractorPassword
     }
 
     def 'a person issuer should be updated'(){
