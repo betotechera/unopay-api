@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -250,4 +251,17 @@ public class EstablishmentController {
         return contractorBonusService.findByIdForPerson(id, establishment.getPerson());
     }
 
+    @JsonView(Views.ContractorBonus.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/contractor-bonuses", method = RequestMethod.GET)
+    public Results<ContractorBonus> getContractorBonusByParams(Establishment establishment,
+                                                                   ContractorBonusFilter filter,
+                                                                   @Validated UnovationPageRequest pageable) {
+        log.info("search Contractor Bonus with filter={}", filter);
+        filter.setPayer(establishment.documentNumber());
+        Page<ContractorBonus> page =  contractorBonusService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/establishments/me/contractor-bonuses", api));
+    }
 }

@@ -186,6 +186,28 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
 
     }
 
+    void 'should return all me Contractor Bonus'(){
+
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        UserDetail establishmentUser = fixtureCreator.createEstablishmentUser(establishment)
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        fixtureCreator.createPersistedContractorBonusForPerson(establishment.person)
+        fixtureCreator.createPersistedContractorBonusForPerson(establishment.person)
+
+        when:
+        def result = this.mvc
+                .perform(get('/establishments/me/contractor-bonuses?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].id', is(notNullValue())))
+
+    }
+
     String extractId(String location) {
         location.replaceAll('/establishments/', "")
     }
