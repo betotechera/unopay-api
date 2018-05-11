@@ -4,13 +4,18 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.uaa.model.UserDetail
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+
+import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -157,6 +162,28 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.authorizationNumber', is(notNullValue())))
+    }
+
+    void 'known Contractor Bonus should be found'() {
+
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        UserDetail establishmentUser = fixtureCreator.createEstablishmentUser(establishment)
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ContractorBonus contractorBonus = fixtureCreator.createPersistedContractorBonusForPerson(establishment.person)
+        String id = contractorBonus.id
+
+        when:
+        def result = this.mvc
+                .perform(get('/establishments/me/contractor-bonuses/{id}?access_token={access_token}'
+                ,id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.earnedBonus', is(notNullValue())))
+
     }
 
     String extractId(String location) {

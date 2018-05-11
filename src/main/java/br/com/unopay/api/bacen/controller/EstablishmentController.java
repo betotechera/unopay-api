@@ -6,6 +6,8 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
@@ -57,6 +59,7 @@ public class EstablishmentController {
     private ContractorService contractorService;
     private PaymentInstrumentService paymentInstrumentService;
     private ContractService contractService;
+    private ContractorBonusService contractorBonusService;
 
     @Value("${unopay.api}")
     private String api;
@@ -66,12 +69,14 @@ public class EstablishmentController {
                                    ServiceAuthorizeService authorizeService,
                                    ContractorService contractorService,
                                    PaymentInstrumentService paymentInstrumentService,
-                                   ContractService contractService) {
+                                   ContractService contractService,
+                                   ContractorBonusService contractorBonusService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractService = contractService;
+        this.contractorBonusService = contractorBonusService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -235,6 +240,14 @@ public class EstablishmentController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/establishments/me/contractors/%s/contracts", api, contractorId));
+    }
+
+    @JsonView(Views.ContractorBonus.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/contractor-bonuses/{id}", method = RequestMethod.GET)
+    public ContractorBonus getContractorBonus(Establishment establishment, @PathVariable String id) {
+        log.info("get Contractor Bonus={} for Establishment={}", id, establishment.documentNumber());
+        return contractorBonusService.findByIdForPerson(id, establishment.getPerson());
     }
 
 }
