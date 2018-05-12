@@ -59,6 +59,6 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
         val result = this.mvc.perform(delete("/bonus-billings/{id}?access_token={access_token}", id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
 
-        result.andExpect(status().isNoContent())
+        result.andExpect(status().isNoContent)
     }
 }
