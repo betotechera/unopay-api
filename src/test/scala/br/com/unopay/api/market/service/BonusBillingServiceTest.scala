@@ -3,9 +3,8 @@ package br.com.unopay.api.market.service
 import java.time.Year
 import java.util.Date
 
-import br.com.unopay.api.ScalaApplicationTest
-import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +16,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
     @Autowired
     var service: BonusBillingService = _
     @Autowired
-    var fixtureCreator: FixtureCreator = _
+    var fixtureCreator: util.FixtureCreatorScala = _
 
      it should "save valid BonusBilling" in{
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()

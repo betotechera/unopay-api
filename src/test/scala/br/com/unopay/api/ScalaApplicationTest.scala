@@ -1,5 +1,6 @@
 package br.com.unopay.api
 
+import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
@@ -43,6 +44,10 @@ abstract class ScalaApplicationTest extends FlatSpec
   def toJson(obj: Object) : String  = {
     val objectMapper = new ObjectMapper()
     objectMapper.writeValueAsString(obj)
+  }
+
+  def instant(pattern: String): java.util.Date ={
+    new ChronicFunction(pattern).generateValue()
   }
 }
 

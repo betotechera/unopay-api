@@ -1,7 +1,7 @@
 package br.com.unopay.api.market.controller
 
 import br.com.unopay.api.AuthServerApplicationTests
-import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.util.FixtureCreatorScala
 import org.hamcrest.Matchers.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{jsonPa
 class BonusBillingControllerTest  extends AuthServerApplicationTests {
 
     @Autowired
-    var fixtureCreator: FixtureCreator = _
+    var fixtureCreator: FixtureCreatorScala = _
 
      "given valid bonusBilling" should "create it" in {
          val accessToken = getUserAccessToken()

@@ -161,4 +161,8 @@ public class Person implements Serializable{
             this.getAddress().setZipCode(zipCodeNumberOnly);
         }
     }
+
+    public String getId(){
+        return this.id;
+    }
 }
