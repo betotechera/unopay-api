@@ -124,4 +124,11 @@ public class Contractor implements Serializable {
     public boolean withBankAccount() {
         return this.bankAccount != null;
     }
+
+    public String personShortName() {
+        if (getPerson() != null && !getPerson().getShortName().equals("")) {
+            return getPerson().getShortName();
+        }
+        return null;
+    }
 }

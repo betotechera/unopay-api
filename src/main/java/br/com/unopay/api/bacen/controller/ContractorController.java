@@ -4,6 +4,8 @@ import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
@@ -14,6 +16,7 @@ import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
@@ -66,6 +69,7 @@ public class ContractorController {
     private TransactionService transactionService;
     private TicketService ticketService;
     private AuthorizedMemberService authorizedMemberService;
+    private ContractorBonusService contractorBonusService;
 
     @Value("${unopay.api}")
     private String api;
@@ -77,7 +81,8 @@ public class ContractorController {
                                 ContractorInstrumentCreditService contractorInstrumentCreditService,
                                 PaymentInstrumentService paymentInstrumentService,
                                 TransactionService transactionService,
-                                TicketService ticketService, AuthorizedMemberService authorizedMemberService) {
+                                TicketService ticketService, AuthorizedMemberService authorizedMemberService,
+                                ContractorBonusService contractorBonusService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -86,6 +91,7 @@ public class ContractorController {
         this.transactionService = transactionService;
         this.ticketService = ticketService;
         this.authorizedMemberService = authorizedMemberService;
+        this.contractorBonusService = contractorBonusService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -283,5 +289,26 @@ public class ContractorController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/%s/authorized-members"
                 , api, contractorDocument));
+    }
+
+    @JsonView(Views.ContractorBonus.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/bonuses/{id}", method = RequestMethod.GET)
+    public ContractorBonus getContractorBonus(Contractor contractor, @PathVariable String id) {
+        log.info("get bonus={} for contractor={}", id, contractor.getPerson().documentNumber());
+        return contractorBonusService.findByIdForContractor(id, contractor);
+    }
+
+    @JsonView(Views.ContractorBonus.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/bonuses", method = RequestMethod.GET)
+    public Results<ContractorBonus> getContractorBonusByParams(Contractor contractor,
+                                                               ContractorBonusFilter filter,
+                                                               @Validated UnovationPageRequest pageable) {
+        log.info("search bonuses with filter={} for contractor={}", filter, contractor.getPerson().documentNumber());
+        filter.setContractor(contractor.getId());
+        Page<ContractorBonus> page = contractorBonusService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/bonuses", api));
     }
 }
