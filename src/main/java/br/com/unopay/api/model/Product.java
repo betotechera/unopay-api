@@ -58,6 +58,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_RULE_GROUP_ID_REQUI
 public class Product implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
+    public static final String EMPTY = "";
     public static final int MAX_CODE_LENGTH = 4, JANUARY = 1, DECEMBER = 12;
 
     public Product(){}
@@ -256,4 +257,5 @@ public class Product implements Serializable, Updatable {
         }
         return null;
     }
+
 }

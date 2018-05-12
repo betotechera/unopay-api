@@ -645,4 +645,12 @@ public final class Errors {
 
     public static final UnovationError BONUS_BILLING_NOT_FOUND =
             new UnovationError("BONUS_BILLING_NOT_FOUND", "Bonus billing not found");
+
+    /*  Contractor Bonus */
+    public static final UnovationError CONTRACTOR_BONUS_NOT_FOUND =
+            new UnovationError("CONTRACTOR_BONUS_NOT_FOUND","Contractor bonus not found");
+    public static final UnovationError INVALID_PROCESSED_AT =
+            new UnovationError("INVALID_PROCESSED_AT","Invalid processed at date");
+    public static final UnovationError INVALID_BONUS_SITUATION =
+            new UnovationError("INVALID_BONUS_SITUATION","Invalid bonus situation");
 }
