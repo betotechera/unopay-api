@@ -8,23 +8,14 @@ import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
-import com.fasterxml.jackson.annotation.JsonView
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonView}
 import lombok.Data
 import org.hibernate.annotations.GenericGenerator
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import javax.persistence._
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import java.io.Serializable
 import java.lang._
-import java.net.URI
 import java.util.Date
 
 import scala.beans.BeanProperty
@@ -84,6 +75,19 @@ class BonusBilling extends Serializable with Updatable {
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @JsonView(Array(classOf[Views.Order.Detail]))
     var status: PaymentStatus = _
+
+    @JsonIgnore
+    @OneToMany
+    @BeanProperty
+    @JoinTable(name = "contractor_bonus_billing",
+        joinColumns = Array(new JoinColumn(name = "bonus_billing_id")),
+        inverseJoinColumns = Array(new JoinColumn(name = "contractor_bonus_id")))
+    var contractorBonuses: java.util.Set[ContractorBonus] = _
+
+    def addToContractorBonuses(bonus: ContractorBonus) {
+        if (contractorBonuses == null) setContractorBonuses(new java.util.HashSet[ContractorBonus]())
+        contractorBonuses.add(bonus)
+    }
 
     def validateMe() {
         if(person == null) {
