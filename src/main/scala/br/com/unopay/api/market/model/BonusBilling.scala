@@ -34,8 +34,6 @@ import scala.beans.BeanProperty
 @Table(name = "bonus_billing")
 @SerialVersionUID(2732233885546623588L)
 class BonusBilling extends Serializable with Updatable {
-    def apply(uri: URI) = ???
-
 
     @Id
     @BeanProperty

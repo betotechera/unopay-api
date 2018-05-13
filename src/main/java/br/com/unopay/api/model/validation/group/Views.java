@@ -13,7 +13,6 @@ public interface Views {
         interface List {}
     }
 
-
     interface AccreditedNetwork {
         interface Detail extends Person,BankAccount,Address,List {}
         interface List {}
