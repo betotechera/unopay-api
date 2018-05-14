@@ -119,7 +119,7 @@ public class Issuer implements Serializable{
     private String textColor;
 
     @Column(name = "authorize_service_without_contractor_password")
-    @JsonView({Views.Issuer.Detail.class})
+    @JsonView({Views.Issuer.List.class})
     private Boolean authorizeServiceWithoutContractorPassword;
 
     @Version
