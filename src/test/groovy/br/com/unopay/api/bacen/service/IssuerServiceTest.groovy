@@ -53,6 +53,32 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
     }
+
+    def 'when creating issuer without authorizeServiceWithoutContractorPassword should define it false'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+
+        when:
+        Issuer created = service.create(issuer)
+        Issuer result = service.findById(created.getId())
+
+        then:
+        !result.authorizeServiceWithoutContractorPassword
+    }
+
+    def 'should create issuer with authorizeServiceWithoutContractorPassword'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        issuer.authorizeServiceWithoutContractorPassword = true
+
+        when:
+        Issuer created = service.create(issuer)
+        Issuer result = service.findById(created.getId())
+
+        then:
+        result.authorizeServiceWithoutContractorPassword
+    }
+
     def 'a valid issuer with the same document number should not be created'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
@@ -208,7 +234,10 @@ class IssuerServiceTest  extends SpockApplicationTests {
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
         Issuer created = service.create(issuer)
 
-        issuer.with { fee = 0.3 }
+        issuer.with {
+            fee = 0.3
+            authorizeServiceWithoutContractorPassword = Boolean.TRUE
+        }
         when:
         service.update(created.id, issuer)
         Issuer result = service.findById(created.id)
@@ -216,6 +245,24 @@ class IssuerServiceTest  extends SpockApplicationTests {
         then:
         result != null
         result.fee == 0.3d
+        result.authorizeServiceWithoutContractorPassword
+    }
+
+    def 'given me issuer should not update authorizeServiceWithoutContractorPassword'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        Issuer created = service.create(issuer)
+
+        issuer.with {
+            authorizeServiceWithoutContractorPassword = Boolean.TRUE
+        }
+        when:
+        service.updateMe(created.id, issuer)
+        Issuer result = service.findById(created.id)
+
+        then:
+        result != null
+        !result.authorizeServiceWithoutContractorPassword
     }
 
     def 'a person issuer should be updated'(){

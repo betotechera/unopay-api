@@ -369,4 +369,10 @@ public class Contract implements Serializable {
     public boolean withIssuerAsHirer() {
         return this.product.getIssuer().documentNumber().equals(this.hirerDocumentNumber());
     }
+
+
+    public boolean canAuthorizeServiceWithoutContractorPassword() {
+        Boolean canAuthorize = product.getIssuer().getAuthorizeServiceWithoutContractorPassword();
+        return  canAuthorize != null ? canAuthorize : false;
+    }
 }

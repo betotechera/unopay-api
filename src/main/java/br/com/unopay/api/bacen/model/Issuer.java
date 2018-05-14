@@ -118,6 +118,10 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.Detail.class, Views.Product.List.class})
     private String textColor;
 
+    @Column(name = "authorize_service_without_contractor_password")
+    @JsonView({Views.Issuer.List.class})
+    private Boolean authorizeServiceWithoutContractorPassword;
+
     @Version
     @JsonIgnore
     Long version;
@@ -127,6 +131,7 @@ public class Issuer implements Serializable{
         setMovementAccount(other.getMovementAccount());
         setPaymentAccount(other.getPaymentAccount());
         setPaymentRuleGroups(other.getPaymentRuleGroups());
+        updateServicePasswordRequired(other.authorizeServiceWithoutContractorPassword);
         this.bin = other.getBin();
         this.creditCardFee = other.getCreditCardFee();
         this.financierMailForRemittance = other.getFinancierMailForRemittance();
@@ -134,6 +139,12 @@ public class Issuer implements Serializable{
         this.backgroundColor = other.backgroundColor;
         this.textColor = other.textColor;
         person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
+    }
+
+    public void setMeUp() {
+        if(authorizeServiceWithoutContractorPassword == null) {
+            authorizeServiceWithoutContractorPassword = false;
+        }
     }
 
     public void validate(){
@@ -184,6 +195,12 @@ public class Issuer implements Serializable{
     @JsonIgnore
     public boolean hasPaymentRuleGroup(){
         return getPaymentRuleGroups() != null && !getPaymentRuleGroups().isEmpty();
+    }
+
+    public void updateServicePasswordRequired(Boolean isRequired) {
+        if(isRequired != null) {
+            this.authorizeServiceWithoutContractorPassword = isRequired;
+        }
     }
 
     public String personShortName() {

@@ -78,6 +78,7 @@ public class ServiceAuthorizeService {
 
     @Transactional
     public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
+        authorize.validateMe();
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
         PaymentInstrument paymentInstrument = getValidContractorPaymentInstrument(authorize, contract);
