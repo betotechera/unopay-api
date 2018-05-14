@@ -114,7 +114,7 @@ public class Contract implements Serializable {
     @ManyToOne
     @JoinColumn(name="hirer_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Contract.Detail.class, Views.AuthorizedMember.List.class})
+    @JsonView({Views.Contract.List.class, Views.AuthorizedMember.List.class})
     private Hirer hirer;
 
     @ManyToOne
