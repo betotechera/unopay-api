@@ -264,4 +264,18 @@ public class EstablishmentController {
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/establishments/me/contractor-bonuses", api));
     }
+
+    @ResponseStatus(CREATED)
+    @JsonView(Views.ContractorBonus.Detail.class)
+    @RequestMapping(value = "/establishments/me/contractor-bonuses", method = POST)
+    public ResponseEntity<ContractorBonus> createContractorBonus(UserDetail currentUser,
+                                                                 @Validated(Create.class)
+                                                                 @RequestBody ContractorBonus contractorBonus) {
+        Establishment establishment = currentUser.getEstablishment();
+        log.info("creating Contractor Bonus={} for Establishment={}", contractorBonus, establishment.documentNumber());
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus);
+        log.info("Contractor Bonus={}", created);
+        return created(URI.create(
+                String.format("%s/establishments/me/contractor-bonuses/%s",api, created.getId()))).body(created);
+    }
 }
