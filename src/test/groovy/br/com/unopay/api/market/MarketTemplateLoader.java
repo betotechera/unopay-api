@@ -126,7 +126,7 @@ public class MarketTemplateLoader implements TemplateLoader {
 
         Fixture.of(BonusBilling.class).addTemplate("valid", new Rule(){{
             add("createdDateTime", instant("now"));
-            add("person", one(Person.class, "physical"));
+            add("payer", one(Person.class, "physical"));
             add("total", random(Double.class, range(2, 300)));
             add("processedAt", instant("now"));
             add("number",  regex("\\w{100}"));
