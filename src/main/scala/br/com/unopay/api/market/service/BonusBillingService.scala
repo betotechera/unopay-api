@@ -27,7 +27,7 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {
-        bonusBilling.setPerson(personService.findById(bonusBilling.personId()))
+        bonusBilling.setPayer(personService.findById(bonusBilling.personId()))
     }
 
     def findById(id: String): BonusBilling = {

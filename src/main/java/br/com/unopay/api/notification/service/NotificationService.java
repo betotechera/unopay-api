@@ -81,7 +81,7 @@ public class NotificationService {
         sendEmailToQueue(order.getBillingMail(), payload, eventType);
     }
 
-    public void sendBoletoIssued(Billable billable, Ticket ticket) {
+    public void sendTicketIssued(Billable billable, Ticket ticket) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("billable", billable);
         payload.put("ticket", ticket);

@@ -112,24 +112,20 @@ public class TicketService {
     @Transactional
     public Ticket createForOrder(String orderId) {
         Order order = orderService.findById(orderId);
-        Ticket ticket = create(order);
-        notificationService.sendBoletoIssued(order, ticket);
-        return ticket;
+        return create(order);
     }
 
     @Transactional
     public Ticket createForCredit(Credit credit) {
         Credit current = creditService.findById(credit.getId());
-        Ticket ticket = create(current);
-        notificationService.sendBoletoIssued(current, ticket);
-        return ticket;
+        return create(current);
     }
 
     @Transactional
     public Ticket createForBilling(NegotiationBilling billing) {
         NegotiationBilling current = negotiationBillingService.findById(billing.getId());
         Ticket ticket = create(current);
-        notificationService.sendBoletoIssued(current, ticket);
+        notificationService.sendTicketIssued(current, ticket);
         return ticket;
     }
 
@@ -152,7 +148,9 @@ public class TicketService {
                 .value(order.getValue())
                 .ourNumber(clearOurNumber)
                 .build();
-        return createTicketModel(order, boletoStella, clearOurNumber);
+        Ticket ticket = createTicketModel(order, boletoStella, clearOurNumber);
+        notificationService.sendTicketIssued(order, ticket);
+        return ticket;
     }
 
     private String getValidNumber() {

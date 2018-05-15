@@ -293,7 +293,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.createForOrder(order.id)
 
         then:
-        1 * notificationServiceMock.sendBoletoIssued(order,_)
+        1 * notificationServiceMock.sendTicketIssued(order,_)
     }
 
     def 'should create ticket from known order'(){
@@ -465,7 +465,7 @@ class TicketServiceTest extends SpockApplicationTests{
         service.createForCredit(credit)
 
         then:
-        1 * notificationServiceMock.sendBoletoIssued(_,_)
+        1 * notificationServiceMock.sendTicketIssued(_,_)
     }
 
     def 'should create ticket from known credit'(){
