@@ -1,0 +1,1 @@
+alter table issuer add authorize_service_without_contractor_password boolean;

@@ -47,6 +47,7 @@ import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_CANNOT_BE_CAN
 import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_IN_BATCH_PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE;
+import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_SHOULD_NOT_HAVE_EXCEPTIONAL_CIRCUMSTANCE;
 
 @Slf4j
 @Data
@@ -208,6 +209,12 @@ public class ServiceAuthorize implements Serializable {
 
     public boolean withEstablishmentId(){
         return establishmentId() != null;
+    }
+
+    public void validateMe() {
+        if(hasExceptionalCircumstance() && !contract.canAuthorizeServiceWithoutContractorPassword()) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(SERVICE_AUTHORIZE_SHOULD_NOT_HAVE_EXCEPTIONAL_CIRCUMSTANCE);
+        }
     }
 
     public void setReferences(UserDetail currentUser, PaymentInstrument paymentInstrument, Contract contract) {

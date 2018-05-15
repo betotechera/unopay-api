@@ -6,8 +6,10 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.model.EstablishmentEvent
+import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.service.InstrumentBalanceService
 import br.com.unopay.api.market.model.AuthorizedMember
 
@@ -267,18 +269,32 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         found
     }
 
-    void 'given a service authorize without password in exceptional circumstance should be created'() {
+    void """given a service authorize without password in exceptional circumstance with issuers
+          permission to authorize service without contractor password should be created"""() {
         given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.paymentInstrument.password = null
-        serviceAuthorize.exceptionalCircumstance = true
-
+        def serviceAuthorize = createServiceAuthorizeInExceptionalCircumstance()
         when:
         def created = service.create(userUnderTest, serviceAuthorize)
         def result = service.findById(created.id)
 
         then:
         assert result.id != null
+    }
+
+    void """given a service authorize without password and without issuer's
+permission to authorize service without contractor password  in exceptional circumstance should not be created"""() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.paymentInstrument.password = null
+        serviceAuthorize.exceptionalCircumstance = true
+
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'SERVICE_AUTHORIZE_SHOULD_NOT_HAVE_EXCEPTIONAL_CIRCUMSTANCE'
     }
 
     void 'given a service authorize without password should not be created'() {
@@ -1105,5 +1121,31 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         instrumentBalanceService.add(paymentInstrumentUnderTest.id, establishmentEventUnderTest.value)
         def balance = instrumentBalanceService.findByInstrumentId(paymentInstrumentUnderTest.id)
         paymentInstrumentUnderTest.setBalance(balance)
+    }
+
+    private ServiceAuthorize createServiceAuthorizeInExceptionalCircumstance() {
+        def issuer = Fixture.from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("authorizeServiceWithoutContractorPassword", true)
+        }})
+        def product = fixtureCreator.createProductWithIssuer(issuer)
+        def contractor = fixtureCreator.createContractor()
+        def contract = fixtureCreator.createPersistedContract(contractor, product)
+        def paymentInstrument = fixtureCreator.createInstrumentToProduct(product)
+        paymentInstrument.password = null
+        def establishment = fixtureCreator.createEstablishment()
+        def event = fixtureCreator.createEstablishmentEvent(establishment,
+                paymentInstrument.availableBalance)
+        fixtureCreator.createNegotiation(contract.hirer, contract.product)
+
+        updateBalance(paymentInstrument, event)
+
+        Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {
+            add("contract",contract)
+            add("contractor",contractor)
+            add("paymentInstrument",paymentInstrument)
+            add("authorizeEvents", [new ServiceAuthorizeEvent(event)])
+            add("establishment",establishment)
+            add("exceptionalCircumstance", true)
+        }})
     }
 }

@@ -446,7 +446,9 @@ public final class Errors {
     public static final UnovationError AUTHORIZATION_ALREADY_RATED =  new UnovationError("AUTHORIZATION_ALREADY_RATED",
             "The ServiceAuthorize is already rated.");
 
-
+    public static final UnovationError SERVICE_AUTHORIZE_SHOULD_NOT_HAVE_EXCEPTIONAL_CIRCUMSTANCE =
+            new UnovationError("SERVICE_AUTHORIZE_SHOULD_NOT_HAVE_EXCEPTIONAL_CIRCUMSTANCE","Service Authorize should " +
+                    "not have exceptional circumstance");
 
 
     /* batch closing */

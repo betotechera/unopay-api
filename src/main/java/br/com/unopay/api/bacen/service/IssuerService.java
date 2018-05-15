@@ -58,6 +58,7 @@ public class IssuerService {
     public Issuer create(Issuer issuer) {
         try {
         issuer.validate();
+        issuer.setMeUp();
         createRequiredReferences(issuer);
         validateReferences(issuer);
         Issuer created = repository.save(issuer);
@@ -73,6 +74,12 @@ public class IssuerService {
     public Issuer findById(String id) {
         Optional<Issuer> issuer = repository.findById(id);
         return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
+    }
+
+    @Transactional
+    public Issuer updateMe(String id, Issuer issuer) {
+        issuer.setAuthorizeServiceWithoutContractorPassword(null);
+        return update(id, issuer);
     }
 
     @Transactional
