@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
@@ -82,6 +83,11 @@ public class ContractorBonusService {
     public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){
         return contractorBonusRepository
                 .findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
+        contractorBonus.setPayer(personService.findById(establishment.personId()));
+        return create(contractorBonus);
     }
 
     private void defineValidProduct(ContractorBonus contractorBonus) {

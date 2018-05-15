@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.Person
@@ -21,12 +22,14 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     private Contractor contractorUnderTest
     private Person personUnderTest
     private Product productUnderTest
+    private Establishment establishmentUnderTest
 
     void setup() {
         productUnderTest
         contractorUnderTest = fixtureCreator.createContractor()
         personUnderTest = contractorUnderTest.person
         productUnderTest = fixtureCreator.createProduct()
+        establishmentUnderTest = fixtureCreator.createEstablishment()
     }
 
     def 'given a valid Contractor Bonus should be saved'() {
@@ -166,6 +169,22 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         person != differentPerson
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+
+    }
+
+    def 'known Establishment should create Contractor Bonus as payer'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = null
+        Establishment establishment = establishmentUnderTest
+
+        when:
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus)
+        ContractorBonus found = contractorBonusService.findByIdForPerson(created.id, establishment.person)
+
+        then:
+        found.payer == establishment.person
 
     }
 
