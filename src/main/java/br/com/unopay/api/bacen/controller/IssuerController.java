@@ -230,7 +230,7 @@ public class IssuerController {
     @RequestMapping(value = "/issuers/me", method = RequestMethod.PUT)
     public void updateMe(Issuer current, @Validated(Update.class) @RequestBody Issuer issuer) {
         log.info("updating issuers={}", issuer);
-        service.update(current.getId(),issuer);
+        service.updateMe(current.getId(),issuer);
     }
 
     @ResponseStatus(HttpStatus.OK)
