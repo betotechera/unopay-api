@@ -56,7 +56,6 @@ public class ContractorBonusService {
         current.updateMe(contractorBonus);
         return save(current);
     }
-
     public void delete(String id) {
         findById(id);
         contractorBonusRepository.delete(id);
@@ -86,7 +85,7 @@ public class ContractorBonusService {
     }
 
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
-        contractorBonus.setPayer(personService.findById(establishment.personId()));
+        contractorBonus.setPayer(establishment.getPerson());
         return create(contractorBonus);
     }
 
@@ -103,9 +102,15 @@ public class ContractorBonusService {
     }
 
     private void defineValidReferences(ContractorBonus contractorBonus) {
-        defineValidProduct(contractorBonus);
-        defineValidContractor(contractorBonus);
-        defineValidPayer(contractorBonus);
+        if (contractorBonus.productId() == null) {
+            defineValidProduct(contractorBonus);
+        }
+        if (contractorBonus.contractorId() == null) {
+            defineValidContractor(contractorBonus);
+        }
+        if (contractorBonus.payerId() == null) {
+            defineValidPayer(contractorBonus);
+        }
     }
 
 }
