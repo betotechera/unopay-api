@@ -231,6 +231,24 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
                 .jsonPath('$.payer.id', is(equalTo(establishmentUser.establishment.person.id))))
     }
 
+    void 'known Contractor Bonus should be updated'() {
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        UserDetail establishmentUser = fixtureCreator.createEstablishmentUser(establishment)
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ContractorBonus contractorBonus = fixtureCreator.createPersistedContractorBonusForPerson(establishment.person)
+        String id = contractorBonus.id
+
+        when:
+        def result = this.mvc
+                .perform(put('/establishments/me/contractor-bonuses/{id}?access_token={access_token}'
+                ,id, accessToken)
+                .content(toJson(contractorBonus.with { earnedBonus = 200; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
     String extractId(String location) {
         location.replaceAll('/establishments/', "")
     }

@@ -255,8 +255,8 @@ public class EstablishmentController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/me/contractor-bonuses", method = RequestMethod.GET)
     public Results<ContractorBonus> getContractorBonusByParams(Establishment establishment,
-                                                                   ContractorBonusFilter filter,
-                                                                   @Validated UnovationPageRequest pageable) {
+                                                               ContractorBonusFilter filter,
+                                                               @Validated UnovationPageRequest pageable) {
         log.info("search Contractor Bonus with filter={}", filter);
         filter.setPayer(establishment.documentNumber());
         Page<ContractorBonus> page =  contractorBonusService.findByFilter(filter, pageable);
@@ -277,5 +277,14 @@ public class EstablishmentController {
         log.info("Contractor Bonus={}", created);
         return created(URI.create(
                 String.format("%s/establishments/me/contractor-bonuses/%s",api, created.getId()))).body(created);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/contractor-bonuses/{id}", method = RequestMethod.PUT)
+    public void updateContractorBonus(Establishment establishment,
+                                      @PathVariable String id,
+                                      @Validated(Update.class) @RequestBody ContractorBonus contractorBonus){
+        log.info("updating Contractor Bonus={} for Establishment={}", contractorBonus, establishment.documentNumber());
+        contractorBonusService.updateForEstablishment(id, establishment, contractorBonus);
     }
 }
