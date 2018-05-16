@@ -2,6 +2,7 @@ package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
@@ -15,8 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
 
@@ -82,6 +86,20 @@ public class ContractorBonusService {
     public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){
         return contractorBonusRepository
                 .findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public List<Person> getPayersWithBonusToProcess() {
+        ContractorBonusFilter filter = new ContractorBonusFilter();
+        filter.setSituation(BonusSituation.FOR_PROCESSING);
+        Stream<ContractorBonus> bonuses = contractorBonusRepository.findAll(filter).stream();
+        return bonuses.map(ContractorBonus::getPayer).distinct().collect(Collectors.toList());
+    }
+
+    public List<ContractorBonus> getBonusesToProcessForPayer(String documentNumber) {
+        ContractorBonusFilter filter = new ContractorBonusFilter();
+        filter.setSituation(BonusSituation.FOR_PROCESSING);
+        filter.setPayer(documentNumber);
+        return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
     }
 
     private void defineValidProduct(ContractorBonus contractorBonus) {
