@@ -72,7 +72,7 @@ class ContractorBonusTest extends FixtureApplicationTest {
         where:
         _ | nullOrNotProcessed
         _ | null
-        _ | BonusSituation.BLOCKED
+        _ | BonusSituation.CANCELED
         _ | BonusSituation.FOR_PROCESSING
     }
 }

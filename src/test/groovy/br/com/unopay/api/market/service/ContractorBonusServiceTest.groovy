@@ -195,7 +195,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.payer = establishment.person
         ContractorBonus created = contractorBonusService.create(contractorBonus)
-        BonusSituation situation = BonusSituation.BLOCKED
+        BonusSituation situation = BonusSituation.CANCELED
         contractorBonus.situation = situation
 
         when:
