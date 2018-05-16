@@ -33,7 +33,6 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
     private Product productUnderTest
 
     void setup() {
-        productUnderTest
         contractorUnderTest = fixtureCreator.createContractor()
         personUnderTest = contractorUnderTest.person
         productUnderTest = fixtureCreator.createProduct()

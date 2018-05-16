@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
@@ -39,7 +40,7 @@ public class ContractorBonusService {
         this.personService = personService;
     }
 
-    public ContractorBonus save(ContractorBonus contractorBonus) {
+    private ContractorBonus save(ContractorBonus contractorBonus) {
         return contractorBonusRepository.save(contractorBonus);
     }
 
@@ -49,11 +50,21 @@ public class ContractorBonusService {
         return save(contractorBonus);
     }
 
-    public ContractorBonus update(String id, ContractorBonus contractorBonus){
-        defineValidReferences(contractorBonus);
+    public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
+        return update(current, contractorBonus);
+    }
+
+    private ContractorBonus update(ContractorBonus current, ContractorBonus contractorBonus){
+        defineValidReferences(contractorBonus);
         current.updateMe(contractorBonus);
         return save(current);
+    }
+
+    public ContractorBonus updateForEstablishment(String id, Establishment establishment,
+                                                  ContractorBonus contractorBonus) {
+        ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
+        return update(current, contractorBonus);
     }
 
     public void delete(String id) {
@@ -82,6 +93,11 @@ public class ContractorBonusService {
     public Page<ContractorBonus> findByFilter(ContractorBonusFilter filter, UnovationPageRequest pageable){
         return contractorBonusRepository
                 .findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
+        contractorBonus.setPayer(establishment.getPerson());
+        return create(contractorBonus);
     }
 
     private void defineValidProduct(ContractorBonus contractorBonus) {

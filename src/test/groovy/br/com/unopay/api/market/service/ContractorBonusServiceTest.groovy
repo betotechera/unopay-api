@@ -3,7 +3,9 @@ package br.com.unopay.api.market.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
@@ -21,12 +23,13 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     private Contractor contractorUnderTest
     private Person personUnderTest
     private Product productUnderTest
+    private Establishment establishmentUnderTest
 
     void setup() {
-        productUnderTest
         contractorUnderTest = fixtureCreator.createContractor()
         personUnderTest = contractorUnderTest.person
         productUnderTest = fixtureCreator.createProduct()
+        establishmentUnderTest = fixtureCreator.createEstablishment()
     }
 
     def 'given a valid Contractor Bonus should be saved'() {
@@ -167,6 +170,39 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
 
+    }
+
+    def 'when create bonus the known Establishment should be Contractor Bonus payer'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = null
+        Establishment establishment = establishmentUnderTest
+
+        when:
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus)
+        ContractorBonus found = contractorBonusService.findByIdForPerson(created.id, establishment.person)
+
+        then:
+        found.payer == establishment.person
+
+    }
+
+    def 'known Contractor Bonus should be updated for Establishment person'(){
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+        BonusSituation situation = BonusSituation.CANCELED
+        contractorBonus.situation = situation
+
+        when:
+        ContractorBonus result = contractorBonusService.updateForEstablishment(created.id, establishment, contractorBonus)
+
+        then:
+        result.situation == situation
     }
 
     private ContractorBonus createContractorBonus() {

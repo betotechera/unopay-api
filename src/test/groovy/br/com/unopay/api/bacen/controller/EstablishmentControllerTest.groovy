@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.controller
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
@@ -206,6 +207,46 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].id', is(notNullValue())))
 
+    }
+
+    void 'valid Contractor Bonus should be created'() {
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        UserDetail establishmentUser = fixtureCreator.createEstablishmentUser(establishment)
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid", new Rule(){{
+            add("contractor", fixtureCreator.createContractor())
+            add("product", fixtureCreator.createProduct())
+        }})
+
+        when:
+        def result = this.mvc.perform(
+                post('/establishments/me/contractor-bonuses?access_token={access_token}', accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(contractorBonus)))
+
+        then:
+        result.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers
+                .jsonPath('$.payer.id', is(equalTo(establishmentUser.establishment.person.id))))
+    }
+
+    void 'known Contractor Bonus should be updated'() {
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        UserDetail establishmentUser = fixtureCreator.createEstablishmentUser(establishment)
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+        ContractorBonus contractorBonus = fixtureCreator.createPersistedContractorBonusForPerson(establishment.person)
+        String id = contractorBonus.id
+
+        when:
+        def result = this.mvc
+                .perform(put('/establishments/me/contractor-bonuses/{id}?access_token={access_token}'
+                ,id, accessToken)
+                .content(toJson(contractorBonus.with { earnedBonus = 200; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
     }
 
     String extractId(String location) {
