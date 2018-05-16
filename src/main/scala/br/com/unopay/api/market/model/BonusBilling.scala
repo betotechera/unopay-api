@@ -44,7 +44,7 @@ class BonusBilling extends Serializable with Updatable {
     @JoinColumn(name = "person_id")
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @JsonView(Array(classOf[Views.BonusBilling.List]))
-    var person: Person = _
+    var payer: Person = _
 
     @Column(name = "total")
     @BeanProperty
@@ -90,7 +90,7 @@ class BonusBilling extends Serializable with Updatable {
     }
 
     def validateMe() {
-        if(person == null) {
+        if(payer == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PERSON_REQUIRED)
         }
 
@@ -114,6 +114,6 @@ class BonusBilling extends Serializable with Updatable {
     }
 
     def  personId(): String = {
-        if(person != null) person.getId else null
+        if(payer != null) payer.getId else null
     }
 }

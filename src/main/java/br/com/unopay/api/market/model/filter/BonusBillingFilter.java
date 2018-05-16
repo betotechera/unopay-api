@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class BonusBillingFilter {
-    @SearchableField(field = "person.document.number")
+    @SearchableField(field = "payer.document.number")
     private String document;
 }

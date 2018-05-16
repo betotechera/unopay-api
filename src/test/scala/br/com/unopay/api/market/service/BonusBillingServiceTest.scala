@@ -32,7 +32,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
 
     "given BonusBilling with unknown person" should "return error" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
-        bonusBilling.person.setId("123")
+        bonusBilling.payer.setId("123")
 
         val thrown = the [NotFoundException] thrownBy {
             service.create(bonusBilling)
@@ -42,7 +42,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
 
      "given BonusBilling without person" should "return error" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
-        bonusBilling.person = null
+        bonusBilling.payer = null
          val thrown = the [UnprocessableEntityException] thrownBy {
              service.create(bonusBilling)
          }
@@ -100,7 +100,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
     }
 
     it should "find BonusBilling by filter" in {
-        val document = fixtureCreator.createPersistedBonusBilling().person.documentNumber()
+        val document = fixtureCreator.createPersistedBonusBilling().payer.documentNumber()
         val page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
         val filter = new BonusBillingFilter()
         filter.setDocument(document)

@@ -45,7 +45,7 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
 
     "known BonusBillings" should "be found by filter" in {
         val accessToken = getUserAccessToken()
-        val document = fixtureCreator.createPersistedBonusBilling().person.documentNumber()
+        val document = fixtureCreator.createPersistedBonusBilling().payer.documentNumber()
         val result = this.mvc.perform(get("/bonus-billings?document={document}&access_token={access_token}", document, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
 

@@ -597,14 +597,14 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     def createBonusBillingToPersist(): BonusBilling = {
         val person: Person = from(classOf[Person]).uses(jpaProcessor).gimme("physical")
         return from(classOf[BonusBilling]).gimme("valid", new Rule() {{
-            add("person", person)
+            add("payer", person)
         }})
     }
 
     def createPersistedBonusBilling(): BonusBilling = {
         val person: Person = from(classOf[Person]).uses(jpaProcessor).gimme("physical")
         return from(classOf[BonusBilling]).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("person", person)
+            add("payer", person)
         }})
     }
 
