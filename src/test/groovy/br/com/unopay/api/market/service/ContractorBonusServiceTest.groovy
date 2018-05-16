@@ -172,7 +172,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
-    def 'known Establishment should create Contractor Bonus as payer'() {
+    def 'when create bonus the known Establishment should be Contractor Bonus payer'() {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
