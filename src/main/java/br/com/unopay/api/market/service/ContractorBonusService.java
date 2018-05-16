@@ -40,7 +40,7 @@ public class ContractorBonusService {
         this.personService = personService;
     }
 
-    public ContractorBonus save(ContractorBonus contractorBonus) {
+    private ContractorBonus save(ContractorBonus contractorBonus) {
         return contractorBonusRepository.save(contractorBonus);
     }
 
@@ -50,12 +50,23 @@ public class ContractorBonusService {
         return save(contractorBonus);
     }
 
-    public ContractorBonus update(String id, ContractorBonus contractorBonus){
-        defineValidReferences(contractorBonus);
+    public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
+        return update(current, contractorBonus);
+    }
+
+    private ContractorBonus update(ContractorBonus current, ContractorBonus contractorBonus){
+        defineValidReferences(contractorBonus);
         current.updateMe(contractorBonus);
         return save(current);
     }
+
+    public ContractorBonus updateForEstablishment(String id, Establishment establishment,
+                                                  ContractorBonus contractorBonus) {
+        ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
+        return update(current, contractorBonus);
+    }
+
     public void delete(String id) {
         findById(id);
         contractorBonusRepository.delete(id);
@@ -102,15 +113,9 @@ public class ContractorBonusService {
     }
 
     private void defineValidReferences(ContractorBonus contractorBonus) {
-        if (contractorBonus.productId() == null) {
-            defineValidProduct(contractorBonus);
-        }
-        if (contractorBonus.contractorId() == null) {
-            defineValidContractor(contractorBonus);
-        }
-        if (contractorBonus.payerId() == null) {
-            defineValidPayer(contractorBonus);
-        }
+        defineValidProduct(contractorBonus);
+        defineValidContractor(contractorBonus);
+        defineValidPayer(contractorBonus);
     }
 
 }
