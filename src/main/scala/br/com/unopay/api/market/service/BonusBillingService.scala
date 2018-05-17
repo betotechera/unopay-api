@@ -3,6 +3,8 @@ package br.com.unopay.api.market.service
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
+import br.com.unopay.api.model.Person
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
@@ -11,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
+import scala.collection.JavaConverters._
+
+
 @Service
 @Autowired
-class BonusBillingService(repository: BonusBillingRepository, personService: PersonService) {
+class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notificationService: NotificationService) {
 
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
@@ -24,6 +29,19 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     def save(bonusBilling: BonusBilling): BonusBilling = {
         repository.save(bonusBilling)
+    }
+    def process() {
+        def payers = bonusService.getPayersWithBonusToProcess
+        payers.forEach(payer => process(payer))
+    }
+
+    def process(payer: Person) {
+        val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
+        var earnedBonus : BigDecimal = 0
+        for(bonus <- bonuses) {
+            earnedBonus += bonus.getEarnedBonus
+        }
+        print("1")
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {

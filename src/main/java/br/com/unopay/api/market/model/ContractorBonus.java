@@ -135,4 +135,8 @@ public class ContractorBonus implements Serializable, Updatable {
         }
         return null;
     }
+
+    public BigDecimal getEarnedBonus() {
+        return earnedBonus;
+    }
 }

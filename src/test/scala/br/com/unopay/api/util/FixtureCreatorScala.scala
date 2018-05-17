@@ -173,14 +173,14 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         })
     }
 
-    def createPersistedContractWithMembershipFee(membershipFee: BigDecimal){
+    def createPersistedContractWithMembershipFee(membershipFee: java.math.BigDecimal){
         createPersistedContract(createContractor(), createProduct(),
                 createHirer(), ContractSituation.ACTIVE, membershipFee)
     }
 
     def createPersistedContract(contractor: Contractor = createContractor(), product: Product = createProduct(),
                                      hirer: Hirer = createHirer(), situation: ContractSituation = ContractSituation.ACTIVE,
-                                     membershipFee: BigDecimal = Math.random * 100) : Contract = {
+                                     membershipFee: java.math.BigDecimal = randomBigDecimal()) : Contract = {
         from(classOf[Contract]).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("hirer", hirer)

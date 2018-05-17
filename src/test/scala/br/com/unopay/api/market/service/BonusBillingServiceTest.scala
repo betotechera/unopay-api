@@ -18,7 +18,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
 
-     it should "save valid BonusBilling" in{
+    it should "save valid BonusBilling" in{
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
          val result = service.save(bonusBilling)
         result
@@ -28,6 +28,12 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         val created = service.create(bonusBilling)
         created
+    }
+
+    it should "AS create it" in {
+        fixtureCreator.createPersistedContractorBonusForContractor()
+
+        service.process()
     }
 
     "given BonusBilling with unknown person" should "return error" in {
