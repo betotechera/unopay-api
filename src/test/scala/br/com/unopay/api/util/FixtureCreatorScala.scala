@@ -387,7 +387,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
     def createProduct(paymentRuleGroupUnderTest: PaymentRuleGroup = createPaymentRuleGroup(),
-                          membershipFee: BigDecimal = Math.random * 100): Product = {
+                          membershipFee: java.math.BigDecimal = randomBigDecimal()): Product = {
         from(classOf[Product]).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("paymentRuleGroup", paymentRuleGroupUnderTest)
             add("membershipFee", membershipFee)
@@ -400,7 +400,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
        }})
     }
 
-    def createProductWithSameIssuerOfHirer(membershipFee: BigDecimal = Math.random * 100): Product = {
+    def createProductWithSameIssuerOfHirer(membershipFee: java.math.BigDecimal = randomBigDecimal()): Product = {
         val hirer = createHirer()
         val issuerPerson: Person = from(classOf[Person]).uses(jpaProcessor).gimme("physical", new Rule(){{
             add("document.number", hirer.getDocumentNumber)
@@ -608,7 +608,20 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
 
+    def createPersistedContractorBonusForContractor(contractor : Contractor = createContractor()) {
+        from(classOf[ContractorBonus]).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("contractor", contractor)
+            add("product", createProduct())
+            add("payer", contractor.getPerson)
+        }})
+    }
+
     private def instant(pattern: String): java.util.Date ={
         new ChronicFunction(pattern).generateValue()
+    }
+
+    private def randomBigDecimal(): java.math.BigDecimal ={
+        val random : scala.math.BigDecimal = Math.random() * 100
+        return random.bigDecimal
     }
 }
