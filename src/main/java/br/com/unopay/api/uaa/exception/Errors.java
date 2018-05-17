@@ -648,6 +648,8 @@ public final class Errors {
     public static final UnovationError BONUS_BILLING_NOT_FOUND =
             new UnovationError("BONUS_BILLING_NOT_FOUND", "Bonus billing not found");
 
+    public static final UnovationError BONUS_BILLING_ISSUER_REQUIRED =
+            new UnovationError("BONUS_BILLING_ISSUER_REQUIRED", "Bonus Billing Issuer required.");
     /*  Contractor Bonus */
     public static final UnovationError CONTRACTOR_BONUS_NOT_FOUND =
             new UnovationError("CONTRACTOR_BONUS_NOT_FOUND","Contractor bonus not found");

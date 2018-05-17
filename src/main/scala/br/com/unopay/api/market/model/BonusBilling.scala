@@ -1,7 +1,6 @@
 package br.com.unopay.api.market.model
 
-import br.com.unopay.api.model.Person
-import br.com.unopay.api.model.Updatable
+import br.com.unopay.api.model.{Billable, Person, Updatable}
 import br.com.unopay.api.model.validation.group.Create
 import br.com.unopay.api.model.validation.group.Update
 import br.com.unopay.api.model.validation.group.Views
@@ -18,13 +17,16 @@ import java.io.Serializable
 import java.lang._
 import java.util.Date
 
+import br.com.unopay.api.bacen.model.Issuer
+import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
+
 import scala.beans.BeanProperty
 
 @Data
 @Entity
 @Table(name = "bonus_billing")
 @SerialVersionUID(2732233885546623588L)
-class BonusBilling extends Serializable with Updatable {
+class BonusBilling extends Serializable with Updatable with Billable{
 
     @Id
     @BeanProperty
@@ -84,6 +86,14 @@ class BonusBilling extends Serializable with Updatable {
         inverseJoinColumns = Array(new JoinColumn(name = "contractor_bonus_id")))
     var contractorBonuses: java.util.Set[ContractorBonus] = _
 
+    @Valid
+    @BeanProperty
+    @ManyToOne
+    @JoinColumn(name = "issuer_id")
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
+    @JsonView(Array(classOf[Views.Order.Detail]))
+    var issuer: Issuer = _
+
     def addToContractorBonuses(bonus: ContractorBonus) {
         if (contractorBonuses == null) setContractorBonuses(new java.util.HashSet[ContractorBonus]())
         contractorBonuses.add(bonus)
@@ -96,6 +106,10 @@ class BonusBilling extends Serializable with Updatable {
 
         if(total == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.BONUS_BILLING_TOTAL_REQUIRED)
+        }
+
+        if(issuer == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.BONUS_BILLING_ISSUER_REQUIRED)
         }
 
         validateDates()
@@ -116,4 +130,17 @@ class BonusBilling extends Serializable with Updatable {
     def  personId(): String = {
         if(payer != null) payer.getId else null
     }
+
+    override def getValue: java.math.BigDecimal = java.math.BigDecimal.valueOf(total)
+
+    override def getCreateDateTime: Date = createdDateTime
+
+    override def getBillingMail: String = {
+        return if (payer.isLegal)
+            payer.getLegalPersonDetail.getResponsibleEmail
+        else
+            payer.getPhysicalPersonDetail.getEmail
+    }
+
+    override def getPaymentSource: TicketPaymentSource = TicketPaymentSource.CONTRACTOR_BONUS
 }
