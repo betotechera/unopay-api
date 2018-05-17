@@ -15,4 +15,9 @@ class BonusBillingTest extends ScalaApplicationTest {
         val b: BonusBilling = Fixture.from(classOf[BonusBilling]).gimme("valid")
         a != b
     }
+
+    it should "get billingMail" in {
+        val a: BonusBilling = Fixture.from(classOf[BonusBilling]).gimme("valid")
+        a.getBillingMail != null
+    }
 }

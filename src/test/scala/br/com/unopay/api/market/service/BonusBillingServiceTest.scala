@@ -30,6 +30,17 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
         created
     }
 
+    "given BonusBilling without issuer" should "return error" in {
+        val bonusBilling = fixtureCreator.createBonusBillingToPersist()
+        bonusBilling.issuer = null
+
+        val thrown = the[UnprocessableEntityException] thrownBy {
+            service.create(bonusBilling)
+        }
+
+        thrown.getErrors.asScala.head.getLogref == "ISSUER_REQUIRED"
+    }
+
     it should "AS create it" in {
         fixtureCreator.createPersistedContractorBonusForContractor()
 
