@@ -1,5 +1,7 @@
 package br.com.unopay.api.market.service
 
+import java.math._
+
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
@@ -37,11 +39,7 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
-        var earnedBonus : BigDecimal = 0
-        for(bonus <- bonuses) {
-            earnedBonus += bonus.getEarnedBonus
-        }
-        print("1")
+        var earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {
