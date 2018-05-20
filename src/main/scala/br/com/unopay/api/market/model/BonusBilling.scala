@@ -115,6 +115,13 @@ class BonusBilling extends Serializable with Updatable with Billable{
         validateDates()
     }
 
+    def setMeUp(payer: Person, issuer: Issuer,total: Double, status: PaymentStatus = PaymentStatus.WAITING_PAYMENT) {
+        this.payer = payer
+        this.issuer = issuer
+        this.total = total
+        this.status = status
+    }
+
     private def validateDates() {
         val today = new Date()
 

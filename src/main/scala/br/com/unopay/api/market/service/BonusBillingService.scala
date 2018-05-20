@@ -1,10 +1,12 @@
 package br.com.unopay.api.market.service
 
+import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
@@ -15,10 +17,11 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
 
+import br.com.unopay.api.notification.model.EventType.BONUS_BILLING_ISSUED
 
 @Service
 @Autowired
-class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notificationService: NotificationService) {
+class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notificationService: NotificationService, issuerService: IssuerService) {
 
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
@@ -37,11 +40,18 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
-        var earnedBonus : BigDecimal = 0
-        for(bonus <- bonuses) {
-            earnedBonus += bonus.getEarnedBonus
+        val issuerIds = bonuses.map(_.issuerId).distinct
+        for(issuerId <- issuerIds) {
+            val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuerId))
+            var earnedBonus : BigDecimal = 0
+              for(bonus <- bonusesByIssuer) {
+                earnedBonus += bonus.getEarnedBonus
+            }
+            val bonusBilling = new BonusBilling
+            val issuer = issuerService.findById(issuerId)
+            bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
+            notificationService.sendPaymentEmail(bonusBilling, BONUS_BILLING_ISSUED)
         }
-        print("1")
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {

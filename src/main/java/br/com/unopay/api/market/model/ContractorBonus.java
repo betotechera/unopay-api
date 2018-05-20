@@ -136,6 +136,10 @@ public class ContractorBonus implements Serializable, Updatable {
         return null;
     }
 
+    public String issuerId() {
+        return product.getIssuer().getId();
+    }
+
     public BigDecimal getEarnedBonus() {
         return earnedBonus;
     }

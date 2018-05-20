@@ -132,6 +132,7 @@ public class MarketTemplateLoader implements TemplateLoader {
             add("number",  regex("\\w{100}"));
             add("expiration", instant("tomorrow"));
             add("status", random(PaymentStatus.class));
+            add("issuer", one(Issuer.class, "valid"));
         }});
     }
 }
