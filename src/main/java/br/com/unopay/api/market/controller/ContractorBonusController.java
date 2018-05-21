@@ -4,6 +4,7 @@ import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -25,6 +26,7 @@ import java.net.URI;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -72,6 +74,15 @@ public class ContractorBonusController {
         log.info("created contractor bonus={}", created);
         return created(URI.create(String
                 .format("/contractor-bonuses/%s",created.getId()))).body(created);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACTOR_BONUS')")
+    @RequestMapping(value = "/contractor-bonuses/{id}", method = PUT)
+    public void update(@PathVariable String id, @Validated(Update.class) @RequestBody ContractorBonus contractorBonus) {
+        contractorBonus.setId(id);
+        log.info("updating bonus={}", contractorBonus);
+        contractorBonusService.update(id, contractorBonus);
     }
 
 }

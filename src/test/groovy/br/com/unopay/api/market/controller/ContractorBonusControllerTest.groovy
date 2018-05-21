@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContractorBonusControllerTest extends AuthServerApplicationTests {
@@ -86,9 +87,35 @@ class ContractorBonusControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isCreated())
     }
+
+    void 'known Contractor Bonus should be updated'() {
+        given:
+        ContractorBonus contractorBonus = createPersistedContractorBonus()
+        String accessToken = getUserAccessToken()
+        String id = contractorBonus.id
+
+        when:
+        def result = this.mvc.perform(put('/contractor-bonuses/{id}?access_token={access_token}',
+                id, accessToken)
+                .content(toJson(contractorBonus.with { earnedBonus = 80; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
     
     private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
+        contractorBonus = contractorBonus.with {
+            product = productUnderTest
+            contractor = contractorUnderTest
+            payer = personUnderTest
+            it
+        }
+        contractorBonus
+    }
+
+    private ContractorBonus createPersistedContractorBonus() {
+        ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).uses(jpaProcessor).gimme("valid")
         contractorBonus = contractorBonus.with {
             product = productUnderTest
             contractor = contractorUnderTest
