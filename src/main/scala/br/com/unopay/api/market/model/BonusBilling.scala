@@ -138,6 +138,10 @@ class BonusBilling extends Serializable with Updatable with Billable{
         if(payer != null) payer.getId else null
     }
 
+    def issuerId(): String = {
+        if(issuer != null) issuer.getId else null
+    }
+
     override def getValue: java.math.BigDecimal = java.math.BigDecimal.valueOf(total)
 
     override def getCreateDateTime: Date = createdDateTime

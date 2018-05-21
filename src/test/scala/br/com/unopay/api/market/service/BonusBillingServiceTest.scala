@@ -18,6 +18,10 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
 
+    override def beforeEach(): Unit = {
+        super.beforeEach()
+    }
+
     it should "save valid BonusBilling" in{
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
          val result = service.save(bonusBilling)

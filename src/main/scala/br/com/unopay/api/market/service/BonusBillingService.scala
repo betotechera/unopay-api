@@ -21,8 +21,8 @@ import br.com.unopay.api.notification.model.EventType.BONUS_BILLING_ISSUED
 
 @Service
 @Autowired
-class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notificationService: NotificationService, issuerService: IssuerService) {
-
+class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notification: NotificationService, issuerService: IssuerService) {
+    var notificationService: NotificationService = notification
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
         bonusBilling.validateMe()
@@ -53,6 +53,7 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     private def validateReferences(bonusBilling: BonusBilling) {
         bonusBilling.setPayer(personService.findById(bonusBilling.personId()))
+        bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
     }
 
     def findById(id: String): BonusBilling = {
