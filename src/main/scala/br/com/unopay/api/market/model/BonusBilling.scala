@@ -75,7 +75,7 @@ class BonusBilling extends Serializable with Updatable with Billable{
     @BeanProperty
     @Enumerated(EnumType.STRING)
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.Order.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
     var status: PaymentStatus = _
 
     @JsonIgnore
@@ -91,7 +91,7 @@ class BonusBilling extends Serializable with Updatable with Billable{
     @ManyToOne
     @JoinColumn(name = "issuer_id")
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.Order.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
     var issuer: Issuer = _
 
     def addToContractorBonuses(bonus: ContractorBonus) {

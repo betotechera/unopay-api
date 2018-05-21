@@ -18,10 +18,6 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
 
-//    override def beforeEach(): Unit = {
-//        service.
-//    }
-
     it should "save valid BonusBilling" in{
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
          val result = service.save(bonusBilling)
@@ -45,7 +41,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
         thrown.getErrors.asScala.head.getLogref == "ISSUER_REQUIRED"
     }
 
-    it should "AS create it" in {
+    "given valid Bonus to process" should "should process bonus billing" in {
         fixtureCreator.createPersistedContractorBonusForContractor()
 
         service.process()

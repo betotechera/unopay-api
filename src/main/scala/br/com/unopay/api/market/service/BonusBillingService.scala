@@ -1,12 +1,12 @@
 package br.com.unopay.api.market.service
 
 import br.com.unopay.api.bacen.service.IssuerService
+import java.math._
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.notification.service.NotificationService
-import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
@@ -43,12 +43,9 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
         val issuerIds = bonuses.map(_.issuerId).distinct
         for(issuerId <- issuerIds) {
             val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuerId))
-            var earnedBonus : BigDecimal = 0
-              for(bonus <- bonusesByIssuer) {
-                earnedBonus += bonus.getEarnedBonus
-            }
-            val bonusBilling = new BonusBilling
+            val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
             val issuer = issuerService.findById(issuerId)
+            val bonusBilling = new BonusBilling
             bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
             notificationService.sendPaymentEmail(bonusBilling, BONUS_BILLING_ISSUED)
         }
