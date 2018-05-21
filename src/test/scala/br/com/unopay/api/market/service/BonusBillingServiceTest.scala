@@ -4,22 +4,28 @@ import java.time.Year
 import java.util.Date
 
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.scalatest.mockito._
+import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
 
-class BonusBillingServiceTest extends ScalaApplicationTest {
+class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
     @Autowired
     var service: BonusBillingService = _
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
+    var mockNotificationService : NotificationService = _
 
     override def beforeEach(): Unit = {
         super.beforeEach()
+        mockNotificationService = mock[NotificationService]
+        service.notificationService = mockNotificationService
     }
 
     it should "save valid BonusBilling" in{
@@ -47,8 +53,10 @@ class BonusBillingServiceTest extends ScalaApplicationTest {
 
     "given valid Bonus to process" should "should process bonus billing" in {
         fixtureCreator.createPersistedContractorBonusForContractor()
-
+        
         service.process()
+
+        verify(mockNotificationService).sendPaymentEmail(_,_)
     }
 
     "given BonusBilling with unknown person" should "return error" in {
