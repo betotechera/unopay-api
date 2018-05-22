@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
+import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
 
 @Service
 public class ContractorBonusService {
@@ -64,6 +68,7 @@ public class ContractorBonusService {
     public ContractorBonus updateForEstablishment(String id, Establishment establishment,
                                                   ContractorBonus contractorBonus) {
         ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
+        checkIfValidSituationChange(current, contractorBonus);
         return update(current, contractorBonus);
     }
 
@@ -116,6 +121,13 @@ public class ContractorBonusService {
         defineValidProduct(contractorBonus);
         defineValidContractor(contractorBonus);
         defineValidPayer(contractorBonus);
+    }
+
+    private void checkIfValidSituationChange(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getSituation().equals(contractorBonus.getSituation())
+                && !(FOR_PROCESSING.equals(current.getSituation()) && CANCELED.equals(contractorBonus.getSituation()))) {
+            throw UnovationExceptions.conflict().withErrors(INVALID_BONUS_SITUATION);
+        }
     }
 
 }
