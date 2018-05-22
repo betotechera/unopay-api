@@ -31,7 +31,7 @@ public class NegotiationBillingReceiver {
     public void batchReceiptNotify(String objectAsString) {
         NegotiationBilling billing = genericObjectMapper.getAsObject(objectAsString, NegotiationBilling.class);
         log.info("processing billing created hirer={}", billing.hirer().getDocumentNumber());
-        ticketService.createForBilling(billing);
+        ticketService.createForNegotiationBilling(billing);
         log.info("processed billing created hirer={}", billing.hirer().getDocumentNumber());
     }
 }

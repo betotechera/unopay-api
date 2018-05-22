@@ -25,6 +25,6 @@ class NegotiationBillingReceiverTest extends SpockApplicationTests {
         when:
         negotiationBillingReceiver.batchReceiptNotify(toJson(batch))
         then:
-        1 * negotiationBillingService.createForBilling(_)
+        1 * negotiationBillingService.createForNegotiationBilling(_)
     }
 }

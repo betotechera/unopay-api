@@ -3,8 +3,10 @@ package br.com.unopay.api.market.service
 import java.time.Year
 import java.util.Date
 
+import br.com.unopay.api.billing.boleto.service.TicketService
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
-import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -20,12 +22,12 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
     var service: BonusBillingService = _
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
-    var mockNotificationService : NotificationService = _
+    var mockNotifier : Notifier = _
 
     override def beforeEach(): Unit = {
         super.beforeEach()
-        mockNotificationService = mock[NotificationService]
-        service.notificationService = mockNotificationService
+        mockNotifier = mock[Notifier]
+        service.notifier = mockNotifier
     }
 
     it should "save valid BonusBilling" in{
@@ -38,6 +40,13 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         val created = service.create(bonusBilling)
         created
+    }
+
+    "given valid BonusBilling" should "define it's number" in {
+        val bonusBilling = fixtureCreator.createBonusBillingToPersist()
+        bonusBilling.number = null
+        val created = service.create(bonusBilling)
+        created.number
     }
 
     "given BonusBilling without issuer" should "return error" in {
@@ -53,10 +62,23 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
     "given valid Bonus to process" should "should process bonus billing" in {
         fixtureCreator.createPersistedContractorBonusForContractor()
-        
+
         service.process()
 
-        verify(mockNotificationService).sendPaymentEmail(_,_)
+//        verify(mockNotifier).notify(Queues.BONUS_BILLING_CREATED,_)
+    }
+
+    "when processing bonus to process" should "create bonus billing" in {
+        val contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContractorBonusForContractor(contractor)
+
+        val filter = new BonusBillingFilter
+        filter.setDocument(contractor.getDocumentNumber)
+
+        service.process()
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+        found
     }
 
     "given BonusBilling with unknown person" should "return error" in {

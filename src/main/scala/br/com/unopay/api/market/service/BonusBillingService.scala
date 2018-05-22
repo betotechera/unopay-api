@@ -2,6 +2,10 @@ package br.com.unopay.api.market.service
 
 import br.com.unopay.api.bacen.service.IssuerService
 import java.math._
+
+import br.com.unopay.api.billing.boleto.service.TicketService
+import br.com.unopay.api.config.Queues
+import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
@@ -17,37 +21,44 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
 
-import br.com.unopay.api.notification.model.EventType.BONUS_BILLING_ISSUED
-
 @Service
 @Autowired
-class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, notification: NotificationService, issuerService: IssuerService) {
-    var notificationService: NotificationService = notification
+class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, var notifier: Notifier, issuerService: IssuerService) {
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
         bonusBilling.validateMe()
         validateReferences(bonusBilling)
+        defineNumber(bonusBilling)
         save(bonusBilling)
+    }
+
+    private def defineNumber(bonusBilling: BonusBilling) {
+        val found = repository.findFirstByOrderByCreatedDateTimeDesc().orElse(null)
+        val lastNumber = if (found != null) found.number else null
+        bonusBilling.defineNumber(lastNumber)
     }
 
     def save(bonusBilling: BonusBilling): BonusBilling = {
         repository.save(bonusBilling)
     }
+
     def process() {
         def payers = bonusService.getPayersWithBonusToProcess
+
         payers.forEach(payer => process(payer))
     }
 
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
         val issuerIds = bonuses.map(_.issuerId).distinct
-        for(issuerId <- issuerIds) {
+        for (issuerId <- issuerIds) {
             val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuerId))
             val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
             val issuer = issuerService.findById(issuerId)
-            val bonusBilling = new BonusBilling
+            var bonusBilling = new BonusBilling
             bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
-            notificationService.sendPaymentEmail(bonusBilling, BONUS_BILLING_ISSUED)
+            bonusBilling = create(bonusBilling)
+            notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
         }
     }
 
@@ -58,8 +69,8 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     def findById(id: String): BonusBilling = {
         val BonusBilling = repository.findById(id)
-        BonusBilling.orElseThrow(()=> UnovationExceptions.notFound().withErrors(
-                Errors.BONUS_BILLING_NOT_FOUND))
+        BonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
+            Errors.BONUS_BILLING_NOT_FOUND))
     }
 
     def findByFilter(filter: BonusBillingFilter, pageable: UnovationPageRequest): Page[BonusBilling] = {

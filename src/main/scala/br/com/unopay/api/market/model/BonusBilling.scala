@@ -122,14 +122,21 @@ class BonusBilling extends Serializable with Updatable with Billable{
         this.status = status
     }
 
+    def defineNumber(lastNumber: String): Unit = {
+        this.number =
+            if(lastNumber != null)
+                (Integer.valueOf(lastNumber)+1).toString
+            else "1"
+    }
+
     private def validateDates() {
         val today = new Date()
 
-        if(processedAt.after(today)) {
+        if(processedAt != null && processedAt.after(today)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_BONUS_BILLING_PROCESS_DATE)
         }
 
-        if(expiration.before(today)) {
+        if(expiration != null && expiration.before(today)) {
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.INVALID_BONUS_BILLING_EXPIRATION_DATE)
         }
     }
