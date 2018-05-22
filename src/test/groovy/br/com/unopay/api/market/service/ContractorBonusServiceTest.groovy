@@ -9,8 +9,10 @@ import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 
 class ContractorBonusServiceTest extends SpockApplicationTests {
 
@@ -24,6 +26,10 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     private Person personUnderTest
     private Product productUnderTest
     private Establishment establishmentUnderTest
+
+    private static BonusSituation FOR_PROCESSING = BonusSituation.FOR_PROCESSING
+    private static BonusSituation PROCESSED = BonusSituation.PROCESSED
+    private static BonusSituation CANCELED = BonusSituation.CANCELED
 
     void setup() {
         contractorUnderTest = fixtureCreator.createContractor()
@@ -195,7 +201,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.payer = establishment.person
         ContractorBonus created = contractorBonusService.create(contractorBonus)
-        BonusSituation situation = BonusSituation.CANCELED
+        BonusSituation situation = CANCELED
         contractorBonus.situation = situation
 
         when:
@@ -203,6 +209,37 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         then:
         result.situation == situation
+    }
+
+    @Unroll
+    def 'Update for Establishment must be For Processing to Canceled'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        contractorBonus.situation = situation
+        contractorBonus.processedAt = processedAt
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        ContractorBonus bonus = createContractorBonus()
+        bonus.situation = updateSituation
+        bonus.processedAt = newProcessedAt
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'INVALID_BONUS_SITUATION'
+
+        where:
+        situation      | updateSituation | processedAt | newProcessedAt
+        FOR_PROCESSING | PROCESSED       | null        | new Date()
+        PROCESSED      | FOR_PROCESSING  | new Date()  | null
+        PROCESSED      | CANCELED        | new Date()  | null
+        CANCELED       | FOR_PROCESSING  | null        | null
+        CANCELED       | PROCESSED       | null        | new Date()
+
     }
 
     private ContractorBonus createContractorBonus() {
