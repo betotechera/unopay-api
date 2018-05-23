@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
@@ -22,7 +23,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
+import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
 
 @Service
 public class ContractorBonusService {
@@ -43,7 +47,7 @@ public class ContractorBonusService {
         this.personService = personService;
     }
 
-    public ContractorBonus save(ContractorBonus contractorBonus) {
+    private ContractorBonus save(ContractorBonus contractorBonus) {
         return contractorBonusRepository.save(contractorBonus);
     }
 
@@ -53,11 +57,22 @@ public class ContractorBonusService {
         return save(contractorBonus);
     }
 
-    public ContractorBonus update(String id, ContractorBonus contractorBonus){
-        defineValidReferences(contractorBonus);
+    public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
+        return update(current, contractorBonus);
+    }
+
+    private ContractorBonus update(ContractorBonus current, ContractorBonus contractorBonus){
+        defineValidReferences(contractorBonus);
         current.updateMe(contractorBonus);
         return save(current);
+    }
+
+    public ContractorBonus updateForEstablishment(String id, Establishment establishment,
+                                                  ContractorBonus contractorBonus) {
+        ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
+        checkIfValidSituationChange(current, contractorBonus);
+        return update(current, contractorBonus);
     }
 
     public void delete(String id) {
@@ -101,6 +116,11 @@ public class ContractorBonusService {
         filter.setPayer(documentNumber);
         return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
     }
+    
+    public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
+        contractorBonus.setPayer(establishment.getPerson());
+        return create(contractorBonus);
+    }
 
     private void defineValidProduct(ContractorBonus contractorBonus) {
         contractorBonus.setProduct(productService.findById(contractorBonus.productId()));
@@ -118,6 +138,13 @@ public class ContractorBonusService {
         defineValidProduct(contractorBonus);
         defineValidContractor(contractorBonus);
         defineValidPayer(contractorBonus);
+    }
+
+    private void checkIfValidSituationChange(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getSituation().equals(contractorBonus.getSituation())
+                && !(FOR_PROCESSING.equals(current.getSituation()) && CANCELED.equals(contractorBonus.getSituation()))) {
+            throw UnovationExceptions.conflict().withErrors(INVALID_BONUS_SITUATION);
+        }
     }
 
 }

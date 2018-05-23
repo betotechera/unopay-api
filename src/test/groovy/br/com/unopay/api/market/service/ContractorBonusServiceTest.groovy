@@ -3,12 +3,16 @@ package br.com.unopay.api.market.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 
 class ContractorBonusServiceTest extends SpockApplicationTests {
 
@@ -21,12 +25,17 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     private Contractor contractorUnderTest
     private Person personUnderTest
     private Product productUnderTest
+    private Establishment establishmentUnderTest
+
+    private static BonusSituation FOR_PROCESSING = BonusSituation.FOR_PROCESSING
+    private static BonusSituation PROCESSED = BonusSituation.PROCESSED
+    private static BonusSituation CANCELED = BonusSituation.CANCELED
 
     void setup() {
-        productUnderTest
         contractorUnderTest = fixtureCreator.createContractor()
         personUnderTest = contractorUnderTest.person
         productUnderTest = fixtureCreator.createProduct()
+        establishmentUnderTest = fixtureCreator.createEstablishment()
     }
 
     def 'given a valid Contractor Bonus should be saved'() {
@@ -195,6 +204,70 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         person != differentPerson
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+
+    }
+
+    def 'when create bonus the known Establishment should be Contractor Bonus payer'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = null
+        Establishment establishment = establishmentUnderTest
+
+        when:
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus)
+        ContractorBonus found = contractorBonusService.findByIdForPerson(created.id, establishment.person)
+
+        then:
+        found.payer == establishment.person
+
+    }
+
+    def 'known Contractor Bonus should be updated for Establishment person'(){
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+        BonusSituation situation = CANCELED
+        contractorBonus.situation = situation
+
+        when:
+        ContractorBonus result = contractorBonusService.updateForEstablishment(created.id, establishment, contractorBonus)
+
+        then:
+        result.situation == situation
+    }
+
+    @Unroll
+    def 'Update for Establishment must be For Processing to Canceled'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        contractorBonus.situation = situation
+        contractorBonus.processedAt = processedAt
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        ContractorBonus bonus = createContractorBonus()
+        bonus.situation = updateSituation
+        bonus.processedAt = newProcessedAt
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'INVALID_BONUS_SITUATION'
+
+        where:
+        situation      | updateSituation | processedAt | newProcessedAt
+        FOR_PROCESSING | PROCESSED       | null        | new Date()
+        PROCESSED      | FOR_PROCESSING  | new Date()  | null
+        PROCESSED      | CANCELED        | new Date()  | null
+        CANCELED       | FOR_PROCESSING  | null        | null
+        CANCELED       | PROCESSED       | null        | new Date()
 
     }
 

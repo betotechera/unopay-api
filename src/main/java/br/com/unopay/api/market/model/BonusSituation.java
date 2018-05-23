@@ -7,7 +7,7 @@ public enum BonusSituation implements DescriptableEnum {
     FOR_PROCESSING("Aguardando processamento"),
     TICKET_ISSUED("Boleto emitido"),
     PROCESSED("Processado"),
-    BLOCKED("Bloqueado");
+    CANCELED("Cancelado");
 
     private String description;
 
