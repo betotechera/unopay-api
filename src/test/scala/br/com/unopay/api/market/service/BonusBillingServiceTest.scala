@@ -72,7 +72,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         service.process()
 
-//        verify(mockNotifier).notify(Queues.BONUS_BILLING_CREATED,_)
+        verify(mockNotifier).notify(Queues.BONUS_BILLING_CREATED, _:Object)
     }
 
     "when processing bonus to process" should "create bonus billing" in {
