@@ -61,16 +61,15 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
 
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
-        val issuerIds = bonuses.map(_.issuerId).distinct
-        for (issuerId <- issuerIds) {
-            val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuerId))
+
+        bonuses.map(_.issuerId).distinct.map(issuerService.findById(_)).foreach(issuer => {
+            val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuer.getId))
             val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
-            val issuer = issuerService.findById(issuerId)
             var bonusBilling = new BonusBilling
             bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
             bonusBilling = create(bonusBilling)
             notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
-        }
+        })
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {
