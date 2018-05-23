@@ -3,7 +3,6 @@ package br.com.unopay.api.market.service
 import java.time.Year
 import java.util.Date
 
-import br.com.unopay.api.billing.boleto.service.TicketService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
@@ -67,7 +66,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         thrown.getErrors.asScala.head.getLogref == "ISSUER_REQUIRED"
     }
 
-    "given valid Bonus to process" should "should process bonus billing" in {
+    "given valid Bonus to process" should "process bonus billing" in {
         fixtureCreator.createPersistedContractorBonusForContractor()
 
         service.process()
