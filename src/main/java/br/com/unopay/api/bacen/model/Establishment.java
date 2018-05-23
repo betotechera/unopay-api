@@ -230,4 +230,11 @@ public class Establishment implements Serializable, Updatable {
         return null;
     }
 
+    public String personId() {
+        if (getPerson() != null) {
+            return getPerson().getId();
+        }
+        return null;
+    }
+
 }
