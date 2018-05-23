@@ -116,7 +116,6 @@ public class ContractorBonusService {
         filter.setPayer(documentNumber);
         return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
     }
-
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
         contractorBonus.setPayer(establishment.getPerson());
         return create(contractorBonus);
