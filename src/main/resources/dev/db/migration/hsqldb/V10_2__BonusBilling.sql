@@ -6,7 +6,7 @@ create table bonus_billing (
     total decimal(20,2) not null,
     processed_at timestamp,
     number varchar(100) not null,
-    expiration timestamp,
+    expiration timestamp not null,
     status varchar(100) not null,
     constraint fk_bonus_bill_person foreign key(person_id) references person(id),
     constraint fk_bonus_bill_issuer foreign key(issuer_id) references issuer(id)

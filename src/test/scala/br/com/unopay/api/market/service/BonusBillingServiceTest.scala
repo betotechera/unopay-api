@@ -49,6 +49,13 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         created.number
     }
 
+    "given valid BonusBilling" should "define it's expiration date" in {
+        val bonusBilling = fixtureCreator.createBonusBillingToPersist()
+        bonusBilling.expiration = null
+        val created = service.create(bonusBilling)
+        created.expiration
+    }
+
     "given BonusBilling without issuer" should "return error" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         bonusBilling.issuer = null
