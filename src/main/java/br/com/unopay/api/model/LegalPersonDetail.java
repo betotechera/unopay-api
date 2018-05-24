@@ -123,4 +123,8 @@ public class LegalPersonDetail implements Serializable{
     public Date getCreation(){
         return ObjectUtils.clone(this.creation);
     }
+
+    public String getResponsibleEmail(){
+        return this.responsibleEmail;
+    }
 }

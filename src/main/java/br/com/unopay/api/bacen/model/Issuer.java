@@ -209,4 +209,8 @@ public class Issuer implements Serializable{
         }
         return null;
     }
+
+    public String getId(){
+        return this.id;
+    }
 }

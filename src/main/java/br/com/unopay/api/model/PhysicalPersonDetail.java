@@ -63,4 +63,8 @@ public class PhysicalPersonDetail implements Serializable{
     public Date getBirthDate(){
         return ObjectUtils.clone(this.birthDate);
     }
+
+    public String getEmail(){
+        return this.email;
+    }
 }

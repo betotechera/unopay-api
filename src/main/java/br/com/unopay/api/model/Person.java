@@ -165,4 +165,12 @@ public class Person implements Serializable{
     public String getId(){
         return this.id;
     }
+
+    public LegalPersonDetail getLegalPersonDetail(){
+        return this.legalPersonDetail;
+    }
+
+    public PhysicalPersonDetail getPhysicalPersonDetail(){
+        return this.physicalPersonDetail;
+    }
 }

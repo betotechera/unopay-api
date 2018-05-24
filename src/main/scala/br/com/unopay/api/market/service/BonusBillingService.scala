@@ -65,7 +65,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
 
         bonuses.map(_.issuerId).distinct.map(issuerService.findById).foreach(issuer => {
-            val bonusesByIssuer = bonuses.filter(_.issuerId.equals(issuer.getId))
+            val bonusesByIssuer = bonuses.filter(_.issuerId == issuer.getId)
             val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
             var bonusBilling = new BonusBilling
             bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
