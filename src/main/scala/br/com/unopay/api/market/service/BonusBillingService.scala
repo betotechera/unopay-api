@@ -1,17 +1,15 @@
 package br.com.unopay.api.market.service
 
-import br.com.unopay.api.bacen.service.IssuerService
 import java.math._
-import java.util.{Calendar, Date}
+import java.util.Calendar
 
-import br.com.unopay.api.billing.boleto.service.TicketService
+import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
-import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
