@@ -610,7 +610,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
 
-    def createPersistedContractorBonusForContractor(contractor : Contractor = createContractor()) {
+    def createPersistedContractorBonusForContractor(contractor : Contractor = createContractor()): ContractorBonus = {
         from(classOf[ContractorBonus]).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("contractor", contractor)
             add("product", createProduct())

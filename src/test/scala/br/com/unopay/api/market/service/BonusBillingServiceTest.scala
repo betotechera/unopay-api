@@ -5,6 +5,7 @@ import java.util.Date
 
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
@@ -72,6 +73,50 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.process()
 
         verify(mockNotifier).notify(Queues.BONUS_BILLING_CREATED, _:Object)
+    }
+
+    "given person without Bonus to process" should "not create BonusBilling" in {
+        val contractor = fixtureCreator.createContractor()
+
+        val filter = new BonusBillingFilter
+        filter.setDocument(contractor.getDocumentNumber)
+
+        service.process(contractor.getPerson)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+
+        found.getSize == 0
+    }
+
+    "given person with Bonus to process" should "create BonusBilling that belongs to it" in {
+        val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
+        val payer = bonus.getPayer
+        fixtureCreator.createPersistedContractorBonusForContractor(bonus.getContractor)
+        val filter = new BonusBillingFilter
+        filter.setDocument(payer.documentNumber())
+
+        service.process(payer)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+
+        found.getSize == 1
+        found.getContent.get(0).payer.equals(payer)
+    }
+
+    "given person with Bonuses to process" should "create BonusBilling with total amount of Bonuses values" in {
+        val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
+        val total = bonus.getEarnedBonus
+        val payer = bonus.getPayer
+        total.add(fixtureCreator.createPersistedContractorBonusForContractor(bonus.getContractor).getEarnedBonus)
+        val filter = new BonusBillingFilter
+        filter.setDocument(payer.documentNumber())
+
+        service.process(payer)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+
+        found.getSize == 1
+        found.getContent.get(0).total.equals(total.doubleValue())
     }
 
     "when processing bonus to process" should "create bonus billing" in {
