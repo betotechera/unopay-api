@@ -2,23 +2,23 @@ package br.com.unopay.api.config
 
 object QueuesScala {
 
-  final val NOTIFICATION = Queues.NOTIFICATION
-  final val BATCH_CLOSING = Queues.BATCH_CLOSING
-  final val PAYMENT_REMITTANCE = Queues.PAYMENT_REMITTANCE
-  final val CREDIT_PROCESSED = Queues.CREDIT_PROCESSED
-  final val ORDER_CREATED = Queues.ORDER_CREATED
-  final val ORDER_UPDATED = Queues.ORDER_UPDATED
-  final val HIRER_CREDIT_CREATED = Queues.HIRER_CREDIT_CREATED
-  final val HIRER_BILLING_CREATED = Queues.HIRER_BILLING_CREATED
-  final val BONUS_BILLING_CREATED = Queues.BONUS_BILLING_CREATED
-  final val DLQ_NOTIFICATION = Queues.DLQ_NOTIFICATION
-  final val DLQ_BATCH_CLOSING = Queues.DLQ_BATCH_CLOSING
-  final val DLQ_PAYMENT_REMITTANCE = Queues.DLQ_PAYMENT_REMITTANCE
-  final val DLQ_CREDIT_PROCESSED = Queues.DLQ_CREDIT_PROCESSED
-  final val DLQ_ORDER_CREATED = Queues.DLQ_ORDER_CREATED
-  final val DLQ_HIRER_BILLING_CREATED = Queues.DLQ_HIRER_BILLING_CREATED
-  final val DLQ_HIRER_CREDIT_CREATED = Queues.DLQ_HIRER_CREDIT_CREATED
-  final val DLQ_ORDER_UPDATED = Queues.DLQ_ORDER_UPDATED
-  final val DLQ_BONUS_BILLING_CREATED = Queues.DLQ_BONUS_BILLING_CREATED
-  final val DURABLE_CONTAINER = Queues.DURABLE_CONTAINER
+  final val NOTIFICATION = "unopay.notification"
+  final val BATCH_CLOSING = "unopay.batch.closing"
+  final val PAYMENT_REMITTANCE = "unopay.payment.remittance"
+  final val CREDIT_PROCESSED = "unopay.credit.processed"
+  final val ORDER_CREATED = "unopay.order.created"
+  final val ORDER_UPDATED = "unopay.order.updated"
+  final val HIRER_CREDIT_CREATED = "unopay.hirer.credit.created"
+  final val HIRER_BILLING_CREATED = "unopay.hirer.billing.created"
+  final val BONUS_BILLING_CREATED = "unopay.bonus.billing.created"
+  final val DLQ_NOTIFICATION = "dlq.unopay.notification"
+  final val DLQ_BATCH_CLOSING = "dlq.unopay.batch.closing"
+  final val DLQ_PAYMENT_REMITTANCE = "dlq.unopay.payment.remittance"
+  final val DLQ_CREDIT_PROCESSED = "dlq.unopay.credit.processed"
+  final val DLQ_ORDER_CREATED = "dlq.unopay.order.created"
+  final val DLQ_HIRER_BILLING_CREATED = "dlq.unopay.hirer.billing.created"
+  final val DLQ_HIRER_CREDIT_CREATED = "dlq.unopay.hirer.credit.created"
+  final val DLQ_ORDER_UPDATED = "dlq.unopay.order.updated"
+  final val DLQ_BONUS_BILLING_CREATED = "dlq.unopay.bonus.billing.created"
+  final val DURABLE_CONTAINER = "durableRabbitListenerContainerFactory"
 }

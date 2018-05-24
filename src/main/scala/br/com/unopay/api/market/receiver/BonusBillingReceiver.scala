@@ -1,7 +1,7 @@
 package br.com.unopay.api.market.receiver
 
 import br.com.unopay.api.billing.boleto.service.TicketService
-import br.com.unopay.api.config.{Queues, QueuesScala}
+import br.com.unopay.api.config.QueuesScala
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.util.{GenericObjectMapper, Logging}
 import org.springframework.amqp.rabbit.annotation.RabbitListener
