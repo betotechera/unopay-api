@@ -31,7 +31,7 @@ class BonusBillingReceiverTest extends ScalaApplicationTest with MockitoSugar {
 
         receiver.bonusBillingNotify(toJson(bonusBilling))
 
-        //verify(mockTicketService).createForBonusBilling(_)
+        verify(mockTicketService).createForBonusBilling(_)
     }
 
 }

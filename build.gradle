@@ -187,7 +187,7 @@ sonarqube {
     properties {
         property 'sonar.projectName', 'unopay-api'
 		property 'sonar.projectKey', 'unopay-api'
-		property 'sonar.exclusions', ['**/*.html', 'src/main/java/br/com/unopay/api/util/**']
+		property 'sonar.exclusions', ['**/*.html', 'src/main/java/br/com/unopay/api/scala/**']
     }
 }
 
@@ -197,7 +197,7 @@ sourceSets {
 			srcDirs = ['src/main/scala', 'src/main/java']
 		}
 		java {
-			srcDirs = ['src/main/java/br/com/unopay/api/util']
+			srcDirs = ['src/main/java/br/com/unopay/api/scala']
 		}
 	}
 }
