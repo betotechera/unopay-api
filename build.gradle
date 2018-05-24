@@ -179,7 +179,7 @@ task copyJacoco(type: Copy) {
 	}
 }
 
-compileGroovy.dependsOn compileScala
+compileScala.dependsOn compileGroovy
 
 test.finalizedBy('sonarqube')
 
