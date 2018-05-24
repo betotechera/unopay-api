@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 @Profile(Array("!test"))
 @Autowired
 @Component
-class BonusBillingReceiver(var genericObjectMapper: GenericObjectMapper, var ticketService: TicketService)  extends Logging {
+class BonusBillingReceiver(var genericObjectMapper: GenericObjectMapper,
+                           var ticketService: TicketService) extends Logging {
 
     @Transactional
     @RabbitListener(queues = Array(QueuesScala.BONUS_BILLING_CREATED), containerFactory = QueuesScala.DURABLE_CONTAINER)
