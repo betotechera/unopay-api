@@ -24,7 +24,11 @@ import scala.collection.JavaConverters._
 
 @Service
 @Autowired
-class BonusBillingService(repository: BonusBillingRepository, personService: PersonService, bonusService: ContractorBonusService, var notifier: Notifier, issuerService: IssuerService) {
+class BonusBillingService(repository: BonusBillingRepository,
+                          personService: PersonService,
+                          bonusService: ContractorBonusService,
+                          var notifier: Notifier,
+                          issuerService: IssuerService) {
 
     @Value("${unopay.boleto.deadline_in_days}")
     private var deadlineInDays :Int =_
@@ -62,8 +66,8 @@ class BonusBillingService(repository: BonusBillingRepository, personService: Per
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
 
-        bonuses.map(_.issuerId).distinct.map(issuerService.findById(_)).foreach(issuer => {
-            val bonusesByIssuer = bonuses.filter(_.issuerId().equals(issuer.getId))
+        bonuses.map(_.issuerId).distinct.map(issuerService.findById).foreach(issuer => {
+            val bonusesByIssuer = bonuses.filter(_.issuerId.equals(issuer.getId))
             val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
             var bonusBilling = new BonusBilling
             bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
