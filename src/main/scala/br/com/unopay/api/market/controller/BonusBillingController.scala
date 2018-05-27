@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus.{CREATED, NO_CONTENT, OK}
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.RequestMethod.{DELETE, GET, POST}
+import org.springframework.web.bind.annotation.RequestMethod.{DELETE, GET, POST, PUT}
 import org.springframework.web.bind.annotation._
 
 @RestController
@@ -37,6 +37,14 @@ class BonusBillingController(service: BonusBillingService) extends Logging {
         log.info("created bonus billing={}", created.toString)
         ResponseEntity.created(URI.create(String
                 .format("/bonus-billings/%s",created.getId))).body(created)
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
+    @RequestMapping(value = Array("/contractors/{id}/bonus-billings"), method = Array(PUT))
+    def update(@PathVariable id: String): Unit = {
+        log.info("updating negotiation={}", id)
+        service.processForContractor(id)
     }
 
     @JsonView(Array(classOf[Views.BonusBilling.Detail]))

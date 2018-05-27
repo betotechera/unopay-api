@@ -5,7 +5,7 @@ import br.com.unopay.api.util.FixtureCreatorScala
 import org.hamcrest.Matchers.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, post}
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, post, put}
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{jsonPath, status}
 
 class BonusBillingControllerTest  extends AuthServerApplicationTests {
@@ -58,6 +58,18 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
         val id = fixtureCreator.createPersistedBonusBilling().id
         val result = this.mvc.perform(delete("/bonus-billings/{id}?access_token={access_token}", id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
+
+        result.andExpect(status().isNoContent)
+    }
+
+    it should "process contractor's bonusses billings" in {
+        val accessToken = getUserAccessToken()
+        val contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContractorBonusForContractor(contractor)
+        val id = contractor.getId
+
+        val result = this.mvc.perform(put("/contractors/{id}/bonus-billings?access_token={access_token}", id, accessToken)
+            .contentType(MediaType.APPLICATION_JSON))
 
         result.andExpect(status().isNoContent)
     }
