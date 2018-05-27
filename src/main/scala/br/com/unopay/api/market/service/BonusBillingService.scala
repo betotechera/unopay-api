@@ -3,7 +3,7 @@ package br.com.unopay.api.market.service
 import java.math._
 import java.util.Calendar
 
-import br.com.unopay.api.bacen.service.IssuerService
+import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusBilling
@@ -26,7 +26,8 @@ class BonusBillingService(repository: BonusBillingRepository,
                           personService: PersonService,
                           bonusService: ContractorBonusService,
                           var notifier: Notifier,
-                          issuerService: IssuerService) {
+                          issuerService: IssuerService,
+                          contractorService: ContractorService) {
 
     @Value("${unopay.boleto.deadline_in_days}")
     private var deadlineInDays :Int =_
@@ -53,6 +54,11 @@ class BonusBillingService(repository: BonusBillingRepository,
 
     def save(bonusBilling: BonusBilling): BonusBilling = {
         repository.save(bonusBilling)
+    }
+
+    def processForContractor(id: String): Unit = {
+        val contractor = contractorService.getById(id)
+        process(contractor.getPerson)
     }
 
     def process() {
