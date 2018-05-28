@@ -14,6 +14,9 @@ import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.model.PaymentDayCalculator
 import br.com.unopay.api.model.Contract
+import static br.com.unopay.api.model.ContractSituation.*
+import static br.com.unopay.api.model.ContractSituation.*
+import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -227,6 +230,48 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
 
         then:
         found
+    }
+
+    def "given valid negotiation when process should be created without inactivates contracts"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        def contractorA = fixtureCreator.createContractor()
+        def contractorB = fixtureCreator.createContractor()
+
+        fixtureCreator.createPersistedContract(contractorA, negotiation.product,negotiation.hirer, ACTIVE)
+        fixtureCreator.createPersistedContract(contractorB, negotiation.product,negotiation.hirer, situation)
+
+        when:
+        service.process(negotiation.getId())
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found.value == (negotiation.installmentValue + negotiation.defaultCreditValue)
+
+        where:
+        _ | situation
+        _ | CANCELLED
+        _ | EXPIRED
+        _ | FINALIZED
+        _ | SUSPENDED
+    }
+
+    def "given valid negotiation when process should be created with actives contracts"(){
+        given:
+        def negotiation = fixtureCreator.createNegotiation()
+        def contractorA = fixtureCreator.createContractor()
+        def contractorB = fixtureCreator.createContractor()
+
+        fixtureCreator.createPersistedContract(contractorA, negotiation.product,negotiation.hirer, ACTIVE)
+        fixtureCreator.createPersistedContract(contractorB, negotiation.product,negotiation.hirer, ACTIVE)
+
+        when:
+        service.process(negotiation.getId())
+        NegotiationBilling found = service.findLastNotPaidByHirer(negotiation.hirerId())
+
+        then:
+        found.value == ((negotiation.installmentValue + negotiation.defaultCreditValue) * 2)
+
     }
 
 

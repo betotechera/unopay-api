@@ -209,8 +209,8 @@ public class ContractService {
         return contracts;
     }
 
-    public Set<Contract> findByHirerId(String hirerId) {
-        return repository.findByHirerId(hirerId);
+    public Set<Contract> findActivesByHirerId(String hirerId) {
+        return repository.findByHirerIdAndSituation(hirerId, ContractSituation.ACTIVE);
     }
 
     public Optional<Contract> findByContractorAndProduct(String document, String productId) {
