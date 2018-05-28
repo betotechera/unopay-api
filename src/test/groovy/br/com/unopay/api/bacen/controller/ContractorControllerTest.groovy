@@ -53,9 +53,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     FixtureCreator fixtureCreator
 
     @Autowired
-    FixtureCreatorScala fixtureCreatorScala
-
-    @Autowired
     BonusBillingService bonusBillingService
 
     @Autowired
@@ -63,9 +60,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     UserCreditCardService userCreditCardService
-
-    @Autowired
-    UserDetailService userDetailService
 
     @Autowired
     ContractInstallmentService contractInstallmentService
@@ -118,6 +112,22 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isNoContent())
         found.first
+    }
+
+    void "should find contractor's bonus"() {
+        given:
+        String accessToken = getUserAccessToken()
+        def contractor = fixtureCreator.createContractor()
+        def billingId = fixtureCreator.createPersistedBonusBilling(contractor.person).id
+        def id = contractor.id
+
+        when:
+        def result = this.mvc.perform(get("/contractors/{id}/bonus-billings/{billingId}?access_token={access_token}", id, billingId, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.payer.name', is(equalTo(contractor.person.name))))
     }
 
     void 'known contractor should be updated'() {

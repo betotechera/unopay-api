@@ -4,6 +4,7 @@ import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
+import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
@@ -145,6 +146,15 @@ public class ContractorController {
     public void processBonusBilling(@PathVariable  String id) {
         log.info("creating bonus billing for contractor={}", id);
         bonusBillingService.processForContractor(id);
+    }
+
+    @JsonView(Views.BonusBilling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
+    @RequestMapping(value = "/contractors/{contractorId}/bonus-billings/{billingId}", method = RequestMethod.GET)
+    public BonusBilling getBonusBilling(@PathVariable  String contractorId, @PathVariable  String billingId) {
+        Contractor contractor = service.getById(contractorId);
+        return bonusBillingService.findByIdForContractor(billingId, contractor);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

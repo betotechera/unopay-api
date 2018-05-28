@@ -617,8 +617,7 @@ class FixtureCreator {
         }})
     }
 
-    BonusBilling createPersistedBonusBilling() {
-        def person = from(Person.class).uses(jpaProcessor).gimme("physical")
+    BonusBilling createPersistedBonusBilling(person = from(Person.class).uses(jpaProcessor).gimme("physical")) {
         from(BonusBilling).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("person", person)

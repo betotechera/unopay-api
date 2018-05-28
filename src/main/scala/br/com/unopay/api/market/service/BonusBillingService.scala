@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service
 import java.math._
 import java.util.Calendar
 
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
@@ -85,9 +86,16 @@ class BonusBillingService(repository: BonusBillingRepository,
         bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
     }
 
+    def findByIdForContractor(id: String, contractor: Contractor): BonusBilling = {
+        val personId = contractor.getPerson.getId
+        val bonusBilling = repository.findByIdAndPayerId(id, personId)
+        bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
+            Errors.BONUS_BILLING_NOT_FOUND))
+    }
+
     def findById(id: String): BonusBilling = {
-        val BonusBilling = repository.findById(id)
-        BonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
+        val bonusBilling = repository.findById(id)
+        bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
             Errors.BONUS_BILLING_NOT_FOUND))
     }
 
