@@ -13,17 +13,6 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
     @Autowired
     var fixtureCreator: FixtureCreatorScala = _
 
-     "given valid bonusBilling" should "create it" in {
-         val accessToken = getUserAccessToken()
-         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
-
-         val result = this.mvc.perform(post("/bonus-billings?access_token={access_token}", accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(bonusBilling)))
-
-        result.andExpect(status().isCreated)
-    }
-
     "known bonusBilling" should "be found" in {
         val accessToken = getUserAccessToken()
         val id = fixtureCreator.createPersistedBonusBilling().id

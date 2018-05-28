@@ -26,23 +26,10 @@ class BonusBillingController(service: BonusBillingService) extends Logging {
     @Value("${unopay.api}")
     var api: String =_
 
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
-    @ResponseStatus(CREATED)
-    @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
-    @RequestMapping(value = Array("/bonus-billings"), method = Array(POST))
-    def create(@Validated(Array(classOf[Create])) @RequestBody
-               bonusBilling: BonusBilling): ResponseEntity[BonusBilling] = {
-        log.info("creating bonus billing={}", bonusBilling.toString)
-        val created = service.create(bonusBilling)
-        log.info("created bonus billing={}", created.toString)
-        ResponseEntity.created(URI.create(String
-                .format("/bonus-billings/%s",created.getId))).body(created)
-    }
-
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
     @RequestMapping(value = Array("/contractors/{id}/bonus-billings"), method = Array(PUT))
-    def update(@PathVariable id: String): Unit = {
+    def process(@PathVariable id: String): Unit = {
         log.info("updating negotiation={}", id)
         service.processForContractor(id)
     }
