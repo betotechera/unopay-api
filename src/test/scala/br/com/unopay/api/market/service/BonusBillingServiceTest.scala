@@ -1,7 +1,7 @@
 package br.com.unopay.api.market.service
 
 import java.time.Year
-import java.util.Date
+import java.util.{Calendar, Date, GregorianCalendar}
 
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
@@ -12,7 +12,7 @@ import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEnti
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.scalatest.mockito._
 import org.mockito.Mockito.verify
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.collection.JavaConverters._
 
@@ -23,6 +23,9 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
     var mockNotifier : Notifier = _
+
+    @Value("${unopay.boleto.deadline_in_days}")
+    private var deadlineInDays :Int =_
 
     override def beforeEach(): Unit = {
         super.beforeEach()
@@ -46,14 +49,21 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         bonusBilling.number = null
         val created = service.create(bonusBilling)
-        created.number
+
+        val found = service.findById(created.id)
+
+        found.number
     }
 
     "given valid BonusBilling" should "define it's expiration date" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         bonusBilling.expiration = null
+        val expectedDate = Calendar.getInstance()
+        expectedDate.add(Calendar.DATE, deadlineInDays)
+
         val created = service.create(bonusBilling)
-        created.expiration
+
+        created.expiration.equals(expectedDate.getTime)
     }
 
     "given BonusBilling without issuer" should "return error" in {
@@ -187,8 +197,9 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
     "given BonusBilling with invalid process date" should "return error" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
-
-        bonusBilling.processedAt = new Date(Year.now().getValue + 4, 12, 12)
+        val date = Calendar.getInstance()
+        date.add(Calendar.DATE, 1)
+        bonusBilling.processedAt = date.getTime
         val thrown = the [UnprocessableEntityException] thrownBy {
             service.create(bonusBilling)
         }
