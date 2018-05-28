@@ -620,7 +620,7 @@ class FixtureCreator {
     BonusBilling createPersistedBonusBilling(person = from(Person.class).uses(jpaProcessor).gimme("physical")) {
         from(BonusBilling).uses(jpaProcessor).gimme("valid", new Rule() {
             {
-                add("person", person)
+                add("payer", person)
             }})
     }
 
