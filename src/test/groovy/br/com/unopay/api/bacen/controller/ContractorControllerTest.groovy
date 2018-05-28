@@ -14,6 +14,8 @@ import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
@@ -22,6 +24,9 @@ import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
+import br.com.unopay.api.util.FixtureCreatorScala
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -46,6 +51,12 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    @Autowired
+    FixtureCreatorScala fixtureCreatorScala
+
+    @Autowired
+    BonusBillingService bonusBillingService
 
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
@@ -86,6 +97,27 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         def result = this.mvc.perform(delete(CONTRACTOR_ID_ENDPOINT,id, accessToken).contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
+    }
+
+    void "should process contractor's bonuses"() {
+        given:
+        String accessToken = getUserAccessToken()
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedContractorBonusForContractor(contractor)
+        def filter = new BonusBillingFilter(){{
+            this.document = contractor.documentNumber
+        }}
+        def id = contractor.id
+
+        when:
+        def result = this.mvc.perform(put("/contractors/{id}/bonus-billings?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        def found = bonusBillingService.findByFilter(filter, new UnovationPageRequest())
+
+        then:
+        result.andExpect(status().isNoContent())
+        found.first
     }
 
     void 'known contractor should be updated'() {

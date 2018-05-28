@@ -1,7 +1,5 @@
 package br.com.unopay.api.market.controller
 
-import java.net.URI
-
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.service.BonusBillingService
@@ -11,8 +9,7 @@ import br.com.unopay.bootcommons.jsoncollections.{PageableResults, Results, Unov
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.HttpStatus.{CREATED, NO_CONTENT, OK}
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus.{NO_CONTENT, OK}
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestMethod.{DELETE, GET, POST, PUT}
@@ -28,10 +25,10 @@ class BonusBillingController(service: BonusBillingService) extends Logging {
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
-    @RequestMapping(value = Array("/contractors/{id}/bonus-billings"), method = Array(PUT))
-    def process(@PathVariable id: String): Unit = {
-        log.info("updating negotiation={}", id)
-        service.processForContractor(id)
+    @RequestMapping(value = Array("/bonus-billings"), method = Array(PUT))
+    def process(): Unit = {
+        log.info("processing bonus billings")
+        service.process()
     }
 
     @JsonView(Array(classOf[Views.BonusBilling.Detail]))

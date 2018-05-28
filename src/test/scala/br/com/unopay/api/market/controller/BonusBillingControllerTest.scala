@@ -51,13 +51,11 @@ class BonusBillingControllerTest  extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent)
     }
 
-    it should "process contractor's bonusses billings" in {
+    it should "process contractor's bonusses" in {
         val accessToken = getUserAccessToken()
-        val contractor = fixtureCreator.createContractor()
-        fixtureCreator.createPersistedContractorBonusForContractor(contractor)
-        val id = contractor.getId
+        fixtureCreator.createPersistedContractorBonusForContractor()
 
-        val result = this.mvc.perform(put("/contractors/{id}/bonus-billings?access_token={access_token}", id, accessToken)
+        val result = this.mvc.perform(put("/bonus-billings?access_token={access_token}", accessToken)
             .contentType(MediaType.APPLICATION_JSON))
 
         result.andExpect(status().isNoContent)
