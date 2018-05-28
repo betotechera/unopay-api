@@ -60,6 +60,7 @@ public class Product implements Serializable, Updatable {
     public static final long serialVersionUID = 1L;
     public static final String EMPTY = "";
     public static final int MAX_CODE_LENGTH = 4, JANUARY = 1, DECEMBER = 12;
+    public static final Double ZERO = 0.0;
 
     public Product(){}
 
@@ -256,6 +257,13 @@ public class Product implements Serializable, Updatable {
             return getIssuer().personShortName();
         }
         return null;
+    }
+
+    public Double returnBonusPercentage() {
+        if (getBonusPercentage() != null && !getBonusPercentage().toString().equals(EMPTY)) {
+            return getBonusPercentage();
+        }
+        return ZERO;
     }
 
 }
