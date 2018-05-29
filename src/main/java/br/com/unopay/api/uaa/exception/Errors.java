@@ -645,4 +645,19 @@ public final class Errors {
             new UnovationError("INVALID_EARNED_BONUS","Invalid earned bonus");
     public static final UnovationError INVALID_SERVICE_VALUE =
             new UnovationError("INVALID_SERVICE_VALUE","Invalid service value");
+    public static final UnovationError UNAUTHORIZED_PRODUCT_CHANGE =
+            new UnovationError("UNAUTHORIZED_PRODUCT_CHANGE","Unauthorized product change");
+    public static final UnovationError UNAUTHORIZED_PAYER_CHANGE =
+            new UnovationError("UNAUTHORIZED_PAYER_CHANGE","Unauthorized payer change");
+    public static final UnovationError UNAUTHORIZED_CONTRACTOR_CHANGE =
+            new UnovationError("UNAUTHORIZED_CONTRACTOR_CHANGE","Unauthorized contractor change");
+    public static final UnovationError UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE =
+            new UnovationError("UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE",
+                    "Unauthorized service identification change");
+    public static final UnovationError UNAUTHORIZED_EARNED_BONUS_CHANGE =
+            new UnovationError("UNAUTHORIZED_EARNED_BONUS_CHANGE","Unauthorized earned bonus change");
+    public static final UnovationError UNAUTHORIZED_SERVICE_VALUE_CHANGE =
+            new UnovationError("UNAUTHORIZED_SERVICE_VALUE_CHANGE","Unauthorized service value change");
+    public static final UnovationError UNAUTHORIZED_PROCESSED_AT_CHANGE =
+            new UnovationError("UNAUTHORIZED_PROCESSED_AT_CHANGE","Unauthorized processed at change");
 }

@@ -12,6 +12,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnauthorizedException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -262,7 +263,142 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         found.earnedBonus
     }
 
-    private ContractorBonus createContractorBonus() {
+    def 'Update Product for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        Product differentProduct = Fixture.from(Product).uses(jpaProcessor).gimme("valid")
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.product = differentProduct
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_PRODUCT_CHANGE'
+    }
+
+    def 'Update Payer for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        Person differentPayer = Fixture.from(Person).uses(jpaProcessor).gimme("physical")
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.payer = differentPayer
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_PAYER_CHANGE'
+    }
+
+    def 'Update Contractor for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        Contractor differentContractor = Fixture.from(Contractor).uses(jpaProcessor).gimme("valid")
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.contractor = differentContractor
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_CONTRACTOR_CHANGE'
+    }
+
+    def 'Update Service Identification for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        String differentServiceIdentification = contractorBonus.serviceIdentification + 'a'
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.serviceIdentification = differentServiceIdentification
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE'
+    }
+
+    def 'Update Earned Bonus for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        BigDecimal differentEarnedBonus = contractorBonus.earnedBonus + 1
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.earnedBonus = differentEarnedBonus
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_EARNED_BONUS_CHANGE'
+    }
+
+    def 'Update Service Value for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        BigDecimal differentServiceValue = contractorBonus.serviceValue + 1
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.serviceValue = differentServiceValue
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_SERVICE_VALUE_CHANGE'
+    }
+
+    def 'Update Processed At for Establishment should return error'() {
+
+        given:
+        Establishment establishment = fixtureCreator.createEstablishment()
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.payer = establishment.person
+        contractorBonus.processedAt = new Date()
+        contractorBonus.situation = PROCESSED
+        Date differentProcessedAt = contractorBonus.processedAt + 1
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.processedAt = null
+        ContractorBonus bonus = current
+
+        when:
+        contractorBonusService.updateForEstablishment(current.id, establishment, bonus)
+
+        then:
+        def ex = thrown(UnauthorizedException)
+        assert ex.errors.first().logref == 'UNAUTHORIZED_PROCESSED_AT_CHANGE'
+    }
+
+        private ContractorBonus createContractorBonus() {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
             product = productUnderTest

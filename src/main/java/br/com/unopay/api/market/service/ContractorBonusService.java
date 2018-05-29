@@ -3,7 +3,6 @@ package br.com.unopay.api.market.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
-import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
@@ -22,8 +21,8 @@ import java.util.function.Supplier;
 
 import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
+import static br.com.unopay.api.uaa.exception.Errors.*;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 @Service
 public class ContractorBonusService {
@@ -32,6 +31,8 @@ public class ContractorBonusService {
     private ProductService productService;
     private ContractorService contractorService;
     private PersonService personService;
+
+    private static final int EQUAL = 0;
 
     @Autowired
     public ContractorBonusService(ContractorBonusRepository contractorBonusRepository,
@@ -70,6 +71,7 @@ public class ContractorBonusService {
                                                   ContractorBonus contractorBonus) {
         ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
         checkIfValidSituationChange(current, contractorBonus);
+        checkListOfUnauthorizedChangesForEstablishment(current, contractorBonus);
         return update(current, contractorBonus);
     }
 
@@ -128,6 +130,58 @@ public class ContractorBonusService {
         if (!current.getSituation().equals(contractorBonus.getSituation())
                 && !(FOR_PROCESSING.equals(current.getSituation()) && CANCELED.equals(contractorBonus.getSituation()))) {
             throw UnovationExceptions.conflict().withErrors(INVALID_BONUS_SITUATION);
+        }
+    }
+
+    private void checkListOfUnauthorizedChangesForEstablishment(ContractorBonus current, ContractorBonus contractorBonus) {
+        checkIfUnauthorizedChangeProduct(current, contractorBonus);
+        checkIfUnauthorizedChangePayer(current, contractorBonus);
+        checkIfUnauthorizedChangeContractor(current, contractorBonus);
+        checkIfUnauthorizedChangeServiceIdentification(current, contractorBonus);
+        checkIfUnauthorizedChangeEarnedBonus(current, contractorBonus);
+        checkIfUnauthorizedChangeServiceValue(current, contractorBonus);
+        checkIfUnauthorizedChangeProcessedAt(current, contractorBonus);
+    }
+
+    private void checkIfUnauthorizedChangeProduct(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getProduct().equals(contractorBonus.getProduct())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PRODUCT_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangePayer(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getPayer().equals(contractorBonus.getPayer())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PAYER_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangeContractor(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getContractor().equals(contractorBonus.getContractor())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_CONTRACTOR_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangeServiceIdentification(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getServiceIdentification().equals(contractorBonus.getServiceIdentification())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangeEarnedBonus(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (compare(current.getEarnedBonus(), contractorBonus.getEarnedBonus()) != EQUAL) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_EARNED_BONUS_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangeServiceValue(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (compare(current.getServiceValue(), contractorBonus.getServiceValue()) != EQUAL) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SERVICE_VALUE_CHANGE);
+        }
+    }
+
+    private void checkIfUnauthorizedChangeProcessedAt(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getProcessedAt().equals(contractorBonus.getProcessedAt())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PROCESSED_AT_CHANGE);
         }
     }
 
