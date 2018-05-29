@@ -62,6 +62,12 @@ class BonusBillingService(repository: BonusBillingRepository,
         process(contractor.getPerson)
     }
 
+    def processForIssuer(id: String): Unit = {
+        issuerService.findById(id)
+        def payers = bonusService.getPayersWithBonusToProcessForIssuer(id)
+        payers.forEach(process(_))
+    }
+
     def process() {
         def payers = bonusService.getPayersWithBonusToProcess
 

@@ -1,11 +1,9 @@
 package br.com.unopay.api.market.service
 
-import java.time.Year
-import java.util.{Calendar, Date, GregorianCalendar}
+import java.util.Calendar
 
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
@@ -83,6 +81,45 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.process()
 
         verify(mockNotifier).notify(Queues.BONUS_BILLING_CREATED, _:Object)
+    }
+
+    "given issuer whose contractors has bonuses to process" should "create bonus billing" in {
+        val issuer = fixtureCreator.createIssuer()
+        val product = fixtureCreator.createProductWithIssuer(issuer)
+        val documentNumber = fixtureCreator.createPersistedContractorBonusWithProduct(product)
+            .getContractor.getDocumentNumber
+
+        val filter = new BonusBillingFilter
+        filter.setDocument(documentNumber)
+
+        service.processForIssuer(issuer.getId)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+        found.getSize == 1
+        found.getContent.get(0).issuer.equals(issuer)
+    }
+
+    "given issuer whose contractors have no bonuses to process" should "not create bonus billing" in {
+        val issuer = fixtureCreator.createIssuer()
+        val product = fixtureCreator.createProductWithIssuer(issuer)
+        val documentNumber = fixtureCreator.createPersistedContractorBonusWithProduct(product)
+            .getContractor.getDocumentNumber
+
+        val filter = new BonusBillingFilter
+        filter.setDocument(documentNumber)
+
+        service.processForIssuer(issuer.getId)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+        found.getSize == 0
+    }
+
+    "given unknown issuer to process bonus" should "return error" in {
+        val thrown = the[NotFoundException] thrownBy {
+            service.processForIssuer("213")
+        }
+
+        thrown.getErrors.asScala.head.getLogref == "ISSUER_NOT_FOUND"
     }
 
     "given person without Bonus to process" should "not create BonusBilling" in {

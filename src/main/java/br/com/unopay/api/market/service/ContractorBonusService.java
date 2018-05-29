@@ -104,8 +104,13 @@ public class ContractorBonusService {
     }
 
     public List<Person> getPayersWithBonusToProcess() {
+        return  getPayersWithBonusToProcessForIssuer(null);
+    }
+
+    public List<Person> getPayersWithBonusToProcessForIssuer(String id) {
         ContractorBonusFilter filter = new ContractorBonusFilter();
         filter.setSituation(BonusSituation.FOR_PROCESSING);
+        filter.setIssuer(id);
         Stream<ContractorBonus> bonuses = contractorBonusRepository.findAll(filter).stream();
         return bonuses.map(ContractorBonus::getPayer).distinct().collect(Collectors.toList());
     }

@@ -617,6 +617,15 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
 
+    def createPersistedContractorBonusWithProduct(product: Product = createProduct()): ContractorBonus = {
+        val contractor = createContractor()
+        from(classOf[ContractorBonus]).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("contractor", contractor)
+            add("product", product)
+            add("payer", contractor.getPerson)
+        }})
+    }
+
     private def instant(pattern: String): java.util.Date ={
         new ChronicFunction(pattern).generateValue()
     }

@@ -174,6 +174,22 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
+    def 'should find payers with Contractor Bonuses for Processing by Issuer'(){
+
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        def product = fixtureCreator.createProductWithIssuer(issuer)
+        ContractorBonus contractorBonus = createContractorBonus(product)
+        contractorBonusService.create(contractorBonus)
+
+        when:
+        def found = contractorBonusService.getPayersWithBonusToProcessForIssuer(issuer.id)
+
+        then:
+        !found.isEmpty()
+
+    }
+
     def 'should find Contractor Bonuses for Processing for payers'(){
 
         given:
@@ -271,10 +287,10 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
-    private ContractorBonus createContractorBonus() {
+    private ContractorBonus createContractorBonus(issuerProduct = productUnderTest) {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
-            product = productUnderTest
+            product = issuerProduct
             contractor = contractorUnderTest
             payer = personUnderTest
             it
