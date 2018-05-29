@@ -59,7 +59,6 @@ public class ContractorBonus implements Serializable, Updatable {
     private Contractor contractor;
 
     @JoinColumn(name="service_identification")
-    @JsonView({Views.ContractorBonus.Detail.class})
     private String serviceIdentification;
 
     @Column(name = "earned_bonus")
