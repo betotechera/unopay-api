@@ -20,12 +20,17 @@ public class ContractorBonusTemplateLoader implements TemplateLoader {
             add("payer", one(Person.class, "legal"));
             add("contractor", one(Contractor.class, "valid"));
             add("earnedBonus", random(BigDecimal.class, range(10,300)));
+            add("serviceValue", random(BigDecimal.class, range(10,300)));
             add("createdDateTime", instant("now"));
         }});
 
         Fixture.of(ContractorBonus.class).addTemplate("processed").inherits("valid", new Rule(){{
             add("situation", BonusSituation.PROCESSED);
             add("processedAt", instant("now"));
+        }});
+
+        Fixture.of(ContractorBonus.class).addTemplate("withoutBonus").inherits("valid", new Rule(){{
+            add("earnedBonus", null);
         }});
     }
 }

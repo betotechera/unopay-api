@@ -3,6 +3,7 @@ package br.com.unopay.api.market.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Unroll
 
@@ -74,5 +75,34 @@ class ContractorBonusTest extends FixtureApplicationTest {
         _ | null
         _ | BonusSituation.CANCELED
         _ | BonusSituation.FOR_PROCESSING
+    }
+
+    def 'when calling validateServiceValue without serviceValue should return error'() {
+
+        given:
+        ContractorBonus contractorBonus = Fixture.from(ContractorBonus).gimme("valid", new Rule(){{
+            add("serviceValue", null)
+        }})
+
+        when:
+        contractorBonus.validateServiceValue()
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.find()?.logref == 'INVALID_SERVICE_VALUE'
+    }
+
+    def 'when calling setupEarnedBonusIfNull without earnedBonus should set it up'() {
+
+        given:
+        ContractorBonus contractorBonus = Fixture.from(ContractorBonus).gimme("withoutBonus")
+        contractorBonus.product.bonusPercentage = Math.random()
+
+        when:
+        contractorBonus.setupEarnedBonus()
+
+        then:
+        contractorBonus.earnedBonus == Rounder.round(contractorBonus.product.returnBonusPercentage()
+                .multiply(contractorBonus.serviceValue))
     }
 }

@@ -56,6 +56,7 @@ public class ContractorBonusService {
 
     public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
+        contractorBonus.setupMyUpdate();
         return update(current, contractorBonus);
     }
 
