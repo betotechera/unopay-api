@@ -24,6 +24,7 @@ import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Contract;
@@ -95,6 +96,7 @@ public class IssuerController {
     private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
     private ContractService contractService;
+    private BonusBillingService bonusBillingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -112,7 +114,8 @@ public class IssuerController {
                             HirerService hirerService,
                             NegotiationBillingService negotiationBillingService,
                             TicketService ticketService,
-                            ContractService contractService) {
+                            ContractService contractService,
+                            BonusBillingService bonusBillingService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
@@ -126,6 +129,7 @@ public class IssuerController {
         this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
         this.contractService = contractService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -498,6 +502,13 @@ public class IssuerController {
     public void processBilling(Issuer issuer,@PathVariable String id){
         log.info("process negotiation={} billing for issuer={}",id, issuer.documentNumber());
         negotiationBillingService.processForIssuer(id,issuer);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/bonus-billings", method = PUT)
+    public void processAllBonusBillings(Issuer issuer){
+        log.info("process all bonus billing for issuer={}", issuer.documentNumber());
+        bonusBillingService.processForIssuer(issuer.getId());
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)

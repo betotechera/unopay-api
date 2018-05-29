@@ -8,9 +8,14 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.UnopayScheduler
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
@@ -32,6 +37,9 @@ class IssuerControllerTest extends AuthServerApplicationTests {
     IssuerService issuerService
 
     UnopayScheduler schedulerMock = Mock(UnopayScheduler)
+
+    @Autowired
+    BonusBillingService bonusBillingService
 
     void setup(){
         issuerService.scheduler = schedulerMock
@@ -174,6 +182,19 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         when:
         def result = this.mvc.perform(delete('/issuers/me/products/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'should process my contractor bonuses'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+
+        when:
+        def result = this.mvc.perform(put('/issuers/me/bonus-billings?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
         then:
         result.andExpect(status().isNoContent())
     }

@@ -632,6 +632,15 @@ class FixtureCreator {
         }})
     }
 
+    ContractorBonus createPersistedContractorBonusWithProduct(product = createProduct()) {
+        def contractor = createContractor()
+        from(ContractorBonus.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("contractor", contractor)
+            add("product", product)
+            add("payer", contractor.person)
+        }})
+    }
+
     ContractorBonus createPersistedContractorBonusForPerson(Person person) {
         from(ContractorBonus.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("contractor", createContractor())
