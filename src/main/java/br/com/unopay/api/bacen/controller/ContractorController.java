@@ -6,6 +6,8 @@ import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.filter.BonusBillingFilter;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
@@ -155,6 +157,20 @@ public class ContractorController {
     public BonusBilling getBonusBilling(@PathVariable  String contractorId, @PathVariable  String billingId) {
         Contractor contractor = service.getById(contractorId);
         return bonusBillingService.findByIdForContractor(billingId, contractor);
+    }
+
+    @JsonView(Views.BonusBilling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
+    @RequestMapping(value = "/contractors/{id}/bonus-billings", method = RequestMethod.GET)
+    public Results<BonusBilling> getAllBonusBillings(@PathVariable  String id, BonusBillingFilter filter,
+                                                           @Validated UnovationPageRequest pageable) {
+        Contractor contractor = service.getById(id);
+        filter.setDocument(contractor.getDocumentNumber());
+        Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/%s/hirer-negotiation-billings", api, id));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

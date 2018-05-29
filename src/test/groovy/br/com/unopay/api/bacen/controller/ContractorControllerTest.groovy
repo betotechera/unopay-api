@@ -130,6 +130,25 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.payer.name', is(equalTo(contractor.person.name))))
     }
 
+    void "should find all contractor's bonuses"() {
+        given:
+        String accessToken = getUserAccessToken()
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedBonusBilling(contractor.person)
+        fixtureCreator.createPersistedBonusBilling(contractor.person)
+
+        def id = contractor.id
+
+        when:
+        def result = this.mvc.perform(get("/contractors/{id}/bonus-billings?access_token={access_token}", id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].payer.name', is(equalTo(contractor.person.name))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].payer.name', is(equalTo(contractor.person.name))))
+    }
+
     void 'known contractor should be updated'() {
         given:
         String accessToken = getUserAccessToken()
