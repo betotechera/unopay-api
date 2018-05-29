@@ -180,7 +180,7 @@ public class ContractorBonusService {
     }
 
     private void checkIfUnauthorizedChangeProcessedAt(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getProcessedAt().equals(contractorBonus.getProcessedAt())) {
+        if (compare(current.getProcessedAt(), contractorBonus.getProcessedAt()) != EQUAL) {
             throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PROCESSED_AT_CHANGE);
         }
     }
