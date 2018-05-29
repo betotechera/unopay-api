@@ -141,7 +141,7 @@ public class NegotiationBillingService {
     }
 
     private NegotiationBilling process(HirerNegotiation negotiation) {
-        Set<Contract> hirerContracts = contractService.findByHirerId(negotiation.hirerId());
+        Set<Contract> hirerContracts = contractService.findActivesByHirerId(negotiation.hirerId());
         Integer nextInstallment = getNextInstallmentNumber(negotiation.hirerId());
         log.info("creating billing for hirer={}, found={} contract(s) and the next billing installment is={}",
                 negotiation.hirerPersonShortName(), hirerContracts.size(), nextInstallment);

@@ -1,6 +1,7 @@
 package br.com.unopay.api.repository;
 
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
@@ -16,7 +17,7 @@ public interface ContractRepository  extends UnovationFilterRepository<Contract,
 
     List<Contract> findByHirerPersonDocumentNumber(String hirerDocument);
 
-    Set<Contract> findByHirerId(String hirerId);
+    Set<Contract> findByHirerIdAndSituation(String hirerId, ContractSituation situation);
 
     Optional<Contract> findByContractorPersonDocumentNumberAndProductId(String document, String productId);
 
