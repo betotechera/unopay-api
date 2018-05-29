@@ -6,7 +6,6 @@ import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.ContractorBonus;
-import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.filter.BonusBillingFilter;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
@@ -155,22 +154,45 @@ public class ContractorController {
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{contractorId}/bonus-billings/{billingId}", method = RequestMethod.GET)
     public BonusBilling getBonusBilling(@PathVariable  String contractorId, @PathVariable  String billingId) {
+        log.info("get BonusBilling={} for Contractor={}", billingId,contractorId);
         Contractor contractor = service.getById(contractorId);
         return bonusBillingService.findByIdForContractor(billingId, contractor);
     }
 
-    @JsonView(Views.BonusBilling.Detail.class)
+    @JsonView(Views.BonusBilling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
     @RequestMapping(value = "/contractors/{id}/bonus-billings", method = RequestMethod.GET)
     public Results<BonusBilling> getAllBonusBillings(@PathVariable  String id, BonusBillingFilter filter,
                                                            @Validated UnovationPageRequest pageable) {
+        log.info("find BonusBillings for Contractor={}", id);
         Contractor contractor = service.getById(id);
         filter.setDocument(contractor.getDocumentNumber());
         Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/issuers/%s/hirer-negotiation-billings", api, id));
+                String.format("%s/contractors/%s/bonus-billings", api, id));
+    }
+
+    @JsonView(Views.BonusBilling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/bonus-billings/{billingId}", method = RequestMethod.GET)
+    public BonusBilling getMeBonusBilling(Contractor contractor,@PathVariable  String billingId) {
+        log.info("get BonusBilling={} for Contractor={}", billingId,contractor.getId());
+        return bonusBillingService.findByIdForContractor(billingId, contractor);
+    }
+
+    @JsonView(Views.BonusBilling.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/bonus-billings", method = RequestMethod.GET)
+    public Results<BonusBilling> getAllMeBonusBillings(Contractor contractor, BonusBillingFilter filter,
+                                                     @Validated UnovationPageRequest pageable) {
+        filter.setDocument(contractor.getDocumentNumber());
+        log.info("find BonusBillings for Contractor={}", contractor.getId());
+        Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/contractors/me/bonus-billings", api));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
