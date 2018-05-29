@@ -199,7 +199,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
     }
 
-    void 'should find my contractor bonus'() {
+    void 'should find my bonus billing'() {
         given:
         def issuerUser = fixtureCreator.createIssuerUser()
         def contractor = fixtureCreator.createContractor()
@@ -213,6 +213,22 @@ class IssuerControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.id', is(notNullValue())))
+    }
+
+    void 'should find all my bonus billings'() {
+        given:
+        def issuerUser = fixtureCreator.createIssuerUser()
+        def contractor = fixtureCreator.createContractor()
+        fixtureCreator.createPersistedBonusBilling(contractor.getPerson(), issuerUser.issuer)
+        String accessToken = getUserAccessToken(issuerUser.email, issuerUser.password)
+
+        when:
+        def result = this.mvc.perform(get('/issuers/me/bonus-billings?access_token={access_token}',accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
     void 'known network should be enabled for me'(){

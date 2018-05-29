@@ -23,6 +23,7 @@ import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.filter.BonusBillingFilter;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.service.BonusBillingService;
@@ -518,6 +519,19 @@ public class IssuerController {
     public BonusBilling getBonusBilling(Issuer issuer, @PathVariable String id) {
         log.info("get bonus billing={} for issuer={}", id, issuer.documentNumber());
         return bonusBillingService.findByIdForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.BonusBilling.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/bonus-billings", method = RequestMethod.GET)
+    public Results<BonusBilling> getAllBonusBillings(Issuer issuer, BonusBillingFilter filter,
+                                                     @Validated UnovationPageRequest pageable) {
+        log.info("find BonusBillings for Contractor={}", issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/bonus-billings", api));
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)
