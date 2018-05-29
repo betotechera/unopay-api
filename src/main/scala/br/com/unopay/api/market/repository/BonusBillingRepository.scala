@@ -10,5 +10,6 @@ trait BonusBillingRepository extends UnovationFilterRepository[BonusBilling, Str
 
     def findById(id: String): Optional[BonusBilling]
     def findByIdAndPayerId(id: String, payerId: String): Optional[BonusBilling]
+    def findByIdAndIssuerId(id: String, issuerId: String): Optional[BonusBilling]
     def findFirstByOrderByCreatedDateTimeDesc(): Optional[BonusBilling]
 }

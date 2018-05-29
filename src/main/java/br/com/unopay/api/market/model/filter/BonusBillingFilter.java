@@ -7,4 +7,7 @@ import lombok.Data;
 public class BonusBillingFilter {
     @SearchableField(field = "payer.document.number")
     private String document;
+
+    @SearchableField(field = "issuer.id")
+    private String issuer;
 }

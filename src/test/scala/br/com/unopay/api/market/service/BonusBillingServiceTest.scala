@@ -257,6 +257,16 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         found
     }
 
+    it should "find issuer's BonusBilling" in {
+        val contractor = fixtureCreator.createContractor()
+        val issuer = fixtureCreator.createIssuer()
+        val id = fixtureCreator.createPersistedBonusBilling(contractor.getPerson, issuer).getId
+
+        val found = service.findByIdForIssuer(id, issuer)
+
+        found
+    }
+
     it should "not find unknown BonusBilling" in {
         val id = "123"
         val thrown = the [NotFoundException] thrownBy {

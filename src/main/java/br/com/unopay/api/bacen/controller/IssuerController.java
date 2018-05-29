@@ -19,6 +19,7 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
+import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
@@ -509,6 +510,14 @@ public class IssuerController {
     public void processAllBonusBillings(Issuer issuer){
         log.info("process all bonus billing for issuer={}", issuer.documentNumber());
         bonusBillingService.processForIssuer(issuer.getId());
+    }
+
+    @JsonView(Views.BonusBilling.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "issuers/me/bonus-billings/{id}", method = GET)
+    public BonusBilling getBonusBilling(Issuer issuer, @PathVariable String id) {
+        log.info("get bonus billing={} for issuer={}", id, issuer.documentNumber());
+        return bonusBillingService.findByIdForIssuer(id, issuer);
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)
