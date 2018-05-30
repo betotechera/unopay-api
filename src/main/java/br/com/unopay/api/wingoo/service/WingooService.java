@@ -1,6 +1,7 @@
 package br.com.unopay.api.wingoo.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.wingoo.model.Password;
 import br.com.unopay.api.wingoo.model.Student;
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
@@ -20,6 +21,7 @@ public class WingooService {
 
     public static final String INSERT_STUDENT = "/inserirAlunos";
     public static final String APPLICATION = "Application";
+    public static final String ACCOUNT_UPDATE_PASSWORD = "/account/updatePassword";
     @Autowired
     @Qualifier("wingooRestTemplate")
     private RestTemplate wingooTemplate;
@@ -42,5 +44,10 @@ public class WingooService {
     public Student create(Contractor contractor){
         HttpEntity<Student> entity = new HttpEntity<>(Student.fromContractor(contractor), headers);
         return wingooTemplate.postForObject(wingooApi + INSERT_STUDENT, entity, Student.class, new HashMap<>());
+    }
+
+    public void update(Password password){
+        HttpEntity<Password> entity = new HttpEntity<>(password, headers);
+        wingooTemplate.put(wingooApi + ACCOUNT_UPDATE_PASSWORD, entity, Password.class, new HashMap<>());
     }
 }
