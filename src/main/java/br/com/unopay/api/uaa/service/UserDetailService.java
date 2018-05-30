@@ -107,6 +107,7 @@ public class UserDetailService implements UserDetailsService {
             if(user.getType() == null) {
                 user.setType(userType);
             }
+
             userTypeService.validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);

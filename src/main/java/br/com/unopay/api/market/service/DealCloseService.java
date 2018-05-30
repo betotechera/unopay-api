@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.csv.ContractorCsv;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.DealClose;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -17,6 +19,7 @@ import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.wingoo.service.WingooService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
@@ -26,6 +29,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.FILE_WIHOUT_LINES_OR_HEADER;
 
+@Slf4j
 @Service
 public class DealCloseService {
 
@@ -45,18 +50,19 @@ public class DealCloseService {
     private ContractInstallmentService installmentService;
     private AuthorizedMemberService authorizedMemberService;
     private Validator validator;
+    private Notifier notifier;
 
     public static final String EMPTY = "";
     private static final char SEMICOLON = ';';
 
     @Autowired
     public DealCloseService(ContractService contractService, HirerService hirerService,
-                           ContractorService contractorService, ProductService productService,
-                           PaymentInstrumentService paymentInstrumentService,
-                           UserDetailService userDetailService,
-                           ContractInstallmentService installmentService,
-                           AuthorizedMemberService authorizedMemberService,
-                           Validator validator) {
+                            ContractorService contractorService, ProductService productService,
+                            PaymentInstrumentService paymentInstrumentService,
+                            UserDetailService userDetailService,
+                            ContractInstallmentService installmentService,
+                            AuthorizedMemberService authorizedMemberService,
+                            Validator validator, Notifier notifier) {
         this.contractService = contractService;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -66,6 +72,7 @@ public class DealCloseService {
         this.installmentService = installmentService;
         this.authorizedMemberService = authorizedMemberService;
         this.validator = validator;
+        this.notifier = notifier;
     }
 
     @Transactional
@@ -120,9 +127,17 @@ public class DealCloseService {
         Contract contract = createContract(dealClose, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
+        sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(dealClose, contract);
         return contract;
+    }
+
+    private void sendContractorToPartner(Contractor contractor, Product product) {
+        if(product.withClub()) {
+            log.info("Notifier contractor created.");
+            notifier.notify(Queues.CONTRACTOR_CREATED, contractor);
+        }
     }
 
     private Contract createContract(DealClose dealClose, Contractor contractor, Product product) {

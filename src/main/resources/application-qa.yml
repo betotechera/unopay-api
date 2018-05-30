@@ -1,3 +1,9 @@
+client:
+  wingoo:
+    user: admin
+    password: wingoo!#2018
+    application: 5ae0973f07f4f19d8b000006
+    api: http://dev-wingoo.herokuapp.com/api
 payment:
   gateway:
     config:
