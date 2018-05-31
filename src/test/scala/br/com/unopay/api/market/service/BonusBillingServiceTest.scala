@@ -87,7 +87,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val issuer = fixtureCreator.createIssuer()
         val product = fixtureCreator.createProductWithIssuer(issuer)
         val documentNumber = fixtureCreator.createPersistedContractorBonusWithProduct(product)
-            .getContractor.getDocumentNumber
+            .getPayer.documentNumber()
 
         val filter = new BonusBillingFilter
         filter.setDocument(documentNumber)
@@ -164,31 +164,6 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         found.getSize == 1
         found.getContent.get(0).total.equals(total.doubleValue())
-    }
-
-    "given contractor with Bonuses to process" should "create BonusBilling with total amount of Bonuses values" in {
-        val contractor = fixtureCreator.createContractor()
-        val bonus = fixtureCreator.createPersistedContractorBonusForContractor(contractor)
-        val total = bonus.getEarnedBonus
-        total.add(fixtureCreator.createPersistedContractorBonusForContractor(bonus.getContractor).getEarnedBonus)
-        val filter = new BonusBillingFilter
-        filter.setDocument(contractor.getPerson.documentNumber())
-
-        service.processForContractor(contractor.getId)
-
-        val found = service.findByFilter(filter, new UnovationPageRequest)
-
-        found.getSize == 1
-        found.getContent.get(0).total.equals(total.doubleValue())
-    }
-
-    "given unknown contractor" should "not process BonusBillings" in {
-        val contractorId = "123"
-
-        val thrown = the [NotFoundException] thrownBy {
-            service.processForContractor(contractorId)
-        }
-        thrown.getErrors.asScala.head.getLogref == "CONTRACTOR_NOT_FOUND"
     }
 
     "when processing bonus to process" should "create bonus billing" in {

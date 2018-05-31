@@ -57,11 +57,6 @@ class BonusBillingService(repository: BonusBillingRepository,
         repository.save(bonusBilling)
     }
 
-    def processForContractor(id: String): Unit = {
-        val contractor = contractorService.getById(id)
-        process(contractor.getPerson)
-    }
-
     def processForIssuer(id: String): Unit = {
         issuerService.findById(id)
         def payers = bonusService.getPayersWithBonusToProcessForIssuer(id)

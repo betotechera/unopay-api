@@ -108,17 +108,19 @@ public class ContractorBonusService {
     }
 
     public List<Person> getPayersWithBonusToProcessForIssuer(String id) {
-        ContractorBonusFilter filter = new ContractorBonusFilter();
-        filter.setSituation(BonusSituation.FOR_PROCESSING);
-        filter.setIssuer(id);
+        ContractorBonusFilter filter = new ContractorBonusFilter() {{
+            setSituation(BonusSituation.FOR_PROCESSING);
+            setIssuer(id);
+        }};
         Stream<ContractorBonus> bonuses = contractorBonusRepository.findAll(filter).stream();
         return bonuses.map(ContractorBonus::getPayer).distinct().collect(Collectors.toList());
     }
 
     public List<ContractorBonus> getBonusesToProcessForPayer(String documentNumber) {
-        ContractorBonusFilter filter = new ContractorBonusFilter();
-        filter.setSituation(BonusSituation.FOR_PROCESSING);
-        filter.setPayer(documentNumber);
+        ContractorBonusFilter filter = new ContractorBonusFilter() {{
+            setSituation(BonusSituation.FOR_PROCESSING);
+            setPayer(documentNumber);
+        }};
         return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
     }
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {

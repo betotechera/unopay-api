@@ -93,27 +93,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
     }
 
-    void "should process contractor's bonuses"() {
-        given:
-        String accessToken = getUserAccessToken()
-        def contractor = fixtureCreator.createContractor()
-        fixtureCreator.createPersistedContractorBonusForContractor(contractor)
-        def filter = new BonusBillingFilter(){{
-            this.document = contractor.documentNumber
-        }}
-        def id = contractor.id
-
-        when:
-        def result = this.mvc.perform(put("/contractors/{id}/bonus-billings?access_token={access_token}",id, accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-
-        def found = bonusBillingService.findByFilter(filter, new UnovationPageRequest())
-
-        then:
-        result.andExpect(status().isNoContent())
-        found.first
-    }
-
     void "should find contractor's bonus"() {
         given:
         String accessToken = getUserAccessToken()

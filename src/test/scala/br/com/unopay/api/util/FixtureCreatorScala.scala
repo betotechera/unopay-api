@@ -612,19 +612,22 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     }
 
     def createPersistedContractorBonusForContractor(contractor : Contractor = createContractor()): ContractorBonus = {
+        val person:Person = from(classOf[Person]).uses(jpaProcessor).gimme("physical")
+
         from(classOf[ContractorBonus]).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("contractor", contractor)
             add("product", createProduct())
-            add("payer", contractor.getPerson)
+            add("payer", person)
         }})
     }
 
     def createPersistedContractorBonusWithProduct(product: Product = createProduct()): ContractorBonus = {
         val contractor = createContractor()
+        val person:Person = from(classOf[Person]).uses(jpaProcessor).gimme("physical")
         from(classOf[ContractorBonus]).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("contractor", contractor)
             add("product", product)
-            add("payer", contractor.getPerson)
+            add("payer", person)
         }})
     }
 

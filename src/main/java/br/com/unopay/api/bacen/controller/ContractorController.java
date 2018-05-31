@@ -141,14 +141,6 @@ public class ContractorController {
         service.update(id, contractor);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACTOR')")
-    @RequestMapping(value = "/contractors/{id}/bonus-billings", method = RequestMethod.PUT)
-    public void processBonusBilling(@PathVariable  String id) {
-        log.info("creating bonus billing for contractor={}", id);
-        bonusBillingService.processForContractor(id);
-    }
-
     @JsonView(Views.BonusBilling.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")
