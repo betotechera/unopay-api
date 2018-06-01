@@ -87,13 +87,6 @@ class BonusBillingService(repository: BonusBillingRepository,
         bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
     }
 
-    def findByIdForContractor(id: String, contractor: Contractor): BonusBilling = {
-        val personId = contractor.getPerson.getId
-        val bonusBilling = repository.findByIdAndPayerId(id, personId)
-        bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
-            Errors.BONUS_BILLING_NOT_FOUND))
-    }
-
     def findByIdForIssuer(id: String, issuer: Issuer): BonusBilling = {
         val bonusBilling = repository.findByIdAndIssuerId(id, issuer.getId)
         bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
