@@ -17,6 +17,8 @@ import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.oauth2.AuthUserContextHolder;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.api.uaa.repository.UserTypeRepository;
+import br.com.unopay.api.wingoo.model.Password;
+import br.com.unopay.api.wingoo.service.WingooService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
@@ -67,6 +69,7 @@ public class UserDetailService implements UserDetailsService {
     private ContractorService contractorService;
     private UserReferencesValidator userReferencesValidator;
     private UserTypeRepository userTypeRepository;
+    private WingooService wingooService;
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository,
@@ -78,7 +81,8 @@ public class UserDetailService implements UserDetailsService {
                              MailValidator mailValidator,
                              ContractorService contractorService,
                              UserReferencesValidator userReferencesValidator,
-                             UserTypeRepository userTypeRepository) {
+                             UserTypeRepository userTypeRepository,
+                             WingooService wingooService) {
         this.userDetailRepository = userDetailRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
@@ -89,6 +93,7 @@ public class UserDetailService implements UserDetailsService {
         this.contractorService = contractorService;
         this.userReferencesValidator = userReferencesValidator;
         this.userTypeRepository = userTypeRepository;
+        this.wingooService = wingooService;
     }
 
     public UserDetailService(){}
@@ -107,6 +112,7 @@ public class UserDetailService implements UserDetailsService {
             if(user.getType() == null) {
                 user.setType(userType);
             }
+
             userTypeService.validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
@@ -159,6 +165,7 @@ public class UserDetailService implements UserDetailsService {
         }
         if (user.getPassword() != null) {
             current.setPassword(passwordEncoder.encode(user.getPassword()));
+            updatePasswordOnWingoo(user.getPassword(), current);
         }
         current.updateMe(user);
         userReferencesValidator.defineValidReferences(current);
@@ -168,6 +175,15 @@ public class UserDetailService implements UserDetailsService {
             log.warn(String.format("user email already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
                     .withArguments(user.getEmail());
+        }
+    }
+
+    private void updatePasswordOnWingoo(String newPassword, UserDetail current) {
+        try {
+            Password password = new Password(current.getPassword(), newPassword);
+            wingooService.update(password);
+        }catch (Exception e){
+            log.warn("Cannot update password on wingoo system",e);
         }
     }
 
@@ -249,6 +265,7 @@ public class UserDetailService implements UserDetailsService {
 
     private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
+        updatePasswordOnWingoo(newPassword.getPassword(), user);
         userDetailRepository.save(user);
     }
 

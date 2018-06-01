@@ -69,6 +69,8 @@ class AmqpConfig {
             declareQueue(amqpAdmin, Queues.DLQ_ORDER_UPDATED, Queues.DLQ_ORDER_UPDATED);
             declareQueue(amqpAdmin, Queues.BONUS_BILLING_CREATED, Queues.BONUS_BILLING_CREATED);
             declareQueue(amqpAdmin, Queues.DLQ_BONUS_BILLING_CREATED, Queues.DLQ_BONUS_BILLING_CREATED);
+            declareQueue(amqpAdmin, Queues.CONTRACTOR_CREATED, Queues.CONTRACTOR_CREATED);
+            declareQueue(amqpAdmin, Queues.DLQ_CONTRACTOR_CREATED, Queues.DLQ_CONTRACTOR_CREATED);
         };
     }
 

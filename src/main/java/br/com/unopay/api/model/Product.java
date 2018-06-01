@@ -258,4 +258,8 @@ public class Product implements Serializable, Updatable {
         return null;
     }
 
+    public Boolean withClub(){
+        return getBonusPercentage() != null && getMonthsToExpireBonus() != null;
+    }
+
 }
