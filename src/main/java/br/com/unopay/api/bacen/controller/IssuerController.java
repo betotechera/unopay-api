@@ -526,7 +526,7 @@ public class IssuerController {
     @RequestMapping(value = "/issuers/me/bonus-billings", method = RequestMethod.GET)
     public Results<BonusBilling> getAllBonusBillings(Issuer issuer, BonusBillingFilter filter,
                                                      @Validated UnovationPageRequest pageable) {
-        log.info("find BonusBillings for Contractor={}", issuer.documentNumber());
+        log.info("find BonusBillings for issuer={}", issuer.documentNumber());
         filter.setIssuer(issuer.getId());
         Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
