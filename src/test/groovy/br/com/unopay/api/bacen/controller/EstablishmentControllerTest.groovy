@@ -267,7 +267,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
 
         when:
-        def result = this.mvc.perform(put('/establishments/me/bonus-billings?access_token={access_token}', id, accessToken)
+        def result = this.mvc.perform(put('/establishments/me/bonus-billings?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
