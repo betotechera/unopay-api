@@ -76,7 +76,7 @@ class BonusBillingService(repository: BonusBillingRepository,
             val bonusesByIssuer = bonuses.filter(_.issuerId == issuer.getId)
             val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
             var bonusBilling = new BonusBilling
-            bonusBilling.setMeUp(payer, issuer, earnedBonus.doubleValue())
+            bonusBilling.setMeUp(payer, issuer, earnedBonus)
             bonusBilling = create(bonusBilling)
             notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
         })

@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull
 import java.io.Serializable
 import java.lang._
 import java.util.Date
+import java.math.BigDecimal
 
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
@@ -52,7 +53,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @JsonView(Array(classOf[Views.BonusBilling.Detail]))
-    var total: Double = _
+    var total: BigDecimal = _
 
     @Column(name = "processed_at")
     @BeanProperty
@@ -115,7 +116,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
         validateDates()
     }
 
-    def setMeUp(payer: Person, issuer: Issuer,total: Double, status: PaymentStatus = PaymentStatus.WAITING_PAYMENT) {
+    def setMeUp(payer: Person, issuer: Issuer,total: BigDecimal, status: PaymentStatus = PaymentStatus.WAITING_PAYMENT) {
         this.payer = payer
         this.issuer = issuer
         this.total = total
@@ -149,7 +150,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
         if(issuer != null) issuer.getId else null
     }
 
-    override def getValue: java.math.BigDecimal = java.math.BigDecimal.valueOf(total)
+    override def getValue: java.math.BigDecimal = total
 
     override def getCreateDateTime: Date = createdDateTime
 
