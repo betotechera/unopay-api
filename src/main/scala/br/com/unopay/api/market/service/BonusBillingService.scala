@@ -15,6 +15,7 @@ import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
@@ -48,9 +49,8 @@ class BonusBillingService(repository: BonusBillingRepository,
     }
 
     private def defineExpirationDate(bonusBilling: BonusBilling): Unit = {
-        val date = Calendar.getInstance()
-        date.add(Calendar.DATE, deadlineInDays)
-        bonusBilling.setExpiration(date.getTime)
+        val date = new DateTime().plusDays(deadlineInDays).toDate
+        bonusBilling.setExpiration(date)
     }
 
     def save(bonusBilling: BonusBilling): BonusBilling = {
