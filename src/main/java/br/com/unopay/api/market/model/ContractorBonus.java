@@ -94,12 +94,12 @@ public class ContractorBonus implements Serializable, Updatable {
     public void setupMyCreate() {
         setCreatedDateTime(new Date());
         validateMe();
-        setupEarnedBonusIfNull();
+        validateAndSetupEarnedBonusIfNull();
     }
 
     public void setupMyUpdate() {
         validateMe();
-        setupEarnedBonusIfNull();
+        validateAndSetupEarnedBonusIfNull();
     }
 
     public void validateMe() {
@@ -125,7 +125,7 @@ public class ContractorBonus implements Serializable, Updatable {
         }
     }
 
-    private void setupEarnedBonusIfNull() {
+    private void validateAndSetupEarnedBonusIfNull() {
         validateSourceValue();
         if (getEarnedBonus() == null || getEarnedBonus().toString().equals(EMPTY)) {
             setupEarnedBonus();

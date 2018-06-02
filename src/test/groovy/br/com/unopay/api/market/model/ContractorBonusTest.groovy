@@ -92,14 +92,14 @@ class ContractorBonusTest extends FixtureApplicationTest {
         assert ex.errors.find()?.logref == 'INVALID_SOURCE_VALUE'
     }
 
-    def 'when calling setupEarnedBonusIfNull without earnedBonus should set it up'() {
+    def 'when calling validateAndSetupEarnedBonusIfNull without earnedBonus should set it up'() {
 
         given:
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus).gimme("withoutBonus")
         contractorBonus.product.bonusPercentage = Math.random()
 
         when:
-        contractorBonus.setupEarnedBonus()
+        contractorBonus.validateAndSetupEarnedBonusIfNull()
 
         then:
         contractorBonus.earnedBonus == Rounder.round(contractorBonus.product.returnBonusPercentage()
