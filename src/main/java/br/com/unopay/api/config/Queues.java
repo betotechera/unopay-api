@@ -10,6 +10,7 @@ public class Queues {
     public static final String ORDER_UPDATED = "unopay.order.updated";
     public static final String HIRER_CREDIT_CREATED = "unopay.hirer.credit.created";
     public static final String HIRER_BILLING_CREATED = "unopay.hirer.billing.created";
+    public static final String CONTRACTOR_CREATED = "unopay.contractor.created";
     public static final String DLQ_NOTIFICATION = "dlq.unopay.notification";
     public static final String DLQ_BATCH_CLOSING = "dlq.unopay.batch.closing";
     public static final String DLQ_PAYMENT_REMITTANCE = "dlq.unopay.payment.remittance";
@@ -18,6 +19,7 @@ public class Queues {
     public static final String DLQ_HIRER_BILLING_CREATED = "dlq.unopay.hirer.billing.created";
     public static final String DLQ_HIRER_CREDIT_CREATED = "dlq.unopay.hirer.credit.created";
     public static final String DLQ_ORDER_UPDATED = "dlq.unopay.order.updated";
+    public static final String DLQ_CONTRACTOR_CREATED = "dlq.unopay.contractor.created";
 
     public static final String DURABLE_CONTAINER = "durableRabbitListenerContainerFactory";
 
