@@ -58,10 +58,6 @@ public class ContractorBonusService {
     public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
         contractorBonus.setupMyUpdate();
-        return update(current, contractorBonus);
-    }
-
-    private ContractorBonus update(ContractorBonus current, ContractorBonus contractorBonus){
         defineValidReferences(contractorBonus);
         current.updateMe(contractorBonus);
         return save(current);
@@ -71,8 +67,8 @@ public class ContractorBonusService {
                                                   ContractorBonus contractorBonus) {
         ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
         checkIfValidSituationChange(current, contractorBonus);
-        checkListOfUnauthorizedChangesForEstablishment(current, contractorBonus);
-        return update(current, contractorBonus);
+        current.updateOnly(contractorBonus, "situation");
+        return save(current);
     }
 
     public void delete(String id) {
@@ -130,58 +126,6 @@ public class ContractorBonusService {
         if (!current.getSituation().equals(contractorBonus.getSituation())
                 && !(FOR_PROCESSING.equals(current.getSituation()) && CANCELED.equals(contractorBonus.getSituation()))) {
             throw UnovationExceptions.conflict().withErrors(INVALID_BONUS_SITUATION);
-        }
-    }
-
-    private void checkListOfUnauthorizedChangesForEstablishment(ContractorBonus current, ContractorBonus contractorBonus) {
-        checkIfUnauthorizedChangeProduct(current, contractorBonus);
-        checkIfUnauthorizedChangePayer(current, contractorBonus);
-        checkIfUnauthorizedChangeContractor(current, contractorBonus);
-        checkIfUnauthorizedChangeSourceIdentification(current, contractorBonus);
-        checkIfUnauthorizedChangeEarnedBonus(current, contractorBonus);
-        checkIfUnauthorizedChangeSourceValue(current, contractorBonus);
-        checkIfUnauthorizedChangeProcessedAt(current, contractorBonus);
-    }
-
-    private void checkIfUnauthorizedChangeProduct(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getProduct().equals(contractorBonus.getProduct())) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PRODUCT_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangePayer(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getPayer().equals(contractorBonus.getPayer())) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PAYER_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangeContractor(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getContractor().equals(contractorBonus.getContractor())) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_CONTRACTOR_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangeSourceIdentification(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getSourceIdentification().equals(contractorBonus.getSourceIdentification())) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SOURCE_IDENTIFICATION_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangeEarnedBonus(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (compare(current.getEarnedBonus(), contractorBonus.getEarnedBonus()) != EQUAL) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_EARNED_BONUS_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangeSourceValue(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (compare(current.getSourceValue(), contractorBonus.getSourceValue()) != EQUAL) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SOURCE_VALUE_CHANGE);
-        }
-    }
-
-    private void checkIfUnauthorizedChangeProcessedAt(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (compare(current.getProcessedAt(), contractorBonus.getProcessedAt()) != EQUAL) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_PROCESSED_AT_CHANGE);
         }
     }
 
