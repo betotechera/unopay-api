@@ -25,5 +25,5 @@ public class ContractorBonusFilter implements Serializable {
     private BonusSituation situation;
 
     @SearchableField
-    private String serviceIdentification;
+    private String sourceIdentification;
 }
