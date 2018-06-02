@@ -20,8 +20,8 @@ public class ContractorBonusTemplateLoader implements TemplateLoader {
             add("payer", one(Person.class, "legal"));
             add("contractor", one(Contractor.class, "valid"));
             add("earnedBonus", random(BigDecimal.class, range(10,300)));
-            add("serviceIdentification", regex("\\w{15}"));
-            add("serviceValue", random(BigDecimal.class, range(10,300)));
+            add("sourceIdentification", regex("\\w{15}"));
+            add("sourceValue", random(BigDecimal.class, range(10,300)));
             add("createdDateTime", instant("now"));
         }});
 

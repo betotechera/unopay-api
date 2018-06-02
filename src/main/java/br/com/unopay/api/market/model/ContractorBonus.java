@@ -58,18 +58,20 @@ public class ContractorBonus implements Serializable, Updatable {
     @JsonView({Views.ContractorBonus.Detail.class})
     private Contractor contractor;
 
-    @JoinColumn(name="service_identification")
-    private String serviceIdentification;
+    @JoinColumn(name="source_identification")
+    @NotNull(groups = {Create.class, Update.class})
+    private String sourceIdentification;
+
+    @Column(name = "source_value")
+    @NotNull(groups = {Create.class, Update.class})
+    @JsonView({Views.ContractorBonus.List.class})
+    private BigDecimal sourceValue;
 
     @Column(name = "earned_bonus")
     @NotNull(groups = {Create.class})
     @JsonView({Views.ContractorBonus.List.class})
     private BigDecimal earnedBonus;
 
-    @Column(name = "service_value")
-    @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.ContractorBonus.List.class})
-    private BigDecimal serviceValue;
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
@@ -103,7 +105,7 @@ public class ContractorBonus implements Serializable, Updatable {
     public void validateMe() {
         validateProcessedAtWhenSituationProcessed();
         validateSituationWhenProcessedAtNotNull();
-        validateServiceValue();
+        validateSourceValue();
     }
 
     public void validateProcessedAtWhenSituationProcessed() {
@@ -124,21 +126,21 @@ public class ContractorBonus implements Serializable, Updatable {
     }
 
     private void setupEarnedBonusIfNull() {
-        validateServiceValue();
+        validateSourceValue();
         if (getEarnedBonus() == null || getEarnedBonus().toString().equals(EMPTY)) {
             setupEarnedBonus();
         }
     }
 
-    private void validateServiceValue() {
-        if (getServiceValue() == null || getServiceValue().toString().equals(EMPTY)) {
+    private void validateSourceValue() {
+        if (getSourceValue() == null || getSourceValue().toString().equals(EMPTY)) {
             throw UnovationExceptions.unprocessableEntity()
-                    .withErrors(INVALID_SERVICE_VALUE.withOnlyArgument(getServiceValue()));
+                    .withErrors(INVALID_SOURCE_VALUE.withOnlyArgument(getSourceValue()));
         }
     }
 
     private void setupEarnedBonus() {
-        setEarnedBonus(Rounder.round(new BigDecimal(getProduct().returnBonusPercentage()).multiply(getServiceValue())));
+        setEarnedBonus(Rounder.round(new BigDecimal(getProduct().returnBonusPercentage()).multiply(getSourceValue())));
     }
 
     @JsonView({Views.ContractorBonus.List.class})

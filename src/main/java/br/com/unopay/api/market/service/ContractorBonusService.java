@@ -137,9 +137,9 @@ public class ContractorBonusService {
         checkIfUnauthorizedChangeProduct(current, contractorBonus);
         checkIfUnauthorizedChangePayer(current, contractorBonus);
         checkIfUnauthorizedChangeContractor(current, contractorBonus);
-        checkIfUnauthorizedChangeServiceIdentification(current, contractorBonus);
+        checkIfUnauthorizedChangeSourceIdentification(current, contractorBonus);
         checkIfUnauthorizedChangeEarnedBonus(current, contractorBonus);
-        checkIfUnauthorizedChangeServiceValue(current, contractorBonus);
+        checkIfUnauthorizedChangeSourceValue(current, contractorBonus);
         checkIfUnauthorizedChangeProcessedAt(current, contractorBonus);
     }
 
@@ -161,9 +161,9 @@ public class ContractorBonusService {
         }
     }
 
-    private void checkIfUnauthorizedChangeServiceIdentification(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (!current.getServiceIdentification().equals(contractorBonus.getServiceIdentification())) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE);
+    private void checkIfUnauthorizedChangeSourceIdentification(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (!current.getSourceIdentification().equals(contractorBonus.getSourceIdentification())) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SOURCE_IDENTIFICATION_CHANGE);
         }
     }
 
@@ -173,9 +173,9 @@ public class ContractorBonusService {
         }
     }
 
-    private void checkIfUnauthorizedChangeServiceValue(ContractorBonus current, ContractorBonus contractorBonus) {
-        if (compare(current.getServiceValue(), contractorBonus.getServiceValue()) != EQUAL) {
-            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SERVICE_VALUE_CHANGE);
+    private void checkIfUnauthorizedChangeSourceValue(ContractorBonus current, ContractorBonus contractorBonus) {
+        if (compare(current.getSourceValue(), contractorBonus.getSourceValue()) != EQUAL) {
+            throw UnovationExceptions.unauthorized().withErrors(UNAUTHORIZED_SOURCE_VALUE_CHANGE);
         }
     }
 

@@ -77,19 +77,19 @@ class ContractorBonusTest extends FixtureApplicationTest {
         _ | BonusSituation.FOR_PROCESSING
     }
 
-    def 'when calling validateServiceValue without serviceValue should return error'() {
+    def 'when calling validateSourceValue without sourceValue should return error'() {
 
         given:
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus).gimme("valid", new Rule(){{
-            add("serviceValue", null)
+            add("sourceValue", null)
         }})
 
         when:
-        contractorBonus.validateServiceValue()
+        contractorBonus.validateSourceValue()
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.find()?.logref == 'INVALID_SERVICE_VALUE'
+        assert ex.errors.find()?.logref == 'INVALID_SOURCE_VALUE'
     }
 
     def 'when calling setupEarnedBonusIfNull without earnedBonus should set it up'() {
@@ -103,6 +103,6 @@ class ContractorBonusTest extends FixtureApplicationTest {
 
         then:
         contractorBonus.earnedBonus == Rounder.round(contractorBonus.product.returnBonusPercentage()
-                .multiply(contractorBonus.serviceValue))
+                .multiply(contractorBonus.sourceValue))
     }
 }

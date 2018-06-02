@@ -320,15 +320,15 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'UNAUTHORIZED_CONTRACTOR_CHANGE'
     }
 
-    def 'Update Service Identification for Establishment should return error'() {
+    def 'Update Source Identification for Establishment should return error'() {
 
         given:
         Establishment establishment = fixtureCreator.createEstablishment()
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.payer = establishment.person
-        String differentServiceIdentification = contractorBonus.serviceIdentification + 'a'
+        String differentSourceIdentification = contractorBonus.sourceIdentification + 'a'
         ContractorBonus current = contractorBonusService.create(contractorBonus)
-        current.serviceIdentification = differentServiceIdentification
+        current.sourceIdentification = differentSourceIdentification
         ContractorBonus bonus = current
 
         when:
@@ -336,7 +336,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnauthorizedException)
-        assert ex.errors.first().logref == 'UNAUTHORIZED_SERVICE_IDENTIFICATION_CHANGE'
+        assert ex.errors.first().logref == 'UNAUTHORIZED_SOURCE_IDENTIFICATION_CHANGE'
     }
 
     def 'Update Earned Bonus for Establishment should return error'() {
@@ -358,15 +358,15 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'UNAUTHORIZED_EARNED_BONUS_CHANGE'
     }
 
-    def 'Update Service Value for Establishment should return error'() {
+    def 'Update Source Value for Establishment should return error'() {
 
         given:
         Establishment establishment = fixtureCreator.createEstablishment()
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.payer = establishment.person
-        BigDecimal differentServiceValue = contractorBonus.serviceValue + 1
+        BigDecimal differentSourceValue = contractorBonus.sourceValue + 1
         ContractorBonus current = contractorBonusService.create(contractorBonus)
-        current.serviceValue = differentServiceValue
+        current.sourceValue = differentSourceValue
         ContractorBonus bonus = current
 
         when:
@@ -374,7 +374,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         then:
         def ex = thrown(UnauthorizedException)
-        assert ex.errors.first().logref == 'UNAUTHORIZED_SERVICE_VALUE_CHANGE'
+        assert ex.errors.first().logref == 'UNAUTHORIZED_SOURCE_VALUE_CHANGE'
     }
 
     def 'Update Processed At for Establishment should return error'() {
@@ -387,7 +387,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         contractorBonus.situation = PROCESSED
         Date differentProcessedAt = contractorBonus.processedAt + 1
         ContractorBonus current = contractorBonusService.create(contractorBonus)
-        current.processedAt = null
+        current.processedAt = differentProcessedAt
         ContractorBonus bonus = current
 
         when:
