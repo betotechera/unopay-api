@@ -3,6 +3,7 @@ package br.com.unopay.api.wingoo.model;
 import br.com.unopay.api.bacen.model.Contractor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -20,7 +21,7 @@ public class Student implements Serializable{
     private String email;
 
     @JsonProperty("data_nascimento")
-    private String brithDate;
+    private Date brithDate;
 
     @JsonProperty("cpf")
     private String cpf;
@@ -48,7 +49,7 @@ public class Student implements Serializable{
         student.name = contractor.getPerson().getShortName();
         student.fullName = contractor.getPerson().getName();
         student.email = contractor.getPerson().getPhysicalPersonDetail().getEmail();
-        student.brithDate = contractor.getPerson().getPhysicalPersonDetail().getBirthDate().toString();
+        student.brithDate = contractor.getPerson().getPhysicalPersonDetail().getBirthDate();
         student.cpf = contractor.getPerson().getDocument().getNumber();
         student.cellphone = contractor.getPerson().getCellPhone();
         student.gender = contractor.getPerson().getPhysicalPersonDetail().getGender().name();

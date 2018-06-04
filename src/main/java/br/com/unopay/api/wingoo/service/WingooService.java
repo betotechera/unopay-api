@@ -3,17 +3,22 @@ package br.com.unopay.api.wingoo.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.wingoo.model.Password;
 import br.com.unopay.api.wingoo.model.Student;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import static org.springframework.http.HttpMethod.POST;
 
 @Data
 @Service
@@ -41,9 +46,11 @@ public class WingooService {
         headers.set(APPLICATION, appId);
     }
 
-    public Student create(Contractor contractor){
-        HttpEntity<Student> entity = new HttpEntity<>(Student.fromContractor(contractor), headers);
-        return wingooTemplate.postForObject(wingooApi + INSERT_STUDENT, entity, Student.class, new HashMap<>());
+    public List<Student> create(Contractor contractor){
+        ParameterizedTypeReference<List<Student>> typeReference = new ParameterizedTypeReference<List<Student>>() {};
+        HttpEntity<List<Student>> entity = new HttpEntity<>(Arrays.asList(Student.fromContractor(contractor)), headers);
+        String uri = wingooApi + INSERT_STUDENT;
+        return wingooTemplate.exchange(uri, POST, entity, typeReference, new HashMap<>()).getBody();
     }
 
     public void update(Password password){
