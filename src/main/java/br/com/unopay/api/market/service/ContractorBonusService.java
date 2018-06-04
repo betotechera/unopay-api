@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
