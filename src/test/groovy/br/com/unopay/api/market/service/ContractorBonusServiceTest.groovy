@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Establishment
@@ -11,6 +12,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.exception.UnauthorizedException
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 
@@ -42,6 +44,7 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.setupMyCreate()
         contractorBonus.validateMe()
 
         when:
@@ -287,7 +290,24 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
-    private ContractorBonus createContractorBonus(issuerProduct = productUnderTest) {
+    def 'create Contractor Bonus without earnedBonus should set it up'() {
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.earnedBonus = null
+        Product product = Fixture.from(Product).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("bonusPercentage", Math.random())
+        }})
+        contractorBonus.product = product
+
+        when:
+        ContractorBonus create = contractorBonusService.create(contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(create.id)
+
+        then:
+        found.earnedBonus
+    }
+
+        private ContractorBonus createContractorBonus(issuerProduct = productUnderTest) {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
             product = issuerProduct

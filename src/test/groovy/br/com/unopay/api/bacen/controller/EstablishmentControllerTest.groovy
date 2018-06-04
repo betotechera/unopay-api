@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -243,7 +244,7 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         def result = this.mvc
                 .perform(put('/establishments/me/contractor-bonuses/{id}?access_token={access_token}'
                 ,id, accessToken)
-                .content(toJson(contractorBonus.with { earnedBonus = 200; it }))
+                .content(toJson(contractorBonus.with { situation = BonusSituation.CANCELED; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())

@@ -26,4 +26,7 @@ public class ContractorBonusFilter implements Serializable {
 
     @SearchableField(field = "product.issuer.id")
     private String issuer;
+
+    @SearchableField
+    private String sourceIdentification;
 }

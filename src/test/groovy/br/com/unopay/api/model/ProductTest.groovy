@@ -3,6 +3,7 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.credit.model.CreditInsertionType
+import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ProductTest  extends FixtureApplicationTest {
@@ -133,6 +134,35 @@ class ProductTest  extends FixtureApplicationTest {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find()?.logref == 'CREDIT_INSERTION_TYPE_NOT_IN_PRODUCT'
+    }
+
+    def 'should return Bonus Percentage'() {
+
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+        product.setBonusPercentage(Math.random())
+
+        when:
+        Double bonusPercentage = product.returnBonusPercentage()
+
+        then:
+        bonusPercentage == product.bonusPercentage
+
+    }
+
+    def 'should return Bonus Percentage equals zero'() {
+
+        given:
+        Product product = Fixture.from(Product.class).gimme("valid")
+        product.bonusPercentage = null
+        Double ZERO = 0.0
+
+        when:
+        Double bonusPercentage = product.returnBonusPercentage()
+
+        then:
+        bonusPercentage == ZERO
+
     }
 
 }
