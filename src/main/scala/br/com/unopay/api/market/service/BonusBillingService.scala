@@ -1,9 +1,8 @@
 package br.com.unopay.api.market.service
 
 import java.math._
-import java.util.Calendar
 
-import br.com.unopay.api.bacen.model.{Contractor, Issuer}
+import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
