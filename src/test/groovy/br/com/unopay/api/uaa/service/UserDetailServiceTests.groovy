@@ -387,7 +387,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         def created = service.create(user)
         when:
-        service.resetPasswordByEmail(created.getEmail(), RequestOrigin.UNOPAY)
+        service.resetPasswordByEmail(created.getEmail(), RequestOrigin.UNOPAY.name())
 
         then:
         1 * notificationService.sendNewPassword(_, EventType.PASSWORD_RESET,_)
@@ -398,7 +398,7 @@ class UserDetailServiceTests extends SpockApplicationTests {
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
 
         when:
-        service.resetPasswordByEmail(user.getEmail(), RequestOrigin.UNOPAY)
+        service.resetPasswordByEmail(user.getEmail(), RequestOrigin.UNOPAY.name())
 
         then:
         thrown(NotFoundException)
