@@ -14,8 +14,6 @@ import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.market.model.ContractorBonus
-import br.com.unopay.api.market.model.filter.BonusBillingFilter
-import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
@@ -23,10 +21,6 @@ import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.uaa.service.UserDetailService
-import br.com.unopay.api.util.FixtureCreatorScala
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -51,9 +45,6 @@ class ContractorControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
-
-    @Autowired
-    BonusBillingService bonusBillingService
 
     @Autowired
     ContractorInstrumentCreditService contractorInstrumentCreditService
