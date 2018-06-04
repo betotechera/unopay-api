@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
@@ -134,6 +135,10 @@ public class ContractorBonus implements Serializable, Updatable {
             return getPayer().getId();
         }
         return null;
+    }
+
+    public boolean hasIssuer(Issuer issuer) {
+        return issuerId().equals(issuer.getId());
     }
 
     public String issuerId() {
