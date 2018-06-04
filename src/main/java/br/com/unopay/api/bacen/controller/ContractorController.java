@@ -1,12 +1,8 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
-import br.com.unopay.api.market.model.ContractorBonus;
-import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
-import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
@@ -16,6 +12,11 @@ import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.market.model.AuthorizedMember;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -70,6 +71,7 @@ public class ContractorController {
     private TicketService ticketService;
     private AuthorizedMemberService authorizedMemberService;
     private ContractorBonusService contractorBonusService;
+    private BonusBillingService bonusBillingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -81,8 +83,10 @@ public class ContractorController {
                                 ContractorInstrumentCreditService contractorInstrumentCreditService,
                                 PaymentInstrumentService paymentInstrumentService,
                                 TransactionService transactionService,
-                                TicketService ticketService, AuthorizedMemberService authorizedMemberService,
-                                ContractorBonusService contractorBonusService) {
+                                TicketService ticketService,
+                                AuthorizedMemberService authorizedMemberService,
+                                ContractorBonusService contractorBonusService,
+                                BonusBillingService bonusBillingService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -92,6 +96,7 @@ public class ContractorController {
         this.ticketService = ticketService;
         this.authorizedMemberService = authorizedMemberService;
         this.contractorBonusService = contractorBonusService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     @JsonView(Views.Contractor.Detail.class)

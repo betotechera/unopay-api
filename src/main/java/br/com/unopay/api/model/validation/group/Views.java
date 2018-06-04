@@ -13,7 +13,6 @@ public interface Views {
         interface List {}
     }
 
-
     interface AccreditedNetwork {
         interface Detail extends Person,BankAccount,Address,List {}
         interface List {}
@@ -190,6 +189,10 @@ public interface Views {
         interface List{}
     }
 
+    interface BonusBilling {
+        interface Detail extends List {}
+        interface List{}
+    }
     interface ContractorBonus {
         interface Detail extends List {}
         interface List {}

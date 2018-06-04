@@ -1,7 +1,6 @@
 package br.com.unopay.api
 
-import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
-import br.com.unopay.api.util.JpaProcessorScala
+import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
 import org.junit.runner.RunWith
@@ -10,15 +9,14 @@ import org.scalatest.junit.JUnitRunner
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.web.FilterChainProxy
-import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
 import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.{DefaultMockMvcBuilder, MockMvcBuilders}
 import org.springframework.web.context.WebApplicationContext
 
 @RunWith(classOf[JUnitRunner])
-abstract class ScalaApplicationTest extends FlatSpec
-    with BeforeAndAfterEach with GivenWhenThen with Matchers with SpringTest {
+abstract class ScalaApplicationTest extends SpringTest {
 
   @Autowired
   var context: WebApplicationContext = _
@@ -45,6 +43,10 @@ abstract class ScalaApplicationTest extends FlatSpec
     val objectMapper = new ObjectMapper()
     objectMapper.writeValueAsString(obj)
   }
+
+  def instant(pattern: String): java.util.Date ={
+    new ChronicFunction(pattern).generateValue()
+  }
 }
 
 
@@ -52,10 +54,9 @@ abstract class ScalaApplicationTest extends FlatSpec
 @ContextConfiguration(classes = Array(classOf[UnopayApiApplication]))
 @WebAppConfiguration
 @ActiveProfiles(Array("test"))
-trait SpringTest extends BeforeAndAfterEach { this: Suite =>
+trait SpringTest extends ScalaFixtureTest { this: Suite =>
 
   override def beforeEach(): Unit = {
-    FixtureFactoryLoader.loadTemplates("br.com.unopay.api")
     new TestContextManager(classOf[SpringTest]).prepareTestInstance(this)
     super.beforeEach()
   }

@@ -17,7 +17,9 @@ import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.NumberGenerator;
+import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Billable;
 import br.com.unopay.api.notification.service.NotificationService;
@@ -71,6 +73,8 @@ public class TicketService {
     @Setter private NotificationService notificationService;
     @Setter private NumberGenerator numberGenerator;
     @Setter private NegotiationBillingService negotiationBillingService;
+    @Setter private BonusBillingService bonusBillingService;
+
 
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer deadlineInDays;
@@ -88,7 +92,8 @@ public class TicketService {
                          FileUploaderService fileUploaderService,
                          LayoutExtractorSelector layoutExtractorSelector,
                          NotificationService notificationService,
-                         NegotiationBillingService negotiationBillingService) {
+                         NegotiationBillingService negotiationBillingService,
+                         BonusBillingService bonusBillingService) {
         this.repository = repository;
         this.orderService = orderService;
         this.orderProcessor = orderProcessor;
@@ -99,6 +104,7 @@ public class TicketService {
         this.notificationService = notificationService;
         this.negotiationBillingService = negotiationBillingService;
         this.numberGenerator = new NumberGenerator(this.repository);
+        this.bonusBillingService = bonusBillingService;
     }
 
     public Ticket save(Ticket ticket) {
@@ -112,24 +118,28 @@ public class TicketService {
     @Transactional
     public Ticket createForOrder(String orderId) {
         Order order = orderService.findById(orderId);
-        Ticket ticket = create(order);
-        notificationService.sendBoletoIssued(order, ticket);
-        return ticket;
+        return create(order);
     }
 
     @Transactional
     public Ticket createForCredit(Credit credit) {
         Credit current = creditService.findById(credit.getId());
+        return create(current);
+    }
+
+    @Transactional
+    public Ticket createForNegotiationBilling(NegotiationBilling billing) {
+        NegotiationBilling current = negotiationBillingService.findById(billing.getId());
         Ticket ticket = create(current);
-        notificationService.sendBoletoIssued(current, ticket);
+        notificationService.sendTicketIssued(current, ticket);
         return ticket;
     }
 
     @Transactional
-    public Ticket createForBilling(NegotiationBilling billing) {
-        NegotiationBilling current = negotiationBillingService.findById(billing.getId());
+    public Ticket createForBonusBilling(BonusBilling billing) {
+        BonusBilling current = bonusBillingService.findById(billing.getId());
         Ticket ticket = create(current);
-        notificationService.sendBoletoIssued(current, ticket);
+        notificationService.sendTicketIssued(current, ticket);
         return ticket;
     }
 
@@ -152,7 +162,9 @@ public class TicketService {
                 .value(order.getValue())
                 .ourNumber(clearOurNumber)
                 .build();
-        return createTicketModel(order, boletoStella, clearOurNumber);
+        Ticket ticket = createTicketModel(order, boletoStella, clearOurNumber);
+        notificationService.sendTicketIssued(order, ticket);
+        return ticket;
     }
 
     private String getValidNumber() {

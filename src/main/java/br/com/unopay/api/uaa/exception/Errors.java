@@ -631,9 +631,25 @@ public final class Errors {
 
     /*  Negotiation Billing */
     public static final UnovationError NEGOTIATION_BILLING_NOT_FOUND =
-            new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "" +
-                    "Negotiation billing not found");
+            new UnovationError("NEGOTIATION_BILLING_NOT_FOUND", "Negotiation billing not found");
 
+    /*  Bonus Billing */
+    public static final UnovationError BONUS_BILLING_TOTAL_REQUIRED =
+            new UnovationError("BONUS_BILLING_TOTAL_REQUIRED", "Bonus Billing total required");
+
+    public static final UnovationError INVALID_BONUS_BILLING_PROCESS_DATE =
+            new UnovationError("INVALID_BONUS_BILLING_PROCESS_DATE", "Invalid Bonus Billing " +
+                    "ProcessedAt date time");
+
+    public static final UnovationError INVALID_BONUS_BILLING_EXPIRATION_DATE =
+            new UnovationError("INVALID_BONUS_BILLING_EXPIRATION_DATE", "Invalid Bonus Billing " +
+                    "expiration date");
+
+    public static final UnovationError BONUS_BILLING_NOT_FOUND =
+            new UnovationError("BONUS_BILLING_NOT_FOUND", "Bonus billing not found");
+
+    public static final UnovationError BONUS_BILLING_ISSUER_REQUIRED =
+            new UnovationError("BONUS_BILLING_ISSUER_REQUIRED", "Bonus Billing Issuer required.");
     /*  Contractor Bonus */
     public static final UnovationError CONTRACTOR_BONUS_NOT_FOUND =
             new UnovationError("CONTRACTOR_BONUS_NOT_FOUND","Contractor bonus not found");

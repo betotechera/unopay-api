@@ -163,6 +163,51 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
+    def 'should find payers with Contractor Bonuses for Processing'(){
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonusService.create(contractorBonus)
+
+        when:
+        def found = contractorBonusService.getPayersWithBonusToProcess()
+
+        then:
+        !found.isEmpty()
+
+    }
+
+    def 'should find payers with Contractor Bonuses for Processing by Issuer'(){
+
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        def product = fixtureCreator.createProductWithIssuer(issuer)
+        ContractorBonus contractorBonus = createContractorBonus(product)
+        contractorBonusService.create(contractorBonus)
+
+        when:
+        def found = contractorBonusService.getPayersWithBonusToProcessForIssuer(issuer.id)
+
+        then:
+        !found.isEmpty()
+
+    }
+
+    def 'should find Contractor Bonuses for Processing for payers'(){
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        def document = contractorBonus.payer.documentNumber()
+        contractorBonusService.create(contractorBonus)
+
+        when:
+        def found = contractorBonusService.getBonusesToProcessForPayer(document)
+
+        then:
+        !found.isEmpty()
+
+    }
+
     def 'known Contractor Bonus for a different Person should return error'() {
 
         given:
@@ -246,7 +291,6 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     }
 
     def 'create Contractor Bonus without earnedBonus should set it up'() {
-
         given:
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.earnedBonus = null
@@ -263,10 +307,10 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         found.earnedBonus
     }
 
-        private ContractorBonus createContractorBonus() {
+        private ContractorBonus createContractorBonus(issuerProduct = productUnderTest) {
         ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
         contractorBonus = contractorBonus.with {
-            product = productUnderTest
+            product = issuerProduct
             contractor = contractorUnderTest
             payer = personUnderTest
             it

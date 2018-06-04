@@ -19,11 +19,14 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
 import br.com.unopay.api.billing.remittance.model.filter.RemittanceFilter;
 import br.com.unopay.api.billing.remittance.service.PaymentRemittanceService;
+import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.HirerForIssuer;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
+import br.com.unopay.api.market.model.filter.BonusBillingFilter;
 import br.com.unopay.api.market.model.filter.HirerNegotiationFilter;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Contract;
@@ -49,7 +52,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Collections;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,6 +97,7 @@ public class IssuerController {
     private NegotiationBillingService negotiationBillingService;
     private TicketService ticketService;
     private ContractService contractService;
+    private BonusBillingService bonusBillingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -112,7 +115,8 @@ public class IssuerController {
                             HirerService hirerService,
                             NegotiationBillingService negotiationBillingService,
                             TicketService ticketService,
-                            ContractService contractService) {
+                            ContractService contractService,
+                            BonusBillingService bonusBillingService) {
         this.service = service;
         this.productService = productService;
         this.paymentRemittanceService = paymentRemittanceService;
@@ -126,6 +130,7 @@ public class IssuerController {
         this.negotiationBillingService = negotiationBillingService;
         this.ticketService = ticketService;
         this.contractService = contractService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     @JsonView(Views.Issuer.Detail.class)
@@ -498,6 +503,34 @@ public class IssuerController {
     public void processBilling(Issuer issuer,@PathVariable String id){
         log.info("process negotiation={} billing for issuer={}",id, issuer.documentNumber());
         negotiationBillingService.processForIssuer(id,issuer);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/bonus-billings", method = PUT)
+    public void processAllBonusBillings(Issuer issuer){
+        log.info("process all bonus billing for issuer={}", issuer.documentNumber());
+        bonusBillingService.processForIssuer(issuer.getId());
+    }
+
+    @JsonView(Views.BonusBilling.Detail.class)
+    @ResponseStatus(OK)
+    @RequestMapping(value = "issuers/me/bonus-billings/{id}", method = GET)
+    public BonusBilling getBonusBilling(Issuer issuer, @PathVariable String id) {
+        log.info("get bonus billing={} for issuer={}", id, issuer.documentNumber());
+        return bonusBillingService.findByIdForIssuer(id, issuer);
+    }
+
+    @JsonView(Views.BonusBilling.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/bonus-billings", method = RequestMethod.GET)
+    public Results<BonusBilling> getAllBonusBillings(Issuer issuer, BonusBillingFilter filter,
+                                                     @Validated UnovationPageRequest pageable) {
+        log.info("find BonusBillings for issuer={}", issuer.documentNumber());
+        filter.setIssuer(issuer.getId());
+        Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/bonus-billings", api));
     }
 
     @JsonView(Views.NegotiationBilling.Detail.class)

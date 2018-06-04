@@ -18,7 +18,6 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

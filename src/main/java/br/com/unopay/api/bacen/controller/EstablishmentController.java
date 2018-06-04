@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -44,10 +45,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -61,6 +64,7 @@ public class EstablishmentController {
     private PaymentInstrumentService paymentInstrumentService;
     private ContractService contractService;
     private ContractorBonusService contractorBonusService;
+    private BonusBillingService bonusBillingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -71,13 +75,15 @@ public class EstablishmentController {
                                    ContractorService contractorService,
                                    PaymentInstrumentService paymentInstrumentService,
                                    ContractService contractService,
-                                   ContractorBonusService contractorBonusService) {
+                                   ContractorBonusService contractorBonusService,
+                                   BonusBillingService bonusBillingService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractService = contractService;
         this.contractorBonusService = contractorBonusService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -99,15 +105,15 @@ public class EstablishmentController {
         return service.findById(id);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/establishments/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/establishments/{id}", method = PUT)
     public void update(@PathVariable String id, @Validated(Update.class) @RequestBody Establishment establishment) {
         establishment.setId(id);
         log.info("updating establishment={}", establishment);
         service.update(id,establishment);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/establishments/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing establishment id={}", id);
@@ -132,8 +138,8 @@ public class EstablishmentController {
         return service.findById(establishment.getId());
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/establishments/me", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/establishments/me", method = PUT)
     public void updateMe(Establishment current,
                          @Validated(Update.class) @RequestBody Establishment establishment) {
         log.info("updating establishments={}", establishment.documentNumber());
@@ -177,7 +183,7 @@ public class EstablishmentController {
     }
 
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     @RequestMapping(value = "/establishments/me/service-authorizations/{id}", method = RequestMethod.DELETE)
     public void cancel(Establishment establishment, @PathVariable String id) {
         log.info("cancel serviceAuthorize={} for establishment={}", id, establishment.documentNumber());
@@ -192,8 +198,8 @@ public class EstablishmentController {
         return contractorService.getByIdForIssuers(id, establishment.getNetwork().issuersIds());
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/establishments/me/contractors/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/contractors/{id}", method = PUT)
     public void updateContractor(Establishment establishment,
                                  @PathVariable String id,
                                  @Validated(Update.class) @RequestBody Contractor contractor){
@@ -279,12 +285,29 @@ public class EstablishmentController {
                 String.format("%s/establishments/me/contractor-bonuses/%s",api, created.getId()))).body(created);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/establishments/me/contractor-bonuses/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/contractor-bonuses/{id}", method = PUT)
     public void updateContractorBonus(Establishment establishment,
                                       @PathVariable String id,
                                       @Validated(Update.class) @RequestBody ContractorBonus contractorBonus){
         log.info("updating Contractor Bonus={} for Establishment={}", contractorBonus, establishment.documentNumber());
         contractorBonusService.updateForEstablishment(id, establishment, contractorBonus);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT')")
+    @RequestMapping(value = "/establishments/{id}/bonus-billings", method = PUT)
+    public void processAllBonusBillings(@PathVariable String id){
+        log.info("find establishment={}", id);
+        Establishment establishment = service.findById(id);
+        log.info("process all bonus billing for establishment={}", establishment.documentNumber());
+        bonusBillingService.process(establishment.getPerson());
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @RequestMapping(value = "/establishments/me/bonus-billings", method = PUT)
+    public void processAllBonusBillings(Establishment establishment){
+        log.info("process all bonus billing for issuer={}", establishment.documentNumber());
+        bonusBillingService.process(establishment.getPerson());
     }
 }

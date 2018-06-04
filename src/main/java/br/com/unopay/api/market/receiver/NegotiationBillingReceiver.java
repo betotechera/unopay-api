@@ -30,8 +30,8 @@ public class NegotiationBillingReceiver {
     @RabbitListener(queues = Queues.HIRER_BILLING_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void batchReceiptNotify(String objectAsString) {
         NegotiationBilling billing = genericObjectMapper.getAsObject(objectAsString, NegotiationBilling.class);
-        log.info("processing billing created hirer={}", billing.hirer().getDocumentNumber());
-        ticketService.createForBilling(billing);
-        log.info("processed billing created hirer={}", billing.hirer().getDocumentNumber());
+        log.info("processing negotiation billing created hirer={}", billing.hirer().getDocumentNumber());
+        ticketService.createForNegotiationBilling(billing);
+        log.info("processed negotiation billing created hirer={}", billing.hirer().getDocumentNumber());
     }
 }

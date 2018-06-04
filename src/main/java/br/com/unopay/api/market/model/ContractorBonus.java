@@ -1,6 +1,7 @@
 package br.com.unopay.api.market.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
@@ -11,18 +12,28 @@ import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
 import static br.com.unopay.api.market.model.BonusSituation.PROCESSED;
-import static br.com.unopay.api.uaa.exception.Errors.*;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_PROCESSED_AT;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_SOURCE_VALUE;
 
 @Data
 @Entity
@@ -170,5 +181,17 @@ public class ContractorBonus implements Serializable, Updatable {
             return getPayer().getId();
         }
         return null;
+    }
+
+    public boolean hasIssuer(Issuer issuer) {
+        return issuerId().equals(issuer.getId());
+    }
+
+    public String issuerId() {
+        return product.getIssuer().getId();
+    }
+
+    public BigDecimal getEarnedBonus() {
+        return earnedBonus;
     }
 }

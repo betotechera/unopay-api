@@ -33,6 +33,7 @@ import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
 import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
+import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.NegotiationBillingDetail;
@@ -123,5 +124,15 @@ public class MarketTemplateLoader implements TemplateLoader {
             add("memberTotal",  random(Integer.class, range(1, 100)));
         }});
 
+        Fixture.of(BonusBilling.class).addTemplate("valid", new Rule(){{
+            add("createdDateTime", instant("now"));
+            add("payer", one(Person.class, "physical"));
+            add("total", random(BigDecimal.class, range(2, 300)));
+            add("processedAt", instant("now"));
+            add("number",  regex("\\w{100}"));
+            add("expiration", instant("tomorrow"));
+            add("status", random(PaymentStatus.class));
+            add("issuer", one(Issuer.class, "valid"));
+        }});
     }
 }

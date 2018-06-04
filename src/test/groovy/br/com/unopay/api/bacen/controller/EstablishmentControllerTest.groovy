@@ -250,6 +250,30 @@ class EstablishmentControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNoContent())
     }
 
+    void 'should process establishment bonus billings'() {
+        given:
+        String accessToken = getUserAccessToken()
+        def id = fixtureCreator.createEstablishment().id
+
+        when:
+        def result = this.mvc.perform(put('/establishments/{id}/bonus-billings?access_token={access_token}', id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'should process my bonus billings'() {
+        given:
+        def establishmentUser = fixtureCreator.createEstablishmentUser()
+        String accessToken = getUserAccessToken(establishmentUser.email, establishmentUser.password)
+
+        when:
+        def result = this.mvc.perform(put('/establishments/me/bonus-billings?access_token={access_token}', accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
     String extractId(String location) {
         location.replaceAll('/establishments/', "")
     }

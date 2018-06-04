@@ -3,6 +3,7 @@ package br.com.unopay.api.market.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
@@ -11,18 +12,20 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
-import static br.com.unopay.api.uaa.exception.Errors.*;
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
 
 @Service
 public class ContractorBonusService {
@@ -99,6 +102,26 @@ public class ContractorBonusService {
                 .findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    public List<Person> getPayersWithBonusToProcess() {
+        return  getPayersWithBonusToProcessForIssuer(null);
+    }
+
+    public List<Person> getPayersWithBonusToProcessForIssuer(String id) {
+        ContractorBonusFilter filter = new ContractorBonusFilter() {{
+            setSituation(BonusSituation.FOR_PROCESSING);
+            setIssuer(id);
+        }};
+        Stream<ContractorBonus> bonuses = contractorBonusRepository.findAll(filter).stream();
+        return bonuses.map(ContractorBonus::getPayer).distinct().collect(Collectors.toList());
+    }
+
+    public List<ContractorBonus> getBonusesToProcessForPayer(String documentNumber) {
+        ContractorBonusFilter filter = new ContractorBonusFilter() {{
+            setSituation(BonusSituation.FOR_PROCESSING);
+            setPayer(documentNumber);
+        }};
+        return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
+    }
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
         contractorBonus.setPayer(establishment.getPerson());
         return create(contractorBonus);

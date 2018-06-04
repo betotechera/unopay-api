@@ -117,6 +117,10 @@ public class Contractor implements Serializable {
         return null;
     }
 
+    public Person getPerson(){
+        return this.person;
+    }
+
     public boolean physicalPerson(){
         return PersonType.PHYSICAL.equals(getPerson().getType());
     }

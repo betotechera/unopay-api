@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.util
 
+import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.ContractorBonus
 
 import static br.com.six2six.fixturefactory.Fixture.*
@@ -609,10 +610,35 @@ class FixtureCreator {
         }})
     }
 
+    BonusBilling createBonusBillingToPersist() {
+        def person = from(Person.class).uses(jpaProcessor).gimme("physical")
+        from(BonusBilling).gimme("valid", new Rule() {{
+            add("person", person)
+        }})
+    }
+
+    BonusBilling createPersistedBonusBilling(person = from(Person.class).uses(jpaProcessor).gimme("physical"),
+                                             issuer = createIssuer()) {
+        from(BonusBilling).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("payer", person)
+                add("issuer", issuer)
+            }})
+    }
+
     ContractorBonus createPersistedContractorBonusForContractor(Contractor contractor = createContractor()) {
         from(ContractorBonus.class).uses(jpaProcessor).gimme("valid", new Rule() {{
             add("contractor", contractor)
             add("product", createProduct())
+            add("payer", contractor.person)
+        }})
+    }
+
+    ContractorBonus createPersistedContractorBonusWithProduct(product = createProduct()) {
+        def contractor = createContractor()
+        from(ContractorBonus.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("contractor", contractor)
+            add("product", product)
             add("payer", contractor.person)
         }})
     }

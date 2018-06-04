@@ -2,10 +2,9 @@ package br.com.unopay.api.market.model.filter;
 
 import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.ToString;
-
-import java.io.Serializable;
 
 @Data
 @ToString
@@ -23,6 +22,9 @@ public class ContractorBonusFilter implements Serializable {
 
     @SearchableField
     private BonusSituation situation;
+
+    @SearchableField(field = "product.issuer.id")
+    private String issuer;
 
     @SearchableField
     private String sourceIdentification;
