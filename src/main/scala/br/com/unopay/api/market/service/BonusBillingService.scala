@@ -43,8 +43,7 @@ class BonusBillingService(repository: BonusBillingRepository,
     }
 
     private def defineNumber(bonusBilling: BonusBilling) {
-        val found = repository.findFirstByOrderByCreatedDateTimeDesc().orElse(null)
-        val lastNumber = if (found != null) found.number else null
+        val lastNumber = repository.findFirstByOrderByCreatedDateTimeDesc().map[String](_.getNumber).orElse(null)
         bonusBilling.defineNumber(lastNumber)
     }
 
