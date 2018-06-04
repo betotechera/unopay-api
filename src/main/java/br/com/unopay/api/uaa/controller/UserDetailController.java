@@ -9,7 +9,6 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.Group;
 import br.com.unopay.api.uaa.model.NewPassword;
-import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.model.filter.UserFilter;
 import br.com.unopay.api.uaa.service.GroupService;
@@ -197,9 +196,9 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isUser()")
     @RequestMapping(value = "/users/me/password", method = DELETE)
-    public void resetPassword(OAuth2Authentication authentication, HttpServletRequest request,
-                              @RequestParam RequestOrigin requestOrigin) {
-        LOGGER.info("password reset request. to user={} on {}", authentication.getName(), requestOrigin.getDescription());
+    public void resetPassword(OAuth2Authentication authentication,
+                              @RequestParam String requestOrigin) {
+        LOGGER.info("password reset request. to user={} on {}", authentication.getName(), requestOrigin);
         userDetailService.resetPasswordByEmail(authentication.getName(), requestOrigin);
     }
 
@@ -214,9 +213,9 @@ public class UserDetailController {
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
-    public void resetPasswordByEmail(HttpServletRequest request, @RequestParam RequestOrigin origin) {
+    public void resetPasswordByEmail(HttpServletRequest request, @RequestParam String origin) {
         String email = request.getParameter("email");
-        LOGGER.info("password reset request. to user={} on {}", email, origin.getDescription());
+        LOGGER.info("password reset request. to user={} on {}", email, origin);
         userDetailService.resetPasswordByEmail(email, origin);
     }
 

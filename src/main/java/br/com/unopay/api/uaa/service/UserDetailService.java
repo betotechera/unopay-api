@@ -99,10 +99,10 @@ public class UserDetailService implements UserDetailsService {
     public UserDetailService(){}
 
     public UserDetail create(UserDetail user) {
-        return create(user, RequestOrigin.BACKOFFICE);
+        return create(user, RequestOrigin.BACKOFFICE.name());
     }
 
-    public UserDetail create(UserDetail user, RequestOrigin requestOrigin) {
+    public UserDetail create(UserDetail user, String requestOrigin) {
         try {
             checkUser(user);
             if(user.getPassword() != null) {
@@ -217,16 +217,16 @@ public class UserDetailService implements UserDetailsService {
 
     public void resetPasswordById(String userId) {
         UserDetail user = getById(userId);
-        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, RequestOrigin.BACKOFFICE);
+        notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, RequestOrigin.BACKOFFICE.name());
     }
 
-    public void resetPasswordByEmail(String email, RequestOrigin requestOrigin) {
+    public void resetPasswordByEmail(String email, String requestOrigin) {
         validateRequestOrigin(requestOrigin);
         UserDetail user = getByEmail(email);
         notificationService.sendNewPassword(user, EventType.PASSWORD_RESET, requestOrigin);
     }
 
-    private void validateRequestOrigin(RequestOrigin requestOrigin) {
+    private void validateRequestOrigin(String requestOrigin) {
         if(requestOrigin == null) {
             throw UnovationExceptions.badRequest()
                     .withErrors(Errors.VALID_PASSWORD_RESET_REQUEST_ORIGIN_REQUIRED);

@@ -125,7 +125,7 @@ public class DealCloseService {
         Product product = productService.findByCode(dealClose.getProductCode());
         Contract contract = createContract(dealClose, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
-        userDetailService.create(new UserDetail(contractor), RequestOrigin.SUPER_SAUDE);
+        userDetailService.create(new UserDetail(contractor), product.getIssuer().documentNumber());
         sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(dealClose, contract);

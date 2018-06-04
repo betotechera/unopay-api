@@ -41,7 +41,7 @@ public class NotificationService {
         this.notifier = notifier;
     }
 
-    public void sendNewPassword(UserDetail user, EventType eventType, RequestOrigin requestOrigin) {
+    public void sendNewPassword(UserDetail user, EventType eventType, String requestOrigin) {
         user.setPassword(null);
         Email email = new Email(user.getEmail());
         String token = passwordTokenService.createToken(user);
@@ -50,18 +50,18 @@ public class NotificationService {
         payload.put("user",user);
         payload.put("link",linkForOrigin(requestOrigin));
         payload.put("token",token);
-        payload.put("requestOrigin", requestOrigin.name());
+        payload.put("requestOrigin", requestOrigin);
 
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.NOTIFICATION, notification);
         log.info("reset password message sent to the queue for {}", user);
     }
 
-    private String linkForOrigin(RequestOrigin requestOrigin) {
-        return resetPassword.get(requestOrigin.name());
+    private String linkForOrigin(String requestOrigin) {
+        return resetPassword.get(requestOrigin);
     }
 
-    public void sendNewPassword(UserDetail user, RequestOrigin requestOrigin) {
+    public void sendNewPassword(UserDetail user, String requestOrigin) {
         sendNewPassword(user, CREATE_PASSWORD, requestOrigin);
     }
 
