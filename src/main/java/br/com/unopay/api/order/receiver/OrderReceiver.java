@@ -8,14 +8,12 @@ import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderProcessor;
 import br.com.unopay.api.util.GenericObjectMapper;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import javax.transaction.Transactional;
-import java.math.BigDecimal;
 
 @Profile("!test")
 @Slf4j

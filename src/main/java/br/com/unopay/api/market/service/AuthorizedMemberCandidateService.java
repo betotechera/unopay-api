@@ -5,7 +5,6 @@ import br.com.unopay.api.market.repository.AuthorizedMemberCandidateRepository;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;

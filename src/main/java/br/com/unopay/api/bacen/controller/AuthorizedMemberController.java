@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;

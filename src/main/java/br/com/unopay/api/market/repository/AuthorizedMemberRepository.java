@@ -1,7 +1,7 @@
 package br.com.unopay.api.market.repository;
 
-import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
 

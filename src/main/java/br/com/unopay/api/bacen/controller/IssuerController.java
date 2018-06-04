@@ -52,7 +52,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Collections;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
