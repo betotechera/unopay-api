@@ -163,7 +163,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
         found.getSize == 1
-        found.getContent.get(0).total.equals(total.doubleValue())
+        found.getContent.get(0).total.equals(total)
     }
 
     "when processing bonus to process" should "create bonus billing" in {

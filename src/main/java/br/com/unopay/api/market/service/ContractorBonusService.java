@@ -12,21 +12,20 @@ import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
-import static br.com.unopay.api.uaa.exception.Errors.*;
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
 
 @Service
 public class ContractorBonusService {

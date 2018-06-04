@@ -1,14 +1,8 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
-import br.com.unopay.api.market.model.BonusBilling;
-import br.com.unopay.api.market.model.ContractorBonus;
-import br.com.unopay.api.market.model.filter.BonusBillingFilter;
-import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
-import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
@@ -18,6 +12,10 @@ import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
+import br.com.unopay.api.market.model.AuthorizedMember;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
