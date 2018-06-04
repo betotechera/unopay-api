@@ -3,6 +3,8 @@ create table contractor_bonus(
     product_id VARCHAR(256) not null,
     person_id VARCHAR(256) not null,
     contractor_id VARCHAR(256) not null,
+    source_identification VARCHAR(256) not null,
+    source_value decimal(20,2) not null,
     earned_bonus decimal(20,2) not null,
     situation VARCHAR(150) not null,
     processed_at TIMESTAMP,

@@ -641,4 +641,6 @@ public final class Errors {
             new UnovationError("INVALID_PROCESSED_AT","Invalid processed at date");
     public static final UnovationError INVALID_BONUS_SITUATION =
             new UnovationError("INVALID_BONUS_SITUATION","Invalid bonus situation");
+    public static final UnovationError INVALID_SOURCE_VALUE =
+            new UnovationError("INVALID_SOURCE_VALUE","Invalid source value");
 }

@@ -3,7 +3,6 @@ package br.com.unopay.api.market.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.service.ContractorService;
-import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
@@ -22,8 +21,8 @@ import java.util.function.Supplier;
 
 import static br.com.unopay.api.market.model.BonusSituation.CANCELED;
 import static br.com.unopay.api.market.model.BonusSituation.FOR_PROCESSING;
-import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_BONUS_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.INVALID_BONUS_SITUATION;
+import static br.com.unopay.api.uaa.exception.Errors.*;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 @Service
 public class ContractorBonusService {
@@ -32,6 +31,8 @@ public class ContractorBonusService {
     private ProductService productService;
     private ContractorService contractorService;
     private PersonService personService;
+
+    private static final int EQUAL = 0;
 
     @Autowired
     public ContractorBonusService(ContractorBonusRepository contractorBonusRepository,
@@ -56,10 +57,7 @@ public class ContractorBonusService {
 
     public ContractorBonus update(String id, ContractorBonus contractorBonus) {
         ContractorBonus current = findById(id);
-        return update(current, contractorBonus);
-    }
-
-    private ContractorBonus update(ContractorBonus current, ContractorBonus contractorBonus){
+        contractorBonus.setupMyUpdate();
         defineValidReferences(contractorBonus);
         current.updateMe(contractorBonus);
         return save(current);
@@ -69,7 +67,8 @@ public class ContractorBonusService {
                                                   ContractorBonus contractorBonus) {
         ContractorBonus current = findByIdForPerson(id, establishment.getPerson());
         checkIfValidSituationChange(current, contractorBonus);
-        return update(current, contractorBonus);
+        current.updateOnly(contractorBonus, "situation");
+        return save(current);
     }
 
     public void delete(String id) {
