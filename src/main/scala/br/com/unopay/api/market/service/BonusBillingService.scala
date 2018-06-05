@@ -6,7 +6,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.{BonusBilling, BonusSituation}
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
@@ -77,6 +77,10 @@ class BonusBillingService(repository: BonusBillingRepository,
             bonusBilling.setMeUp(payer, issuer, earnedBonus)
             bonusBilling = create(bonusBilling)
             notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
+            bonusesByIssuer.foreach(bonus => {
+                bonus.setSituation(BonusSituation.TICKET_ISSUED)
+                bonusService.update(bonus.getId, bonus)
+            })
         })
     }
 

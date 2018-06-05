@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
+import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
@@ -18,6 +19,8 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
     @Autowired
     var service: BonusBillingService = _
+    @Autowired
+    var contractorBonusService: ContractorBonusService =_
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
     var mockNotifier : Notifier = _
@@ -133,6 +136,17 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
         found.getSize == 0
+    }
+
+    "when processing Bonus" should "set bonus status to TICKET_ISSUED" in {
+        val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
+        val payer = bonus.getPayer
+
+        service.process(payer)
+
+        val found = contractorBonusService.findById(bonus.getId)
+
+        found.getSituation == BonusSituation.TICKET_ISSUED
     }
 
     "given person with Bonus to process" should "create BonusBilling that belongs to it" in {
