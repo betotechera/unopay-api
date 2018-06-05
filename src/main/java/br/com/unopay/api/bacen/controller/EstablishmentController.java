@@ -303,11 +303,4 @@ public class EstablishmentController {
         log.info("process all bonus billing for establishment={}", establishment.documentNumber());
         bonusBillingService.process(establishment.getPerson());
     }
-
-    @ResponseStatus(NO_CONTENT)
-    @RequestMapping(value = "/establishments/me/bonus-billings", method = PUT)
-    public void processAllBonusBillings(Establishment establishment){
-        log.info("process all bonus billing for issuer={}", establishment.documentNumber());
-        bonusBillingService.process(establishment.getPerson());
-    }
 }
