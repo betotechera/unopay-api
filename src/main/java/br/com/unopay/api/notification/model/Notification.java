@@ -26,6 +26,9 @@ public class Notification {
     }
 
     public String getFrom() {
-        return this.email.getFrom();
+        if(this.email != null) {
+            return this.email.getFrom();
+        }
+        return null;
     }
 }
