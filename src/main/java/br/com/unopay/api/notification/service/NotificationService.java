@@ -25,10 +25,12 @@ import static br.com.unopay.api.notification.model.EventType.CREATE_PASSWORD;
 @Service
 @Slf4j
 @Data
-@ConfigurationProperties("unopay")
+@ConfigurationProperties(prefix = "unopay.notification")
 public class NotificationService {
 
     private Map<String, String> resetPassword = new HashMap<>();
+
+    private Map<String, Email> clientFrom = new HashMap<>();
 
     private Notifier notifier;
 
@@ -43,7 +45,7 @@ public class NotificationService {
 
     public void sendNewPassword(UserDetail user, EventType eventType, String requestOrigin) {
         user.setPassword(null);
-        Email email = new Email(user.getEmail());
+        Email email = getEmail(user.getEmail(), requestOrigin);
         String token = passwordTokenService.createToken(user);
 
         Map<String,Object> payload = new HashMap<>();
@@ -52,8 +54,7 @@ public class NotificationService {
         payload.put("token",token);
         payload.put("requestOrigin", requestOrigin);
 
-        Notification notification = new Notification(email, null, eventType, payload);
-        notifier.notify(Queues.NOTIFICATION, notification);
+        sendNotificationToQueue(payload, eventType, email);
         log.info("reset password message sent to the queue for {}", user);
     }
 
@@ -77,21 +78,42 @@ public class NotificationService {
 
     public void sendPaymentEmail(Billable order, EventType eventType){
         Map<String,Object> payload = new HashMap<String, Object>() {{ put("order", order); }};
-        sendEmailToQueue(order.getBillingMail(), payload, eventType);
+        sendEmailToQueue(order, payload, eventType);
     }
 
     public void sendTicketIssued(Billable billable, Ticket ticket) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("billable", billable);
         payload.put("ticket", ticket);
-        sendEmailToQueue(billable.getBillingMail(), payload, EventType.BOLETO_ISSUED);
+        sendEmailToQueue(billable, payload, EventType.BOLETO_ISSUED);
     }
-
 
     private void sendEmailToQueue(String emailAsText, final Map<String,Object>  payload, EventType eventType) {
         Email email = new Email(emailAsText);
+        sendNotificationToQueue(payload, eventType, email);
+    }
+
+    private void sendEmailToQueue(Billable billable, final Map<String,Object>  payload, EventType eventType) {
+        Email email = getEmail(billable.getBillingMail(), billable.getIssuer().documentNumber());
+        sendNotificationToQueue(payload, eventType, email);
+    }
+
+    private void sendNotificationToQueue(Map<String, Object> payload, EventType eventType, Email email) {
         Notification notification = new Notification(email, null, eventType, payload);
         notifier.notify(Queues.NOTIFICATION, notification);
+    }
+
+    private Email getEmail(String email, String requestOrigin) {
+        Email emailWithFrom = clientFrom.get(requestOrigin);
+        if(emailWithFrom != null){
+            emailWithFrom.setTo(email);
+            return emailWithFrom;
+        }
+        return new Email(email);
+    }
+
+    public Map<String, Email> getClientFrom(){
+        return this.clientFrom;
     }
 
     public Map<String, String> getResetPassword(){

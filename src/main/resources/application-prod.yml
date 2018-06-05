@@ -20,10 +20,13 @@ payment:
         ymb-transacional-service: "http://impl.webservice.ymb.app.bsbr.altec.com/"
         enviroment: 'P'
 unopay:
-  resetPassword:
-        SUPER_SAUDE: 'http://backoffice.unovation.com.br/#/page/password/SUPER_SAUDE/'
-        BACKOFFICE: 'http://backoffice.unovation.com.br/#/page/password/BACKOFFICE/'
-        UNOPAY: 'https://unopay.unovation.com.br/recover-password/'
+  notification:
+    resetPassword:
+      15200249000118: 'http://backoffice.unovation.com.br/#/page/password/15200249000118/'
+      21902075000138: 'http://backoffice.unovation.com.br/#/page/password/21902075000138/'
+      SUPER_SAUDE: 'http://backoffice.unovation.com.br/#/page/password/SUPER_SAUDE/'
+      BACKOFFICE: 'http://backoffice.unovation.com.br/#/page/password/BACKOFFICE/'
+      UNOPAY: 'https://unopay.unovation.com.br/recover-password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: unopay.api.unovation.com.br

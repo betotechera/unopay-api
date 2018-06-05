@@ -24,7 +24,7 @@ public class MimeMessageFactory {
 
     private EnumMap<EventType, String> subjectByEvent = new EnumMap<>(EventType.class);
 
-    private Email defaultMail;
+    private Email defaultFrom;
 
     @Autowired
     public MimeMessageFactory(JavaMailSender mailSender, MailValidator mailValidator) {
@@ -40,7 +40,7 @@ public class MimeMessageFactory {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8");
         mimeMessageHelper.setTo(email.getTo());
         mimeMessageHelper.setSubject(subjectByEvent.get(eventType));
-        mimeMessageHelper.setFrom(defaultMail.getFrom(), defaultMail.getPersonalFrom());
+        mimeMessageHelper.setFrom(defaultFrom.getFrom(), defaultFrom.getPersonalFrom());
         mimeMessageHelper.setText(content, true);
 
         if(!mailValidator.isValid(email.getTo())) {

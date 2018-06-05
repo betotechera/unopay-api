@@ -4,7 +4,9 @@ import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.engine.TemplateProcessor;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.notification.repository.NotificationRepository;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,6 +39,7 @@ public class UnopayMailSender {
         this.templateProcessor = templateProcessor;
     }
 
+    @SneakyThrows
     public void send(Notification notification) {
         if(valid(notification)) {
             try {
@@ -47,6 +50,9 @@ public class UnopayMailSender {
                 if(dateSent != null) {
                     mailAlreadySent(notification, dateSent);
                     return;
+                }
+                if(notification.hasPersonalFrom()){
+                    mailMessage.setFrom(new InternetAddress(notification.getFrom(), notification.getPersonalFrom()));
                 }
                 sendMail(mailMessage, notification, content);
             } catch (IllegalArgumentException e) {

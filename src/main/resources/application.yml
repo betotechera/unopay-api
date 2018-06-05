@@ -56,9 +56,16 @@ unopay:
       'PAYMENT_APPROVED' : "Pagamento aprovado!"
       'PAYMENT_DENIED' : 'Pagamento não aprovado.'
       'BOLETO_ISSUED' : 'Boleto gerado para sua solicitação.'
-    defaultMail:
-      from: 'no-reply@clinicasclivale.com.br'
-      personalFrom: 'Super Saude'
+    defaultFrom:
+      from: 'no-reply@unovation.com.br'
+      personalFrom: 'Unopay'
+    clientFrom:
+      15200249000118:
+        from: 'no-reply@clinicasclivale.com.br'
+        personalFrom: 'Super Saude'
+      21902075000138:
+        from: 'no-reply@poupesaude.com.br'
+        personalFrom: 'Poupe Saude'
 soap:
   client:
     ssl:

@@ -15,4 +15,17 @@ public class Notification {
     private EventType eventType;
     private Map<String, Object> payload;
 
+    public boolean hasPersonalFrom(){
+        return this.getEmail() != null &&
+                this.getEmail().getFrom() != null &&
+                this.getEmail().getPersonalFrom() != null;
+    }
+
+    public String getPersonalFrom() {
+        return this.email.getPersonalFrom();
+    }
+
+    public String getFrom() {
+        return this.email.getFrom();
+    }
 }

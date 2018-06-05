@@ -17,4 +17,10 @@ public class Email {
     public Email(String to) {
         this.to = to;
     }
+
+    public Email(String to, String from, String personalFrom) {
+        this.to = to;
+        this.from = from;
+        this.personalFrom = personalFrom;
+    }
 }
