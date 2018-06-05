@@ -34,7 +34,7 @@ class SimpleMailMessageFactoryTest extends SpockApplicationTests{
         then:
         createdMailMessage.getRecipients(Message.RecipientType.TO).find().toString() == to
         createdMailMessage.getRecipients(Message.RecipientType.TO).find().toString() == to
-        createdMailMessage.getFrom().find().toString() == 'Super Saude <no-reply@clinicasclivale.com.br>'
+        createdMailMessage.getFrom().find().toString() == 'Unopay <no-reply@unovation.com.br>'
         createdMailMessage.getSubject() == 'Crie sua nova senha'
 
     }
