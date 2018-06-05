@@ -22,7 +22,10 @@ public class Notification {
     }
 
     public String getPersonalFrom() {
-        return this.email.getPersonalFrom();
+        if(this.email != null){
+            return this.getPersonalFrom();
+        }
+        return null;
     }
 
     public String getFrom() {
