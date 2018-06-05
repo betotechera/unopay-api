@@ -526,7 +526,7 @@ public class IssuerController {
     public Results<BonusBilling> getAllBonusBillings(Issuer issuer, BonusBillingFilter filter,
                                                      @Validated UnovationPageRequest pageable) {
         log.info("find BonusBillings for issuer={}", issuer.documentNumber());
-        filter.setIssuer(issuer.getId());
+        filter.setIssuer(issuer.documentNumber());
         Page<BonusBilling> page =  bonusBillingService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
