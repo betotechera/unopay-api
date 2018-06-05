@@ -228,6 +228,7 @@ class IssuerControllerTest extends AuthServerApplicationTests {
 
         then:
         result.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
     void 'known network should be enabled for me'(){
