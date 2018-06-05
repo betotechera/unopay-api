@@ -52,7 +52,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
     @Column(name = "total")
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.List]))
     var total: BigDecimal = _
 
     @Column(name = "processed_at")
@@ -63,20 +63,20 @@ class BonusBilling extends Serializable with Updatable with Billable {
     @Column(name = "number")
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.List]))
     var number: String = _
 
     @Column(name = "expiration")
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.List]))
     var expiration: Date = _
 
     @Column(name = "status")
     @BeanProperty
     @Enumerated(EnumType.STRING)
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.List]))
     var status: PaymentStatus = _
 
     @JsonIgnore
@@ -92,7 +92,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
     @ManyToOne
     @JoinColumn(name = "issuer_id")
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @JsonView(Array(classOf[Views.BonusBilling.Detail]))
+    @JsonView(Array(classOf[Views.BonusBilling.List]))
     var issuer: Issuer = _
 
     def addToContractorBonuses(bonus: ContractorBonus) {
@@ -121,6 +121,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
         this.issuer = issuer
         this.total = total
         this.status = status
+        this.createdDateTime = new Date()
     }
 
     def defineNumber(lastNumber: String): Unit = {

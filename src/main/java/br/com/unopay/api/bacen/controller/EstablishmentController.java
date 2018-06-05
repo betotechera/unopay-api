@@ -295,7 +295,7 @@ public class EstablishmentController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_MANAGE_ESTABLISHMENT')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_BONUS_BILLING')")
     @RequestMapping(value = "/establishments/{id}/bonus-billings", method = PUT)
     public void processAllBonusBillings(@PathVariable String id){
         log.info("find establishment={}", id);

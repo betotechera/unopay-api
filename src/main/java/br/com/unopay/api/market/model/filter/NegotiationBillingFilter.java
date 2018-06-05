@@ -26,6 +26,9 @@ public class NegotiationBillingFilter {
     @SearchableField(field = "createdDateTime")
     private Period createdDateTimePeriod;
 
+    @SearchableField(field = "installmentExpiration")
+    private Period installmentExpirationPeriod;
+
     @SearchableField
     private Integer installmentNumber;
 }
