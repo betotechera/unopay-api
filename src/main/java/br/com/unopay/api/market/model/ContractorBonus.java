@@ -48,7 +48,6 @@ public class ContractorBonus implements Serializable, Updatable {
 
     @ManyToOne
     @JoinColumn(name="person_id")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.ContractorBonus.List.class})
     private Person payer;
 
@@ -68,7 +67,6 @@ public class ContractorBonus implements Serializable, Updatable {
     private BigDecimal sourceValue;
 
     @Column(name = "earned_bonus")
-    @NotNull(groups = {Create.class})
     @JsonView({Views.ContractorBonus.List.class})
     private BigDecimal earnedBonus;
 
