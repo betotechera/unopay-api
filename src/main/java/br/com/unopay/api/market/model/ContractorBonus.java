@@ -84,13 +84,13 @@ public class ContractorBonus implements Serializable, Updatable {
 
     @Column(name = "situation")
     @Enumerated(EnumType.STRING)
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = {Update.class})
     @JsonView({Views.ContractorBonus.List.class})
     private BonusSituation situation = FOR_PROCESSING;
 
     @Column(name = "processed_at")
     @JsonView({Views.ContractorBonus.Detail.class})
-    private Date processedAt;
+    private Date processedAt = null;
 
     @Column(name = "created_date_time")
     @JsonView({Views.ContractorBonus.Detail.class})
@@ -102,6 +102,7 @@ public class ContractorBonus implements Serializable, Updatable {
 
     public void setupMyCreate() {
         setCreatedDateTime(new Date());
+        setupInitialSituationAndProcessedAt();
         validateMe();
         validateAndSetupEarnedBonusIfNull();
     }
@@ -109,6 +110,11 @@ public class ContractorBonus implements Serializable, Updatable {
     public void setupMyUpdate() {
         validateMe();
         validateAndSetupEarnedBonusIfNull();
+    }
+
+    private void setupInitialSituationAndProcessedAt() {
+        setSituation(FOR_PROCESSING);
+        setProcessedAt(null);
     }
 
     public void validateMe() {
