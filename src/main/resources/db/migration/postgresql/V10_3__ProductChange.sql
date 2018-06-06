@@ -1,0 +1,1 @@
+alter table product add with_partner_integration boolean;
