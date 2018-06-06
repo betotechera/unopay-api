@@ -180,9 +180,9 @@ public class UserDetailService implements UserDetailsService {
 
     private void updatePasswordOnWingoo(String newPassword, UserDetail current) {
         try {
-            Password password = new Password(current.getPassword(), newPassword);
+            Password password = new Password(current.getEmail(), newPassword);
             wingooService.update(password);
-        }catch (Exception e){
+        } catch (Exception e){
             log.warn("Cannot update password on wingoo system",e);
         }
     }
@@ -263,7 +263,7 @@ public class UserDetailService implements UserDetailsService {
         return userDetailRepository.countByPartnerId(id) > 0;
     }
 
-    private void updatePasswordByUser( UserDetail user, NewPassword newPassword) {
+    private void updatePasswordByUser(UserDetail user, NewPassword newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
         updatePasswordOnWingoo(newPassword.getPassword(), user);
         userDetailRepository.save(user);

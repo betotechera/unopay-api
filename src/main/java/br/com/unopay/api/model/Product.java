@@ -193,7 +193,7 @@ public class Product implements Serializable, Updatable {
 
     @Column(name = "with_partner_integration")
     @JsonView({Views.Product.Detail.class})
-    private Boolean withPartnerIntegration;
+    private Boolean withPartnerIntegration = false;
 
     @Version
     @JsonIgnore
@@ -214,10 +214,6 @@ public class Product implements Serializable, Updatable {
         }
 
         validateBonus();
-    }
-
-    public void setMeUp() {
-        if(withPartnerIntegration == null) withPartnerIntegration = false;
     }
 
     private void validateBonus() {
@@ -275,7 +271,7 @@ public class Product implements Serializable, Updatable {
     }
 
     public Boolean withClub(){
-        return getBonusPercentage() != null && getMonthsToExpireBonus() != null;
+        return withPartnerIntegration;
     }
 
 }

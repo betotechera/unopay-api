@@ -15,6 +15,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class WingooService {
 
     public static final String INSERT_STUDENT = "/inserirAlunos";
     public static final String APPLICATION = "Application";
-    public static final String ACCOUNT_UPDATE_PASSWORD = "/account/updatePassword";
+    public static final String ACCOUNT_UPDATE_PASSWORD = "/alterarSenha";
     @Autowired
     @Qualifier("wingooRestTemplate")
     private RestTemplate wingooTemplate;
@@ -50,7 +51,8 @@ public class WingooService {
         ParameterizedTypeReference<List<Student>> typeReference = new ParameterizedTypeReference<List<Student>>() {};
         HttpEntity<List<Student>> entity = new HttpEntity<>(Arrays.asList(Student.fromContractor(contractor)), headers);
         String uri = wingooApi + INSERT_STUDENT;
-        return wingooTemplate.exchange(uri, POST, entity, typeReference, new HashMap<>()).getBody();
+        ResponseEntity<List<Student>> exchange = wingooTemplate.exchange(uri, POST, entity, typeReference, new HashMap<>());
+        return exchange.getBody();
     }
 
     public void update(Password password){

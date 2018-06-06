@@ -44,7 +44,6 @@ public class ProductService {
     public Product create(Product product) {
         try {
             product.validate();
-            product.setMeUp();
             checkName(product);
             validateReferences(product);
             return save(product);

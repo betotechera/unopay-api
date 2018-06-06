@@ -9,19 +9,16 @@ public class Password implements Serializable{
 
     private static final long serialVersionUID = 8679664832098056775L;
 
-    @JsonProperty("current_password")
-    private String currentPassword;
-
-    @JsonProperty("new_password")
+    @JsonProperty("senha")
     private String newPassword;
 
-    @JsonProperty("password_confirmation")
-    private String passwordConfirmation;
+    @JsonProperty("email")
+    private String email;
 
-    public Password(String currentPassword, String newPassword) {
-        this.currentPassword = currentPassword;
+    public Password(String email, String newPassword) {
+        this.email = email;
         this.newPassword = newPassword;
-        this.passwordConfirmation = newPassword;
+        this.email = newPassword;
 
     }
 }

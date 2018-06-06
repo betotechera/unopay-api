@@ -19,6 +19,7 @@ import br.com.unopay.api.service.ProductService;
 import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
+import br.com.unopay.api.wingoo.service.WingooService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
