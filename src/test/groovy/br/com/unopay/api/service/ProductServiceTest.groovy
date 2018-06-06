@@ -58,7 +58,25 @@ class ProductServiceTest extends SpockApplicationTests {
         def result  = service.create(product)
 
         then:
-        assert result.withPartnerIntegration == false
+        result.withPartnerIntegration == false
+    }
+
+    void "when creating product with withPartnerIntegration should define it's value"(){
+        given:
+
+        Product product = Fixture.from(Product.class).gimme("valid", new Rule(){{
+            add("accreditedNetwork", networkUnderTest)
+            add("issuer", issuerUnderTest)
+            add("paymentRuleGroup", paymentRuleGroupUnderTest)
+        }})
+
+        product.withPartnerIntegration = true
+
+        when:
+        def result  = service.create(product)
+
+        then:
+        result.withPartnerIntegration == true
     }
 
     void 'given product with same name should not be created'(){
