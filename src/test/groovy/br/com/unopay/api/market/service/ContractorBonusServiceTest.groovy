@@ -209,12 +209,15 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     }
 
     def "should not find Contractor Bonuses for Processing for payers if there ain't no one"(){
-
         given:
-        ContractorBonus contractorBonus = createContractorBonus()
-        contractorBonus.situation = BonusSituation.TICKET_ISSUED
+        ContractorBonus contractorBonus = Fixture
+                .from(ContractorBonus.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+                add("product",productUnderTest)
+                add("contractor",contractorUnderTest)
+                add("payer",personUnderTest)
+                add("situation", BonusSituation.TICKET_ISSUED)
+        }})
         def document = contractorBonus.payer.documentNumber()
-        contractorBonusService.create(contractorBonus)
 
         when:
         def found = contractorBonusService.getBonusesToProcessForPayer(document)
@@ -384,13 +387,10 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
     }
 
         private ContractorBonus createContractorBonus(issuerProduct = productUnderTest) {
-        ContractorBonus contractorBonus = Fixture.from(ContractorBonus.class).gimme("valid")
-        contractorBonus = contractorBonus.with {
-            product = issuerProduct
-            contractor = contractorUnderTest
-            payer = personUnderTest
-            it
-        }
-        contractorBonus
+        return Fixture.from(ContractorBonus.class).gimme("valid", new Rule(){{
+            add("product",issuerProduct)
+            add("contractor",contractorUnderTest)
+            add("payer",personUnderTest)
+        }})
     }
 }
