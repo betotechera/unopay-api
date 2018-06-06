@@ -205,7 +205,22 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
         then:
         !found.isEmpty()
+        found.first().situation == BonusSituation.FOR_PROCESSING
+    }
 
+    def "should not find Contractor Bonuses for Processing for payers if there ain't no one"(){
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        contractorBonus.situation = BonusSituation.TICKET_ISSUED
+        def document = contractorBonus.payer.documentNumber()
+        contractorBonusService.create(contractorBonus)
+
+        when:
+        def found = contractorBonusService.getBonusesToProcessForPayer(document)
+
+        then:
+        found.isEmpty()
     }
 
     def 'known Contractor Bonus for a different Person should return error'() {

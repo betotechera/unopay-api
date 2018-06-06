@@ -192,4 +192,12 @@ public class ContractorBonus implements Serializable, Updatable {
     public BigDecimal getEarnedBonus() {
         return earnedBonus;
     }
+
+    public void setSituation(BonusSituation situation) {
+        this.situation = situation;
+    }
+
+    public String getId() {
+        return id;
+    }
 }

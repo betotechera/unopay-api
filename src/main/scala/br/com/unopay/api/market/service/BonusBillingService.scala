@@ -77,11 +77,11 @@ class BonusBillingService(repository: BonusBillingRepository,
         })
     }
 
-    private def processIssuerBonuses(payer: Person, issuer: Issuer, bonuses: mutable.Buffer[ContractorBonus]): Unit = {
+    private def processIssuerBonuses(payer: Person, issuer: Issuer, bonuses: mutable.Buffer[ContractorBonus]) {
         val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
         val bonusBilling = create(payer, issuer, earnedBonus)
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
-        bonuses.foreach(_=> updateBonusStatus(_))
+        bonuses.foreach(_=>updateBonusStatus(_))
     }
 
     private def create(payer: Person, issuer: Issuer, total: BigDecimal): BonusBilling = {
@@ -90,7 +90,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         create(bonusBilling)
     }
 
-    private def updateBonusStatus(bonus: ContractorBonus): Unit = {
+    private def updateBonusStatus(bonus: ContractorBonus){
         bonus.setSituation(BonusSituation.TICKET_ISSUED)
         bonusService.update(bonus.getId, bonus)
     }
