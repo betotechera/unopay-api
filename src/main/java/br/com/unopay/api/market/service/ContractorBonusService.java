@@ -116,11 +116,10 @@ public class ContractorBonusService {
     }
 
     public List<ContractorBonus> getBonusesToProcessForPayer(String documentNumber) {
-        ContractorBonusFilter filter = new ContractorBonusFilter() {{
-            setSituation(BonusSituation.FOR_PROCESSING);
-            setPayer(documentNumber);
-        }};
-        return contractorBonusRepository.findAll(filter).stream().collect(Collectors.toList());
+        ContractorBonusFilter filter = new ContractorBonusFilter();
+        filter.setSituation(BonusSituation.FOR_PROCESSING);
+        filter.setPayer(documentNumber);
+        return contractorBonusRepository.findAll(filter);
     }
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
         contractorBonus.setPayer(establishment.getPerson());

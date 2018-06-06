@@ -6,7 +6,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.{BonusBilling, BonusSituation, ContractorBonus}
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
@@ -20,6 +20,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
+import scala.collection.{TraversableLike, mutable}
 
 @Service
 @Autowired
@@ -72,12 +73,26 @@ class BonusBillingService(repository: BonusBillingRepository,
 
         bonuses.map(_.issuerId).distinct.map(issuerService.findById).foreach(issuer => {
             val bonusesByIssuer = bonuses.filter(_.hasIssuer(issuer))
-            val earnedBonus = bonusesByIssuer.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
-            var bonusBilling = new BonusBilling
-            bonusBilling.setMeUp(payer, issuer, earnedBonus)
-            bonusBilling = create(bonusBilling)
-            notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
+            processIssuerBonuses(payer, issuer, bonusesByIssuer)
         })
+    }
+
+    private def processIssuerBonuses(payer: Person, issuer: Issuer, bonuses: mutable.Buffer[ContractorBonus]) {
+        val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
+        val bonusBilling = create(payer, issuer, earnedBonus)
+        notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
+        bonuses.foreach(_=>updateBonusStatus(_))
+    }
+
+    private def create(payer: Person, issuer: Issuer, total: BigDecimal): BonusBilling = {
+        val bonusBilling = new BonusBilling
+        bonusBilling.setMeUp(payer, issuer, total)
+        create(bonusBilling)
+    }
+
+    private def updateBonusStatus(bonus: ContractorBonus){
+        bonus.setSituation(BonusSituation.TICKET_ISSUED)
+        bonusService.update(bonus.getId, bonus)
     }
 
     private def validateReferences(bonusBilling: BonusBilling) {
