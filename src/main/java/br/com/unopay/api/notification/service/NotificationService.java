@@ -10,6 +10,7 @@ import br.com.unopay.api.notification.model.Email;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.model.Notification;
 import br.com.unopay.api.uaa.infra.PasswordTokenService;
+import br.com.unopay.api.uaa.model.RequestOrigin;
 import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class NotificationService {
     }
 
     private String linkForOrigin(String requestOrigin) {
-        return resetPassword.get(requestOrigin);
+        String link = resetPassword.get(requestOrigin);
+        return link == null ? RequestOrigin.BACKOFFICE.name() : link;
     }
 
     public void sendNewPassword(UserDetail user, String requestOrigin) {
