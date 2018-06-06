@@ -191,6 +191,10 @@ public class Product implements Serializable, Updatable {
     @JsonView(Views.Product.Detail.class)
     private Integer monthsToExpireBonus;
 
+    @Column(name = "with_partner_integration")
+    @JsonView({Views.Product.Detail.class})
+    private Boolean withPartnerIntegration;
+
     @Version
     @JsonIgnore
     private Integer version;
@@ -210,6 +214,10 @@ public class Product implements Serializable, Updatable {
         }
 
         validateBonus();
+    }
+
+    public void setMeUp() {
+        if(withPartnerIntegration == null) withPartnerIntegration = false;
     }
 
     private void validateBonus() {
