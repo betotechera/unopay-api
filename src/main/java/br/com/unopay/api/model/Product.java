@@ -216,6 +216,10 @@ public class Product implements Serializable, Updatable {
         validateBonus();
     }
 
+    public void setMeUp() {
+        if(withPartnerIntegration == null) withPartnerIntegration = false;
+    }
+
     private void validateBonus() {
         if(bonusPercentage != null && monthsToExpireBonus == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(MONTHS_TO_EXPIRE_BONUS_REQUIRED);
