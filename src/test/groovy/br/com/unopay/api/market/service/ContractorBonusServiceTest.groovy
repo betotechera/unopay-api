@@ -226,7 +226,66 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
 
     }
 
-    def 'when create bonus the known Establishment should be Contractor Bonus payer'() {
+    def 'when create bonus situation should be set as For Processing'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+
+        when:
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(created.id)
+
+        then:
+        found.situation == FOR_PROCESSING
+
+    }
+
+    def 'when create bonus processedAt should be set as Null'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+
+        when:
+        ContractorBonus created = contractorBonusService.create(contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(created.id)
+
+        then:
+        found.processedAt == null
+
+    }
+
+    def 'when create for Establishment situation should be set as For Processing'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        Establishment establishment = establishmentUnderTest
+
+        when:
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(created.id)
+
+        then:
+        found.situation == FOR_PROCESSING
+
+    }
+
+    def 'when create for Establishment processedAt should be set as Null'() {
+
+        given:
+        ContractorBonus contractorBonus = createContractorBonus()
+        Establishment establishment = establishmentUnderTest
+        contractorBonus.processedAt = new Date()
+
+        when:
+        ContractorBonus created = contractorBonusService.createForEstablishment(establishment, contractorBonus)
+        ContractorBonus found = contractorBonusService.findById(created.id)
+
+        then:
+        found.processedAt == null
+
+    }
+
+        def 'when create bonus the known Establishment should be Contractor Bonus payer'() {
 
         given:
         ContractorBonus contractorBonus = createContractorBonus()
@@ -266,9 +325,11 @@ class ContractorBonusServiceTest extends SpockApplicationTests {
         Establishment establishment = fixtureCreator.createEstablishment()
         ContractorBonus contractorBonus = createContractorBonus()
         contractorBonus.payer = establishment.person
+        ContractorBonus current = contractorBonusService.create(contractorBonus)
         contractorBonus.situation = situation
         contractorBonus.processedAt = processedAt
-        ContractorBonus current = contractorBonusService.create(contractorBonus)
+        current.updateOnly(contractorBonus, "situation", "processedAt")
+        contractorBonusService.save(current)
         ContractorBonus bonus = createContractorBonus()
         bonus.situation = updateSituation
         bonus.processedAt = newProcessedAt
