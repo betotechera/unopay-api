@@ -271,7 +271,7 @@ public class Product implements Serializable, Updatable {
     }
 
     public Boolean withClub(){
-        return withPartnerIntegration;
+        return withPartnerIntegration == null ? Boolean.FALSE : withPartnerIntegration;
     }
 
 }
