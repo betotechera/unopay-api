@@ -52,18 +52,23 @@ public class NotificationService {
         payload.put("user",user);
         payload.put("link",linkForOrigin(requestOrigin));
         payload.put("token",token);
-        payload.put("requestOrigin", getRequestOrigin(requestOrigin));
+        payload.put("requestOrigin", requestOrigin);
 
         sendNotificationToQueue(payload, eventType, email);
         log.info("reset password message sent to the queue for {}", user);
     }
 
     private String linkForOrigin(String requestOrigin) {
-        return resetPassword.get(getRequestOrigin(requestOrigin));
+        String link = getLink(requestOrigin);
+        return link == null ? defaultLink() : link;
     }
 
-    private String getRequestOrigin(String requestOrigin) {
-        return requestOrigin == null ? RequestOrigin.BACKOFFICE.name() : requestOrigin;
+    private String getLink(String requestOrigin) {
+        return resetPassword.get(requestOrigin);
+    }
+
+    private String defaultLink() {
+        return getLink(RequestOrigin.BACKOFFICE.name());
     }
 
     public void sendNewPassword(UserDetail user, String requestOrigin) {
