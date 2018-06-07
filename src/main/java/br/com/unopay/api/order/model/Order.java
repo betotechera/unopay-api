@@ -266,10 +266,12 @@ public class Order implements Updatable, Billable, Serializable {
     public void validateMe() {
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
-            candidates.forEach(candidate -> {
-                candidate.validateMe();
-                candidate.setMeUp();
-            });
+            if(candidates!= null) {
+                candidates.forEach(candidate -> {
+                    candidate.validateMe();
+                    candidate.setMeUp();
+                });
+            }
         }
     }
 
