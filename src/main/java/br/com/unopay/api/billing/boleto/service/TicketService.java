@@ -216,7 +216,8 @@ public class TicketService {
                 }
             }else{
                 if(!PAID.equals(ticket.getOccurrenceCode())) {
-                    defineOccurrence(ticket, occurrenceCode);
+                    ticket.setOccurrenceCode(occurrenceCode);
+                    repository.save(ticket);
                 }
             }
         });
@@ -229,17 +230,17 @@ public class TicketService {
     }
 
     private void processOrderAsPaid(Ticket ticket) {
-        defineOccurrence(ticket, PAID);
+        defineAsPaid(ticket);
         orderProcessor.processAsPaid(ticket.getSourceId());
     }
 
     private void processCreditAsPaid(Ticket ticket) {
-        defineOccurrence(ticket, PAID);
+        defineAsPaid(ticket);
         creditService.processAsPaid(ticket.getSourceId());
     }
 
     private void processHirerBillingAsPaid(Ticket ticket){
-        defineOccurrence(ticket, PAID);
+        defineAsPaid(ticket);
         negotiationBillingService.processAsPaid(ticket.getSourceId());
         NegotiationBilling billing = negotiationBillingService.findById(ticket.getSourceId());
         if(billing.getBillingWithCredits()) {
@@ -247,9 +248,9 @@ public class TicketService {
         }
     }
 
-    private void defineOccurrence(Ticket ticket, String occurrenceCode) {
+    private void defineAsPaid(Ticket ticket) {
         ticket.setProcessedAt(new Date());
-        ticket.setOccurrenceCode(occurrenceCode);
+        ticket.setOccurrenceCode(PAID);
         repository.save(ticket);
     }
 
