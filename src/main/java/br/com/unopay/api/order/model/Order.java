@@ -353,4 +353,11 @@ public class Order implements Updatable, Billable, Serializable {
     public BigDecimal paymentValue() {
         return value.add(fee);
     }
+
+    public Integer candidatesSize(){
+        if(this.candidates != null){
+            return this.candidates.size();
+        }
+        return 0;
+    }
 }
