@@ -69,7 +69,7 @@ public class NegotiationBilling implements Billable, Serializable {
     private HirerNegotiation hirerNegotiation;
 
     @Column(name = "installment_number")
-    @JsonView({Views.NegotiationBilling.Detail.class})
+    @JsonView({Views.NegotiationBilling.List.class})
     private Integer installmentNumber;
 
     @Column(name = "\"number\"")
@@ -97,11 +97,11 @@ public class NegotiationBilling implements Billable, Serializable {
     private Integer freeInstallmentQuantity;
 
     @Column(name = "default_credit_value")
-    @JsonView({Views.NegotiationBilling.List.class})
+    @JsonView({Views.NegotiationBilling.Detail.class})
     private BigDecimal defaultCreditValue;
 
     @Column(name = "default_member_credit_value")
-    @JsonView({Views.NegotiationBilling.List.class})
+    @JsonView({Views.NegotiationBilling.Detail.class})
     private BigDecimal defaultMemberCreditValue;
 
     @Column(name = "billing_with_credits")
