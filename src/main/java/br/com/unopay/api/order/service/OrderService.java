@@ -173,7 +173,7 @@ public class OrderService {
                 order.setValue(order.getProductMembershipFee());
                 return;
             }
-            order.setValue(order.getProductInstallmentTotal(order.getCandidates().size()));
+            order.setValue(order.getProductInstallmentTotal(order.candidatesSize()));
         }
     }
 

@@ -266,10 +266,12 @@ public class Order implements Updatable, Billable, Serializable {
     public void validateMe() {
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
-            candidates.forEach(candidate -> {
-                candidate.validateMe();
-                candidate.setMeUp();
-            });
+            if(candidates!= null) {
+                candidates.forEach(candidate -> {
+                    candidate.validateMe();
+                    candidate.setMeUp();
+                });
+            }
         }
     }
 
@@ -352,5 +354,12 @@ public class Order implements Updatable, Billable, Serializable {
 
     public BigDecimal paymentValue() {
         return value.add(fee);
+    }
+
+    public Integer candidatesSize(){
+        if(this.candidates != null){
+            return this.candidates.size();
+        }
+        return 0;
     }
 }

@@ -387,6 +387,25 @@ class OrderServiceTest extends SpockApplicationTests{
         result.value != null
     }
 
+    def 'given a unknown contractor and unknown person on ADHESION order should be created'(){
+        given:
+        Person person =  Fixture.from(Person.class).gimme("physical")
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", null)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.value != null
+    }
+
     def 'given a unknown contractor and ADHESION order without value should be created'(){
         given:
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")

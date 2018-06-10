@@ -40,16 +40,16 @@ public class ContractInstallment implements Serializable, Updatable {
 
     public ContractInstallment(){}
 
-    public ContractInstallment(Contract contract, Date currentDate) {
+    public ContractInstallment(final Contract contract, final Date currentDate) {
         this.value = contract.annuityTotal()
                 .divide(new BigDecimal(contract.getPaymentInstallments()), 2, Rounder.ROUND_STRATEGY);
         this.currentDate = currentDate;
         this.installmentNumber = ONE_INSTALLMENT;
         this.contract = contract;
-        defineExpiration(contract);
+        defineExpiration(contract, currentDate);
     }
 
-    public ContractInstallment(Contract contract, HirerNegotiation negotiation, Date currentDate) {
+    public ContractInstallment(final Contract contract,final HirerNegotiation negotiation,final Date currentDate) {
         this.currentDate = currentDate;
         defineValue(negotiation);
         this.installmentNumber = ONE_INSTALLMENT;
@@ -103,7 +103,7 @@ public class ContractInstallment implements Serializable, Updatable {
     @JsonIgnore
     private Date currentDate = new Date();
 
-    public void plusOneMonthInExpiration(Date previousMonth) {
+    public void plusOneMonthInExpiration(final Date previousMonth) {
         if(new DateTime(currentDate).getDayOfMonth() >= END_OF_FEBRUARY) {
             this.expiration = Time.createDateTime(previousMonth)
                     .plusMonths(installmentNumber).dayOfMonth().withMaximumValue().toDate();
@@ -116,7 +116,7 @@ public class ContractInstallment implements Serializable, Updatable {
         this.installmentNumber = previousNumber + ONE_INSTALLMENT;
     }
 
-    private void defineExpiration(Contract contract) {
+    private void defineExpiration(final Contract contract, final Date currentDate) {
         if(contract.withMembershipFee()) {
             plusOneMonthInExpiration(currentDate);
             return;
