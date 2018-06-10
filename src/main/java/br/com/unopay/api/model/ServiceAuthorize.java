@@ -267,6 +267,27 @@ public class ServiceAuthorize implements Serializable {
         return null;
     }
 
+    public Product contractProduct() {
+        if (getContract() != null) {
+            return getContract().returnProduct();
+        }
+        return null;
+    }
+
+    public Person establishmentPerson() {
+        if (getEstablishment() != null) {
+            return getEstablishment().returnPerson();
+        }
+        return null;
+    }
+
+    public Contractor returnContractor() {
+        if (getContractor() != null) {
+            return getContractor();
+        }
+        return null;
+    }
+
     public void addEventValueToTotal(BigDecimal value){
         this.total = this.total.add(value);
     }

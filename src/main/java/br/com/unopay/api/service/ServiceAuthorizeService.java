@@ -9,6 +9,7 @@ import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
+import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -53,6 +54,7 @@ public class ServiceAuthorizeService {
     private HirerNegotiationService hirerNegotiationService;
     private NumberGenerator numberGenerator;
     private AuthorizedMemberService authorizedMemberService;
+    private ContractorBonusService contractorBonusService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -63,7 +65,8 @@ public class ServiceAuthorizeService {
                                    EstablishmentEventService establishmentEventService,
                                    InstrumentBalanceService instrumentBalanceService,
                                    HirerNegotiationService hirerNegotiationService,
-                                   AuthorizedMemberService authorizedMemberService) {
+                                   AuthorizedMemberService authorizedMemberService,
+                                   ContractorBonusService contractorBonusService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -74,6 +77,7 @@ public class ServiceAuthorizeService {
         this.numberGenerator = new NumberGenerator(repository);
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
+        this.contractorBonusService = contractorBonusService;
     }
 
     @Transactional
@@ -89,6 +93,7 @@ public class ServiceAuthorizeService {
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
+        contractorBonusService.createForServiceAuthorize(authorize);
         return repository.save(authorize);
     }
 

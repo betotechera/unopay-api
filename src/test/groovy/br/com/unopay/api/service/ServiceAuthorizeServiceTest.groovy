@@ -12,6 +12,8 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.service.InstrumentBalanceService
 import br.com.unopay.api.market.model.AuthorizedMember
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.service.ContractorBonusService
 
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
@@ -62,6 +64,9 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
     @Autowired
     PasswordEncoder passwordEncoder
+
+    @Autowired
+    ContractorBonusService contractorBonusService
 
     Contractor contractorUnderTest
     Contract contractUnderTest
@@ -1066,6 +1071,24 @@ permission to authorize service without contractor password  in exceptional circ
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'create Service Authorize should create Contractor Bonus based on its data'() {
+
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize();
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+        List<ContractorBonus> list = contractorBonusService
+                .getBonusesToProcessForPayer(serviceAuthorize.establishment.documentNumber())
+
+        then:
+        list.first().contractor == serviceAuthorize.contractor
+        list.first().product == serviceAuthorize.contract.product
+        list.first().payer == serviceAuthorize.establishment.person
+        list.first().sourceIdentification == serviceAuthorize.authorizationNumber
+        list.first().sourceValue == serviceAuthorize.paid
     }
 
     private ServiceAuthorize createServiceAuthorize(HirerNegotiation hirerNegotiation = null) {
