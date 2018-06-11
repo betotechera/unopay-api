@@ -8,7 +8,9 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
+import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
+import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -53,6 +55,7 @@ public class ServiceAuthorizeService {
     private HirerNegotiationService hirerNegotiationService;
     private NumberGenerator numberGenerator;
     private AuthorizedMemberService authorizedMemberService;
+    private ContractorBonusService contractorBonusService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -63,7 +66,8 @@ public class ServiceAuthorizeService {
                                    EstablishmentEventService establishmentEventService,
                                    InstrumentBalanceService instrumentBalanceService,
                                    HirerNegotiationService hirerNegotiationService,
-                                   AuthorizedMemberService authorizedMemberService) {
+                                   AuthorizedMemberService authorizedMemberService,
+                                   ContractorBonusService contractorBonusService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -74,6 +78,7 @@ public class ServiceAuthorizeService {
         this.numberGenerator = new NumberGenerator(repository);
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
+        this.contractorBonusService = contractorBonusService;
     }
 
     @Transactional
@@ -89,6 +94,7 @@ public class ServiceAuthorizeService {
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
+        createBonusIfProductBonus(authorize);
         return repository.save(authorize);
     }
 
@@ -207,6 +213,12 @@ public class ServiceAuthorizeService {
     private boolean hasEqualsBirthDate(ServiceAuthorize serviceAuthorize, Contract contract) {
         return DateTimeComparator.getDateOnlyInstance()
                 .compare(serviceAuthorize.getContractor().getBirthDate(), contract.getContractor().getBirthDate()) == 0;
+    }
+
+    private void createBonusIfProductBonus(ServiceAuthorize authorize) {
+        if (authorize.productHasBonus()) {
+            contractorBonusService.createForServiceAuthorize(authorize);
+        }
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {

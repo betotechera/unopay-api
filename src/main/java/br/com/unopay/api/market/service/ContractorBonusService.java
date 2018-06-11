@@ -8,6 +8,7 @@ import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.repository.ContractorBonusRepository;
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.service.ProductService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -122,6 +123,11 @@ public class ContractorBonusService {
     }
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
         contractorBonus.setPayer(establishment.getPerson());
+        return create(contractorBonus);
+    }
+
+    public ContractorBonus createForServiceAuthorize(ServiceAuthorize serviceAuthorize) {
+        ContractorBonus contractorBonus = new ContractorBonus(serviceAuthorize);
         return create(contractorBonus);
     }
 

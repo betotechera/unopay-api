@@ -237,4 +237,11 @@ public class Establishment implements Serializable, Updatable {
         return null;
     }
 
+    public Person returnPerson() {
+        if (getPerson() != null) {
+            return getPerson();
+        }
+        return null;
+    }
+
 }

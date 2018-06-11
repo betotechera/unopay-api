@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -42,8 +43,6 @@ public class ContractorBonus implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
     public static final String EMPTY = "";
-
-    public ContractorBonus(){}
 
     @Id
     @Column(name="id")
@@ -99,6 +98,16 @@ public class ContractorBonus implements Serializable, Updatable {
     @JsonIgnore
     @Version
     private Integer version;
+
+    public ContractorBonus(){}
+
+    public ContractorBonus(ServiceAuthorize serviceAuthorize) {
+        product = serviceAuthorize.contractProduct();
+        payer = serviceAuthorize.establishmentPerson();
+        contractor = serviceAuthorize.returnContractor();
+        sourceIdentification = serviceAuthorize.getAuthorizationNumber();
+        sourceValue = serviceAuthorize.getPaid();
+    }
 
     public void setupMyCreate() {
         setCreatedDateTime(new Date());

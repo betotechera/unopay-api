@@ -43,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.model.Product.ZERO;
 import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_CANNOT_BE_CANCELLED;
 import static br.com.unopay.api.uaa.exception.Errors.AUTHORIZATION_IN_BATCH_PROCESSING;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_REQUIRED;
@@ -265,6 +266,31 @@ public class ServiceAuthorize implements Serializable {
             return getEstablishment().getIssueInvoiceType();
         }
         return null;
+    }
+
+    public Product contractProduct() {
+        if (getContract() != null) {
+            return getContract().returnProduct();
+        }
+        return null;
+    }
+
+    public Person establishmentPerson() {
+        if (getEstablishment() != null) {
+            return getEstablishment().returnPerson();
+        }
+        return null;
+    }
+
+    public Contractor returnContractor() {
+        if (getContractor() != null) {
+            return getContractor();
+        }
+        return null;
+    }
+
+    public boolean productHasBonus() {
+        return contractProduct() != null && contractProduct().returnBonusPercentage() > ZERO;
     }
 
     public void addEventValueToTotal(BigDecimal value){
