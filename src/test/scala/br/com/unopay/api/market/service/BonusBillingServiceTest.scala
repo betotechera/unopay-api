@@ -150,6 +150,25 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         found.getSituation == BonusSituation.TICKET_ISSUED
     }
 
+    "when processing Bonus" should "add it to bonusBilling" in {
+        val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
+        val contractorId = bonus.contractorId()
+        val payer = bonus.getPayer
+        fixtureCreator.createPersistedContractorBonusForContractor(bonus.getContractor)
+        val filter = new BonusBillingFilter
+        filter.setDocument(payer.documentNumber())
+
+        service.process(payer)
+
+        val found = service.findByFilter(filter, new UnovationPageRequest)
+
+        found.getSize == 1
+        val bonusBilling = found.getContent.get(0)
+        bonusBilling.contractorBonuses.size() == 1
+        bonusBilling.contractorBonuses.iterator().next().contractorId() == contractorId
+    }
+
+
     "given person with Bonus to process" should "create BonusBilling that belongs to it" in {
         val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
         val payer = bonus.getPayer

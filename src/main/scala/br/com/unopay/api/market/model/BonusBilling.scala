@@ -14,7 +14,6 @@ import javax.persistence._
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import java.io.Serializable
-import java.lang._
 import java.util.Date
 import java.math.BigDecimal
 
@@ -80,7 +79,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
     var status: PaymentStatus = _
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @BeanProperty
     @JoinTable(name = "contractor_bonus_billing",
         joinColumns = Array(new JoinColumn(name = "bonus_billing_id")),
@@ -163,6 +162,10 @@ class BonusBilling extends Serializable with Updatable with Billable {
             payer.getLegalPersonDetail.getResponsibleEmail
         else
             payer.getPhysicalPersonDetail.getEmail
+    }
+
+    def getOneContractorBonus() :ContractorBonus = {
+        return this.contractorBonuses.iterator().next();
     }
 
     override def getPaymentSource: TicketPaymentSource = TicketPaymentSource.CONTRACTOR_BONUS

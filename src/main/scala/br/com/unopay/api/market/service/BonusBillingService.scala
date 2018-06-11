@@ -2,14 +2,15 @@ package br.com.unopay.api.market.service
 
 import java.math._
 import java.util.Date
+import javax.transaction.Transactional
 
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.{BonusBilling, BonusSituation, ContractorBonus, NegotiationBilling}
+import br.com.unopay.api.market.model._
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
-import br.com.unopay.api.market.repository.BonusBillingRepository
+import br.com.unopay.api.market.repository.{BonusBillingRepository, ContractorBonusBillingRepository}
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
@@ -31,7 +32,8 @@ class BonusBillingService(repository: BonusBillingRepository,
                           bonusService: ContractorBonusService,
                           var notifier: Notifier,
                           issuerService: IssuerService,
-                          contractorService: ContractorService) {
+                          contractorService: ContractorService,
+                          contractorBonusBillingRepository: ContractorBonusBillingRepository) {
 
     @Value("${unopay.boleto.deadline_in_days}")
     private var deadlineInDays :Int =_
@@ -70,6 +72,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         payers.forEach(payer => process(payer))
     }
 
+    @Transactional
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
 
@@ -81,9 +84,18 @@ class BonusBillingService(repository: BonusBillingRepository,
 
     private def processIssuerBonuses(payer: Person, issuer: Issuer, bonuses: mutable.Buffer[ContractorBonus]) {
         val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
-        val bonusBilling = create(payer, issuer, earnedBonus)
+        var bonusBilling = create(payer, issuer, earnedBonus)
+        bonusBilling = save(bonusBilling)
+        bonuses.foreach(bonus =>createContractorBonusBilling(bonusBilling, bonus))
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
         bonuses.foreach(_=>updateBonusStatus(_))
+    }
+
+    private def createContractorBonusBilling(bonusBilling: BonusBilling, contractorBonus: ContractorBonus): Unit = {
+        val contractorBonusBilling = new ContractorBonusBilling
+        contractorBonusBilling.bonusBilling = bonusBilling
+        contractorBonusBilling.contractorBonus = contractorBonus
+        contractorBonusBillingRepository.save(contractorBonusBilling)
     }
 
     private def create(payer: Person, issuer: Issuer, total: BigDecimal): BonusBilling = {
@@ -121,6 +133,7 @@ class BonusBillingService(repository: BonusBillingRepository,
             Errors.BONUS_BILLING_NOT_FOUND))
     }
 
+    @Transactional
     def findByFilter(filter: BonusBillingFilter, pageable: UnovationPageRequest): Page[BonusBilling] = {
         repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()))
     }
