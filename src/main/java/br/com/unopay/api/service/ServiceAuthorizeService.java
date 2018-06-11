@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
+import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
@@ -93,7 +94,7 @@ public class ServiceAuthorizeService {
         authorize.setMeUp(paymentInstrument);
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
-        contractorBonusService.createForServiceAuthorize(authorize);
+        createBonusIfProductBonus(authorize);
         return repository.save(authorize);
     }
 
@@ -212,6 +213,12 @@ public class ServiceAuthorizeService {
     private boolean hasEqualsBirthDate(ServiceAuthorize serviceAuthorize, Contract contract) {
         return DateTimeComparator.getDateOnlyInstance()
                 .compare(serviceAuthorize.getContractor().getBirthDate(), contract.getContractor().getBirthDate()) == 0;
+    }
+
+    private void createBonusIfProductBonus(ServiceAuthorize authorize) {
+        if (authorize.productHasBonus()) {
+            contractorBonusService.createForServiceAuthorize(authorize);
+        }
     }
 
     private void defineEstablishment(ServiceAuthorize serviceAuthorize, UserDetail currentUser) {

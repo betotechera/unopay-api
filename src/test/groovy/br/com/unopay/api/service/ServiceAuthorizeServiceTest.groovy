@@ -56,6 +56,9 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     PaymentInstrumentService paymentInstrumentService
 
     @Autowired
+    ProductService productService
+
+    @Autowired
     UnopayEncryptor encryptor
 
 
@@ -1076,7 +1079,9 @@ permission to authorize service without contractor password  in exceptional circ
     void 'create Service Authorize should create Contractor Bonus based on its data'() {
 
         given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize();
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.contract.product.setBonusPercentage((0.3).toDouble())
+        productService.save(serviceAuthorize.contract.product)
 
         when:
         service.create(userUnderTest, serviceAuthorize)
@@ -1089,6 +1094,21 @@ permission to authorize service without contractor password  in exceptional circ
         list.first().payer == serviceAuthorize.establishment.person
         list.first().sourceIdentification == serviceAuthorize.authorizationNumber
         list.first().sourceValue == serviceAuthorize.paid
+    }
+
+    void 'create Service Authorize with Product without bonusPercentage should not create Contractor Bonus'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.contract.product.setBonusPercentage((0.0).toDouble())
+        productService.save(serviceAuthorize.contract.product)
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+        List<ContractorBonus> list = contractorBonusService
+                .getBonusesToProcessForPayer(serviceAuthorize.establishment.documentNumber())
+
+        then:
+        list.empty
     }
 
     private ServiceAuthorize createServiceAuthorize(HirerNegotiation hirerNegotiation = null) {
