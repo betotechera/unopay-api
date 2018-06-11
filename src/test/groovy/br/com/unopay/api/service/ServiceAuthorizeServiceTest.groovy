@@ -1076,6 +1076,21 @@ permission to authorize service without contractor password  in exceptional circ
         assert ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
+    void 'create Service Authorize with Product with bonus percentage should create Contractor Bonus'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.contract.product.setBonusPercentage((0.3).toDouble())
+        productService.save(serviceAuthorize.contract.product)
+
+        when:
+        service.create(userUnderTest, serviceAuthorize)
+        List<ContractorBonus> list = contractorBonusService
+                .getBonusesToProcessForPayer(serviceAuthorize.establishment.documentNumber())
+
+        then:
+        !list.empty
+    }
+
     void 'create Service Authorize should create Contractor Bonus based on its data'() {
 
         given:
