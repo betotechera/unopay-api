@@ -123,4 +123,8 @@ public class Ticket {
     public boolean fromBillingHirer() {
         return TicketPaymentSource.HIRER_INSTALLMENT.equals(paymentSource);
     }
+
+    public boolean fromBonusBilling() {
+        return TicketPaymentSource.CONTRACTOR_BONUS.equals(paymentSource);
+    }
 }
