@@ -6,6 +6,7 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -236,6 +237,19 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val id = fixtureCreator.createPersistedBonusBilling().getId
         val found = service.findById(id)
         found
+    }
+
+    "given known BonusBilling" should "process as paid" in {
+        val bonusBilling = fixtureCreator.createBonusBillingToPersist()
+        bonusBilling.processedAt = null
+        bonusBilling.status = PaymentStatus.WAITING_PAYMENT
+        val id = service.create(bonusBilling).id
+
+        service.processAsPaid(id)
+        val found = service.findById(id)
+
+        found.processedAt
+        found.status == PaymentStatus.PAID
     }
 
     it should "find issuer's BonusBilling" in {

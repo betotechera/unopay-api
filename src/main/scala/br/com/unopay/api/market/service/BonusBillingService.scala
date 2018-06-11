@@ -1,15 +1,17 @@
 package br.com.unopay.api.market.service
 
 import java.math._
+import java.util.Date
 
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.{BonusBilling, BonusSituation, ContractorBonus}
+import br.com.unopay.api.market.model.{BonusBilling, BonusSituation, ContractorBonus, NegotiationBilling}
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
 import br.com.unopay.api.model.Person
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
@@ -98,6 +100,13 @@ class BonusBillingService(repository: BonusBillingRepository,
     private def validateReferences(bonusBilling: BonusBilling) {
         bonusBilling.setPayer(personService.findById(bonusBilling.personId()))
         bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
+    }
+
+    def processAsPaid(billingId: String): Unit = {
+        val current = repository.findOne(billingId)
+        current.processedAt = new Date()
+        current.setStatus(PaymentStatus.PAID)
+        save(current)
     }
 
     def findByIdForIssuer(id: String, issuer: Issuer): BonusBilling = {
