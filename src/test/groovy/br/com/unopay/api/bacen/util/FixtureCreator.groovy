@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.util
 
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.model.PaymentInstrumentType
 
 import static br.com.six2six.fixturefactory.Fixture.*
 import br.com.six2six.fixturefactory.Fixture
@@ -146,6 +147,16 @@ class FixtureCreator {
             {
                 add("contractor", createContractor())
                 add("product", createProduct())
+            }
+        })
+    }
+    PaymentInstrument createPersistedInstrument(contractor = createContractor(), product = createProduct(), type) {
+
+        from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("contractor", contractor)
+                add("product", product)
+                add("type", type)
             }
         })
     }
