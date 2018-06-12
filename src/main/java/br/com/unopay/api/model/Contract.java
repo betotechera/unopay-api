@@ -230,10 +230,10 @@ public class Contract implements Serializable {
     }
 
     public boolean inProgress(){
-        if(begin != null && begin.after(Time.create())) {
+        if(begin != null && begin.after(new Date())) {
             return false;
         }
-        if(end != null && end.before(Time.create())) {
+        if(end != null && end.before(new Date())) {
             return false;
         }
 
