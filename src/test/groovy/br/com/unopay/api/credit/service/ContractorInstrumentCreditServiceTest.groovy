@@ -227,8 +227,14 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
     def "given valid bonus billing when processing it should create instrument credit"(){
         given:
         def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
-        fixtureCreator.createPersistedContract(contractorBonus.contractor, contractorBonus.product)
-        fixtureCreator.createPersistedInstrument(contractorBonus.contractor, contractorBonus.product, PaymentInstrumentType.DIGITAL_WALLET)
+        def product = contractorBonus.getProduct()
+        def contractor1 = contractorBonus.getContractor()
+        fixtureCreator.createPersistedContract(contractor1, product)
+        fixtureCreator.createPersistedInstrument(contractor1, product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def contractor2 = fixtureCreator.createPersistedContractorBonusForContractor(fixtureCreator.createContractor(), contractorBonus.getPayer(), product).getContractor()
+        fixtureCreator.createPersistedContract(contractor2, product)
+        fixtureCreator.createPersistedInstrument(contractor2, product, PaymentInstrumentType.DIGITAL_WALLET)
 
         def filter = new BonusBillingFilter()
         filter.document = contractorBonus.payer.documentNumber()
@@ -236,11 +242,14 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
 
         when:
-        def result = service.processBonusBilling(billing)
-        def found = service.findById(result.id)
+        service.processBonusBilling(billing)
+
+        def found1 = service.findByContractorId(contractor1.id)
+        def found2 = service.findByContractorId(contractor2.id)
 
         then:
-        found
+        found1
+        found2
     }
 
     def "given bonus billing without bonus associated to id when processing it should return error"(){

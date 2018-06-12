@@ -2,6 +2,7 @@ package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
 import br.com.unopay.api.credit.model.InstrumentCreditSource;
@@ -9,11 +10,15 @@ import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
 import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.model.ContractorBonusBilling;
+import br.com.unopay.api.market.repository.ContractorBonusBillingRepository;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.Time;
@@ -22,6 +27,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +52,7 @@ public class ContractorInstrumentCreditService {
     private CreditPaymentAccountService creditPaymentAccountService;
     private UserDetailService userDetailService;
     private InstrumentBalanceService instrumentBalanceService;
+    private BonusBillingService bonusBillingService;
 
     @Autowired
     public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository,
@@ -53,13 +60,15 @@ public class ContractorInstrumentCreditService {
                                              PaymentInstrumentService paymentInstrumentService,
                                              CreditPaymentAccountService creditPaymentAccountService,
                                              UserDetailService userDetailService,
-                                             InstrumentBalanceService instrumentBalanceService) {
+                                             InstrumentBalanceService instrumentBalanceService,
+                                             BonusBillingService bonusBillingService) {
         this.repository = repository;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.userDetailService = userDetailService;
         this.instrumentBalanceService = instrumentBalanceService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     public ContractorInstrumentCredit findById(String id) {
@@ -84,15 +93,20 @@ public class ContractorInstrumentCreditService {
         return insert(paymentInstrument.getId(), credit);
     }
 
-    public ContractorInstrumentCredit processBonusBilling(BonusBilling bonusBilling) {
-        ContractorBonus contractorBonus = bonusBilling.getOneContractorBonus();
-        Contract contract = getContract(contractorBonus.contractorDocument(), contractorBonus.productId());
-        PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorBonus.contractorDocument());
-        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, bonusBilling);
-        ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract,
-                                                                            paymentInstrument, creditPaymentAccount);
-        credit.setValue(bonusBilling.getValue());
-        return insert(paymentInstrument.getId(), credit);
+    public void processBonusBilling(BonusBilling bonusBilling) {
+        Set<ContractorBonus> contractorBonuses = bonusBillingService.getContractorBonusesByBonusBillingId(bonusBilling.getId());
+
+        for(ContractorBonus contractorBonus : contractorBonuses) {
+            String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
+            String productId = contractorBonus.productId();
+            Contract contract = getContract(contractorDocument, productId);
+            PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
+            CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, contractorBonus, bonusBilling.getIssuer());
+            ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract, paymentInstrument, creditPaymentAccount);
+
+            credit.setValue(bonusBilling.getValue());
+            insert(paymentInstrument.getId(), credit);
+        }
     }
 
     private PaymentInstrument findContractorDigitalWallet(String contractorDocumentNumber) {
@@ -102,13 +116,13 @@ public class ContractorInstrumentCreditService {
                                 .withErrors(PAYMENT_INSTRUMENT_NOT_FOUND.withOnlyArgument("Digital Wallet")));
     }
 
-    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, BonusBilling billing) {
+    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, ContractorBonus contractorBonus, Issuer issuer) {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(contract.hirerDocumentNumber());
         Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
                 contract.isProductCodeEquals(account.getProductCode()))
                 .findFirst();
-        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(contract.hirerDocumentNumber(), billing)));
+        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer)));
 
     }
 

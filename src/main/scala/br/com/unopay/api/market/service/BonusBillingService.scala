@@ -2,6 +2,7 @@ package br.com.unopay.api.market.service
 
 import java.math._
 import java.util.Date
+import java.util.stream.{Collector, Collectors}
 import javax.transaction.Transactional
 
 import br.com.unopay.api.bacen.model.Issuer
@@ -11,7 +12,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model._
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
-import br.com.unopay.api.market.repositoryrepository.findOne.ContractorBonusBillingRepository
+import br.com.unopay.api.market.repository.ContractorBonusBillingRepository
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
@@ -45,6 +46,12 @@ class BonusBillingService(repository: BonusBillingRepository,
         defineNumber(bonusBilling)
         defineExpirationDate(bonusBilling)
         save(bonusBilling)
+    }
+
+    def getContractorBonusesByBonusBillingId(id: String): java.util.Set[ContractorBonus] = {
+        val contractorBonuses = contractorBonusBillingRepository.findByBonusBillingId(id).stream().map[ContractorBonus](_.contractorBonus).collect(Collectors.toSet[ContractorBonus])
+        if(contractorBonuses.isEmpty) throw UnovationExceptions.notFound.withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
+        return contractorBonuses
     }
 
     private def defineNumber(bonusBilling: BonusBilling) {
@@ -87,7 +94,9 @@ class BonusBillingService(repository: BonusBillingRepository,
         val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
         var bonusBilling = create(payer, issuer, earnedBonus)
         bonusBilling = save(bonusBilling)
-        bonuses.foreach(bonus => createContractorBonusBilling(bonusBilling, bonus))
+        for(bonus <- bonuses) {
+            createContractorBonusBilling(bonusBilling, bonus)
+        }
         bonuses.foreach(updateBonusStatus)
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
     }

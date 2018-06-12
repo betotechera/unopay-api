@@ -6,7 +6,7 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
-import br.com.unopay.api.market.repositoryrepository.findOne.ContractorBonusBillingRepository
+import br.com.unopay.api.market.repository.ContractorBonusBillingRepository
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}

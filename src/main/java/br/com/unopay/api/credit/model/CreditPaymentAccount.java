@@ -79,20 +79,17 @@ public class CreditPaymentAccount implements Serializable, Updatable {
         }
     }
 
-    public CreditPaymentAccount(String hirerDocument, BonusBilling billing){
-        if(billing != null) {
-            ContractorBonus contractorBonus = billing.getOneContractorBonus();
-            this.transactionCreatedDateTime = new Date();
-            this.issuer = billing.getIssuer();
-            this.product = contractorBonus.getProduct();
-            this.paymentRuleGroup = contractorBonus.getProduct().getPaymentRuleGroup();
-            this.hirerDocument = hirerDocument;
-            this.creditInsertionType = CreditInsertionType.BOLETO;
-            this.value = billing.getValue();
-            this.situation = CreditSituation.AVAILABLE;
-            this.creditSource = InstrumentCreditSource.HIRER.name();
-            this.availableBalance = billing.getValue();
-        }
+    public CreditPaymentAccount(String hirerDocument, ContractorBonus contractorBonus ,Issuer issuer){
+        this.transactionCreatedDateTime = new Date();
+        this.issuer = issuer;
+        this.product = contractorBonus.getProduct();
+        this.paymentRuleGroup = contractorBonus.getProduct().getPaymentRuleGroup();
+        this.hirerDocument = hirerDocument;
+        this.creditInsertionType = CreditInsertionType.BOLETO;
+        this.value = contractorBonus.getEarnedBonus();
+        this.situation = CreditSituation.AVAILABLE;
+        this.creditSource = InstrumentCreditSource.HIRER.name();
+        this.availableBalance = contractorBonus.getEarnedBonus();
     }
 
     @Id
