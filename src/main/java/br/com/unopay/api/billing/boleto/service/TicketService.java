@@ -134,17 +134,13 @@ public class TicketService {
     @Transactional
     public Ticket createForNegotiationBilling(NegotiationBilling billing) {
         NegotiationBilling current = negotiationBillingService.findById(billing.getId());
-        Ticket ticket = create(current);
-        notificationService.sendTicketIssued(current, ticket);
-        return ticket;
+        return create(current);
     }
 
     @Transactional
     public Ticket createForBonusBilling(BonusBilling billing) {
         BonusBilling current = bonusBillingService.findById(billing.getId());
-        Ticket ticket = create(current);
-        notificationService.sendTicketIssued(current, ticket);
-        return ticket;
+        return create(current);
     }
 
     private Ticket create(Billable order) {
