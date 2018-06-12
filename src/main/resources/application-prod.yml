@@ -9,7 +9,7 @@ payment:
     config:
       shopId: 39572022
       shopKey: 6005944078480348
-      mode: PROD
+      mode: PRODUCTION
       endpointHost: secure.payzen.com.br
   soap:
     santander:
