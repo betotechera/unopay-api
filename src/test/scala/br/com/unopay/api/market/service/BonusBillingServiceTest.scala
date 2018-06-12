@@ -6,6 +6,7 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.market.repositoryrepository.findOne.ContractorBonusBillingRepository
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.{ScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
@@ -24,6 +25,9 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
     var contractorBonusService: ContractorBonusService =_
     @Autowired
     var fixtureCreator: util.FixtureCreatorScala = _
+    @Autowired
+    var contractorBonusBillingRepository: ContractorBonusBillingRepository = _
+
     var mockNotifier : Notifier = _
 
     @Value("${unopay.boleto.deadline_in_days}")
@@ -152,20 +156,16 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
     "when processing Bonus" should "add it to bonusBilling" in {
         val bonus = fixtureCreator.createPersistedContractorBonusForContractor()
-        val contractorId = bonus.contractorId()
         val payer = bonus.getPayer
         fixtureCreator.createPersistedContractorBonusForContractor(bonus.getContractor)
-        val filter = new BonusBillingFilter
-        filter.setDocument(payer.documentNumber())
 
         service.process(payer)
 
-        val found = service.findByFilter(filter, new UnovationPageRequest)
+        val found = contractorBonusBillingRepository.findByContractorBonusId(bonus.getId)
 
-        found.getContent should not be empty
-        val bonusBilling = found.getContent.asScala.head
-        bonusBilling.contractorBonuses should have size 1
-        bonusBilling.contractorBonuses.asScala.head.contractorId shouldEqual contractorId
+        found should not be empty
+        found should have size 1
+        found.asScala.head.bonusBilling.payer.documentNumber shouldEqual payer.documentNumber
     }
 
 

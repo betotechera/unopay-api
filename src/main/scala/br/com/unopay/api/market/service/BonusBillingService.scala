@@ -37,7 +37,7 @@ class BonusBillingService(repository: BonusBillingRepository,
                           contractorBonusBillingRepository: ContractorBonusBillingRepository) {
 
     @Value("${unopay.boleto.deadline_in_days}")
-    private var deadlineInDays :Int =_
+    private var deadlineInDays : Int =_
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
         bonusBilling.validateMe()
@@ -52,7 +52,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         bonusBilling.defineNumber(lastNumber)
     }
 
-    private def defineExpirationDate(bonusBilling: BonusBilling): Unit = {
+    private def defineExpirationDate(bonusBilling: BonusBilling) = {
         val date = new DateTime().plusDays(deadlineInDays).toDate
         bonusBilling.setExpiration(date)
     }
@@ -61,7 +61,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         repository.save(bonusBilling)
     }
 
-    def processForIssuer(id: String): Unit = {
+    def processForIssuer(id: String) = {
         issuerService.findById(id)
         def payers = bonusService.getPayersWithBonusToProcessForIssuer(id)
         payers.forEach(process(_))
@@ -87,12 +87,12 @@ class BonusBillingService(repository: BonusBillingRepository,
         val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
         var bonusBilling = create(payer, issuer, earnedBonus)
         bonusBilling = save(bonusBilling)
-        bonuses.foreach(bonus =>createContractorBonusBilling(bonusBilling, bonus))
+        bonuses.foreach(bonus => createContractorBonusBilling(bonusBilling, bonus))
+        bonuses.foreach(updateBonusStatus)
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
-        bonuses.foreach(bonus => updateBonusStatus(bonus))
     }
 
-    private def createContractorBonusBilling(bonusBilling: BonusBilling, contractorBonus: ContractorBonus): Unit = {
+    private def createContractorBonusBilling(bonusBilling: BonusBilling, contractorBonus: ContractorBonus) = {
         val contractorBonusBilling = new ContractorBonusBilling
         contractorBonusBilling.bonusBilling = bonusBilling
         contractorBonusBilling.contractorBonus = contractorBonus
