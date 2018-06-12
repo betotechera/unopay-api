@@ -79,7 +79,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
     var status: PaymentStatus = _
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @BeanProperty
     @JoinTable(name = "contractor_bonus_billing",
         joinColumns = Array(new JoinColumn(name = "bonus_billing_id")),
