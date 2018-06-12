@@ -75,7 +75,7 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit processOrder(Order order) {
-        Contract contract = getContract(order);
+        Contract contract = getContract(order.getDocumentNumber(), order.getProductId());
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
         ContractorInstrumentCredit credit = createInstrumentCreditFromClient(contract,
@@ -268,12 +268,6 @@ public class ContractorInstrumentCreditService {
         instrumentCredit.setContract(contract);
         instrumentCredit.setExpirationDateTime(Time.createDateTime().plusYears(5).toDate());
         return  instrumentCredit;
-    }
-
-    private Contract getContract(Order order) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(order.getDocumentNumber(),
-                                                                                 order.getProductId());
-        return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
     private Contract getContract(String contractorDocument, String productId) {
