@@ -89,7 +89,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         bonusBilling = save(bonusBilling)
         bonuses.foreach(bonus =>createContractorBonusBilling(bonusBilling, bonus))
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
-        bonuses.foreach(_=>updateBonusStatus(_))
+        bonuses.foreach(bonus => updateBonusStatus(bonus))
     }
 
     private def createContractorBonusBilling(bonusBilling: BonusBilling, contractorBonus: ContractorBonus): Unit = {
