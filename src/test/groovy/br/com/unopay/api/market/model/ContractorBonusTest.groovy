@@ -3,6 +3,7 @@ package br.com.unopay.api.market.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import spock.lang.Unroll
@@ -104,5 +105,21 @@ class ContractorBonusTest extends FixtureApplicationTest {
         then:
         contractorBonus.earnedBonus == Rounder.round(contractorBonus.product.returnBonusPercentage()
                 .multiply(contractorBonus.sourceValue))
+    }
+
+    def 'Contractor Bonus constructor for Service Authorize should use their data'() {
+
+        given:
+        ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize).gimme("valid")
+
+        when:
+        ContractorBonus contractorBonus = new ContractorBonus(serviceAuthorize)
+
+        then:
+        contractorBonus.product == serviceAuthorize.contract.product
+        contractorBonus.contractor == serviceAuthorize.contractor
+        contractorBonus.payer == serviceAuthorize.establishment.person
+        contractorBonus.sourceIdentification == serviceAuthorize.authorizationNumber
+        contractorBonus.sourceValue == serviceAuthorize.paid
     }
 }

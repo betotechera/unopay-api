@@ -289,6 +289,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public Product returnProduct() {
+        if (getProduct() != null) {
+            return getProduct();
+        }
+        return null;
+    }
+
     public boolean isProductCodeEquals(String code){
         if(getProduct() != null){
             return Objects.equals(getProduct().getCode(), code);
