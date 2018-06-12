@@ -206,4 +206,8 @@ public class ContractorBonus implements Serializable, Updatable {
     public String getId() {
         return id;
     }
+
+    public Contractor getContractor() {
+        return contractor;
+    }
 }

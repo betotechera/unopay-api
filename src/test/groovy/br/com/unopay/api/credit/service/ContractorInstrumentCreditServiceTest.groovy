@@ -13,8 +13,13 @@ import br.com.unopay.api.credit.model.ContractorInstrumentCreditType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.credit.model.InstrumentCreditSource
+import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
@@ -26,6 +31,8 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
+
+import static br.com.six2six.fixturefactory.Fixture.from
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -47,6 +54,9 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     @Autowired
     InstrumentBalanceService instrumentBalanceService
+
+    @Autowired
+    BonusBillingService bonusBillingService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -212,6 +222,25 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         result.id != null
         result.type == ContractorInstrumentCreditType.BONUS
+    }
+
+    def "given valid "(){
+        given:
+        def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
+        fixtureCreator.createPersistedContract(contractorBonus.contractor, contractorBonus.product)
+        fixtureCreator.createPersistedInstrument(contractorBonus.contractor, contractorBonus.product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def filter = new BonusBillingFilter()
+        filter.document = contractorBonus.payer.documentNumber()
+        bonusBillingService.process()
+        def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
+
+        when:
+        def result = service.processBonusBilling(billing)
+        def found = service.findById(result.id)
+
+        then:
+        found
     }
 
     def 'given a valid instrument credit when create should be subtract payment account balance'(){

@@ -115,7 +115,7 @@ class BonusBillingService(repository: BonusBillingRepository,
     }
 
     def processAsPaid(billingId: String): Unit = {
-        val current = repository.findOne(billingId)
+        val current = findById(billingId)
         current.processedAt = new Date()
         current.setStatus(PaymentStatus.PAID)
         save(current)
