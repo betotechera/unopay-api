@@ -23,6 +23,7 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -94,18 +95,18 @@ public class ContractorInstrumentCreditService {
 
     public void processBonusBilling(BonusBilling bonusBilling) {
         Set<ContractorBonus> contractorBonuses = bonusBillingService.getContractorBonusesByBonusBillingId(bonusBilling.getId());
+        contractorBonuses.forEach(bonus -> processBonus(bonusBilling.getIssuer(), bonus));
+    }
 
-        for(ContractorBonus contractorBonus : contractorBonuses) {
-            String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
-            String productId = contractorBonus.productId();
-            Contract contract = getContract(contractorDocument, productId);
-            PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
-            CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, contractorBonus, bonusBilling.getIssuer());
-            ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract, paymentInstrument, creditPaymentAccount);
-
-            credit.setValue(bonusBilling.getValue());
-            insert(paymentInstrument.getId(), credit);
-        }
+    private void processBonus(Issuer issuer, ContractorBonus contractorBonus) {
+        String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
+        String productId = contractorBonus.productId();
+        Contract contract = getContract(contractorDocument, productId);
+        PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, contractorBonus, issuer);
+        ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract, paymentInstrument, creditPaymentAccount);
+        credit.setValue(contractorBonus.getEarnedBonus());
+        insert(paymentInstrument.getId(), credit);
     }
 
     private PaymentInstrument findContractorDigitalWallet(String contractorDocumentNumber) {
