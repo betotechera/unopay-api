@@ -86,16 +86,13 @@ public class ContractorInstrumentCreditService {
 
     public ContractorInstrumentCredit processBonusBilling(BonusBilling bonusBilling) {
         ContractorBonus contractorBonus = bonusBilling.getOneContractorBonus();
-        String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
-        String productId = contractorBonus.productId();
-        Contract contract = getContract(contractorDocument, productId);
-        PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
+        Contract contract = getContract(contractorBonus.contractorDocument(), contractorBonus.productId());
+        PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorBonus.contractorDocument());
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, bonusBilling);
-        ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract, paymentInstrument, creditPaymentAccount);
-
+        ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract,
+                                                                            paymentInstrument, creditPaymentAccount);
         credit.setValue(bonusBilling.getValue());
-
-        return  insert(paymentInstrument.getId(), credit);
+        return insert(paymentInstrument.getId(), credit);
     }
 
     private PaymentInstrument findContractorDigitalWallet(String contractorDocumentNumber) {
