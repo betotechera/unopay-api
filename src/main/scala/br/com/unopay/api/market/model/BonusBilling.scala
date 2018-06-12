@@ -21,6 +21,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 @Data
 @Entity
@@ -168,7 +169,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
         if(this.contractorBonuses == null) {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
         }
-        return this.contractorBonuses.iterator().next();
+        return this.contractorBonuses.asScala.head;
     }
 
     override def getPaymentSource: TicketPaymentSource = TicketPaymentSource.CONTRACTOR_BONUS
