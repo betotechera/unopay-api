@@ -438,6 +438,7 @@ class ProductServiceTest extends SpockApplicationTests {
     void 'given product with monthsToExpireBonus and without bonusPercentage should not be created'(){
         given:
         Product product = createProduct()
+        product.bonusPercentage = null
         product.monthsToExpireBonus = 22
 
         when:
@@ -452,6 +453,7 @@ class ProductServiceTest extends SpockApplicationTests {
         given:
         Product product = createProduct()
         product.bonusPercentage = 0.1
+        product.monthsToExpireBonus = null
 
         when:
         service.create(product)
