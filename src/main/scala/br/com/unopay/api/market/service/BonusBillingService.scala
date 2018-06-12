@@ -134,7 +134,6 @@ class BonusBillingService(repository: BonusBillingRepository,
             Errors.BONUS_BILLING_NOT_FOUND))
     }
 
-    @Transactional
     def findByFilter(filter: BonusBillingFilter, pageable: UnovationPageRequest): Page[BonusBilling] = {
         repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()))
     }
