@@ -34,6 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.credit.model.InstrumentCreditSource.*;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
@@ -86,9 +87,9 @@ public class ContractorInstrumentCreditService {
     public ContractorInstrumentCredit processOrder(Order order) {
         Contract contract = getContract(order.getDocumentNumber(), order.getProductId());
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
-        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
-        ContractorInstrumentCredit credit = createInstrumentCreditFromClient(contract,
-                                                                            paymentInstrument, creditPaymentAccount);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, new CreditPaymentAccount(order));
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+        credit.setCreditSource(CLIENT);
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
     }
@@ -100,11 +101,12 @@ public class ContractorInstrumentCreditService {
 
     private void processBonus(Issuer issuer, ContractorBonus contractorBonus) {
         String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
-        String productId = contractorBonus.productId();
-        Contract contract = getContract(contractorDocument, productId);
+        Contract contract = getContract(contractorDocument, contractorBonus.productId());
         PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
-        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, contractorBonus, issuer);
-        ContractorInstrumentCredit credit = createInstrumentCreditFromEstablishment(contract, paymentInstrument, creditPaymentAccount);
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, paymentAccount);
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+        credit.setCreditSource(ESTABLISHMENT);
         credit.setValue(contractorBonus.getEarnedBonus());
         insert(paymentInstrument.getId(), credit);
     }
@@ -116,13 +118,13 @@ public class ContractorInstrumentCreditService {
                                 .withErrors(PAYMENT_INSTRUMENT_NOT_FOUND.withOnlyArgument("Digital Wallet")));
     }
 
-    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, ContractorBonus contractorBonus, Issuer issuer) {
+    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, CreditPaymentAccount newPaymentAccount) {
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(contract.hirerDocumentNumber());
         Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
                 contract.isProductCodeEquals(account.getProductCode()))
                 .findFirst();
-        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer)));
+        return current.orElseGet(()-> creditPaymentAccountService.save(newPaymentAccount));
 
     }
 
@@ -257,20 +259,6 @@ public class ContractorInstrumentCreditService {
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private ContractorInstrumentCredit createInstrumentCreditFromClient(Contract contract, PaymentInstrument paymentInstrument,
-                                                                        CreditPaymentAccount creditPaymentAccount) {
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
-        instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
-        return instrumentCredit;
-    }
-
-    private ContractorInstrumentCredit createInstrumentCreditFromEstablishment(Contract contract, PaymentInstrument paymentInstrument,
-                                                                               CreditPaymentAccount creditPaymentAccount) {
-        ContractorInstrumentCredit instrumentCredit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
-        instrumentCredit.setCreditSource(InstrumentCreditSource.ESTABLISHMENT);
-        return  instrumentCredit;
-    }
-
     private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
                                                               CreditPaymentAccount creditPaymentAccount) {
         ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
@@ -285,15 +273,5 @@ public class ContractorInstrumentCreditService {
         Optional<Contract> existing = contractService.findByContractorAndProduct(contractorDocument,
                 productId);
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
-    }
-
-    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, Order order) {
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                .findByHirerDocument(contract.hirerDocumentNumber());
-        Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
-                contract.isProductCodeEquals(account.getProductCode()))
-                .findFirst();
-        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(order)));
-
     }
 }
