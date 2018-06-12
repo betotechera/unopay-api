@@ -1,15 +1,20 @@
 package br.com.unopay.api.market.service
 
 import java.math._
+import java.util.Date
+import java.util.stream.{Collector, Collectors}
+import javax.transaction.Transactional
 
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.{ContractorService, IssuerService}
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
-import br.com.unopay.api.market.model.{BonusBilling, BonusSituation, ContractorBonus}
+import br.com.unopay.api.market.model._
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.BonusBillingRepository
+import br.com.unopay.api.market.repository.ContractorBonusBillingRepository
 import br.com.unopay.api.model.Person
+import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
@@ -20,7 +25,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
-import scala.collection.{TraversableLike, mutable}
+import scala.collection.mutable
 
 @Service
 @Autowired
@@ -29,10 +34,11 @@ class BonusBillingService(repository: BonusBillingRepository,
                           bonusService: ContractorBonusService,
                           var notifier: Notifier,
                           issuerService: IssuerService,
-                          contractorService: ContractorService) {
+                          contractorService: ContractorService,
+                          contractorBonusBillingRepository: ContractorBonusBillingRepository) {
 
     @Value("${unopay.boleto.deadline_in_days}")
-    private var deadlineInDays :Int =_
+    private var deadlineInDays : Int =_
 
     def create(bonusBilling: BonusBilling): BonusBilling = {
         bonusBilling.validateMe()
@@ -42,12 +48,18 @@ class BonusBillingService(repository: BonusBillingRepository,
         save(bonusBilling)
     }
 
+    def getContractorBonusesByBonusBillingId(id: String): java.util.Set[ContractorBonus] = {
+        val contractorBonuses = contractorBonusBillingRepository.findByBonusBillingId(id).stream().map[ContractorBonus](_.contractorBonus).collect(Collectors.toSet[ContractorBonus])
+        if(contractorBonuses.isEmpty) throw UnovationExceptions.notFound.withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
+        return contractorBonuses
+    }
+
     private def defineNumber(bonusBilling: BonusBilling) {
         val lastNumber = repository.findFirstByOrderByCreatedDateTimeDesc().map[String](_.getNumber).orElse(null)
         bonusBilling.defineNumber(lastNumber)
     }
 
-    private def defineExpirationDate(bonusBilling: BonusBilling): Unit = {
+    private def defineExpirationDate(bonusBilling: BonusBilling) = {
         val date = new DateTime().plusDays(deadlineInDays).toDate
         bonusBilling.setExpiration(date)
     }
@@ -56,7 +68,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         repository.save(bonusBilling)
     }
 
-    def processForIssuer(id: String): Unit = {
+    def processForIssuer(id: String) = {
         issuerService.findById(id)
         def payers = bonusService.getPayersWithBonusToProcessForIssuer(id)
         payers.forEach(process(_))
@@ -68,6 +80,7 @@ class BonusBillingService(repository: BonusBillingRepository,
         payers.forEach(payer => process(payer))
     }
 
+    @Transactional
     def process(payer: Person) {
         val bonuses = bonusService.getBonusesToProcessForPayer(payer.documentNumber).asScala
 
@@ -79,9 +92,20 @@ class BonusBillingService(repository: BonusBillingRepository,
 
     private def processIssuerBonuses(payer: Person, issuer: Issuer, bonuses: mutable.Buffer[ContractorBonus]) {
         val earnedBonus = bonuses.map(_.getEarnedBonus).fold(BigDecimal.ZERO)(_.add(_))
-        val bonusBilling = create(payer, issuer, earnedBonus)
+        var bonusBilling = create(payer, issuer, earnedBonus)
+        bonusBilling = save(bonusBilling)
+        for(bonus <- bonuses) {
+            createContractorBonusBilling(bonusBilling, bonus)
+        }
+        bonuses.foreach(updateBonusStatus)
         notifier.notify(Queues.BONUS_BILLING_CREATED, bonusBilling)
-        bonuses.foreach(_=>updateBonusStatus(_))
+    }
+
+    private def createContractorBonusBilling(bonusBilling: BonusBilling, contractorBonus: ContractorBonus) = {
+        val contractorBonusBilling = new ContractorBonusBilling
+        contractorBonusBilling.bonusBilling = bonusBilling
+        contractorBonusBilling.contractorBonus = contractorBonus
+        contractorBonusBillingRepository.save(contractorBonusBilling)
     }
 
     private def create(payer: Person, issuer: Issuer, total: BigDecimal): BonusBilling = {
@@ -98,6 +122,13 @@ class BonusBillingService(repository: BonusBillingRepository,
     private def validateReferences(bonusBilling: BonusBilling) {
         bonusBilling.setPayer(personService.findById(bonusBilling.personId()))
         bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
+    }
+
+    def processAsPaid(billingId: String): Unit = {
+        val current = findById(billingId)
+        current.processedAt = new Date()
+        current.setStatus(PaymentStatus.PAID)
+        save(current)
     }
 
     def findByIdForIssuer(id: String, issuer: Issuer): BonusBilling = {

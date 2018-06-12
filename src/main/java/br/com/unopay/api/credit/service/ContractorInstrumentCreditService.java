@@ -1,11 +1,14 @@
 package br.com.unopay.api.credit.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
-import br.com.unopay.api.credit.model.InstrumentCreditSource;
 import br.com.unopay.api.credit.model.filter.ContractorInstrumentCreditFilter;
 import br.com.unopay.api.credit.repository.ContractorInstrumentCreditRepository;
+import br.com.unopay.api.market.model.BonusBilling;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.order.model.Order;
@@ -25,12 +28,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.credit.model.InstrumentCreditSource.CLIENT;
+import static br.com.unopay.api.credit.model.InstrumentCreditSource.ESTABLISHMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_WITHOUT_CREDITS;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_HIRER;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.CREDIT_PAYMENT_ACCOUNT_FROM_ANOTHER_SERVICE;
+import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_NOT_VALID;
 
 @Service
@@ -42,6 +48,7 @@ public class ContractorInstrumentCreditService {
     private CreditPaymentAccountService creditPaymentAccountService;
     private UserDetailService userDetailService;
     private InstrumentBalanceService instrumentBalanceService;
+    private BonusBillingService bonusBillingService;
 
     @Autowired
     public ContractorInstrumentCreditService(ContractorInstrumentCreditRepository repository,
@@ -49,13 +56,15 @@ public class ContractorInstrumentCreditService {
                                              PaymentInstrumentService paymentInstrumentService,
                                              CreditPaymentAccountService creditPaymentAccountService,
                                              UserDetailService userDetailService,
-                                             InstrumentBalanceService instrumentBalanceService) {
+                                             InstrumentBalanceService instrumentBalanceService,
+                                             BonusBillingService bonusBillingService) {
         this.repository = repository;
         this.contractService = contractService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.creditPaymentAccountService = creditPaymentAccountService;
         this.userDetailService = userDetailService;
         this.instrumentBalanceService = instrumentBalanceService;
+        this.bonusBillingService = bonusBillingService;
     }
 
     public ContractorInstrumentCredit findById(String id) {
@@ -71,14 +80,49 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit processOrder(Order order) {
-        Contract contract = getContract(order);
+        Contract contract = getContract(order.getDocumentNumber(), order.getProductId());
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
-        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, order);
-        ContractorInstrumentCredit credit = createInstrumentCreditFromClient(contract,
-                                                                            paymentInstrument, creditPaymentAccount);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, new CreditPaymentAccount(order));
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+        credit.setCreditSource(CLIENT);
         credit.setValue(order.getValue());
         return insert(paymentInstrument.getId(), credit);
     }
+
+    public void processBonusBilling(BonusBilling bonusBilling) {
+        Set<ContractorBonus> contractorBonuses = bonusBillingService.getContractorBonusesByBonusBillingId(bonusBilling.getId());
+        contractorBonuses.forEach(bonus -> processBonus(bonusBilling.getIssuer(), bonus));
+    }
+
+    private void processBonus(Issuer issuer, ContractorBonus contractorBonus) {
+        String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
+        Contract contract = getContract(contractorDocument, contractorBonus.productId());
+        PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
+        CreditPaymentAccount paymentAccount = new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer);
+        CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, paymentAccount);
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+        credit.setCreditSource(ESTABLISHMENT);
+        credit.setValue(contractorBonus.getEarnedBonus());
+        insert(paymentInstrument.getId(), credit);
+    }
+
+    private PaymentInstrument findContractorDigitalWallet(String contractorDocumentNumber) {
+        return paymentInstrumentService
+                .findDigitalWalletByContractorDocument(contractorDocumentNumber).orElseThrow(() ->
+                        UnovationExceptions.notFound()
+                                .withErrors(PAYMENT_INSTRUMENT_NOT_FOUND.withOnlyArgument("Digital Wallet")));
+    }
+
+    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, CreditPaymentAccount newPaymentAccount) {
+        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
+                .findByHirerDocument(contract.hirerDocumentNumber());
+        Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
+                contract.isProductCodeEquals(account.getProductCode()))
+                .findFirst();
+        return current.orElseGet(()-> creditPaymentAccountService.save(newPaymentAccount));
+
+    }
+
     private PaymentInstrument getContractorPaymentInstrument(Order order) {
         Optional<PaymentInstrument> instrument = paymentInstrumentService.getById(order.instrumentId());
         return instrument.orElseGet(() -> paymentInstrumentService
@@ -210,31 +254,19 @@ public class ContractorInstrumentCreditService {
                 new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
-    private ContractorInstrumentCredit createInstrumentCreditFromClient(Contract contract, PaymentInstrument paymentInstrument,
-                                                                        CreditPaymentAccount creditPaymentAccount) {
+    private ContractorInstrumentCredit createInstrumentCredit(Contract contract, PaymentInstrument paymentInstrument,
+                                                              CreditPaymentAccount creditPaymentAccount) {
         ContractorInstrumentCredit instrumentCredit = new ContractorInstrumentCredit();
         instrumentCredit.setPaymentInstrument(paymentInstrument);
         instrumentCredit.setCreditPaymentAccount(creditPaymentAccount);
         instrumentCredit.setContract(contract);
-        instrumentCredit.setCreditSource(InstrumentCreditSource.CLIENT);
         instrumentCredit.setExpirationDateTime(Time.createDateTime().plusYears(5).toDate());
-        return instrumentCredit;
+        return  instrumentCredit;
     }
 
-    private Contract getContract(Order order) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(order.getDocumentNumber(),
-                                                                                 order.getProductId());
+    private Contract getContract(String contractorDocument, String productId) {
+        Optional<Contract> existing = contractService.findByContractorAndProduct(contractorDocument,
+                productId);
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
-
-    private CreditPaymentAccount getCreditPaymentAccount(Contract contract, Order order) {
-        List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
-                .findByHirerDocument(contract.hirerDocumentNumber());
-        Optional<CreditPaymentAccount> current = creditPaymentAccounts.stream().filter(account ->
-                contract.isProductCodeEquals(account.getProductCode()))
-                .findFirst();
-        return current.orElseGet(()-> creditPaymentAccountService.save(new CreditPaymentAccount(order)));
-
-    }
-
 }

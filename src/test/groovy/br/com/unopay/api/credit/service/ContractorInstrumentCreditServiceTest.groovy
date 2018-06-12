@@ -13,8 +13,13 @@ import br.com.unopay.api.credit.model.ContractorInstrumentCreditType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.credit.model.InstrumentCreditSource
+import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.model.filter.BonusBillingFilter
+import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
@@ -26,6 +31,8 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
+
+import static br.com.six2six.fixturefactory.Fixture.from
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -47,6 +54,9 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     @Autowired
     InstrumentBalanceService instrumentBalanceService
+
+    @Autowired
+    BonusBillingService bonusBillingService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -212,6 +222,64 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         result.id != null
         result.type == ContractorInstrumentCreditType.BONUS
+    }
+
+    def "given valid bonus billing when processing it should create instrument credit"(){
+        given:
+        def contractorBonus1 = fixtureCreator.createPersistedContractorBonusForContractor()
+        def product = contractorBonus1.getProduct()
+        def contractor1 = contractorBonus1.getContractor()
+        fixtureCreator.createPersistedContract(contractor1, product)
+        fixtureCreator.createPersistedInstrument(contractor1, product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def contractorBonus2 = fixtureCreator.createPersistedContractorBonusForContractor(
+                                                fixtureCreator.createContractor(), contractorBonus1.getPayer(), product)
+        def contractor2 = contractorBonus2.getContractor()
+        fixtureCreator.createPersistedContract(contractor2, product)
+        fixtureCreator.createPersistedInstrument(contractor2, product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def filter = new BonusBillingFilter()
+        filter.document = contractorBonus1.payer.documentNumber()
+        bonusBillingService.process()
+        def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
+
+        when:
+        service.processBonusBilling(billing)
+
+        def found1 = service.findByContractorId(contractor1.id)
+        def found2 = service.findByContractorId(contractor2.id)
+
+        then:
+        found1.availableBalance == contractorBonus1.earnedBonus
+        found2.availableBalance == contractorBonus2.earnedBonus
+    }
+
+    def "given bonus billing without bonus associated to id when processing it should return error"(){
+        given:
+        def billing = fixtureCreator.createPersistedBonusBilling()
+
+        when:
+        service.processBonusBilling(billing)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+    }
+
+    def "given bonus billing whose contractor has no contract associated to id when processing it should return error"(){
+        given:
+        def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
+
+        def filter = new BonusBillingFilter()
+        filter.document = contractorBonus.payer.documentNumber()
+        bonusBillingService.process()
+        def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
+        when:
+        service.processBonusBilling(billing)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
     def 'given a valid instrument credit when create should be subtract payment account balance'(){

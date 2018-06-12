@@ -3,6 +3,8 @@ package br.com.unopay.api.credit.model;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.market.model.BonusBilling;
+import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
@@ -75,6 +77,19 @@ public class CreditPaymentAccount implements Serializable, Updatable {
             this.creditSource = InstrumentCreditSource.CLIENT.name();
             this.availableBalance = order.getValue();
         }
+    }
+
+    public CreditPaymentAccount(String hirerDocument, ContractorBonus contractorBonus ,Issuer issuer){
+        this.transactionCreatedDateTime = new Date();
+        this.issuer = issuer;
+        this.product = contractorBonus.getProduct();
+        this.paymentRuleGroup = contractorBonus.getProduct().getPaymentRuleGroup();
+        this.hirerDocument = hirerDocument;
+        this.creditInsertionType = CreditInsertionType.BOLETO;
+        this.value = contractorBonus.getEarnedBonus();
+        this.situation = CreditSituation.AVAILABLE;
+        this.creditSource = InstrumentCreditSource.HIRER.name();
+        this.availableBalance = contractorBonus.getEarnedBonus();
     }
 
     @Id

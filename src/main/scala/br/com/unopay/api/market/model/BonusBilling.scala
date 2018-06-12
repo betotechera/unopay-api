@@ -14,7 +14,6 @@ import javax.persistence._
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import java.io.Serializable
-import java.lang._
 import java.util.Date
 import java.math.BigDecimal
 
@@ -22,6 +21,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 @Data
 @Entity
@@ -163,6 +163,13 @@ class BonusBilling extends Serializable with Updatable with Billable {
             payer.getLegalPersonDetail.getResponsibleEmail
         else
             payer.getPhysicalPersonDetail.getEmail
+    }
+
+    def oneContractorBonus() :ContractorBonus = {
+        if(this.contractorBonuses == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
+        }
+        this.contractorBonuses.asScala.head
     }
 
     override def getPaymentSource: TicketPaymentSource = TicketPaymentSource.CONTRACTOR_BONUS

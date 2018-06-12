@@ -14,6 +14,7 @@ import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilde
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.NumberGenerator;
@@ -74,6 +75,7 @@ public class TicketService {
     @Setter private NumberGenerator numberGenerator;
     @Setter private NegotiationBillingService negotiationBillingService;
     @Setter private BonusBillingService bonusBillingService;
+    @Setter private ContractorInstrumentCreditService contractorInstrumentCreditService;
 
 
     @Value("${unopay.boleto.deadline_in_days}")
@@ -93,7 +95,8 @@ public class TicketService {
                          LayoutExtractorSelector layoutExtractorSelector,
                          NotificationService notificationService,
                          NegotiationBillingService negotiationBillingService,
-                         BonusBillingService bonusBillingService) {
+                         BonusBillingService bonusBillingService,
+                         ContractorInstrumentCreditService contractorInstrumentCreditService) {
         this.repository = repository;
         this.orderService = orderService;
         this.orderProcessor = orderProcessor;
@@ -105,6 +108,7 @@ public class TicketService {
         this.negotiationBillingService = negotiationBillingService;
         this.numberGenerator = new NumberGenerator(this.repository);
         this.bonusBillingService = bonusBillingService;
+        this.contractorInstrumentCreditService = contractorInstrumentCreditService;
     }
 
     public Ticket save(Ticket ticket) {
@@ -214,6 +218,9 @@ public class TicketService {
                 if(ticket.fromBillingHirer()){
                     processHirerBillingAsPaid(ticket);
                 }
+                if(ticket.fromBonusBilling()) {
+                    processBonusBillingAsPaid(ticket);
+                }
             }else{
                 if(!PAID.equals(ticket.getOccurrenceCode())) {
                     ticket.setOccurrenceCode(occurrenceCode);
@@ -246,6 +253,13 @@ public class TicketService {
         if(billing.getBillingWithCredits()) {
             creditService.processAsPaid(billing.creditId());
         }
+    }
+
+    private void processBonusBillingAsPaid(Ticket ticket) {
+        defineAsPaid(ticket);
+        bonusBillingService.processAsPaid(ticket.getSourceId());
+        BonusBilling bonusBilling = bonusBillingService.findById(ticket.getSourceId());
+        contractorInstrumentCreditService.processBonusBilling(bonusBilling);
     }
 
     private void defineAsPaid(Ticket ticket) {
