@@ -1,6 +1,5 @@
 package br.com.unopay.api.credit.service;
 
-import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
