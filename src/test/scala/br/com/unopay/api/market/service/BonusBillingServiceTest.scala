@@ -38,13 +38,13 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
     it should "save valid BonusBilling" in{
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
          val result = service.save(bonusBilling)
-        result
+        result should be
     }
 
     "given valid BonusBilling" should "create it" in {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         val created = service.create(bonusBilling)
-        created
+        created should be
     }
 
     "given valid BonusBilling" should "define it's number" in {
@@ -54,7 +54,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findById(created.id)
 
-        found.number
+        found.number should be
     }
 
     "given valid BonusBilling" should "define it's expiration date" in {
@@ -65,7 +65,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val created = service.create(bonusBilling)
 
-        created.expiration.equals(expectedDate.getTime)
+        created.expiration should be equals expectedDate.getTime
     }
 
     "given BonusBilling without issuer" should "return error" in {
@@ -76,7 +76,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
             service.create(bonusBilling)
         }
 
-        thrown.getErrors.asScala.head.getLogref == "ISSUER_REQUIRED"
+        thrown.getErrors.asScala.head.getLogref should be equals "ISSUER_REQUIRED"
     }
 
     "given valid Bonus to process" should "process bonus billing" in {
@@ -99,8 +99,8 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.processForIssuer(issuer.getId)
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
-        found.getSize == 1
-        found.getContent.get(0).issuer.equals(issuer)
+        found.getContent should not be empty
+        found.getContent.asScala.head.issuer should be equals issuer
     }
 
     "given issuer whose contractors have no bonuses to process" should "not create bonus billing" in {
@@ -115,7 +115,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.processForIssuer(issuer.getId)
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
-        found.getSize == 0
+        found.getContent shouldBe empty
     }
 
     "given unknown issuer to process bonus" should "return error" in {
@@ -123,7 +123,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
             service.processForIssuer("213")
         }
 
-        thrown.getErrors.asScala.head.getLogref == "ISSUER_NOT_FOUND"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "ISSUER_NOT_FOUND"
     }
 
     "given person without Bonus to process" should "not create BonusBilling" in {
@@ -136,7 +136,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
-        found.getSize == 0
+        found.getContent shouldBe empty
     }
 
     "when processing Bonus" should "set bonus status to TICKET_ISSUED" in {
@@ -147,7 +147,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = contractorBonusService.findById(bonus.getId)
 
-        found.getSituation == BonusSituation.TICKET_ISSUED
+        found.getSituation shouldEqual BonusSituation.TICKET_ISSUED
     }
 
     "when processing Bonus" should "add it to bonusBilling" in {
@@ -162,10 +162,10 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
-        found.getSize == 1
-        val bonusBilling = found.getContent.get(0)
-        bonusBilling.contractorBonuses.size() == 1
-        bonusBilling.contractorBonuses.iterator().next().contractorId() == contractorId
+        found.getContent should not be empty
+        val bonusBilling = found.getContent.asScala.head
+        bonusBilling.contractorBonuses should have size 1
+        bonusBilling.contractorBonuses.asScala.head.contractorId shouldEqual contractorId
     }
 
 
@@ -180,8 +180,8 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
-        found.getSize == 1
-        found.getContent.get(0).payer.equals(payer)
+        found.getContent should not be empty
+        found.getContent.asScala.head.payer should be equals payer
     }
 
     "given person with Bonuses to process" should "create BonusBilling with total amount of Bonuses values" in {
@@ -196,8 +196,8 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
 
-        found.getSize == 1
-        found.getContent.get(0).total.equals(total)
+        found.getContent should not be empty
+        found.getContent.asScala.head.total should be equals total
     }
 
     "when processing bonus to process" should "create bonus billing" in {
@@ -210,7 +210,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.process()
 
         val found = service.findByFilter(filter, new UnovationPageRequest)
-        found
+        found should be
     }
 
     "given BonusBilling with unknown person" should "return error" in {
@@ -220,7 +220,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val thrown = the [NotFoundException] thrownBy {
             service.create(bonusBilling)
         }
-        thrown.getErrors.asScala.head.getLogref == "PERSON_NOT_FOUND"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "PERSON_NOT_FOUND"
     }
 
      "given BonusBilling without person" should "return error" in {
@@ -238,7 +238,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val thrown = the [UnprocessableEntityException] thrownBy {
             service.create(bonusBilling)
         }
-        thrown.getErrors.asScala.head.getLogref == "BONUS_BILLING_TOTAL_REQUIRED"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "BONUS_BILLING_TOTAL_REQUIRED"
     }
 
     "given BonusBilling with invalid process date" should "return error" in {
@@ -249,13 +249,13 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val thrown = the [UnprocessableEntityException] thrownBy {
             service.create(bonusBilling)
         }
-        thrown.getErrors.asScala.head.getLogref == "INVALID_BONUS_BILLING_PROCESS_DATE"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "INVALID_BONUS_BILLING_PROCESS_DATE"
     }
 
     it should "find known BonusBilling" in {
         val id = fixtureCreator.createPersistedBonusBilling().getId
         val found = service.findById(id)
-        found
+        found should be
     }
 
     "given known BonusBilling" should "process as paid" in {
@@ -267,8 +267,8 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         service.processAsPaid(id)
         val found = service.findById(id)
 
-        found.processedAt
-        found.status == PaymentStatus.PAID
+        found.processedAt should be
+        found.status should be(PaymentStatus.PAID)
     }
 
     it should "find issuer's BonusBilling" in {
@@ -278,7 +278,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
 
         val found = service.findByIdForIssuer(id, issuer)
 
-        found
+        found should be
     }
 
     it should "not find unknown BonusBilling" in {
@@ -286,7 +286,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val thrown = the [NotFoundException] thrownBy {
             service.findById(id)
         }
-        thrown.getErrors.asScala.head.getLogref == "BONUS_BILLING_NOT_FOUND"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "BONUS_BILLING_NOT_FOUND"
     }
 
      it should "not delete unknown BonusBilling" in {
@@ -294,7 +294,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
          val thrown = the [NotFoundException] thrownBy {
              service.delete(id)
          }
-         thrown.getErrors.asScala.head.getLogref == "BONUS_BILLING_NOT_FOUND"
+         thrown.getErrors.asScala.head.getLogref shouldEqual "BONUS_BILLING_NOT_FOUND"
     }
 
     it should "delete known BonusBilling" in {
@@ -303,7 +303,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val thrown = the [NotFoundException] thrownBy {
             service.findById(id)
         }
-        thrown.getErrors.asScala.head.getLogref == "BONUS_BILLING_NOT_FOUND"
+        thrown.getErrors.asScala.head.getLogref shouldEqual "BONUS_BILLING_NOT_FOUND"
     }
 
     it should "find BonusBilling by filter" in {
@@ -312,6 +312,6 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val filter = new BonusBillingFilter()
         filter.setDocument(document)
         val bonus = service.findByFilter(filter, page)
-        bonus.asScala.head
+        bonus.asScala.head should be
     }
 }
