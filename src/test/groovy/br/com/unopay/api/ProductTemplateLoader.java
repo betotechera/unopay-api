@@ -46,6 +46,7 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("paymentInstallments", random(Integer.class, range(2,12)));
             add("annuity", random(BigDecimal.class, range(100, 250)));
             add("memberAnnuity", random(BigDecimal.class, range(50,100)));
+            add("monthsToExpireBonus", random(36));
         }});
 
         Fixture.of(Product.class).addTemplate("creditWithoutDirectDebit").inherits("valid", new Rule(){{
@@ -55,5 +56,6 @@ public class ProductTemplateLoader implements TemplateLoader {
             }}};
             add("creditInsertionTypes", creditInsertionTypes);
         }});
+
     }
 }

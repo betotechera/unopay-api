@@ -34,6 +34,7 @@ import groovy.time.TimeCategory
 
 import static br.com.six2six.fixturefactory.Fixture.from
 import static org.hamcrest.Matchers.hasSize
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import static spock.util.matcher.HamcrestSupport.that
@@ -222,6 +223,37 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         then:
         result.id != null
         result.type == ContractorInstrumentCreditType.BONUS
+    }
+
+    def "given valid bonus billing when processing it should create instrument credit with product expiration"(){
+        given:
+        def contractorBonus1 = fixtureCreator.createPersistedContractorBonusForContractor()
+        def product = contractorBonus1.getProduct()
+        def contractor1 = contractorBonus1.getContractor()
+        fixtureCreator.createPersistedContract(contractor1, product)
+        fixtureCreator.createPersistedInstrument(contractor1, product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def contractorBonus2 = fixtureCreator.createPersistedContractorBonusForContractor(
+                fixtureCreator.createContractor(), contractorBonus1.getPayer(), product)
+        def contractor2 = contractorBonus2.getContractor()
+        fixtureCreator.createPersistedContract(contractor2, product)
+        fixtureCreator.createPersistedInstrument(contractor2, product, PaymentInstrumentType.DIGITAL_WALLET)
+
+        def filter = new BonusBillingFilter()
+        filter.document = contractorBonus1.payer.documentNumber()
+        bonusBillingService.process()
+        def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
+
+        when:
+        service.processBonusBilling(billing)
+
+        def found1 = service.findByContractorId(contractor1.id)
+        def found2 = service.findByContractorId(contractor2.id)
+
+        then:
+        def timeToExpire = new DateTime().plusMonths(product.monthsToExpireBonus)
+        timeComparator.compare(found1.expirationDateTime, timeToExpire) == 0
+        timeComparator.compare(found2.expirationDateTime, timeToExpire) == 0
     }
 
     def "given valid bonus billing when processing it should create instrument credit"(){

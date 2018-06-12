@@ -274,4 +274,7 @@ public class Product implements Serializable, Updatable {
         return withPartnerIntegration == null ? Boolean.FALSE : withPartnerIntegration;
     }
 
+    public boolean hasBonusExpiration() {
+        return this.getMonthsToExpireBonus() != null;
+    }
 }

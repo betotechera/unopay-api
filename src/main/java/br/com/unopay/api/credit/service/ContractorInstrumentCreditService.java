@@ -11,6 +11,7 @@ import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -100,10 +102,20 @@ public class ContractorInstrumentCreditService {
         PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
         CreditPaymentAccount paymentAccount = new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, paymentAccount);
-        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
-        credit.setCreditSource(ESTABLISHMENT);
+        ContractorInstrumentCredit credit = createCreditForBonus(contract, paymentInstrument, creditPaymentAccount);
         credit.setValue(contractorBonus.getEarnedBonus());
         insert(paymentInstrument.getId(), credit);
+    }
+
+    private ContractorInstrumentCredit createCreditForBonus(Contract contract, PaymentInstrument paymentInstrument,
+                                                            CreditPaymentAccount creditPaymentAccount) {
+        ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
+        credit.setCreditSource(ESTABLISHMENT);
+        Product product = contract.getProduct();
+        if(product.hasBonusExpiration()) {
+            credit.setExpirationDateTime(new DateTime().plusMonths(product.getMonthsToExpireBonus()).toDate());
+        }
+        return credit;
     }
 
     private PaymentInstrument findContractorDigitalWallet(String contractorDocumentNumber) {
