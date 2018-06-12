@@ -7,8 +7,8 @@ client:
 payment:
   gateway:
     config:
-      shopId: 21985337
-      shopKey: 4876228797067177
+      shopId: 39572022
+      shopKey: 1652724655003284
       mode: TEST
       endpointHost: secure.payzen.com.br
   soap:
