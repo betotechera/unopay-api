@@ -232,7 +232,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         fixtureCreator.createPersistedContract(contractor1, product)
         fixtureCreator.createPersistedInstrument(contractor1, product, PaymentInstrumentType.DIGITAL_WALLET)
 
-        def contractorBonus2 = fixtureCreator.createPersistedContractorBonusForContractor(fixtureCreator.createContractor(), contractorBonus1.getPayer(), product)
+        def contractorBonus2 = fixtureCreator.createPersistedContractorBonusForContractor(
+                                                fixtureCreator.createContractor(), contractorBonus1.getPayer(), product)
         def contractor2 = contractorBonus2.getContractor()
         fixtureCreator.createPersistedContract(contractor2, product)
         fixtureCreator.createPersistedInstrument(contractor2, product, PaymentInstrumentType.DIGITAL_WALLET)
