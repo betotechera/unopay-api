@@ -10,7 +10,8 @@ import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model._
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
-import br.com.unopay.api.market.repository.{BonusBillingRepository, ContractorBonusBillingRepository}
+import br.com.unopay.api.market.repository.BonusBillingRepository
+import br.com.unopay.api.market.repositoryrepository.findOne.ContractorBonusBillingRepository
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.PersonService
@@ -23,7 +24,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
-import scala.collection.{TraversableLike, mutable}
+import scala.collection.mutable
 
 @Service
 @Autowired

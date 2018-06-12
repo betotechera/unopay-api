@@ -165,6 +165,9 @@ class BonusBilling extends Serializable with Updatable with Billable {
     }
 
     def getOneContractorBonus() :ContractorBonus = {
+        if(this.contractorBonuses == null) {
+            throw UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
+        }
         return this.contractorBonuses.iterator().next();
     }
 

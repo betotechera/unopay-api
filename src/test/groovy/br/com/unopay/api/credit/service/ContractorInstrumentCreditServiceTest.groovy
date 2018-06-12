@@ -224,7 +224,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         result.type == ContractorInstrumentCreditType.BONUS
     }
 
-    def "given valid "(){
+    def "given valid bonus billing when processing it should create instrument credit"(){
         given:
         def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
         fixtureCreator.createPersistedContract(contractorBonus.contractor, contractorBonus.product)
@@ -241,6 +241,34 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
         then:
         found
+    }
+
+    def "given bonus billing without bonus associated to id when processing it should return error"(){
+        given:
+        def billing = fixtureCreator.createPersistedBonusBilling()
+
+        when:
+        service.processBonusBilling(billing)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACTOR_BONUS_NOT_FOUND'
+    }
+
+    def "given bonus billing whose contractor has no contract associated to id when processing it should return error"(){
+        given:
+        def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
+
+        def filter = new BonusBillingFilter()
+        filter.document = contractorBonus.payer.documentNumber()
+        bonusBillingService.process()
+        def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
+        when:
+        service.processBonusBilling(billing)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
     def 'given a valid instrument credit when create should be subtract payment account balance'(){
