@@ -81,7 +81,7 @@ public class CreditPaymentAccount implements Serializable, Updatable {
 
     public CreditPaymentAccount(String hirerDocument, BonusBilling billing){
         if(billing != null) {
-            ContractorBonus contractorBonus = billing.getOneContractorBonus();
+            ContractorBonus contractorBonus = billing.oneContractorBonus();
             this.transactionCreatedDateTime = new Date();
             this.issuer = billing.getIssuer();
             this.product = contractorBonus.getProduct();

@@ -1,6 +1,5 @@
 package br.com.unopay.api.credit.service;
 
-import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
@@ -85,7 +84,7 @@ public class ContractorInstrumentCreditService {
     }
 
     public ContractorInstrumentCredit processBonusBilling(BonusBilling bonusBilling) {
-        ContractorBonus contractorBonus = bonusBilling.getOneContractorBonus();
+        ContractorBonus contractorBonus = bonusBilling.oneContractorBonus();
         Contract contract = getContract(contractorBonus.contractorDocument(), contractorBonus.productId());
         PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorBonus.contractorDocument());
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, bonusBilling);
