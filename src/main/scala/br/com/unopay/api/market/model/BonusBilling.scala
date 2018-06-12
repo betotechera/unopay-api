@@ -165,6 +165,7 @@ class BonusBilling extends Serializable with Updatable with Billable {
             payer.getPhysicalPersonDetail.getEmail
     }
 
+    @JsonIgnore
     def getOneContractorBonus() :ContractorBonus = {
         if(this.contractorBonuses == null) {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACTOR_BONUS_NOT_FOUND)
