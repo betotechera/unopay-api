@@ -226,18 +226,19 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def "given valid bonus billing when processing it should create instrument credit"(){
         given:
-        def contractorBonus = fixtureCreator.createPersistedContractorBonusForContractor()
-        def product = contractorBonus.getProduct()
-        def contractor1 = contractorBonus.getContractor()
+        def contractorBonus1 = fixtureCreator.createPersistedContractorBonusForContractor()
+        def product = contractorBonus1.getProduct()
+        def contractor1 = contractorBonus1.getContractor()
         fixtureCreator.createPersistedContract(contractor1, product)
         fixtureCreator.createPersistedInstrument(contractor1, product, PaymentInstrumentType.DIGITAL_WALLET)
 
-        def contractor2 = fixtureCreator.createPersistedContractorBonusForContractor(fixtureCreator.createContractor(), contractorBonus.getPayer(), product).getContractor()
+        def contractorBonus2 = fixtureCreator.createPersistedContractorBonusForContractor(fixtureCreator.createContractor(), contractorBonus1.getPayer(), product)
+        def contractor2 = contractorBonus2.getContractor()
         fixtureCreator.createPersistedContract(contractor2, product)
         fixtureCreator.createPersistedInstrument(contractor2, product, PaymentInstrumentType.DIGITAL_WALLET)
 
         def filter = new BonusBillingFilter()
-        filter.document = contractorBonus.payer.documentNumber()
+        filter.document = contractorBonus1.payer.documentNumber()
         bonusBillingService.process()
         def billing = bonusBillingService.findByFilter(filter, new UnovationPageRequest()).first()
 
@@ -248,8 +249,8 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
         def found2 = service.findByContractorId(contractor2.id)
 
         then:
-        found1
-        found2
+        found1.availableBalance == contractorBonus1.earnedBonus
+        found2.availableBalance == contractorBonus2.earnedBonus
     }
 
     def "given bonus billing without bonus associated to id when processing it should return error"(){
