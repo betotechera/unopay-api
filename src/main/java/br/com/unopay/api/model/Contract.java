@@ -354,7 +354,7 @@ public class Contract implements Serializable {
     }
 
     public boolean withMembershipFee() {
-        return this.membershipFee != null;
+        return this.membershipFee != null && this.membershipFee.compareTo(BigDecimal.ZERO) == 1;
     }
 
     public boolean containsHirer(Hirer hirer) {

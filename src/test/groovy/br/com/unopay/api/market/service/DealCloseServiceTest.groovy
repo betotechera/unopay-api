@@ -219,7 +219,7 @@ class DealCloseServiceTest extends SpockApplicationTests{
 
     void 'given product without member ship fee when deal close should mark first installment as paid'(){
         given:
-        def memberShipFee = null
+        def memberShipFee = fee
         def product = fixtureCreator.createProductWithSameIssuerOfHirer(memberShipFee)
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -230,6 +230,11 @@ class DealCloseServiceTest extends SpockApplicationTests{
         def installment = result.sort { it.installmentNumber }.find()
         timeComparator.compare(installment.paymentDateTime, new Date()) == 0
         installment.paymentValue == product.installmentValue
+
+        where:
+        _ | fee
+        _ | null
+        _ | 0.0
     }
 
     def'given known hirer should deal close from csv with persons in file'(){

@@ -169,7 +169,7 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
 
     def 'given a contract without membership fee should create the first installment with now expiration date'(){
         given:
-        BigDecimal membershipFee = null
+        BigDecimal membershipFee = fee
         def contract = fixtureCreator.createPersistedContractWithMembershipFee(membershipFee)
         def currentDate = new DateTime().withDayOfMonth(27).toDate()
         service.setCurrentDate(currentDate)
@@ -182,6 +182,11 @@ class ContractInstallmentServiceTest extends SpockApplicationTests {
         !result.isEmpty()
         def installment = result.sort { it.installmentNumber }.find()
         timeComparator.compare(installment.expiration, currentDate) == 0
+
+        where:
+        _ | fee
+        _ | null
+        _ | 0.0
     }
 
     def 'given a contract with membership fee should create the first installment after 30 days'(){
