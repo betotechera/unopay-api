@@ -13,7 +13,7 @@ public class BonusBillingJob {
     @Autowired
     BonusBillingService service;
 
-    @Scheduled(cron = "0 0 3 ? * *")
+    @Scheduled(cron = "0 3 0 1,15 * ?")
     void execute() {
         log.info("running bonus billing job");
         service.process();
