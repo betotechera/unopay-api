@@ -22,7 +22,7 @@ import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.filter.NegotiationBillingFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
-import br.com.unopay.api.market.service.DealCloseService;
+import br.com.unopay.api.market.service.DealService;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Contract;
@@ -84,7 +84,7 @@ public class HirerController {
     private HirerNegotiationService hirerNegotiationService;
     private AuthorizedMemberService authorizedMemberService;
     private NegotiationBillingService negotiationBillingService;
-    private DealCloseService dealCloseService;
+    private DealService dealService;
 
     @Value("${unopay.api}")
     private String api;
@@ -100,7 +100,7 @@ public class HirerController {
                            HirerNegotiationService hirerNegotiationService,
                            AuthorizedMemberService authorizedMemberService,
                            NegotiationBillingService negotiationBillingService,
-                           DealCloseService dealCloseService) {
+                           DealService dealService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -111,7 +111,7 @@ public class HirerController {
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
         this.negotiationBillingService = negotiationBillingService;
-        this.dealCloseService = dealCloseService;
+        this.dealService = dealService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -186,7 +186,7 @@ public class HirerController {
     public void createFromCsvById(@PathVariable  String document, @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file {}", fileName);
-        dealCloseService.dealCloseFromCsv(document, file);
+        dealService.closeFromCsv(document, file);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -196,7 +196,7 @@ public class HirerController {
                                     @RequestParam MultipartFile file){
         String fileName = file.getOriginalFilename();
         log.info("reading clients from csv file={} for={}", fileName, authentication.getName());
-        dealCloseService.dealCloseFromCsvForCurrentUser(authentication.getName(), file);
+        dealService.closeFromCsvForCurrentUser(authentication.getName(), file);
     }
 
     @ResponseStatus(OK)

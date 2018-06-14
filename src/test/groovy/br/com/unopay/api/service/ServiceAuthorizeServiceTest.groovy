@@ -9,19 +9,17 @@ import br.com.unopay.api.bacen.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.service.InstrumentBalanceService
-import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.service.ContractorBonusService
 
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.market.model.HirerNegotiation
-import br.com.unopay.api.market.service.DealCloseService
+import br.com.unopay.api.market.service.DealService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
-import br.com.unopay.api.model.DealClose
+import br.com.unopay.api.model.Deal
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
@@ -50,7 +48,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
     ContractService contractService
 
     @Autowired
-    private DealCloseService dealCloseService
+    private DealService dealCloseService
 
     @Autowired
     PaymentInstrumentService paymentInstrumentService
@@ -258,7 +256,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Contract contract =  dealCloseService.dealCloseWithIssuerAsHirer(new DealClose(person, product.code))
+        Contract contract =  dealCloseService.closeWithIssuerAsHirer(new Deal(person, product.code))
         def instrument = fixtureCreator.createInstrumentToProduct(product)
         updateBalance(instrument, establishmentEventUnderTest)
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {

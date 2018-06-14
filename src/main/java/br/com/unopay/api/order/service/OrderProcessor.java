@@ -4,8 +4,8 @@ import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.market.service.AuthorizedMemberCandidateService;
-import br.com.unopay.api.market.service.DealCloseService;
-import br.com.unopay.api.model.DealClose;
+import br.com.unopay.api.market.service.DealService;
+import br.com.unopay.api.model.Deal;
 import br.com.unopay.api.notification.model.EventType;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
@@ -28,20 +28,20 @@ public class OrderProcessor {
     private ContractService contractService;
     private ContractorInstrumentCreditService instrumentCreditService;
     @Setter private NotificationService notificationService;
-    private DealCloseService dealCloseService;
+    private DealService dealService;
     private AuthorizedMemberCandidateService authorizedMemberCandidateService;
 
     public OrderProcessor(OrderService orderService,
                           ContractService contractService,
                           ContractorInstrumentCreditService instrumentCreditService,
                           NotificationService notificationService,
-                          DealCloseService dealCloseService,
+                          DealService dealService,
                           AuthorizedMemberCandidateService authorizedMemberCandidateService) {
         this.orderService = orderService;
         this.contractService = contractService;
         this.instrumentCreditService = instrumentCreditService;
         this.notificationService = notificationService;
-        this.dealCloseService = dealCloseService;
+        this.dealService = dealService;
         this.authorizedMemberCandidateService = authorizedMemberCandidateService;
     }
 
@@ -79,8 +79,8 @@ public class OrderProcessor {
 
     private void processAdhesion(Order order) {
         Set<AuthorizedMemberCandidate> candidates = authorizedMemberCandidateService.findByOrderId(order.getId());
-        DealClose dealClose = new DealClose(order.getPerson(), order.getProductCode(), candidates);
-        dealCloseService.dealCloseWithIssuerAsHirer(dealClose);
+        Deal deal = new Deal(order.getPerson(), order.getProductCode(), candidates);
+        dealService.closeWithIssuerAsHirer(deal);
         if(!order.productWithMembershipFee()){
             contractService.markInstallmentAsPaidFrom(order);
         }

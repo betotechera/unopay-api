@@ -6,22 +6,22 @@ import java.util.Set;
 import lombok.Getter;
 
 @Getter
-public class DealClose {
+public class Deal {
 
-    public DealClose(Person person, String hirerDocument, String productCode) {
+    public Deal(Person person, String hirerDocument, String productCode) {
         this.person = person;
         this.hirerDocument = hirerDocument;
         this.productCode = productCode;
         this.members = new HashSet<>();
     }
 
-    public DealClose(Person person, String productCode, Set<AuthorizedMemberCandidate> members) {
+    public Deal(Person person, String productCode, Set<AuthorizedMemberCandidate> members) {
         this.person = person;
         this.productCode = productCode;
         this.members = members;
     }
 
-    public DealClose(Person person, String productCode) {
+    public Deal(Person person, String productCode) {
         this.person = person;
         this.productCode = productCode;
         this.members = new HashSet<>();
