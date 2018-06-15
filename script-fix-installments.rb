@@ -5,7 +5,7 @@ require 'date'
 conn = PG::Connection.new("dbname=unopay port=5432 host=unopay-qa.c2u10rjpdtxz.us-west-2.rds.amazonaws.com user=administrator password=LVTQB5MkBuH0" )
 
 
-res = conn.exec_params("""SELECT ci.installment_number, ci.expiration, c.begin_date, p.\"name\", c.code as c_code, * from unovation.contract_installment ci 
+res = conn.exec_params("""SELECT ci.id as install_id, ci.installment_number, ci.expiration, c.begin_date, p.\"name\", c.code as c_code, * from unovation.contract_installment ci 
                         inner join unovation.contract c on ci.contract_id = c.id 
                         inner join unovation.product p on c.product_id = p.\"id\" 
                         inner join unovation.issuer i on i.id = p.issuer_id
@@ -21,7 +21,9 @@ codes.each { |code|
         installment_number = installment['installment_number']
         newExpiration = expiration << 1  
         puts "-------------------------------------------------------------------------------------------------- #{code}" if installment_number.eql? '1' 
-        puts "#{installment_number} #{expiration.strftime("%d/%m/%Y")} >> #{newExpiration.strftime("%d/%m/%Y")} #{installment['name']} #{installment['c_code']}"
+        puts "#{installment['install_id']} #{installment_number} #{expiration.strftime("%d/%m/%Y")} >> #{newExpiration.strftime("%d/%m/%Y")} #{installment['name']} #{installment['c_code']}"
+        
+        #conn.exec_params("update unovation.contract_installment set expiration=$1 where id=$2",[newExpiration, installment['install_id']])
     end
 }
 
