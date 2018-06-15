@@ -19,7 +19,7 @@ public class ContractFilter  implements Serializable {
     public ContractFilter(){}
 
     @SearchableField
-    private Integer code;
+    private Long code;
 
     @SearchableField(field = "code")
     private List<Long> inCodes;
