@@ -70,7 +70,7 @@ springBoot {
 
 dependencies {
 	compile 'br.com.unopay:unopay-common-dependencies:0.0.6'
-	compile 'br.com.unopay:unopay-boot-commons:0.0.28'
+	compile 'br.com.unopay:unopay-boot-commons:0.0.41'
 	compile 'io.springfox:springfox-swagger2:2.4.0'
 
 	compile 'org.springframework.boot:spring-boot-starter-security'
