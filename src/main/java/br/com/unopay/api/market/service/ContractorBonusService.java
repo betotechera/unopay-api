@@ -2,6 +2,7 @@ package br.com.unopay.api.market.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
@@ -123,6 +124,11 @@ public class ContractorBonusService {
     }
     public ContractorBonus createForEstablishment(Establishment establishment, ContractorBonus contractorBonus) {
         contractorBonus.setPayer(establishment.getPerson());
+        return create(contractorBonus);
+    }
+
+    public ContractorBonus createForPartner(Partner partner, ContractorBonus contractorBonus) {
+        contractorBonus.setPayer(partner.getPerson());
         return create(contractorBonus);
     }
 

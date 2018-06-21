@@ -1,8 +1,11 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.filter.PartnerFilter;
 import br.com.unopay.api.bacen.service.PartnerService;
+import br.com.unopay.api.market.model.ContractorBonus;
+import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -27,6 +30,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Slf4j
 @RestController
 @Timed(prefix = "api")
@@ -37,10 +44,14 @@ public class PartnerController {
     @Value("${unopay.api}")
     private String api;
 
+    private ContractorBonusService contractorBonusService;
+
     @Autowired
-    public PartnerController(PartnerService service) {
+    public PartnerController(PartnerService service,
+                             ContractorBonusService contractorBonusService) {
         this.service = service;
-     }
+        this.contractorBonusService = contractorBonusService;
+    }
 
     @JsonView(Views.Partner.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
@@ -105,6 +116,19 @@ public class PartnerController {
     public void updateMe(Partner current, @Validated(Update.class) @RequestBody Partner partner) {
         log.info("updating partner={} for partner={}", partner, current.documentNumber());
         service.update(current.getId(),partner);
+    }
+
+    @ResponseStatus(CREATED)
+    @JsonView(Views.ContractorBonus.Detail.class)
+    @RequestMapping(value = "/partners/me/contractor-bonuses", method = POST)
+    public ResponseEntity<ContractorBonus> createContractorBonus(Partner partner,
+                                                                 @Validated(Create.class)
+                                                                 @RequestBody ContractorBonus contractorBonus) {
+        log.info("creating Contractor Bonus={} for partner={}", contractorBonus, partner.documentNumber());
+        ContractorBonus created = contractorBonusService.createForPartner(partner, contractorBonus);
+        log.info("Contractor Bonus={}", created);
+        return created(URI.create(
+                String.format("%s/partners/me/contractor-bonuses/%s",api, created.getId()))).body(created);
     }
 
 }
