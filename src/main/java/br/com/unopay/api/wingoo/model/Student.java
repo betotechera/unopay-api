@@ -10,6 +10,7 @@ import lombok.Data;
 public class Student implements Serializable{
 
     private static final long serialVersionUID = 2847458826624619595L;
+    public static final String DEFAULT_PWD = "123456";
 
     @JsonProperty("nome")
     private String name;
@@ -42,9 +43,9 @@ public class Student implements Serializable{
     private String zipCode;
 
     @JsonProperty("senha")
-    private String password;
+    private String password = DEFAULT_PWD;
 
-    public static Student fromContractor(Contractor contractor){
+    public static Student fromContractor(Contractor contractor, String instrumentNumber){
         Student student = new Student();
         student.name = contractor.getPerson().getShortName();
         student.fullName = contractor.getPerson().getName();
@@ -54,6 +55,7 @@ public class Student implements Serializable{
         student.cellphone = contractor.getPerson().getCellPhone();
         student.gender = contractor.getPerson().getPhysicalPersonDetail().getGender().name();
         student.zipCode = contractor.getPerson().getAddress().getZipCode();
+        student.ra = instrumentNumber;
         return student;
     }
 }

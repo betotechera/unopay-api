@@ -47,9 +47,9 @@ public class WingooService {
         headers.set(APPLICATION, appId);
     }
 
-    public List<Student> create(Contractor contractor){
+    public List<Student> create(Contractor contractor, String instrumentNumber){
         ParameterizedTypeReference<List<Student>> typeReference = new ParameterizedTypeReference<List<Student>>() {};
-        HttpEntity<List<Student>> entity = new HttpEntity<>(Arrays.asList(Student.fromContractor(contractor)), headers);
+        HttpEntity<List<Student>> entity = new HttpEntity<>(Arrays.asList(Student.fromContractor(contractor, instrumentNumber)), headers);
         String uri = wingooApi + INSERT_STUDENT;
         ResponseEntity<List<Student>> exchange = wingooTemplate.exchange(uri, POST, entity, typeReference, new HashMap<>());
         return exchange.getBody();
