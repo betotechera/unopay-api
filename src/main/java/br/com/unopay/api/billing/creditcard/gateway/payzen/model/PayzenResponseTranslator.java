@@ -4,14 +4,16 @@ import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
 import eu.payzen.webservices.sdk.ServiceResult;
 import java.util.Arrays;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
+@Slf4j
 @Component
 public class PayzenResponseTranslator {
 
     public TransactionStatus translate(ServiceResult serviceResult) {
         String responseLabel = serviceResult.getCommonResponse().getTransactionStatusLabel();
         Integer responseCode = serviceResult.getCommonResponse().getResponseCode();
+        log.info("Payzen response label={} code={}", responseLabel, responseCode);
         if(Objects.equals(responseLabel, "AUTHORISED")) {
             return TransactionStatus.CAPTURED;
         }
