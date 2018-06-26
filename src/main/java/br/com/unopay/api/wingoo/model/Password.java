@@ -15,10 +15,13 @@ public class Password implements Serializable{
     @JsonProperty("email")
     private String email;
 
-    public Password(String email, String newPassword) {
+    @JsonProperty("cpf")
+    private String document;
+
+    public Password(String email, String document, String newPassword) {
         this.email = email;
         this.newPassword = newPassword;
-        this.email = newPassword;
+        this.document = document;
 
     }
 }

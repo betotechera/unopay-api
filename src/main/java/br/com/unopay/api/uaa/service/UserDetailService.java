@@ -180,8 +180,10 @@ public class UserDetailService implements UserDetailsService {
 
     private void updatePasswordOnWingoo(String newPassword, UserDetail current) {
         try {
-            Password password = new Password(current.getEmail(), newPassword);
-            wingooService.update(password);
+            current.myContractor().ifPresent(contractor -> {
+                Password password = new Password(current.getEmail(), contractor.getDocumentNumber(), newPassword);
+                wingooService.update(password);
+            });
         } catch (Exception e){
             log.warn("Cannot update password on wingoo system",e);
         }
