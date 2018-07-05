@@ -17,12 +17,14 @@ import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import static com.sun.xml.ws.developer.JAXWSProperties.SSL_SOCKET_FACTORY;
 
+@Slf4j
 @Service
 public class CobrancaOnlineService {
 
@@ -66,6 +68,7 @@ public class CobrancaOnlineService {
         tituloGenericRequest.setEstacao(station);
         TituloGenericResponse tituloGenericResponse = cobrancaEndpoint.registraTitulo(tituloGenericRequest);
         if(!tituloGenericResponse.getDescricaoErro().contains(REGISTRY_OK_MESSAGE)){
+            log.error("Santander ticket registration response={}", tituloGenericResponse.getDescricaoErro());
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.TICKET_REGISTRATION_ERROR
                             .withOnlyArgument(tituloGenericResponse.getDescricaoErro()));
