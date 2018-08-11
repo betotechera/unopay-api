@@ -12,6 +12,16 @@ public class PaymentDayCalculator {
     public static final int ONE_MONTH = 1;
     @Value("${unopay.boleto.deadline_in_days}")
     private Integer ticketDeadLineInDays;
+    private DateTime date;
+
+    public PaymentDayCalculator(){
+        this.date = new DateTime();
+    }
+
+    public PaymentDayCalculator(DateTime date, Integer deadLineInDays){
+        this.date = date;
+        this.ticketDeadLineInDays = deadLineInDays;
+    }
 
     public Integer getNearDay(){
         Integer firstPaymentDayOfNextMonth = 1;
@@ -20,14 +30,14 @@ public class PaymentDayCalculator {
     }
 
     private Integer nearDay() {
-        Integer currentDay = new DateTime().dayOfMonth().get();
+        Integer currentDay = date.dayOfMonth().get();
         return currentDay + ticketDeadLineInDays;
     }
 
     public Date getNearDate(){
         if(nearDay() > MAX_PAYMENT_DAY){
-            return new DateTime().plusMonths(ONE_MONTH).withDayOfMonth(getNearDay()).toDate();
+            return date.plusMonths(ONE_MONTH).withDayOfMonth(getNearDay()).toDate();
         }
-        return new DateTime().withDayOfMonth(getNearDay()).toDate();
+        return date.withDayOfMonth(getNearDay()).toDate();
     }
 }
