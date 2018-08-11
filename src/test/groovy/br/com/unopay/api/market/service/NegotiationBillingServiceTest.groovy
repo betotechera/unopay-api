@@ -165,8 +165,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
             when process should create billings"""(){
         given:
         def delay = 1
-        def effectiveDate = getNear() == FIRST_PAYMENT_DAY_OF_NEX_TMONTH ? new DateTime()
-                .plusMonths(1).withDayOfMonth(1).toDate() : instant("${ticketDeadLineInDays} days from now")
+        def effectiveDate = new PaymentDayCalculator(new DateTime(), ticketDeadLineInDays).nearDate
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
