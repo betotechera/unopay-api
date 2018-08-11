@@ -47,7 +47,7 @@ public class PartnerService {
                 bankAccountService.create(partner.getBankAccount());
             }
             validateReferences(partner);
-            personService.save(partner.getPerson());
+            personService.create(partner.getPerson());
             return repository.save(partner);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person partner already exists %s", partner.getPerson()), e);
@@ -65,7 +65,7 @@ public class PartnerService {
         Partner current = getById(id);
         validateReferences(partner);
         current.updateModel(partner);
-        personService.save(partner.getPerson());
+        personService.create(partner.getPerson());
         repository.save(current);
     }
 

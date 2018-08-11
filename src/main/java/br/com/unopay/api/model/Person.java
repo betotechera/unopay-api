@@ -173,4 +173,11 @@ public class Person implements Serializable{
     public PhysicalPersonDetail getPhysicalPersonDetail(){
         return this.physicalPersonDetail;
     }
+
+    public String getPhysicalPersonEmail() {
+        if(isPhysical()) {
+            return getPhysicalPersonDetail().getEmail();
+        }
+        return null;
+    }
 }

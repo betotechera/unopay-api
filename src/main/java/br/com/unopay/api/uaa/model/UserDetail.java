@@ -54,7 +54,7 @@ public class UserDetail implements Serializable, Updatable {
     public UserDetail(Contractor contractor){
         this.contractor = contractor;
         this.name = contractor.getPerson().getShortName();
-        this.email = contractor.getPerson().getPhysicalPersonDetail().getEmail();
+        this.email = contractor.getPerson().getPhysicalPersonEmail();
     }
 
     @Id

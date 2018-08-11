@@ -137,7 +137,7 @@ public class EstablishmentService {
         contactService.save(establishment.getAdministrativeContact());
         contactService.save(establishment.getFinancierContact());
         contactService.save(establishment.getOperationalContact());
-        personService.save(establishment.getPerson());
+        personService.create(establishment.getPerson());
         bankAccountService.create(establishment.getBankAccount());
     }
 

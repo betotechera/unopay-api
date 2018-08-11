@@ -190,7 +190,7 @@ public class OrderService {
 
     private Person getOrCreatePerson(Order order) {
         Optional<Person> person = personService.findOptionalByDocument(order.getDocumentNumber());
-        return person.orElseGet(()-> personService.save(order.getPerson()));
+        return person.orElseGet(()-> personService.create(order.getPerson()));
     }
 
     public Page<Order> findByFilter(OrderFilter filter, UnovationPageRequest pageable) {

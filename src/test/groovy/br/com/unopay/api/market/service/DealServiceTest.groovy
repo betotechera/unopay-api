@@ -177,6 +177,22 @@ class DealServiceTest extends SpockApplicationTests{
         that result, hasSize(1)
     }
 
+    void 'given known contractor when deal close should create contract with him'(){
+        given:
+        def hirer = fixtureCreator.createHirer()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Contractor contractor = fixtureCreator.createContractor("physical")
+        fixtureCreator.createNegotiation(hirer, product)
+
+        when:
+        service.close(contractor.person, product.code, hirer.documentNumber)
+        def result  = contractService.findByHirerDocument(hirer.documentNumber)
+
+        then:
+        that result, hasSize(1)
+        result.find().contractor.documentNumber == contractor.documentNumber
+    }
+
     void 'given order with authorized member candidates when deal close should be created authorized members'(){
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()

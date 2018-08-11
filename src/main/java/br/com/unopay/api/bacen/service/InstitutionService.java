@@ -37,7 +37,7 @@ public class InstitutionService {
 
     public Institution create(Institution institution) {
         try {
-            personService.save(institution.getPerson());
+            personService.create(institution.getPerson());
             return repository.save(institution);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person institution already exists %s", institution.getPerson()), e);
@@ -54,7 +54,7 @@ public class InstitutionService {
     public void update(String id, Institution institution) {
         Institution current = repository.findOne(id);
         current.updateModel(institution);
-        personService.save(institution.getPerson());
+        personService.create(institution.getPerson());
         repository.save(current);
     }
 

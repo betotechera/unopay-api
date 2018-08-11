@@ -61,7 +61,7 @@ public class BranchService {
     }
 
     private void saveReferences(Branch branch) {
-        personService.save(branch.getPerson());
+        personService.create(branch.getPerson());
         bankAccountService.create(branch.getBankAccount());
     }
 

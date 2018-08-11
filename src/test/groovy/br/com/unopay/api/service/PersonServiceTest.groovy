@@ -24,7 +24,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("physical")
 
         when:
-        def result  = service.save(person)
+        def result  = service.create(person)
 
         then:
         assert result.id != null
@@ -37,7 +37,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("legal")
 
         when:
-        def result  = service.save(person)
+        def result  = service.create(person)
 
         then:
         assert result.id != null
@@ -50,8 +50,8 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("legal")
 
         when:
-        service.save(person)
-        service.save(person.with { id = null; it })
+        service.create(person)
+        service.create(person.with { id = null; it })
 
         then:
         def ex = thrown(ConflictException)
@@ -63,7 +63,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("legal")
 
         when:
-        service.save(person)
+        service.create(person)
         def filter = new PersonFilter(documentType: person.document.type, documentNumber: person.document.number)
         def result = service.findByFilter(filter)
 
@@ -77,7 +77,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("legal")
 
         when:
-        service.save(person)
+        service.create(person)
         def filter = new PersonFilter(documentType: DocumentType.CNH, documentNumber: person.document.number)
          service.findByFilter(filter)
 

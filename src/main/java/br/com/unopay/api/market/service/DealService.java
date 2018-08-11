@@ -83,8 +83,8 @@ public class DealService {
     @Transactional
     public Contract close(final Person person, final String productCode, final String hirerDocument){
         Deal deal = new Deal(person, hirerDocument, productCode);
-        checkContractor(person.documentNumber());
-        Contractor contractor = contractorService.create(new Contractor(person));
+        Optional<Contractor> currentContractor = contractorService.getOptionalByDocument(person.documentNumber());
+        Contractor contractor = currentContractor.orElseGet(() -> contractorService.create(new Contractor(person)));
         return close(deal, contractor);
     }
 

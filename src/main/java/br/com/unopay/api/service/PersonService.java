@@ -42,7 +42,7 @@ public class PersonService {
         this.physicalPersonDetailRepository = physicalPersonDetailRepository;
     }
 
-    public Person save(Person person){
+    public Person create(Person person){
         try {
             person.validate();
             person.normalize();
