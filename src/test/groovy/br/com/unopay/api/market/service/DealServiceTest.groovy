@@ -109,6 +109,21 @@ class DealServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    void 'given an existing user when deal close should deal with him'(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def currentUser = fixtureCreator.createUser(person.getPhysicalPersonEmail())
+
+        when:
+        Contract contract =  service.closeWithIssuerAsHirer(new Deal(person, product.code))
+        UserDetail result  = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
+
+        then:
+        result.id == currentUser.id
+        result.email == currentUser.email
+    }
+
     def 'when deal close should create user with contractor user type'(){
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()

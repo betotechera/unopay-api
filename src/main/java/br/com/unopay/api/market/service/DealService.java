@@ -124,11 +124,18 @@ public class DealService {
         Product product = productService.findByCode(deal.getProductCode());
         Contract contract = createContract(deal, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
-        userDetailService.create(new UserDetail(contractor), product.getIssuer().documentNumber());
+        createUserWhenRequired(contractor, product);
         sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(deal, contract);
         return contract;
+    }
+
+    private void createUserWhenRequired(Contractor contractor, Product product) {
+        String email = contractor.getPerson().getPhysicalPersonEmail();
+        userDetailService.getByEmailOptional(email)
+                .orElseGet(()->
+                        userDetailService.create(new UserDetail(contractor), product.getIssuer().documentNumber()));
     }
 
     private void sendContractorToPartner(Contractor contractor, Product product) {

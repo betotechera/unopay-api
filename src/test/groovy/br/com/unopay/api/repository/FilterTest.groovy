@@ -220,7 +220,7 @@ class FilterTest extends SpockApplicationTests {
         that result, hasSize(1)
     }
 
-    def 'should return contracts like name with ignore case'() {
+    def 'should return contracts by name using ignore case'() {
         given:
         Fixture.from(Contract.class).uses(jpaProcessor).gimme(3,"withReferences", new Rule(){{
             add("name", uniqueRandom("JoSe", "fernanda", "joao"))
