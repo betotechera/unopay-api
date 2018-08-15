@@ -156,6 +156,14 @@ public class PaymentInstrument implements Serializable, Updatable {
         return null;
     }
 
+    public void cancel(){
+        setSituation(PaymentInstrumentSituation.CANCELED);
+    }
+
+    public boolean isCanceled(){
+        return situation == PaymentInstrumentSituation.CANCELED;
+    }
+
     public String documentNumber(){
         if(getContractor() != null){
             return getContractor().getDocumentNumber();

@@ -85,7 +85,7 @@ public class ContractController {
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing contract id={}", id);
-        service.delete(id);
+        service.cancel(id);
     }
 
     @ResponseStatus(OK)

@@ -248,7 +248,9 @@ public class Contract implements Serializable {
 
     public void updateMe(Contract contract) {
         name = contract.getName();
-        situation = contract.getSituation();
+        if(contract.getSituation() != ContractSituation.CANCELLED) {
+            situation = contract.getSituation();
+        }
         issueInvoice = contract.isIssueInvoice();
         if(contract.getDocumentNumberInvoice() != null) {
             documentNumberInvoice = contract.getDocumentNumberInvoice();

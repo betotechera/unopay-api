@@ -4,10 +4,12 @@ import br.com.unopay.api.InstrumentNumberGenerator
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.PaymentInstrumentSituation
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.method.P
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentInstrumentServiceTest extends SpockApplicationTests {
@@ -234,6 +236,32 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
         then:
         result != null
+    }
+
+    def 'given a contractor with payment instruments when cancel everyone with specific product should be canceled'(){
+        given:
+        PaymentInstrument instrument = fixtureCreator.createPersistedInstrument()
+        fixtureCreator.createPersistedInstrument(instrument.contractor, instrument.product)
+        service.instrumentNumberGenerator = generator
+        when:
+        service.cancel(instrument.contractor.documentNumber, instrument.product)
+        def all = service.findByContractorId(instrument.contractorId())
+
+        then:
+        all.findAll { it.isCanceled() }.size() == 2
+    }
+
+    def 'given a contractor with payment instruments when cancel should not cancel instruments with different product'(){
+        given:
+        PaymentInstrument instrument = fixtureCreator.createPersistedInstrument()
+        fixtureCreator.createPersistedInstrument()
+        service.instrumentNumberGenerator = generator
+        when:
+        service.cancel(instrument.contractor.documentNumber, instrument.product)
+        def all = service.findByContractorId(instrument.contractorId())
+
+        then:
+        all.findAll { it.isCanceled() }.size() == 1
     }
 
     def 'a known Instrument should be deleted'(){

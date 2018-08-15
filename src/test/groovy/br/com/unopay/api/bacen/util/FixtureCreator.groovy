@@ -150,7 +150,8 @@ class FixtureCreator {
             }
         })
     }
-    PaymentInstrument createPersistedInstrument(contractor = createContractor(), product = createProduct(), type) {
+    PaymentInstrument createPersistedInstrument(contractor = createContractor(),
+                                                product = createProduct(), type = PaymentInstrumentType.DIGITAL_WALLET){
 
         from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {

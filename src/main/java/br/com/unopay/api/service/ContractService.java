@@ -47,13 +47,15 @@ public class ContractService {
     private ContractEstablishmentRepository contractEstablishmentRepository;
     private UserDetailService userDetailService;
     private ContractInstallmentService installmentService;
+    private PaymentInstrumentService paymentInstrumentService;
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
                            ContractorService contractorService, ProductService productService,
                            ContractEstablishmentRepository contractEstablishmentRepository,
                            UserDetailService userDetailService,
-                           ContractInstallmentService installmentService) {
+                           ContractInstallmentService installmentService,
+                           PaymentInstrumentService paymentInstrumentService) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -61,6 +63,7 @@ public class ContractService {
         this.contractEstablishmentRepository = contractEstablishmentRepository;
         this.userDetailService = userDetailService;
         this.installmentService = installmentService;
+        this.paymentInstrumentService = paymentInstrumentService;
     }
 
     public Contract create(Contract contract) {
@@ -111,7 +114,6 @@ public class ContractService {
         current.updateMe(contract);
         current.validate();
         contract.checkFields();
-
         try {
             save(current);
         }catch (DataIntegrityViolationException e){
@@ -143,10 +145,11 @@ public class ContractService {
     }
 
     @Transactional
-    public void delete(String id) {
-        findById(id);
-        installmentService.deleteByContract(id);
-        repository.delete(id);
+    public void cancel(String id) {
+        Contract current = findById(id);
+        current.setSituation(ContractSituation.CANCELLED);
+        paymentInstrumentService.cancel(current.getContractor().getDocumentNumber(), current.getProduct());
+        repository.save(current);
     }
 
     public Page<Contract> findByFilter(ContractFilter filter, UnovationPageRequest pageable) {

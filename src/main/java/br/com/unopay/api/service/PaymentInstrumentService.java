@@ -4,6 +4,8 @@ import br.com.unopay.api.InstrumentNumberGenerator;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.PaymentInstrumentSituation;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.repository.PaymentInstrumentRepository;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -196,5 +198,13 @@ public class PaymentInstrumentService {
     private void validateReferenceForIssuer(Issuer issuer, PaymentInstrument instrument) {
         instrument.setContractor(contractorService.getByIdForIssuer(instrument.getContractor().getId(), issuer));
         instrument.setProduct(productService.findByIdForIssuer(instrument.getProduct().getId(), issuer));
+    }
+
+    public void cancel(String contractorDocument, Product product) {
+        List<PaymentInstrument> instruments = findByContractorDocument(contractorDocument);
+        instruments.stream().filter(current -> current.hasProduct(product)).forEach(current-> {
+            current.cancel();
+            repository.save(current);
+        });
     }
 }

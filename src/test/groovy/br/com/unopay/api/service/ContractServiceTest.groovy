@@ -11,6 +11,9 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.PaymentInstrumentSituation
+import static br.com.unopay.api.model.PaymentInstrumentType.*
+import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
@@ -33,6 +36,9 @@ class ContractServiceTest extends SpockApplicationTests {
 
     @Autowired
     private ContractInstallmentService installmentService
+
+    @Autowired
+    private PaymentInstrumentService paymentInstrumentService
 
     private Hirer hirerUnderTest
     private Contractor contractorUnderTest
@@ -263,6 +269,22 @@ class ContractServiceTest extends SpockApplicationTests {
         assert result.name == newName
     }
 
+
+    void 'should not update contract situation to canceled'(){
+        given:
+        Contract contract = createContract()
+
+        def created  = service.create(contract)
+        contract.situation = ContractSituation.CANCELLED
+
+        when:
+        service.update(created.id, contract)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.situation != ContractSituation.CANCELLED
+    }
+
     void 'unknown contract should not be updated'(){
         given:
         Contract contract = createContract()
@@ -348,22 +370,58 @@ class ContractServiceTest extends SpockApplicationTests {
         assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
     }
 
-    void 'known contract should be deleted'(){
+    void 'known contract should be canceled'(){
         given:
         Contract contract = createContract()
         def created  = service.create(contract)
         when:
-        service.delete(created.id)
-        service.findById(created.id)
+        service.cancel(created.id)
+        def current = service.findById(created.id)
 
         then:
-        def ex = thrown(NotFoundException)
-        assert ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+        current.situation == ContractSituation.CANCELLED
     }
 
-    void 'unknown contract should not be deleted'(){
+    void 'when cancel a known contract should cancel the payment instruments with same contract product'(){
+        given:
+        Contract contract = createContract()
+        fixtureCreator.createPersistedInstrument(contract.contractor, contract.product, PREPAID_CARD)
+        fixtureCreator.createPersistedInstrument(contract.contractor, contract.product, DIGITAL_WALLET)
+        def created  = service.create(contract)
+
         when:
-        service.delete('')
+        service.cancel(created.id)
+        def instruments = paymentInstrumentService.findByContractorId(contract.contractor.id)
+
+        then:
+        that instruments, hasSize(2)
+        instruments.findAll {
+            it.hasProduct(contract.product) && it.isCanceled()
+        }.size() == 2
+    }
+
+    void 'when cancel a known contract should not cancel the payment instruments with different contract product'(){
+        given:
+        Contract contract = createContract()
+        def anotherProduct = fixtureCreator.createProduct()
+        fixtureCreator.createPersistedInstrument(contract.contractor, anotherProduct, PREPAID_CARD)
+        fixtureCreator.createPersistedInstrument(contract.contractor, contract.product, DIGITAL_WALLET)
+        def created  = service.create(contract)
+
+        when:
+        service.cancel(created.id)
+        def instruments = paymentInstrumentService.findByContractorId(contract.contractor.id)
+
+        then:
+        that instruments, hasSize(2)
+        instruments.findAll {
+            it.hasProduct(contract.product) && it.isCanceled()
+        }.size() == 1
+    }
+
+    void 'unknown contract should not be canceled'(){
+        when:
+        service.cancel('')
 
         then:
         def ex = thrown(NotFoundException)
