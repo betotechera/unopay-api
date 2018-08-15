@@ -594,6 +594,31 @@ public class IssuerController {
                 String.format("%s/issuers/me/contracts", api));
     }
 
+
+    @JsonView(Views.Contract.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/contracts/{id}", method = RequestMethod.GET)
+    public Contract getContract(Issuer issuer, @PathVariable  String id) {
+        log.info("get Contract={} for issuer={}", id, issuer.documentNumber());
+        return contractService.getByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/contracts/{id}", method = RequestMethod.DELETE)
+    public void cancelContract(Issuer issuer, @PathVariable  String id) {
+        log.info("cancel Contract={} for issuer={}", id, issuer.documentNumber());
+        contractService.cancelByIdForIssuer(id, issuer);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/issuers/me/contracts/{id}", method = RequestMethod.PUT)
+    public void updateContract(Issuer issuer, @PathVariable String id,
+                               @Validated(Update.class) @RequestBody Contract contract){
+        contract.setId(id);
+        log.info("updating contract={} for issuer={}", contract, issuer.documentNumber());
+        contractService.updateForIssuer(id, issuer, contract);
+    }
+
     @JsonView(Views.Contract.List.class)
     @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @ResponseStatus(HttpStatus.OK)

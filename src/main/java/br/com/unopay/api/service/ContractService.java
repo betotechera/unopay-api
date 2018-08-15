@@ -1,6 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
@@ -110,6 +111,10 @@ public class ContractService {
 
     public void update(String id, Contract contract) {
         Contract current = findById(id);
+        update(current, contract);
+    }
+
+    private void update(Contract current, Contract contract) {
         validateReferences(contract);
         current.updateMe(contract);
         current.validate();
@@ -147,6 +152,10 @@ public class ContractService {
     @Transactional
     public void cancel(String id) {
         Contract current = findById(id);
+        cancel(current);
+    }
+
+    private void cancel(Contract current) {
         current.setSituation(ContractSituation.CANCELLED);
         paymentInstrumentService.cancel(current.getContractor().getDocumentNumber(), current.getProduct());
         repository.save(current);
@@ -257,4 +266,18 @@ public class ContractService {
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
+    public void cancelByIdForIssuer(String id, Issuer issuer) {
+        Contract current = getByIdForIssuer(id, issuer);
+        cancel(current);
+    }
+
+    public Contract getByIdForIssuer(String id, Issuer issuer) {
+        Optional<Contract> contract = repository.findByIdAndProductIssuerId(id, issuer.getId());
+        return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
+    }
+
+    public void updateForIssuer(String id, Issuer issuer, Contract contract) {
+        Contract current = getByIdForIssuer(id, issuer);
+        update(current, contract);
+    }
 }

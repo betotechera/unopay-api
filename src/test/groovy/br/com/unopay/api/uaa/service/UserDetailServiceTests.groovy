@@ -315,11 +315,11 @@ class UserDetailServiceTests extends SpockApplicationTests {
         that usersFound.content, hasSize(1)
     }
 
-    void 'when find user by unknown name should return'() {
+    void 'when find user by unknown name should not be returned'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
         service.create(user)
-        def userSearch = new UserFilter().with { name = 'ze'; it }
+        def userSearch = new UserFilter().with { name = '12oooouuu'; it }
 
         when:
         def page = new UnovationPageRequest() {{ setPage(1); setSize(20) }}
