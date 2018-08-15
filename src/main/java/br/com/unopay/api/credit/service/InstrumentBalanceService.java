@@ -54,7 +54,6 @@ public class InstrumentBalanceService {
 
     public void subtract(String instrumentId, BigDecimal value) {
         InstrumentBalance current = findByInstrumentId(instrumentId);
-        checkBalance(current);
         current.subtract(value);
         save(current);
     }

@@ -370,27 +370,6 @@ permission to authorize service without contractor password  in exceptional circ
         assert ex.errors.first().logref == 'EVENT_VALUE_GREATER_THAN_CREDIT_BALANCE'
     }
 
-    void """given a payment instrument without balance partial payment defined should not be created"""() {
-        given:
-        def additionalValue = 100
-        def paymentInstrument = fixtureCreator.createInstrumentToProduct(contractUnderTest.product)
-        def establishmentEventTest = fixtureCreator.createEstablishmentEvent(establishmentUnderTest,
-                paymentInstrument.availableBalance + additionalValue)
-        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
-        serviceAuthorize.paymentInstrument = paymentInstrument
-        serviceAuthorize.authorizeEvents = [new ServiceAuthorizeEvent(establishmentEventTest)]
-        serviceAuthorize.partialPayment = true
-        updateBalance(paymentInstrument, establishmentEventTest)
-        instrumentBalanceService.subtract(paymentInstrument.id, paymentInstrument.availableBalance)
-
-        when:
-        service.create(userUnderTest, serviceAuthorize)
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'CREDIT_BALANCE_REQUIRED'
-    }
-
     void 'new service authorize should be created with product fee value'() {
         given:
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
