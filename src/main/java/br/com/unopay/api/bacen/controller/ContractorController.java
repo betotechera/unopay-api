@@ -236,17 +236,18 @@ public class ContractorController {
         return new Results<>(contracts);
     }
 
+
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/tickets", method = RequestMethod.GET)
-    public Results<Ticket> findTickets(Contractor contractor,
+    public Results<Ticket> findBoletos(OAuth2Authentication authentication,
                                        TicketFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("get tickets to contractor={}", contractor.getDocumentNumber());
-        filter.setClientDocument(contractor.getDocumentNumber());
-        Page<Ticket> page = ticketService.findByFilter(filter, pageable);
+        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
+        Set<String> myOrderIds = orderService.getMyOrderIds(authentication.getName(), filter.getOrderId());
+        filter.setOrderId(myOrderIds);
+        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = ticketService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/contractors/me/tickets", api));
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/tickets", api));
     }
 
     @JsonView(Views.Ticket.Detail.class)

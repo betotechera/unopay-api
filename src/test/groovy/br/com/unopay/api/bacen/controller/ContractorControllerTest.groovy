@@ -203,7 +203,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
     }
 
-    void 'known boletos should be returned'() {
+    void 'known tickets should be returned'() {
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
@@ -216,7 +216,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         }})
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}', accessToken)
+        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}', accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -225,7 +225,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(2))))
     }
 
-    void 'should return my boleto by orderId'() {
+    void 'should return my ticket by orderId'() {
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
@@ -241,7 +241,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         def sourceId = orderA.id
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
+        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -249,7 +249,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
     }
 
-    void 'should not return boleto with unkown sourceId'() {
+    void 'should not return ticket with unkown sourceId'() {
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def user = fixtureCreator.createUser(person.physicalPersonDetail.email)
@@ -265,7 +265,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         def sourceId = 'unknown'
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/boletos?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
+        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
