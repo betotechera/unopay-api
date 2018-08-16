@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
@@ -235,18 +236,25 @@ public class ContractorController {
         return new Results<>(contracts);
     }
 
-
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/contractors/me/boletos", method = RequestMethod.GET)
-    public Results<Ticket> findBoletos(OAuth2Authentication authentication,
+    @RequestMapping(value = "/contractors/me/tickets", method = RequestMethod.GET)
+    public Results<Ticket> findTickets(Contractor contractor,
                                        TicketFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Set<String> myOrderIds = orderService.getMyOrderIds(authentication.getName(), filter.getOrderId());
-        filter.setOrderId(myOrderIds);
-        Page<br.com.unopay.api.billing.boleto.model.Ticket> page = ticketService.findByFilter(filter, pageable);
+        log.info("get tickets to contractor={}", contractor.getDocumentNumber());
+        filter.setClientDocument(contractor.getDocumentNumber());
+        Page<Ticket> page = ticketService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/boletos", api));
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/contractors/me/tickets", api));
+    }
+
+    @JsonView(Views.Ticket.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/tickets/{id}", method = RequestMethod.GET)
+    public Ticket getTicket(Contractor contractor, @PathVariable  String id) {
+        log.info("get ticket={} for contractor={}", id, contractor.getDocumentNumber());
+        return ticketService.getByIdForPayer(id, contractor.getPerson());
     }
 
     @JsonView(Views.Billing.List.class)

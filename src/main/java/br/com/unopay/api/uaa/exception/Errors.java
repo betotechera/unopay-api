@@ -539,6 +539,8 @@ public final class Errors {
             new UnovationError("TICKET_REGISTRATION_ERROR", "Error when register ticket.");
     public static final UnovationError TICKET_NUMBER_ALREADY_EXISTS =
             new UnovationError("TICKET_NUMBER_ALREADY_EXISTS", "Ticket number already exists.");
+    public static final UnovationError TICKET_NOT_FOUND =
+            new UnovationError("TICKET_NOT_FOUND", "Ticket not found.");
 
 
     /* Instrument Balance */

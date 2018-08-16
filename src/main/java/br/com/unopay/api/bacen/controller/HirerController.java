@@ -1,7 +1,9 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
@@ -9,6 +11,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;
 import br.com.unopay.api.credit.model.CreditPaymentAccount;
@@ -85,6 +88,7 @@ public class HirerController {
     private AuthorizedMemberService authorizedMemberService;
     private NegotiationBillingService negotiationBillingService;
     private DealService dealService;
+    private TicketService ticketService;
 
     @Value("${unopay.api}")
     private String api;
@@ -100,7 +104,7 @@ public class HirerController {
                            HirerNegotiationService hirerNegotiationService,
                            AuthorizedMemberService authorizedMemberService,
                            NegotiationBillingService negotiationBillingService,
-                           DealService dealService) {
+                           DealService dealService, TicketService ticketService) {
         this.service = service;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -112,6 +116,7 @@ public class HirerController {
         this.authorizedMemberService = authorizedMemberService;
         this.negotiationBillingService = negotiationBillingService;
         this.dealService = dealService;
+        this.ticketService = ticketService;
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER')")
@@ -374,11 +379,23 @@ public class HirerController {
 
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hirers/me/boletos", method = RequestMethod.GET)
-    public Results<Ticket> findBoletos(OAuth2Authentication authentication,
+    @RequestMapping(value = "/hirers/me/tickets", method = RequestMethod.GET)
+    public Results<Ticket> findTickets(Hirer hirer,
                                        TicketFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        return PageableResults.create(pageable, new ArrayList<>(), String.format("%s/hirers/me/boletos", api));
+        log.info("get tickets to hirer={}", hirer.getDocumentNumber());
+        filter.setClientDocument(hirer.getDocumentNumber());
+        Page<Ticket> page = ticketService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/hirers/me/tickets", api));
+    }
+
+    @JsonView(Views.Ticket.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/hirers/me/tickets/{id}", method = RequestMethod.GET)
+    public Ticket getTicket(Hirer hirer, @PathVariable  String id) {
+        log.info("get ticket={} for hirer={}", id, hirer.getDocumentNumber());
+        return ticketService.getByIdForPayer(id, hirer.getPerson());
     }
 
     @ResponseStatus(HttpStatus.CREATED)

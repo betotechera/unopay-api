@@ -2,10 +2,14 @@ package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
+import br.com.unopay.api.billing.boleto.model.Ticket;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
+import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.BonusBillingService;
@@ -65,6 +69,7 @@ public class EstablishmentController {
     private ContractService contractService;
     private ContractorBonusService contractorBonusService;
     private BonusBillingService bonusBillingService;
+    private TicketService ticketService;
 
     @Value("${unopay.api}")
     private String api;
@@ -76,7 +81,8 @@ public class EstablishmentController {
                                    PaymentInstrumentService paymentInstrumentService,
                                    ContractService contractService,
                                    ContractorBonusService contractorBonusService,
-                                   BonusBillingService bonusBillingService) {
+                                   BonusBillingService bonusBillingService,
+                                   TicketService ticketService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
@@ -84,6 +90,7 @@ public class EstablishmentController {
         this.contractService = contractService;
         this.contractorBonusService = contractorBonusService;
         this.bonusBillingService = bonusBillingService;
+        this.ticketService = ticketService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -292,6 +299,27 @@ public class EstablishmentController {
                                       @Validated(Update.class) @RequestBody ContractorBonus contractorBonus){
         log.info("updating Contractor Bonus={} for Establishment={}", contractorBonus, establishment.documentNumber());
         contractorBonusService.updateForEstablishment(id, establishment, contractorBonus);
+    }
+
+    @JsonView(Views.Ticket.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/tickets", method = RequestMethod.GET)
+    public Results<Ticket> findTickets(Establishment establishment,
+                                       TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get tickets to establishment={}", establishment.documentNumber());
+        filter.setClientDocument(establishment.documentNumber());
+        Page<Ticket> page = ticketService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/establishments/me/tickets", api));
+    }
+
+    @JsonView(Views.Ticket.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/tickets/{id}", method = RequestMethod.GET)
+    public Ticket getTicket(Establishment establishment, @PathVariable  String id) {
+        log.info("get ticket={} for establishment={}", id, establishment.documentNumber());
+        return ticketService.getByIdForPayer(id, establishment.getPerson());
     }
 
     @ResponseStatus(NO_CONTENT)

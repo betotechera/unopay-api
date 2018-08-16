@@ -14,6 +14,7 @@ import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilde
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
+import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
@@ -23,10 +24,12 @@ import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.NegotiationBillingService;
 import br.com.unopay.api.model.Billable;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderProcessor;
 import br.com.unopay.api.order.service.OrderService;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
@@ -117,6 +120,16 @@ public class TicketService {
 
     public Ticket findById(String id) {
         return repository.findOne(id);
+    }
+
+    public Ticket getByIdForIssuer(String id, Issuer issuer) {
+        Optional<Ticket> ticket = repository.findByIdAndIssuerDocument(id, issuer.documentNumber());
+        return ticket.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.TICKET_NOT_FOUND));
+    }
+
+    public Ticket getByIdForPayer(String id, Person payer) {
+        Optional<Ticket> ticket = repository.findByIdAndPayerDocument(id, payer.documentNumber());
+        return ticket.orElseThrow(()->UnovationExceptions.notFound().withErrors(Errors.TICKET_NOT_FOUND));
     }
 
     @Transactional

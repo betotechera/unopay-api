@@ -14,6 +14,8 @@ import br.com.unopay.api.bacen.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;
+import br.com.unopay.api.billing.boleto.model.Ticket;
+import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.service.TicketService;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.filter.PaymentRemittanceFilter;
@@ -457,6 +459,26 @@ public class IssuerController {
         ticketService.processTicketReturnForIssuer(issuer, file);
     }
 
+    @JsonView(Views.Ticket.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/tickets", method = RequestMethod.GET)
+    public Results<Ticket> getTickets(Issuer issuer, TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("get tickets for issuer={}", issuer.documentNumber());
+        filter.setIssuerDocument(issuer.documentNumber());
+        Page<Ticket> page = ticketService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/issuers/me/tickets", api));
+    }
+
+    @JsonView(Views.Ticket.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/issuers/me/tickets/{id}", method = RequestMethod.GET)
+    public Ticket getTicket(Issuer issuer, @PathVariable  String id) {
+        log.info("get ticket={} for issuer={}", id, issuer.documentNumber());
+        return ticketService.getByIdForIssuer(id, issuer);
+    }
+
     @JsonView(Views.HirerNegotiation.Detail.class)
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/issuers/me/hirer-negotiations", method = POST)
@@ -554,7 +576,6 @@ public class IssuerController {
                 String.format("%s/issuers/me/hirer-negotiation-billings", api));
     }
 
-
     @JsonView(Views.Hirer.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/hirers/{id}", method = RequestMethod.GET)
@@ -585,7 +606,8 @@ public class IssuerController {
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/contracts", method = RequestMethod.GET)
-    public Results<Contract> getContracts(Issuer issuer, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Contract> getContracts(Issuer issuer, ContractFilter filter,
+                                          @Validated UnovationPageRequest pageable) {
         log.info("get contracts for issuer={}", issuer.documentNumber());
         filter.setIssuers(Collections.singleton(issuer.getId()));
         Page<Contract> page = contractService.findByFilter(filter, pageable);
@@ -623,7 +645,8 @@ public class IssuerController {
     @PreAuthorize("hasRole('ROLE_MANAGE_ISSUER')")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/{id}/contracts", method = RequestMethod.GET)
-    public Results<Contract> getContracts(@PathVariable String id, ContractFilter filter, @Validated UnovationPageRequest pageable) {
+    public Results<Contract> getContracts(@PathVariable String id, ContractFilter filter,
+                                          @Validated UnovationPageRequest pageable) {
         log.info("get contracts for issuer={}", id);
         filter.setIssuers(Collections.singleton(id));
         Page<Contract> page = contractService.findByFilter(filter, pageable);
