@@ -13,6 +13,8 @@ public interface TicketRepository extends UnovationFilterRepository<Ticket,Strin
 
     Integer countByNumber(String number);
 
+    Optional<Ticket> findById(String id);
+
     Optional<Ticket> findByIdAndIssuerDocument(String number, String issuerDocument);
 
     Optional<Ticket> findByIdAndPayerDocument(String number, String payerDocument);

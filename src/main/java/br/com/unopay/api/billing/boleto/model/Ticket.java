@@ -46,7 +46,7 @@ public class Ticket {
 
     @NotNull(groups = {Create.class})
     @JoinColumn(name="payer_document")
-    @JsonView({Views.Ticket.Detail.class})
+    @JsonView({Views.Ticket.List.class})
     private String payerDocument;
 
     @Column(name = "expiration_date_time")

@@ -119,7 +119,8 @@ public class TicketService {
     }
 
     public Ticket findById(String id) {
-        return repository.findOne(id);
+        Optional<Ticket> ticket = repository.findById(id);
+        return ticket.orElseThrow(() -> UnovationExceptions.notFound().withErrors(Errors.TICKET_NOT_FOUND));
     }
 
     public Ticket getByIdForIssuer(String id, Issuer issuer) {

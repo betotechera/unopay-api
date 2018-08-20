@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Slf4j
@@ -39,15 +41,24 @@ public class TicketController {
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_BOLETOS')")
-    @RequestMapping(value = "/tickets", method = RequestMethod.GET)
+    @RequestMapping(value = "/tickets", method = GET)
     public Results<Ticket> findBoletos(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
         return getTicketResults(filter, pageable);
     }
 
+    @ResponseStatus(OK)
+    @JsonView(Views.Ticket.Detail.class)
+    @PreAuthorize("hasRole('ROLE_LIST_BOLETOS')")
+    @RequestMapping(value = "/tickets/{id}", method = GET)
+    public Ticket get(@PathVariable String id) {
+        log.info("get ticket={}", id);
+        return service.findById(id);
+    }
+
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/tickets", method = RequestMethod.GET, params = "orderId")
+    @RequestMapping(value = "/tickets", method = GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
         return getTicketResults(filter, pageable);
@@ -56,7 +67,7 @@ public class TicketController {
     @Deprecated
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/boletos", method = RequestMethod.GET, params = "orderId")
+    @RequestMapping(value = "/boletos", method = GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnlyOld(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
         return getTicketResults(filter, pageable);
