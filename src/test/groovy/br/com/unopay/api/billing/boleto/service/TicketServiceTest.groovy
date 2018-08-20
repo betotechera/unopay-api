@@ -304,7 +304,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.issuerDocument == order.product.issuer.documentNumber()
         created.payerDocument == order.person.documentNumber()
         created.value == order.value
-        created.sourceId == order.id
+        created.sourceId == order.number
     }
 
     def 'when process cnab paid ticket the occurrence code for issuer should be paid'(){
@@ -476,7 +476,7 @@ class TicketServiceTest extends SpockApplicationTests{
         created.issuerDocument == credit.issuer.documentNumber()
         created.payerDocument == credit.hirer.documentNumber
         created.value == credit.value
-        created.sourceId == credit.id
+        created.sourceId == credit.number
     }
 
     def 'when create ticket for credit should be found'(){
