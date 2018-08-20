@@ -302,7 +302,7 @@ public class TicketService {
         ticket.setValue(billable.getValue());
         ticket.setIssuerDocument(billable.getIssuer().documentNumber());
         ticket.setPayerDocument(billable.getPayer().documentNumber());
-        ticket.setSourceId(billable.getId());
+        ticket.setSourceId(billable.getNumber());
         ticket.setUri(path);
         ticket.setTypingCode(boletoStella.getLinhaDigitavel());
         ticket.setNumber(boletoStella.getNumeroDoDocumento());
