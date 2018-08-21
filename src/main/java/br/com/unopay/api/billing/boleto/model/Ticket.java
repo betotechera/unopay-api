@@ -99,7 +99,7 @@ public class Ticket {
     private Date createDateTime;
 
     @Column(name = "occurrence_code")
-    @JsonView({Views.Ticket.Detail.class})
+    @JsonView({Views.Ticket.List.class})
     private String occurrenceCode;
 
     @Column(name = "source_type")
