@@ -79,7 +79,7 @@ public class OrderProcessor {
 
     private void processAdhesion(Order order) {
         Set<AuthorizedMemberCandidate> candidates = authorizedMemberCandidateService.findByOrderId(order.getId());
-        Deal deal = new Deal(order.getPerson(), order.getProductCode(), candidates);
+        Deal deal = new Deal(order.getPerson(), order.getProductCode(), order.getCreateUser(), candidates);
         dealService.closeWithIssuerAsHirer(deal);
         log.info("adhesion paid for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());

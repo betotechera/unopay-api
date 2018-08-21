@@ -425,6 +425,54 @@ class OrderServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    def 'should create an ADHESION order with payment method'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type", OrderType.ADHESION)
+            add("contract", contractUnderTest)
+            add("value", null)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.paymentMethod != null
+    }
+
+    @Unroll
+    'should create an #type order with payment method'(){
+        given:
+        def orderType = type
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        fixtureCreator.createInstrumentToProduct(product, contractor)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("type", orderType)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", instrument)
+            add("value", 10.0)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.paymentMethod != null
+
+        where:
+        _ | type
+        _ | OrderType.INSTALLMENT_PAYMENT
+        _ | OrderType.CREDIT
+    }
+
     def 'given a known contractor and INSTALLMENT_PAYMENT order without value should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
@@ -532,7 +580,51 @@ class OrderServiceTest extends SpockApplicationTests{
 
     }
 
-    def 'given a adhesion order for an unknown contractor with known email should return error'(){
+    def "given a adhesion order for an unknown contractor with known email and createUser disabled should be created"(){
+        given:
+        def user = fixtureCreator.createUser()
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", user.getEmail())
+        }})
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+        creditOrder.createUser = false
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        notThrown(ConflictException)
+    }
+
+    def "given a adhesion order for an unknown contractor with known email and createUser enabled should return error"(){
+        given:
+        def user = fixtureCreator.createUser()
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", user.getEmail())
+        }})
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+        creditOrder.createUser = createUser
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'USER_ALREADY_EXISTS'
+
+        where:
+        _ | createUser
+        _ | true
+        _ | null
+    }
+
+    def "given a adhesion order for an unknown contractor with known email should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{

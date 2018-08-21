@@ -119,7 +119,7 @@ public class OrderValidator {
     private void checkAdhesionWhenRequired(Order order, Contractor contractor) {
         Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
         if(order.isType(OrderType.ADHESION)) {
-            if (existingUser.isPresent()) {
+            if (existingUser.isPresent() && order.mustCreateUser()) {
                 throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
             }
             if (contractor!=null) {

@@ -256,7 +256,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
-        Contract contract =  dealCloseService.closeWithIssuerAsHirer(new Deal(person, product.code))
+        Contract contract =  dealCloseService.closeWithIssuerAsHirer(new Deal(person, product.code, createUser))
         def instrument = fixtureCreator.createInstrumentToProduct(product)
         updateBalance(instrument, establishmentEventUnderTest)
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {

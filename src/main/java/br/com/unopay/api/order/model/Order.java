@@ -136,6 +136,15 @@ public class Order implements Updatable, Billable, Serializable {
     @JoinColumn(name = "order_id")
     private Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
 
+    @Column(name = "create_user")
+    @JsonView({Views.Order.Detail.class})
+    private Boolean createUser;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
+    @JsonView({Views.Order.Detail.class})
+    private PaymentMethod paymentMethod;
+
     @Transient
     private PaymentRequest paymentRequest;
 
@@ -146,12 +155,6 @@ public class Order implements Updatable, Billable, Serializable {
     public void validateUpdate() {
         if (this.status == PaymentStatus.CANCELED)
             throw UnovationExceptions.unauthorized().withErrors(Errors.UNABLE_TO_UPDATE_ORDER_STATUS);
-    }
-
-    public void incrementNumber(String lastNumber) {
-        Long number = lastNumber == null ? 0 : Long.valueOf(lastNumber);
-        number++;
-        this.number = StringUtils.leftPad(String.valueOf(number), 10, "0");
     }
 
     public void defineStatus(TransactionStatus transactionStatus) {
@@ -196,6 +199,10 @@ public class Order implements Updatable, Billable, Serializable {
             return product.getId();
         }
         return null;
+    }
+
+    public boolean mustCreateUser(){
+        return getCreateUser() == null || getCreateUser();
     }
 
     @JsonIgnore
@@ -254,6 +261,9 @@ public class Order implements Updatable, Billable, Serializable {
             this.fee = getIssuer().getCreditCardFee();
         }else{
             this.fee = BigDecimal.ZERO;
+        }
+        if(hasPaymentRequest()) {
+            this.paymentMethod = this.paymentRequest.getMethod();
         }
     }
 

@@ -78,19 +78,6 @@ class OrderTest extends FixtureApplicationTest {
         order.status == PaymentStatus.PAYMENT_DENIED
     }
 
-
-    def 'given a previous number should increment number'(){
-        given:
-        def order = new Order()
-        order.setValue(ONE)
-
-        when:
-        order.incrementNumber("0000000001")
-
-        then:
-        order.number == '0000000002'
-    }
-
     def 'should create order with pending status'(){
         when:
         def order = new Order()
@@ -98,18 +85,6 @@ class OrderTest extends FixtureApplicationTest {
 
         then:
         order.status == PaymentStatus.WAITING_PAYMENT
-    }
-
-    def 'should increment number without previous number'(){
-        given:
-        def order = new Order()
-        order.setValue(ONE)
-
-        when:
-        order.incrementNumber(null)
-
-        then:
-        order.number == '0000000001'
     }
 
     def 'when update me should update only status'(){

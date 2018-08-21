@@ -124,7 +124,9 @@ public class DealService {
         Product product = productService.findByCode(deal.getProductCode());
         Contract contract = createContract(deal, contractor, product);
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
-        createUserWhenRequired(contractor, product);
+        if(deal.mustCreateUser()) {
+            createUserWhenRequired(contractor, product);
+        }
         sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(deal, contract);
