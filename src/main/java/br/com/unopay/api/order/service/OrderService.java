@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.order.model.Order;
@@ -45,6 +46,7 @@ public class OrderService {
     @Setter private Notifier notifier;
     private UserCreditCardService userCreditCardService;
     private OrderValidator orderValidator;
+    private NumberGenerator numberGenerator;
 
     public OrderService(){}
 
@@ -63,6 +65,7 @@ public class OrderService {
         this.notifier = notifier;
         this.userCreditCardService = userCreditCardService;
         this.orderValidator = orderValidator;
+        this.numberGenerator = new NumberGenerator(repository);
     }
 
     public Order save(Order order) {
@@ -184,8 +187,7 @@ public class OrderService {
     }
 
     private void incrementNumber(Order order) {
-        Optional<Order> last = repository.findFirstByOrderByCreateDateTimeDesc();
-        order.incrementNumber(last.map(Order::getNumber).orElse(null));
+        order.setNumber(numberGenerator.createNumber());
     }
 
     private Person getOrCreatePerson(Order order) {
