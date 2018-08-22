@@ -157,27 +157,29 @@ public class TicketService {
         return create(current);
     }
 
-    private Ticket create(Billable order) {
-        PaymentBankAccount paymentBankAccount = order.getIssuer().getPaymentAccount();
+    private Ticket create(Billable billable) {
+        PaymentBankAccount paymentBankAccount = billable.getIssuer().getPaymentAccount();
         String number = getValidNumber();
         List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
-                .payer(order.getPayer()).expirationDays(deadlineInDays)
+                .payer(billable.getPayer()).expirationDays(deadlineInDays)
                 .paymentBankAccount(paymentBankAccount)
-                .value(order.getValue())
+                .value(billable.getValue())
                 .yourNumber(number).build();
 
         TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
         String clearOurNumber = Integer.valueOf(tituloDto.getNossoNumero()).toString();
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
-                .issuer(order.getIssuer())
+                .issuer(billable.getIssuer())
                 .number(number)
                 .expirationDays(deadlineInDays)
-                .payer(order.getPayer())
-                .value(order.getValue())
+                .payer(billable.getPayer())
+                .value(billable.getValue())
                 .ourNumber(clearOurNumber)
                 .build();
-        Ticket ticket = createTicketModel(order, boletoStella, clearOurNumber);
-        notificationService.sendTicketIssued(order, ticket);
+        Ticket ticket = createTicketModel(billable, boletoStella, clearOurNumber);
+        if(billable.getBillingMail() != null) {
+            notificationService.sendTicketIssued(billable, ticket);
+        }
         return ticket;
     }
 
