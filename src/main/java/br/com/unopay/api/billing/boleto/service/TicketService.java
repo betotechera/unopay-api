@@ -177,7 +177,7 @@ public class TicketService {
                 .ourNumber(clearOurNumber)
                 .build();
         Ticket ticket = createTicketModel(billable, boletoStella, clearOurNumber);
-        if(billable.getBillingMail() != null) {
+        if(billable.hasBillingMail()) {
             notificationService.sendTicketIssued(billable, ticket);
         }
         return ticket;

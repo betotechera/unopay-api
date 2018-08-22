@@ -22,4 +22,8 @@ public interface Billable {
     String getBillingMail();
 
     TicketPaymentSource getPaymentSource();
+
+    default boolean hasBillingMail(){
+        return getBillingMail() != null;
+    }
 }

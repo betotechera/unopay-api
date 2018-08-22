@@ -372,8 +372,4 @@ public class Order implements Updatable, Billable, Serializable {
         }
         return 0;
     }
-
-    public boolean hasBillingMail() {
-        return getBillingMail() != null;
-    }
 }
