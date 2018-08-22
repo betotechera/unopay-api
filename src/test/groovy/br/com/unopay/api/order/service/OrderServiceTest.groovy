@@ -23,6 +23,7 @@ import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
+import br.com.unopay.bootcommons.exception.BadRequestException
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnauthorizedException
@@ -580,7 +581,25 @@ class OrderServiceTest extends SpockApplicationTests{
 
     }
 
-    def "given a adhesion order for an unknown contractor with known email and createUser disabled should be created"(){
+    def "given a adhesion order for an unknown contractor with unknown email and createUser disabled should be created"(){
+        given:
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", 'new@valid.com.br')
+        }})
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+        creditOrder.createUser = false
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        notThrown(ConflictException)
+    }
+
+    def "given a adhesion order for an unknown contractor with known email and createUser disabled should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
@@ -596,10 +615,11 @@ class OrderServiceTest extends SpockApplicationTests{
         service.create(creditOrder)
 
         then:
-        notThrown(ConflictException)
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'USER_ALREADY_EXISTS'
     }
 
-    def "given a adhesion order for an unknown contractor with known email and createUser enabled should return error"(){
+    def "given a adhesion order for an unknown contractor with a known email and createUser enabled should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
@@ -622,6 +642,55 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | createUser
         _ | true
         _ | null
+    }
+
+    def "given a adhesion order for an unknown contractor with an invalid email and any createUser should return error"(){
+        given:
+        def invalidMail = mail
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", invalidMail)
+        }})
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+        creditOrder.createUser = createUser
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(BadRequestException)
+        assert ex.errors.first().logref == 'INVALID_EMAIL'
+
+        where:
+        mail       | createUser
+        ''         | true
+        "a%%%.com" | null
+        'ze@'      | false
+    }
+
+    def "given a adhesion order for an unknown contractor with an empty email and createUser disable should not return error"(){
+        given:
+        Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
+            add("physicalPersonDetail.email", null)
+        }})
+        def creditOrder = fixtureCreator.createOrder(contractUnderTest)
+        creditOrder.setPerson(person)
+        creditOrder.type = OrderType.ADHESION
+        creditOrder.createUser = createUser
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        notThrown(ConflictException)
+
+        where:
+        _ | createUser
+        _ | null
+        _ | false
     }
 
     def "given a adhesion order for an unknown contractor with known email should return error"(){

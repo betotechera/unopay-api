@@ -83,20 +83,26 @@ public class OrderProcessor {
         dealService.closeWithIssuerAsHirer(deal);
         log.info("adhesion paid for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
-        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+        sentPaymentMail(order);
     }
 
     private void processInstallment(Order order) {
         contractService.markInstallmentAsPaidFrom(order);
         log.info("contract paid for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
-        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+        sentPaymentMail(order);
     }
 
     private void processCredit(Order order) {
         instrumentCreditService.processOrder(order);
         log.info("credit processed for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
-        notificationService.sendPaymentEmail(order,  EventType.PAYMENT_APPROVED);
+        sentPaymentMail(order);
+    }
+
+    private void sentPaymentMail(Order order) {
+        if(order.hasBillingMail()) {
+            notificationService.sendPaymentEmail(order, EventType.PAYMENT_APPROVED);
+        }
     }
 }

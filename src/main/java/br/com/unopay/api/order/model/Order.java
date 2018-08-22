@@ -202,7 +202,7 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public boolean mustCreateUser(){
-        return getCreateUser() == null || getCreateUser();
+        return hasBillingMail() || (getCreateUser() == null || getCreateUser());
     }
 
     @JsonIgnore
@@ -371,5 +371,9 @@ public class Order implements Updatable, Billable, Serializable {
             return this.candidates.size();
         }
         return 0;
+    }
+
+    public boolean hasBillingMail() {
+        return getBillingMail() != null;
     }
 }

@@ -125,7 +125,9 @@ public class OrderValidator {
             if (contractor!=null) {
                 throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
             }
-            this.mailValidator.check(order.getBillingMail());
+            if(order.hasBillingMail()) {
+                this.mailValidator.check(order.getBillingMail());
+            }
         }
 
     }
