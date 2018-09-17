@@ -22,4 +22,6 @@ public interface NegotiationBillingRepository
 
     Optional<NegotiationBilling> findByIdAndHirerNegotiationHirerId(String id, String hirerId);
 
+    Optional<NegotiationBilling> findByNumer(String number);
+
 }

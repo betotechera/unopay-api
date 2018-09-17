@@ -249,29 +249,29 @@ public class TicketService {
     }
 
     private void processOrderAsPaid(Ticket ticket) {
-        defineAsPaid(ticket);
         orderProcessor.processAsPaid(ticket.getSourceId());
+        defineAsPaid(ticket);
     }
 
     private void processCreditAsPaid(Ticket ticket) {
-        defineAsPaid(ticket);
         creditService.processAsPaid(ticket.getSourceId());
+        defineAsPaid(ticket);
     }
 
     private void processHirerBillingAsPaid(Ticket ticket){
-        defineAsPaid(ticket);
         negotiationBillingService.processAsPaid(ticket.getSourceId());
         NegotiationBilling billing = negotiationBillingService.findById(ticket.getSourceId());
         if(billing.getBillingWithCredits()) {
             creditService.processAsPaid(billing.creditId());
         }
+        defineAsPaid(ticket);
     }
 
     private void processBonusBillingAsPaid(Ticket ticket) {
-        defineAsPaid(ticket);
         bonusBillingService.processAsPaid(ticket.getSourceId());
         BonusBilling bonusBilling = bonusBillingService.findById(ticket.getSourceId());
         contractorInstrumentCreditService.processBonusBilling(bonusBilling);
+        defineAsPaid(ticket);
     }
 
     private void defineAsPaid(Ticket ticket) {

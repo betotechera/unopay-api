@@ -44,7 +44,7 @@ public final class Errors {
     public static final UnovationError SERVICE_CODE_ALREADY_EXISTS =
             new UnovationError("SERVICE_CODE_ALREADY_EXISTS","Service code already exists");
     public static final UnovationError CANNOT_INVOKE_TYPE =
-            new UnovationError("CANNOT_INVOKE_TYPE","Cannot invoke type");
+            new UnovationError("fCANNOT_INVOKE_TYPE","Cannot invoke type");
 
 
     /* bank account */

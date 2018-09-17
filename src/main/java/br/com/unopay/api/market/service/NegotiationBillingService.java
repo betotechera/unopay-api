@@ -115,7 +115,7 @@ public class NegotiationBillingService {
 
     @Transactional
     public void processAsPaid(String billingId) {
-        NegotiationBilling current = repository.findOne(billingId);
+        NegotiationBilling current = checkReturn(() -> repository.findByNumer(billingId));
         hirerNegotiationService.defineActive(current.negotiationId());
         current.setStatus(PaymentStatus.PAID);
         save(current);
