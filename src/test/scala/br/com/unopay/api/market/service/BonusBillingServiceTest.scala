@@ -262,10 +262,10 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
         val bonusBilling = fixtureCreator.createBonusBillingToPersist()
         bonusBilling.processedAt = null
         bonusBilling.status = PaymentStatus.WAITING_PAYMENT
-        val id = service.create(bonusBilling).id
+        val number = service.create(bonusBilling).number
 
-        service.processAsPaid(id)
-        val found = service.findById(id)
+        service.processAsPaid(number)
+        val found = service.findByNumber(number)
 
         found.processedAt should be
         found.status should be(PaymentStatus.PAID)

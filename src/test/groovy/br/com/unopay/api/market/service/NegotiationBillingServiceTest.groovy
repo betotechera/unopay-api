@@ -273,7 +273,6 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
 
     }
 
-
     def "given known negotiation when process as Paid should update status to paid"(){
         given:
         def negotiation = fixtureCreator.createNegotiation()
@@ -282,7 +281,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         NegotiationBilling foundBefore = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         when:
-        service.processAsPaid(foundBefore.getId())
+        service.processAsPaid(foundBefore.getNumber())
         NegotiationBilling foundAfter = service.findById(foundBefore.getId())
 
         then:
@@ -300,7 +299,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         NegotiationBilling billing = service.findLastNotPaidByHirer(negotiation.hirerId())
 
         when:
-        service.processAsPaid(billing.getId())
+        service.processAsPaid(billing.getNumber())
 
         HirerNegotiation negotiationFound = hirerNegotiationService.findById(negotiation.getId())
 
