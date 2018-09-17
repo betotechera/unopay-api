@@ -190,7 +190,7 @@ class TicketServiceTest extends SpockApplicationTests{
         extractor.extractOnLine(CODIGO_OCORRENCIA, _) >> PAID
         extractor.extractOnLine(IDENTIFICACAO_TITULO, _) >> ticket.number
         numberGeneratorMock.getNumberWithoutLeftPad(_) >> ticket.number
-        negotiationBillingServiceMock.findById(_) >> Fixture.from(NegotiationBilling).gimme("valid")
+        negotiationBillingServiceMock.findByNumber(_) >> Fixture.from(NegotiationBilling).gimme("valid")
 
         when:
         service.processTicketReturn(file)
