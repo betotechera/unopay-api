@@ -45,8 +45,8 @@ public class OrderProcessor {
         this.authorizedMemberCandidateService = authorizedMemberCandidateService;
     }
 
-    public void processAsPaid(String orderId){
-        Order order = orderService.findById(orderId);
+    public void processAsPaid(String number){
+        Order order = orderService.findByNumber(number);
         order.setStatus(PaymentStatus.PAID);
         orderService.save(order);
         process(order);

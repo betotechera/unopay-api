@@ -119,6 +119,11 @@ public class CreditService {
         return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
     }
 
+    public Credit  findByNumber(String number) {
+        Optional<Credit> credit = repository.findByCreditNumber(number);
+        return credit.orElseThrow(() -> UnovationExceptions.notFound().withErrors(HIRER_CREDIT_NOT_FOUND));
+    }
+
     public Set<Credit> findProcessingByIssuerAndInsertionType(String issuerId, CreditInsertionType type){
         return repository.findByIssuerIdAndSituationAndCreditInsertionType(issuerId,
                 CreditSituation.PROCESSING, type);
@@ -169,8 +174,8 @@ public class CreditService {
         repository.save(credit);
     }
 
-    public void processAsPaid(String creditId) {
-        Credit credit = findById(creditId);
+    public void processAsPaid(String number) {
+        Credit credit = findByNumber(number);
         credit.setSituation(CreditSituation.CONFIRMED);
         save(credit);
         unblockCredit(credit, BOLETO);

@@ -260,7 +260,7 @@ public class TicketService {
 
     private void processHirerBillingAsPaid(Ticket ticket){
         negotiationBillingService.processAsPaid(ticket.getSourceId());
-        NegotiationBilling billing = negotiationBillingService.findById(ticket.getSourceId());
+        NegotiationBilling billing = negotiationBillingService.findByNumber(ticket.getSourceId());
         if(billing.getBillingWithCredits()) {
             creditService.processAsPaid(billing.creditId());
         }
@@ -269,7 +269,7 @@ public class TicketService {
 
     private void processBonusBillingAsPaid(Ticket ticket) {
         bonusBillingService.processAsPaid(ticket.getSourceId());
-        BonusBilling bonusBilling = bonusBillingService.findById(ticket.getSourceId());
+        BonusBilling bonusBilling = bonusBillingService.findByNumber(ticket.getSourceId());
         contractorInstrumentCreditService.processBonusBilling(bonusBilling);
         defineAsPaid(ticket);
     }

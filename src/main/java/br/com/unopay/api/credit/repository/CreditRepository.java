@@ -13,6 +13,7 @@ public interface CreditRepository extends UnovationFilterRepository<Credit,Strin
     Optional<Credit> findFirstByOrderByCreatedDateTimeDesc();
 
     Optional<Credit> findById(String id);
+    Optional<Credit> findByCreditNumber(String number);
 
     Optional<Credit> findByIdAndHirerId(String id, String hirerId);
 

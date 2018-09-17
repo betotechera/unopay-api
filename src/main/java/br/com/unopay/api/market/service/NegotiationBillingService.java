@@ -83,6 +83,12 @@ public class NegotiationBillingService {
                 UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public NegotiationBilling findByNumber(String number) {
+        Optional<NegotiationBilling> billing = repository.findByNumber(number);
+        return billing.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(NEGOTIATION_BILLING_NOT_FOUND.withOnlyArgument(number)));
+    }
+
     public NegotiationBilling findByIdForIssuer(String id, Issuer issuer) {
         Optional<NegotiationBilling> billing = repository.findByIdAndHirerNegotiationProductIssuerId(id,issuer.getId());
         return billing.orElseThrow(()->
@@ -114,8 +120,8 @@ public class NegotiationBillingService {
     }
 
     @Transactional
-    public void processAsPaid(String billingId) {
-        NegotiationBilling current = checkReturn(() -> repository.findByNumer(billingId));
+    public void processAsPaid(String billingNumber) {
+        NegotiationBilling current = findByNumber(billingNumber);
         hirerNegotiationService.defineActive(current.negotiationId());
         current.setStatus(PaymentStatus.PAID);
         save(current);

@@ -12,6 +12,7 @@ public interface OrderRepository extends UnovationFilterRepository<Order,String,
     List<Order> findAllByOrderByCreateDateTimeDesc();
     Optional<Order> findFirstByOrderByCreateDateTimeDesc();
     Optional<Order> findById(String id);
+    Optional<Order> findByNumber(String number);
     Optional<Order> findByIdAndProductIssuerId(String id, String issuerId);
     Set<Order> findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(String email);
 }

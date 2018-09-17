@@ -121,8 +121,8 @@ class BonusBillingService(repository: BonusBillingRepository,
         bonusBilling.setIssuer(issuerService.findById(bonusBilling.issuerId()))
     }
 
-    def processAsPaid(billingId: String) = {
-        val current = findById(billingId)
+    def processAsPaid(billingNumber: String) = {
+        val current = findByNumber(billingNumber)
         current.processedAt = new Date()
         current.setStatus(PaymentStatus.PAID)
         save(current)
@@ -136,6 +136,12 @@ class BonusBillingService(repository: BonusBillingRepository,
 
     def findById(id: String): BonusBilling = {
         val bonusBilling = repository.findById(id)
+        bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
+            Errors.BONUS_BILLING_NOT_FOUND))
+    }
+
+    def findByNumber(number: String): BonusBilling = {
+        val bonusBilling = repository.findByNumber(number)
         bonusBilling.orElseThrow(() => UnovationExceptions.notFound().withErrors(
             Errors.BONUS_BILLING_NOT_FOUND))
     }

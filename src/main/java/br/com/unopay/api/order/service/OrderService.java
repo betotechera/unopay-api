@@ -77,6 +77,11 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
+    public Order findByNumber(String number) {
+        Optional<Order> order = repository.findByNumber(number);
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+    }
+
     public Order findByIdForIssuer(String id, Issuer issuer) {
         Optional<Order> order = repository.findByIdAndProductIssuerId(id, issuer.getId());
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
