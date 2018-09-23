@@ -55,7 +55,8 @@ class ContractInstallmentOrderJobTest extends SpockApplicationTests {
     def "Should  not create order for contract Installment that will expire in 4+ days"() {
         given:
         contractInstallmentService.update(installmentUnderTest.id, installmentUnderTest.with {
-            it.expiration = LocalDate.now().plusDays(4).toDate()
+            it.expiration = LocalDate.now().plusDays(3).toDate()
+            it.paymentDateTime = new Date()
             it
         })
 
