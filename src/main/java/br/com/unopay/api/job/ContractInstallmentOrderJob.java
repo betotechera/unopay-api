@@ -29,6 +29,6 @@ public class ContractInstallmentOrderJob {
         Set<ContractInstallment> installments = contractInstallmentService.findInstallmentAboutToExpire();
         installments.stream().map(ContractInstallment::toOrder)
                 .forEach(order -> orderService.create(order));
-        log.info("finished contract installment order job");
+        log.info("finished contract installment order job. Created {} order(s)", installments.size());
     }
 }
