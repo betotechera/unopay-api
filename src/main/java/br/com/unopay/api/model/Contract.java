@@ -15,14 +15,12 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -40,11 +38,14 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.commons.lang.RandomStringUtils;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static br.com.unopay.api.model.ContractOrigin.APPLICATION;
 import static br.com.unopay.api.model.ContractSituation.ACTIVE;
@@ -383,5 +384,9 @@ public class Contract implements Serializable {
     public boolean canAuthorizeServiceWithoutContractorPassword() {
         Boolean canAuthorize = product.getIssuer().getAuthorizeServiceWithoutContractorPassword();
         return  canAuthorize != null ? canAuthorize : false;
+    }
+
+    public Person contractorPerson() {
+        return contractor.getPerson();
     }
 }
