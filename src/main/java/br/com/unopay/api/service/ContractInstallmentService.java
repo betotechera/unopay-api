@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
@@ -101,9 +102,10 @@ public class ContractInstallmentService {
     }
 
     @Transactional
-    public Set<ContractInstallment> findInstallmentAboutToExpire(){
+    public Stream<ContractInstallment> findInstallmentAboutToExpire(){
         LocalDate localDate = LocalDate.now().plusDays(boletoDeadlineInDays);
-        return repository.findInstallmentAboutToExpire(localDate.toDate());
+        Set<ContractInstallment> installments = repository.findInstallmentAboutToExpire(localDate.toDate());
+        return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
     }
 
     public Set<ContractInstallment> findByContractId(String contractId) {

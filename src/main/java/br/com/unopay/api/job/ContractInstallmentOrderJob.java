@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -26,9 +26,9 @@ public class ContractInstallmentOrderJob {
     @Scheduled(cron = "0 10 3 ? * *", zone = "GMT-3")
     void execute() {
         log.info("running contract installment order job");
-        Set<ContractInstallment> installments = contractInstallmentService.findInstallmentAboutToExpire();
-        installments.stream().map(ContractInstallment::toOrder)
+        Stream<ContractInstallment> installments = contractInstallmentService.findInstallmentAboutToExpire();
+        installments.map(ContractInstallment::toOrder)
                 .forEach(order -> orderService.create(order));
-        log.info("finished contract installment order job. Created {} order(s)", installments.size());
+        log.info("finished contract installment order job.");
     }
 }
