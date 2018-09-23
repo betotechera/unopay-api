@@ -51,4 +51,19 @@ class ContractInstallmentOrderJobTest extends SpockApplicationTests {
         notThrown(BaseException)
         1 * notifierMock.notify(Queues.ORDER_CREATED, _)
     }
+
+    def "Should  not create order for contract Installment that will expire in 4+ days"() {
+        given:
+        contractInstallmentService.update(installmentUnderTest.id, installmentUnderTest.with {
+            it.expiration = LocalDate.now().plusDays(4).toDate()
+            it
+        })
+
+        when:
+        job.execute()
+        then:
+        notThrown(BaseException)
+        0 * notifierMock.notify(_ , _)
+    }
+
 }
