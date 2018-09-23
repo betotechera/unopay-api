@@ -6,6 +6,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
@@ -32,7 +33,7 @@ public class ContractInstallmentService {
     private ContractInstallmentRepository repository;
     private HirerNegotiationService hirerNegotiationService;
     @Setter private Date currentDate = new Date();
-    private final Integer boletoDeadlineInDays;
+    @Getter private final Integer boletoDeadlineInDays;
 
     @Autowired
     public ContractInstallmentService(ContractInstallmentRepository repository,
