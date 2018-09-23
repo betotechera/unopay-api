@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,12 +32,16 @@ public class ContractInstallmentService {
     private ContractInstallmentRepository repository;
     private HirerNegotiationService hirerNegotiationService;
     @Setter private Date currentDate = new Date();
+    private final Integer boletoDeadlineInDays;
 
     @Autowired
     public ContractInstallmentService(ContractInstallmentRepository repository,
-                                      HirerNegotiationService hirerNegotiationService) {
+                                      HirerNegotiationService hirerNegotiationService,
+                                      @Value("${unopay.boleto.deadline_in_days}")Integer boletoDeadlineInDays
+                                      ) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.boletoDeadlineInDays = boletoDeadlineInDays;
     }
 
     @Transactional
@@ -96,7 +101,7 @@ public class ContractInstallmentService {
 
     @Transactional
     public Set<ContractInstallment> findInstallmentAboutToExpire(){
-        LocalDate localDate = LocalDate.now().plusDays(3);
+        LocalDate localDate = LocalDate.now().plusDays(boletoDeadlineInDays);
         return repository.findInstallmentAboutToExpire(localDate.toDate());
     }
 
