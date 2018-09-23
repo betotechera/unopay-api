@@ -23,7 +23,7 @@ public class ContractInstallmentOrderJob {
         this.orderService = orderService;
     }
 
-    @Scheduled(cron = "0 0 0 ? * *", zone = "GMT-3")
+    @Scheduled(cron = "0 10 3 ? * *", zone = "GMT-3")
     void execute() {
         log.info("running contract installment order job");
         Set<ContractInstallment> installments = contractInstallmentService.findInstallmentAboutToExpire();

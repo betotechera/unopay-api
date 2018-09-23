@@ -68,7 +68,7 @@ class ContractInstallmentOrderJobTest extends SpockApplicationTests {
         0 * notifierMock.notify(_ , _)
     }
 
-    def "Should  not create order for contract Installment that will expire in deadline days + 1"() {
+    def "Should  not create order for contract Installment that will expire in deadline days plus one day"() {
         given:
         contractInstallmentService.update(installmentUnderTest.id, installmentUnderTest.with {
             it.expiration = LocalDate.now().plusDays(contractInstallmentService.boletoDeadlineInDays + 1).toDate()
