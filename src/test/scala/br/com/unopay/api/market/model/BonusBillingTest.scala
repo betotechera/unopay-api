@@ -1,9 +1,9 @@
 package br.com.unopay.api.market.model
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.ScalaApplicationTest
+import br.com.unopay.api.ScalaFixtureTest
 
-class BonusBillingTest extends ScalaApplicationTest {
+class BonusBillingTest extends ScalaFixtureTest {
 
     it should "be equal" in {
         val a: BonusBilling = Fixture.from(classOf[BonusBilling]).gimme("valid")

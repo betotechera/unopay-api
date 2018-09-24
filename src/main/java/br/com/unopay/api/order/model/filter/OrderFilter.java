@@ -24,6 +24,9 @@ public class OrderFilter {
     @SearchableField
     private PaymentStatus status;
 
+    @SearchableField
+    private String number;
+
     @SearchableField(field = "createDateTime")
     private Period createdAt;
 }
