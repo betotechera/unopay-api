@@ -428,8 +428,7 @@ class FixtureCreator {
        }})
     }
 
-    Product createProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100)){
-        def hirer = createHirer()
+    Product createProductWithSameIssuerOfHirer(BigDecimal membershipFee = (Math.random() * 100),hirer = createHirer()){
         Person issuerPerson = from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
             add("document.number", hirer.documentNumber)
         }})

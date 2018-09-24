@@ -7,26 +7,20 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.credit.service.CreditService
-import static br.com.unopay.api.function.FixtureFunctions.*
-import br.com.unopay.api.function.FixtureFunctions
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.model.PaymentDayCalculator
-import br.com.unopay.api.model.Contract
-import static br.com.unopay.api.model.ContractSituation.*
-import static br.com.unopay.api.model.ContractSituation.*
-import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
-import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
-import org.joda.time.Days
 import org.joda.time.LocalDate
-import org.joda.time.Months
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+
+import static br.com.unopay.api.model.ContractSituation.*
+import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
 class NegotiationBillingServiceTest extends SpockApplicationTests{
@@ -397,7 +391,7 @@ class NegotiationBillingServiceTest extends SpockApplicationTests{
         HirerNegotiation negotiation = Fixture.from(HirerNegotiation).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("hirer", fixtureCreator.createHirer())
             add("product", fixtureCreator.createProduct())
-            add("effectiveDate", new DateTime().plusMonths(1).withMillisOfDay(0).toDate())
+            add("effectiveDate", LocalDate.now().plusMonths(1).toDate())
         }})
         fixtureCreator.createPersistedContract(fixtureCreator.createContractor(), negotiation.product,negotiation.hirer)
 

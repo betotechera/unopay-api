@@ -6,6 +6,15 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import lombok.Getter;
+import lombok.Setter;
+import org.joda.time.LocalDate;
+import org.joda.time.Months;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,12 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.IntStream;
-import javax.transaction.Transactional;
-import lombok.Setter;
-import org.joda.time.LocalDate;
-import org.joda.time.Months;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.stream.Stream;
 
 import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
@@ -30,12 +34,16 @@ public class ContractInstallmentService {
     private ContractInstallmentRepository repository;
     private HirerNegotiationService hirerNegotiationService;
     @Setter private Date currentDate = new Date();
+    @Getter private final Integer boletoDeadlineInDays;
 
     @Autowired
     public ContractInstallmentService(ContractInstallmentRepository repository,
-                                      HirerNegotiationService hirerNegotiationService) {
+                                      HirerNegotiationService hirerNegotiationService,
+                                      @Value("${unopay.boleto.deadline_in_days}")Integer boletoDeadlineInDays
+                                      ) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
+        this.boletoDeadlineInDays = boletoDeadlineInDays;
     }
 
     @Transactional
@@ -93,6 +101,12 @@ public class ContractInstallmentService {
         repository.delete(id);
     }
 
+    @Transactional
+    public Stream<ContractInstallment> findInstallmentAboutToExpire(){
+        LocalDate localDate = LocalDate.now().plusDays(boletoDeadlineInDays);
+        Set<ContractInstallment> installments = repository.findInstallmentAboutToExpire(localDate.toDate());
+        return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
+    }
 
     public Set<ContractInstallment> findByContractId(String contractId) {
         Set<ContractInstallment> installments = repository.findByContractId(contractId);
