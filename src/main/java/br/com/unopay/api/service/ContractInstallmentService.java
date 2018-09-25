@@ -48,9 +48,9 @@ public class ContractInstallmentService {
 
     @Transactional
     public void create(Contract contract) {
-        ContractInstallment firstInstallment = save(new ContractInstallment(contract, currentDate));
+        ContractInstallment firstInstallment = save(new ContractInstallment(contract));
         create(firstInstallment, contract.getPaymentInstallments(), number ->
-                save(new ContractInstallment(contract, currentDate))
+                save(new ContractInstallment(contract))
         );
     }
 

@@ -116,7 +116,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
         when:
-        def installment = new ContractInstallment(contract,currentDate)
+        def installment = new ContractInstallment(contract)
 
         then:
         installment.value == Rounder.round(contract.annuityTotal() / contract.paymentInstallments)
@@ -127,7 +127,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
         when:
-        def installment = new ContractInstallment(contract,currentDate)
+        def installment = new ContractInstallment(contract)
 
         then:
         installment.contract.id == contract.id
@@ -138,7 +138,7 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
         when:
-        def installment = new ContractInstallment(contract,currentDate)
+        def installment = new ContractInstallment(contract)
 
         then:
         installment.installmentNumber == 1
@@ -149,23 +149,26 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         Contract contract = Fixture.from(Contract.class).gimme("valid")
 
         when:
-        def installment = new ContractInstallment(contract,currentDate)
+        def installment = new ContractInstallment(contract)
 
         then:
-        timeComparator.compare(installment.expiration, new Date())
+        timeComparator.compare(installment.expiration, contract.begin)
     }
 
     def 'when increment expiration and today is after day 27 should be incremented with one month and at the end of the month'(){
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         def currentDate =  new DateTime().withDayOfMonth(28).toDate()
+        contract.setBegin(currentDate)
+
         when:
-        def contractInstallment = new ContractInstallment(contract, currentDate)
+        def contractInstallment = new ContractInstallment(contract)
         Date expiration = contractInstallment.expiration
 
         then:
         def excitations = (1..contract.paymentInstallments).collect {
-            def installment = new ContractInstallment(contract, expiration)
+
+            def installment = new ContractInstallment(contract)
             installment.plusOneMonthInExpiration(expiration)
             expiration = installment.expiration
             return expiration
@@ -182,14 +185,14 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         given:
         Contract contract = Fixture.from(Contract.class).gimme("valid")
         def currentDate =  new DateTime().withDayOfMonth(27).toDate()
-
+        contract.setBegin(currentDate)
         when:
-        def contractInstallment = new ContractInstallment(contract,currentDate)
+        def contractInstallment = new ContractInstallment(contract)
         Date expiration = contractInstallment.expiration
 
         then:
         def excitations = (1..contract.paymentInstallments).collect {
-            def installment = new ContractInstallment(contract, expiration)
+            def installment = new ContractInstallment(contract)
             installment.plusOneMonthInExpiration(expiration)
             expiration = installment.expiration
             return expiration
@@ -207,10 +210,11 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         BigDecimal membershipFee = null
         Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
             add("membershipFee", membershipFee)
+            add("begin", currentDate)
         }})
 
         when:
-        def contractInstallment = new ContractInstallment(contract,currentDate)
+        def contractInstallment = new ContractInstallment(contract)
 
         then:
         timeComparator.compare(contractInstallment.expiration, currentDate) == 0
@@ -221,10 +225,11 @@ class ContractInstallmentTest extends FixtureApplicationTest {
         BigDecimal membershipFee = 20.0
         Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
             add("membershipFee", membershipFee)
+            add("begin", currentDate)
         }})
 
         when:
-        def contractInstallment = new ContractInstallment(contract,currentDate)
+        def contractInstallment = new ContractInstallment(contract)
 
         then:
         timeComparator.compare(contractInstallment.expiration,
@@ -233,15 +238,17 @@ class ContractInstallmentTest extends FixtureApplicationTest {
 
     def 'installment number should be incremented'(){
         given:
-        Contract contract = Fixture.from(Contract.class).gimme("valid")
+        Contract contract = Fixture.from(Contract.class).gimme("valid", new Rule(){{
+            add("begin", currentDate)
+        }})
 
         when:
-        def contractInstallment = new ContractInstallment(contract,currentDate)
+        def contractInstallment = new ContractInstallment(contract)
 
         then:
         int nextNumber = contractInstallment.installmentNumber
         (0..contract.paymentInstallments).every {
-            def installment = new ContractInstallment(contract,currentDate)
+            def installment = new ContractInstallment(contract)
             installment.incrementNumber(nextNumber)
             nextNumber++
             installment.installmentNumber == nextNumber
