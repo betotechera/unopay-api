@@ -9,6 +9,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,10 +102,12 @@ public class ContractInstallmentService {
         repository.delete(id);
     }
 
-    @Transactional
     public Stream<ContractInstallment> findInstallmentAboutToExpire(){
-        LocalDate localDate = LocalDate.now().plusDays(boletoDeadlineInDays);
-        Set<ContractInstallment> installments = repository.findInstallmentAboutToExpire(localDate.toDate());
+        LocalDateTime expirationDayBegin = LocalDateTime.now().plusDays(boletoDeadlineInDays)
+                .withTime(0,0,0,0);
+        LocalDateTime expirationDayEnd = LocalDateTime.now().plusDays(boletoDeadlineInDays)
+                .withTime(23,59,59,0);
+        Set<ContractInstallment> installments = repository.findInstallmentAboutToExpire(expirationDayBegin.toDate(), expirationDayEnd.toDate());
         return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
     }
 

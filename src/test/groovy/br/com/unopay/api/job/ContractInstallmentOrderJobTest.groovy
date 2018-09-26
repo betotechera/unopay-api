@@ -9,6 +9,7 @@ import br.com.unopay.api.order.service.OrderService
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.bootcommons.exception.BaseException
 import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
 import org.springframework.beans.factory.annotation.Autowired
 
 class ContractInstallmentOrderJobTest extends SpockApplicationTests {
@@ -56,6 +57,25 @@ class ContractInstallmentOrderJobTest extends SpockApplicationTests {
         notThrown(BaseException)
         1 * notifierMock.notify(Queues.ORDER_CREATED, _)
     }
+
+
+    def "Should create order for contract Installment that will expire in deadline config days when is a PF product get all day interval"() {
+        given:
+        contractInstallmentService.update(installmentUnderTest.id, installmentUnderTest.with {
+            it.expiration = LocalDateTime.now().plusDays(contractInstallmentService.boletoDeadlineInDays)
+            .withTime(13,54,10,2)
+                    .toDate()
+            it
+        })
+
+
+        when:
+        job.execute()
+        then:
+        notThrown(BaseException)
+        1 * notifierMock.notify(Queues.ORDER_CREATED, _)
+    }
+
 
     def "Should not create order for contract Installment that will expire in deadline config days but is a PJ product"() {
         given:

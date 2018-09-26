@@ -14,7 +14,7 @@ public interface ContractInstallmentRepository
     Optional<ContractInstallment> findById(String id);
     Set<ContractInstallment> findByContractId(String contractId);
 
-    @Query("SELECT c FROM ContractInstallment c WHERE c.expiration  = ?1 and paymentDateTime is null")
-    Set<ContractInstallment> findInstallmentAboutToExpire(Date expiration);
+    @Query("SELECT c FROM ContractInstallment c WHERE c.expiration  >=  ?1 and c.expiration  <= ?2 and paymentDateTime is null")
+    Set<ContractInstallment> findInstallmentAboutToExpire(Date expiration, Date expirationEnd);
 
 }
