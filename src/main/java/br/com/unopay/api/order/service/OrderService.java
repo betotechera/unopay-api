@@ -113,6 +113,7 @@ public class OrderService {
 
     @Transactional
     public Order create(Order order) {
+        log.info("Creating order={}", order);
         orderValidator.validateProduct(order);
         return createOrder(order);
     }
