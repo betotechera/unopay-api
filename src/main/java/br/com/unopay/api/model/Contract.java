@@ -15,6 +15,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.Comparator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang.RandomStringUtils;
@@ -353,7 +354,9 @@ public class Contract implements Serializable {
 
     public BigDecimal installmentValue(){
         return getContractInstallments().stream()
-                .findFirst().map(ContractInstallment::getValue).orElse(null);
+                .filter(i -> i.getPaymentValue() == null)
+                .min(Comparator.comparing(ContractInstallment::getInstallmentNumber))
+                .map(ContractInstallment::getValue).orElse(null);
     }
 
     public boolean withMembershipFee() {

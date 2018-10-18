@@ -20,6 +20,7 @@ import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
+import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
@@ -41,6 +42,8 @@ class OrderServiceTest extends SpockApplicationTests{
     private PersonService personService
     @Autowired
     private ContractInstallmentService installmentService
+    @Autowired
+    private ContractService contractService
     @Autowired
     private UserCreditCardService userCreditCardService
     @Autowired
@@ -252,6 +255,43 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.value == creditOrder.contract.installmentValue()
+    }
+
+    def 'when create a installment order should get the last installment value'(){
+        given:
+        fixtureCreator.createInstrumentToProduct(contractUnderTest.product, contractUnderTest.contractor)
+        Order creditOrderA = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractUnderTest.contractorPerson())
+            add("product", contractUnderTest.product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", null)
+        }})
+
+        def created = service.create(creditOrderA)
+        contractService.markInstallmentAsPaidFrom(created)
+
+        def installments = installmentService.findByContractId(contractUnderTest.getId())
+        def currentInstallmentToPay = installments.findAll { it.paymentValue == null }.sort { it.installmentNumber }.first()
+        def newExpectedValue = 666.72
+        installmentService.update(currentInstallmentToPay.id, new ContractInstallment().with {
+            value = newExpectedValue
+            installmentNumber = currentInstallmentToPay.installmentNumber
+            it})
+        Order creditOrderB = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractUnderTest.contractorPerson())
+            add("product", contractUnderTest.product)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
+            add("contract", contractService.findById(contractUnderTest.id))
+            add("paymentInstrument", null)
+        }})
+        when:
+        def lastOrder = service.create(creditOrderB)
+        Order result = service.findById(lastOrder.id)
+
+        then:
+        result.value == newExpectedValue
+
     }
 
 
