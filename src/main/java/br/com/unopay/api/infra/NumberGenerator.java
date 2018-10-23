@@ -23,7 +23,7 @@ public class NumberGenerator {
     public synchronized String createNumber(int size) {
         String count = valueOf(repository.count());
         String timestamp = valueOf(new Date().getTime());
-        String number = format("%s%s",count.substring(count.length()-2),timestamp.substring(timestamp.length()-10));
+        String number = format("%s%s",count.substring(count.length()-Math.min(2, count.length())),timestamp.substring(timestamp.length()-10));
         return getNumberWithoutLeftPad(number.substring(0, Math.min(number.length(), size)));
     }
 
