@@ -21,8 +21,9 @@ public class NumberGenerator {
     }
 
     public synchronized String createNumber(int size) {
-        long count = repository.count();
-        String number = format("%s%s",valueOf(count),valueOf(new Date().getTime()));
+        String count = valueOf(repository.count());
+        String timestamp = valueOf(new Date().getTime());
+        String number = format("%s%s",count.substring(count.length()-2),timestamp.substring(timestamp.length()-10));
         return getNumberWithoutLeftPad(number.substring(0, Math.min(number.length(), size)));
     }
 
