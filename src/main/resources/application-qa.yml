@@ -54,7 +54,7 @@ multipart:
   max-file-size: 9000Kb
 spring:
   datasource:
-      url: jdbc:postgresql://unopay-qa.c2u10rjpdtxz.us-west-2.rds.amazonaws.com:5432/unopay?currentSchema=unovation
+      url: jdbc:postgresql://db-qa.unvlocal.com.br:5432/unopay?currentSchema=unovation
       username: administrator
       password: LVTQB5MkBuH0
       initialSize: 5
@@ -79,10 +79,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     generate-ddl: false
   redis:
-    host: redis.qa.unvlocal.com.br
+    host: redis-qa.unvlocal.com.br
     port: 6379
   rabbitmq:
-    host: rabbit.qa.unvlocal.com.br
+    host: rabbit-qa.unvlocal.com.br
     port: 5672
     username: unopay
     password: unopay
