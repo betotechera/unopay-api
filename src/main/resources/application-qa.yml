@@ -81,6 +81,8 @@ spring:
   redis:
     host: redis-qa.unvlocal.com.br
     port: 6379
+    username: user
+    password: 4EmcoC5S1b0v
   rabbitmq:
     host: rabbit-qa.unvlocal.com.br
     port: 5672
