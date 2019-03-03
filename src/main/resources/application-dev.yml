@@ -21,7 +21,7 @@ payment:
         enviroment: 'T'
 unopay:
   resetPassword:
-        url: 'http://backoffice.qa.unovation.com.br/#/page/password/'
+        url: 'http://backoffice-qa.unovation.com.br/#/page/password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
   api: api.qa.unovation.com.br:8080
