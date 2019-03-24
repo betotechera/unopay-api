@@ -7,9 +7,6 @@ import static br.com.unopay.api.bacen.model.Segment.TRANSPORT;
 
 public enum EstablishmentType implements DescriptableEnum {
 
-    SUPPORT_POINT("Ponto de apoio", TRANSPORT),
-    SUPPLY_STATION("Posto de abastecimento", TRANSPORT),
-    TOLL_STATION("Posto de Pedágio", TRANSPORT),
     DOCTORS_OFFICE("Consultório Médico", HEALTH),
     CLINICAL_ANALYSIS_LABORATORY("Laboratório Análises Clinicas", HEALTH),
     PICTURE_SERVICES("Serviços de Imagem", HEALTH),
@@ -17,7 +14,9 @@ public enum EstablishmentType implements DescriptableEnum {
     PHYSIOTHERAPY("Fisioterapia", HEALTH),
     DENTISTRY("Odontologia", HEALTH),
     PSYCHOLOGY("Psicologia", HEALTH),
-    PHARMACIES("Farmácias", HEALTH);
+    PHARMACIES("Farmácias", HEALTH),
+    ALTERNATIVE_MEDICINE("Medicina alternativa", HEALTH),
+    HOSPITAL("Hospitais", HEALTH);
 
     private String description;
     private Segment segment;

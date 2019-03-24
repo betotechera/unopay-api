@@ -9,7 +9,10 @@ public enum ServiceType implements DescriptableEnum {
     DOCTORS_APPOINTMENTS("Consultas Médicas", HEALTH),
     DIAGNOSIS_AND_THERAPY("Diagnose e Terapia", HEALTH),
     DENTISTRY("Odontologia", HEALTH),
-    MEDICINES("Medicamentos", HEALTH);
+    MEDICINES("Medicamentos", HEALTH),
+    INTEGRATES_AND_ALTERNATIVES("Práticas Integrativas e Complementares", HEALTH),
+    HOSPITALIZATION("Internações",HEALTH),
+    EMS("Pronto Socorro", HEALTH);
 
     private String description;
     private Segment segment;
