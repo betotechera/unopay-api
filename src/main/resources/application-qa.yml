@@ -1,9 +1,15 @@
-client:
-  wingoo:
-    user: admin
-    password: wingoo!#2018
-    application: 5ae0973f07f4f19d8b000006
-    api: http://dev-wingoo.herokuapp.com/api
+wingoo:
+  api: api-qa.wingoo.com.br
+  security:
+    oauth2:
+      resource:
+        tokenInfoUri: ${wingoo.api}/uaa/oauth/check_token
+      client:
+        clientId: api-gateway
+        clientSecret: 5yRt6BPsdusq8AP
+        accessTokenUri: ${api.gateway}/uaa/oauth/token
+        username: emerson@unovation.com.br
+        passwor: backwin567
 payment:
   gateway:
     config:
