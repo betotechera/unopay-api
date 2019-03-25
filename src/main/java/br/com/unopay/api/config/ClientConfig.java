@@ -26,8 +26,6 @@ public class ClientConfig {
     @Value("${wingoo.api}")
     private String wingooApi;
 
-    private String ACCESS_TOKEN_KEY = "OAuth2AuthenticationDetails.ACCESS_TOKEN_VALUE";
-
     @Bean
     @ConfigurationProperties("wingoo.security.oauth2.client")
     public ResourceOwnerPasswordResourceDetails WingooOauth2Client() {
