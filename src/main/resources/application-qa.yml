@@ -1,5 +1,5 @@
 wingoo:
-  api: api-qa.wingoo.com.br
+  api: https://api-qa.wingoo.com.br
   security:
     oauth2:
       resource:
@@ -7,9 +7,9 @@ wingoo:
       client:
         clientId: api-gateway
         clientSecret: 5yRt6BPsdusq8AP
-        accessTokenUri: ${api.gateway}/uaa/oauth/token
+        accessTokenUri: ${wingoo.api}/uaa/oauth/token
         username: emerson@unovation.com.br
-        passwor: backwin567
+        password: backwin567
 payment:
   gateway:
     config:
@@ -36,7 +36,7 @@ unopay:
 
   credit:
     defaultCreditInsertionType: 'BOLETO'
-  api: api.qa.unvlocal.com.br:8080
+  api: api-qa.unvlocal.com.br:8080
   file-uploader:
     configs:
       avatar:
