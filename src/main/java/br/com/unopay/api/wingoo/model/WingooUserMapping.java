@@ -26,7 +26,7 @@ public class WingooUserMapping implements Serializable{
         user.setStudentId(instrumentNumber);
         user.setStatus(STATUS);
         user.setType(TYPE);
-        user.setHirer(issuerDocument);
+        user.setHirerDocument(issuerDocument);
         return user;
     }
 }
