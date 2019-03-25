@@ -6,11 +6,14 @@ import br.com.unopay.api.wingoo.model.WingooUserMapping;
 import br.com.wingoo.userclient.client.UserClient;
 import br.com.wingoo.userclient.model.User;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Data
+@Slf4j
 @Service
 public class WingooService {
 
@@ -19,7 +22,12 @@ public class WingooService {
     private UserClient wingooUserClient;
 
     public User create(Contractor contractor, String instrumentNumber){
-        return wingooUserClient.create(WingooUserMapping.fromContractor(contractor, instrumentNumber));
+        try {
+            return wingooUserClient.create(WingooUserMapping.fromContractor(contractor, instrumentNumber));
+        }catch (HttpClientErrorException e){
+            log.warn(e.getResponseBodyAsString());
+            return null;
+        }
     }
 
     public void update(Password password){
