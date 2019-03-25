@@ -133,7 +133,10 @@ public class Person implements Serializable{
     }
 
     public String documentNumber(){
-        return getDocument().getNumber();
+        if(getDocument() != null) {
+            return getDocument().getNumber();
+        }
+        return null;
     }
 
     public String documentType(){

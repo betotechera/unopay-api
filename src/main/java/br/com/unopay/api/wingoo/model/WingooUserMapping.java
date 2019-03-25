@@ -12,7 +12,7 @@ public class WingooUserMapping implements Serializable{
     public static final int STATUS = 2;
     public static final String FORMAT = "%s-%s";
 
-    public static User fromContractor(Contractor contractor, String instrumentNumber){
+    public static User fromContractor(Contractor contractor, String instrumentNumber, String issuerDocument){
         User user = new User();
         user.setName(contractor.getPerson().getShortName());
         user.setLastName(contractor.getPerson().getName());
@@ -26,6 +26,7 @@ public class WingooUserMapping implements Serializable{
         user.setStudentId(instrumentNumber);
         user.setStatus(STATUS);
         user.setType(TYPE);
+        user.setHirer(issuerDocument);
         return user;
     }
 }

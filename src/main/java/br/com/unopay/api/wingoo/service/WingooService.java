@@ -21,9 +21,9 @@ public class WingooService {
     @Qualifier("wingooUserClient")
     private UserClient wingooUserClient;
 
-    public User create(Contractor contractor, String instrumentNumber){
+    public User create(Contractor contractor, String instrumentNumber, String issuerDocument){
         try {
-            return wingooUserClient.create(WingooUserMapping.fromContractor(contractor, instrumentNumber));
+            return wingooUserClient.create(WingooUserMapping.fromContractor(contractor, instrumentNumber, issuerDocument));
         }catch (HttpClientErrorException e){
             log.warn(e.getResponseBodyAsString());
             return null;

@@ -188,7 +188,10 @@ public class Issuer implements Serializable{
     }
 
     public String documentNumber(){
-        return person.documentNumber();
+        if(person != null) {
+            return person.documentNumber();
+        }
+        return null;
     }
 
     @JsonIgnore
