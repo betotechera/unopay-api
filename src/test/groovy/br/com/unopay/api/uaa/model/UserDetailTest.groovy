@@ -12,32 +12,43 @@ class UserDetailTest extends FixtureApplicationTest {
         Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
 
         when:
-        def userDetail = new UserDetail(contractor)
+        def userDetail = new UserDetail(contractor, '456@@')
 
         then:
         userDetail.contractor == contractor
     }
 
-    def 'when create from contractor should define name'(){
+    def 'when create from contractor should define the name'(){
         given:
         Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
 
         when:
-        def userDetail = new UserDetail(contractor)
+        def userDetail = new UserDetail(contractor, '456@@')
 
         then:
         userDetail.name == contractor.person.shortName
     }
 
-    def 'when create from contractor should define email'(){
+    def 'when create from contractor should define the email'(){
         given:
         Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
 
         when:
-        def userDetail = new UserDetail(contractor)
+        def userDetail = new UserDetail(contractor, '456@@')
 
         then:
         userDetail.email == contractor.person.physicalPersonDetail.email
+    }
+
+    def 'when create from contractor with password should define the password'(){
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("physical")
+        def password = '123456@@'
+        when:
+        def userDetail = new UserDetail(contractor, password)
+
+        then:
+        userDetail.password == password
     }
 
     def 'given id, email and password when initializing then should set properties'() {

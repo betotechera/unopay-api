@@ -1,0 +1,1 @@
+alter table "order" add user_password varchar(150) default null;

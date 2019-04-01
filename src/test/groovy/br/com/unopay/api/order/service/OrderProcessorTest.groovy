@@ -3,7 +3,6 @@ package br.com.unopay.api.order.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.infra.Notifier
@@ -11,7 +10,6 @@ import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.Person
-import br.com.unopay.api.model.Product
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.OrderType
@@ -19,6 +17,7 @@ import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.ProductService
+import br.com.unopay.api.uaa.service.UserDetailService
 import org.springframework.beans.factory.annotation.Autowired
 
 class OrderProcessorTest extends SpockApplicationTests{
@@ -35,6 +34,8 @@ class OrderProcessorTest extends SpockApplicationTests{
     private ContractorInstrumentCreditService instrumentCreditService
     @Autowired
     private AuthorizedMemberService authorizedMemberService
+    @Autowired
+    private UserDetailService userDetailService
     @Autowired
     private FixtureCreator fixtureCreator
     @Autowired
@@ -68,7 +69,7 @@ class OrderProcessorTest extends SpockApplicationTests{
         result.availableBalance == paid.value
     }
 
-    def 'given a adhesion order with paid status should create contract'(){
+    def 'given a adhesion order with paid status should create the contract'(){
         given:
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def paid = fixtureCreator.createPersistedAdhesionOrder(person)
@@ -79,6 +80,34 @@ class OrderProcessorTest extends SpockApplicationTests{
 
         then:
         contract.isPresent()
+    }
+
+    def 'given a adhesion order with paid status should create the user'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
+
+        when:
+        processor.process(paid)
+        def userDetail = userDetailService.getByEmail(person.physicalPersonEmail)
+
+        then:
+        userDetail != null
+    }
+
+    def 'given a adhesion order with paid status and a password should create the user with the same password'(){
+        given:
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def paid = fixtureCreator.createPersistedAdhesionOrder(person)
+        def expectedPassword = '45687998'
+        paid.userPassword = expectedPassword
+
+        when:
+        processor.process(paid)
+        def userDetail = userDetailService.getByEmail(person.physicalPersonEmail)
+
+        then:
+        userDetailService.passwordEncoder.matches(expectedPassword,userDetail.password)
     }
 
     def 'given a adhesion order with candidates should create authorized members'(){

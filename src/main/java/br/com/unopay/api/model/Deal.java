@@ -22,10 +22,26 @@ public class Deal {
         this.members = members;
     }
 
+    public Deal(Person person, String productCode, Boolean createUser, Set<AuthorizedMemberCandidate> members, String password) {
+        this.person = person;
+        this.productCode = productCode;
+        this.createUser = createUser;
+        this.members = members;
+        this.password = password;
+    }
+
     public Deal(Person person, String productCode, Boolean createUser) {
         this.person = person;
         this.productCode = productCode;
         this.createUser = createUser;
+        this.members = new HashSet<>();
+    }
+
+    public Deal(Person person, String productCode, Boolean createUser, String Password) {
+        this.person = person;
+        this.productCode = productCode;
+        this.createUser = createUser;
+        this.password = Password;
         this.members = new HashSet<>();
     }
 
@@ -34,6 +50,7 @@ public class Deal {
     private String productCode;
     private Boolean createUser;
     private Set<AuthorizedMemberCandidate> members;
+    private String password;
 
     public Boolean hasHirerDocument() {
         return this.hirerDocument != null;

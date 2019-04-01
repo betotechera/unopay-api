@@ -148,6 +148,10 @@ public class Order implements Updatable, Billable, Serializable {
     @Transient
     private PaymentRequest paymentRequest;
 
+    @Column(name = "user_password")
+    @JsonView({Views.Order.Detail.class})
+    private String userPassword;
+
     @JsonIgnore
     @Version
     private Integer version;

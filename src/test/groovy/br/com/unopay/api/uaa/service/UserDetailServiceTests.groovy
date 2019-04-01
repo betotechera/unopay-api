@@ -195,6 +195,20 @@ class UserDetailServiceTests extends SpockApplicationTests {
         created.name != null
     }
 
+    void 'when create user with password should not send a password notification mail'(){
+        given:
+        UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")
+        def password = '123456'
+        user.password = password
+
+        when:
+        service.create(user)
+
+        then:
+        1 * passwordEncoder.encode(_) >> password
+        0 * notificationService.sendNewPassword(_,_)
+    }
+
     void 'should create user with existing userType'() {
         given:
         UserDetail user = Fixture.from(UserDetail.class).gimme("without-group")

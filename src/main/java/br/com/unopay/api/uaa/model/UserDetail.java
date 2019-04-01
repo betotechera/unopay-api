@@ -51,10 +51,11 @@ public class UserDetail implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
-    public UserDetail(Contractor contractor){
+    public UserDetail(Contractor contractor, String password){
         this.contractor = contractor;
         this.name = contractor.getPerson().getShortName();
         this.email = contractor.getPerson().getPhysicalPersonEmail();
+        this.password = password;
     }
 
     @Id
@@ -309,6 +310,10 @@ public class UserDetail implements Serializable, Updatable {
 
     public String contractorId() {
         return isContractorType() ? contractor.getId() : null;
+    }
+
+    public boolean hasPassword(){
+        return this.password != null;
     }
 
     public String contractorDocument() {

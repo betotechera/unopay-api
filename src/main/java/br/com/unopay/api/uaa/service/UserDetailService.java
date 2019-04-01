@@ -105,25 +105,30 @@ public class UserDetailService implements UserDetailsService {
     public UserDetail create(UserDetail user, String requestOrigin) {
         try {
             checkUser(user);
-            if(user.getPassword() != null) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if(user.hasPassword()) {
+                encodePassword(user, user.getPassword());
             }
             UserType userType = userTypeRepository.findByName(CONTRACTOR);
             if(user.getType() == null) {
                 user.setType(userType);
             }
-
             userTypeService.validateUserType(user);
             Set<Group> groups = groupService.loadKnownUserGroups(user);
             user.setGroups(groups);
             UserDetail created =  this.userDetailRepository.save(user);
-            notificationService.sendNewPassword(created, requestOrigin);
+            if(!user.hasPassword()) {
+                notificationService.sendNewPassword(created, requestOrigin);
+            }
             return created;
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("user already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict()
                     .withErrors(Errors.USER_EMAIL_ALREADY_EXISTS.withOnlyArgument(user.getEmail()));
         }
+    }
+
+    private void encodePassword(UserDetail user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
     }
 
     private void checkUser(UserDetail user) {
@@ -163,8 +168,8 @@ public class UserDetailService implements UserDetailsService {
         if (current == null) {
             throw UnovationExceptions.notFound().withErrors(USER_NOT_FOUND);
         }
-        if (user.getPassword() != null) {
-            current.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.hasPassword()) {
+            encodePassword(current, user.getPassword());
             updatePasswordOnWingoo(user.getPassword(), current);
         }
         current.updateMe(user);
@@ -266,7 +271,7 @@ public class UserDetailService implements UserDetailsService {
     }
 
     private void updatePasswordByUser(UserDetail user, NewPassword newPassword) {
-        user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
+        encodePassword(user, newPassword.getPassword());
         updatePasswordOnWingoo(newPassword.getPassword(), user);
         userDetailRepository.save(user);
     }

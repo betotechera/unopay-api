@@ -111,6 +111,19 @@ class DealServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    void 'when deal close with a password should create user with the same password'(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def expectedPassword = '123458@@$$'
+        when:
+        Contract contract =  service.closeWithIssuerAsHirer(new Deal(person, product.code, createUser, expectedPassword))
+        UserDetail result  = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
+
+        then:
+        userDetailService.passwordEncoder.matches(expectedPassword, result.password)
+    }
+
     void 'given an existing user when deal close should deal with him'(){
         given:
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
@@ -139,6 +152,22 @@ class DealServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'USER_NOT_FOUND'
+    }
+
+    void """an non existing user, createUser enabled end a user password define
+            when deal close should create a user with the informed password"""(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def createUser = true
+        def expectedPassword = '12345679A@'
+
+        when:
+        Contract contract =  service.closeWithIssuerAsHirer(new Deal(person, product.code, createUser, expectedPassword))
+        def user = userDetailService.getByEmail(contract.contractor.person.physicalPersonDetail.email)
+
+        then:
+        userDetailService.passwordEncoder.matches(expectedPassword, user.password)
     }
 
     def 'when deal close should create user with contractor user type'(){
