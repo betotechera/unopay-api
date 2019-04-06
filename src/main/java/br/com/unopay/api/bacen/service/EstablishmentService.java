@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_WITH_BRANCH;
 
@@ -59,6 +60,12 @@ public class EstablishmentService {
         this.scheduler = scheduler;
     }
 
+    public Establishment create(Establishment establishment, AccreditedNetwork accreditedNetwork) {
+        AccreditedNetwork network = networkService.getById(accreditedNetwork.getId());
+        establishment.setNetwork(network);
+        return create(establishment);
+    }
+
     public Establishment create(Establishment establishment) {
         establishment.validateCreate();
         saveReferences(establishment);
@@ -66,6 +73,21 @@ public class EstablishmentService {
         Establishment created = repository.save(establishment);
         scheduleClosingJob(created);
         return created;
+    }
+
+    public void update(String id, Establishment establishment, AccreditedNetwork accreditedNetwork) {
+        AccreditedNetwork currentNetwork = checkEstablishmentOwner(id, accreditedNetwork);
+        establishment.setNetwork(currentNetwork);
+        update(id, establishment);
+    }
+
+    private AccreditedNetwork checkEstablishmentOwner(String id, AccreditedNetwork accreditedNetwork) {
+        AccreditedNetwork network = networkService.getById(accreditedNetwork.getId());
+        AccreditedNetwork currentNetwork = findById(id).getNetwork();
+        if(!network.getId().equals(currentNetwork.getId())){
+            throw UnovationExceptions.forbidden().withErrors(ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK);
+        }
+        return currentNetwork;
     }
 
     public void update(String id, Establishment establishment) {

@@ -12,6 +12,7 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.BatchClosingJob
 import br.com.unopay.api.job.UnopayScheduler
 import br.com.unopay.bootcommons.exception.ConflictException
+import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -214,6 +215,29 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         result != null
     }
 
+    def 'a valid establishment should be create to a logged network'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        establishment.network = null
+        when:
+        def created = service.create(establishment, networkUnderTest)
+        def result = service.findById(created.id)
+        then:
+        result.network.id == networkUnderTest.id
+    }
+
+    def 'a valid establishment should not be create to a unknown logged network'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).gimme("valid")
+        establishment.network = null
+        when:
+        service.create(establishment, new AccreditedNetwork())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
+    }
+
     def 'a valid establishment without bank account should not be updated'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
@@ -226,6 +250,55 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         then:
         def ex = thrown(UnprocessableEntityException)
         ex.errors.find().logref == 'BANK_ACCOUNT_REQUIRED'
+    }
+
+    def 'a valid establishment should not be updated with a unknown logged network'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+
+        when:
+        service.update(establishment.id, establishment, new AccreditedNetwork())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
+    }
+
+    def 'a valid establishment should not be updated with a different network'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        establishment.network = fixtureCreator.createNetwork()
+        when:
+        service.update(establishment.id, establishment, networkUnderTest)
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK'
+    }
+
+    def 'a valid establishment should not be updated the network'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        def newNetwork = fixtureCreator.createNetwork()
+        establishment.network = newNetwork
+        when:
+        service.update(establishment.id, establishment, newNetwork)
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK'
+    }
+
+    def 'given a logged network different than the establishment network should not be updated'(){
+        given:
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+
+        when:
+        service.update(establishment.id, establishment, fixtureCreator.createNetwork())
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK'
     }
 
     def 'a valid establishment without bank account id should not be updated'(){
