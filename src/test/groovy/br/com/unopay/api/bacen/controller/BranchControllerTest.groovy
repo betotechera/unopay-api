@@ -55,7 +55,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/branches/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(branch.with { id= extractId(location);  fee = 0.3d ; person.id = '1'; person.document.number = '11114444555786'; it }))
+                .content(toJson(branch.with { id= extractId(location);  person.id = '1'; person.document.number = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
@@ -94,7 +94,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath('$.fee', is(notNullValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.id', is(notNullValue())))
     }
 
     void 'all branches should be found'() {

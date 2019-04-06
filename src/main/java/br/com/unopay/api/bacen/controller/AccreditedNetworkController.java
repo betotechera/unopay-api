@@ -126,7 +126,7 @@ public class AccreditedNetworkController {
     @RequestMapping(value = "/accredited-networks/me/establishments/{id}", method = RequestMethod.GET)
     public Establishment getEstablishment(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
         log.info("get establishment={} for network={}", id, accreditedNetwork.documentNumber());
-        return establishmentService.findByIdAndNewtwork(id, accreditedNetwork);
+        return establishmentService.findByIdAndNetworks(id, accreditedNetwork);
     }
 
     @JsonView(Views.Establishment.List.class)

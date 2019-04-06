@@ -20,15 +20,12 @@ public class BranchService {
     private BranchRepository repository;
     private PersonService personService;
     private EstablishmentService establishmentService;
-    private BankAccountService bankAccountService;
 
     @Autowired
-    public BranchService(BankAccountService bankAccountService,
-                         EstablishmentService establishmentService,
+    public BranchService(EstablishmentService establishmentService,
                          PersonService personService,
                          BranchRepository repository){
         this.repository = repository;
-        this.bankAccountService = bankAccountService;
         this.establishmentService = establishmentService;
         this.personService = personService;
 
@@ -62,12 +59,10 @@ public class BranchService {
 
     private void saveReferences(Branch branch) {
         personService.create(branch.getPerson());
-        bankAccountService.create(branch.getBankAccount());
     }
 
     private void validateExistingReferences(Branch branch) {
         establishmentService.findById(branch.getHeadOffice().getId());
-        bankAccountService.findById(branch.getBankAccount().getId());
         personService.findById(branch.getPerson().getId());
     }
 

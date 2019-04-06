@@ -78,7 +78,7 @@ public class EstablishmentService {
         scheduleClosingJob(current);
     }
 
-    public Establishment findByIdAndNewtwork(String id, AccreditedNetwork network) {
+    public Establishment findByIdAndNetworks(String id, AccreditedNetwork network) {
         Optional<Establishment> establishment = repository.findByIdAndNetworkId(id, network.getId());
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }

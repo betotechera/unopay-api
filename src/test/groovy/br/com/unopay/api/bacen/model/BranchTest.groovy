@@ -15,17 +15,11 @@ class BranchTest extends FixtureApplicationTest{
 
         then:
         branchA.headOffice == branchB.headOffice
-        branchA.alternativeMail == branchB.alternativeMail
-        branchA.bankAccount == branchB.bankAccount
-        branchA.checkout == branchB.checkout
         branchA.contactMail == branchB.contactMail
-        branchA.contractUri == branchB.contractUri
         branchA.branchPhotoUri == branchB.branchPhotoUri
-        branchA.cancellationTolerance == branchB.cancellationTolerance
-        branchA.gatheringChannel == branchB.gatheringChannel
-        branchA.invoiceMail == branchB.invoiceMail
+        branchA.gatheringChannels == branchB.gatheringChannels
         branchA.person == branchB.person
-        branchA.fee == branchB.fee
+        branchA.services == branchB.services
         branchA.technicalContact == branchB.technicalContact
     }
 

@@ -261,16 +261,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("person", one(Person.class, "legal"));
             add("headOffice", one(Establishment.class, "valid"));
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me", null));
-            add("cancellationTolerance", random(Integer.class, range(0, 60)));
-            add("fee", random(Double.class, range(0.00, 1)));
-            add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("branchPhotoUri", "/tmp/path");
-            add("contractUri", "/tmp/path");
-            add("gatheringChannel", random(GatheringChannel.class));
-            add("bankAccount", one(BankAccount.class, "persisted"));
-            add("checkout", one(Checkout.class,"valid"));
+            add("gatheringChannels", has(2).of(GatheringChannel.class));
         }});
 
         Fixture.of(AccreditedNetworkIssuer.class).addTemplate("valid", new Rule(){{

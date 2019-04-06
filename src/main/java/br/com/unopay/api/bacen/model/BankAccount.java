@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -71,6 +72,11 @@ public class BankAccount implements Serializable{
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.BankAccount.class})
     private BankAccountType type;
+
+    @JsonView({Views.BankAccount.class})
+    @Column(name = "operation_type")
+    @Size(min = 2, max = 6)
+    private String operationType;
 
     public void updateMe(BankAccount other){
         setBank(other.getBank());

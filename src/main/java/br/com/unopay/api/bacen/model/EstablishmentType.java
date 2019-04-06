@@ -3,7 +3,6 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.http.DescriptableEnum;
 
 import static br.com.unopay.api.bacen.model.Segment.HEALTH;
-import static br.com.unopay.api.bacen.model.Segment.TRANSPORT;
 
 public enum EstablishmentType implements DescriptableEnum {
 
@@ -16,7 +15,8 @@ public enum EstablishmentType implements DescriptableEnum {
     PSYCHOLOGY("Psicologia", HEALTH),
     PHARMACIES("Farmácias", HEALTH),
     ALTERNATIVE_MEDICINE("Medicina alternativa", HEALTH),
-    HOSPITAL("Hospitais", HEALTH);
+    HOSPITAL("Hospitais", HEALTH),
+    POLYCLINIC("Policlínica", HEALTH);
 
     private String description;
     private Segment segment;
