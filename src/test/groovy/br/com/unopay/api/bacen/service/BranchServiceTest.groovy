@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
@@ -40,6 +41,47 @@ class BranchServiceTest extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+    def 'a valid branch with a head office from the current network should be create'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        Branch branch = Fixture.from(Branch.class).gimme("valid")
+        Establishment establishment = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("network", network)
+        }})
+        branch.headOffice = establishment
+        when:
+        def created = service.create(branch, network)
+        def result = service.findById(created.id)
+        then:
+        result.headOffice.id == establishment.id
+    }
+
+    def 'a valid branch without a head office from the current network should be create'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        Branch branch = Fixture.from(Branch.class).gimme("valid")
+        branch.headOffice = Fixture.from(Establishment.class).gimme("valid")
+
+        when:
+        service.create(branch, network)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ESTABLISHMENT_NOT_FOUND'
+    }
+
+    def 'a valid branch should not be create to a unknown logged network'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).gimme("valid")
+
+        when:
+        service.create(branch, new AccreditedNetwork())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
     }
 
     def 'a branch person should be updated'(){

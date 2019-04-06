@@ -37,6 +37,13 @@ public class BranchService {
         this.accreditedNetworkService = accreditedNetworkService;
     }
 
+    public Branch create(Branch branch, AccreditedNetwork accreditedNetwork) {
+        AccreditedNetwork network = accreditedNetworkService.getById(accreditedNetwork.getId());
+        Establishment headOffice = establishmentService.findByIdAndNetworks(branch.getHeadOffice().getId(), network);
+        branch.setHeadOffice(headOffice);
+        return create(branch);
+    }
+
     public Branch create(Branch branch) {
         branch.validateCreate();
         saveReferences(branch);
