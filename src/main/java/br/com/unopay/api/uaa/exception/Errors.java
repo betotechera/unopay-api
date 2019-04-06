@@ -558,6 +558,9 @@ public final class Errors {
     public static final UnovationError ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK =
             new UnovationError("ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK", "" +
                     "establishment belong to another network");
+    public static final UnovationError ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK =
+            new UnovationError("ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK", "" +
+                    "establishment branch belong to another network");
 
 
     /* Contractor Credit Recurrence */

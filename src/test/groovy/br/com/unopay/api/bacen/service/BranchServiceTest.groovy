@@ -2,9 +2,11 @@ package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
@@ -109,6 +111,55 @@ class BranchServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.find().logref == 'PERSON_NOT_FOUND'
+    }
+
+    def 'a valid establishment should not be updated with a unknown logged network'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
+
+        when:
+        service.update(branch.id, branch, new AccreditedNetwork())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
+    }
+
+    def 'a valid establishment should not be updated with a different network'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
+        branch.headOffice.network = fixtureCreator.createNetwork()
+        when:
+        service.update(branch.id, branch, fixtureCreator.createNetwork())
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
+    }
+
+    def 'a valid establishment should not be updated the network'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
+        def newNetwork = fixtureCreator.createNetwork()
+        branch.headOffice.network = newNetwork
+        when:
+        service.update(branch.id, branch, newNetwork)
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
+    }
+
+    def 'given a logged network different than the establishment network should not be updated'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
+
+        when:
+        service.update(branch.id, branch, fixtureCreator.createNetwork())
+
+        then:
+        def ex = thrown(ForbiddenException)
+        ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
     }
 
     def 'a valid branch without person should not be created'(){
