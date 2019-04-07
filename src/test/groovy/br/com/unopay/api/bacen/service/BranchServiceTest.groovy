@@ -311,6 +311,38 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'BRANCH_NOT_FOUND'
     }
 
+    def 'a known branch of an establishment of the same network should be found'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        Establishment headOffice = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("network", network)
+        }})
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOffice)
+        }})
+        when:
+        Branch result = service.findById(branch.id, network)
+
+        then:
+        result != null
+        result.headOffice.network.id == network.id
+    }
+
+    def 'a known branch of an establishment of another network should not be found'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        Establishment headOffice = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid")
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOffice)
+        }})
+        when:
+        service.findById(branch.id, network)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'BRANCH_NOT_FOUND'
+    }
+
     def 'a known branch should be deleted'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }

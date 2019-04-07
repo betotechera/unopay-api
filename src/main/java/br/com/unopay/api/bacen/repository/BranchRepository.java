@@ -11,4 +11,6 @@ public interface BranchRepository extends UnovationFilterRepository<Branch, Stri
 
      Optional<Branch> findById(String id);
 
+    Optional<Branch> findByIdAndHeadOfficeNetworkId(String id, String networkId);
+
 }

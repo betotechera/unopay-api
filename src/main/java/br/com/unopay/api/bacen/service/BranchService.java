@@ -65,6 +65,11 @@ public class BranchService {
         repository.save(current);
     }
 
+    public Branch findById(String id, AccreditedNetwork accreditedNetwork) {
+        Optional<Branch> branch = repository.findByIdAndHeadOfficeNetworkId(id, accreditedNetwork.getId());
+        return branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
+    }
+
     public Branch findById(String id) {
         Optional<Branch> branch = repository.findById(id);
         return branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
