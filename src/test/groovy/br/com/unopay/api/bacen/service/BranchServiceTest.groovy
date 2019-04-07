@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Branch
 import br.com.unopay.api.bacen.model.Establishment
+import br.com.unopay.api.bacen.model.GatheringChannel
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
@@ -155,7 +156,7 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'PERSON_NOT_FOUND'
     }
 
-    def 'a valid establishment should not be updated with a unknown logged network'(){
+    def 'a valid branch should not be updated with a unknown logged network'(){
         given:
         Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
 
@@ -167,7 +168,25 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
     }
 
-    def 'a valid establishment should not be updated with a different network'(){
+    def 'a valid branch of an establishment of the same network should be updated'(){
+        given:
+        def network = fixtureCreator.createNetwork()
+        Establishment headOffice = Fixture.from(Establishment.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+           add("network", network)
+        }})
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOffice)
+        }})
+        branch.gatheringChannels = [GatheringChannel.MOBILE]
+        when:
+        service.update(branch.id, branch, network)
+        Branch result = service.findById(branch.id)
+
+        then:
+        result.gatheringChannels.contains(GatheringChannel.MOBILE)
+    }
+
+    def 'a valid branch should not be updated with a different network'(){
         given:
         Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
         branch.headOffice.network = fixtureCreator.createNetwork()
@@ -179,7 +198,7 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
     }
 
-    def 'a valid establishment should not be updated the network'(){
+    def 'a valid branch should not be updated the network'(){
         given:
         Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
         def newNetwork = fixtureCreator.createNetwork()
@@ -192,7 +211,7 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
     }
 
-    def 'given a logged network different than the establishment network should not be updated'(){
+    def 'given a logged network different than the branch network should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid")
 

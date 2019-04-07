@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.BRANCH_NOT_FOUND;
-import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_BELONG_TO_ANOTHER_NETWORK;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK;
 
 @Service
@@ -93,6 +92,11 @@ public class BranchService {
             throw UnovationExceptions.forbidden().withErrors(ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK);
         }
         return currentEstablishment;
+    }
+
+    public Page<Branch> findByFilter(BranchFilter filter, AccreditedNetwork network, UnovationPageRequest pageable) {
+        filter.setNetwork(network.getId());
+        return findByFilter(filter, pageable);
     }
 
     public Page<Branch> findByFilter(BranchFilter filter, UnovationPageRequest pageable) {

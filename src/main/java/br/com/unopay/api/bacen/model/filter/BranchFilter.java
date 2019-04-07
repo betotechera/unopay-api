@@ -19,6 +19,9 @@ public class BranchFilter implements Serializable {
     @SearchableField(field = "headOffice.type")
     private String headOfficeType;
 
+    @SearchableField(field = "headOffice.network.id")
+    private String network;
+
     @SearchableField(field = "person.address.city")
     private String city;
 
