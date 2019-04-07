@@ -1,10 +1,13 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
+import br.com.unopay.api.bacen.model.filter.BranchFilter;
 import br.com.unopay.api.bacen.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.bacen.service.BranchService;
 import br.com.unopay.api.bacen.service.EstablishmentService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -38,15 +41,18 @@ public class AccreditedNetworkController {
 
     private AccreditedNetworkService service;
     private EstablishmentService establishmentService;
+    private BranchService branchService;
 
     @Value("${unopay.api}")
     private String api;
 
     @Autowired
     public AccreditedNetworkController(AccreditedNetworkService service,
-                                       EstablishmentService establishmentService) {
+                                       EstablishmentService establishmentService,
+                                       BranchService branchService) {
         this.service = service;
         this.establishmentService = establishmentService;
+        this.branchService = branchService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -141,5 +147,44 @@ public class AccreditedNetworkController {
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/accredited-networks/me/establishments", api));
     }
+
+
+    @JsonView(Views.Branch.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/accredited-networks/me/establishments/branches", method = RequestMethod.POST)
+    public ResponseEntity<Branch> createBranch(@Validated(Create.class) @RequestBody Branch branch, AccreditedNetwork accreditedNetwork) {
+        log.info("create a branch establishment for network={}", accreditedNetwork.documentNumber());
+        Branch created = branchService.create(branch, accreditedNetwork);
+        return ResponseEntity
+                .created(URI.create("/branches/"+created.getId()))
+                .body(created);
+
+    }
+    @JsonView(Views.Branch.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments/branches/{id}", method = RequestMethod.GET)
+    public Branch getBranch(@PathVariable  String id, AccreditedNetwork accreditedNetwork) {
+        log.info("get a branch establishment={} for network={}",id, accreditedNetwork.documentNumber());
+        return branchService.findById(id, accreditedNetwork);
+    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/establishments/branches/{id}", method = RequestMethod.PUT)
+    public void updateBranch(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch branch, AccreditedNetwork accreditedNetwork) {
+        branch.setId(id);
+        log.info("update a branch establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        branchService.update(id,branch, accreditedNetwork);
+    }
+
+    @JsonView(Views.Branch.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments/branches", method = RequestMethod.GET)
+    public Results<Branch> getBranchByParams(BranchFilter filter, @Validated UnovationPageRequest pageable, AccreditedNetwork accreditedNetwork) {
+        log.info("search branch establishment with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        Page<Branch> page =  branchService.findByFilter(filter, accreditedNetwork, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/branches", api));
+    }
+
+
 
 }
