@@ -85,19 +85,19 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ACCREDITED_NETWORK_NOT_FOUND'
     }
 
-    def 'a branch person should be updated'(){
+    def 'a branch address should be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         Branch created = service.create(branch)
         def newField = "teste"
-        branch.person.name = newField
+        branch.address.streetName = newField
 
         when:
         service.update(created.id, branch)
         Branch result = service.findById(created.id)
 
         then:
-        result.person.name == newField
+        result.address.streetName == newField
     }
 
     def 'a branch head office should not be updated'(){
@@ -115,45 +115,45 @@ class BranchServiceTest extends SpockApplicationTests {
         result.headOffice.contactMail != newField
     }
 
-    def 'a valid branch without person should not be updated'(){
+    def 'a valid branch without an address should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def created = service.create(branch)
-        branch.person = null
+        branch.address = null
         when:
         service.update(created.id, branch)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'PERSON_REQUIRED'
+        ex.errors.find().logref == 'ADDRESS_REQUIRED'
     }
 
-    def 'a valid branch without person id should not be updated'(){
+    def 'a valid branch without an address id should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def created = service.create(branch)
-        branch.person.id = null
+        branch.address.id = null
 
         when:
         service.update(created.id, branch)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'PERSON_ID_REQUIRED'
+        ex.errors.find().logref == 'ADDRESS_ID_REQUIRED'
     }
 
-    def 'a valid branch with unknown person id should not be updated'(){
+    def 'a valid branch with unknown address id should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
         def created = service.create(branch)
-        branch.person.id = ''
+        branch.address.id = ''
 
         when:
         service.update(created.id, branch)
 
         then:
         def ex = thrown(NotFoundException)
-        ex.errors.find().logref == 'PERSON_NOT_FOUND'
+        ex.errors.find().logref == 'ADDRESS_NOT_FOUND'
     }
 
     def 'a valid branch should not be updated with a unknown logged network'(){
@@ -223,16 +223,16 @@ class BranchServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK'
     }
 
-    def 'a valid branch without person should not be created'(){
+    def 'a valid branch without an address should not be created'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        branch.person = null
+        branch.address = null
         when:
         service.create(branch)
 
         then:
         def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'PERSON_REQUIRED'
+        ex.errors.find().logref == 'ADDRESS_REQUIRED'
     }
 
     def 'a valid branch without headOffice should not be updated'(){

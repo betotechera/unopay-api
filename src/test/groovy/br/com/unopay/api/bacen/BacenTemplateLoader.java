@@ -31,6 +31,7 @@ import br.com.unopay.api.bacen.model.Scope;
 import br.com.unopay.api.bacen.model.Service;
 import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
+import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
@@ -258,7 +259,10 @@ public class BacenTemplateLoader implements TemplateLoader {
         }});
 
         Fixture.of(Branch.class).addTemplate("valid", new Rule(){{
-            add("person", one(Person.class, "legal"));
+            add("fantasyName", name());
+            add("name", firstName());
+            add("shortName", firstName());
+            add("address", one(Address.class, "address"));
             add("headOffice", one(Establishment.class, "valid"));
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("branchPhotoUri", "/tmp/path");

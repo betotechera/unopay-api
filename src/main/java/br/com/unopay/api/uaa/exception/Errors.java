@@ -165,7 +165,13 @@ public final class Errors {
     public static final UnovationError
             PERSON_REQUIRED = new UnovationError("PERSON_REQUIRED","Person required");
     public static final UnovationError
+            ADDRESS_REQUIRED = new UnovationError("ADDRESS_REQUIRED","Address required");
+    public static final UnovationError
+            ADDRESS_NOT_FOUND = new UnovationError("ADDRESS_NOT_FOUND","Address not found");
+    public static final UnovationError
             PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
+    public static final UnovationError
+            ADDRESS_ID_REQUIRED = new UnovationError("ADDRESS_ID_REQUIRED","Address id required");
 
 
     /* Institution */

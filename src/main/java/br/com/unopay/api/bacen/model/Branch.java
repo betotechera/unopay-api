@@ -1,6 +1,6 @@
 package br.com.unopay.api.bacen.model;
 
-import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -22,17 +22,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
+import static br.com.unopay.api.uaa.exception.Errors.ADDRESS_ID_REQUIRED;
+import static br.com.unopay.api.uaa.exception.Errors.ADDRESS_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.CANNOT_CHANGE_HEAD_OFFICE;
 import static br.com.unopay.api.uaa.exception.Errors.HEAD_OFFICE_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_ID_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 
 @Data
 @Entity
@@ -49,11 +51,28 @@ public class Branch implements Serializable {
     @Column(name="id")
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
+    @Column(name="name")
+    @Size(min=2, max = 150, groups = {Create.class, Update.class})
+    private String name;
+
+    @Column(name="short_name")
+    @NotNull(groups = {Create.class, Update.class})
+    @Size(min=2,max = 50, groups = {Create.class, Update.class})
+    private String shortName;
+
+    @Column(name="fantasy_name")
+    @JsonView({Views.Person.class, Views.Person.Detail.class})
+    @Size(max = 150, groups = {Create.class, Update.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private String fantasyName;
+
     @Valid
-    private Person person;
+    @NotNull(groups = {Create.class, Update.class})
+    @OneToOne
+    @JsonView({Views.Address.class,Views.AddressList.class})
+    @JoinColumn(name="address_id")
+    private Address address;
 
     @ManyToOne
     @JoinColumn(name="head_office_id")
@@ -94,8 +113,8 @@ public class Branch implements Serializable {
         if(getHeadOffice() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(HEAD_OFFICE_REQUIRED);
         }
-        if(getPerson() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_REQUIRED);
+        if(getAddress() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ADDRESS_REQUIRED);
         }
     }
 
@@ -107,8 +126,8 @@ public class Branch implements Serializable {
         if(!Objects.equals(getHeadOffice().getId(), current.getHeadOffice().getId())) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CANNOT_CHANGE_HEAD_OFFICE);
         }
-        if(getPerson().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_ID_REQUIRED);
+        if(getAddress().getId() == null) {
+            throw UnovationExceptions.unprocessableEntity().withErrors(ADDRESS_ID_REQUIRED);
         }
     }
 
@@ -117,7 +136,7 @@ public class Branch implements Serializable {
         contactMail = other.getContactMail();
         branchPhotoUri = other.getBranchPhotoUri();
         gatheringChannels = other.getGatheringChannels();
-        person = other.getPerson();
+        address = other.getAddress();
         technicalContact = other.getTechnicalContact();
         services = other.getServices();
     }
