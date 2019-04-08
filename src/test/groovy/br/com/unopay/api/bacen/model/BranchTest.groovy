@@ -14,7 +14,7 @@ class BranchTest extends FixtureApplicationTest{
         branchA.updateMe(branchB)
 
         then:
-        branchA.headOffice == branchB.headOffice
+        branchA.headOffice.id == branchB.headOffice.id
         branchA.contactMail == branchB.contactMail
         branchA.branchPhotoUri == branchB.branchPhotoUri
         branchA.gatheringChannels == branchB.gatheringChannels

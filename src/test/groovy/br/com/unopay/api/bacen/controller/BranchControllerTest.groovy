@@ -26,15 +26,15 @@ class BranchControllerTest extends AuthServerApplicationTests {
     Establishment headOfficeUnderTest
 
     void setup(){
-        flyway.clean()
-        flyway.migrate()
         headOfficeUnderTest = fixtureCreator.createHeadOffice()
     }
 
     void 'valid branch should be created'() {
         given:
         String accessToken = getUserAccessToken()
-        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
+        Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+        }})
 
         when:
         def result = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
@@ -47,16 +47,13 @@ class BranchControllerTest extends AuthServerApplicationTests {
     void 'known branch should be updated'() {
         given:
         String accessToken = getUserAccessToken()
-        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(branch))).andReturn()
-
-        def location = getLocationHeader(mvcResult)
-        def id = extractId(location)
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+        }})
+        def id = branch.id
         when:
         def result = this.mvc.perform(put('/branches/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(branch.with { id= extractId(location);  name.id = '1'; fantasyName = '11114444555786'; it }))
+                .content(toJson(branch.with { name = '13333'; fantasyName = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())
@@ -65,13 +62,10 @@ class BranchControllerTest extends AuthServerApplicationTests {
     void 'known branch should be deleted'() {
         given:
         String accessToken = getUserAccessToken()
-        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(branch))).andReturn()
-
-        def location = getLocationHeader(mvcResult)
-        def id = extractId(location)
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+        }})
+        def id = branch.id
         when:
         def result = this.mvc.perform(delete('/branches/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -82,14 +76,10 @@ class BranchControllerTest extends AuthServerApplicationTests {
     void 'known branches should be found'() {
         given:
         String accessToken = getUserAccessToken()
-        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        def mvcResult = this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(branch)))
-                .andReturn()
-
-        def location = getLocationHeader(mvcResult)
-        def id = extractId(location)
+        Branch branch = Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+        }})
+        def id = branch.id
         when:
         def result = this.mvc.perform(get('/branches/{id}?access_token={access_token}',id, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -101,10 +91,9 @@ class BranchControllerTest extends AuthServerApplicationTests {
     void 'all branches should be found'() {
         given:
         String accessToken = getUserAccessToken()
-        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
-        this.mvc.perform(post('/branches?access_token={access_token}', accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(branch)))
+        Fixture.from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+        }})
 
         when:
         def result = this.mvc.perform(get('/branches?access_token={access_token}', accessToken)
@@ -113,11 +102,6 @@ class BranchControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(equalTo(1))))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
-    }
-
-
-    private String extractId(String location) {
-        location.replaceAll('/branches/', "")
     }
 
 }

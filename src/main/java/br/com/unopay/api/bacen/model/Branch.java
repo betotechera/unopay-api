@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Address;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -39,7 +40,7 @@ import static br.com.unopay.api.uaa.exception.Errors.HEAD_OFFICE_REQUIRED;
 @Data
 @Entity
 @Table(name = "branch")
-public class Branch implements Serializable {
+public class Branch implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -131,13 +132,4 @@ public class Branch implements Serializable {
         }
     }
 
-    public void updateMe(Branch other) {
-        headOffice = other.getHeadOffice();
-        contactMail = other.getContactMail();
-        branchPhotoUri = other.getBranchPhotoUri();
-        gatheringChannels = other.getGatheringChannels();
-        address = other.getAddress();
-        technicalContact = other.getTechnicalContact();
-        services = other.getServices();
-    }
 }
