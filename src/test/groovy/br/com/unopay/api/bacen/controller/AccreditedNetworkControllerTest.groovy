@@ -202,7 +202,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
         when:
         def result = this.mvc.perform(put('/accredited-networks/me/establishments/branches/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(branch.with { person.id = '1'; person.document.number = '11114444555786'; it }))
+                .content(toJson(branch.with { name = '1'; fantasyName = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())

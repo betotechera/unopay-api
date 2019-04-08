@@ -56,7 +56,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
         def id = extractId(location)
         when:
         def result = this.mvc.perform(put('/branches/{id}?access_token={access_token}',id, accessToken)
-                .content(toJson(branch.with { id= extractId(location);  person.id = '1'; person.document.number = '11114444555786'; it }))
+                .content(toJson(branch.with { id= extractId(location);  name.id = '1'; fantasyName = '11114444555786'; it }))
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isNoContent())

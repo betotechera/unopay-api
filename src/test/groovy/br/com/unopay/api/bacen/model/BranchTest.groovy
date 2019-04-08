@@ -18,9 +18,12 @@ class BranchTest extends FixtureApplicationTest{
         branchA.contactMail == branchB.contactMail
         branchA.branchPhotoUri == branchB.branchPhotoUri
         branchA.gatheringChannels == branchB.gatheringChannels
-        branchA.person == branchB.person
+        branchA.address == branchB.address
         branchA.services == branchB.services
         branchA.technicalContact == branchB.technicalContact
+        branchA.name == branchB.name
+        branchA.shortName == branchB.shortName
+        branchA.fantasyName == branchB.fantasyName
     }
 
     def 'should be equals'(){
