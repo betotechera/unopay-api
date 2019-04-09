@@ -8,13 +8,11 @@ import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
 import javax.validation.constraints.NotNull
-import lombok.Data
-import org.codehaus.jackson.annotate.JsonIgnore
+import org.codehaus.jackson.annotate.{JsonBackReference, JsonIgnore}
 import org.hibernate.annotations.GenericGenerator
 
 import scala.beans.BeanProperty
 
-@Data
 @Entity
 @Table(name = "branch_service_period")
 class BranchServicePeriod extends Serializable with Updatable {
@@ -63,6 +61,8 @@ class BranchServicePeriod extends Serializable with Updatable {
   @Version
   @JsonIgnore
   var version: java.lang.Long = _
+
+
 
 
 }
