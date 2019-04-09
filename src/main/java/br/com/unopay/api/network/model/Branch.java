@@ -100,7 +100,7 @@ public class Branch implements Serializable, Updatable {
     @Column(name = "branch_photo_uri")
     private String branchPhotoUri;
 
-    @JsonView({Views.Branch.Detail.class})
+    @JsonView({Views.Branch.List.class})
     @Enumerated(EnumType.STRING)
     @Column(name = "situation")
     @NotNull(groups = {Create.class, Update.class})
