@@ -60,17 +60,17 @@ public class Branch implements Serializable, Updatable {
 
     @NotNull(groups = {Create.class, Update.class})
     @Column(name="name")
-    @Size(min=2, max = 150, groups = {Create.class, Update.class})
+    @Size(min=2, max = 50, groups = {Create.class, Update.class})
     private String name;
 
     @Column(name="short_name")
     @NotNull(groups = {Create.class, Update.class})
-    @Size(min=2,max = 50, groups = {Create.class, Update.class})
+    @Size(min=2,max = 20, groups = {Create.class, Update.class})
     private String shortName;
 
     @Column(name="fantasy_name")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
-    @Size(max = 150, groups = {Create.class, Update.class})
+    @Size(max = 50, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String fantasyName;
 
