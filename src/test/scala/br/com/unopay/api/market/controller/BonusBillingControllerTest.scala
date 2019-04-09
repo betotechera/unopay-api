@@ -10,9 +10,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{jsonPa
 
 class BonusBillingControllerTest  extends AuthServerApplicationTests {
 
-    @Autowired
-    var fixtureCreator: FixtureCreatorScala = _
-
     "known bonusBilling" should "be found" in {
         val accessToken = getUserAccessToken()
         val id = fixtureCreator.createPersistedBonusBilling().id

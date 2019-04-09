@@ -1,6 +1,7 @@
 package br.com.unopay.api
 
 import br.com.six2six.fixturefactory.function.impl.ChronicFunction
+import br.com.unopay.api.util.FixtureCreatorScala
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
@@ -33,6 +34,9 @@ abstract class ScalaApplicationTest extends SpringTest {
 
   @Autowired
   var jpaProcessor: util.JpaProcessorScala = _
+
+  @Autowired
+  var fixtureCreator: FixtureCreatorScala = _
 
   var mvc:  MockMvc = _
 

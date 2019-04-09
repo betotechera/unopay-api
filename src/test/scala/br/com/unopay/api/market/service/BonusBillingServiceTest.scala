@@ -23,8 +23,7 @@ class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
     var service: BonusBillingService = _
     @Autowired
     var contractorBonusService: ContractorBonusService =_
-    @Autowired
-    var fixtureCreator: util.FixtureCreatorScala = _
+
     @Autowired
     var contractorBonusBillingRepository: ContractorBonusBillingRepository = _
 

@@ -1,6 +1,6 @@
 package br.com.unopay.api.credit.model;
 
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Updatable;

@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
-import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.EstablishmentEvent;
+import br.com.unopay.api.network.model.Event;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;

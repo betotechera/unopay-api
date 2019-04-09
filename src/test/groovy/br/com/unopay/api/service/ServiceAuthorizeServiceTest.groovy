@@ -4,10 +4,10 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.bacen.model.Establishment
-import br.com.unopay.api.bacen.model.EstablishmentEvent
+import br.com.unopay.api.network.model.Establishment
+import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.bacen.model.ServiceType
+import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
 import br.com.unopay.api.market.model.ContractorBonus

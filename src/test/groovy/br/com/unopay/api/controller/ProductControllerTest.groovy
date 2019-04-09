@@ -2,7 +2,7 @@ package br.com.unopay.api.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.bacen.model.AccreditedNetwork
+import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator

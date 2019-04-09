@@ -1,19 +1,19 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.Partner;
-import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
+import br.com.unopay.api.network.model.Partner;
+import br.com.unopay.api.network.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
-import br.com.unopay.api.bacen.repository.EstablishmentRepository;
+import br.com.unopay.api.network.repository.EstablishmentRepository;
 import br.com.unopay.api.bacen.repository.HirerRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
-import br.com.unopay.api.bacen.repository.PartnerRepository;
+import br.com.unopay.api.network.repository.PartnerRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.GroupService;
 import br.com.unopay.api.uaa.service.UserTypeService;

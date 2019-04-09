@@ -1,9 +1,9 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Reference;

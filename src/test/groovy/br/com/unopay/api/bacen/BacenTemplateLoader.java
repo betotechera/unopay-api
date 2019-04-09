@@ -3,41 +3,26 @@ package br.com.unopay.api.bacen;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.BankAccountType;
-import br.com.unopay.api.bacen.model.Branch;
 import br.com.unopay.api.bacen.model.Checkout;
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
-import br.com.unopay.api.bacen.model.EstablishmentType;
-import br.com.unopay.api.bacen.model.Event;
-import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
 import br.com.unopay.api.bacen.model.InvoiceReceiptType;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.Partner;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.Purpose;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;
 import br.com.unopay.api.bacen.model.Scope;
-import br.com.unopay.api.bacen.model.Service;
-import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.bacen.model.UserRelationship;
-import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
-import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
-import br.com.unopay.api.uaa.model.UserDetail;
-
 import java.math.BigDecimal;
 
 
@@ -87,11 +72,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("creditRecurrencePeriod", random(RecurrencePeriod.class));
         }});
 
-        Fixture.of(Partner.class).addTemplate("valid", new Rule(){{
-            add("person", one(Person.class, "legal"));
-            add("bankAccount", one(BankAccount.class, "persisted"));
-        }});
-
         Fixture.of(Hirer.class).addTemplate("persisted").inherits("valid", new Rule(){{
             add("id", "1");
         }});
@@ -134,15 +114,6 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         }});
 
-        Fixture.of(AccreditedNetwork.class).addTemplate("valid", new Rule(){{
-            add("person", one(Person.class, "legal"));
-            add("paymentRuleGroups", has(1).of(PaymentRuleGroup.class, "persisted"));
-            add("merchantDiscountRate", random(Double.class,range(0D,1.0D)));
-            add("bankAccount", one(BankAccount.class, "persisted"));
-            add("checkout", one(Checkout.class,"valid"));
-            add("invoiceReceipt", one(InvoiceReceipt.class,"valid"));
-        }});
-
         Fixture.of(Checkout.class).addTemplate("valid", new Rule(){{
             add("period", random(RecurrencePeriod.class));
             add("authorizeTransfer", random(Boolean.class));
@@ -180,34 +151,6 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("walletNumber", regex("\\d{3}"));
         }});
 
-        Fixture.of(Service.class).addTemplate("valid", new Rule(){{
-            add("name", firstName());
-            add("code", random(Integer.class));
-            add("type", random(ServiceType.class));
-            add("feeVal", random(BigDecimal.class));
-            add("feePercent", random(Double.class));
-        }});
-
-        Fixture.of(Service.class).addTemplate("persisted").inherits("valid", new Rule(){{
-            add("id", "1");
-        }});
-
-        Fixture.of(Event.class).addTemplate("valid", new Rule(){{
-            add("service", one(Service.class, "persisted"));
-            add("ncmCode", regex("\\d{15,18}"));
-            add("name", regex("\\w{15,18}"));
-            add("requestQuantity",random(Boolean.class));
-            add("quantityUnity",random("litros", "arroba"));
-        }});
-
-        Fixture.of(Event.class).addTemplate("withRequestQuantity").inherits("valid", new Rule(){{
-            add("requestQuantity",true);
-        }});
-
-        Fixture.of(Event.class).addTemplate("withoutRequestQuantity").inherits("valid", new Rule(){{
-            add("requestQuantity",false);
-        }});
-
         Fixture.of(Bank.class).addTemplate("valid", new Rule(){{
             add("bacenCode", uniqueRandom(341, 318, 33));
             add("name", uniqueRandom("Itau", "BMG", "SANTANDER"));
@@ -230,51 +173,5 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("id", "1");
         }});
 
-        Fixture.of(Establishment.class).addTemplate("valid", new Rule(){{
-            add("person", one(Person.class, "legal"));
-            add("type", random(EstablishmentType.class));
-            add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("invoiceMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("bachShipmentMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("alternativeMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("cancellationTolerance", random(Integer.class, range(0, 60)));
-            add("fee", random(Double.class, range(0.00, 1)));
-            add("network", one(AccreditedNetwork.class, "valid"));
-            add("facadePhotoUri", "/tmp/path");
-            add("logoUri", "/tmp/path");
-            add("operationalContact", one(Contact.class, "persisted"));
-            add("administrativeContact", one(Contact.class, "persisted"));
-            add("financierContact", one(Contact.class, "persisted"));
-            add("technicalContact", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("contractUri", "/tmp/path");
-            add("gatheringChannels", has(2).of(GatheringChannel.class));
-            add("bankAccount", one(BankAccount.class, "persisted"));
-            add("checkout", one(Checkout.class,"valid"));
-            add("issueInvoiceType", uniqueRandom(IssueInvoiceType.class));
-        }});
-
-        Fixture.of(EstablishmentEvent.class).addTemplate("withoutReferences", new Rule(){{
-            add("value", random(BigDecimal.class, range(1,200)));
-            add("expiration", instant("1 day from now"));
-        }});
-
-        Fixture.of(Branch.class).addTemplate("valid", new Rule(){{
-            add("fantasyName", name());
-            add("name", firstName());
-            add("shortName", firstName());
-            add("address", one(Address.class, "address"));
-            add("headOffice", one(Establishment.class, "valid"));
-            add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
-            add("branchPhotoUri", "/tmp/path");
-            add("gatheringChannels", has(2).of(GatheringChannel.class));
-        }});
-
-        Fixture.of(AccreditedNetworkIssuer.class).addTemplate("valid", new Rule(){{
-            add("accreditedNetwork", one(AccreditedNetwork.class, "valid"));
-            add("issuer", one(Issuer.class, "valid"));
-            add("user", one(UserDetail.class, "with-group"));
-            add("createdDateTime", instant("now"));
-            add("active", random(Boolean.class));
-        }});
     }
 }

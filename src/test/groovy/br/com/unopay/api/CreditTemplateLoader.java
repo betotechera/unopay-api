@@ -7,7 +7,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.credit.model.ContractorCreditRecurrence;
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit;
 import br.com.unopay.api.credit.model.Credit;

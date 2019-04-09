@@ -1,7 +1,7 @@
 package br.com.unopay.api.bacen.model.csv;
 
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
-import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.network.model.EstablishmentEvent;
+import br.com.unopay.api.network.model.Event;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 import java.math.BigDecimal;

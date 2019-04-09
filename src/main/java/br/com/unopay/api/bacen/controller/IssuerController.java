@@ -1,16 +1,16 @@
 package br.com.unopay.api.bacen.controller;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.filter.AccreditedNetworkFilter;
+import br.com.unopay.api.network.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.service.AccreditedNetworkIssuerService;
-import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.bacen.service.IssuerService;

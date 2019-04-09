@@ -3,8 +3,8 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.bacen.model.EstablishmentEvent
-import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.api.network.model.EstablishmentEvent
+import br.com.unopay.api.network.model.Event
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ServiceAuthorizeEventTest extends FixtureApplicationTest{

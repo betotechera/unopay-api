@@ -310,6 +310,8 @@ public final class Errors {
             new UnovationError("HEAD_OFFICE_REQUIRED","Head office required.");
     public static final UnovationError CANNOT_CHANGE_HEAD_OFFICE =
             new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
+    public static final UnovationError PERIOD_ALREADY_REGISTERED =
+            new UnovationError("PERIOD_ALREADY_REGISTERED","period already registered");
 
     /* product */
     public static final UnovationError PRODUCT_NOT_FOUND =

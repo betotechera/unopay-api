@@ -14,9 +14,6 @@ class BonusBillingReceiverTest extends ScalaApplicationTest with MockitoSugar {
     var receiver: BonusBillingReceiver = _
 
     @Autowired
-    var fixtureCreator: util.FixtureCreatorScala = _
-
-    @Autowired
     var genericObjectMapper: GenericObjectMapper = _
     var mockTicketService: TicketService = _
 

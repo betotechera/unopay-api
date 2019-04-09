@@ -1,8 +1,8 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.Event;
+import br.com.unopay.api.network.model.Establishment;
+import br.com.unopay.api.network.model.Event;
 import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.model.validation.group.Rating;
 import br.com.unopay.api.model.validation.group.Reference;

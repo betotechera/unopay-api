@@ -1,6 +1,6 @@
 package br.com.unopay.api.credit.model.filter;
 
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.credit.model.ContractorInstrumentCreditType;
 import br.com.unopay.api.credit.model.CreditSituation;
 import br.com.unopay.bootcommons.model.Period;

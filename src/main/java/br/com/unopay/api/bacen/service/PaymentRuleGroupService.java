@@ -3,7 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
-import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
+import br.com.unopay.api.network.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository;
 import br.com.unopay.api.uaa.exception.Errors;

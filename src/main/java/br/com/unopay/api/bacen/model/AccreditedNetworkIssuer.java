@@ -2,6 +2,7 @@ package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.uaa.model.UserDetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;

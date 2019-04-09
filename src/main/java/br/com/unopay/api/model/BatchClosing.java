@@ -1,7 +1,7 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
-import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.network.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;

@@ -3,9 +3,8 @@ package br.com.unopay.api.credit.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.ServiceType
-import static br.com.unopay.api.bacen.model.ServiceType.DOCTORS_APPOINTMENTS
-import static br.com.unopay.api.bacen.model.ServiceType.MEDICINES
+import br.com.unopay.api.network.model.ServiceType
+import static br.com.unopay.api.network.model.ServiceType.DOCTORS_APPOINTMENTS
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditInsertionType

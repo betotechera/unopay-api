@@ -6,15 +6,13 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.bacen.model.ServiceType
+import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.ContractorInstrumentCreditType
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.CreditSituation
 import br.com.unopay.api.credit.model.InstrumentCreditSource
-import br.com.unopay.api.market.model.BonusBilling
-import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.service.BonusBillingService
 import br.com.unopay.api.model.Contract
@@ -31,8 +29,6 @@ import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import groovy.time.TimeCategory
-
-import static br.com.six2six.fixturefactory.Fixture.from
 import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired

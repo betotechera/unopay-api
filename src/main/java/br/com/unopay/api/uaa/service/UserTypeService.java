@@ -1,6 +1,6 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.repository.AccreditedNetworkRepository;
+import br.com.unopay.api.network.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.InstitutionRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.uaa.exception.Errors;

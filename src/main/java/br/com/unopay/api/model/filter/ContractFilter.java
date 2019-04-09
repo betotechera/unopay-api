@@ -1,6 +1,6 @@
 package br.com.unopay.api.model.filter;
 
-import br.com.unopay.api.bacen.model.ServiceType;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.bootcommons.model.Period;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;

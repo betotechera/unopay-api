@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer;
 import br.com.unopay.api.bacen.model.filter.AccreditedNetworkIssuerFilter;
 import br.com.unopay.api.bacen.repository.AccreditedNetworkIssuerRepository;
+import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;

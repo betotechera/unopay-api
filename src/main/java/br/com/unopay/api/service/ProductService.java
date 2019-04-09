@@ -1,7 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
 import br.com.unopay.api.model.Product;

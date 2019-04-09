@@ -1,14 +1,13 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
-import br.com.unopay.api.bacen.model.EstablishmentEvent;
-import br.com.unopay.api.bacen.service.EstablishmentEventService;
-import br.com.unopay.api.bacen.service.EstablishmentService;
+import br.com.unopay.api.network.model.Establishment;
+import br.com.unopay.api.network.model.EstablishmentEvent;
+import br.com.unopay.api.network.service.EstablishmentEventService;
+import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.credit.service.InstrumentBalanceService;
 import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.infra.UnopayEncryptor;
-import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.market.service.HirerNegotiationService;

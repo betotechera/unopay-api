@@ -1,12 +1,12 @@
 package br.com.unopay.api.uaa.model;
 
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Establishment;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.Partner;
+import br.com.unopay.api.network.model.Partner;
 import br.com.unopay.api.infra.ReflectionHelper;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;

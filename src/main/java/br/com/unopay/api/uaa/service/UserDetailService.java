@@ -1,6 +1,6 @@
 package br.com.unopay.api.uaa.service;
 
-import br.com.unopay.api.bacen.service.AccreditedNetworkService;
+import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.notification.model.EventType;

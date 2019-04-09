@@ -2,8 +2,8 @@ package br.com.unopay.api.bacen.model.csv
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.bacen.model.EstablishmentEvent
-import br.com.unopay.api.bacen.model.Event
+import br.com.unopay.api.network.model.EstablishmentEvent
+import br.com.unopay.api.network.model.Event
 
 class EstablishmentEventFeeCsvTest extends FixtureApplicationTest {
 

@@ -2,8 +2,7 @@ package br.com.unopay.api.credit.model;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.ServiceType;
-import br.com.unopay.api.market.model.BonusBilling;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.Updatable;

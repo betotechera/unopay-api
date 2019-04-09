@@ -3,22 +3,20 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.bacen.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.ServiceType;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.PaymentInstrumentType;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.ProductSituation;
-import com.google.common.collect.Sets;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.unopay.api.bacen.model.ServiceType.DIAGNOSIS_AND_THERAPY;
-import static br.com.unopay.api.bacen.model.ServiceType.DOCTORS_APPOINTMENTS;
+import static br.com.unopay.api.network.model.ServiceType.DIAGNOSIS_AND_THERAPY;
+import static br.com.unopay.api.network.model.ServiceType.DOCTORS_APPOINTMENTS;
 import static br.com.unopay.api.credit.model.CreditInsertionType.BOLETO;
 import static br.com.unopay.api.credit.model.CreditInsertionType.CREDIT_CARD;
 

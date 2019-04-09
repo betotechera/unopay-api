@@ -193,7 +193,13 @@ public interface Views {
         interface Detail extends List {}
         interface List{}
     }
+
     interface ContractorBonus {
+        interface Detail extends List {}
+        interface List {}
+    }
+
+    interface BranchServicePeriod {
         interface Detail extends List {}
         interface List {}
     }
