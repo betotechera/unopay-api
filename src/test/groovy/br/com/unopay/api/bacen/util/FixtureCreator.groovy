@@ -12,6 +12,7 @@ import br.com.unopay.api.JpaProcessor
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
+import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.network.model.Event

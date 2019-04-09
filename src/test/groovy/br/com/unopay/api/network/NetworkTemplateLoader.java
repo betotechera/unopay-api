@@ -128,6 +128,7 @@ public class NetworkTemplateLoader implements TemplateLoader {
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("branchPhotoUri", "/tmp/path");
             add("gatheringChannels", has(2).of(GatheringChannel.class));
+            add("services", has(2).of(Service.class, "valid"));
         }});
 
         Fixture.of(AccreditedNetworkIssuer.class).addTemplate("valid", new Rule(){{

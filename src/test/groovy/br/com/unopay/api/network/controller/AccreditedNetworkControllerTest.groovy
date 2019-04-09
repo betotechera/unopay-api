@@ -178,6 +178,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         Establishment establishment = fixtureCreator.createEstablishment(accreditedNetworkUser.accreditedNetwork)
         Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
             add("headOffice", establishment)
+            add("services", [fixtureCreator.createService()])
         }})
 
         when:
