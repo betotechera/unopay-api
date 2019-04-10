@@ -12,6 +12,7 @@ public enum BranchSituation implements DescriptableEnum {
     private String description;
 
     BranchSituation(String description) {
+        this.description = description;
     }
 
     public String getDescription() {

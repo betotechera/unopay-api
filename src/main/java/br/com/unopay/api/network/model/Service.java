@@ -46,13 +46,13 @@ public class Service implements Serializable {
 
     @Column(name = "code")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Service.List.class,Views.Event.Detail.class, Views.Establishment.Detail.class})
+    @JsonView({Views.Service.List.class,Views.Event.Detail.class, Views.Establishment.Detail.class, Views.Branch.Detail.class})
     private Integer code;
 
     @Column(name = "name")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Service.List.class, Views.Event.Detail.class,
-            Views.EstablishmentEvent.List.class, Views.Establishment.Detail.class})
+            Views.EstablishmentEvent.List.class, Views.Establishment.Detail.class, Views.Branch.Detail.class})
     private String name;
 
     @Column(name = "type")
