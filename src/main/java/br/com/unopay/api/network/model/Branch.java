@@ -109,14 +109,14 @@ public class Branch implements Serializable, Updatable {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = GatheringChannel.class)
     @Column(name = "gathering_channel", nullable = false)
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonView({Views.Branch.Detail.class})
     @NotNull(groups = {Create.class, Update.class})
     @CollectionTable(name = "establishment_branch_gathering", joinColumns = @JoinColumn(name = "branch_id"))
     private Set<GatheringChannel> gatheringChannels;
 
     @ManyToMany
     @BatchSize(size = 10)
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonView({Views.Branch.Detail.class})
     @JoinTable(name = "establishment_branch_service",
             joinColumns = { @JoinColumn(name = "branch_id") },
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
@@ -124,6 +124,7 @@ public class Branch implements Serializable, Updatable {
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
+    @JsonView({Views.Branch.Detail.class})
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 
     public Set<BranchServicePeriod> cutServicePeriods(){
