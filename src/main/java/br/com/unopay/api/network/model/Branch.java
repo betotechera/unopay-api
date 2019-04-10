@@ -117,7 +117,6 @@ public class Branch implements Serializable, Updatable {
     @ManyToMany
     @BatchSize(size = 10)
     @JsonView({Views.Establishment.Detail.class})
-    @NotNull(groups = {Create.class, Update.class})
     @JoinTable(name = "establishment_branch_service",
             joinColumns = { @JoinColumn(name = "branch_id") },
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
