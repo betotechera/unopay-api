@@ -1,6 +1,6 @@
 package br.com.unopay.api.market.service
 
-import br.com.unopay.api.market.service.AuthorizedMemberService
+
 import br.com.unopay.api.model.Gender
 import br.com.unopay.api.model.Relatedness
 
@@ -52,6 +52,55 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         def result = service.create(authorizedMember)
         then:
         result
+    }
+
+    void 'given a hirer with a own contract when creating a member should not return an error'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember =  fixtureCreator.createAuthorizedMemberToPersist(contract)
+        authorizedMember.contract = contract
+        when:
+        def created = service.create(authorizedMember, contract.hirer)
+        def result = service.findById(created.id)
+        then:
+        result.contract.id == contract.id
+    }
+
+    void 'given a hirer when creating a member with a contract from another hirer should return an error'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember =  fixtureCreator.createAuthorizedMemberToPersist(contract)
+        authorizedMember.contract = contract
+        Hirer hirer = from(Hirer.class).uses(jpaProcessor).gimme("valid")
+        when:
+        service.create(authorizedMember, hirer)
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'CONTRACT_NOT_FOUND'
+    }
+
+    void 'given a contractor with a own contract when creating a member should not return an error'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember =  fixtureCreator.createAuthorizedMemberToPersist(contract)
+        authorizedMember.contract = contract
+        when:
+        def created = service.create(authorizedMember, contract.contractor)
+        def result = service.findById(created.id)
+        then:
+        result.contract.id == contract.id
+    }
+
+    void 'given a contractor when creating a member with a contract from another hirer should return an error'(){
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember =  fixtureCreator.createAuthorizedMemberToPersist(contract)
+        authorizedMember.contract = contract
+        when:
+        service.create(authorizedMember, fixtureCreator.createContractor("valid"))
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'CONTRACTOR_CONTRACT_NOT_FOUND'
     }
 
     void 'given AuthorizedMember without birthDate should return error'(){
@@ -258,7 +307,7 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
     }
 
 
-    void 'given knoen AuthorizedMember should update for hirer'() {
+    void 'given known AuthorizedMember should update for hirer'() {
         given:
         AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
         authorizedMember.name = "new name"
@@ -269,6 +318,45 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         then:
         def found = service.findById(authorizedMember.id)
         found.name == authorizedMember.name
+    }
+
+    void 'given known AuthorizedMember from another hirer should not be updated for hirer'() {
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        authorizedMember.name = "new name"
+        def hirer = fixtureCreator.createHirer()
+        when:
+        service.updateForHirer(authorizedMember.id, hirer, authorizedMember)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'given known AuthorizedMember should update for contractor'() {
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        authorizedMember.name = "new name"
+        def contractor = authorizedMember.contract.contractor
+        when:
+        service.updateForContractor(authorizedMember.id, contractor, authorizedMember)
+
+        then:
+        def found = service.findById(authorizedMember.id)
+        found.name == authorizedMember.name
+    }
+
+    void 'given known AuthorizedMember from another contractor should not be updated for contractor'() {
+        given:
+        AuthorizedMember authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        authorizedMember.name = "new name"
+        def contractor = fixtureCreator.createContractor("valid")
+        when:
+        service.updateForContractor(authorizedMember.id, contractor, authorizedMember)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
     void 'when trying to delete unknown AuthorizedMember should return error'(){
@@ -299,8 +387,42 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         when:
         service.deleteForHirer(authorizedMember.id, authorizedMember.contract.hirer)
         service.findById(authorizedMember.id)
+
         then:
         thrown(NotFoundException)
+    }
+
+    void 'should not delete AuthorizedMember from another Hirer'(){
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        service.deleteForHirer(authorizedMember.id, fixtureCreator.createHirer())
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
+    }
+
+    void 'should delete AuthorizedMember by Contractor'(){
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        service.deleteForContractor(authorizedMember.id, authorizedMember.contract.contractor)
+        service.findById(authorizedMember.id)
+
+        then:
+        thrown(NotFoundException)
+    }
+
+    void 'should not delete AuthorizedMember from another Contractor'(){
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        when:
+        service.deleteForContractor(authorizedMember.id, fixtureCreator.createContractor("valid"))
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'AUTHORIZED_MEMBER_NOT_FOUND'
     }
 
     void 'should create AuthorizedMembers from csv'() {

@@ -272,7 +272,7 @@ class FixtureCreator {
         })
     }
 
-    ContractorInstrumentCredit createInstrumentToContract(Contract contract) {
+    ContractorInstrumentCredit createInstrumentCreditToContract(Contract contract) {
         PaymentInstrument paymentInstrument = createInstrumentToProduct(contract.product, contract.contractor)
         CreditPaymentAccount paymentAccount = from(CreditPaymentAccount.class)
                 .uses(jpaProcessor).gimme("valid", new Rule() {
@@ -601,8 +601,7 @@ class FixtureCreator {
         }})
     }
 
-    AuthorizedMember createAuthorizedMemberToPersist() {
-        def contract = createPersistedContract()
+    AuthorizedMember createAuthorizedMemberToPersist(Contract contract = createPersistedContract()) {
         from(AuthorizedMember.class).gimme("valid", new Rule() {{
             add("paymentInstrument", createInstrumentToProduct(createProduct(), contract.contractor))
             add("contract", contract)

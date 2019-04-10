@@ -333,6 +333,47 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].name', is(notNullValue())))
     }
 
+    void 'should create my authorizedMember'() {
+        given:
+        def authorizedMember = fixtureCreator.createAuthorizedMemberToPersist()
+        def contractorUser = fixtureCreator.createContractorUser(authorizedMember.contract.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        when:
+        def result = this.mvc.perform(post('/contractors/me/authorized-members?access_token={access_token}', accessToken)
+                .content(toJson(authorizedMember))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath('$.name', is(notNullValue())))
+    }
+
+    void 'known me authorizedMember should be updated'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        def contractorUser = fixtureCreator.createContractorUser(authorizedMember.contract.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        def id = authorizedMember.id
+        when:
+        def result = this.mvc.perform(put('/contractors/me/authorized-members/{id}?access_token={access_token}',id, accessToken)
+                .content(toJson(authorizedMember.with {  name = "new name"; it }))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void 'should delete my authorizedMember'() {
+        given:
+        def authorizedMember = fixtureCreator.createPersistedAuthorizedMember()
+        def contractorUser = fixtureCreator.createContractorUser(authorizedMember.contract.contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+        def id = authorizedMember.id
+        when:
+        def result = this.mvc.perform(delete("/contractors/me/authorized-members/{id}?access_token={access_token}",id, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
     void "given contractor's document number all its authorizedMembers should be found"() {
         given:
         def documentNumber = fixtureCreator.createPersistedAuthorizedMember().contractorDocumentNumber()

@@ -290,6 +290,34 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/hirers/me/authorized-members", api));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @RequestMapping(value = "/contractors/me/authorized-members", method = RequestMethod.POST)
+    public ResponseEntity<AuthorizedMember> create(Contractor contractor, @Validated(Create.class)
+    @RequestBody AuthorizedMember authorizedMember) {
+        log.info("creating authorizedMember {}", authorizedMember);
+        AuthorizedMember created = authorizedMemberService.create(authorizedMember, contractor);
+        return ResponseEntity
+                .created(URI.create("/contractors/me/authorized-members/"+created.getId()))
+                .body(created);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/contractors/me/authorized-members/{id}", method = RequestMethod.PUT)
+    public void updateAuthorizedMember(Contractor contractor, @PathVariable  String id, @Validated(Update.class)
+    @RequestBody AuthorizedMember authorizedMember) {
+        log.info("updating authorizedMember={} for contractor={}", id, contractor.getPerson().documentNumber());
+        authorizedMemberService.updateForContractor(id, contractor, authorizedMember);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/contractors/me/authorized-members/{id}", method = RequestMethod.DELETE)
+    public void removeAuthorizedMember(Contractor contractor, @PathVariable  String id) {
+        log.info("removing authorized-member id={}", id);
+        authorizedMemberService.deleteForContractor(id, contractor);
+    }
+
     @JsonView(Views.AuthorizedMember.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_CONTRACTOR')")

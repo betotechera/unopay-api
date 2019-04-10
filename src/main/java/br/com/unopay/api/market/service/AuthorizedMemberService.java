@@ -51,6 +51,16 @@ public class AuthorizedMemberService {
         this.productService = productService;
     }
 
+    public AuthorizedMember create(AuthorizedMember authorizedMember, Contractor contractor) {
+        contractService.getByIdAndContractorId(authorizedMember.contractId(), contractor);
+        return create(authorizedMember);
+    }
+
+    public AuthorizedMember create(AuthorizedMember authorizedMember, Hirer hirer) {
+        contractService.findByIdForHirer(authorizedMember.contractId(), hirer);
+        return create(authorizedMember);
+    }
+
     public AuthorizedMember create(AuthorizedMember authorizedMember) {
         if(!authorizedMember.withInstrument()) {
             authorizedMember.setPaymentInstrument(findDigitalWalletByContractorDocument(authorizedMember
@@ -106,6 +116,11 @@ public class AuthorizedMemberService {
         save(current);
     }
 
+    public void updateForContractor(String id, Contractor contractor, AuthorizedMember authorizedMember) {
+        AuthorizedMember current = findByIdForContractor(id, contractor);
+        update(current, authorizedMember);
+    }
+
     public void updateForHirer(String id, Hirer hirer, AuthorizedMember authorizedMember) {
         AuthorizedMember current = findByIdForHirer(id, hirer);
         update(current, authorizedMember);
@@ -113,6 +128,11 @@ public class AuthorizedMemberService {
 
     public void deleteForHirer(String id, Hirer hirer) {
         AuthorizedMember toBeDeleted = findByIdForHirer(id, hirer);
+        delete(toBeDeleted.getId());
+    }
+
+    public void deleteForContractor(String id, Contractor contractor) {
+        AuthorizedMember toBeDeleted = findByIdForContractor(id, contractor);
         delete(toBeDeleted.getId());
     }
 
@@ -184,4 +204,5 @@ public class AuthorizedMemberService {
     private PaymentInstrument findPaymentInstrumentByNumber(String number) {
         return paymentInstrumentService.findByNumber(number);
     }
+
 }

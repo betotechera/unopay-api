@@ -550,7 +550,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'payment instrument credit with credit payment account with product different of contract product should not be inserted'(){
         given:
-        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest.id)
+        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                                                                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()
@@ -573,7 +573,7 @@ class ContractorInstrumentCreditServiceTest extends SpockApplicationTests {
 
     def 'payment instrument credit with credit payment account with service different of contract service should not be inserted'(){
         given:
-        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest.id)
+        def myContract = contractService.getByIdAndContractorId(contractUnderTest.id, contractorUnderTest)
         List<CreditPaymentAccount> creditPaymentAccounts = creditPaymentAccountService
                 .findByHirerDocument(myContract.hirer.documentNumber)
         ContractorInstrumentCredit instrumentCredit = createInstrumentCredit()

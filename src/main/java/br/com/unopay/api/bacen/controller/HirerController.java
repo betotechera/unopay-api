@@ -401,7 +401,7 @@ public class HirerController {
     public ResponseEntity<AuthorizedMember> create(Hirer hirer, @Validated(Create.class)
                                                    @RequestBody AuthorizedMember authorizedMember) {
         log.info("creating authorizedMember {}", authorizedMember);
-        AuthorizedMember created = authorizedMemberService.create(authorizedMember);
+        AuthorizedMember created = authorizedMemberService.create(authorizedMember, hirer);
         return ResponseEntity
                 .created(URI.create("/hirers/me/authorized-members/"+created.getId()))
                 .body(created);

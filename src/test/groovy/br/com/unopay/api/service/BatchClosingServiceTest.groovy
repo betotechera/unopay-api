@@ -780,7 +780,7 @@ class BatchClosingServiceTest extends SpockApplicationTests {
         def sumValueByHirer = [:]
         (1..contracts.size()).each { Integer index ->
             def establishment = contracts.size() != establishments.size() ? establishments.find() : establishments.get(index-1)
-            def instrumentCredit = fixtureCreator.createInstrumentToContract(contracts.get(index-1))
+            def instrumentCredit = fixtureCreator.createInstrumentCreditToContract(contracts.get(index-1))
             def serviceAuthorize = fixtureCreator.createServiceAuthorize(instrumentCredit, establishment, dateAsText)
             sumValueByHirer.put(serviceAuthorize.hirerId(), serviceAuthorize.total * numberOfAuthorizations)
             (1..numberOfAuthorizations).each {

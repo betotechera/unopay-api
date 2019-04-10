@@ -1,5 +1,6 @@
 package br.com.unopay.api.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
@@ -142,8 +143,8 @@ public class ContractService {
         return contract.orElseThrow(()->UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 
-    public Contract getByIdAndContractorId(String contractId, String contractorId) {
-        List<Contract> contracts = repository.findByContractorId(contractorId);
+    public Contract getByIdAndContractorId(String contractId, Contractor contractor) {
+        List<Contract> contracts = repository.findByContractorId(contractor.getId());
         Optional<Contract> contract = contracts.stream()
                                     .filter(c -> Objects.equals(c.getId(), contractId)).findFirst();
         return contract.orElseThrow(()->  UnovationExceptions.notFound().withErrors(CONTRACTOR_CONTRACT_NOT_FOUND));
