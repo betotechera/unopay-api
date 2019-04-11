@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import scala.collection.JavaConverters._
 
 
-class BranchServicePeriodTest extends ScalaApplicationTest with MockitoSugar {
+class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSugar {
 
   @Autowired
   var service: BranchServicePeriodService = _
