@@ -52,7 +52,7 @@ class BranchServiceTest extends SpockApplicationTests {
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
             add("headOffice", headOfficeUnderTest)
-            add("servicePeriods", Fixture.from(BranchServicePeriod).gimme(2,"valid"))
+            add("servicePeriods", Fixture.from(BranchServicePeriod).gimme(1,"valid"))
         }})
 
         when:
