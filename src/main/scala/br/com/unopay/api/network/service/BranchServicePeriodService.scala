@@ -4,6 +4,7 @@ import java.util
 import java.util.Date
 
 import br.com.unopay.api.network.model.BranchServicePeriod
+import br.com.unopay.api.network.model.filter.BranchServicePeriodFilter
 import br.com.unopay.api.network.repository.BranchServicePeriodRepository
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.api.util.Logging
@@ -36,6 +37,12 @@ class BranchServicePeriodService(branchServicePeriodRepository: BranchServicePer
     if(result.nonEmpty){
       throw result.head
     }
+  }
+
+  def findForBranch(id: String): util.Collection[BranchServicePeriod] = {
+    val filter = new BranchServicePeriodFilter
+    filter.branch = id
+    branchServicePeriodRepository.findAll().asScala.asJavaCollection
   }
 
   def create(servicePeriod: BranchServicePeriod): BranchServicePeriod = {

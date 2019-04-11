@@ -23,10 +23,7 @@ class BranchServiceTest extends SpockApplicationTests {
     BranchService service
 
     @Autowired
-    EstablishmentService establishmentService
-
-    @Autowired
-    AccreditedNetworkService accreditedNetworkService
+    BranchServicePeriodService periodService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -57,10 +54,10 @@ class BranchServiceTest extends SpockApplicationTests {
 
         when:
         Branch created = service.create(branch)
-        def result = service.findById(created.id)
+        def result = periodService.findForBranch(created.id)
 
         then:
-        !result.servicePeriods.isEmpty()
+        !result.isEmpty()
     }
 
     def 'a valid branch with a head office from the current network should be create'(){
