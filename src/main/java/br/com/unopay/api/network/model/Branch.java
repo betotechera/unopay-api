@@ -35,6 +35,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -44,6 +45,7 @@ import static br.com.unopay.api.uaa.exception.Errors.CANNOT_CHANGE_HEAD_OFFICE;
 import static br.com.unopay.api.uaa.exception.Errors.HEAD_OFFICE_REQUIRED;
 
 @Data
+@EqualsAndHashCode(exclude = {"servicePeriods", "services", "gatheringChannels"})
 @Entity
 @Table(name = "branch")
 public class Branch implements Serializable, Updatable {
