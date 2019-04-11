@@ -25,7 +25,7 @@ class BranchServicePeriod extends Serializable with Updatable {
   var id: String = _
 
   @BeanProperty
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
 
