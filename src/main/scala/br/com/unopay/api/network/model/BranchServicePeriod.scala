@@ -25,7 +25,7 @@ class BranchServicePeriod extends Serializable with Updatable {
   var id: String = _
 
   @ManyToOne
-  @JsonView(Array(classOf[Views.BranchServicePeriod.Detail]))
+  @JsonIgnore
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
 
