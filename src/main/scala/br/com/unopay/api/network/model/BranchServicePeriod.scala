@@ -3,7 +3,7 @@ package br.com.unopay.api.network.model
 import java.io.Serializable
 import java.util.Date
 
-import br.com.unopay.api.model.{Address, Updatable}
+import br.com.unopay.api.model.Updatable
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
@@ -24,6 +24,7 @@ class BranchServicePeriod extends Serializable with Updatable {
   @GenericGenerator(name = "system-uuid", strategy = "uuid2")
   var id: String = _
 
+  @BeanProperty
   @ManyToOne
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
@@ -63,8 +64,7 @@ class BranchServicePeriod extends Serializable with Updatable {
   @JsonIgnore
   var version: java.lang.Long = _
 
-  @JsonBackReference
-  def getBranch: Branch = branch
 
-  def setBranch (branch: Branch) = this.branch = branch
+
+
 }
