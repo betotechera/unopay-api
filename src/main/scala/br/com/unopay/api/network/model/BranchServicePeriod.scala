@@ -8,7 +8,7 @@ import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
 import javax.validation.constraints.NotNull
-import org.codehaus.jackson.annotate.JsonIgnore
+import org.codehaus.jackson.annotate.{JsonBackReference, JsonIgnore}
 import org.hibernate.annotations.GenericGenerator
 
 import scala.beans.BeanProperty
@@ -25,6 +25,7 @@ class BranchServicePeriod extends Serializable with Updatable {
   var id: String = _
 
   @BeanProperty
+  @JsonBackReference
   @ManyToOne
   @JoinColumn(name = "branch_id")
   var branch: Branch = _

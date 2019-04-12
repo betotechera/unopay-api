@@ -8,7 +8,6 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -124,6 +124,7 @@ public class Branch implements Serializable, Updatable {
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private Set<Service> services;
 
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "branch_id")
     @JsonView({Views.Branch.Detail.class})

@@ -3,6 +3,7 @@ package br.com.unopay.api.network.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.network.model.Branch
+import br.com.unopay.api.network.model.BranchServicePeriod
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
@@ -34,6 +35,7 @@ class BranchControllerTest extends AuthServerApplicationTests {
         String accessToken = getUserAccessToken()
         Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
             add("headOffice", headOfficeUnderTest)
+            add("servicePeriods", Fixture.from(BranchServicePeriod).gimme(1,"valid"))
         }})
 
         when:
