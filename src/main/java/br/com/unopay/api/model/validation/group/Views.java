@@ -24,7 +24,7 @@ public interface Views {
     }
 
     interface Branch {
-        interface Detail extends Person,Address,BankAccount,List, BranchServicePeriod.List {}
+        interface Detail extends Person,Address,BankAccount,List {}
         interface List extends AddressList{}
     }
 
