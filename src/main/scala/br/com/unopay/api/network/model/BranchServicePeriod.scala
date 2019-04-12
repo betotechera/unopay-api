@@ -24,9 +24,8 @@ class BranchServicePeriod extends Serializable with Updatable {
   @GenericGenerator(name = "system-uuid", strategy = "uuid2")
   var id: String = _
 
-  @BeanProperty
-  @JsonBackReference
   @ManyToOne
+  @JsonView(Array(classOf[Views.BranchServicePeriod.Detail]))
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
 
@@ -65,7 +64,8 @@ class BranchServicePeriod extends Serializable with Updatable {
   @JsonIgnore
   var version: java.lang.Long = _
 
+  @JsonBackReference
+  def getBranch: Branch = branch
 
-
-
+  def setBranch (branch: Branch) = this.branch = branch
 }
