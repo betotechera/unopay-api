@@ -24,7 +24,6 @@ class BranchServicePeriod extends Serializable with Updatable {
   @GenericGenerator(name = "system-uuid", strategy = "uuid2")
   var id: String = _
 
-  @BeanProperty
   @ManyToOne
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
