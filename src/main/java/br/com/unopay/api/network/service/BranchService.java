@@ -84,16 +84,12 @@ public class BranchService {
 
     public Branch findById(String id, AccreditedNetwork accreditedNetwork) {
         Optional<Branch> branch = repository.findByIdAndHeadOfficeNetworkId(id, accreditedNetwork.getId());
-        Branch current =  branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
-        current.getServicePeriods().forEach(period -> period.setBranch(null));
-        return current;
+        return branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
     }
 
     public Branch findById(String id) {
         Optional<Branch> branch = repository.findById(id);
-        Branch current =  branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
-        current.getServicePeriods().forEach(period -> period.setBranch(null));
-        return current;
+        return branch.orElseThrow(() -> UnovationExceptions.notFound().withErrors(BRANCH_NOT_FOUND));
     }
 
     public void delete(String id) {
