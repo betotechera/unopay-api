@@ -73,6 +73,7 @@ public class Establishment implements Serializable, Updatable {
     @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
+    @JsonView({Views.Establishment.Detail.class})
     private Person person;
 
     @Valid

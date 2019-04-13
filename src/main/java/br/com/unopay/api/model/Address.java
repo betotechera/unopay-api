@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.EnumUtils.getEnum;
 @Data
 @Entity
 @Table(name = "address")
-public class Address implements Serializable {
+public class Address implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 

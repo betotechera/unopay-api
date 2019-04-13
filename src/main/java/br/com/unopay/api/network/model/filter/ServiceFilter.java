@@ -1,5 +1,6 @@
 package br.com.unopay.api.network.model.filter;
 
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class ServiceFilter implements Serializable {
 
     @SearchableField
     private String name;
+
+    @SearchableField
+    private ServiceType type;
 
     public ServiceFilter() {}
 }

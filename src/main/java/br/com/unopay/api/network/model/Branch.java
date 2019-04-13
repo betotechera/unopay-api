@@ -125,9 +125,8 @@ public class Branch implements Serializable, Updatable {
     private Set<Service> services;
 
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "branch_id")
     @JsonView({Views.Branch.Detail.class})
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "branch")
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 
     public Set<BranchServicePeriod> cutServicePeriods(){

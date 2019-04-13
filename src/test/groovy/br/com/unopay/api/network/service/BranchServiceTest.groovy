@@ -116,6 +116,23 @@ class BranchServiceTest extends SpockApplicationTests {
         result.address.streetName == newField
     }
 
+    def 'A branch with a gathering channel should be updated'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+            add("gatheringChannels", [GatheringChannel.TEF])
+        }})
+        Branch created = service.create(branch)
+        branch.gatheringChannels = [GatheringChannel.WEB] as Set
+
+        when:
+        service.update(created.id, branch)
+        Branch result = service.findById(created.id)
+
+        then:
+        result.gatheringChannels.find() == GatheringChannel.WEB
+    }
+
     def 'a branch head office should not be updated'(){
         given:
         Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }

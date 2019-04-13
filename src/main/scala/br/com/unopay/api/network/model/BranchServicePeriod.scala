@@ -5,13 +5,14 @@ import java.util.Date
 
 import br.com.unopay.api.model.Updatable
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
-import com.fasterxml.jackson.annotation.JsonView
+import com.fasterxml.jackson.annotation.{JsonBackReference, JsonView}
 import javax.persistence._
 import javax.validation.constraints.NotNull
-import org.codehaus.jackson.annotate.{JsonBackReference, JsonIgnore}
+import org.codehaus.jackson.annotate.JsonIgnore
 import org.hibernate.annotations.GenericGenerator
 
 import scala.beans.BeanProperty
+
 
 @Entity
 @Table(name = "branch_service_period")
@@ -26,18 +27,17 @@ class BranchServicePeriod extends Serializable with Updatable {
 
   @BeanProperty
   @ManyToOne
+  @JsonBackReference
   @JoinColumn(name = "branch_id")
   var branch: Branch = _
 
   @BeanProperty
   @NotNull(groups = Array(classOf[Create], classOf[Update]))
-  @Temporal(TemporalType.TIME)
   @Column(name = "begin_service_time")
   @JsonView(Array(classOf[Views.BranchServicePeriod.List]))
   var beginServiceTime: Date = _
 
   @BeanProperty
-  @Temporal(TemporalType.TIME)
   @NotNull(groups = Array(classOf[Create], classOf[Update]))
   @Column(name = "end_service_time")
   @JsonView(Array(classOf[Views.BranchServicePeriod.List]))
@@ -63,8 +63,5 @@ class BranchServicePeriod extends Serializable with Updatable {
   @Version
   @JsonIgnore
   var version: java.lang.Long = _
-
-
-
 
 }

@@ -1,5 +1,6 @@
 package br.com.unopay.api.network.service;
 
+import br.com.unopay.api.model.Address;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Branch;
 import br.com.unopay.api.network.model.BranchServicePeriod;
@@ -7,10 +8,8 @@ import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.filter.BranchFilter;
 import br.com.unopay.api.network.repository.BranchRepository;
 import br.com.unopay.api.repository.AddressRepository;
-import br.com.unopay.bootcommons.exception.UnovationError;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
-import java.beans.Transient;
 import java.util.Collection;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -55,7 +54,7 @@ public class BranchService {
     @Transactional
     public Branch create(Branch branch) {
         branch.validateCreate();
-        saveReferences(branch);
+        saveAddress(branch);
         validateExistingReferences(branch);
         Collection<BranchServicePeriod> periods = branch.cutServicePeriods();
         Branch current = repository.save(branch);
@@ -78,8 +77,8 @@ public class BranchService {
         Branch current = findById(id);
         branch.validateUpdate(current);
         validateExistingReferences(branch);
-        saveReferences(branch);
         current.updateMe(branch);
+        saveAddress(branch);
         repository.save(current);
     }
 
@@ -102,13 +101,17 @@ public class BranchService {
         repository.delete(id);
     }
 
-    private void saveReferences(Branch branch) {
+    private void saveAddress(Branch branch) {
         addressRepository.save(branch.getAddress());
     }
 
     private void validateExistingReferences(Branch branch) {
-        establishmentService.findById(branch.getHeadOffice().getId());
-        addressRepository.findById(branch.getAddress().getId()).orElseThrow(() -> UnovationExceptions.notFound().withErrors(ADDRESS_NOT_FOUND));
+        branch.setHeadOffice(establishmentService.findById(branch.getHeadOffice().getId()));
+        getAddressById(branch);
+    }
+
+    private Address getAddressById(Branch branch) {
+        return addressRepository.findById(branch.getAddress().getId()).orElseThrow(() -> UnovationExceptions.notFound().withErrors(ADDRESS_NOT_FOUND));
     }
 
     private Establishment checkEstablishmentOwner(String id, AccreditedNetwork accreditedNetwork) {
