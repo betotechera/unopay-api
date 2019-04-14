@@ -157,4 +157,7 @@ public class Branch implements Serializable, Updatable {
         }
     }
 
+    public String getId() {
+        return id;
+    }
 }
