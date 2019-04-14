@@ -73,6 +73,7 @@ public class BranchService {
         update(id, branch);
     }
 
+    @Transactional
     public void update(String id, Branch branch) {
         Branch current = findById(id);
         branch.validateUpdate(current);
@@ -85,7 +86,7 @@ public class BranchService {
 
     private void updateServicePeriods(Collection<BranchServicePeriod> periods, Branch current) {
         periods.forEach(period -> period.setBranch(current));
-        current.setServicePeriods(branchServicePeriodService.update(periods));
+        branchServicePeriodService.updateOrCreate(periods);
     }
 
     public Branch findById(String id, AccreditedNetwork accreditedNetwork) {

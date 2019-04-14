@@ -123,7 +123,7 @@ class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSu
     }})
     val periods = List(sunday,monday, tuesday, wednesday, thursday, friday, saturday).asJavaCollection
 
-    service.update(periods)
+    service.updateOrCreate(periods)
     val result = repository.count()
     result should be(7)
   }
@@ -152,7 +152,7 @@ class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSu
     val periods = List(sunday,monday, tuesday, wednesday, thursday).asJavaCollection
 
     val thrown = the[ConflictException] thrownBy {
-      service.update(periods)
+      service.updateOrCreate(periods)
     }
     thrown.getErrors.asScala.head.getLogref should be("PERIOD_ALREADY_REGISTERED")
     thrown.getErrors.asScala.head.getArguments should contain("WEDNESDAY")
@@ -173,7 +173,7 @@ class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSu
     }})
     servicePeriod.setSituation(SUSPENDED)
 
-    val result = service.update(servicePeriod.id, servicePeriod)
+    val result = service.updateOrCreate(servicePeriod.id, servicePeriod)
     result.situation should be(SUSPENDED)
   }
 
@@ -183,10 +183,18 @@ class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSu
     }})
     servicePeriod.branch = Fixture.from(classOf[Branch]).uses(jpaProcessor).gimme("valid")
     val thrown = the[ForbiddenException] thrownBy {
-      service.update(servicePeriod.id, servicePeriod)
+      service.updateOrCreate(servicePeriod.id, servicePeriod)
     }
     thrown.getErrors.asScala.head.getLogref should be("PERIOD_BELONGS_TO_ANOTHER_BRANCH")
     thrown.getErrors.asScala.head.getArguments should contain(branchUnderTest.getId)
+  }
+
+  "given a unknown period when updating it" should "be created" in{
+    val servicePeriod: BranchServicePeriod = Fixture.from(classOf[BranchServicePeriod]).gimme("valid", new Rule(){{
+      add("branch", branchUnderTest)
+    }})
+    val result = service.updateOrCreate(servicePeriod.getId, servicePeriod)
+    result should be
   }
 
 }
