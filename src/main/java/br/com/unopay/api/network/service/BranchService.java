@@ -73,7 +73,6 @@ public class BranchService {
         update(id, branch);
     }
 
-    @Transactional
     public void update(String id, Branch branch) {
         Branch current = findById(id);
         branch.validateUpdate(current);
