@@ -64,7 +64,7 @@ public class BranchService {
 
     private void persistServicePeriods(Collection<BranchServicePeriod> periods, Branch current) {
         periods.forEach(period -> period.setBranch(current));
-        branchServicePeriodService.create(periods);
+        current.setServicePeriods(branchServicePeriodService.create(periods));
     }
 
     public void update(String id, Branch branch, AccreditedNetwork accreditedNetwork) {
@@ -79,7 +79,13 @@ public class BranchService {
         validateExistingReferences(branch);
         current.updateMe(branch);
         saveAddress(branch);
+        updateServicePeriods(branch.getServicePeriods(), current);
         repository.save(current);
+    }
+
+    private void updateServicePeriods(Collection<BranchServicePeriod> periods, Branch current) {
+        periods.forEach(period -> period.setBranch(current));
+        current.setServicePeriods(branchServicePeriodService.update(periods));
     }
 
     public Branch findById(String id, AccreditedNetwork accreditedNetwork) {

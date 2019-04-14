@@ -18,10 +18,23 @@ import scala.collection.JavaConverters._
 @Autowired
 class BranchServicePeriodService(branchServicePeriodRepository: BranchServicePeriodRepository) extends Logging {
 
+
+  def update(servicePeriods: java.util.Collection[BranchServicePeriod]): util.Set[BranchServicePeriod] = {
+    checkUniquesPeriods(servicePeriods)
+    servicePeriods.asScala.map(period => update(period.id, period)).toSet.asJava
+  }
+
   def update(id: String, servicePeriod: BranchServicePeriod): BranchServicePeriod  = {
-    val current = branchServicePeriodRepository.findById(id).orElseThrow(() => UnovationExceptions.notFound())
+    val current = branchServicePeriodRepository.findById(id).orElseThrow(() => UnovationExceptions.notFound().withErrors(Errors.PERIOD_NOT_FOUND))
+    checkBranch(servicePeriod, current)
     current.updateMe(servicePeriod)
     branchServicePeriodRepository.save(current)
+  }
+
+  private def checkBranch(servicePeriod: BranchServicePeriod, current: BranchServicePeriod) = {
+    if (current.branch.getId != servicePeriod.branch.getId) {
+      throw UnovationExceptions.forbidden().withErrors(Errors.PERIOD_BELONGS_TO_ANOTHER_BRANCH.withOnlyArgument(current.branch.getId))
+    }
   }
 
   def create(servicePeriods: java.util.Collection[BranchServicePeriod]): util.Set[BranchServicePeriod] = {

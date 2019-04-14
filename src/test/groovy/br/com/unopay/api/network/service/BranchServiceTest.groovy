@@ -3,15 +3,14 @@ package br.com.unopay.api.network.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.GatheringChannel
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.BranchServicePeriod
 import br.com.unopay.api.network.model.Establishment
-import br.com.unopay.api.bacen.model.GatheringChannel
-import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.network.service.AccreditedNetworkService
+import br.com.unopay.api.network.model.ServicePeriodSituation
 import br.com.unopay.api.network.service.BranchService
-import br.com.unopay.api.network.service.EstablishmentService
 import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -114,6 +113,25 @@ class BranchServiceTest extends SpockApplicationTests {
 
         then:
         result.address.streetName == newField
+    }
+
+    def 'when update a period it should be updated'(){
+        given:
+        def periods = Fixture.from(BranchServicePeriod).gimme(1,"valid", new Rule(){{
+            add("situation", ServicePeriodSituation.SUSPENDED)
+        }})
+        Branch branch = Fixture.from(Branch.class).gimme("valid", new Rule(){{
+            add("headOffice", headOfficeUnderTest)
+            add("servicePeriods", periods)
+        }})
+        def created = service.create(branch)
+        created.servicePeriods.find().situation = ServicePeriodSituation.ACTIVE
+        when:
+        service.update(created.id, created)
+        def result = periodService.findForBranch(created.id)
+
+        then:
+        result.find().situation == ServicePeriodSituation.ACTIVE
     }
 
     def 'A branch with a gathering channel should be updated'(){

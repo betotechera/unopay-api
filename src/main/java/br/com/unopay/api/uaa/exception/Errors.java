@@ -312,6 +312,11 @@ public final class Errors {
             new UnovationError("CANNOT_CHANGE_HEAD_OFFICE","Cannot change head office.");
     public static final UnovationError PERIOD_ALREADY_REGISTERED =
             new UnovationError("PERIOD_ALREADY_REGISTERED","period already registered");
+    public static final UnovationError PERIOD_NOT_FOUND =
+            new UnovationError("PERIOD_NOT_FOUND","Period not found.");
+    public static final UnovationError PERIOD_BELONGS_TO_ANOTHER_BRANCH =
+            new UnovationError("PERIOD_BELONGS_TO_ANOTHER_BRANCH","period belongs to another branch");
+
 
     /* product */
     public static final UnovationError PRODUCT_NOT_FOUND =
