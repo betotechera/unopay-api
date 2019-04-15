@@ -414,30 +414,28 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         result != null
     }
 
-    def 'a valid establishment without administrative contact should not be created'(){
+    def 'a valid establishment without administrative contact should be created'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                 .gimme("valid").with { network = networkUnderTest; it }
         establishment.administrativeContact = null
         when:
-        service.create(establishment)
+        def created = service.create(establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_REQUIRED'
+        created
     }
 
-    def 'a valid establishment without operational contact should not be created'(){
+    def 'a valid establishment without operational contact should be created'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                 .gimme("valid").with { network = networkUnderTest; it }
         establishment.operationalContact = null
         when:
-        service.create(establishment)
+        def created = service.create(establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_REQUIRED'
+        created
     }
 
     def 'a valid establishment without financier contact should not be created'(){
@@ -507,7 +505,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'ACCREDITED_NETWORK_REQUIRED'
     }
 
-    def 'a valid establishment without administrative contatct should not be updated'(){
+    def 'a valid establishment without administrative contatct should be updated'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                 .gimme("valid").with { network = networkUnderTest; it }
@@ -517,11 +515,10 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         service.update(created.id, establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_REQUIRED'
+        notThrown(UnprocessableEntityException)
     }
 
-    def 'a valid establishment without financier contact should not be updated'(){
+    def 'a valid establishment without financier contact should be updated'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                 .gimme("valid").with { network = networkUnderTest; it }
@@ -535,7 +532,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'CONTACT_REQUIRED'
     }
 
-    def 'a valid establishment without operational contact should not be updated'(){
+    def 'a valid establishment without operational contact should be updated'(){
         given:
         Establishment establishment = Fixture.from(Establishment.class)
                 .gimme("valid").with { network = networkUnderTest; it }
@@ -545,8 +542,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         service.update(created.id, establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_REQUIRED'
+        notThrown(UnprocessableEntityException)
     }
 
     def 'a valid establishment with unknown operational contact should not be updated'(){
@@ -573,8 +569,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         service.update(created.id, establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_ID_REQUIRED'
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'CONTACT_NOT_FOUND'
     }
 
     def 'a valid establishment with unknown administrative contact should not be updated'(){
@@ -601,8 +597,8 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         service.update(created.id, establishment)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        ex.errors.find().logref == 'CONTACT_ID_REQUIRED'
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'CONTACT_NOT_FOUND'
     }
 
     def 'a valid establishment with unknown financier contact should not be updated'(){

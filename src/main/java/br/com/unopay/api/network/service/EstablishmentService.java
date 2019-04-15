@@ -157,18 +157,26 @@ public class EstablishmentService {
     }
 
     private void saveReferences(Establishment establishment) {
-        contactService.save(establishment.getAdministrativeContact());
+        if(establishment.hasAdministrativeContact()) {
+            contactService.save(establishment.getAdministrativeContact());
+        }
         contactService.save(establishment.getFinancierContact());
-        contactService.save(establishment.getOperationalContact());
+        if(establishment.hasOperationalContact()) {
+            contactService.save(establishment.getOperationalContact());
+        }
         personService.create(establishment.getPerson());
         bankAccountService.create(establishment.getBankAccount());
     }
 
     private void validateReferences(Establishment establishment) {
         networkService.getById(establishment.getNetwork().getId());
-        contactService.findById(establishment.getOperationalContact().getId());
+        if(establishment.hasOperationalContact()) {
+            contactService.findById(establishment.getOperationalContact().getId());
+        }
         contactService.findById(establishment.getFinancierContact().getId());
-        contactService.findById(establishment.getAdministrativeContact().getId());
+        if(establishment.hasAdministrativeContact()) {
+            contactService.findById(establishment.getAdministrativeContact().getId());
+        }
         bankAccountService.findById(establishment.getBankAccount().getId());
     }
 

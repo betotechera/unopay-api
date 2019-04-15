@@ -127,7 +127,6 @@ public class Establishment implements Serializable, Updatable {
     @Valid
     @OneToOne
     @JoinColumn(name="operational_contact_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private Contact operationalContact;
 
@@ -200,12 +199,6 @@ public class Establishment implements Serializable, Updatable {
         if(getNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
         }
-        if(getAdministrativeContact() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
-        }
-        if(getOperationalContact() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
-        }
         if(getFinancierContact() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
         }
@@ -216,15 +209,17 @@ public class Establishment implements Serializable, Updatable {
         if(getBankAccount().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
         }
-        if(getAdministrativeContact().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
-        }
-        if(getOperationalContact().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
-        }
         if(getFinancierContact().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
+    }
+
+    public boolean hasOperationalContact(){
+        return this.operationalContact != null;
+    }
+
+    public boolean hasAdministrativeContact(){
+        return this.administrativeContact != null;
     }
 
     public String documentNumber(){
