@@ -41,6 +41,7 @@ public class EstablishmentService {
     private EstablishmentEventRepository establishmentEventRepository;
     @Setter
     private UnopayScheduler scheduler;
+    @Setter
     private GeoService geoService;
 
     @Autowired

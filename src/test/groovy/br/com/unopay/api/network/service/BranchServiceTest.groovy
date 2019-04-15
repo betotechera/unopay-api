@@ -29,13 +29,13 @@ class BranchServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
-    @MockBean
-    GeoService geoService
+    GeoService geoService = Mock(GeoService)
 
     Establishment headOfficeUnderTest
 
     void setup(){
         headOfficeUnderTest = fixtureCreator.createHeadOffice()
+        service.setGeoService(geoService)
     }
 
     def 'a valid branch should be created'(){

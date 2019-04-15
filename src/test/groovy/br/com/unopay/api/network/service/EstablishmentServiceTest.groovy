@@ -29,8 +29,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     @Autowired
     BranchService branchService
 
-    @MockBean
-    GeoService geoService
+    GeoService geoService = Mock(GeoService)
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -42,6 +41,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
     void setup(){
         networkUnderTest = fixtureCreator.createNetwork()
         service.scheduler =  schedulerMock
+        service.setGeoService(geoService)
     }
 
     def 'a valid establishment should be schedule closing job'(){

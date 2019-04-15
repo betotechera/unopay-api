@@ -14,6 +14,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Collection;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ public class BranchService {
     private BranchRepository repository;
     private AccreditedNetworkService accreditedNetworkService;
     private BranchServicePeriodService branchServicePeriodService;
+    @Setter
     private GeoService geoService;
     private EstablishmentService establishmentService;
 
