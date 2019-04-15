@@ -41,6 +41,11 @@ public class ProductService {
         this.paymentRuleGroupService = paymentRuleGroupService;
     }
 
+    public Product create(Product product, Issuer issuer) {
+        product.setIssuer(issuer);
+        return create(product);
+    }
+
     public Product create(Product product) {
         try {
             product.validate();

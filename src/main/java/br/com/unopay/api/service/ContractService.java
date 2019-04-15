@@ -9,6 +9,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
 import br.com.unopay.api.repository.ContractRepository;
@@ -18,6 +19,7 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -233,6 +235,11 @@ public class ContractService {
     public List<Contract> getMeValidContracts(String userEmail, String productCode) {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         return getContractorValidContracts(currentUser.contractorId(), productCode);
+    }
+
+    public List<ServiceType> getMeValidContractServiceType(String userEmail, String productCode) {
+        List<Contract> validContracts = getMeValidContracts(userEmail, productCode);
+        return validContracts.stream().map(Contract::getServiceTypes).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     public List<Contract> getContractorValidContracts(String contractorId, String productCode) {

@@ -24,6 +24,7 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
@@ -175,9 +176,19 @@ public class ContractorController {
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
     public Results<Contract> getMyContracts(@RequestParam(required = false) String productCode,
                                             OAuth2Authentication authentication) {
-        log.info("search Contractor={} Contracts with productCode={}",authentication.getName(), productCode);
+        log.info("search Contractor={} Contracts for productCode={}",authentication.getName(), productCode);
         List<Contract> contracts = contractService.getMeValidContracts(authentication.getName(), productCode);
         return new Results<>(contracts);
+    }
+
+    @JsonView(Views.Contract.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/contracts/service-types", method = RequestMethod.GET)
+    public Results<ServiceType> getMyContractsServiceTypes(@RequestParam(required = false) String productCode,
+                                            OAuth2Authentication authentication) {
+        log.info("search Contractor={} Contracts service types for productCode={}",authentication.getName(), productCode);
+        List<ServiceType> contractsServiceTypes = contractService.getMeValidContractServiceType(authentication.getName(), productCode);
+        return new Results<>(contractsServiceTypes);
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
