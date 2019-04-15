@@ -1,6 +1,9 @@
 server:
     tomcat:
         max-threads: 800
+google:
+  url: https://maps.googleapis.com/maps/api/geocode/json
+  key: AIzaSyDx_LI5t14-Jsl-mseXpAjVvqUTiUx6dDY
 flyway:
     baselineOnMigrate: true
     clean: true

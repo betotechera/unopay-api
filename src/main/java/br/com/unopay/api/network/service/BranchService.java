@@ -1,5 +1,6 @@
 package br.com.unopay.api.network.service;
 
+import br.com.unopay.api.geo.service.GeoService;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Branch;
@@ -29,6 +30,7 @@ public class BranchService {
     private BranchRepository repository;
     private AccreditedNetworkService accreditedNetworkService;
     private BranchServicePeriodService branchServicePeriodService;
+    private GeoService geoService;
     private EstablishmentService establishmentService;
 
     @Autowired
@@ -36,12 +38,14 @@ public class BranchService {
                          AddressRepository addressRepository,
                          BranchRepository repository,
                          AccreditedNetworkService accreditedNetworkService,
-                         BranchServicePeriodService branchServicePeriodService){
+                         BranchServicePeriodService branchServicePeriodService,
+                         GeoService geoService){
         this.addressRepository = addressRepository;
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.accreditedNetworkService = accreditedNetworkService;
         this.branchServicePeriodService = branchServicePeriodService;
+        this.geoService = geoService;
     }
 
     public Branch create(Branch branch, AccreditedNetwork accreditedNetwork) {
@@ -54,6 +58,7 @@ public class BranchService {
     @Transactional
     public Branch create(Branch branch) {
         branch.validateCreate();
+        geoService.defineAddressLatLong(branch);
         saveAddress(branch);
         validateExistingReferences(branch);
         Collection<BranchServicePeriod> periods = branch.cutServicePeriods();

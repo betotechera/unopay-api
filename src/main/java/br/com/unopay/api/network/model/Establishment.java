@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.Checkout;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
+import br.com.unopay.api.geo.model.Localizable;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
@@ -55,7 +56,7 @@ import static javax.persistence.EnumType.STRING;
 @ToString(exclude = "services")
 @EqualsAndHashCode(exclude = "services")
 @Table(name = "establishment")
-public class Establishment implements Serializable, Updatable {
+public class Establishment implements Serializable, Updatable, Localizable {
 
     public static final long serialVersionUID = 1L;
 
@@ -227,6 +228,20 @@ public class Establishment implements Serializable, Updatable {
             return getPerson().getDocument().getNumber();
         }
         return null;
+    }
+
+    @Override
+    public void defineAddressLat(double lat) {
+        this.person.getAddress().setLatitude(lat);
+    }
+
+    @Override
+    public void defineAddressLong(double lng) {
+        this.person.getAddress().setLongitude(lng);
+    }
+
+    public String formattedAddress(){
+        return person.getFormatedAddress();
     }
 
     public String personId() {

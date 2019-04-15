@@ -1,6 +1,8 @@
 package br.com.unopay.api.network.service;
 
 import br.com.unopay.api.bacen.service.BankAccountService;
+import br.com.unopay.api.geo.model.Location;
+import br.com.unopay.api.geo.service.GeoService;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
@@ -39,6 +41,7 @@ public class EstablishmentService {
     private EstablishmentEventRepository establishmentEventRepository;
     @Setter
     private UnopayScheduler scheduler;
+    private GeoService geoService;
 
     @Autowired
     public EstablishmentService(EstablishmentRepository repository,
@@ -49,7 +52,8 @@ public class EstablishmentService {
                                 BankAccountService bankAccountService,
                                 UserDetailService userDetailService,
                                 EstablishmentEventRepository establishmentEventRepository,
-                                UnopayScheduler scheduler) {
+                                UnopayScheduler scheduler,
+                                GeoService geoService) {
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
@@ -59,6 +63,7 @@ public class EstablishmentService {
         this.userDetailService = userDetailService;
         this.establishmentEventRepository = establishmentEventRepository;
         this.scheduler = scheduler;
+        this.geoService = geoService;
     }
 
     public Establishment create(Establishment establishment, AccreditedNetwork accreditedNetwork) {
@@ -69,12 +74,14 @@ public class EstablishmentService {
 
     public Establishment create(Establishment establishment) {
         establishment.validateCreate();
+        geoService.defineAddressLatLong(establishment);
         saveReferences(establishment);
         validateReferences(establishment);
         Establishment created = repository.save(establishment);
         scheduleClosingJob(created);
         return created;
     }
+
 
     public void update(String id, Establishment establishment, AccreditedNetwork accreditedNetwork) {
         AccreditedNetwork currentNetwork = checkEstablishmentOwner(id, accreditedNetwork);
