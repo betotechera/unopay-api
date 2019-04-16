@@ -8,7 +8,10 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.ContractSituation;
+import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
+import br.com.unopay.api.network.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
@@ -240,6 +243,11 @@ public class ContractService {
     public List<ServiceType> getMeValidContractServiceType(String userEmail, String productCode) {
         List<Contract> validContracts = getMeValidContracts(userEmail, productCode);
         return validContracts.stream().map(Contract::getServiceTypes).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    public List<AccreditedNetwork> getMeValidContractNetworks(String userEmail, String productCode) {
+        List<Contract> validContracts = getMeValidContracts(userEmail, productCode);
+        return validContracts.stream().map(Contract::getProduct).map(Product::getAccreditedNetwork).collect(Collectors.toList());
     }
 
     public List<Contract> getContractorValidContracts(String contractorId, String productCode) {

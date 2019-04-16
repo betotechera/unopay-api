@@ -16,7 +16,6 @@ import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
 
 class BranchServiceTest extends SpockApplicationTests {
 

@@ -24,7 +24,10 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.ServiceType;
+import br.com.unopay.api.network.model.filter.EstablishmentFilter;
+import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.service.ContractService;
@@ -73,7 +76,7 @@ public class ContractorController {
     private TicketService ticketService;
     private AuthorizedMemberService authorizedMemberService;
     private ContractorBonusService contractorBonusService;
-    private BonusBillingService bonusBillingService;
+    private EstablishmentService establishmentService;
 
     @Value("${unopay.api}")
     private String api;
@@ -88,7 +91,7 @@ public class ContractorController {
                                 TicketService ticketService,
                                 AuthorizedMemberService authorizedMemberService,
                                 ContractorBonusService contractorBonusService,
-                                BonusBillingService bonusBillingService) {
+                                EstablishmentService establishmentService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -98,7 +101,7 @@ public class ContractorController {
         this.ticketService = ticketService;
         this.authorizedMemberService = authorizedMemberService;
         this.contractorBonusService = contractorBonusService;
-        this.bonusBillingService = bonusBillingService;
+        this.establishmentService = establishmentService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -189,6 +192,17 @@ public class ContractorController {
         log.info("search Contractor={} Contracts service types for productCode={}",authentication.getName(), productCode);
         List<ServiceType> contractsServiceTypes = contractService.getMeValidContractServiceType(authentication.getName(), productCode);
         return new Results<>(contractsServiceTypes);
+    }
+
+    @JsonView(Views.Establishment.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/contracts/establishments", method = RequestMethod.GET)
+    public Results<Establishment> getMyContractsEstablishments(@Validated UnovationPageRequest pageable, EstablishmentFilter filter,
+                                                           OAuth2Authentication authentication) {
+        log.info("search Contractor={} Contracts service types for productCode={}",authentication.getName());
+        Page<Establishment> page = establishmentService.getMeEstablishments(authentication.getName(), filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/establishments", api));
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)

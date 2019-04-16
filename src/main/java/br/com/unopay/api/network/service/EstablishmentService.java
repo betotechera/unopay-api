@@ -1,23 +1,26 @@
 package br.com.unopay.api.network.service;
 
 import br.com.unopay.api.bacen.service.BankAccountService;
-import br.com.unopay.api.geo.model.Location;
 import br.com.unopay.api.geo.service.GeoService;
+import br.com.unopay.api.job.BatchClosingJob;
+import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.repository.BranchRepository;
 import br.com.unopay.api.network.repository.EstablishmentEventRepository;
 import br.com.unopay.api.network.repository.EstablishmentRepository;
-import br.com.unopay.api.job.BatchClosingJob;
-import br.com.unopay.api.job.UnopayScheduler;
 import br.com.unopay.api.service.ContactService;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +46,7 @@ public class EstablishmentService {
     private UnopayScheduler scheduler;
     @Setter
     private GeoService geoService;
+    private ContractService contractService;
 
     @Autowired
     public EstablishmentService(EstablishmentRepository repository,
@@ -54,7 +58,8 @@ public class EstablishmentService {
                                 UserDetailService userDetailService,
                                 EstablishmentEventRepository establishmentEventRepository,
                                 UnopayScheduler scheduler,
-                                GeoService geoService) {
+                                GeoService geoService,
+                                ContractService contractService){
         this.repository = repository;
         this.branchRepository = branchRepository;
         this.contactService = contactService;
@@ -65,6 +70,7 @@ public class EstablishmentService {
         this.establishmentEventRepository = establishmentEventRepository;
         this.scheduler = scheduler;
         this.geoService = geoService;
+        this.contractService = contractService;
     }
 
     public Establishment create(Establishment establishment, AccreditedNetwork accreditedNetwork) {
@@ -117,6 +123,13 @@ public class EstablishmentService {
     public Establishment findById(String id) {
         Optional<Establishment> establishment = repository.findById(id);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
+    }
+
+    public Page<Establishment> getMeEstablishments(String userEmail, EstablishmentFilter filter, UnovationPageRequest pageable){
+        List<AccreditedNetwork> networks = contractService.getMeValidContractNetworks(userEmail, null);
+        Set<String> networkIds = networks.stream().map(AccreditedNetwork::getId).collect(Collectors.toSet());
+        filter.setAccreditedNetworks(networkIds);
+        return findByFilter(filter, pageable);
     }
 
     public Optional<Establishment> findByIdOptional(String id){
