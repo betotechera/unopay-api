@@ -18,3 +18,10 @@ CREATE TABLE scheduling (
     constraint fk_authorized_member_scheduling foreign key(authorized_member_id) references authorized_member(id)
 
 );
+
+
+insert into AUTHORITY(name, description) values('ROLE_LIST_SCHEDULING','Permite listar agendamentos');
+insert into AUTHORITY(name, description) values('ROLE_MANAGE_SCHEDULING','Permite gerenciar agendamentos');
+
+insert into oauth_group_authorities(authority, group_id) values('ROLE_LIST_SCHEDULING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
+insert into oauth_group_authorities(authority, group_id) values('ROLE_MANAGE_SCHEDULING', '99bf9ba6-75e4-4109-b5be-e4858f3f68b2');
