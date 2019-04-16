@@ -7,12 +7,15 @@ import br.com.unopay.api.network.model.Branch;
 import br.com.unopay.api.network.model.BranchServicePeriod;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.filter.BranchFilter;
+import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.repository.BranchRepository;
 import br.com.unopay.api.repository.AddressRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +134,17 @@ public class BranchService {
             throw UnovationExceptions.forbidden().withErrors(ESTABLISHMENT_BRANCH_BELONG_TO_ANOTHER_NETWORK);
         }
         return currentEstablishment;
+    }
+
+    public Page<Branch> getContractorBranches(String userEmail, BranchFilter filter, UnovationPageRequest pageable){
+        UnovationPageRequest pageRequest = new UnovationPageRequest();
+        pageable.setSize(50);
+        EstablishmentFilter establishmentFilter = new EstablishmentFilter();
+        establishmentFilter.setId(filter.getHeadOffice());
+        Page<Establishment> establishments = establishmentService.getContractorEstablishments(userEmail, establishmentFilter, pageRequest);
+        Set<String> establishmentIds = establishments.getContent().stream().map(Establishment::getId).collect(Collectors.toSet());
+        filter.setHeadOffices(establishmentIds);
+        return findByFilter(filter, pageable);
     }
 
     public Page<Branch> findByFilter(BranchFilter filter, AccreditedNetwork network, UnovationPageRequest pageable) {

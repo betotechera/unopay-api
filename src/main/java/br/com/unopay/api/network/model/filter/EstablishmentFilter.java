@@ -12,6 +12,9 @@ public class EstablishmentFilter implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
+    @SearchableField
+    private String id;
+
     @SearchableField(field = "person.document.number")
     private String documentNumber;
 
