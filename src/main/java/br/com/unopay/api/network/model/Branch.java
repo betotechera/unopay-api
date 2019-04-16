@@ -1,6 +1,7 @@
 package br.com.unopay.api.network.model;
 
 import br.com.unopay.api.bacen.model.GatheringChannel;
+import br.com.unopay.api.geo.model.Localizable;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Updatable;
@@ -48,7 +49,7 @@ import static br.com.unopay.api.uaa.exception.Errors.HEAD_OFFICE_REQUIRED;
 @EqualsAndHashCode(exclude = {"servicePeriods", "services", "gatheringChannels"})
 @Entity
 @Table(name = "branch")
-public class Branch implements Serializable, Updatable {
+public class Branch implements Serializable, Updatable, Localizable {
 
     public static final long serialVersionUID = 1L;
 
@@ -159,5 +160,31 @@ public class Branch implements Serializable, Updatable {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public void defineAddressLat(double lat) {
+        if(hasAddress()) {
+            this.address.setLatitude(lat);
+        }
+    }
+
+    @Override
+    public void defineAddressLong(double lng) {
+        if(hasAddress()) {
+            this.address.setLongitude(lng);
+        }
+    }
+
+    @Override
+    public String formattedAddress() {
+        if(hasAddress()) {
+            return this.address.toString();
+        }
+        return null;
+    }
+
+    public boolean hasAddress(){
+        return this.address != null;
     }
 }

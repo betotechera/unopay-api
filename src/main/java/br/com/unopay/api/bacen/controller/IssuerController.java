@@ -268,9 +268,9 @@ public class IssuerController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/issuers/me/products", method = RequestMethod.POST)
     public ResponseEntity<Product> createProduct(Issuer issuer, @Validated(Create.class) @RequestBody Product product){
-        log.info("creating product={} for issuer={}", product, issuer.documentNumber());
+        log.info("creating a product={} for the issuer={}", product, issuer.documentNumber());
         product.setIssuer(issuer);
-        Product created = productService.create(product);
+        Product created = productService.create(product, issuer);
         return ResponseEntity
                 .created(URI.create("/issuers/me/products/"+created.getId()))
                 .body(created);
@@ -280,9 +280,10 @@ public class IssuerController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/issuers/me/products/{id}", method = RequestMethod.GET)
     public Product getProduct(Issuer issuer, @PathVariable String id) {
-        log.info("get product={} for issuer={}", id, issuer.documentNumber());
+        log.info("getting the product={} for the issuer={}", id, issuer.documentNumber());
         return productService.findByIdForIssuer(id, issuer);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/issuers/me/products/{id}", method = RequestMethod.PUT)
     public void updateProduct(Issuer issuer,

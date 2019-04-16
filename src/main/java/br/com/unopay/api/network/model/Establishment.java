@@ -4,6 +4,7 @@ import br.com.unopay.api.bacen.model.BankAccount;
 import br.com.unopay.api.bacen.model.Checkout;
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
+import br.com.unopay.api.geo.model.Localizable;
 import br.com.unopay.api.model.Contact;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.Person;
@@ -55,7 +56,7 @@ import static javax.persistence.EnumType.STRING;
 @ToString(exclude = "services")
 @EqualsAndHashCode(exclude = "services")
 @Table(name = "establishment")
-public class Establishment implements Serializable, Updatable {
+public class Establishment implements Serializable, Updatable, Localizable {
 
     public static final long serialVersionUID = 1L;
 
@@ -127,7 +128,6 @@ public class Establishment implements Serializable, Updatable {
     @Valid
     @OneToOne
     @JoinColumn(name="operational_contact_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private Contact operationalContact;
 
@@ -200,12 +200,6 @@ public class Establishment implements Serializable, Updatable {
         if(getNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
         }
-        if(getAdministrativeContact() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
-        }
-        if(getOperationalContact() == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
-        }
         if(getFinancierContact() == null){
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
         }
@@ -216,15 +210,17 @@ public class Establishment implements Serializable, Updatable {
         if(getBankAccount().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
         }
-        if(getAdministrativeContact().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
-        }
-        if(getOperationalContact().getId() == null) {
-            throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
-        }
         if(getFinancierContact().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
+    }
+
+    public boolean hasOperationalContact(){
+        return this.operationalContact != null;
+    }
+
+    public boolean hasAdministrativeContact(){
+        return this.administrativeContact != null;
     }
 
     public String documentNumber(){
@@ -232,6 +228,20 @@ public class Establishment implements Serializable, Updatable {
             return getPerson().getDocument().getNumber();
         }
         return null;
+    }
+
+    @Override
+    public void defineAddressLat(double lat) {
+        this.person.getAddress().setLatitude(lat);
+    }
+
+    @Override
+    public void defineAddressLong(double lng) {
+        this.person.getAddress().setLongitude(lng);
+    }
+
+    public String formattedAddress(){
+        return person.getFormatedAddress();
     }
 
     public String personId() {

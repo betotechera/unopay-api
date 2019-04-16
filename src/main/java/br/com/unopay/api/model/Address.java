@@ -96,4 +96,9 @@ public class Address implements Serializable, Updatable {
     public Address(String zipCode) {
         this.zipCode = zipCode;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s,%s,%s", streetName, number, district, city, state);
+    }
 }

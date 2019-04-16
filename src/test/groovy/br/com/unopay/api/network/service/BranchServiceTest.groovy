@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.GatheringChannel
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.geo.service.GeoService
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.BranchServicePeriod
@@ -27,10 +28,13 @@ class BranchServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
+    GeoService geoService = Mock(GeoService)
+
     Establishment headOfficeUnderTest
 
     void setup(){
         headOfficeUnderTest = fixtureCreator.createHeadOffice()
+        service.setGeoService(geoService)
     }
 
     def 'a valid branch should be created'(){
@@ -42,6 +46,17 @@ class BranchServiceTest extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+    def 'when creating a branch should be geo resolve it address'(){
+        given:
+        Branch branch = Fixture.from(Branch.class).gimme("valid").with { headOffice = headOfficeUnderTest; it }
+
+        when:
+        service.create(branch)
+
+        then:
+        1 * geoService.defineAddressLatLong(branch)
     }
 
     def 'when create the periods should be saved'(){

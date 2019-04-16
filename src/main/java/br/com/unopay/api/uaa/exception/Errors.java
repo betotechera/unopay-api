@@ -172,6 +172,9 @@ public final class Errors {
             PERSON_ID_REQUIRED = new UnovationError("PERSON_ID_REQUIRED","Person id required");
     public static final UnovationError
             ADDRESS_ID_REQUIRED = new UnovationError("ADDRESS_ID_REQUIRED","Address id required");
+    public static final UnovationError
+            GOOGLE_ADDRESS_NOT_FOUND = new UnovationError("GOOGLE_ADDRESS_NOT_FOUND","google address not found");
+
 
 
     /* Institution */

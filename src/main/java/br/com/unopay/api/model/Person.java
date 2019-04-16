@@ -165,6 +165,13 @@ public class Person implements Serializable{
         }
     }
 
+    public String getFormatedAddress(){
+        if(address != null) {
+            return address.toString();
+        }
+        return null;
+    }
+
     public String getId(){
         return this.id;
     }
