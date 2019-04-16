@@ -1,10 +1,10 @@
 package br.com.unopay.api.util
 
-import br.com.unopay.api.ScalaApplicationTest
+import br.com.unopay.api.UnopayApiScalaApplicationTest
 
 import scala.collection.JavaConverters._
 
-class StringJoinerTest extends ScalaApplicationTest {
+class StringJoinerTest extends UnopayApiScalaApplicationTest {
     
     "given a collection of strings then" should "join it properly with default delimiter" in {
         val strings = List("a", "b", "c")

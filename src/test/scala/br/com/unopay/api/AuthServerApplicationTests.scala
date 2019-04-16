@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders._
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers._
 import org.springframework.test.web.servlet.{MvcResult, ResultActions}
 
-trait AuthServerApplicationTests extends ScalaApplicationTest {
+trait AuthServerApplicationTests extends UnopayApiScalaApplicationTest {
 
     protected def getClientAccessToken(): String = {
         val result = clientCredentials()

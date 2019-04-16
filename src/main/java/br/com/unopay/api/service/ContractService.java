@@ -261,7 +261,9 @@ public class ContractService {
 
     private Page<Contract> getActiveContracts(String contractorId, String productCode) {
         ContractFilter contractFilter = createContractActiveFilter(contractorId,productCode);
-        return findByFilter(contractFilter, new UnovationPageRequest());
+        UnovationPageRequest pageRequest = new UnovationPageRequest();
+        pageRequest.setSize(50);
+        return findByFilter(contractFilter, pageRequest);
     }
 
     private ContractFilter createContractActiveFilter(String contractorId, String productCode) {

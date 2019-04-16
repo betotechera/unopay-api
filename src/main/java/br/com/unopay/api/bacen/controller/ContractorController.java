@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
@@ -17,16 +16,18 @@ import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.market.model.filter.ContractorBonusFilter;
 import br.com.unopay.api.market.service.AuthorizedMemberService;
-import br.com.unopay.api.market.service.BonusBillingService;
 import br.com.unopay.api.market.service.ContractorBonusService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.network.model.Branch;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.ServiceType;
+import br.com.unopay.api.network.model.filter.BranchFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
+import br.com.unopay.api.network.service.BranchService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
@@ -77,6 +78,7 @@ public class ContractorController {
     private AuthorizedMemberService authorizedMemberService;
     private ContractorBonusService contractorBonusService;
     private EstablishmentService establishmentService;
+    private BranchService branchService;
 
     @Value("${unopay.api}")
     private String api;
@@ -91,7 +93,8 @@ public class ContractorController {
                                 TicketService ticketService,
                                 AuthorizedMemberService authorizedMemberService,
                                 ContractorBonusService contractorBonusService,
-                                EstablishmentService establishmentService) {
+                                EstablishmentService establishmentService,
+                                BranchService branchService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -102,6 +105,7 @@ public class ContractorController {
         this.authorizedMemberService = authorizedMemberService;
         this.contractorBonusService = contractorBonusService;
         this.establishmentService = establishmentService;
+        this.branchService = branchService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -199,10 +203,21 @@ public class ContractorController {
     @RequestMapping(value = "/contractors/me/contracts/establishments", method = RequestMethod.GET)
     public Results<Establishment> getMyContractsEstablishments(@Validated UnovationPageRequest pageable, EstablishmentFilter filter,
                                                            OAuth2Authentication authentication) {
-        log.info("search Contractor={} Contracts service types for productCode={}",authentication.getName());
-        Page<Establishment> page = establishmentService.getMeEstablishments(authentication.getName(), filter, pageable);
+        log.info("searching the contractor={} contracts establishments for productCode={}",authentication.getName());
+        Page<Establishment> page = establishmentService.getContractorEstablishments(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/establishments", api));
+    }
+
+    @JsonView(Views.Branch.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/contracts/branches", method = RequestMethod.GET)
+    public Results<Branch> getMyContractsBranches(@Validated UnovationPageRequest pageable, BranchFilter filter,
+                                                               OAuth2Authentication authentication) {
+        log.info("searching the contractor={} contracts branches for productCode={}",authentication.getName());
+        Page<Branch> page = branchService.getContractorBranches(authentication.getName(), filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/branches", api));
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)

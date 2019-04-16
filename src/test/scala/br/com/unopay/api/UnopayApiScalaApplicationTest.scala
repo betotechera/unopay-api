@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.context.WebApplicationContext
 
 @RunWith(classOf[JUnitRunner])
-abstract class ScalaApplicationTest extends SpringTest {
+abstract class UnopayApiScalaApplicationTest extends SpringTest {
 
   @Autowired
   var context: WebApplicationContext = _
@@ -56,7 +56,7 @@ abstract class ScalaApplicationTest extends SpringTest {
 @SpringBootTest
 @FlywayTest
 @EnableTransactionManagement
-@ContextConfiguration(classes = Array(classOf[UnopayApiApplication]))
+@ContextConfiguration(classes = Array(classOf[UnopayScala]))
 @WebAppConfiguration
 @ActiveProfiles(Array("test"))
 @TestExecutionListeners(Array(classOf[DependencyInjectionTestExecutionListener], classOf[FlywayTestExecutionListener]))

@@ -125,7 +125,7 @@ public class EstablishmentService {
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 
-    public Page<Establishment> getMeEstablishments(String userEmail, EstablishmentFilter filter, UnovationPageRequest pageable){
+    public Page<Establishment> getContractorEstablishments(String userEmail, EstablishmentFilter filter, UnovationPageRequest pageable){
         List<AccreditedNetwork> networks = contractService.getMeValidContractNetworks(userEmail, null);
         Set<String> networkIds = networks.stream().map(AccreditedNetwork::getId).collect(Collectors.toSet());
         filter.setAccreditedNetworks(networkIds);

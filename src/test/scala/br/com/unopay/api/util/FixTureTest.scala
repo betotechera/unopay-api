@@ -1,14 +1,14 @@
 package br.com.unopay.api.util
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.ScalaApplicationTest
+import br.com.unopay.api.UnopayApiScalaApplicationTest
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.repository.ProductRepository
 import br.com.unopay.api.uaa.model.UserDetail
 import ch.qos.logback.core.net.server.Client
 import org.springframework.beans.factory.annotation.Autowired
 
-class FixTureTest extends ScalaApplicationTest {
+class FixTureTest extends UnopayApiScalaApplicationTest {
 
     @Autowired
     var productRepository: ProductRepository = _

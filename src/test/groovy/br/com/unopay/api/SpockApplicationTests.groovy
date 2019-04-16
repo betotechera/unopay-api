@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext
 @EnableTransactionManagement
 @ActiveProfiles("test")
 @FlywayTest
-@ContextConfiguration(classes = [Mocks, UnopayApiApplication])
+@ContextConfiguration(classes = [Mocks, UnopayScala])
 @TestExecutionListeners([DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class ])
 class SpockApplicationTests extends FixtureApplicationTest{
 

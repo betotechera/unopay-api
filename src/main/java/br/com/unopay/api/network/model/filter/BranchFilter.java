@@ -3,6 +3,7 @@ package br.com.unopay.api.network.model.filter;
 import br.com.unopay.api.model.State;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
+import java.util.Collection;
 import lombok.Data;
 
 @Data
@@ -19,12 +20,21 @@ public class BranchFilter implements Serializable {
     @SearchableField(field = "headOffice.type")
     private String headOfficeType;
 
+    @SearchableField(field = "headOffice.id")
+    private String headOffice;
+
+    @SearchableField(field = "headOffice.id")
+    private Collection<String> headOffices;
+
     @SearchableField(field = "headOffice.network.id")
     private String network;
 
-    @SearchableField(field = "person.address.city")
+    @SearchableField(field = "address.district")
+    private String district;
+
+    @SearchableField(field = "address.city")
     private String city;
 
-    @SearchableField(field = "person.address.state")
+    @SearchableField(field = "address.state")
     private State state;
 }

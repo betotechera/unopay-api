@@ -8,7 +8,7 @@ import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.ContractorBonusBillingRepository
 import br.com.unopay.api.order.model.PaymentStatus
-import br.com.unopay.api.{ScalaApplicationTest, util}
+import br.com.unopay.api.{UnopayApiScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.scalatest.mockito._
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.collection.JavaConverters._
 
-class BonusBillingServiceTest extends ScalaApplicationTest with MockitoSugar {
+class BonusBillingServiceTest extends UnopayApiScalaApplicationTest with MockitoSugar {
 
     @Autowired
     var service: BonusBillingService = _
