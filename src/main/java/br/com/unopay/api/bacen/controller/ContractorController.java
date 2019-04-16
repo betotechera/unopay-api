@@ -209,7 +209,7 @@ public class ContractorController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/establishments", api));
     }
 
-    @JsonView(Views.Establishment.List.class)
+    @JsonView(Views.Branch.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/contracts/branches", method = RequestMethod.GET)
     public Results<Branch> getMyContractsBranches(@Validated UnovationPageRequest pageable, BranchFilter filter,

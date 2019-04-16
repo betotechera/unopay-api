@@ -139,12 +139,18 @@ public class BranchService {
     public Page<Branch> getContractorBranches(String userEmail, BranchFilter filter, UnovationPageRequest pageable){
         UnovationPageRequest pageRequest = new UnovationPageRequest();
         pageable.setSize(50);
-        EstablishmentFilter establishmentFilter = new EstablishmentFilter();
-        establishmentFilter.setId(filter.getHeadOffice());
+        EstablishmentFilter establishmentFilter = getEstablishmentFilter(filter);
         Page<Establishment> establishments = establishmentService.getContractorEstablishments(userEmail, establishmentFilter, pageRequest);
         Set<String> establishmentIds = establishments.getContent().stream().map(Establishment::getId).collect(Collectors.toSet());
         filter.setHeadOffices(establishmentIds);
         return findByFilter(filter, pageable);
+    }
+
+    private EstablishmentFilter getEstablishmentFilter(BranchFilter filter) {
+        EstablishmentFilter establishmentFilter = new EstablishmentFilter();
+        establishmentFilter.setId(filter.getHeadOffice());
+        filter.setHeadOffice(null);
+        return establishmentFilter;
     }
 
     public Page<Branch> findByFilter(BranchFilter filter, AccreditedNetwork network, UnovationPageRequest pageable) {
