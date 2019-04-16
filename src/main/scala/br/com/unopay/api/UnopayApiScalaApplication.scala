@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true, prePostEnabled = true)
 class UnopayScala
 
-object ScalaApplication{
+object UnopayApiScalaApplication{
   def main(args: Array[String]) {
     SpringApplication.run(classOf[UnopayScala], args:_*)
   }

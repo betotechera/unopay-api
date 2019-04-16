@@ -1,7 +1,7 @@
 package br.com.unopay.api.network.service
 
 import br.com.six2six.fixturefactory.{Fixture, Rule}
-import br.com.unopay.api.ScalaApplicationTest
+import br.com.unopay.api.UnopayApiScalaApplicationTest
 import br.com.unopay.api.network.model.ServicePeriodSituation.SUSPENDED
 import br.com.unopay.api.network.model.{Branch, BranchServicePeriod, Weekday}
 import br.com.unopay.api.network.repository.BranchServicePeriodRepository
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import scala.collection.JavaConverters._
 
 
-class BranchServicePeriodServiceTest extends ScalaApplicationTest with MockitoSugar {
+class BranchServicePeriodServiceTest extends UnopayApiScalaApplicationTest with MockitoSugar {
 
   @Autowired
   var service: BranchServicePeriodService = _
