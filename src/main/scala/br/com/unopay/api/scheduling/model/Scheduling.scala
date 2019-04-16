@@ -41,27 +41,27 @@ class Scheduling extends Serializable with Updatable {
     var branch: Branch = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "contract_id")
     var contract: Contract = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "contractor_id")
     var contractor: Contractor = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "payment_instrument_id")
     var paymentInstrument: PaymentInstrument = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     var user: UserDetail = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "authorized_member_id")
     var authorizedMember: AuthorizedMember = _
 
