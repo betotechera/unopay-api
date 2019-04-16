@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 
 @EnableCaching
-@SpringBootApplication(scanBasePackageClasses = Array(classOf[UnopayScala], classOf[CommonsAutoConfig]))
+//@SpringBootApplication(scanBasePackageClasses = Array(classOf[UnopayScala], classOf[CommonsAutoConfig]))
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true, prePostEnabled = true)
 class UnopayScala
 

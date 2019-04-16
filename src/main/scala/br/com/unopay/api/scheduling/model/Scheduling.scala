@@ -66,7 +66,7 @@ class Scheduling extends Serializable with Updatable {
     var authorizedMember: AuthorizedMember = _
 
     @PrePersist
-    def prePersist(): _ = {
+    def prePersist(): Unit = {
         this.createdDateTime = LocalDateTime.now()
     }
 }

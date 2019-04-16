@@ -47,11 +47,6 @@ abstract class ScalaApplicationTest extends SpringTest {
     flyway.migrate()
   }
 
-  def toJson(obj: Object) : String  = {
-    val objectMapper = new ObjectMapper()
-    objectMapper.writeValueAsString(obj)
-  }
-
   def instant(pattern: String): java.util.Date ={
     new ChronicFunction(pattern).generateValue()
   }
