@@ -6,11 +6,13 @@ import br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.{Fixture, Rule}
 import br.com.six2six.fixturefactory.function.impl.{ChronicFunction, RegexFunction}
 import br.com.unopay.api.bacen.model.{PaymentRuleGroup, _}
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model._
 import br.com.unopay.api.market.model.{AuthorizedMember, AuthorizedMemberCandidate, _}
 import br.com.unopay.api.model._
 import br.com.unopay.api.network.model._
 import br.com.unopay.api.order.model.{Order, OrderType, PaymentStatus}
+import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -22,7 +24,8 @@ import scala.collection.JavaConverters._
 @Autowired
 class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
                           paymentDayCalculator: PaymentDayCalculator,
-                          jpaProcessor: JpaProcessorScala) {
+                          jpaProcessor: JpaProcessorScala,
+                          fixtureCreator: FixtureCreator) {
 
 
     def createEstablishmentUser(establishmentUnderTest: Establishment = createEstablishment()): UserDetail = {
@@ -98,7 +101,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     }
 
     def createUser(email: String = null): UserDetail = {
-        val generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        val generatePassword: String = new RegexFunction("\\d{3}\\w{5}").generateValue()
         val user: UserDetail = from(classOf[UserDetail]).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
                 add("password", passwordEncoder.encode(generatePassword))
@@ -123,7 +126,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     }
 
     def createInstrumentToProduct(product: Product = createProduct(), contractor: Contractor = createContractor()): PaymentInstrument = {
-        val generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        val generatePassword: String = new RegexFunction("\\d{3}\\w{5}").generateValue()
         val inst: PaymentInstrument = from(classOf[PaymentInstrument]).uses(jpaProcessor).gimme("valid", new Rule() {
             {
                 add("product", product)
@@ -617,6 +620,25 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
             add("contractor", contractor)
             add("product", product)
             add("payer", person)
+        }})
+    }
+
+    def createBranch() : Branch = {
+        from(classOf[Branch]).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("headOffice", fixtureCreator.createEstablishment())
+        }})
+    }
+
+    def createSchedulingToPersist(): Scheduling = {
+        val contract: Contract = createPersistedContract()
+
+        from(classOf[Scheduling]).gimme("valid", new Rule() {{
+            add("branch", createBranch())
+            add("contract", contract)
+            add("contractor", contract.getContractor)
+            add("paymentInstrument", createInstrumentToProduct(contract.getProduct, contract.getContractor))
+            add("user", createUser())
+            add("authorizedMember", createPersistedAuthorizedMember())
         }})
     }
 

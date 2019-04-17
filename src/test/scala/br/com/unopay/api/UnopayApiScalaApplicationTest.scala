@@ -62,8 +62,9 @@ abstract class UnopayApiScalaApplicationTest extends SpringTest {
 @TestExecutionListeners(Array(classOf[DependencyInjectionTestExecutionListener], classOf[FlywayTestExecutionListener]))
 trait SpringTest extends ScalaFixtureTest { this: Suite =>
 
+  new TestContextManager(classOf[SpringTest]).prepareTestInstance(this)
+
   override def beforeEach(): Unit = {
-    new TestContextManager(classOf[SpringTest]).prepareTestInstance(this)
     super.beforeEach()
   }
 }

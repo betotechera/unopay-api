@@ -20,13 +20,13 @@ class ControllerTest extends ScalaFixtureTest { this: Suite =>
     @MockBean
     var mockUserDetailService: UserDetailService = _
 
+    new TestContextManager(this.getClass).prepareTestInstance(this)
+
     override def beforeEach(): Unit = {
         JUnitCore.runClasses(classOf[TestSpringRunner])
-        new TestContextManager(this.getClass).prepareTestInstance(this)
         super.beforeEach()
 
     }
-
 
 }
 

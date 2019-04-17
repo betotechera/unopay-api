@@ -9,18 +9,20 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
 @RequestMapping(Array("/schedules"))
-class SchedulingController(var sechedulingService: SchedulingService) {
+class SchedulingController(var schedulingService: SchedulingService) {
 
-    @RequestMapping
-    @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULES')")
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
     def create(@RequestBody scheduling: Scheduling): ResponseEntity[Scheduling] = {
-        val schedulingCreated = sechedulingService.create(scheduling)
-        val uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-            .path("/{id}")
-            .buildAndExpand(schedulingCreated.id)
-            .toUri
-
+        val schedulingCreated = schedulingService.create(scheduling)
+        val uri = buildUriLocation(schedulingCreated.id)
         ResponseEntity.created(uri).body(schedulingCreated)
     }
 
+    private def buildUriLocation(id: String) = {
+        ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri
+    }
 }

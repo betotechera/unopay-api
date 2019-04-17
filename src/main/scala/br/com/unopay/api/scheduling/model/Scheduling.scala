@@ -2,6 +2,7 @@ package br.com.unopay.api.scheduling.model
 
 import java.io.Serializable
 import java.time.LocalDateTime
+import java.util.Date
 
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
@@ -11,7 +12,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import javax.persistence._
 import javax.validation.constraints.NotNull
 import lombok.{EqualsAndHashCode, Getter}
-import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.{GenericGenerator, Type}
 
 import scala.beans.BeanProperty
 
@@ -33,7 +34,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @Column(name = "created_date_time")
-    var createdDateTime: LocalDateTime= _
+    var createdDateTime: Date = _
 
     @BeanProperty
     @OneToOne
@@ -67,7 +68,8 @@ class Scheduling extends Serializable with Updatable {
     var authorizedMember: AuthorizedMember = _
 
     @PrePersist
-    def prePersist(): Unit = {
-        this.createdDateTime = LocalDateTime.now()
-    }
+    def prePersist(): Unit = this.createdDateTime = new Date
+
+    def hasAuthorizedMember: Boolean = this.authorizedMember != null && this.authorizedMember.getId != null
+
 }
