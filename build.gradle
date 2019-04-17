@@ -65,7 +65,7 @@ repositories {
 }
 
 springBoot {
-	mainClass = "br.com.unopay.api.ScalaApplication"
+	mainClass = "br.com.unopay.api.UnopayApiScalaApplication"
 }
 
 dependencies {
@@ -106,8 +106,6 @@ dependencies {
 	compile group: 'br.com.caelum.stella', name: 'caelum-stella-boleto', version: '2.1.2'
 	compile group: 'com.lowagie', name: 'itext', version: '2.1.7'
 
-
-
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 
 	testCompile 'com.jayway.jsonpath:json-path:2.4.0'
@@ -124,9 +122,6 @@ dependencies {
 	testCompile "org.scala-lang:scala-library:2.12.0"
 	testCompile 'org.scalatest:scalatest_2.12:3.2.0-SNAP10'
 	testCompile 'com.github.maiflai:gradle-scalatest:0.19'
-
-
-
 }
 
 
