@@ -4,11 +4,14 @@ import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.network.service.BranchService
 import br.com.unopay.api.scheduling.model.Scheduling
+import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.exception.Errors.SCHEDULING_NOT_FOUND
 import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,12 +32,22 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         val actualScheduling = findById(id)
         actualScheduling.updateMe(otherScheduling)
         setReferences(actualScheduling)
-        actualScheduling
+        schedulingRepository.save(actualScheduling)
     }
 
     def findById(id: String) : Scheduling = {
         schedulingRepository.findById(id)
-                .orElseThrow(throw notFound.withErrors(SCHEDULING_NOT_FOUND.withOnlyArguments(id)))
+                .orElseThrow(() => throw notFound.withErrors(SCHEDULING_NOT_FOUND.withOnlyArguments(id)))
+    }
+
+    def deleteById(id: String): Unit = {
+        val scheduling = findById(id)
+        schedulingRepository.delete(scheduling)
+    }
+
+    def findAll(schedulingFilter: SchedulingFilter, pageable: UnovationPageRequest): Page[Scheduling] = {
+        val pageRequest = new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize())
+        schedulingRepository.findAll(schedulingFilter, pageRequest)
     }
 
     private def setReferences(scheduling: Scheduling): Unit = {

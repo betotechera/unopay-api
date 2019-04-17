@@ -2,6 +2,7 @@ package br.com.unopay.api.scheduling.controller
 
 import java.util.UUID
 
+import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.ControllerTest
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.service.SchedulingService
@@ -27,7 +28,7 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
     private val ROLE_DEFAULT_REQUIRED = "USER"
 
     it should "create a Scheduling" in {
-        val scheduling = new Scheduling
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
         scheduling.id = UUID.randomUUID().toString
 
         when(mockSchedulingService.create(mockito.Matchers.any())).thenReturn(scheduling)
@@ -45,7 +46,7 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
     }
 
     it should "not authorize create a Scheduling without role" in {
-        val scheduling = new Scheduling
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
 
         val result = this.mockMvc.perform(post(SCHEDULING_URI)
                 .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED))

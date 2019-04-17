@@ -9,6 +9,8 @@ CREATE TABLE scheduling (
     payment_instrument_id VARCHAR(256) NOT NULL,
     user_id VARCHAR(256) NOT NULL,
     authorized_member_id VARCHAR(256),
+    expiration_date TIMESTAMP,
+    cancelation_date TIMESTAMP
 
     constraint fk_branch_scheduling foreign key(branch_id) references branch(id),
     constraint fk_contract_scheduling foreign key(contract_id) references contract(id),

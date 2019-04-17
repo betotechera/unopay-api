@@ -17,7 +17,7 @@ import org.hibernate.annotations.{GenericGenerator, Type}
 import scala.beans.BeanProperty
 
 @SerialVersionUID(1L)
-@EqualsAndHashCode(of = Array ("id"))
+@EqualsAndHashCode(of = Array ("id", "token"))
 @Getter
 @Entity
 class Scheduling extends Serializable with Updatable {
@@ -66,6 +66,14 @@ class Scheduling extends Serializable with Updatable {
     @ManyToOne
     @JoinColumn(name = "authorized_member_id")
     var authorizedMember: AuthorizedMember = _
+
+    @BeanProperty
+    @Column(name = "expiration_date")
+    var expirationDate: Date = _
+
+    @BeanProperty
+    @Column(name = "cancelation_date")
+    var cancelationDate: Date = _
 
     @PrePersist
     def prePersist(): Unit = this.createdDateTime = new Date
