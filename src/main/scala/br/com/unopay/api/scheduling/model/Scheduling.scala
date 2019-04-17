@@ -10,11 +10,12 @@ import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.uaa.model.UserDetail
 import javax.persistence._
 import javax.validation.constraints.NotNull
-import lombok.{EqualsAndHashCode, Getter}
+import lombok.{EqualsAndHashCode, Getter, ToString}
 import org.hibernate.annotations.GenericGenerator
 
 import scala.beans.BeanProperty
 
+@ToString(of = Array("token"))
 @SerialVersionUID(1L)
 @EqualsAndHashCode(of = Array ("id", "token"))
 @Getter

@@ -109,7 +109,7 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         Mockito.verify(mockSchedulingRepository).delete(scheduling)
     }
 
-    it should "list all schedules" in {
+    it should "filter schedules" in {
         val schedulingFilter = new SchedulingFilter
         val pageRequest = new UnovationPageRequest
 

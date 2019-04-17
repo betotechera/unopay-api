@@ -1,26 +1,57 @@
 package br.com.unopay.api.scheduling.controller
 
 import br.com.unopay.api.scheduling.model.Scheduling
+import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.service.SchedulingService
-import org.springframework.http.ResponseEntity
+import br.com.unopay.api.util.Logging
+import br.com.unopay.bootcommons.jsoncollections.{PageableResults, Results, UnovationPageRequest}
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.{PostMapping, RequestBody, RequestMapping, RestController}
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.{GetMapping, PathVariable, PostMapping, PutMapping, RequestBody, RequestMapping, ResponseStatus, RestController}
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
 @RestController
 @RequestMapping(Array("/schedules"))
-class SchedulingController(var schedulingService: SchedulingService) {
+class SchedulingController(var schedulingService: SchedulingService) extends Logging{
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
     def create(@RequestBody scheduling: Scheduling): ResponseEntity[Scheduling] = {
+        log.info("creating Scheduling={}", scheduling)
         val schedulingCreated = schedulingService.create(scheduling)
         val uri = buildUriLocation(schedulingCreated.id)
         ResponseEntity.created(uri).body(schedulingCreated)
     }
 
+    @PutMapping(Array("/{id}"))
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
+    def update (@PathVariable id: String, @RequestBody scheduling: Scheduling): Unit = {
+        log.info("updating Scheduling with id={}", id)
+        schedulingService.update(id, scheduling)
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_LIST_SCHEDULING')")
+    def findAll(schedulingFilter: SchedulingFilter, @Validated pageable: UnovationPageRequest): Results[Scheduling] = {
+        log.info("filtering schedules. ScheduleFilter={}", schedulingFilter)
+        val schedulesPage = schedulingService.findAll(schedulingFilter, pageable)
+        pageable.setTotal(schedulesPage.getTotalElements())
+        PageableResults.create(pageable, schedulesPage.getContent, fromCurrentRequestUri().toUriString)
+
+    }
+
+    @GetMapping(Array("/{id}"))
+    @PreAuthorize("hasRole('ROLE_LIST_SCHEDULING')")
+    def findById(@PathVariable id: String): Scheduling = {
+        log.info("finding scheduling with id={}", id)
+        schedulingService.findById(id)
+    }
+
     private def buildUriLocation(id: String) = {
-        ServletUriComponentsBuilder.fromCurrentRequestUri()
+        fromCurrentRequestUri()
                 .path("/{id}")
                 .buildAndExpand(id)
                 .toUri

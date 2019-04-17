@@ -630,16 +630,23 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     }
 
     def createSchedulingToPersist(): Scheduling = {
-        val contract: Contract = createPersistedContract()
+        from(classOf[Scheduling]).gimme("valid", ruleSchedulingValid)
+    }
 
-        from(classOf[Scheduling]).gimme("valid", new Rule() {{
+    def createScheduling(): Scheduling = {
+        from(classOf[Scheduling]).uses(jpaProcessor).gimme("valid", ruleSchedulingValid)
+    }
+
+    private def ruleSchedulingValid : Rule = {
+        val contract: Contract = createPersistedContract()
+        new Rule() {{
             add("branch", createBranch())
             add("contract", contract)
             add("contractor", contract.getContractor)
             add("paymentInstrument", createInstrumentToProduct(contract.getProduct, contract.getContractor))
             add("user", createUser())
             add("authorizedMember", createPersistedAuthorizedMember())
-        }})
+        }}
     }
 
     private def instant(pattern: String): java.util.Date ={
