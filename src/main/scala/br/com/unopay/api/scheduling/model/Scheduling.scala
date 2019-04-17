@@ -46,6 +46,7 @@ class Scheduling extends Serializable with Updatable {
     var contract: Contract = _
 
     @BeanProperty
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "contractor_id")
     var contractor: Contractor = _

@@ -27,8 +27,7 @@ class ControllerTest extends ScalaFixtureTest { this: Suite =>
 
     }
 
-}
 
-import org.junit.runner.RunWith
+}
 
 @RunWith(classOf[SpringRunner]) trait TestSpringRunner {}
