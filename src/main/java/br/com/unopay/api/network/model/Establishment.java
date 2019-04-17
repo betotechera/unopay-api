@@ -14,6 +14,7 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.opencsv.bean.CsvBindByName;
 import java.io.Serializable;
@@ -54,8 +55,8 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@ToString(exclude = "services")
-@EqualsAndHashCode(exclude = "services")
+@ToString(exclude = {"services", "eventPrices"})
+@EqualsAndHashCode(exclude = {"services", "eventPrices"})
 @Table(name = "establishment")
 public class Establishment implements Serializable, Updatable, Localizable {
 
@@ -170,7 +171,7 @@ public class Establishment implements Serializable, Updatable, Localizable {
 
     @OneToMany(mappedBy = "establishment")
     @BatchSize(size = 10)
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonIgnore
     private Set<EstablishmentEvent> eventPrices;
     
     @Valid
