@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -166,6 +167,11 @@ public class Establishment implements Serializable, Updatable, Localizable {
             joinColumns = { @JoinColumn(name = "establishment_id") },
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private Set<Service> services;
+
+    @OneToMany(mappedBy = "establishment")
+    @BatchSize(size = 10)
+    @JsonView({Views.Establishment.Detail.class})
+    private Set<EstablishmentEvent> eventPrices;
     
     @Valid
     @ManyToOne

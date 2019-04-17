@@ -126,7 +126,7 @@ public class Branch implements Serializable, Updatable, Localizable {
     private Set<Service> services;
 
     @JsonManagedReference
-    @JsonView({Views.Branch.Detail.class})
+    @JsonView({Views.Branch.List.class})
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "branch")
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 

@@ -30,6 +30,9 @@ public class EstablishmentFilter implements Serializable {
     @SearchableField
     private EstablishmentType type;
 
+    @SearchableField(field = "eventPrices.event.ncmCode")
+    private String eventCode;
+
     @SearchableField(field = "type")
     private Collection<EstablishmentType> types;
 
