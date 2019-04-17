@@ -1,7 +1,6 @@
 package br.com.unopay.api.scheduling.model
 
 import java.io.Serializable
-import java.time.LocalDateTime
 import java.util.Date
 
 import br.com.unopay.api.bacen.model.Contractor
@@ -12,7 +11,7 @@ import br.com.unopay.api.uaa.model.UserDetail
 import javax.persistence._
 import javax.validation.constraints.NotNull
 import lombok.{EqualsAndHashCode, Getter}
-import org.hibernate.annotations.{GenericGenerator, Type}
+import org.hibernate.annotations.GenericGenerator
 
 import scala.beans.BeanProperty
 
@@ -37,7 +36,7 @@ class Scheduling extends Serializable with Updatable {
     var createdDateTime: Date = _
 
     @BeanProperty
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     var branch: Branch = _
 
