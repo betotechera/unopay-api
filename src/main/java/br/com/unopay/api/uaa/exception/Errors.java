@@ -684,4 +684,6 @@ public final class Errors {
             new UnovationError("INVALID_BONUS_SITUATION","Invalid bonus situation");
     public static final UnovationError INVALID_SOURCE_VALUE =
             new UnovationError("INVALID_SOURCE_VALUE","Invalid source value");
+    public static final UnovationError SCHEDULING_NOT_FOUND =
+            new UnovationError("SCHEDULING_NOT_FOUND","Scheduling not found");
 }
