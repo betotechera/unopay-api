@@ -1,5 +1,6 @@
 package br.com.unopay.api.scheduling.controller
 
+import br.com.unopay.api.model.validation.group.{Create, Update}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.service.SchedulingService
@@ -18,7 +19,7 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
-    def create(@RequestBody scheduling: Scheduling): ResponseEntity[Scheduling] = {
+    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling): ResponseEntity[Scheduling] = {
         log.info("creating Scheduling={}", scheduling)
         val schedulingCreated = schedulingService.create(scheduling)
         val uri = buildUriLocation(schedulingCreated.id)
@@ -28,7 +29,7 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @PutMapping(Array("/{id}"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
-    def update (@PathVariable id: String, @RequestBody scheduling: Scheduling): Unit = {
+    def update (@PathVariable id: String, @RequestBody @Validated(Array(classOf[Update])) scheduling: Scheduling): Unit = {
         log.info("updating Scheduling with id={}", id)
         schedulingService.update(id, scheduling)
     }

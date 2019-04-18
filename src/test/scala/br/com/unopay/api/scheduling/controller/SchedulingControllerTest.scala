@@ -60,6 +60,16 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
         assert(scheduling.token.equals(captor.getValue.token))
     }
 
+    it should "don`t create a Scheduling invalid" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("invalid")
+
+        val result = this.mockMvc.perform(post(SCHEDULING_URI)
+                .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED, "MANAGE_SCHEDULING"))
+                .contentType(MediaType.APPLICATION_JSON).content(toJson(scheduling)))
+
+        result.andExpect(status().isUnprocessableEntity)
+    }
+
     it should "not authorize create a Scheduling without role" in {
         val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
 
@@ -88,6 +98,17 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
 
         result.andExpect(status().isNoContent)
         assert(captor.getValue.token.equals(scheduling.token))
+    }
+
+    it should "don`t update a Scheduling invalid" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("invalid")
+        scheduling.id = UUID.randomUUID().toString
+
+        val result = this.mockMvc.perform(put(SCHEDULING_URI + "/{id}", scheduling.id)
+                .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED, "MANAGE_SCHEDULING"))
+                .contentType(MediaType.APPLICATION_JSON).content(toJson(scheduling)))
+
+        result.andExpect(status().isUnprocessableEntity)
     }
 
     it should "not authorize update a Scheduling without role" in {

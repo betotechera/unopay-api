@@ -5,6 +5,7 @@ import java.util.Date
 
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
+import br.com.unopay.api.model.validation.group.{Create, Update}
 import br.com.unopay.api.model.{Contract, PaymentInstrument, Updatable}
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.uaa.model.UserDetail
@@ -37,27 +38,31 @@ class Scheduling extends Serializable with Updatable {
     var createdDateTime: Date = _
 
     @BeanProperty
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "branch_id")
     var branch: Branch = _
 
     @BeanProperty
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contract_id")
     var contract: Contract = _
 
     @BeanProperty
-    @NotNull
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contractor_id")
     var contractor: Contractor = _
 
     @BeanProperty
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "payment_instrument_id")
     var paymentInstrument: PaymentInstrument = _
 
     @BeanProperty
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user: UserDetail = _

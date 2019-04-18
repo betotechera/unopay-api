@@ -26,6 +26,10 @@ class SchedulingTemplateLoader extends TemplateLoader {
             add("user", createUser)
             add("authorizedMember", createAuthorizedMember)
         })
+
+        Fixture.of(classOf[Scheduling]).addTemplate("invalid", new Rule() {
+            add("token", UUID.randomUUID().toString)
+        })
     }
 
     private def createAuthorizedMember = {
