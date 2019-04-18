@@ -8,7 +8,7 @@ import br.com.unopay.bootcommons.jsoncollections.{PageableResults, Results, Unov
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.{GetMapping, PathVariable, PostMapping, PutMapping, RequestBody, RequestMapping, ResponseStatus, RestController}
+import org.springframework.web.bind.annotation.{DeleteMapping, GetMapping, PathVariable, PostMapping, PutMapping, RequestBody, RequestMapping, ResponseStatus, RestController}
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
@@ -48,6 +48,14 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     def findById(@PathVariable id: String): Scheduling = {
         log.info("finding scheduling with id={}", id)
         schedulingService.findById(id)
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(Array("/{id}"))
+    @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
+    def deleteById(@PathVariable id: String): Unit = {
+        log.info("deleting scheduling with id={}", id)
+        schedulingService.deleteById(id)
     }
 
     private def buildUriLocation(id: String) = {

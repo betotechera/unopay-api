@@ -1,21 +1,10 @@
 package br.com.unopay.api.scheduling.controller
 
-import java.util.Arrays.asList
-import java.util.UUID
-
-import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.AuthServerApplicationTests
 import br.com.unopay.api.scheduling.model.Scheduling
-import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import org.hamcrest.Matchers.{containsString, notNullValue}
-import org.mockito
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{verify, when}
 import org.scalatest.Suite
-import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders._
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers._
 
@@ -55,9 +44,9 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     it should "filter Schedules" in {
         val accessToken = getUserAccessToken()
-        val actualScheduling: Scheduling = fixtureCreator.createScheduling()
+        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
 
-        val result = this.mvc.perform(get(SCHEDULING_URI+ "?token={token}", actualScheduling.token)
+        val result = this.mvc.perform(get(SCHEDULING_URI+ "?token={token}", schedulingPersisted.token)
                 .param("access_token", accessToken))
 
         result.andExpect(status().isOk)
@@ -67,15 +56,25 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     it should "find a Scheduling by id" in {
         val accessToken = getUserAccessToken()
-        val actualScheduling: Scheduling = fixtureCreator.createScheduling()
+        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
 
-        val result = this.mvc.perform(get(SCHEDULING_URI+ "/{id}", actualScheduling.id)
+        val result = this.mvc.perform(get(SCHEDULING_URI+ "/{id}", schedulingPersisted.id)
                 .param("access_token", accessToken))
 
         result.andExpect(status().isOk)
                 .andExpect(jsonPath("$.token", notNullValue()))
                 .andExpect(jsonPath("$.id", notNullValue()))
 
+    }
+
+    it should "delete a Schedule" in {
+        val accessToken = getUserAccessToken()
+        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
+
+        val result = this.mvc.perform(delete(SCHEDULING_URI+ "/{id}", schedulingPersisted.id)
+                .param("access_token", accessToken))
+
+        result.andExpect(status().isNoContent)
     }
 
 }
