@@ -14,6 +14,7 @@ import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.opencsv.bean.CsvBindByName;
 import java.io.Serializable;
@@ -32,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -53,8 +55,8 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
-@ToString(exclude = "services")
-@EqualsAndHashCode(exclude = "services")
+@ToString(exclude = {"services", "eventPrices"})
+@EqualsAndHashCode(exclude = {"services", "eventPrices"})
 @Table(name = "establishment")
 public class Establishment implements Serializable, Updatable, Localizable {
 
@@ -166,6 +168,11 @@ public class Establishment implements Serializable, Updatable, Localizable {
             joinColumns = { @JoinColumn(name = "establishment_id") },
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private Set<Service> services;
+
+    @OneToMany(mappedBy = "establishment")
+    @BatchSize(size = 10)
+    @JsonIgnore
+    private Set<EstablishmentEvent> eventPrices;
     
     @Valid
     @ManyToOne

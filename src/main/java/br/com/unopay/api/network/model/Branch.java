@@ -72,7 +72,6 @@ public class Branch implements Serializable, Updatable, Localizable {
     private String shortName;
 
     @Column(name="fantasy_name")
-    @JsonView({Views.Person.class, Views.Person.Detail.class})
     @Size(max = 50, groups = {Create.class, Update.class})
     @NotNull(groups = {Create.class, Update.class})
     private String fantasyName;
@@ -80,7 +79,7 @@ public class Branch implements Serializable, Updatable, Localizable {
     @Valid
     @NotNull(groups = {Create.class, Update.class})
     @OneToOne
-    @JsonView({Views.Address.class,Views.AddressList.class})
+    @JsonView({Views.Branch.List.class})
     @JoinColumn(name="address_id")
     private Address address;
 
@@ -126,7 +125,7 @@ public class Branch implements Serializable, Updatable, Localizable {
     private Set<Service> services;
 
     @JsonManagedReference
-    @JsonView({Views.Branch.Detail.class})
+    @JsonView({Views.Branch.List.class})
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "branch")
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 

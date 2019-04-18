@@ -138,7 +138,7 @@ public class BranchService {
 
     public Page<Branch> getContractorBranches(String userEmail, BranchFilter filter, UnovationPageRequest pageable){
         UnovationPageRequest pageRequest = new UnovationPageRequest();
-        pageable.setSize(50);
+        pageRequest.setSize(50);
         EstablishmentFilter establishmentFilter = getEstablishmentFilter(filter);
         Page<Establishment> establishments = establishmentService.getContractorEstablishments(userEmail, establishmentFilter, pageRequest);
         Set<String> establishmentIds = establishments.getContent().stream().map(Establishment::getId).collect(Collectors.toSet());
