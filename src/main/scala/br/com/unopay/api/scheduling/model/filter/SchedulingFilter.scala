@@ -19,6 +19,12 @@ class SchedulingFilter {
     @SearchableField(field = "branch.name")
     var branch: String = _
 
+    @SearchableField(field = "branch.headOffice.network.id")
+    var network: String = _
+
+    @SearchableField(field = "contractor.id")
+    var contractor: String = _
+
     @SearchableField(field = "contract.code")
     var contract: Long = _
 

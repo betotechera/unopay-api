@@ -80,6 +80,32 @@ class Scheduling extends Serializable with Updatable {
     @Column(name = "cancelation_date")
     var cancelationDate: Date = _
 
+    def branchId(): java.lang.String = {
+        if(this.branch != null) {
+           return this.branch.getId
+        }
+        null
+    }
+
+    def contractorId(): String = {
+        if(this.contractor != null){
+            return this.contractor.getId
+        }
+        null
+    }
+
+    def instrumentId(): String = {
+        if(this.paymentInstrument != null){
+            return this.paymentInstrument.getId
+        }
+        null
+    }
+
+    def cancelMe() = {
+        this.cancelationDate = new Date()
+    }
+
+
     @PrePersist
     def prePersist(): Unit = this.createdDateTime = new Date
 

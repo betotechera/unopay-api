@@ -392,4 +392,8 @@ public class Contract implements Serializable {
     public Person contractorPerson() {
         return contractor.getPerson();
     }
+
+    public String getId() {
+        return id;
+    }
 }

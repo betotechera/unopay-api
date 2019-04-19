@@ -178,4 +178,8 @@ public class AuthorizedMember implements Serializable, Updatable{
     public boolean withInstrument() {
         return paymentInstrument != null;
     }
+
+    public String getId() {
+        return id;
+    }
 }

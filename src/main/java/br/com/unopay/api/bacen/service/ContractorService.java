@@ -5,6 +5,8 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
+import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -75,6 +77,18 @@ public class ContractorService {
 
     public Contractor getByIdForIssuers(String id, Set<String> issuersIds) {
         Optional<Contractor> contractor = repository.findByIdAndContractsProductIssuerIdIn(id, issuersIds);
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public Contractor getByIdForNetwork(String id, AccreditedNetwork accreditedNetwork) {
+        Optional<Contractor> contractor = repository.findByIdAndContractsProductAccreditedNetworkId(id, accreditedNetwork.getId());
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
+    }
+
+    public Contractor getByIdForConctract(String id, Contract contract) {
+        Optional<Contractor> contractor = repository.findByIdAndContractsId(id, contract.getId());
         return contractor.orElseThrow(()->
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
     }
