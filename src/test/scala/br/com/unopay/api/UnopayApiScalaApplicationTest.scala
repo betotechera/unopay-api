@@ -47,11 +47,6 @@ abstract class UnopayApiScalaApplicationTest extends SpringTest {
     flyway.migrate()
   }
 
-  def toJson(obj: Object) : String  = {
-    val objectMapper = new ObjectMapper()
-    objectMapper.writeValueAsString(obj)
-  }
-
   def instant(pattern: String): java.util.Date ={
     new ChronicFunction(pattern).generateValue()
   }
@@ -67,8 +62,11 @@ abstract class UnopayApiScalaApplicationTest extends SpringTest {
 @TestExecutionListeners(Array(classOf[DependencyInjectionTestExecutionListener], classOf[FlywayTestExecutionListener]))
 trait SpringTest extends ScalaFixtureTest { this: Suite =>
 
-  override def beforeEach(): Unit = {
+  override def beforeAll(): Unit = {
     new TestContextManager(classOf[SpringTest]).prepareTestInstance(this)
+  }
+
+  override def beforeEach(): Unit = {
     super.beforeEach()
   }
 }

@@ -12,6 +12,10 @@ import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.scheduling.model.Scheduling;
+import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
+import br.com.unopay.api.scheduling.service.SchedulingService;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -42,6 +46,7 @@ public class AccreditedNetworkController {
     private AccreditedNetworkService service;
     private EstablishmentService establishmentService;
     private BranchService branchService;
+    private SchedulingService schedulingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -49,10 +54,12 @@ public class AccreditedNetworkController {
     @Autowired
     public AccreditedNetworkController(AccreditedNetworkService service,
                                        EstablishmentService establishmentService,
-                                       BranchService branchService) {
+                                       BranchService branchService,
+                                       SchedulingService schedulingService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
+        this.schedulingService = schedulingService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -156,7 +163,7 @@ public class AccreditedNetworkController {
         log.info("create a branch establishment for network={}", accreditedNetwork.documentNumber());
         Branch created = branchService.create(branch, accreditedNetwork);
         return ResponseEntity
-                .created(URI.create("/branches/"+created.getId()))
+                .created(URI.create("/accredited-networks/me/establishments/branches/"+created.getId()))
                 .body(created);
 
     }
@@ -183,6 +190,52 @@ public class AccreditedNetworkController {
         Page<Branch> page =  branchService.findByFilter(filter, accreditedNetwork, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/branches", api));
+    }
+
+
+    @JsonView(Views.Branch.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/accredited-networks/me/establishments/schedules", method = RequestMethod.POST)
+    public ResponseEntity<Scheduling> createScheduling(@Validated(Create.class) @RequestBody Scheduling scheduling,
+                                                       AccreditedNetwork accreditedNetwork, UserDetail currentUser) {
+        scheduling.setUser(currentUser);
+        log.info("create a scheduling establishment for network={}", accreditedNetwork.documentNumber());
+        Scheduling created = schedulingService.create(scheduling, accreditedNetwork);
+        return ResponseEntity
+                .created(URI.create("/accredited-networks/me/establishments/schedules/"+created.getId()))
+                .body(created);
+
+    }
+    @JsonView(Views.Branch.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments/schedules/{id}", method = RequestMethod.GET)
+    public Scheduling getScheduling(@PathVariable  String id, AccreditedNetwork accreditedNetwork) {
+        log.info("get a scheduling establishment={} for network={}",id, accreditedNetwork.documentNumber());
+        return schedulingService.findById(id, accreditedNetwork);
+    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/establishments/schedules/{id}", method = RequestMethod.PUT)
+    public void updateScheduling(@PathVariable  String id, @Validated(Update.class) @RequestBody Scheduling scheduling, AccreditedNetwork accreditedNetwork) {
+        scheduling.setId(id);
+        log.info("update a scheduling establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        schedulingService.update(id,scheduling, accreditedNetwork);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/establishments/schedules/{id}", method = RequestMethod.DELETE)
+    public void cancelScheduling(@PathVariable  String id, AccreditedNetwork accreditedNetwork) {
+        log.info("cancelling a scheduling establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        schedulingService.cancelById(id, accreditedNetwork);
+    }
+
+    @JsonView(Views.Branch.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishments/schedules", method = RequestMethod.GET)
+    public Results<Scheduling> getSchedulingByParams(SchedulingFilter filter, @Validated UnovationPageRequest pageable, AccreditedNetwork accreditedNetwork) {
+        log.info("search scheduling establishment with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        Page<Scheduling> page =  schedulingService.findAll(filter, accreditedNetwork, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/schedules", api));
     }
 
 

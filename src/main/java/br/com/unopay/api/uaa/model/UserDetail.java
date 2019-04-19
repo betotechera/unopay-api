@@ -331,4 +331,8 @@ public class UserDetail implements Serializable, Updatable {
         partner = source.partner;
         groups = source.groups;
     }
+
+    public String getId() {
+        return id;
+    }
 }

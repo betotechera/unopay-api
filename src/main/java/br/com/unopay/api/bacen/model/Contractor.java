@@ -135,4 +135,8 @@ public class Contractor implements Serializable {
         }
         return null;
     }
+
+    public String getId() {
+        return id;
+    }
 }

@@ -127,7 +127,6 @@ public class PaymentInstrument implements Serializable, Updatable {
     @Transient
     private boolean hasPassword;
 
-
     public void setMeUp(String number){
         createdDate = new Date();
         this.number = number;
@@ -221,5 +220,9 @@ public class PaymentInstrument implements Serializable, Updatable {
             throw UnovationExceptions.unprocessableEntity().withErrors(PRODUCT_ID_NOT_MET);
         }
 
+    }
+
+    public String getId() {
+        return id;
     }
 }

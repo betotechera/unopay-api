@@ -14,6 +14,10 @@ public interface ContractorRepository extends UnovationFilterRepository<Contract
 
     Optional<Contractor> findByIdAndContractsHirerId(String id, String hirerId);
 
+    Optional<Contractor> findByIdAndContractsProductAccreditedNetworkId(String id, String networkId);
+
+    Optional<Contractor> findByIdAndContractsId(String id, String contractId);
+
     Optional<Contractor> findByIdAndContractsProductIssuerId(String id, String issuerId);
 
     Optional<Contractor> findByIdAndContractsProductIssuerIdIn(String id, Set<String> issuersIds);
