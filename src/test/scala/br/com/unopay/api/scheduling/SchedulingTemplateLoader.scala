@@ -7,7 +7,7 @@ import br.com.six2six.fixturefactory.{Fixture, Rule}
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.{Contract, PaymentInstrument}
-import br.com.unopay.api.network.model.Branch
+import br.com.unopay.api.network.model.{Branch, ServiceType}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
 
@@ -23,6 +23,8 @@ class SchedulingTemplateLoader extends TemplateLoader {
             add("contract", contract)
             add("contractor", contract.getContractor)
             add("paymentInstrument", createPaymentInstrument)
+            add("serviceDescription", name())
+            add("serviceType", random(classOf[ServiceType]))
             add("user", createUser)
             add("authorizedMember", createAuthorizedMember)
         })
