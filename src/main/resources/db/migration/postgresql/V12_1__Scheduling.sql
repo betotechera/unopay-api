@@ -8,9 +8,11 @@ CREATE TABLE scheduling (
     contractor_id VARCHAR(256) NOT NULL,
     payment_instrument_id VARCHAR(256) NOT NULL,
     user_id VARCHAR(256) NOT NULL,
+    service_description varchar(150) not null,
+    service_type varchar(150) not null,
     authorized_member_id VARCHAR(256),
     expiration_date TIMESTAMP,
-    cancelation_date TIMESTAMP,
+    cancellation_date TIMESTAMP,
 
     constraint fk_branch_scheduling foreign key(branch_id) references branch(id),
     constraint fk_contract_scheduling foreign key(contract_id) references contract(id),
@@ -19,6 +21,14 @@ CREATE TABLE scheduling (
     constraint fk_user_scheduling foreign key(user_id) references oauth_user_details(id),
     constraint fk_authorized_member_scheduling foreign key(authorized_member_id) references authorized_member(id)
 
+);
+
+create table scheduling_event (
+    id varchar(256) PRIMARY KEY,
+    scheduling_id varchar(256) not null,
+    event_id varchar(256) not null,
+    constraint fk_sch_event foreign key(scheduling_id) references scheduling(id),
+    constraint fk_sch_sch foreign key(event_id) references event(id)
 );
 
 

@@ -102,7 +102,6 @@ public class EstablishmentController {
                 .created(URI.create("/establishments/"+created.getId()))
                 .body(created);
     }
-
     @JsonView(Views.Establishment.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/establishments/{id}", method = RequestMethod.GET)
