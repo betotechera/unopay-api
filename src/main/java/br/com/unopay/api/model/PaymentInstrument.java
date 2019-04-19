@@ -127,10 +127,6 @@ public class PaymentInstrument implements Serializable, Updatable {
     @Transient
     private boolean hasPassword;
 
-    public String getId() {
-        return id;
-    }
-
     public void setMeUp(String number){
         createdDate = new Date();
         this.number = number;
