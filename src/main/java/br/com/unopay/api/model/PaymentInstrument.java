@@ -222,4 +222,8 @@ public class PaymentInstrument implements Serializable, Updatable {
         }
 
     }
+
+    public String getId() {
+        return id;
+    }
 }
