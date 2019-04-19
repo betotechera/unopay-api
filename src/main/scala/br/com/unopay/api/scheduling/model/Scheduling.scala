@@ -32,7 +32,6 @@ class Scheduling extends Serializable with Updatable {
     var id: String = _
 
     @BeanProperty
-    @NotNull
     @JsonView(Array(classOf[Views.Scheduling.List]))
     var token: String = _
 
