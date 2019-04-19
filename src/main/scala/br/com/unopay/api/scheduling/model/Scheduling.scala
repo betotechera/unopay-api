@@ -5,10 +5,11 @@ import java.util.Date
 
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
-import br.com.unopay.api.model.validation.group.{Create, Update}
+import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import br.com.unopay.api.model.{Contract, PaymentInstrument, Updatable}
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.uaa.model.UserDetail
+import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
 import javax.validation.constraints.NotNull
 import lombok.{EqualsAndHashCode, Getter, ToString}
@@ -31,53 +32,63 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @NotNull
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var token: String = _
 
     @BeanProperty
     @Column(name = "created_date_time")
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var createdDateTime: Date = _
 
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var branch: Branch = _
 
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contract_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var contract: Contract = _
 
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contractor_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var contractor: Contractor = _
 
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "payment_instrument_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var paymentInstrument: PaymentInstrument = _
 
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var user: UserDetail = _
 
     @BeanProperty
     @ManyToOne
     @JoinColumn(name = "authorized_member_id")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     var authorizedMember: AuthorizedMember = _
 
     @BeanProperty
     @Column(name = "expiration_date")
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var expirationDate: Date = _
 
     @BeanProperty
     @Column(name = "cancelation_date")
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var cancelationDate: Date = _
 
     def branchId(): java.lang.String = {
@@ -102,7 +113,9 @@ class Scheduling extends Serializable with Updatable {
     }
 
     def cancelMe() = {
-        this.cancelationDate = new Date()
+        if(this.cancelationDate == null) {
+            this.cancelationDate = new Date()
+        }
     }
 
 

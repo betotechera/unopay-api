@@ -204,4 +204,9 @@ public interface Views {
         interface List {}
     }
 
+    interface Scheduling {
+        interface Detail extends List {}
+        interface List {}
+    }
+
 }

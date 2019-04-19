@@ -31,6 +31,9 @@ import br.com.unopay.api.network.service.BranchService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.service.OrderService;
+import br.com.unopay.api.scheduling.model.Scheduling;
+import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
+import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -79,6 +82,7 @@ public class ContractorController {
     private ContractorBonusService contractorBonusService;
     private EstablishmentService establishmentService;
     private BranchService branchService;
+    private SchedulingService schedulingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -94,7 +98,8 @@ public class ContractorController {
                                 AuthorizedMemberService authorizedMemberService,
                                 ContractorBonusService contractorBonusService,
                                 EstablishmentService establishmentService,
-                                BranchService branchService) {
+                                BranchService branchService,
+                                SchedulingService schedulingService) {
         this.service = service;
         this.contractService = contractService;
         this.orderService = orderService;
@@ -106,6 +111,7 @@ public class ContractorController {
         this.contractorBonusService = contractorBonusService;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
+        this.schedulingService = schedulingService;
     }
 
     @JsonView(Views.Contractor.Detail.class)
@@ -218,6 +224,25 @@ public class ContractorController {
         Page<Branch> page = branchService.getContractorBranches(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/branches", api));
+    }
+
+    @JsonView(Views.Scheduling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/schedules/{id}", method = RequestMethod.GET)
+    public Scheduling getScheduling(Contractor contractor, @PathVariable  String id) {
+        log.info("get scheduling={} for contractor={}", id, contractor.getDocumentNumber());
+        return schedulingService.findById(id, contractor);
+    }
+
+    @JsonView(Views.Scheduling.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/schedules", method = RequestMethod.GET)
+    public Results<Scheduling> getMyContractsSchedules(@Validated UnovationPageRequest pageable, SchedulingFilter filter,
+                                                       Contractor contractor) {
+        log.info("searching the contractor={} schedules",contractor.getDocumentNumber());
+        Page<Scheduling> page = schedulingService.findAll(filter, contractor, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/schedules", api));
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
