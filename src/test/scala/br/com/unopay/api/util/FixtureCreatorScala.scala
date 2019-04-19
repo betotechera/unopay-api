@@ -3,10 +3,9 @@ package br.com.unopay.api.util
 import java.util.Date
 
 import br.com.six2six.fixturefactory.Fixture.from
-import br.com.six2six.fixturefactory.{Fixture, Rule}
 import br.com.six2six.fixturefactory.function.impl.{ChronicFunction, RegexFunction}
+import br.com.six2six.fixturefactory.{Fixture, Rule}
 import br.com.unopay.api.bacen.model.{PaymentRuleGroup, _}
-import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model._
 import br.com.unopay.api.market.model.{AuthorizedMember, AuthorizedMemberCandidate, _}
 import br.com.unopay.api.model._
@@ -24,8 +23,7 @@ import scala.collection.JavaConverters._
 @Autowired
 class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
                           paymentDayCalculator: PaymentDayCalculator,
-                          jpaProcessor: JpaProcessorScala,
-                          fixtureCreator: FixtureCreator) {
+                          jpaProcessor: JpaProcessorScala) {
 
 
     def createEstablishmentUser(establishmentUnderTest: Establishment = createEstablishment()): UserDetail = {
@@ -624,9 +622,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     }
 
     def createBranch() : Branch = {
-        from(classOf[Branch]).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("headOffice", fixtureCreator.createEstablishment())
-        }})
+        from(classOf[Branch]).uses(jpaProcessor).gimme("valid")
     }
 
     def createSchedulingToPersist(): Scheduling = {

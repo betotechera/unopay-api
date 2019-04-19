@@ -222,7 +222,7 @@ public class Contract implements Serializable {
         if(!active()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_ACTIVATED);
         }
-         if(!inProgress()){
+        if(!inProgress()){
             throw UnovationExceptions.unprocessableEntity().withErrors(Errors.CONTRACT_NOT_IN_PROGRESS);
         }
     }
@@ -271,7 +271,7 @@ public class Contract implements Serializable {
             contractEstablishments.removeIf(item -> item.getId().equals(contractEstablishmentId));
         }
     }
-    
+
     public boolean containsEstablishment(ContractEstablishment contractEstablishment) {
         return contractEstablishments != null &&
                 contractEstablishments.stream().filter(item ->
@@ -397,3 +397,4 @@ public class Contract implements Serializable {
         return id;
     }
 }
+

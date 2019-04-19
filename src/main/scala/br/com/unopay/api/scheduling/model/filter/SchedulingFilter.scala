@@ -1,33 +1,37 @@
 package br.com.unopay.api.scheduling.model.filter
 
+import java.lang.Long
 import java.util.Date
 
 import br.com.unopay.bootcommons.repository.filter.SearchableField
-import lombok.Data
-import org.springframework.core.annotation.AliasFor
 
 import scala.beans.BeanProperty
 
-@Data
 class SchedulingFilter {
 
     @BeanProperty
     var token: String = _
 
+    @BeanProperty
     var createdDateTime: Date = _
 
+    @BeanProperty
     @SearchableField(field = "branch.name")
     var branch: String = _
 
+    @BeanProperty
     @SearchableField(field = "branch.headOffice.network.id")
     var network: String = _
 
+    @BeanProperty
     @SearchableField(field = "contractor.id")
     var contractor: String = _
 
+    @BeanProperty
     @SearchableField(field = "contract.code")
     var contract: Long = _
 
+    @BeanProperty
     @SearchableField(field = "contractor.person.document.number")
     var contractorDocument: String = _
 }
