@@ -124,6 +124,10 @@ public class AccreditedNetwork implements Serializable {
 
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String documentNumber(){
         return person.documentNumber();
     }
