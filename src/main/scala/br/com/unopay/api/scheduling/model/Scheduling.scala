@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.util
 import java.util.Date
 
+import br.com.unopay.api.`implicit`.DateImplicit._
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
@@ -134,7 +135,7 @@ class Scheduling extends Serializable with Updatable {
         null
     }
 
-    def cancelMe() = {
+    def cancelMe(): Unit = {
         if(this.cancellationDate == null) {
             this.cancellationDate = new Date()
         }
@@ -142,7 +143,10 @@ class Scheduling extends Serializable with Updatable {
 
 
     @PrePersist
-    def prePersist(): Unit = this.createdDateTime = new Date
+    def prePersist(): Unit = {
+        this.createdDateTime = new Date
+        this.expirationDate = createdDateTime.plusDays(5)
+    }
 
     def hasAuthorizedMember: Boolean = this.authorizedMember != null && this.authorizedMember.getId != null
 
