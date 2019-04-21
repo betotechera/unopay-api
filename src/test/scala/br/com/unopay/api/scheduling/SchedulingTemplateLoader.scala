@@ -18,8 +18,7 @@ class SchedulingTemplateLoader extends TemplateLoader {
         val contract: Contract = createContract()
 
         Fixture.of(classOf[Scheduling]).addTemplate("valid", new Rule() {
-            add("token", UUID.randomUUID().toString)//TODO: REMOVER O TOKEN
-            add("date", new Date().plusDays(10))//TODO: REMOVER O TOKEN
+            add("date", new Date().plusDays(10))
             add("branch", createBranch)
             add("contract", contract)
             add("contractor", contract.getContractor)

@@ -14,6 +14,8 @@ import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.assertj.core.api.Assert
+import org.junit.Assert
 import org.junit.runner.RunWith
 import org.mockito.Matchers.{any, isA}
 import org.mockito.Mockito.{verify, when}
@@ -70,7 +72,14 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         schedulingService.create(scheduling)
 
-        verify(mockSchedulingRepository).save(scheduling)
+        val captor = ArgumentCaptor.forClass(classOf[Scheduling])
+
+        verify(mockSchedulingRepository).save(captor.capture())
+
+        val schedulingSaved = captor.getValue
+
+        assert(schedulingSaved.token != null)
+        assert(schedulingSaved.expirationDate != null)
         expectCallReferences(scheduling)
     }
 

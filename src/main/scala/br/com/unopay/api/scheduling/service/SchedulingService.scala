@@ -15,6 +15,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
+import br.com.unopay.api.`implicit`.DateImplicit.DateImplicit
 
 @Service
 class SchedulingService(val schedulingRepository: SchedulingRepository,
@@ -25,6 +26,8 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
                         val paymentInstrumentService: PaymentInstrumentService,
                         val userDetailService: UserDetailService) {
 
+    private val MAX_EXPIRATION_IN_DAYS = 5
+
     def create(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
         checkNetworkContextReferences(scheduling, accreditedNetwork)
         create(scheduling)
@@ -32,6 +35,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     def create(scheduling: Scheduling) : Scheduling = {
         setReferences(scheduling)
+        scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
         schedulingRepository.save(scheduling)
     }
 

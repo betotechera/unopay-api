@@ -4,7 +4,6 @@ import java.io.Serializable
 import java.util
 import java.util.Date
 
-import br.com.unopay.api.`implicit`.DateImplicit._
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
@@ -34,7 +33,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @JsonView(Array(classOf[Views.Scheduling.List]))
-    var token: String = _
+    var token: String = System.currentTimeMillis().toString
 
     @BeanProperty
     @Column(name = "created_date_time")
@@ -150,7 +149,6 @@ class Scheduling extends Serializable with Updatable {
     @PrePersist
     def prePersist(): Unit = {
         this.createdDateTime = new Date
-        this.expirationDate = createdDateTime.plusDays(5)
     }
 
     def hasAuthorizedMember: Boolean = this.authorizedMember != null && this.authorizedMember.getId != null
