@@ -256,7 +256,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     def "create a scheduling for accredited network"() {
         given:
 
-        def contract = fixtureCreator.createContract()
+        def contract = fixtureCreator.createPersistedContract()
         def network = contract.getProduct().accreditedNetwork
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(network)
         def establishment = fixtureCreator.createEstablishment(network)
