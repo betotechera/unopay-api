@@ -23,14 +23,14 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
                         val contractService: ContractService,
                         val branchService: BranchService,
                         val authorizedMemberService: AuthorizedMemberService,
-                        val paymentInstrumentService: PaymentInstrumentService,
-                        val userDetailService: UserDetailService) {
+                        val paymentInstrumentService: PaymentInstrumentService) {
 
     private val MAX_EXPIRATION_IN_DAYS = 5
 
     def create(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
-        checkNetworkContextReferences(scheduling, accreditedNetwork)
-        create(scheduling)
+        setReferences(scheduling, accreditedNetwork)
+        scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
+        schedulingRepository.save(scheduling)
     }
 
     def create(scheduling: Scheduling) : Scheduling = {
@@ -40,9 +40,10 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
     }
 
     def update(id: String, otherScheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
-        checkNetworkContextReferences(otherScheduling, accreditedNetwork)
-        findById(id, accreditedNetwork)
-        update(id, otherScheduling)
+        val actualScheduling = findById(id, accreditedNetwork)
+        actualScheduling.updateMe(otherScheduling)
+        setReferences(otherScheduling, accreditedNetwork)
+        schedulingRepository.save(actualScheduling)
     }
 
     def update(id: String, otherScheduling: Scheduling) : Scheduling = {
@@ -74,7 +75,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     private def cancelById(id: String, current: Scheduling) = {
         current.cancelMe()
-        update(id, current)
+        schedulingRepository.save(current)
     }
 
     def cancelById(id: String, contractor: Contractor): Unit = {
@@ -102,11 +103,24 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         schedulingRepository.findAll(schedulingFilter, pageRequest)
     }
 
-    private def checkNetworkContextReferences(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) = {
-        branchService.findById(scheduling.branchId(), accreditedNetwork)
+    private def setReferences(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Unit = {
+        val branch = branchService.findById(scheduling.branchId(), accreditedNetwork)
+        scheduling.setBranch(branch)
+
         contractorService.getByIdForNetwork(scheduling.contractorId(), accreditedNetwork)
-        contractorService.getByIdForConctract(scheduling.contractorId(), scheduling.getContract)
-        paymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), scheduling.contractorId())
+        val contractor = contractorService.getByIdForConctract(scheduling.contractorId(), scheduling.getContract)
+        scheduling.setContractor(contractor)
+
+        val paymentInstrument = paymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), scheduling.contractorId())
+        scheduling.setPaymentInstrument(paymentInstrument)
+
+        val contract = contractService.findById(scheduling.contract.getId)
+        scheduling.setContract(contract)
+
+        if (scheduling.hasAuthorizedMember) {
+            val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
+            scheduling.setAuthorizedMember(authorizedMember)
+        }
     }
 
     private def setReferences(scheduling: Scheduling): Unit = {
@@ -122,13 +136,12 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         val paymentInstrument = paymentInstrumentService.findById(scheduling.paymentInstrument.getId)
         scheduling.setPaymentInstrument(paymentInstrument)
 
-        val user = userDetailService.getById(scheduling.user.getId)
-        scheduling.setUser(user)
-
         if (scheduling.hasAuthorizedMember) {
             val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
             scheduling.setAuthorizedMember(authorizedMember)
         }
     }
+
+
 
 }
