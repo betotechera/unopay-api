@@ -554,6 +554,19 @@ class FixtureCreator {
         }})
     }
 
+    Branch createBranch(Establishment headOffice = createEstablishment()) {
+        from(Branch.class).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("headOffice", headOffice)
+        }})
+    }
+
+    Branch createBranchForContract(Contract contract = createContract()) {
+        def network = contract.getProduct().accreditedNetwork
+        def establishment = createEstablishment(network)
+        createBranch(establishment)
+
+    }
+
     Establishment createHeadOffice() {
         from(Establishment.class).uses(jpaProcessor).gimme("valid")
     }

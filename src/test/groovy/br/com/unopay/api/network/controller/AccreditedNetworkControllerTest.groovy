@@ -253,15 +253,14 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
-    def "create a scheduling for accredited network"() {
+    void "create a scheduling for accredited network"() {
         given:
 
         def contract = fixtureCreator.createPersistedContract()
+        def branch = fixtureCreator.createBranchForContract(contract)
+
         def network = contract.getProduct().accreditedNetwork
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(network)
-        def establishment = fixtureCreator.createEstablishment(network)
-        def branch = fixtureCreatorScala.createBranch(establishment)
-
         String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
 
         Scheduling scheduling = fixtureCreatorScala.createSchedulingToPersist(contract, branch)
