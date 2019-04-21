@@ -13,7 +13,7 @@ import br.com.unopay.api.network.model.{Branch, Event, ServiceType}
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
-import javax.validation.constraints.{NotNull, Size}
+import javax.validation.constraints.{Future, NotNull, Size}
 import lombok.{EqualsAndHashCode, Getter, ToString}
 import org.hibernate.annotations.{BatchSize, GenericGenerator}
 
@@ -97,6 +97,12 @@ class Scheduling extends Serializable with Updatable {
     var authorizedMember: AuthorizedMember = _
 
     @BeanProperty
+    @Future
+    @Column(name = "scheduling_date")
+    @JsonView(Array(classOf[Views.Scheduling.List]))
+    var date: Date = _
+
+    @BeanProperty
     @Column(name = "expiration_date")
     @JsonView(Array(classOf[Views.Scheduling.List]))
     var expirationDate: Date = _
@@ -140,7 +146,6 @@ class Scheduling extends Serializable with Updatable {
             this.cancellationDate = new Date()
         }
     }
-
 
     @PrePersist
     def prePersist(): Unit = {
