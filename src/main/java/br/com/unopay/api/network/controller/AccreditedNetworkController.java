@@ -192,7 +192,6 @@ public class AccreditedNetworkController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/branches", api));
     }
 
-
     @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/accredited-networks/me/establishments/schedules", method = RequestMethod.POST)
@@ -206,19 +205,23 @@ public class AccreditedNetworkController {
                 .body(created);
 
     }
-    @JsonView(Views.Branch.Detail.class)
+
+    @JsonView(Views.Scheduling.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/me/establishments/schedules/{id}", method = RequestMethod.GET)
     public Scheduling getScheduling(@PathVariable  String id, AccreditedNetwork accreditedNetwork) {
         log.info("get a scheduling establishment={} for network={}",id, accreditedNetwork.documentNumber());
         return schedulingService.findById(id, accreditedNetwork);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/me/establishments/schedules/{id}", method = RequestMethod.PUT)
-    public void updateScheduling(@PathVariable  String id, @Validated(Update.class) @RequestBody Scheduling scheduling, AccreditedNetwork accreditedNetwork) {
+    public void updateScheduling(@PathVariable  String id, @Validated(Update.class) @RequestBody Scheduling scheduling,
+                                 AccreditedNetwork accreditedNetwork, UserDetail currentUser) {
+        scheduling.setUser(currentUser);
         scheduling.setId(id);
         log.info("update a scheduling establishment={} for network={}", id, accreditedNetwork.documentNumber());
-        schedulingService.update(id,scheduling, accreditedNetwork);
+        schedulingService.update(id, scheduling, accreditedNetwork);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -228,7 +231,7 @@ public class AccreditedNetworkController {
         schedulingService.cancelById(id, accreditedNetwork);
     }
 
-    @JsonView(Views.Branch.List.class)
+    @JsonView(Views.Scheduling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/me/establishments/schedules", method = RequestMethod.GET)
     public Results<Scheduling> getSchedulingByParams(SchedulingFilter filter, @Validated UnovationPageRequest pageable, AccreditedNetwork accreditedNetwork) {
@@ -237,7 +240,5 @@ public class AccreditedNetworkController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/schedules", api));
     }
-
-
 
 }

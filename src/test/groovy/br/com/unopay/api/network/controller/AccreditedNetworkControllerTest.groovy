@@ -2,34 +2,23 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.market.model.ContractorBonus
-import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.Product
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
-import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.api.util.FixtureCreatorScala
-import groovy.transform.CompileStatic
-import spock.lang.AutoCleanup
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     private static final String ACCREDITED_NETWORK_ENDPOINT = '/accredited-networks?access_token={access_token}'
@@ -37,9 +26,6 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
-
-    @Autowired
-    FixtureCreatorScala fixtureCreatorScala
 
     void 'should create accreditedNetwork'() {
         given:
@@ -255,15 +241,12 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     void "create a scheduling for accredited network"() {
         given:
-
         def contract = fixtureCreator.createPersistedContract()
-        def branch = fixtureCreator.createBranchForContract(contract)
-
         def network = contract.getProduct().accreditedNetwork
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(network)
         String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
 
-        Scheduling scheduling = fixtureCreatorScala.createSchedulingToPersist(contract, branch)
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract)
 
         when:
         def result = this.mvc.perform(post('/accredited-networks/me/establishments/schedules')
@@ -273,6 +256,82 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         then:
         result.andExpect(status().isCreated())
     }
+
+    void "find a scheduling for accredited network"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(contract.getProduct().accreditedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract)
+
+        when:
+        def result = this.mvc.perform(get('/accredited-networks/me/establishments/schedules/{id}', scheduling.id)
+                .param("access_token", accessToken))
+        then:
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath('$.token', notNullValue()))
+            .andExpect(jsonPath('$.id', notNullValue()))
+            .andExpect(jsonPath('$.date', notNullValue()))
+    }
+
+    void "update a scheduling for accredited network"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(contract.getProduct().accreditedNetwork)
+
+        Scheduling actualScheduling = fixtureCreator.createSchedulingPersisted(contract, accreditedNetworkUser)
+        Scheduling otherScheduling = fixtureCreator.createSchedulingToPersist(contract, accreditedNetworkUser)
+
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(put('/accredited-networks/me/establishments/schedules/{id}', actualScheduling.id)
+                .param("access_token", accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(otherScheduling)))
+
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void "cancel a scheduling for accredited network"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(contract.getProduct().accreditedNetwork)
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract, accreditedNetworkUser)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(delete('/accredited-networks/me/establishments/schedules/{id}', scheduling.id)
+                .param("access_token", accessToken))
+
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void "search a scheduling for accredited network"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(contract.getProduct().accreditedNetwork)
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract, accreditedNetworkUser)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get('/accredited-networks/me/establishments/schedules')
+                .param("access_token", accessToken)
+                .param("token", scheduling.token))
+
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items[0].token', notNullValue()))
+                .andExpect(jsonPath('$.items[0].id', notNullValue()))
+                .andExpect(jsonPath('$.total', notNullValue()))
+    }
+
 
     AccreditedNetwork getAccreditedNetwork() {
         Fixture.from(AccreditedNetwork.class).gimme("valid")

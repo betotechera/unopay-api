@@ -98,7 +98,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         user
     }
 
-    def createUser(email: String = null): UserDetail = {
+    def createUserPersisted(email: String = null): UserDetail = {
         val generatePassword: String = new RegexFunction("\\d{3}\\w{5}").generateValue()
         val user: UserDetail = from(classOf[UserDetail]).uses(jpaProcessor).gimme("with-group", new Rule() {
             {
@@ -274,7 +274,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
                 createInstrumenBalance(credit.getPaymentInstrument, establishmentEvent.getValue)
                 add("contract", credit.getContract)
                 add("contractor", credit.getContract.getContractor)
-                add("user", createUser())
+                add("user", createUserPersisted())
                 add("authorizationDateTime", instant(dateAsText))
                 add("paymentInstrument", credit.getPaymentInstrument)
                 add("establishment", establishment)
@@ -299,7 +299,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
             {
                 add("contract", credit.getContract)
                 add("contractor", credit.getContract.getContractor)
-                add("user", createUser())
+                add("user", createUserPersisted())
                 add("authorizationDateTime", instant(dateAsText))
                 add("paymentInstrument", credit.getPaymentInstrument)
                 add("establishment", establishment)
@@ -458,7 +458,7 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
     def createPersistedPaidOrder(contractor: Contractor = createContractor("physical"),
                                  typ: OrderType = OrderType.CREDIT, status: PaymentStatus = PaymentStatus.PAID): Order = {
         val product = createProduct()
-        val user = createUser()
+        val user = createUserPersisted()
         val contract = createPersistedContract(contractor, product)
         from(classOf[ContractInstallment]).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", contract)
@@ -627,21 +627,30 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
 
-    def createSchedulingToPersist(contract: Contract = createContract(), branch: Branch = createBranch()): Scheduling = {
-        from(classOf[Scheduling]).gimme("valid", ruleSchedulingValid(contract, branch))
+    def createSchedulingToPersist(contract: Contract = createPersistedContract(),
+                                  userDetail: UserDetail = createUserPersisted()): Scheduling = {
+        from(classOf[Scheduling]).gimme("valid", ruleSchedulingValid(contract, userDetail))
     }
 
-    def createScheduling(): Scheduling = {
-        from(classOf[Scheduling]).uses(jpaProcessor).gimme("valid", ruleSchedulingValid())
+    def createSchedulingPersisted(contract: Contract = createPersistedContract(),
+                                  userDetail: UserDetail = createUserPersisted()): Scheduling = {
+        from(classOf[Scheduling]).uses(jpaProcessor).gimme("valid", ruleSchedulingValid(contract, userDetail))
     }
 
-    private def ruleSchedulingValid(contract: Contract = createPersistedContract(), branch: Branch = createBranch()) : Rule = {
+    def createBranchForContract(contract: Contract = createContract()): Branch = {
+        def network = contract.getProduct.getAccreditedNetwork
+        def establishment = createEstablishment(network)
+        createBranch(establishment)
+    }
+
+    private def ruleSchedulingValid(contract: Contract, userDetail: UserDetail) : Rule = {
+        def branch = createBranchForContract(contract)
         new Rule() {{
             add("branch", branch)
             add("contract", contract)
             add("contractor", contract.getContractor)
             add("paymentInstrument", createInstrumentToProduct(contract.getProduct, contract.getContractor))
-            add("user", createUser())
+            add("user", userDetail)
             add("authorizedMember", createPersistedAuthorizedMember())
         }}
     }

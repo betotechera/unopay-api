@@ -29,20 +29,20 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     def create(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
         setReferences(scheduling, accreditedNetwork)
-        scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
+        setExpiration(scheduling)
         schedulingRepository.save(scheduling)
     }
 
     def create(scheduling: Scheduling) : Scheduling = {
         setReferences(scheduling)
-        scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
+        setExpiration(scheduling)
         schedulingRepository.save(scheduling)
     }
 
     def update(id: String, otherScheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
         val actualScheduling = findById(id, accreditedNetwork)
         actualScheduling.updateMe(otherScheduling)
-        setReferences(otherScheduling, accreditedNetwork)
+        setReferences(actualScheduling, accreditedNetwork)
         schedulingRepository.save(actualScheduling)
     }
 
@@ -140,5 +140,9 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
             val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
             scheduling.setAuthorizedMember(authorizedMember)
         }
+    }
+
+    private def setExpiration(scheduling: Scheduling) : Unit = {
+        scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
     }
 }

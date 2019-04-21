@@ -32,12 +32,12 @@ class Scheduling extends Serializable with Updatable {
     var id: String = _
 
     @BeanProperty
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var token: String = System.currentTimeMillis().toString
 
     @BeanProperty
     @Column(name = "created_date_time")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var createdDateTime: Date = _
 
     @BeanProperty
@@ -98,17 +98,17 @@ class Scheduling extends Serializable with Updatable {
     @BeanProperty
     @Future
     @Column(name = "scheduling_date")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var date: Date = _
 
     @BeanProperty
     @Column(name = "expiration_date")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var expirationDate: Date = _
 
     @BeanProperty
     @Column(name = "cancellation_date")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var cancellationDate: Date = _
 
     @BatchSize(size = 10)

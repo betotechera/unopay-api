@@ -3,6 +3,7 @@ package br.com.unopay.api.bacen.util
 import br.com.unopay.api.market.model.BonusBilling
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.PaymentInstrumentType
+import br.com.unopay.api.scheduling.model.Scheduling
 
 import static br.com.six2six.fixturefactory.Fixture.*
 import br.com.six2six.fixturefactory.Fixture
@@ -564,7 +565,6 @@ class FixtureCreator {
         def network = contract.getProduct().accreditedNetwork
         def establishment = createEstablishment(network)
         createBranch(establishment)
-
     }
 
     Establishment createHeadOffice() {
@@ -673,5 +673,27 @@ class FixtureCreator {
             add("product", createProduct())
             add("payer", person)
         }})
+    }
+
+    Scheduling createSchedulingToPersist(Contract contract = createPersistedContract(),
+                                  UserDetail userDetail = createUser()) {
+        from(Scheduling.class).gimme("valid", ruleSchedulingValid(contract, userDetail))
+    }
+
+    Scheduling createSchedulingPersisted(Contract contract = createPersistedContract(),
+                                         UserDetail userDetail  = createUser()) {
+        from(Scheduling.class).uses(jpaProcessor).gimme("valid", ruleSchedulingValid(contract, userDetail))
+    }
+
+    private def ruleSchedulingValid(Contract contract, UserDetail userDetail) {
+        def branch = createBranchForContract(contract)
+        new Rule() {{
+            add("branch", branch)
+            add("contract", contract)
+            add("contractor", contract.contractor)
+            add("paymentInstrument", createInstrumentToProduct(contract.product, contract.contractor))
+            add("user", userDetail)
+            add("authorizedMember", createPersistedAuthorizedMember())
+        }}
     }
 }
