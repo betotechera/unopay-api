@@ -114,21 +114,13 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         val paymentInstrument = paymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), scheduling.contractorId())
         scheduling.setPaymentInstrument(paymentInstrument)
 
-        val contract = contractService.findById(scheduling.contract.getId)
-        scheduling.setContract(contract)
-
-        if (scheduling.hasAuthorizedMember) {
-            val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
-            scheduling.setAuthorizedMember(authorizedMember)
-        }
+        this.setCommonReferences(scheduling)
     }
 
     private def setReferences(scheduling: Scheduling): Unit = {
         val contractor = contractorService.getById(scheduling.contractor.getId)
         scheduling.setContractor(contractor)
 
-        val contract = contractService.findById(scheduling.contract.getId)
-        scheduling.setContract(contract)
 
         val branch = branchService.findById(scheduling.branch.getId)
         scheduling.setBranch(branch)
@@ -136,12 +128,17 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         val paymentInstrument = paymentInstrumentService.findById(scheduling.paymentInstrument.getId)
         scheduling.setPaymentInstrument(paymentInstrument)
 
+        this.setCommonReferences(scheduling)
+    }
+
+
+    private def setCommonReferences(scheduling: Scheduling): Unit = {
+        val contract = contractService.findById(scheduling.contract.getId)
+        scheduling.setContract(contract)
+
         if (scheduling.hasAuthorizedMember) {
             val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
             scheduling.setAuthorizedMember(authorizedMember)
         }
     }
-
-
-
 }
