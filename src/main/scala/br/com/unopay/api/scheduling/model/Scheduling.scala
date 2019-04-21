@@ -69,7 +69,6 @@ class Scheduling extends Serializable with Updatable {
     var paymentInstrument: PaymentInstrument = _
 
     @BeanProperty
-    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonView(Array(classOf[Views.Scheduling.Detail]))

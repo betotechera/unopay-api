@@ -4,6 +4,7 @@ import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.service.SchedulingService
+import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Logging
 import br.com.unopay.bootcommons.jsoncollections.{PageableResults, Results, UnovationPageRequest}
 import com.fasterxml.jackson.annotation.JsonView
@@ -20,8 +21,10 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @PostMapping
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
     @JsonView(Array(classOf[Views.Scheduling.Detail]))
-    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling): ResponseEntity[Scheduling] = {
+    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling,
+               currentUser: UserDetail): ResponseEntity[Scheduling] = {
         log.info("creating Scheduling={}", scheduling)
+        scheduling.user = currentUser
         val schedulingCreated = schedulingService.create(scheduling)
         val uri = buildUriLocation(schedulingCreated.id)
         ResponseEntity.created(uri).body(schedulingCreated)
