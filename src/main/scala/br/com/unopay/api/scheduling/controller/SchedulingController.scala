@@ -21,10 +21,8 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @PostMapping
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
     @JsonView(Array(classOf[Views.Scheduling.Detail]))
-    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling,
-               currentUser: UserDetail): ResponseEntity[Scheduling] = {
+    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling): ResponseEntity[Scheduling] = {
         log.info("creating Scheduling={}", scheduling)
-        scheduling.user = currentUser
         val schedulingCreated = schedulingService.create(scheduling)
         val uri = buildUriLocation(schedulingCreated.id)
         ResponseEntity.created(uri).body(schedulingCreated)
