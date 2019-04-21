@@ -2,11 +2,19 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import br.com.unopay.api.util.FixtureCreatorScala
+import groovy.transform.CompileStatic
+import spock.lang.AutoCleanup
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -29,6 +37,9 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
     @Autowired
     FixtureCreator fixtureCreator
+
+    @Autowired
+    FixtureCreatorScala fixtureCreatorScala
 
     void 'should create accreditedNetwork'() {
         given:
@@ -242,7 +253,30 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
     }
 
+    def "create a scheduling for accredited network"() {
+        given:
+
+        def contract = fixtureCreator.createContract()
+        def network = contract.getProduct().accreditedNetwork
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(network)
+        def establishment = fixtureCreator.createEstablishment(network)
+        def branch = fixtureCreatorScala.createBranch(establishment)
+
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        Scheduling scheduling = fixtureCreatorScala.createSchedulingToPersist(contract, branch)
+
+        when:
+        def result = this.mvc.perform(post('/accredited-networks/me/establishments/schedules')
+                .param("access_token", accessToken)
+                .content(toJson(scheduling))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
     AccreditedNetwork getAccreditedNetwork() {
         Fixture.from(AccreditedNetwork.class).gimme("valid")
     }
+
 }

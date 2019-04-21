@@ -621,22 +621,23 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         }})
     }
 
-    def createBranch() : Branch = {
-        from(classOf[Branch]).uses(jpaProcessor).gimme("valid")
+    def createBranch(headOffice: Establishment = createEstablishment()) : Branch = {
+        from(classOf[Branch]).uses(jpaProcessor).gimme("valid", new Rule() {{
+            add("headOffice", headOffice)
+        }})
     }
 
-    def createSchedulingToPersist(): Scheduling = {
-        from(classOf[Scheduling]).gimme("valid", ruleSchedulingValid)
+    def createSchedulingToPersist(contract: Contract = createContract(), branch: Branch = createBranch()): Scheduling = {
+        from(classOf[Scheduling]).gimme("valid", ruleSchedulingValid(contract, branch))
     }
 
     def createScheduling(): Scheduling = {
-        from(classOf[Scheduling]).uses(jpaProcessor).gimme("valid", ruleSchedulingValid)
+        from(classOf[Scheduling]).uses(jpaProcessor).gimme("valid", ruleSchedulingValid())
     }
 
-    private def ruleSchedulingValid : Rule = {
-        val contract: Contract = createPersistedContract()
+    private def ruleSchedulingValid(contract: Contract = createPersistedContract(), branch: Branch = createBranch()) : Rule = {
         new Rule() {{
-            add("branch", createBranch())
+            add("branch", branch)
             add("contract", contract)
             add("contractor", contract.getContractor)
             add("paymentInstrument", createInstrumentToProduct(contract.getProduct, contract.getContractor))
