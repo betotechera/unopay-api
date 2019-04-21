@@ -78,8 +78,8 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         val schedulingSaved = captor.getValue
 
-        assert(schedulingSaved.token != null)
-        assert(schedulingSaved.expirationDate != null)
+        assert(schedulingSaved.token != null, "Token should not be null")
+        assert(schedulingSaved.expirationDate != null, "ExpirationDate should not be null")
         expectCallReferences(scheduling)
     }
 
@@ -98,8 +98,8 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         val schedulingSaved = captor.getValue
 
-        assert(schedulingSaved.token != null)
-        assert(schedulingSaved.expirationDate != null)
+        assert(schedulingSaved.token != null, "Token should not be null")
+        assert(schedulingSaved.expirationDate != null, "ExpirationDate should not be null")
 
         expectCallReferences(scheduling, network)
     }
@@ -124,8 +124,8 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         verify(mockSchedulingRepository).save(schedulingUpdated.capture())
         expectCallReferences(actualScheduling, network)
-        assert(actualScheduling.id eq schedulingUpdated.getValue.id)
-        assert(actualScheduling.token eq otherScheduling.token)
+        assert(id eq schedulingUpdated.getValue.id, "Current id can not change")
+        assert(actualScheduling.date eq otherScheduling.date, "Date must be updated")
     }
 
     it should "update a Scheduling" in {
@@ -146,8 +146,8 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         verify(mockSchedulingRepository).save(schedulingUpdated.capture())
         expectCallReferences(actualScheduling)
-        assert(actualScheduling.id eq schedulingUpdated.getValue.id)
-        assert(actualScheduling.token eq otherScheduling.token)
+        assert(id eq schedulingUpdated.getValue.id, "Current id can not change")
+        assert(actualScheduling.date eq otherScheduling.date, "Date must be updated")
     }
 
     it should "cancel a Scheduling by accredit network" in {
@@ -165,7 +165,7 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         val captor = ArgumentCaptor.forClass(classOf[Scheduling])
         verify(mockSchedulingRepository).save(captor.capture())
-        assert(captor.getValue.cancellationDate != null)
+        assert(captor.getValue.cancellationDate != null, "Cancellation date should not be null")
     }
 
     it should "cancel a Scheduling by Contractor" in {
@@ -183,7 +183,7 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         val captor = ArgumentCaptor.forClass(classOf[Scheduling])
         verify(mockSchedulingRepository).save(captor.capture())
-        assert(captor.getValue.cancellationDate != null)
+        assert(captor.getValue.cancellationDate != null, "Cancellation date should not be null")
     }
 
     it should "delete a Scheduling" in {
