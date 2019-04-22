@@ -25,8 +25,9 @@ import scala.beans.BeanProperty
 @Entity
 class Scheduling extends Serializable with Updatable {
 
-    @BeanProperty
     @Id
+    @BeanProperty
+    @Column(name = "id")
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     var id: String = _
