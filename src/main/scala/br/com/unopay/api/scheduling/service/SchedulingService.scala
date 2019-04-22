@@ -48,7 +48,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     def update(id: String, otherScheduling: Scheduling) : Scheduling = {
         val actualScheduling = findById(id)
-        actualScheduling.updateMe(otherScheduling)
+        actualScheduling.updateAllExcept(otherScheduling, "user")
         setReferences(actualScheduling)
         schedulingRepository.save(actualScheduling)
     }
