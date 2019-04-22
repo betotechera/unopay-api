@@ -23,7 +23,9 @@ import scala.beans.BeanProperty
 @EqualsAndHashCode(of = Array ("id", "token"))
 @Getter
 @Entity
+@Table(name = "scheduling")
 class Scheduling extends Serializable with Updatable {
+
 
     @Id
     @BeanProperty
@@ -33,12 +35,12 @@ class Scheduling extends Serializable with Updatable {
     var id: String = _
 
     @BeanProperty
-    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    @Column(name = "token")
     var token: String = System.currentTimeMillis().toString
 
     @BeanProperty
     @Column(name = "created_date_time")
-    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var createdDateTime: Date = _
 
     @BeanProperty
@@ -78,7 +80,7 @@ class Scheduling extends Serializable with Updatable {
     @BeanProperty
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @Column(name = "service_description")
-    @JsonView(Array(classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     @Size(min = 3, max = 30)
     var serviceDescription: String = _
 
@@ -86,7 +88,7 @@ class Scheduling extends Serializable with Updatable {
     @Enumerated(EnumType.STRING)
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @Column(name = "service_type")
-    @JsonView(Array(classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var serviceType: ServiceType = _
 
     @BeanProperty
@@ -99,17 +101,17 @@ class Scheduling extends Serializable with Updatable {
     @Future
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @Column(name = "scheduling_date")
-    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var date: Date = _
 
     @BeanProperty
     @Column(name = "expiration_date")
-    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var expirationDate: Date = _
 
     @BeanProperty
     @Column(name = "cancellation_date")
-    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var cancellationDate: Date = _
 
     @BatchSize(size = 10)
@@ -153,5 +155,9 @@ class Scheduling extends Serializable with Updatable {
     }
 
     def hasAuthorizedMember: Boolean = this.authorizedMember != null && this.authorizedMember.getId != null
+
+    def hasEvents(): Boolean = {
+        this.events != null && !this.events.isEmpty
+    }
 
 }

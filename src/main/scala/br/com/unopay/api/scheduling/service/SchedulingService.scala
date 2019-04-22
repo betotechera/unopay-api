@@ -1,16 +1,18 @@
 package br.com.unopay.api.scheduling.service
 
+import java.util.Date
+
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.network.service.BranchService
+import br.com.unopay.api.network.service.{BranchService, EventService}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.exception.Errors.SCHEDULING_NOT_FOUND
-import br.com.unopay.api.uaa.service.UserDetailService
+import scala.collection.JavaConverters._
 import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.data.domain.{Page, PageRequest}
@@ -23,7 +25,8 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
                         val contractService: ContractService,
                         val branchService: BranchService,
                         val authorizedMemberService: AuthorizedMemberService,
-                        val paymentInstrumentService: PaymentInstrumentService) {
+                        val paymentInstrumentService: PaymentInstrumentService,
+                        val eventService: EventService) {
 
     private val MAX_EXPIRATION_IN_DAYS = 5
 
@@ -139,6 +142,9 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         if (scheduling.hasAuthorizedMember) {
             val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
             scheduling.setAuthorizedMember(authorizedMember)
+        }
+        if (scheduling.hasEvents()){
+            scheduling.events = scheduling.events.asScala.map(event => eventService.findById(event.getId)).asJava
         }
     }
 

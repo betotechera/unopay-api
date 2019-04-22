@@ -25,7 +25,6 @@ CREATE TABLE scheduling (
 );
 
 create table scheduling_event (
-    id varchar(256) PRIMARY KEY,
     scheduling_id varchar(256) not null,
     event_id varchar(256) not null,
     constraint fk_sch_event foreign key(scheduling_id) references scheduling(id),
