@@ -96,6 +96,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @Future
+    @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @Column(name = "scheduling_date")
     @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var date: Date = _
