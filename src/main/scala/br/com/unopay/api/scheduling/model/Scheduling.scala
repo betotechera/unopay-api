@@ -12,7 +12,7 @@ import br.com.unopay.api.network.model.{Branch, Event, ServiceType}
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
-import javax.validation.constraints.{NotNull, Size}
+import javax.validation.constraints.{Future, NotNull, Size}
 import lombok.{EqualsAndHashCode, Getter, ToString}
 import org.hibernate.annotations.{BatchSize, GenericGenerator}
 
@@ -32,12 +32,12 @@ class Scheduling extends Serializable with Updatable {
     var id: String = _
 
     @BeanProperty
-    @JsonView(Array(classOf[Views.Scheduling.List]))
-    var token: String = _
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    var token: String = System.currentTimeMillis().toString
 
     @BeanProperty
     @Column(name = "created_date_time")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var createdDateTime: Date = _
 
     @BeanProperty
@@ -95,13 +95,19 @@ class Scheduling extends Serializable with Updatable {
     var authorizedMember: AuthorizedMember = _
 
     @BeanProperty
+    @Future
+    @Column(name = "scheduling_date")
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
+    var date: Date = _
+
+    @BeanProperty
     @Column(name = "expiration_date")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var expirationDate: Date = _
 
     @BeanProperty
     @Column(name = "cancellation_date")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.List], classOf[Views.Scheduling.Detail]))
     var cancellationDate: Date = _
 
     @BatchSize(size = 10)
@@ -133,15 +139,16 @@ class Scheduling extends Serializable with Updatable {
         null
     }
 
-    def cancelMe() = {
+    def cancelMe(): Unit = {
         if(this.cancellationDate == null) {
             this.cancellationDate = new Date()
         }
     }
 
-
     @PrePersist
-    def prePersist(): Unit = this.createdDateTime = new Date
+    def prePersist(): Unit = {
+        this.createdDateTime = new Date
+    }
 
     def hasAuthorizedMember: Boolean = this.authorizedMember != null && this.authorizedMember.getId != null
 

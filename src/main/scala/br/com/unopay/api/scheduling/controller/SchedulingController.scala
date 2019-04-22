@@ -21,8 +21,10 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @PostMapping
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
     @JsonView(Array(classOf[Views.Scheduling.Detail]))
-    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling): ResponseEntity[Scheduling] = {
+    def create(@RequestBody @Validated(Array(classOf[Create])) scheduling: Scheduling,
+               user: UserDetail): ResponseEntity[Scheduling] = {
         log.info("creating Scheduling={}", scheduling)
+        scheduling.setUser(user)
         val schedulingCreated = schedulingService.create(scheduling)
         val uri = buildUriLocation(schedulingCreated.id)
         ResponseEntity.created(uri).body(schedulingCreated)
@@ -31,8 +33,10 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @PutMapping(Array("/{id}"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_SCHEDULING')")
-    def update (@PathVariable id: String, @RequestBody @Validated(Array(classOf[Update])) scheduling: Scheduling): Unit = {
+    def update (@PathVariable id: String, @RequestBody @Validated(Array(classOf[Update])) scheduling: Scheduling,
+                user: UserDetail): Unit = {
         log.info("updating Scheduling with id={}", id)
+        scheduling.setUser(user)
         schedulingService.update(id, scheduling)
     }
 

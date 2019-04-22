@@ -11,6 +11,7 @@ CREATE TABLE scheduling (
     service_description varchar(150) not null,
     service_type varchar(150) not null,
     authorized_member_id VARCHAR(256),
+    scheduling_date TIMESTAMP NOT NULL,
     expiration_date TIMESTAMP,
     cancellation_date TIMESTAMP,
 

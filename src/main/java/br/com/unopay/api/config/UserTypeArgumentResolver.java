@@ -13,6 +13,7 @@ import br.com.unopay.bootcommons.exception.ForbiddenException;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
@@ -41,9 +42,14 @@ public class UserTypeArgumentResolver implements HandlerMethodArgumentResolver {
                            WebDataBinderFactory webDataBinderFactory) throws Exception {
 
 
-        OAuth2Authentication authentication = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.isClientOnly()) {
-            throw new ForbiddenException("only authenticated user can access this resource");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof  OAuth2Authentication) {
+            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+            if (oAuth2Authentication.isClientOnly()) {
+                throw new ForbiddenException("only authenticated user can access this resource");
+            }
+
         }
 
         UserDetail currentUser = userDetailService.getByEmail(authentication.getName());

@@ -1,6 +1,6 @@
 package br.com.unopay.api.scheduling
 
-import java.util.UUID
+import java.util.{Date, UUID}
 
 import br.com.six2six.fixturefactory.loader.TemplateLoader
 import br.com.six2six.fixturefactory.{Fixture, Rule}
@@ -10,7 +10,7 @@ import br.com.unopay.api.model.{Contract, PaymentInstrument}
 import br.com.unopay.api.network.model.{Branch, ServiceType}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
-
+import br.com.unopay.api.`implicit`.DateImplicit._
 
 class SchedulingTemplateLoader extends TemplateLoader {
 
@@ -18,7 +18,7 @@ class SchedulingTemplateLoader extends TemplateLoader {
         val contract: Contract = createContract()
 
         Fixture.of(classOf[Scheduling]).addTemplate("valid", new Rule() {
-            add("token", UUID.randomUUID().toString)
+            add("date", new Date().plusDays(10))
             add("branch", createBranch)
             add("contract", contract)
             add("contractor", contract.getContractor)

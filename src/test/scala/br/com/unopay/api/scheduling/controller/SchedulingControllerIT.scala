@@ -31,7 +31,7 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
     it should "update a Scheduling" in {
         val accessToken = getUserAccessToken()
 
-        val actualScheduling: Scheduling = fixtureCreator.createScheduling()
+        val actualScheduling: Scheduling = fixtureCreator.createSchedulingPersisted()
 
         val otherScheduling = fixtureCreator.createSchedulingToPersist()
 
@@ -44,7 +44,7 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     it should "filter Schedules" in {
         val accessToken = getUserAccessToken()
-        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
+        val schedulingPersisted: Scheduling = fixtureCreator.createSchedulingPersisted()
 
         val result = this.mvc.perform(get(SCHEDULING_URI+ "?token={token}", schedulingPersisted.token)
                 .param("access_token", accessToken))
@@ -56,7 +56,7 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     it should "find a Scheduling by id" in {
         val accessToken = getUserAccessToken()
-        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
+        val schedulingPersisted: Scheduling = fixtureCreator.createSchedulingPersisted()
 
         val result = this.mvc.perform(get(SCHEDULING_URI+ "/{id}", schedulingPersisted.id)
                 .param("access_token", accessToken))
@@ -69,7 +69,7 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     it should "delete a Schedule" in {
         val accessToken = getUserAccessToken()
-        val schedulingPersisted: Scheduling = fixtureCreator.createScheduling()
+        val schedulingPersisted: Scheduling = fixtureCreator.createSchedulingPersisted()
 
         val result = this.mvc.perform(delete(SCHEDULING_URI+ "/{id}", schedulingPersisted.id)
                 .param("access_token", accessToken))

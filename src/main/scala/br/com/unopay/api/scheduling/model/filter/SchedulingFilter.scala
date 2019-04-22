@@ -34,4 +34,8 @@ class SchedulingFilter {
     @BeanProperty
     @SearchableField(field = "contractor.person.document.number")
     var contractorDocument: String = _
+
+    override def toString: String = s"SchedulingFilter(token=$token, createdDateTime=$createdDateTime, " +
+            s"branch=$branch, network=$network, contractor=$contractor, contract=$contract, " +
+            s"contractorDocument=$contractorDocument)"
 }
