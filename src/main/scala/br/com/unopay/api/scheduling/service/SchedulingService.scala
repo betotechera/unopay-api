@@ -1,7 +1,6 @@
 package br.com.unopay.api.scheduling.service
 
-import java.util.Date
-
+import br.com.unopay.api.`implicit`.DateImplicit.DateImplicit
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
@@ -12,12 +11,12 @@ import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.exception.Errors.SCHEDULING_NOT_FOUND
-import scala.collection.JavaConverters._
 import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
-import br.com.unopay.api.`implicit`.DateImplicit.DateImplicit
+
+import scala.collection.JavaConverters._
 
 @Service
 class SchedulingService(val schedulingRepository: SchedulingRepository,
