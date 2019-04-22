@@ -98,6 +98,10 @@ public class Event implements Serializable {
         return false;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public ServiceType serviceType() {
         return service.getType();
     }

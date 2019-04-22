@@ -8,7 +8,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.network.service.BranchService
+import br.com.unopay.api.network.service.{BranchService, EventService}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
@@ -36,6 +36,7 @@ class SchedulingServiceTest extends ScalaFixtureTest {
     var mockBranchService: BranchService = _
     var mockAuthorizedMemberService: AuthorizedMemberService = _
     var mockPaymentInstrumentService: PaymentInstrumentService = _
+    var mockEventService: EventService = _
 
     override def beforeEach() {
         super.beforeEach()
@@ -46,9 +47,10 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         mockBranchService = mock(classOf[BranchService])
         mockAuthorizedMemberService = mock(classOf[AuthorizedMemberService])
         mockPaymentInstrumentService = mock(classOf[PaymentInstrumentService])
+        mockEventService = mock(classOf[EventService])
 
         schedulingService = new SchedulingService(mockSchedulingRepository, mockContractorService, mockContractService,
-            mockBranchService, mockAuthorizedMemberService, mockPaymentInstrumentService)
+            mockBranchService, mockAuthorizedMemberService, mockPaymentInstrumentService, mockEventService)
     }
 
     it should "find scheduling by id" in {
