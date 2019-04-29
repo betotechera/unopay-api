@@ -13,6 +13,7 @@ public enum ServiceType implements DescriptableEnum {
     MEDICINES("Medicamentos", HEALTH),
     INTEGRATES_AND_ALTERNATIVES("Práticas Integrativas e Complementares", HEALTH),
     HOSPITALIZATION("Internações",HEALTH),
+    MULTIDISCIPLINARY("Especialidade  Multidisciplinar", HEALTH),
     EMS("Pronto Socorro", HEALTH);
 
     private String description;
