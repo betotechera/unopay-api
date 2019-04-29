@@ -31,6 +31,8 @@ create table scheduling_event (
     constraint fk_sch_sch foreign key(event_id) references event(id)
 );
 
+alter table establishment_event add column private_value decimal(20,2) default 0.0 not null;
+
 
 insert into AUTHORITY(name, description) values('ROLE_LIST_SCHEDULING','Permite listar agendamentos');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_SCHEDULING','Permite gerenciar agendamentos');

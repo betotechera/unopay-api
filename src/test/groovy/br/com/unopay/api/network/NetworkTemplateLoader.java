@@ -115,6 +115,7 @@ public class NetworkTemplateLoader implements TemplateLoader {
 
         Fixture.of(EstablishmentEvent.class).addTemplate("withoutReferences", new Rule(){{
             add("value", random(BigDecimal.class, range(1,200)));
+            add("privateValue", random(BigDecimal.class, range(1,200)));
             add("expiration", instant("1 day from now"));
         }});
 

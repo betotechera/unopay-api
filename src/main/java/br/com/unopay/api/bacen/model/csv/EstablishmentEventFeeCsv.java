@@ -20,6 +20,9 @@ public class EstablishmentEventFeeCsv {
     @CsvBindByName
     private BigDecimal value;
 
+    @CsvBindByName
+    private BigDecimal privateValue;
+
     @CsvDate("dd/MM/yyyy")
     @CsvBindByName
     private Date expiration;
@@ -29,6 +32,7 @@ public class EstablishmentEventFeeCsv {
         establishmentEvent.setEvent(event);
         establishmentEvent.setValue(this.value);
         establishmentEvent.setExpiration(this.expiration);
+        establishmentEvent.setPrivateValue(this.privateValue);
         return establishmentEvent;
     }
 }

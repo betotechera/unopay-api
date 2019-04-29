@@ -51,11 +51,15 @@ public class EstablishmentEvent implements Updatable, Serializable {
     @JsonView({Views.EstablishmentEvent.List.class})
     private Establishment establishment;
 
-    @CsvBindByName
     @Column(name = "value")
     @JsonView({Views.EstablishmentEvent.List.class})
     @NotNull(groups = {Create.class, Update.class})
     private BigDecimal value;
+
+    @Column(name = "private_value")
+    @JsonView({Views.EstablishmentEvent.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    private BigDecimal privateValue;
 
     @Column(name = "expiration")
     @JsonView({Views.EstablishmentEvent.List.class})

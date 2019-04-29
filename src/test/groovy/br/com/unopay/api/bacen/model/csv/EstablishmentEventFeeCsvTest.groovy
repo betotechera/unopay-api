@@ -14,6 +14,7 @@ class EstablishmentEventFeeCsvTest extends FixtureApplicationTest {
         EstablishmentEventFeeCsv csv = new EstablishmentEventFeeCsv() {{
             setValue(BigDecimal.ONE)
             setExpiration(date)
+            setPrivateValue(BigDecimal.TEN)
         }}
 
         when:
@@ -23,6 +24,7 @@ class EstablishmentEventFeeCsvTest extends FixtureApplicationTest {
         establishmentEvent.value == BigDecimal.ONE
         establishmentEvent.expiration == date
         establishmentEvent.event == event
+        establishmentEvent.privateValue == BigDecimal.TEN
     }
 
     def 'should be equals'(){
