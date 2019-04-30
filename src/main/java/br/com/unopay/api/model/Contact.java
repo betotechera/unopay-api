@@ -41,4 +41,14 @@ public class Contact  implements Serializable {
     @Column(name = "phone")
     @JsonView({Views.Establishment.Contact.class})
     private String phone;
+
+    @Column(name = "office")
+    @JsonView({Views.Establishment.Contact.class})
+    private String office;
+
+    @Column(name = "whatsapp")
+    @JsonView({Views.Establishment.Contact.class})
+    private String whatsapp;
+
+
 }
