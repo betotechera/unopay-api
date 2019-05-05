@@ -68,6 +68,7 @@ public class NetworkTemplateLoader implements TemplateLoader {
             add("type", random(ServiceType.class));
             add("feeVal", random(BigDecimal.class));
             add("feePercent", random(Double.class));
+            add("schedulingAllowed", random(Boolean.class));
         }});
 
         Fixture.of(Service.class).addTemplate("persisted").inherits("valid", new Rule(){{

@@ -7,6 +7,7 @@ import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.model.validation.group.Rating;
 import br.com.unopay.api.model.validation.group.Reference;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.scheduling.model.Scheduling;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -29,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,6 +38,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
@@ -161,6 +164,16 @@ public class ServiceAuthorize implements Serializable {
     @JoinColumn(name="authorized_member_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private AuthorizedMember authorizedMember;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="scheduling_id")
+    @JsonView({Views.ServiceAuthorize.Detail.class})
+    private Scheduling scheduling;
+
+    @Column(name="scheduling_token")
+    @Size(max = 100)
+    @JsonView({Views.ServiceAuthorize.List.class})
+    private String schedulingToken;
 
     @Version
     @JsonIgnore

@@ -69,6 +69,11 @@ public class Service implements Serializable {
     @JsonView({Views.Service.Detail.class})
     private Double feePercent;
 
+    @Column(name = "scheduling_allowed")
+    @NotNull
+    @JsonView({Views.Service.Detail.class})
+    private Boolean schedulingAllowed;
+
     @ManyToMany
     @BatchSize(size = 10)
     @JsonIgnore

@@ -3,6 +3,7 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
@@ -46,6 +47,7 @@ public class ProductTemplateLoader implements TemplateLoader {
             add("memberAnnuity", random(BigDecimal.class, range(50,100)));
             add("monthsToExpireBonus", random(36));
             add("bonusPercentage", random(Double.class, range(0, 1)));
+            add("paymentMethods", Arrays.asList(PaymentMethod.CARD, PaymentMethod.BOLETO));
         }});
 
         Fixture.of(Product.class).addTemplate("creditWithoutDirectDebit").inherits("valid", new Rule(){{

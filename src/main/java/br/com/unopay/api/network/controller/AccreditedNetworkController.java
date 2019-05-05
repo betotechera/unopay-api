@@ -155,6 +155,27 @@ public class AccreditedNetworkController {
                 String.format("%s/accredited-networks/me/establishments", api));
     }
 
+    @JsonView(Views.Branch.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/accredited-networks/me/establishments", method = RequestMethod.POST)
+    public ResponseEntity<Establishment> createEstablishment(@Validated(Create.class) @RequestBody Establishment establishment,
+                                                             AccreditedNetwork accreditedNetwork) {
+        log.info("create an establishment for network={}", accreditedNetwork.documentNumber());
+        Establishment created = establishmentService.create(establishment, accreditedNetwork);
+        return ResponseEntity
+                .created(URI.create("/accredited-networks/me/establishments/"+created.getId()))
+                .body(created);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/establishments/{id}", method = RequestMethod.PUT)
+    public void updateEstablishment(@PathVariable  String id, @Validated(Update.class) @RequestBody Establishment establishment,
+                                    AccreditedNetwork accreditedNetwork) {
+        establishment.setId(id);
+        log.info("update an establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        establishmentService.update(id,establishment, accreditedNetwork);
+    }
+
 
     @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
@@ -167,6 +188,7 @@ public class AccreditedNetworkController {
                 .body(created);
 
     }
+
     @JsonView(Views.Branch.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/accredited-networks/me/establishments/branches/{id}", method = RequestMethod.GET)
@@ -174,6 +196,7 @@ public class AccreditedNetworkController {
         log.info("get a branch establishment={} for network={}",id, accreditedNetwork.documentNumber());
         return branchService.findById(id, accreditedNetwork);
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/accredited-networks/me/establishments/branches/{id}", method = RequestMethod.PUT)
     public void updateBranch(@PathVariable  String id, @Validated(Update.class) @RequestBody Branch branch, AccreditedNetwork accreditedNetwork) {

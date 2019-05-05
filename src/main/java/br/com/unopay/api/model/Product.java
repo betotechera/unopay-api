@@ -1,5 +1,6 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.network.model.Partner;
@@ -194,6 +195,15 @@ public class Product implements Serializable, Updatable {
     @Column(name = "with_partner_integration")
     @JsonView({Views.Product.Detail.class})
     private Boolean withPartnerIntegration = false;
+
+    @Size(min = 1)
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER,targetClass = PaymentMethod.class)
+    @Column(name = "payment_method", nullable = false)
+    @JsonView({Views.Product.Detail.class, Views.Product.List.class})
+    @NotNull(groups = {Create.class, Update.class})
+    @CollectionTable(name = "product_payment_methods", joinColumns = @JoinColumn(name = "product_id"))
+    private Set<PaymentMethod> paymentMethods;
 
     @Version
     @JsonIgnore
