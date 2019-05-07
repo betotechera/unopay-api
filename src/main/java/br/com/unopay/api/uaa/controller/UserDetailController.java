@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
@@ -238,6 +239,19 @@ public class UserDetailController {
     public UserCreditCard getUserCreditCard(UserDetail userDetail, @PathVariable String id) {
         LOGGER.info("get user credit card={} for user={}", id, userDetail.getId());
         return userCreditCardService.findByIdForUser(id, userDetail);
+    }
+
+    @JsonView(Views.UserCreditCard.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.POST)
+    public ResponseEntity<UserCreditCard> createCreditCard(@Validated(Create.class) @RequestBody CreditCard creditCard,
+                                                           UserDetail user) {
+        LOGGER.info("adding a user credit card to user={}", user);
+        UserCreditCard created = userCreditCardService.storeForUser(user, creditCard);
+        return ResponseEntity
+                .created(URI.create("/users/me/credit-cards"+created.getId()))
+                .body(created);
+
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
