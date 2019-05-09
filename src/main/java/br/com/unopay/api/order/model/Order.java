@@ -297,6 +297,12 @@ public class Order implements Updatable, Billable, Serializable {
         return null;
     }
 
+    public void checkAlreadyPaid() {
+        if(paid()){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.ALREADY_PAID_ORDER);
+        }
+    }
+
     @Override
     public TicketPaymentSource getPaymentSource() {
         return TicketPaymentSource.CONTRACTOR_CREDIT;

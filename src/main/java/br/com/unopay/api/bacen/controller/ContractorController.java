@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.service.TicketService;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
 import br.com.unopay.api.billing.creditcard.model.filter.TransactionFilter;
 import br.com.unopay.api.billing.creditcard.service.TransactionService;
@@ -30,6 +31,7 @@ import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.service.BranchService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.scheduling.model.Scheduling;
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
@@ -61,9 +63,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @Slf4j
 @RestController
@@ -289,7 +293,35 @@ public class ContractorController {
                                         @Validated(Create.Order.class) @RequestBody Order order) {
         log.info("creating order {}", order);
         Order created = orderService.create(authentication.getName(), order);
-        return created(URI.create("/credit-orders/"+created.getId())).body(created);
+        return created(URI.create("/contractors/me/orders"+created.getId())).body(created);
+    }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(ACCEPTED)
+    @RequestMapping(value = "/contractors/me/orders/{id}", method = PUT, params = "request-payment")
+    public Order create(Contractor contractor, @PathVariable  String id,
+                                        @Validated(Create.Order.class) @RequestBody PaymentRequest paymentRequest) {
+        log.info("new payment for order={} and contractor={}", id, contractor.getDocumentNumber());
+        return orderService.requestPayment(contractor, id, paymentRequest);
+    }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/orders/{id}", method = RequestMethod.GET)
+    public Order getOrder(Contractor contractor, @PathVariable  String id) {
+        log.info("get order={} for contractor={}", id, contractor.getDocumentNumber());
+        return orderService.findByIdForContractor(id, contractor);
+    }
+
+    @JsonView(Views.Order.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/contractors/me/orders", method = RequestMethod.GET)
+    public Results<Order> getOrderByParams(Contractor contractor, OrderFilter filter, @Validated UnovationPageRequest pageable){
+        log.info("search order with filter={} for contractor={}", filter, contractor.getDocumentNumber());
+        filter.setDocument(contractor.getDocumentNumber());
+        Page<Order> page =  orderService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/orders", api));
     }
 
     @JsonView(Views.PaymentInstrument.List.class)

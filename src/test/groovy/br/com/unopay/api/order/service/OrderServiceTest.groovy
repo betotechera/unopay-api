@@ -76,6 +76,150 @@ class OrderServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    def 'given a unknown order when trying process the payment should return error'(){
+        given:
+        Order unknownOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("status", PaymentStatus.WAITING_PAYMENT)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(unknownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
+    }
+
+    def 'given a unknown order when trying process the payment for the contractor should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        Order unknownOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.WAITING_PAYMENT)
+            add("person", contractor.getPerson())
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(contractor, unknownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
+    }
+
+    def 'given a known order from another contractor when trying process the payment for the contractor should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        Order unknownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.WAITING_PAYMENT)
+            add("person", contractor.getPerson())
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(fixtureCreator.createContractor(), unknownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
+    }
+
+    def 'given a known non-adhesion order when trying process the payment should return error'(){
+        given:
+        def type = orderType
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", type)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(knownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(BadRequestException)
+        assert ex.errors.first().logref == 'INVALID_ORDER_TYPE'
+
+        where:
+        _ | orderType
+        _ | OrderType.INSTALLMENT_PAYMENT
+        _ | OrderType.CREDIT
+    }
+
+    def 'given a known adhesion order when trying process the payment should not return error'(){
+        given:
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(knownOrder.id, order.paymentRequest)
+
+        then:
+        notifierMock.notify(Queues.ORDER_CREATED, knownOrder)
+    }
+
+    def 'given a known adhesion order when trying process the payment for the contractor should not return error'(){
+        def contractor = fixtureCreator.createContractor()
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.WAITING_PAYMENT)
+            add("person", contractor.getPerson())
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(contractor, knownOrder.id, order.paymentRequest)
+
+        then:
+        notifierMock.notify(Queues.ORDER_CREATED, knownOrder)
+    }
+
+    def 'given a known adhesion order which is already paid when trying process the payment should return error'(){
+        given:
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.PAID)
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(knownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ALREADY_PAID_ORDER'
+    }
+
+    def 'given a known adhesion order which is already paid when trying process the payment for the contractor should return error'(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.PAID)
+            add("person", contractor.getPerson())
+        }})
+
+        Order order = Fixture.from(Order.class).gimme("valid")
+
+        when:
+        service.requestPayment(contractor, knownOrder.id, order.paymentRequest)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ALREADY_PAID_ORDER'
+    }
+
     def 'given a known credit order with status waiting payment should update to paid status'(){
         given:
         Contractor contractor = fixtureCreator.createContractor("physical")

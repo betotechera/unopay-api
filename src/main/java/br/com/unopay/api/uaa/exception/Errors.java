@@ -518,6 +518,10 @@ public final class Errors {
             new UnovationError("PAYMENT_REQUEST_REQUIRED","Payment request required.");
     public static final UnovationError ORDER_REQUIRED =
             new UnovationError("ORDER_REQUIRED","Order required.");
+    public static final UnovationError INVALID_ORDER_TYPE =
+            new UnovationError("INVALID_ORDER_TYPE","invalid order type");
+    public static final UnovationError ALREADY_PAID_ORDER =
+            new UnovationError("ALREADY_PAID_ORDER","already paid order");
 
     /* Order */
     public static final UnovationError INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR =

@@ -2,6 +2,7 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
@@ -11,10 +12,12 @@ import br.com.unopay.api.model.Person;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.OrderValidator;
+import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.repository.OrderRepository;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PersonService;
+import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -74,6 +77,11 @@ public class OrderService {
 
     public Order findById(String id) {
         Optional<Order> order = repository.findById(id);
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+    }
+
+    public Order findByIdForContractor(String id, Contractor contractor) {
+        Optional<Order> order = repository.findByIdAndPersonDocumentNumber(id, contractor.getDocumentNumber());
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
@@ -139,6 +147,31 @@ public class OrderService {
         notifier.notify(Queues.ORDER_CREATED, created);
         return created;
     }
+
+    public Order requestPayment(Contractor contractor, String orderId, PaymentRequest paymentRequest){
+        Order current = findByIdForContractor(orderId, contractor);
+        paymentRequest.setOrderId(orderId);
+        current.setPaymentRequest(paymentRequest);
+        return requestPayment(current);
+    }
+    public Order requestPayment(String orderId, PaymentRequest paymentRequest){
+        Order current = findById(orderId);
+        if(!current.isType(OrderType.ADHESION)){
+            throw UnovationExceptions.badRequest().withErrors(Errors.INVALID_ORDER_TYPE.withOnlyArgument(current.getType()));
+        }
+        paymentRequest.setOrderId(orderId);
+        current.setPaymentRequest(paymentRequest);
+        return requestPayment(current);
+    }
+    private Order requestPayment(Order current){
+        current.checkAlreadyPaid();
+        current.setStatus(PaymentStatus.WAITING_PAYMENT);
+        save(current);
+        notifier.notify(Queues.ORDER_CREATED, current);
+        return current;
+    }
+
+
 
     @Transactional
     public void update(String id, Order order) {

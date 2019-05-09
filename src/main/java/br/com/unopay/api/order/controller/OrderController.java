@@ -1,6 +1,7 @@
 package br.com.unopay.api.order.controller;
 
 
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -98,6 +100,16 @@ public class OrderController {
         Page<Order> page =  service.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/orders", api));
+    }
+
+    @JsonView(Views.Order.Detail.class)
+    @ResponseStatus(ACCEPTED)
+    @PreAuthorize("#oauth2.isClient()")
+    @RequestMapping(value = "/orders/{id}", method = PUT, params = "request-payment")
+    public Order create(@PathVariable  String id,
+                                        @Validated(Create.Order.class) @RequestBody PaymentRequest paymentRequest) {
+        log.info("new payment for order={}", id);
+        return service.requestPayment(id, paymentRequest);
     }
 
 }
