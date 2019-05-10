@@ -13,7 +13,8 @@ public class PayzenResponseTranslator {
     public TransactionStatus translate(ServiceResult serviceResult) {
         String responseLabel = serviceResult.getCommonResponse().getTransactionStatusLabel();
         Integer responseCode = serviceResult.getCommonResponse().getResponseCode();
-        log.info("Payzen response label={} code={}", responseLabel, responseCode);
+        String responseCodeDetail = serviceResult.getCommonResponse().getResponseCodeDetail();
+        log.info("Payzen response label={} code={} details={}", responseLabel, responseCode, responseCodeDetail);
         if(Objects.equals(responseLabel, "AUTHORISED")) {
             return TransactionStatus.CAPTURED;
         }
