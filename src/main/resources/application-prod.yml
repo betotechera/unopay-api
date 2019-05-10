@@ -1,9 +1,15 @@
-client:
-  wingoo:
-    user: admin
-    password: wingoo!#2018
-    application: 5ae0973f07f4f19d8b000006
-    api: http://dev-wingoo.herokuapp.com/api
+wingoo:
+  api: https://api.wingoo.com.br
+  security:
+    oauth2:
+      resource:
+        tokenInfoUri: ${wingoo.api}/uaa/oauth/check_token
+      client:
+        clientId: api-gateway
+        clientSecret: 5yRt6BPsdusq8AP
+        accessTokenUri: ${wingoo.api}/uaa/oauth/token
+        username: emerson@unovation.com.br
+        password: backwin567
 payment:
   gateway:
     config:
@@ -22,10 +28,10 @@ payment:
 unopay:
   notification:
     resetPassword:
-      15200249000118: 'http://backoffice.unovation.com.br/#/page/password/15200249000118/'
-      21902075000138: 'http://backoffice.unovation.com.br/#/page/password/21902075000138/'
-      SUPER_SAUDE: 'http://backoffice.unovation.com.br/#/page/password/SUPER_SAUDE/'
-      BACKOFFICE: 'http://backoffice.unovation.com.br/#/page/password/BACKOFFICE/'
+      15200249000118: 'https://backoffice.unovation.com.br/#/page/password/15200249000118/'
+      21902075000138: 'https://backoffice.unovation.com.br/#/page/password/21902075000138/'
+      SUPER_SAUDE: 'https://backoffice.unovation.com.br/#/page/password/SUPER_SAUDE/'
+      BACKOFFICE: 'https://backoffice.unovation.com.br/#/page/password/BACKOFFICE/'
       UNOPAY: 'https://unopay.unovation.com.br/recover-password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
