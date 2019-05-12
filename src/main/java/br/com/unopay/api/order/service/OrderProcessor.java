@@ -12,6 +12,7 @@ import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.service.ContractService;
 import java.util.Set;
+import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class OrderProcessor {
         process(order);
     }
 
+    @Transactional
     public void processWithStatus(String id, TransactionStatus status){
         Order current = orderService.findById(id);
         current.defineStatus(status);
