@@ -39,7 +39,7 @@ public class Address implements Serializable, Updatable {
     @Column(name="zip_code")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Address.class})
-    @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")
+    @Pattern(regexp = "\\d{8}", message = "invalid zipCode!", groups = {Create.class, Update.class})
     private String zipCode;
 
     @Column(name="street_name")
