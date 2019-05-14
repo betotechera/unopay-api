@@ -156,6 +156,7 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         Order knownOrder = Fixture.from(Order.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.WAITING_PAYMENT)
         }})
 
         Order order = Fixture.from(Order.class).gimme("valid")
