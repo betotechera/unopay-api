@@ -1,11 +1,14 @@
 package br.com.unopay.api.network.service;
 
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.EstablishmentEvent;
 import br.com.unopay.api.network.model.Event;
 import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
+import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.repository.EstablishmentEventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +18,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +43,10 @@ public class EstablishmentEventService {
         this.establishmentService = establishmentService;
         this.eventService = eventService;
     }
+    public EstablishmentEvent create(String establishmentId, EstablishmentEvent establishmentEvent, AccreditedNetwork accreditedNetwork) {
+        establishmentService.findByIdAndNetworks(establishmentId, accreditedNetwork);
+        return create(establishmentId,establishmentEvent);
+    }
 
     public EstablishmentEvent create(String establishmentId, EstablishmentEvent establishmentEvent) {
         setReferences(establishmentId, establishmentEvent);
@@ -49,6 +58,11 @@ public class EstablishmentEventService {
         Event event = eventService.findById(establishmentEvent.getEvent().getId());
         establishmentEvent.setEvent(event);
         establishmentEvent.setEstablishment(establishment);
+    }
+
+    public void update(String establishmentId, EstablishmentEvent establishmentEvent, AccreditedNetwork accreditedNetwork) {
+        establishmentService.findByIdAndNetworks(establishmentId, accreditedNetwork);
+        update(establishmentId, establishmentEvent);
     }
 
     public void update(String establishmentId, EstablishmentEvent establishmentEvent) {
@@ -71,6 +85,11 @@ public class EstablishmentEventService {
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND));
     }
 
+    public EstablishmentEvent findByNetworkIdAndId(String id, AccreditedNetwork accreditedNetwork) {
+        Optional<EstablishmentEvent> establishment = repository.findByEstablishmentNetworkIdAndId(accreditedNetwork.getId(), id);
+        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND));
+    }
+
     public EstablishmentEvent findByEstablishmentIdAndId(String establishmentId, String id) {
         Optional<EstablishmentEvent> establishment = repository.findByEstablishmentIdAndId(establishmentId, id);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND));
@@ -80,8 +99,18 @@ public class EstablishmentEventService {
         return repository.findByEstablishmentId(establishmentId);
     }
 
+    public Page<EstablishmentEvent> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
+        return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
     public List<EstablishmentEvent> findByEstablishmentDocument(String document) {
         return repository.findByEstablishmentPersonDocumentNumber(document);
+    }
+
+    @Transactional
+    public void delete(String id, AccreditedNetwork accreditedNetwork) {
+        findByNetworkIdAndId(id, accreditedNetwork);
+        repository.delete(id);
     }
 
     @Transactional
