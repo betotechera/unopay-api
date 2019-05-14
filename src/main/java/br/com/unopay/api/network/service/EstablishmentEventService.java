@@ -5,6 +5,7 @@ import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.EstablishmentEvent;
 import br.com.unopay.api.network.model.Event;
 import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
+import br.com.unopay.api.network.model.filter.EstablishmentEventFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.repository.EstablishmentEventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
@@ -99,7 +100,7 @@ public class EstablishmentEventService {
         return repository.findByEstablishmentId(establishmentId);
     }
 
-    public Page<EstablishmentEvent> findByFilter(EstablishmentFilter filter, UnovationPageRequest pageable) {
+    public Page<EstablishmentEvent> findByFilter(EstablishmentEventFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 

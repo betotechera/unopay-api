@@ -3,11 +3,14 @@ package br.com.unopay.api.network.controller;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Branch;
 import br.com.unopay.api.network.model.Establishment;
+import br.com.unopay.api.network.model.EstablishmentEvent;
 import br.com.unopay.api.network.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.network.model.filter.BranchFilter;
+import br.com.unopay.api.network.model.filter.EstablishmentEventFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.network.service.BranchService;
+import br.com.unopay.api.network.service.EstablishmentEventService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
@@ -47,6 +50,7 @@ public class AccreditedNetworkController {
     private EstablishmentService establishmentService;
     private BranchService branchService;
     private SchedulingService schedulingService;
+    private EstablishmentEventService establishmentEventService;
 
     @Value("${unopay.api}")
     private String api;
@@ -55,11 +59,13 @@ public class AccreditedNetworkController {
     public AccreditedNetworkController(AccreditedNetworkService service,
                                        EstablishmentService establishmentService,
                                        BranchService branchService,
-                                       SchedulingService schedulingService) {
+                                       SchedulingService schedulingService,
+                                       EstablishmentEventService establishmentEventService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
         this.schedulingService = schedulingService;
+        this.establishmentEventService = establishmentEventService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -262,6 +268,49 @@ public class AccreditedNetworkController {
         Page<Scheduling> page =  schedulingService.findAll(filter, accreditedNetwork, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/schedules", api));
+    }
+
+    @JsonView(Views.EstablishmentEvent.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishment-events/{id}", method = RequestMethod.GET)
+    public EstablishmentEvent getEstablishmentEvent(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
+        log.info("get establishmentEvent={} for network={}", id, accreditedNetwork.documentNumber());
+        return establishmentEventService.findByNetworkIdAndId(id, accreditedNetwork);
+    }
+
+    @JsonView(Views.EstablishmentEvent.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/accredited-networks/me/establishment-events", method = RequestMethod.GET)
+    public Results<EstablishmentEvent> getEstablishmentEventsByParams(AccreditedNetwork accreditedNetwork,
+                                                           EstablishmentEventFilter filter,
+                                                           @Validated UnovationPageRequest pageable) {
+        log.info("search establishmentEvent with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        filter.setNetwork(accreditedNetwork.getId());
+        Page<EstablishmentEvent> page =  establishmentEventService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/accredited-networks/me/establishment-events", api));
+    }
+
+    @JsonView(Views.EstablishmentEvent.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/accredited-networks/me/establishment-events", method = RequestMethod.POST)
+    public ResponseEntity<EstablishmentEvent> createEstablishmentEvent(@Validated(Create.class) @RequestBody EstablishmentEvent establishmentEvent,
+                                                                  AccreditedNetwork accreditedNetwork) {
+        log.info("create an establishmentEvent for network={}", accreditedNetwork.documentNumber());
+        EstablishmentEvent created = establishmentEventService.create(establishmentEvent.getEstablishment().getId(), establishmentEvent, accreditedNetwork);
+        return ResponseEntity
+                .created(URI.create("/accredited-networks/me/establishmentEvent-events/"+created.getId()))
+                .body(created);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/establishment-events/{id}", method = RequestMethod.PUT)
+    public void updateEstablishmentEvent(@PathVariable  String id, @Validated(Update.class) @RequestBody EstablishmentEvent establishment,
+                                    AccreditedNetwork accreditedNetwork) {
+        establishment.setId(id);
+        log.info("update an establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        establishmentEventService.update(id,establishment, accreditedNetwork);
     }
 
 }

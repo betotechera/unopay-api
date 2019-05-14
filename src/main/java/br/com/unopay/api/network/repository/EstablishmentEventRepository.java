@@ -1,13 +1,13 @@
 package br.com.unopay.api.network.repository;
 
 import br.com.unopay.api.network.model.EstablishmentEvent;
-import br.com.unopay.api.network.model.filter.EstablishmentFilter;
+import br.com.unopay.api.network.model.filter.EstablishmentEventFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.List;
 import java.util.Optional;
 
 public interface EstablishmentEventRepository
-        extends UnovationFilterRepository<EstablishmentEvent, String, EstablishmentFilter> {
+        extends UnovationFilterRepository<EstablishmentEvent, String, EstablishmentEventFilter > {
 
     Optional<EstablishmentEvent> findById(String id);
     Optional<EstablishmentEvent> findByEstablishmentIdAndId(String establishmentId, String id);
