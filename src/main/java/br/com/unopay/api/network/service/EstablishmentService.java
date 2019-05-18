@@ -115,6 +115,10 @@ public class EstablishmentService {
         scheduleClosingJob(current);
     }
 
+    public Optional<Establishment> findByIdAndNetworksOptional(String id, AccreditedNetwork network) {
+        return repository.findByIdAndNetworkId(id, network.getId());
+    }
+
     public Establishment findByIdAndNetworks(String id, AccreditedNetwork network) {
         Optional<Establishment> establishment = repository.findByIdAndNetworkId(id, network.getId());
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
@@ -134,6 +138,11 @@ public class EstablishmentService {
 
     public Optional<Establishment> findByIdOptional(String id){
         return repository.findById(id);
+    }
+
+    public Establishment findByDocumentNumberAndNetwork(String document, AccreditedNetwork network) {
+        Optional<Establishment> establishment = repository.findByPersonDocumentNumberAndNetworkId(document, network.getId());
+        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 
     public Establishment findByDocumentNumber(String document) {

@@ -125,6 +125,17 @@ public class EstablishmentEventService {
         repository.delete(id);
     }
 
+    @SneakyThrows
+    @Transactional
+    public void createFromCsv(String id, MultipartFile multipartFile, AccreditedNetwork accreditedNetwork) {
+        List<EstablishmentEventFeeCsv> csvLines = getEstablishmentEventFeeCsvs(multipartFile);
+        Optional<Establishment> establishmentOptional = establishmentService.findByIdAndNetworksOptional(id, accreditedNetwork);
+        csvLines.forEach(csvLine ->  {
+            Establishment establishment = establishmentOptional.orElseGet(() ->
+                    establishmentService.findByDocumentNumberAndNetwork(csvLine.getEstablishmentDocument(), accreditedNetwork));
+            createEventFee(csvLine, establishment);
+        });
+    }
 
     @SneakyThrows
     @Transactional

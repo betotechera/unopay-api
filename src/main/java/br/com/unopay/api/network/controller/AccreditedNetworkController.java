@@ -34,11 +34,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -311,6 +314,16 @@ public class AccreditedNetworkController {
         establishment.setId(id);
         log.info("update an establishment={} for network={}", id, accreditedNetwork.documentNumber());
         establishmentEventService.update(id,establishment, accreditedNetwork);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.POST,
+            consumes = "multipart/form-data")
+    public void createFromCsvByMe(AccreditedNetwork accreditedNetwork, @RequestParam MultipartFile file,
+                                  @RequestAttribute("establishment") String establishment){
+        String fileName = file.getOriginalFilename();
+        log.info("reading establishment event fee csv file {}", fileName);
+        establishmentEventService.createFromCsv(establishment, file,accreditedNetwork);
     }
 
 }

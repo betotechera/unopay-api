@@ -11,5 +11,5 @@ public interface EstablishmentRepository
     Optional<Establishment> findById(String id);
     Optional<Establishment> findByIdAndNetworkId(String id, String networkId);
     Optional<Establishment> findByPersonDocumentNumber(String document);
-
+    Optional<Establishment> findByPersonDocumentNumberAndNetworkId(String document, String networkId);
 }
