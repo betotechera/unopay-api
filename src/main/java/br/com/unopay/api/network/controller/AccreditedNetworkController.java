@@ -275,7 +275,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.EstablishmentEvent.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/accredited-networks/me/establishment-events/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/accredited-networks/me/event-fees/{id}", method = RequestMethod.GET)
     public EstablishmentEvent getEstablishmentEvent(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
         log.info("get establishmentEvent={} for network={}", id, accreditedNetwork.documentNumber());
         return establishmentEventService.findByNetworkIdAndId(id, accreditedNetwork);
@@ -283,7 +283,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.EstablishmentEvent.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/accredited-networks/me/establishment-events", method = RequestMethod.GET)
+    @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.GET)
     public Results<EstablishmentEvent> getEstablishmentEventsByParams(AccreditedNetwork accreditedNetwork,
                                                            EstablishmentEventFilter filter,
                                                            @Validated UnovationPageRequest pageable) {
@@ -292,23 +292,23 @@ public class AccreditedNetworkController {
         Page<EstablishmentEvent> page =  establishmentEventService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/accredited-networks/me/establishment-events", api));
+                String.format("%s/accredited-networks/me/event-fees", api));
     }
 
     @JsonView(Views.EstablishmentEvent.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/accredited-networks/me/establishment-events", method = RequestMethod.POST)
+    @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.POST)
     public ResponseEntity<EstablishmentEvent> createEstablishmentEvent(@Validated(Create.class) @RequestBody EstablishmentEvent establishmentEvent,
                                                                   AccreditedNetwork accreditedNetwork) {
         log.info("create an establishmentEvent for network={}", accreditedNetwork.documentNumber());
         EstablishmentEvent created = establishmentEventService.create(establishmentEvent.getEstablishment().getId(), establishmentEvent, accreditedNetwork);
         return ResponseEntity
-                .created(URI.create("/accredited-networks/me/establishmentEvent-events/"+created.getId()))
+                .created(URI.create("/accredited-networks/me/event-fees/"+created.getId()))
                 .body(created);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/accredited-networks/me/establishment-events/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/accredited-networks/me/event-fees/{id}", method = RequestMethod.PUT)
     public void updateEstablishmentEvent(@PathVariable  String id, @Validated(Update.class) @RequestBody EstablishmentEvent establishment,
                                     AccreditedNetwork accreditedNetwork) {
         establishment.setId(id);
