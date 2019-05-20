@@ -320,7 +320,7 @@ public class AccreditedNetworkController {
     @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.POST,
             consumes = "multipart/form-data")
     public void createFromCsvByMe(AccreditedNetwork accreditedNetwork, @RequestParam MultipartFile file,
-                                  @RequestAttribute("establishment") String establishment){
+                                  @RequestAttribute(value ="establishment", required = false) String establishment){
         String fileName = file.getOriginalFilename();
         log.info("reading establishment event fee csv file {}", fileName);
         establishmentEventService.createFromCsv(establishment, file,accreditedNetwork);
