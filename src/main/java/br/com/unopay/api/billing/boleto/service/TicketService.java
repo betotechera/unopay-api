@@ -166,8 +166,8 @@ public class TicketService {
                 .value(billable.getValue())
                 .yourNumber(number).build();
 
-        TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
-        String clearOurNumber = Integer.valueOf(tituloDto.getNossoNumero()).toString();
+        //TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
+        String clearOurNumber = String.valueOf(new Date().getTime()); //Integer.valueOf(tituloDto.getNossoNumero()).toString();
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(billable.getIssuer())
                 .number(number)
