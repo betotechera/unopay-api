@@ -95,11 +95,19 @@ public class OrderService {
         return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
     }
 
-    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email")
     public Set<String> findIdsByPersonEmail(String email) {
-        Set<Order> orders = repository
-                .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
+        Set<Order> orders = getLastOrders(email);
         return orders.stream().map(Order::getId).collect(Collectors.toSet());
+    }
+
+    public Set<String> findNumbersByPersonEmail(String email) {
+        Set<Order> orders = getLastOrders(email);
+        return orders.stream().map(Order::getNumber).collect(Collectors.toSet());
+    }
+
+    private Set<Order> getLastOrders(String email) {
+        return repository
+                .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
     }
 
     @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#ordersIds)")
@@ -107,6 +115,13 @@ public class OrderService {
         Set<String> ids = findIdsByPersonEmail(email);
         Set<String> intersection = ordersIds.stream().filter(ids::contains).collect(Collectors.toSet());
         return ordersIds.isEmpty() ? ids : intersection;
+    }
+
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#orderNumbers)")
+    public Set<String> getMyOrderNumbers(String email, Set<String> orderNumbers) {
+        Set<String> numbers = findNumbersByPersonEmail(email);
+        Set<String> intersection = orderNumbers.stream().filter(numbers::contains).collect(Collectors.toSet());
+        return orderNumbers.isEmpty() ? numbers : intersection;
     }
 
     @Transactional

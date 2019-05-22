@@ -339,9 +339,9 @@ public class ContractorController {
     @RequestMapping(value = "/contractors/me/tickets", method = RequestMethod.GET)
     public Results<Ticket> findBoletos(OAuth2Authentication authentication,
                                        TicketFilter filter, @Validated UnovationPageRequest pageable) {
-        log.info("find boletos for={} with filter={}",authentication.getName(), filter);
-        Set<String> myOrderIds = orderService.getMyOrderIds(authentication.getName(), filter.getOrderId());
-        filter.setOrderId(myOrderIds);
+        log.info("find tickets for={} with filter={}",authentication.getName(), filter);
+        Set<String> myOrderNumbers = orderService.getMyOrderNumbers(authentication.getName(), filter.getOrderId());
+        filter.setOrderId(myOrderNumbers);
         Page<br.com.unopay.api.billing.boleto.model.Ticket> page = ticketService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/tickets", api));

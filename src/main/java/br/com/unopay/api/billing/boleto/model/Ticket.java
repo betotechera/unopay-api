@@ -36,7 +36,7 @@ public class Ticket {
 
     @Column(name = "source_id")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Ticket.Detail.class})
+    @JsonView({Views.Ticket.List.class})
     private String sourceId;
 
     @NotNull(groups = {Create.class})
@@ -65,12 +65,12 @@ public class Ticket {
 
     @Column(name = "payment_penalty_value")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Ticket.List.class})
+    @JsonView({Views.Ticket.Detail.class})
     private BigDecimal paymentPenaltyValue;
 
     @Column(name = "interest")
     @NotNull(groups = {Create.class})
-    @JsonView({Views.Ticket.List.class})
+    @JsonView({Views.Ticket.Detail.class})
     private BigDecimal interest;
 
     @Column(name = "uri")
@@ -99,7 +99,7 @@ public class Ticket {
     private Date createDateTime;
 
     @Column(name = "occurrence_code")
-    @JsonView({Views.Ticket.List.class})
+    @JsonView({Views.Ticket.Detail.class})
     private String occurrenceCode;
 
     @Column(name = "source_type")

@@ -18,6 +18,9 @@ public class TicketFilter implements Serializable {
     @SearchableField(field = "sourceId")
     private Set<String> orderId;
 
+    @SearchableField(field = "sourceId")
+    private Set<String> orderNumber;
+
     @SearchableField
     private String issuerDocument;
 
