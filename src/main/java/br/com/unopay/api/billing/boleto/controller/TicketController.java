@@ -59,6 +59,7 @@ public class TicketController {
     @Deprecated
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/tickets", method = GET, params = "orderNumber")
     public Results<Ticket> findBoletosByOrderNumberOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
@@ -68,6 +69,7 @@ public class TicketController {
     @Deprecated
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/tickets", method = GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
@@ -77,6 +79,7 @@ public class TicketController {
     @Deprecated
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#oauth2.isClient()")
     @RequestMapping(value = "/boletos", method = GET, params = "orderId")
     public Results<Ticket> findBoletosByOrderIdOnlyOld(TicketFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("find tickets  with filter={}", filter);
