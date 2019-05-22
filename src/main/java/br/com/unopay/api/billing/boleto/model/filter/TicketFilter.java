@@ -16,7 +16,7 @@ public class TicketFilter implements Serializable {
     public static final Long serialVersionUID = 1L;
 
     @SearchableField(field = "sourceId")
-    private Set<String> orderId;
+    private String orderId;
 
     @SearchableField(field = "sourceId")
     private Set<String> orderNumber;
@@ -45,8 +45,8 @@ public class TicketFilter implements Serializable {
         }
     }
 
-    public Set<String> getOrderId(){
-        Optional<Set<String>> list = Optional.ofNullable(this.orderId);
+    public Set<String> getOrderNumbers(){
+        Optional<Set<String>> list = Optional.ofNullable(this.orderNumber);
         return list.orElse(new HashSet<>());
     }
 }

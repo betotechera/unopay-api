@@ -56,6 +56,16 @@ public class TicketController {
         return service.findById(id);
     }
 
+    @Deprecated
+    @JsonView(Views.Ticket.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/tickets", method = GET, params = "orderNumber")
+    public Results<Ticket> findBoletosByOrderNumberOnly(TicketFilter filter, @Validated UnovationPageRequest pageable) {
+        log.info("find tickets  with filter={}", filter);
+        return getTicketResults(filter, pageable);
+    }
+
+    @Deprecated
     @JsonView(Views.Ticket.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/tickets", method = GET, params = "orderId")
