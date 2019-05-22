@@ -212,7 +212,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Order order = fixtureCreator.createPersistedAdhesionOrder(person)
 
         Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("sourceId", order.id)
+            add("sourceId", order.number)
         }})
 
         when:
@@ -235,13 +235,13 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
 
         Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("sourceId", uniqueRandom(orderA.id,orderB.id))
+            add("sourceId", uniqueRandom(orderA.number,orderB.number))
         }})
 
-        def sourceId = orderA.id
+        def sourceId = orderA.number
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
+        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderNumber={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
@@ -259,13 +259,13 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Order orderB = fixtureCreator.createPersistedAdhesionOrder(person)
 
         Fixture.from(Ticket.class).uses(jpaProcessor).gimme(2, "valid", new Rule(){{
-            add("sourceId", uniqueRandom(orderA.id,orderB.id))
+            add("sourceId", uniqueRandom(orderA.number,orderB.number))
         }})
 
         def sourceId = 'unknown'
 
         when:
-        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderId={sourceId}',accessToken, sourceId)
+        def result = this.mvc.perform(get('/contractors/me/tickets?access_token={access_token}&orderNumber={sourceId}',accessToken, sourceId)
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isOk())
