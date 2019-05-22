@@ -35,7 +35,7 @@ unopay:
       UNOPAY: 'https://unopay.unovation.com.br/recover-password/'
   credit:
     defaultCreditInsertionType: 'BOLETO'
-  api: unopay.api.unovation.com.br
+  api: api.unovation.com.br
   file-uploader:
     configs:
       avatar:

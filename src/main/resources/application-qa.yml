@@ -36,7 +36,7 @@ unopay:
 
   credit:
     defaultCreditInsertionType: 'BOLETO'
-  api: api-qa.unvlocal.com.br:8080
+  api: api-qa.unovation.com.br
   file-uploader:
     configs:
       avatar:
