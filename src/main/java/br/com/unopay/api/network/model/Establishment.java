@@ -18,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.opencsv.bean.CsvBindByName;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,6 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -62,48 +65,49 @@ public class Establishment implements Serializable, Updatable, Localizable {
 
     public static final long serialVersionUID = 1L;
 
-    public Establishment(){}
+    public Establishment() {
+    }
 
     @CsvBindByName
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     @NotNull(groups = {Reference.class})
-    @GenericGenerator(name="system-uuid", strategy="uuid2")
-    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+    @GeneratedValue(generator = "system-uuid")
     private String id;
 
     @Valid
-    @JoinColumn(name="person_id")
+    @JoinColumn(name = "person_id")
     @NotNull(groups = {Create.class, Update.class})
     @ManyToOne
     private Person person;
 
     @Valid
     @Enumerated(STRING)
-    @Column(name="type")
+    @Column(name = "type")
     @JsonView({Views.Establishment.Detail.class})
     private EstablishmentType type;
 
-    @Column(name="contact_mail")
+    @Column(name = "contact_mail")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private String contactMail;
 
-    @Column(name="invoice_mail")
+    @Column(name = "invoice_mail")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private String invoiceMail;
 
-    @Column(name="bach_shipment_mail")
+    @Column(name = "bach_shipment_mail")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private String bachShipmentMail;
 
-    @Column(name="alternative_mail")
+    @Column(name = "alternative_mail")
     @JsonView({Views.Establishment.Detail.class})
     private String alternativeMail;
 
-    @Column(name="cancellation_tolerance")
+    @Column(name = "cancellation_tolerance")
     @JsonView({Views.Establishment.Detail.class})
     @Max(value = 60, groups = {Create.class, Update.class})
     private Integer cancellationTolerance;
@@ -114,7 +118,7 @@ public class Establishment implements Serializable, Updatable, Localizable {
     private Double fee;
 
     @ManyToOne
-    @JoinColumn(name="accredited_network_id")
+    @JoinColumn(name = "accredited_network_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private AccreditedNetwork network;
@@ -129,19 +133,19 @@ public class Establishment implements Serializable, Updatable, Localizable {
 
     @Valid
     @OneToOne
-    @JoinColumn(name="operational_contact_id")
+    @JoinColumn(name = "operational_contact_id")
     @JsonView({Views.Establishment.Detail.class})
     private Contact operationalContact;
 
     @Valid
     @OneToOne
-    @JoinColumn(name="administrative_contact_id")
+    @JoinColumn(name = "administrative_contact_id")
     @JsonView({Views.Establishment.Detail.class})
     private Contact administrativeContact;
 
     @Valid
     @OneToOne
-    @JoinColumn(name="financier_contact_id")
+    @JoinColumn(name = "financier_contact_id")
     @JsonView({Views.Establishment.Detail.class})
     private Contact financierContact;
 
@@ -165,18 +169,18 @@ public class Establishment implements Serializable, Updatable, Localizable {
     @BatchSize(size = 10)
     @JsonView({Views.Establishment.Detail.class})
     @JoinTable(name = "establishment_service",
-            joinColumns = { @JoinColumn(name = "establishment_id") },
-            inverseJoinColumns = { @JoinColumn(name = "service_id") })
+            joinColumns = {@JoinColumn(name = "establishment_id")},
+            inverseJoinColumns = {@JoinColumn(name = "service_id")})
     private Set<Service> services;
 
     @OneToMany(mappedBy = "establishment")
     @BatchSize(size = 10)
     @JsonIgnore
     private Set<EstablishmentEvent> eventPrices;
-    
+
     @Valid
     @ManyToOne
-    @JoinColumn(name="movement_account_id")
+    @JoinColumn(name = "movement_account_id")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private BankAccount bankAccount;
@@ -197,41 +201,52 @@ public class Establishment implements Serializable, Updatable, Localizable {
     @JsonView({Views.Establishment.Detail.class})
     private IssueInvoiceType issueInvoiceType;
 
-    public void validateCreate(){
-        if(getBankAccount() == null) {
+    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "returning_deadline")
+    @JsonView({Views.Establishment.Detail.class})
+    private Integer returningDeadline;
+
+    @Transient
+    private boolean createBranch;
+
+    @Transient
+    private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
+
+    public void validateCreate() {
+        if (getBankAccount() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
         }
-        if(getNetwork() == null) {
+        if (getNetwork() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_REQUIRED);
         }
-        if(getNetwork().getId() == null) {
+        if (getNetwork().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(ACCREDITED_NETWORK_ID_REQUIRED);
         }
-        if(getFinancierContact() == null){
+        if (getFinancierContact() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_REQUIRED);
         }
     }
 
-    public void validateUpdate(){
+    public void validateUpdate() {
         validateCreate();
-        if(getBankAccount().getId() == null) {
+        if (getBankAccount().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_ID_REQUIRED);
         }
-        if(getFinancierContact().getId() == null) {
+        if (getFinancierContact().getId() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(CONTACT_ID_REQUIRED);
         }
     }
 
-    public boolean hasOperationalContact(){
+    public boolean hasOperationalContact() {
         return this.operationalContact != null;
     }
 
-    public boolean hasAdministrativeContact(){
+    public boolean hasAdministrativeContact() {
         return this.administrativeContact != null;
     }
 
-    public String documentNumber(){
-        if(getPerson() != null && getPerson().getDocument() != null){
+    public String documentNumber() {
+        if (getPerson() != null && getPerson().getDocument() != null) {
             return getPerson().getDocument().getNumber();
         }
         return null;
@@ -247,7 +262,7 @@ public class Establishment implements Serializable, Updatable, Localizable {
         this.person.getAddress().setLongitude(lng);
     }
 
-    public String formattedAddress(){
+    public String formattedAddress() {
         return person.getFormatedAddress();
     }
 
@@ -265,4 +280,22 @@ public class Establishment implements Serializable, Updatable, Localizable {
         return null;
     }
 
+    public Branch toBranch() {
+        Branch branch = new Branch();
+        branch.setSituation(BranchSituation.REGISTERED);
+        branch.setServicePeriods(Collections.unmodifiableSet(this.servicePeriods));
+        branch.setGatheringChannels(Collections.unmodifiableSet(this.gatheringChannels));
+        branch.setFantasyName(this.person.getLegalPersonDetail().getFantasyName());
+        branch.setShortName(this.person.getShortName());
+        branch.setName(this.person.getName());
+        branch.setAddress(this.person.getAddress());
+        branch.setHeadOffice(this);
+        if(this.services != null) {
+            branch.setServices(Collections.unmodifiableSet(this.services));
+        }
+        branch.setContactMail(this.contactMail);
+        branch.setTechnicalContact(this.technicalContact);
+        branch.setBranchPhotoUri(this.facadePhotoUri);
+        return branch;
+    }
 }

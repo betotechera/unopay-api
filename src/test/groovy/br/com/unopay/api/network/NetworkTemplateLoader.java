@@ -112,6 +112,7 @@ public class NetworkTemplateLoader implements TemplateLoader {
             add("bankAccount", one(BankAccount.class, "persisted"));
             add("checkout", one(Checkout.class,"valid"));
             add("issueInvoiceType", uniqueRandom(IssueInvoiceType.class));
+            add("returningDeadline", 15);
         }});
 
         Fixture.of(EstablishmentEvent.class).addTemplate("withoutReferences", new Rule(){{

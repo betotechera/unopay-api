@@ -152,6 +152,7 @@ public class DealService {
         Contract contract = new Contract(product, deal.getMembers().size());
         contract.setHirer(hirer);
         contract.setContractor(contractor);
+        contract.setRecurrencePaymentMethod(deal.getRecurrencePaymentMethod());
         return contractService.create(contract, deal.hasHirerDocument());
     }
 

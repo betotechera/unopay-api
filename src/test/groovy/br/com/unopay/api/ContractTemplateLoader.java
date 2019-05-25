@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
@@ -41,6 +42,7 @@ public class ContractTemplateLoader implements TemplateLoader {
             add("membershipFee", random(BigDecimal.class, range(50,150)));
             add("paymentInstallments", random(Integer.class, range(2, 12)));
             add("createdDateTime", instant("now"));
+            add("recurrencePaymentMethod", PaymentMethod.CARD);
         }});
 
         Fixture.of(Contract.class).addTemplate("endedNow").inherits("valid", new Rule() {{

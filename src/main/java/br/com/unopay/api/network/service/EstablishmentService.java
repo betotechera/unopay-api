@@ -141,13 +141,21 @@ public class EstablishmentService {
     }
 
     public Establishment findByDocumentNumberAndNetwork(String document, AccreditedNetwork network) {
-        Optional<Establishment> establishment = repository.findByPersonDocumentNumberAndNetworkId(document, network.getId());
+        Optional<Establishment> establishment = getByPersonDocumentNumberAndNetworkId(document, network);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
     }
 
+    public Optional<Establishment> getByPersonDocumentNumberAndNetworkId(String document, AccreditedNetwork network) {
+        return repository.findByPersonDocumentNumberAndNetworkId(document, network.getId());
+    }
+
     public Establishment findByDocumentNumber(String document) {
-        Optional<Establishment> establishment = repository.findByPersonDocumentNumber(document);
+        Optional<Establishment> establishment = getByPersonDocumentNumber(document);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_NOT_FOUND));
+    }
+
+    public Optional<Establishment> getByPersonDocumentNumber(String document) {
+        return repository.findByPersonDocumentNumber(document);
     }
 
     public void delete(String id) {

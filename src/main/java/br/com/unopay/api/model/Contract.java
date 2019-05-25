@@ -1,6 +1,7 @@
 package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.network.model.ServiceType;
@@ -202,6 +203,12 @@ public class Contract implements Serializable {
     @Column(name = "created_date_time")
     @JsonView({Views.ContractorInstrumentCredit.List.class})
     private Date createdDateTime;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "recurrence_payment_method")
+    @JsonView({Views.Establishment.Detail.class})
+    private PaymentMethod recurrencePaymentMethod;
 
     @JsonIgnore
     @Version

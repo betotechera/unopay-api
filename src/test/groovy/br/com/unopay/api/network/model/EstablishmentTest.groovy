@@ -7,6 +7,31 @@ import br.com.unopay.api.network.model.Establishment
 
 class EstablishmentTest extends FixtureApplicationTest {
 
+    def 'it should create a branch'() {
+        given:
+        Establishment establishmentA = Fixture.from(Establishment.class).gimme("valid", new Rule(){{
+            add("person.id", '1')
+        }})
+
+        when:
+        def branch = establishmentA.toBranch()
+
+        then:
+        branch.situation == BranchSituation.REGISTERED
+        branch.servicePeriods == establishmentA.servicePeriods
+        branch.gatheringChannels == establishmentA.gatheringChannels
+        branch.fantasyName == establishmentA.person.getLegalPersonDetail().fantasyName
+        branch.shortName == establishmentA.person.shortName
+        branch.name == establishmentA.person.name
+        branch.address == establishmentA.person.address
+        branch.headOffice == establishmentA
+        branch.services == establishmentA.services
+        branch.contactMail == establishmentA.contactMail
+        branch.technicalContact == establishmentA.technicalContact
+        branch.branchPhotoUri == establishmentA.facadePhotoUri
+
+    }
+
 
     def 'should update all fields'(){
         given:

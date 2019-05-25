@@ -152,6 +152,11 @@ public class Order implements Updatable, Billable, Serializable {
     @JsonView({Views.Order.Detail.class})
     private String userPassword;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recurrence_payment_method")
+    @JsonView({Views.Establishment.Detail.class})
+    private PaymentMethod recurrencePaymentMethod;
+
     @JsonIgnore
     @Version
     private Integer version;

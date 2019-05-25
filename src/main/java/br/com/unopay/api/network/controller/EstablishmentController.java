@@ -5,6 +5,7 @@ import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.network.service.EstablishmentBranchService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
@@ -68,6 +69,7 @@ public class EstablishmentController {
     private ContractService contractService;
     private ContractorBonusService contractorBonusService;
     private BonusBillingService bonusBillingService;
+    private EstablishmentBranchService establishmentBranchService;
     private TicketService ticketService;
 
     @Value("${unopay.api}")
@@ -81,6 +83,7 @@ public class EstablishmentController {
                                    ContractService contractService,
                                    ContractorBonusService contractorBonusService,
                                    BonusBillingService bonusBillingService,
+                                   EstablishmentBranchService establishmentBranchService,
                                    TicketService ticketService) {
         this.service = service;
         this.authorizeService = authorizeService;
@@ -89,6 +92,7 @@ public class EstablishmentController {
         this.contractService = contractService;
         this.contractorBonusService = contractorBonusService;
         this.bonusBillingService = bonusBillingService;
+        this.establishmentBranchService = establishmentBranchService;
         this.ticketService = ticketService;
     }
 
@@ -97,7 +101,7 @@ public class EstablishmentController {
     @RequestMapping(value = "/establishments", method = RequestMethod.POST)
     public ResponseEntity<Establishment> create(@Validated(Create.class) @RequestBody Establishment establishment) {
         log.info("creating establishment {}", establishment);
-        Establishment created = service.create(establishment);
+        Establishment created = establishmentBranchService.create(establishment);
         return ResponseEntity
                 .created(URI.create("/establishments/"+created.getId()))
                 .body(created);

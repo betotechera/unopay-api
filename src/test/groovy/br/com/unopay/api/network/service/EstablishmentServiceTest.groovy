@@ -12,14 +12,19 @@ import br.com.unopay.api.bacen.model.RecurrencePeriod
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.BatchClosingJob
 import br.com.unopay.api.job.UnopayScheduler
+import br.com.unopay.api.network.model.filter.BranchFilter
 import br.com.unopay.api.network.service.BranchService
 import br.com.unopay.api.network.service.EstablishmentService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.ForbiddenException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import static org.hamcrest.Matchers.hasSize
+import static org.spockframework.util.Assert.that
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
+import static spock.util.matcher.HamcrestSupport.that
 
 class EstablishmentServiceTest  extends SpockApplicationTests {
 
@@ -57,6 +62,7 @@ class EstablishmentServiceTest  extends SpockApplicationTests {
         then:
         1 * schedulerMock.schedule(_,RecurrencePeriod.BIWEEKLY.pattern, BatchClosingJob.class)
     }
+
 
     def 'when creating a establishment should be geo resolve it address'(){
         given:

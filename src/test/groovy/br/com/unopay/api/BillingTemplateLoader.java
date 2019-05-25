@@ -64,6 +64,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("value", random(BigDecimal.class, range(0.1, 500)));
             add("fee", BigDecimal.ZERO);
             add("contract", one(Contract.class, "valid"));
+            add("recurrencePaymentMethod", PaymentMethod.CARD);
         }});
 
 

@@ -160,6 +160,7 @@ public class ContractInstallment implements Serializable, Updatable {
         order.setProduct(this.contract.getProduct());
         order.setType(OrderType.INSTALLMENT_PAYMENT);
         order.setPerson(this.contract.contractorPerson());
+        order.setRecurrencePaymentMethod(this.contract.getRecurrencePaymentMethod());
         return order;
     }
 }

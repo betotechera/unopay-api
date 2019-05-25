@@ -10,6 +10,7 @@ import br.com.unopay.api.network.model.filter.EstablishmentEventFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.service.AccreditedNetworkService;
 import br.com.unopay.api.network.service.BranchService;
+import br.com.unopay.api.network.service.EstablishmentBranchService;
 import br.com.unopay.api.network.service.EstablishmentEventService;
 import br.com.unopay.api.network.service.EstablishmentService;
 import br.com.unopay.api.model.validation.group.Create;
@@ -54,6 +55,8 @@ public class AccreditedNetworkController {
     private BranchService branchService;
     private SchedulingService schedulingService;
     private EstablishmentEventService establishmentEventService;
+    private EstablishmentBranchService establishmentBranchService;
+
 
     @Value("${unopay.api}")
     private String api;
@@ -63,12 +66,14 @@ public class AccreditedNetworkController {
                                        EstablishmentService establishmentService,
                                        BranchService branchService,
                                        SchedulingService schedulingService,
-                                       EstablishmentEventService establishmentEventService) {
+                                       EstablishmentEventService establishmentEventService,
+                                       EstablishmentBranchService establishmentBranchService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
         this.schedulingService = schedulingService;
         this.establishmentEventService = establishmentEventService;
+        this.establishmentBranchService = establishmentBranchService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -170,7 +175,7 @@ public class AccreditedNetworkController {
     public ResponseEntity<Establishment> createEstablishment(@Validated(Create.class) @RequestBody Establishment establishment,
                                                              AccreditedNetwork accreditedNetwork) {
         log.info("create an establishment for network={}", accreditedNetwork.documentNumber());
-        Establishment created = establishmentService.create(establishment, accreditedNetwork);
+        Establishment created = establishmentBranchService.create(establishment, accreditedNetwork);
         return ResponseEntity
                 .created(URI.create("/accredited-networks/me/establishments/"+created.getId()))
                 .body(created);
