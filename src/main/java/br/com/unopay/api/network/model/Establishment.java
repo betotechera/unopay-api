@@ -119,7 +119,6 @@ public class Establishment implements Serializable, Updatable, Localizable {
 
     @ManyToOne
     @JoinColumn(name = "accredited_network_id")
-    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Detail.class})
     private AccreditedNetwork network;
 
