@@ -2,7 +2,6 @@ package br.com.unopay.api.network.model;
 
 import br.com.unopay.api.bacen.model.GatheringChannel;
 import br.com.unopay.api.geo.model.Localizable;
-import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;

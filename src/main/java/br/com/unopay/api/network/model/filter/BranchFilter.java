@@ -1,6 +1,7 @@
 package br.com.unopay.api.network.model.filter;
 
 import br.com.unopay.api.model.State;
+import br.com.unopay.api.network.model.EstablishmentType;
 import br.com.unopay.bootcommons.repository.filter.SearchableField;
 import java.io.Serializable;
 import java.util.Collection;
@@ -11,14 +12,17 @@ public class BranchFilter implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
-    @SearchableField(field = "person.document.number")
-    private String documentNumber;
+    @SearchableField
+    private String shortName;
 
-    @SearchableField(field = "person.name")
-    private String personName;
+    @SearchableField
+    private String fantasyName;
 
     @SearchableField(field = "headOffice.type")
-    private String headOfficeType;
+    private EstablishmentType headOfficeType;
+
+    @SearchableField(field = "headOffice.person.document.number")
+    private String headOfficeDocument;
 
     @SearchableField(field = "headOffice.id")
     private String headOffice;
