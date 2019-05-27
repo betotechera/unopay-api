@@ -57,6 +57,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTU
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURE_RECEIVED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.DENIED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUND;
+import static br.com.unopay.api.uaa.exception.Errors.RECURRENCE_PAYMENT_METHOD_REQUIRED;
 
 @Data
 @Entity
@@ -285,11 +286,14 @@ public class Order implements Updatable, Billable, Serializable {
     public void validateMe() {
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
-            if(candidates!= null) {
-                candidates.forEach(candidate -> {
+            if(this.candidates!= null) {
+                this.candidates.forEach(candidate -> {
                     candidate.validateMe();
                     candidate.setMeUp();
                 });
+            }
+            if(this.recurrencePaymentMethod == null){
+                throw UnovationExceptions.unprocessableEntity().withErrors(RECURRENCE_PAYMENT_METHOD_REQUIRED);
             }
         }
     }
