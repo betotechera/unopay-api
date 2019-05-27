@@ -275,6 +275,11 @@ public class Order implements Updatable, Billable, Serializable {
         if(hasPaymentRequest()) {
             this.paymentMethod = this.paymentRequest.getMethod();
         }
+        if(isType(OrderType.ADHESION)){
+            if(this.recurrencePaymentMethod == null){
+                this.recurrencePaymentMethod = PaymentMethod.BOLETO;
+            }
+        }
     }
 
     private boolean shouldApplyFee() {
@@ -291,9 +296,6 @@ public class Order implements Updatable, Billable, Serializable {
                     candidate.validateMe();
                     candidate.setMeUp();
                 });
-            }
-            if(this.recurrencePaymentMethod == null){
-                throw UnovationExceptions.unprocessableEntity().withErrors(RECURRENCE_PAYMENT_METHOD_REQUIRED);
             }
         }
     }
