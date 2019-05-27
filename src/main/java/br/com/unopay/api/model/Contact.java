@@ -1,9 +1,12 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.model.validation.group.Create;
+import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,6 +38,7 @@ public class Contact  implements Serializable {
     private String mail;
 
     @Column(name = "cell_phone")
+    @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.Establishment.Contact.class})
     private String cellPhone;
 
