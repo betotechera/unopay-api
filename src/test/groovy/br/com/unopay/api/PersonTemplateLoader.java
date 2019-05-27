@@ -28,6 +28,8 @@ public class PersonTemplateLoader implements TemplateLoader {
             add("shortName", firstName());
             add("address", one(Address.class, "address"));
             add("telephone", "11999999999");
+            add("cellPhone", "11999999999");
+
         }});
 
         Fixture.of(Person.class).addTemplate("physical").inherits("base", new Rule(){{
