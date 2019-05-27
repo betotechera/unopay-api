@@ -293,7 +293,7 @@ public class Order implements Updatable, Billable, Serializable {
                 });
             }
             if(this.recurrencePaymentMethod == null){
-                throw UnovationExceptions.unprocessableEntity().withErrors(RECURRENCE_PAYMENT_METHOD_REQUIRED);
+                this.recurrencePaymentMethod = PaymentMethod.BOLETO;
             }
         }
     }
