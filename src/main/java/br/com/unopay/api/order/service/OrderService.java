@@ -10,6 +10,7 @@ import br.com.unopay.api.infra.NumberGenerator;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderSummary;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.OrderValidator;
 import br.com.unopay.api.order.model.PaymentStatus;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +102,11 @@ public class OrderService {
         return orders.stream().map(Order::getId).collect(Collectors.toSet());
     }
 
+    public Set<OrderSummary> findSummaryByPersonDocument(String document) {
+        Set<Order> orders = getLastOrdersByDocument(document);
+        return orders.stream().map(OrderSummary::new).collect(Collectors.toSet());
+    }
+
     public Set<String> findNumbersByPersonEmail(String email) {
         Set<Order> orders = getLastOrders(email);
         return orders.stream().map(Order::getNumber).collect(Collectors.toSet());
@@ -108,6 +115,11 @@ public class OrderService {
     private Set<Order> getLastOrders(String email) {
         return repository
                 .findTop20ByPersonPhysicalPersonDetailEmailIgnoreCaseOrderByCreateDateTimeDesc(email);
+    }
+
+    private Set<Order> getLastOrdersByDocument(String email) {
+        return repository
+                .findTop20ByPersonDocumentNumberOrderByCreateDateTimeDesc(email);
     }
 
     @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#ordersIds)")
@@ -119,6 +131,13 @@ public class OrderService {
 
     @Cacheable(value = CONTRACTOR_ORDERS, key = "#email + '_' + T(java.util.Objects).hash(#orderNumbers)")
     public Set<String> getMyOrderNumbers(String email, Set<String> orderNumbers) {
+        Set<String> numbers = findNumbersByPersonEmail(email);
+        Set<String> intersection = orderNumbers.stream().filter(numbers::contains).collect(Collectors.toSet());
+        return orderNumbers.isEmpty() ? numbers : intersection;
+    }
+
+    @Cacheable(value = CONTRACTOR_ORDERS, key = "#document + '_' + T(java.util.Objects).hash(#orderNumbers)")
+    public Set<String> getMyOrderNumbersAndIds(String document, Set<String> orderNumbers) {
         Set<String> numbers = findNumbersByPersonEmail(email);
         Set<String> intersection = orderNumbers.stream().filter(numbers::contains).collect(Collectors.toSet());
         return orderNumbers.isEmpty() ? numbers : intersection;

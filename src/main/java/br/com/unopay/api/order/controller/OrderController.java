@@ -5,6 +5,7 @@ import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.order.model.Order;
+import br.com.unopay.api.order.model.OrderSummary;
 import br.com.unopay.api.order.model.OrderType;
 import br.com.unopay.api.order.model.filter.OrderFilter;
 import br.com.unopay.api.order.service.OrderService;
@@ -14,6 +15,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -110,6 +113,14 @@ public class OrderController {
                                         @Validated(Create.Order.class) @RequestBody PaymentRequest paymentRequest) {
         log.info("new payment for order={}", id);
         return service.requestPayment(id, paymentRequest);
+    }
+
+    @ResponseStatus(OK)
+    @PreAuthorize("#oauth2.isClient()")
+    @RequestMapping(value = "/orders/summaries", method = GET, params = "document")
+    public Set<OrderSummary> summarize(@RequestParam String document) {
+        log.info("new payment for order={}", document);
+        return service.findSummaryByPersonDocument(document);
     }
 
 }
