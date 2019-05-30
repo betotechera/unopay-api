@@ -136,13 +136,6 @@ public class OrderService {
         return orderNumbers.isEmpty() ? numbers : intersection;
     }
 
-    @Cacheable(value = CONTRACTOR_ORDERS, key = "#document + '_' + T(java.util.Objects).hash(#orderNumbers)")
-    public Set<String> getMyOrderNumbersAndIds(String document, Set<String> orderNumbers) {
-        Set<String> numbers = findNumbersByPersonEmail(email);
-        Set<String> intersection = orderNumbers.stream().filter(numbers::contains).collect(Collectors.toSet());
-        return orderNumbers.isEmpty() ? numbers : intersection;
-    }
-
     @Transactional
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
