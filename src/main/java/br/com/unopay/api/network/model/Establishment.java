@@ -211,6 +211,10 @@ public class Establishment implements Serializable, Updatable, Localizable {
     @Transient
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 
+    public AccreditedNetwork getNetwork() {
+        return network;
+    }
+
     public void validateCreate() {
         if (getBankAccount() == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(BANK_ACCOUNT_REQUIRED);
