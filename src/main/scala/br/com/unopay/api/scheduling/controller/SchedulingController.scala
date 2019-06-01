@@ -67,6 +67,14 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
         schedulingService.deleteById(id)
     }
 
+    @GetMapping(Array("/"), params = Array("token"))
+    @PreAuthorize("hasRole('ROLE_LIST_SCHEDULING')")
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
+    def findByToken(@RequestParam token: String): Scheduling = {
+        log.info("finding scheduling with token={}", token)
+        schedulingService.findByToken(token)
+    }
+
     private def buildUriLocation(id: String) = {
         fromCurrentRequestUri()
                 .path("/{id}")

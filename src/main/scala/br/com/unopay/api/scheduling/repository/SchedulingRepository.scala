@@ -10,6 +10,8 @@ trait SchedulingRepository extends UnovationFilterRepository[Scheduling, String,
 
     def findById(id: String): Optional[Scheduling]
 
+    def findByToken(token: String): Optional[Scheduling]
+
     def findByIdAndBranchHeadOfficeNetworkId(id: String, networkId: String): Optional[Scheduling]
 
     def findByTokenAndBranchHeadOfficeNetworkId(token: String, networkId: String): Optional[Scheduling]
