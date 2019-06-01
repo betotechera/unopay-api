@@ -4,7 +4,7 @@ import br.com.unopay.api.`implicit`.DateImplicit.DateImplicit
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
-import br.com.unopay.api.network.model.AccreditedNetwork
+import br.com.unopay.api.network.model.{AccreditedNetwork, Establishment}
 import br.com.unopay.api.network.service.{BranchService, EventService}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
@@ -53,6 +53,11 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         actualScheduling.updateAllExcept(otherScheduling, "user")
         setReferences(actualScheduling)
         schedulingRepository.save(actualScheduling)
+    }
+
+    def findByToken(token: String, establishment: Establishment) = {
+        schedulingRepository.findByTokenAndBranchHeadOfficeNetworkId(token, establishment.getNetwork.getId)
+          .orElseThrow(() => throw notFound.withErrors(SCHEDULING_NOT_FOUND.withOnlyArguments(token)))
     }
 
     def findById(id: String, accreditedNetwork: AccreditedNetwork) : Scheduling = {

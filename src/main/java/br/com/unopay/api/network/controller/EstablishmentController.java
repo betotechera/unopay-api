@@ -1,6 +1,7 @@
 package br.com.unopay.api.network.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
@@ -23,6 +24,8 @@ import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.scheduling.model.Scheduling;
+import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.service.ServiceAuthorizeService;
@@ -71,6 +74,7 @@ public class EstablishmentController {
     private BonusBillingService bonusBillingService;
     private EstablishmentBranchService establishmentBranchService;
     private TicketService ticketService;
+    private SchedulingService schedulingService;
 
     @Value("${unopay.api}")
     private String api;
@@ -84,7 +88,8 @@ public class EstablishmentController {
                                    ContractorBonusService contractorBonusService,
                                    BonusBillingService bonusBillingService,
                                    EstablishmentBranchService establishmentBranchService,
-                                   TicketService ticketService) {
+                                   TicketService ticketService,
+                                   SchedulingService schedulingService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
@@ -94,6 +99,7 @@ public class EstablishmentController {
         this.bonusBillingService = bonusBillingService;
         this.establishmentBranchService = establishmentBranchService;
         this.ticketService = ticketService;
+        this.schedulingService = schedulingService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -332,5 +338,13 @@ public class EstablishmentController {
         Establishment establishment = service.findById(id);
         log.info("process all bonus billing for establishment={}", establishment.documentNumber());
         bonusBillingService.process(establishment.getPerson());
+    }
+
+    @JsonView(Views.Scheduling.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/schedules/{token}", method = RequestMethod.GET)
+    public Scheduling getScheduling(@PathVariable  String token, Establishment establishment) {
+        log.info("get a scheduling for token={} and establishment={}",token, establishment.documentNumber());
+        return schedulingService.findByToken(token, establishment);
     }
 }
