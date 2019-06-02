@@ -77,4 +77,8 @@ public class EstablishmentEvent implements Updatable, Serializable {
     public ServiceType serviceType() {
         return event.serviceType();
     }
+
+    public Event getEvent() {
+        return event;
+    }
 }

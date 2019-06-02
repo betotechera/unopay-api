@@ -93,7 +93,7 @@ public class EstablishmentEventService {
 
     public EstablishmentEvent findByEstablishmentIdAndId(String establishmentId, String id) {
         Optional<EstablishmentEvent> establishment = repository.findByEstablishmentIdAndId(establishmentId, id);
-        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND));
+        return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND.withOnlyArguments(id)));
     }
 
     public List<EstablishmentEvent> findByEstablishmentId(String establishmentId) {

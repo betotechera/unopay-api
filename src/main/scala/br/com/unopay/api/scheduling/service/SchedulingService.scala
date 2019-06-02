@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.network.model.{AccreditedNetwork, Establishment}
-import br.com.unopay.api.network.service.{BranchService, EventService}
+import br.com.unopay.api.network.service.{BranchService, EstablishmentEventService, EventService}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
@@ -25,7 +25,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
                         val branchService: BranchService,
                         val authorizedMemberService: AuthorizedMemberService,
                         val paymentInstrumentService: PaymentInstrumentService,
-                        val eventService: EventService) {
+                        val establishmentEventService: EstablishmentEventService) {
 
     private val MAX_EXPIRATION_IN_DAYS = 5
 
@@ -153,7 +153,8 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
             scheduling.setAuthorizedMember(authorizedMember)
         }
         if (scheduling.hasEvents()){
-            scheduling.events = scheduling.events.asScala.map(event => eventService.findById(event.getId)).asJava
+            scheduling.events = scheduling.events.asScala.map(event =>
+                establishmentEventService.findByEstablishmentIdAndId(scheduling.getBranch.headOfficeId, event.getId)).map(_.getEvent).asJava
         }
     }
 

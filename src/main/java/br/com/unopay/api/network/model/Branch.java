@@ -160,6 +160,13 @@ public class Branch implements Serializable, Updatable, Localizable {
         return id;
     }
 
+    public String headOfficeId(){
+        if(this.headOffice != null){
+            this.headOffice.getId();
+        }
+        return null;
+    }
+
     @Override
     public void defineAddressLat(double lat) {
         if(hasAddress()) {
