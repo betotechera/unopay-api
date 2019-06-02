@@ -1,7 +1,10 @@
 package br.com.unopay.api.network.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
-import br.com.unopay.api.network.model.AccreditedNetwork;
+import br.com.unopay.api.bacen.model.Hirer;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
+import br.com.unopay.api.market.model.AuthorizedMember;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.network.model.filter.EstablishmentFilter;
@@ -75,6 +78,7 @@ public class EstablishmentController {
     private EstablishmentBranchService establishmentBranchService;
     private TicketService ticketService;
     private SchedulingService schedulingService;
+    private AuthorizedMemberService authorizedMemberService;
 
     @Value("${unopay.api}")
     private String api;
@@ -89,7 +93,8 @@ public class EstablishmentController {
                                    BonusBillingService bonusBillingService,
                                    EstablishmentBranchService establishmentBranchService,
                                    TicketService ticketService,
-                                   SchedulingService schedulingService) {
+                                   SchedulingService schedulingService,
+                                   AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.authorizeService = authorizeService;
         this.contractorService = contractorService;
@@ -100,6 +105,7 @@ public class EstablishmentController {
         this.establishmentBranchService = establishmentBranchService;
         this.ticketService = ticketService;
         this.schedulingService = schedulingService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @JsonView(Views.Establishment.Detail.class)
@@ -346,5 +352,17 @@ public class EstablishmentController {
     public Scheduling getScheduling(@PathVariable  String token, Establishment establishment) {
         log.info("get a scheduling for token={} and establishment={}",token, establishment.documentNumber());
         return schedulingService.findByToken(token, establishment);
+    }
+
+    @JsonView(Views.AuthorizedMember.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/establishments/me/authorized-members", method = RequestMethod.GET)
+    public PageableResults<AuthorizedMember> getAuthorizedMember(Establishment establishment, AuthorizedMemberFilter filter,
+                                                                 @Validated UnovationPageRequest pageable) {
+        log.info("get authorizedMembers for establishment={}", establishment.getPerson().documentNumber());
+        filter.setNetworkId(establishment.getNetwork().getId());
+        Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(), String.format("%s/establishments/me/authorized-members", api));
     }
 }
