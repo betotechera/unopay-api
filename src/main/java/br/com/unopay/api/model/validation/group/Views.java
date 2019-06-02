@@ -205,7 +205,7 @@ public interface Views {
     }
 
     interface Scheduling {
-        interface Detail extends List, PaymentInstrument.Detail {}
+        interface Detail extends List, PaymentInstrument.Detail, Branch.Detail {}
         interface List {}
     }
 
