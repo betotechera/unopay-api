@@ -76,7 +76,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
     }
 
     def findByToken(token: String) : Scheduling = {
-        schedulingRepository.findById(token)
+        schedulingRepository.findByToken(token)
           .orElseThrow(() => throw notFound.withErrors(SCHEDULING_NOT_FOUND.withOnlyArguments(token)))
     }
 
