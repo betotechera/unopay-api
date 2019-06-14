@@ -2,6 +2,7 @@ package br.com.unopay.api.billing.creditcard.model;
 
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -24,6 +25,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+
+import static br.com.unopay.api.uaa.exception.Errors.INVALID_PAYMENT_VALUE;
 
 @Data
 @Entity
@@ -107,5 +110,13 @@ public class Transaction {
 
     public boolean hasCardToken() {
         return getCreditCard() != null && getCreditCard().getToken() != null;
+    }
+
+    public void checkValue() {
+        if(getAmount().getValue() == null ||
+                getAmount().getValue().compareTo(BigDecimal.ZERO) == -1 ||
+                getAmount().getValue().compareTo(BigDecimal.ZERO) == 0){
+            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_PAYMENT_VALUE);
+        }
     }
 }

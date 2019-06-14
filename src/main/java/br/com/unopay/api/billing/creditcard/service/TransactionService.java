@@ -64,17 +64,11 @@ public class TransactionService {
         if(transaction.getOrderId() == null){
             throw UnovationExceptions.conflict().withErrors(ORDER_REQUIRED);
         }
-        checkValue(transaction);
+        transaction.checkValue();
         checkAlreadyCreated(transaction.getOrderId());
     }
 
-    private void checkValue(Transaction transaction) {
-        if(transaction.getAmount().getValue() == null ||
-                transaction.getAmount().getValue().compareTo(BigDecimal.ZERO) == -1 ||
-                transaction.getAmount().getValue().compareTo(BigDecimal.ZERO) == 0){
-            throw UnovationExceptions.unprocessableEntity().withErrors(INVALID_PAYMENT_VALUE);
-        }
-    }
+
 
     private void checkAlreadyCreated(String orderId) {
         Optional<Transaction> byOrder = repository.findByOrderId(orderId);
