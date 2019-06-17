@@ -17,7 +17,8 @@ public enum ServiceType implements DescriptableEnum {
     EMS("Pronto Socorro", HEALTH),
     BODY_THERAPY("Terapia do corpo", HEALTH),
     ENERGY_THERAPY("Terapia de energia", HEALTH),
-    CONSCIENCE_THERAPY("Terapia da consciência", HEALTH);
+    CONSCIENCE_THERAPY("Terapia da consciência", HEALTH),
+    HOLISTIC_MEDICINE("Medicina alternativa", HEALTH);
 
     private String description;
     private Segment segment;
