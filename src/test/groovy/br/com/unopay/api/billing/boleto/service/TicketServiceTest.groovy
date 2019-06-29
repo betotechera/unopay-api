@@ -1,13 +1,15 @@
 package br.com.unopay.api.billing.boleto.service
 
+import br.com.caelum.stella.boleto.Banco
+import br.com.caelum.stella.boleto.bancos.Santander
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.model.PaymentBankAccount
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.boleto.model.Ticket
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
-import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto
-import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService
+import br.com.unopay.api.billing.boleto.registry.TicketRegistry
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentT
@@ -19,6 +21,7 @@ import br.com.unopay.api.fileuploader.service.FileUploaderService
 import br.com.unopay.api.infra.NumberGenerator
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.service.NegotiationBillingService
+import br.com.unopay.api.model.Billable
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.service.OrderProcessor
@@ -46,7 +49,6 @@ class TicketServiceTest extends SpockApplicationTests{
     Order order
     Credit credit
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
-    CobrancaOnlineService cobrancaOnlineServiceMock = Mock(CobrancaOnlineService)
     NotificationService notificationServiceMock = Mock(NotificationService)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     OrderService orderServiceMock = Mock(OrderService)
@@ -74,8 +76,22 @@ class TicketServiceTest extends SpockApplicationTests{
         path = "${order.person.documentNumber()}.pdf"
         uploaderServiceMock.uploadBytes(_,_) >> path
         service.fileUploaderService = uploaderServiceMock
-        cobrancaOnlineServiceMock.getTicket(_,_) >> new TituloDto().with { nossoNumero = "1234"; it }
-        service.cobrancaOnlineService = cobrancaOnlineServiceMock
+        service.ticketRegistries = [ new TicketRegistry() {
+            @Override
+            String registryTicket(Billable billable, PaymentBankAccount paymentBankAccount, String number) {
+                return "1234"
+            }
+
+            @Override
+            Banco getBank() {
+                return new Santander()
+            }
+
+            @Override
+            boolean hasBacenCode(Integer bacenCode) {
+                return true
+            }
+        }]
         service.notificationService = notificationServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
         service.negotiationBillingService = negotiationBillingServiceMock

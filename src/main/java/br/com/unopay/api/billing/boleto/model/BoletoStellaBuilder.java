@@ -58,7 +58,7 @@ public class BoletoStellaBuilder {
         return this;
     }
 
-    public Boleto build() {
+    public Boleto build(Banco banco) {
         checkUp();
         Datas datas = getDatas();
 
@@ -75,8 +75,6 @@ public class BoletoStellaBuilder {
                 .comNome(this.payer.getName())
                 .comDocumento(this.payer.documentNumber())
                 .comEndereco(enderecoPagador);
-
-        Banco banco = new Santander();
 
         return Boleto.novoBoleto()
                 .comBanco(banco)

@@ -6,15 +6,12 @@ import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.model.BoletoStellaBuilder;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
+import br.com.unopay.api.billing.boleto.registry.TicketRegistry;
 import br.com.unopay.api.billing.boleto.repository.TicketRepository;
-import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
-import br.com.unopay.api.billing.boleto.santander.cobrancaonline.ymb.TituloDto;
 import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
-import br.com.unopay.api.billing.boleto.santander.translate.CobrancaOlnineBuilder;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
-import br.com.unopay.api.credit.model.filter.CreditFilter;
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService;
 import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
@@ -33,8 +30,8 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import javax.transaction.Transactional;
 import lombok.Getter;
@@ -71,7 +68,7 @@ public class TicketService {
     @Setter private OrderService orderService;
     @Setter private OrderProcessor orderProcessor;
     @Setter private CreditService creditService;
-    @Setter private CobrancaOnlineService cobrancaOnlineService;
+    @Setter private Set<TicketRegistry> ticketRegistries;
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     @Setter private NotificationService notificationService;
@@ -93,8 +90,7 @@ public class TicketService {
     public TicketService(TicketRepository repository,
                          OrderService orderService,
                          OrderProcessor orderProcessor, CreditService creditService,
-                         CobrancaOnlineService cobrancaOnlineService,
-                         FileUploaderService fileUploaderService,
+                         Set<TicketRegistry> ticketRegistries, FileUploaderService fileUploaderService,
                          LayoutExtractorSelector layoutExtractorSelector,
                          NotificationService notificationService,
                          NegotiationBillingService negotiationBillingService,
@@ -104,7 +100,7 @@ public class TicketService {
         this.orderService = orderService;
         this.orderProcessor = orderProcessor;
         this.creditService = creditService;
-        this.cobrancaOnlineService = cobrancaOnlineService;
+        this.ticketRegistries = ticketRegistries;
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.notificationService = notificationService;
@@ -160,14 +156,8 @@ public class TicketService {
     private Ticket create(Billable billable) {
         PaymentBankAccount paymentBankAccount = billable.getIssuer().getPaymentAccount();
         String number = getValidNumber();
-        List<TicketRequest.Dados.Entry> entries = new CobrancaOlnineBuilder()
-                .payer(billable.getPayer()).expirationDays(deadlineInDays)
-                .paymentBankAccount(paymentBankAccount)
-                .value(billable.getValue())
-                .yourNumber(number).build();
-
-        //TituloDto tituloDto = cobrancaOnlineService.getTicket(entries, paymentBankAccount.getStation());
-        String clearOurNumber = String.valueOf(new Date().getTime()); //Integer.valueOf(tituloDto.getNossoNumero()).toString();
+        TicketRegistry ticketRegistry = getTicketRegistry(paymentBankAccount);
+        String clearOurNumber = ticketRegistry.registryTicket(billable, paymentBankAccount, number);
         br.com.caelum.stella.boleto.Boleto boletoStella = new BoletoStellaBuilder()
                 .issuer(billable.getIssuer())
                 .number(number)
@@ -175,12 +165,16 @@ public class TicketService {
                 .payer(billable.getPayer())
                 .value(billable.getValue())
                 .ourNumber(clearOurNumber)
-                .build();
+                .build(ticketRegistry.getBank());
         Ticket ticket = createTicketModel(billable, boletoStella, clearOurNumber);
         if(billable.hasBillingMail()) {
             notificationService.sendTicketIssued(billable, ticket);
         }
         return ticket;
+    }
+
+    private TicketRegistry getTicketRegistry(PaymentBankAccount paymentBankAccount) {
+        return ticketRegistries.stream().filter(registry -> registry.hasBacenCode(paymentBankAccount.backBacenCode())).findFirst().orElseThrow(UnovationExceptions.failedDependency());
     }
 
     private String getValidNumber() {

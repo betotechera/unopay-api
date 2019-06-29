@@ -94,4 +94,8 @@ public class PaymentBankAccount implements Serializable{
     public String getBankAccountId() {
         return bankAccount.getId();
     }
+
+    public Integer backBacenCode(){
+        return this.bankAccount.getBank().getBacenCode();
+    }
 }

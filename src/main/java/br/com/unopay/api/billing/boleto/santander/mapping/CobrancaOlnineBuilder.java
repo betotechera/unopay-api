@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.boleto.santander.translate;
+package br.com.unopay.api.billing.boleto.santander.mapping;
 
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
 import br.com.unopay.api.billing.boleto.santander.cobrancaonline.dl.TicketRequest;
