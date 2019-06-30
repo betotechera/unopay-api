@@ -78,16 +78,16 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_PAGAMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO;
 
-public abstract class RemittanceLayout {
+public abstract class BradescoRemittanceLayout {
 
     private static final Map<String, RecordColumnRule> remittanceHeader = new HashMap<String, RecordColumnRule>(){
 
      {
-        put(BANCO_COMPENSACAO, new RecordColumnRule(1, 1, 3, 3, "237", ColumnType.NUMBER));
+        put(BANCO_COMPENSACAO, new RecordColumnRule(1, 1, 3, 3, "341", ColumnType.NUMBER));
         put(LOTE_SERVICO, new RecordColumnRule(2, 4, 7, 4, "0000", ColumnType.NUMBER));
         put(TIPO_REGISTRO, new RecordColumnRule(3, 8, 8, 1, "0", ColumnType.NUMBER));
         put(INICIO_FEBRABAN, new RecordColumnRule(4, 9, 17, 9, ColumnType.ALPHA));
-        put(TIPO_INSCRICAO, new RecordColumnRule(5, 18, 18, 1, "2", ColumnType.NUMBER));
+        put(TIPO_INSCRICAO, new RecordColumnRule(5, 18, 18, 1, "1", ColumnType.NUMBER));
         put(NUMERO_INSCRICAO_EMPRESA, new RecordColumnRule(6, 19, 32, 14, ColumnType.NUMBER));
         put(CONVEIO_BANCO, new RecordColumnRule(7, 33, 52, 20, ColumnType.ALPHA));
         put(AGENCIA, new RecordColumnRule(8, 53, 57, 5, ColumnType.NUMBER));

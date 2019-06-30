@@ -42,9 +42,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentB;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceHeader;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentB;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;

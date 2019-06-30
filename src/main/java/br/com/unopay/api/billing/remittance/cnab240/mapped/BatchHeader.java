@@ -5,7 +5,7 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.billing.remittance.model.RemittancePayer;
 
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CEP;

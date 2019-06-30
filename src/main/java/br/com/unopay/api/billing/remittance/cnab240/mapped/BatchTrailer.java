@@ -4,7 +4,7 @@ import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.util.Rounder;
 
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchTrailer;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchTrailer;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INICIO_FEBRABAN;

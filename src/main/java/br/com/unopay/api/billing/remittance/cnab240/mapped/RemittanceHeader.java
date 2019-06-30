@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
 import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.HOUR_FORMAT;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceHeader;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_REMESSA;

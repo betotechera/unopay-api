@@ -10,7 +10,7 @@ import java.util.Date;
 import org.apache.commons.lang3.ObjectUtils;
 
 import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentB;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentB;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BAIRRO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CEP;

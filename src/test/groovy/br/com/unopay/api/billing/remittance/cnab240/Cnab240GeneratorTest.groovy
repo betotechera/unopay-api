@@ -4,12 +4,12 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentB
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchTrailer
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceHeader
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceTrailer
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchHeader
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentB
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchTrailer
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceTrailer
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AVISO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BAIRRO

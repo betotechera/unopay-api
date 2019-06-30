@@ -1,12 +1,12 @@
 package br.com.unopay.api.billing.remittance.cnab240.filler
 
 import br.com.unopay.api.FixtureApplicationTest
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentB
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchTrailer
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceHeader
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceTrailer
+import static BradescoRemittanceLayout.getBatchHeader
+import static BradescoRemittanceLayout.getBatchSegmentA
+import static BradescoRemittanceLayout.getBatchSegmentB
+import static BradescoRemittanceLayout.getBatchTrailer
+import static BradescoRemittanceLayout.getRemittanceHeader
+import static BradescoRemittanceLayout.getRemittanceTrailer
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AVISO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BAIRRO

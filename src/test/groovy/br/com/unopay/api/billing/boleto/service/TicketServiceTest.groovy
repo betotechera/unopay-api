@@ -12,7 +12,7 @@ import br.com.unopay.api.billing.boleto.model.TicketPaymentSource
 import br.com.unopay.api.billing.boleto.registry.TicketRegistry
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentT
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentT
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_OCORRENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_TITULO
 import br.com.unopay.api.credit.model.Credit

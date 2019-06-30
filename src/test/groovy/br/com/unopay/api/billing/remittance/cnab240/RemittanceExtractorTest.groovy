@@ -3,9 +3,9 @@ package br.com.unopay.api.billing.remittance.cnab240
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.remittance.cnab240.filler.RecordColumnRule
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchHeader
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getRemittanceHeader
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchHeader
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_TED
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA

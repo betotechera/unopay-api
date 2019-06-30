@@ -10,7 +10,7 @@ import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayout.getBatchSegmentA
+import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
 import br.com.unopay.api.billing.remittance.model.PaymentOperationType
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
