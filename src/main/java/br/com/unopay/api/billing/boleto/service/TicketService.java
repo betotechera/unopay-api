@@ -8,7 +8,6 @@ import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.filter.TicketFilter;
 import br.com.unopay.api.billing.boleto.registry.TicketRegistry;
 import br.com.unopay.api.billing.boleto.repository.TicketRepository;
-import br.com.unopay.api.billing.boleto.santander.service.CobrancaOnlineService;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.credit.model.Credit;
