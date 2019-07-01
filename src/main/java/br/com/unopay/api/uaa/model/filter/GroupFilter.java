@@ -11,4 +11,10 @@ public class GroupFilter {
     @SearchableField(field = "userType.id")
     private String userTypeId;
 
+    @SearchableField
+    private String name;
+
+    @SearchableField
+    private String description;
+
 }
