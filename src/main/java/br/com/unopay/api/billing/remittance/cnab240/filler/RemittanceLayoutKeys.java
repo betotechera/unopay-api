@@ -28,7 +28,18 @@ public class RemittanceLayoutKeys {
     public static final String INICIO_FEBRABAN = "inicioFebraban";
     public static final String MEIO_FEBRABAN = "meioFebraban";
     public static final String FIM_FEBRABAN = "fimFebraban";
+    public static final String AGENCIA_CONTA = "agencia_conta";
+    public static final String CODIGO_ISPB = "codigo_ispb";
+    public static final String FINALIDADE_DETALHE = "finalidade_detalhe";
+    public static final String NUMERO_DOCUMENTO = "numero_documento";
+    public static final String NUMERO_INSCRICAO_FAVORECIDO = "numero_inscricao_favorecido";
     public static final String FORMA_LANCAMENTO = "formaLancamento";
+    public static final String IDENTIFICACAO_LANCAMENTO = "identificacao_lancamento";
+    public static final String BRANCOS_1 = "brancos_1";
+    public static final String BRANCOS_2 = "brancos_2";
+    public static final String BRANCOS_3 = "brancos_3";
+    public static final String HISTORICO_CC = "historico_CC";
+    public static final String FINALIDADE_COD = "finalidade_cod";
     public static final String TIPO_OPERACAO = "tipoOperacao";
     public static final String TIPO_SERVICO = "tipoServico";
     public static final String MENSAGEM = "mensagem";
@@ -40,6 +51,7 @@ public class RemittanceLayoutKeys {
     public static final String COMPLEMENTO_CEP = "complementoCep";
     public static final String ESTADO = "estado";
     public static final String OCORRENCIAS = "ocorrencias";
+    public static final String NOSSO_NUMERO = "nosso_numero";
     public static final String SOMATORIA_VALORES = "somatoriaValores";
     public static final String QUANTIDADE_MOEDAS = "quantidadeMoedas";
     public static final String NUMERO_AVISO_DEBITO = "numeroAvisoDebito";
@@ -66,7 +78,6 @@ public class RemittanceLayoutKeys {
     public static final String FINALIDADE_TED = "finalidadeTed";
     public static final String AVISO = "aviso";
     public static final String TIPO_INSCRICAO_FAVORECIDO = "tipoInscricaoFavorecido";
-    public static final String NUMERO_INSCRICAO_FAVORECIDO = "numeroInscricaoFavorecido";
     public static final String BAIRRO = "bairro";
     public static final String DATA_VENCIMENTO = "dataVencimento";
     public static final String VALOR_DOCUMENTO = "valorDocumento";
