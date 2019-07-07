@@ -12,22 +12,20 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCOS_1;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCOS_2;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCOS_3;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCOS_5;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCOS_6;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BRANCO_4;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CAMARA_CENTRALIZADORA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CEP;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CIDADE;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_ISPB;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_REMESSA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CONVEIO_BANCO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_GERACAO_ARQUIVO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_PAGAMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_REAL_PAGAMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DENSIDADE_GRAVACAO;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.ESTADO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_COD;
@@ -42,7 +40,6 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LAYOUT_ARQUIVO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOGRADOURO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOTE_SERVICO;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.MEIO_FEBRABAN;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_BANCO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_EMPRESA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_FAVORECIDO;
@@ -58,6 +55,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_REGISTROS;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.RESERVADO_BANCO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEGMENTO;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEU_NUMERO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SOMATORIA_VALORES;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_INSCRICAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_MOEDA;
@@ -70,6 +68,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 
 public abstract class ItauRemittanceLayout {
 
+
     private static final Map<String, RecordColumnRule> remittanceHeader = new HashMap<String, RecordColumnRule>(){
 
      {
@@ -80,19 +79,19 @@ public abstract class ItauRemittanceLayout {
         put(LAYOUT_ARQUIVO, new RecordColumnRule(4, 15, 17, 3, "081",ColumnType.ALPHA));
         put(TIPO_INSCRICAO, new RecordColumnRule(5, 18, 18, 1, "1", ColumnType.NUMBER));
         put(NUMERO_INSCRICAO_EMPRESA, new RecordColumnRule(6, 19, 32, 14, ColumnType.NUMBER));
-        put(CONVEIO_BANCO, new RecordColumnRule(7, 33, 52, 20, ColumnType.ALPHA));
+        put(BRANCOS_2, new RecordColumnRule(7, 33, 52, 20, ColumnType.ALPHA));
         put(AGENCIA, new RecordColumnRule(8, 53, 57, 5, ColumnType.NUMBER));
-        put(DIGITO_AGENCIA, new RecordColumnRule(9, 58, 58, 1, ColumnType.ALPHA));
+        put(BRANCOS_3, new RecordColumnRule(9, 58, 58, 1, ColumnType.ALPHA));
         put(NUMERO_CONTA, new RecordColumnRule(10, 59, 70, 12, ColumnType.NUMBER));
-        put(DIGITO_CONTA, new RecordColumnRule(11, 71, 71, 1, ColumnType.ALPHA));
+        put(BRANCO_4, new RecordColumnRule(11, 71, 71, 1, ColumnType.ALPHA));
         put(DIGITO_AGENCIA_CONTA, new RecordColumnRule(12, 72, 72, 1, ColumnType.ALPHA));
         put(NOME_EMPRESA, new RecordColumnRule(13, 73, 102, 30, ColumnType.ALPHA));
         put(NOME_BANCO, new RecordColumnRule(14, 103, 132, 30, ColumnType.ALPHA));
-        put(MEIO_FEBRABAN, new RecordColumnRule(15, 133, 142, 10, ColumnType.ALPHA));
+        put(BRANCOS_5, new RecordColumnRule(15, 133, 142, 10, ColumnType.ALPHA));
         put(CODIGO_REMESSA, new RecordColumnRule(16, 143, 143, 1, "1", ColumnType.NUMBER));
         put(DATA_GERACAO_ARQUIVO, new RecordColumnRule(17, 144, 151, 8, ColumnType.NUMBER));
         put(HORA_GERACAO_ARQUIVO, new RecordColumnRule(18, 152, 157, 6, ColumnType.NUMBER));
-        put(BRANCOS_2, new RecordColumnRule(19, 158, 166, 9, ColumnType.NUMBER));
+        put(BRANCOS_6, new RecordColumnRule(19, 158, 166, 9, ColumnType.NUMBER));
         put(DENSIDADE_GRAVACAO, new RecordColumnRule(20, 167, 171, 5, "1600", ColumnType.NUMBER));
         put(RESERVADO_BANCO, new RecordColumnRule(21, 172, 240, 69, ColumnType.ALPHA));
     }};
@@ -116,7 +115,7 @@ public abstract class ItauRemittanceLayout {
         put(BRANCOS_2, new RecordColumnRule(14, 58, 58, 1, ColumnType.ALPHA));
         put(NUMERO_CONTA, new RecordColumnRule(15, 59, 70, 12, ColumnType.NUMBER));
         put(BRANCOS_3, new RecordColumnRule(16, 71, 71, 1, ColumnType.ALPHA));
-        put(DIGITO_CONTA, new RecordColumnRule(17, 72, 72, 1, ColumnType.ALPHA));
+        put(DIGITO_AGENCIA_CONTA, new RecordColumnRule(17, 72, 72, 1, ColumnType.ALPHA));
         put(NOME_EMPRESA, new RecordColumnRule(18, 73, 102, 30, ColumnType.ALPHA));
         put(FINALIDADE_COD, new RecordColumnRule(19, 103, 132, 30, ColumnType.ALPHA));
         put(HISTORICO_CC, new RecordColumnRule(20, 133, 142, 10, ColumnType.ALPHA));
@@ -143,7 +142,7 @@ public abstract class ItauRemittanceLayout {
         put(BANCO_FAVORECIDO, new RecordColumnRule(8,21,23,3, ColumnType.NUMBER));
         put(AGENCIA_CONTA, new RecordColumnRule(9,24,43,20, ColumnType.ALPHA));
         put(NOME_FAVORECIDO, new RecordColumnRule(10,44,73,30, ColumnType.ALPHA));
-        put(DOCUMENTO_ATRIBUIDO_EMPRESA, new RecordColumnRule(11,74,93,20, ColumnType.ALPHA));
+        put(SEU_NUMERO, new RecordColumnRule(11,74,93,20, ColumnType.ALPHA));
         put(DATA_PAGAMENTO, new RecordColumnRule(12,94,101,8, ColumnType.NUMBER));
         put(TIPO_MOEDA, new RecordColumnRule(13,102,104,3, "REA",  ColumnType.ALPHA));
         put(CODIGO_ISPB, new RecordColumnRule(14,105,112,8, ColumnType.NUMBER));
@@ -153,12 +152,12 @@ public abstract class ItauRemittanceLayout {
         put(BRANCOS_2, new RecordColumnRule(18,150,154,5, ColumnType.ALPHA));
         put(DATA_REAL_PAGAMENTO, new RecordColumnRule(19,155,162,8, ColumnType.NUMBER));
         put(VALOR_REAL_PAGAMENTO, new RecordColumnRule(20,163,177,15, ColumnType.NUMBER));
-        put(FINALIDADE_DETALHE, new RecordColumnRule(21,178,195,18, ColumnType.ALPHA));
+        put(FINALIDADE_DETALHE, new RecordColumnRule(21,178,195,18,"20", ColumnType.ALPHA));
         put(BRANCOS_3, new RecordColumnRule(22,196,197,2, ColumnType.ALPHA));
         put(NUMERO_DOCUMENTO, new RecordColumnRule(23,198,203,6, ColumnType.NUMBER));
         put(NUMERO_INSCRICAO_FAVORECIDO, new RecordColumnRule(24,204,217,14, ColumnType.NUMBER));
         put(FINALIDADE_DOC, new RecordColumnRule(25,218,219,2,"01", ColumnType.ALPHA));
-        put(FINALIDADE_TED, new RecordColumnRule(26,220,224,5, "12345",  ColumnType.ALPHA));
+        put(FINALIDADE_TED, new RecordColumnRule(26,220,224,5, "00005",  ColumnType.ALPHA));
         put(FIM_FEBRABAN, new RecordColumnRule(27,225,229,5, ColumnType.ALPHA));
         put(AVISO, new RecordColumnRule(28,230,230,1, ColumnType.NUMBER));
         put(OCORRENCIAS, new RecordColumnRule(29,231,240,10, ColumnType.ALPHA));

@@ -7,7 +7,7 @@ import br.com.unopay.api.bacen.model.BankAccount
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator
+import br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA
@@ -46,7 +46,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
-    Cnab240Generator cnab240GeneratorMock = Mock(Cnab240Generator)
+    BradescoCnab240Generator cnab240GeneratorMock = Mock(BradescoCnab240Generator)
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
@@ -54,7 +54,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     NotificationService notificationServiceMock = Mock(NotificationService)
 
     void setup() {
-        service.cnab240Generator = cnab240GeneratorMock
+        service.bradescoCnab240Generator = cnab240GeneratorMock
         service.fileUploaderService = uploaderServiceMock
         service.layoutExtractorSelector = extractorSelectorMock
         service.notificationService = notificationServiceMock
@@ -671,7 +671,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
 
     private MockMultipartFile createCnabFile(PaymentRemittance remittance, Date currentDate) {
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        String cnab240 = new BradescoCnab240Generator().generate(remittance, currentDate)
         new MockMultipartFile('file', cnab240.getBytes())
     }
 }

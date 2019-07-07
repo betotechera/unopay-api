@@ -163,6 +163,8 @@ public class RemittancePayee implements Serializable {
         return StringUtils.left(agencyDigit, 1);
     }
 
+
+
     public String agentDvLastDigit(){
         return StringUtils.right(agencyDigit, 1);
     }

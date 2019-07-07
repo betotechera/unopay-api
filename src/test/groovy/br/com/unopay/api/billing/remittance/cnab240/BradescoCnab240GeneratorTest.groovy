@@ -90,7 +90,7 @@ import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
 import spock.lang.Unroll
 
-class Cnab240GeneratorTest extends FixtureApplicationTest{
+class BradescoCnab240GeneratorTest extends FixtureApplicationTest{
 
     @Unroll
     'should create remittance header for #operation operation'(){
@@ -100,7 +100,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
             add("operationType", operationType)
         }})
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)
@@ -151,7 +151,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)
@@ -176,7 +176,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)
@@ -219,7 +219,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)
@@ -238,7 +238,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)
@@ -258,7 +258,7 @@ class Cnab240GeneratorTest extends FixtureApplicationTest{
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        def generator = new Cnab240Generator()
+        def generator = new BradescoCnab240Generator()
 
         when:
         String cnab240 = generator.generate(remittance, currentDate)

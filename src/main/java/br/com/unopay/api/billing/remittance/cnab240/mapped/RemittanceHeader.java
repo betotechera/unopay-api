@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.ObjectUtils;
 
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.HOUR_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.DATE_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.HOUR_FORMAT;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;

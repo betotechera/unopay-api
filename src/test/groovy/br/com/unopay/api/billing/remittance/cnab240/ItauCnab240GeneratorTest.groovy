@@ -1,6 +1,9 @@
-package br.com.unopay.api.billing.remittance.cnab240.filler
+package br.com.unopay.api.billing.remittance.cnab240
 
+import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord
 import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchHeader
 import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchSegmentA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchTrailer
@@ -23,6 +26,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_ISPB
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_REMESSA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO_CEP
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CONVEIO_BANCO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_GERACAO_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_PAGAMENTO
@@ -31,6 +35,7 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.ESTADO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN
@@ -42,26 +47,35 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.HISTORICO_CC
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.HORA_GERACAO_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_LANCAMENTO
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INFORMACAO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INICIO_FEBRABAN
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INSTITUICAO_MOVIMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LAYOUT_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOGRADOURO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOTE_SERVICO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.MEIO_FEBRABAN
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.MENSAGEM
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_BANCO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_FAVORECIDO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOSSO_NUMERO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_AVISO_DEBITO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_DOCUMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_REGISTRO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_CONTAS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_LOTES
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_MOEDA
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_MOEDAS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_REGISTROS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.RESERVADO_BANCO
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.RESERVADO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEGMENTO
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEQUENCIAL_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEU_NUMERO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SOMATORIA_VALORES
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_INSCRICAO
@@ -72,66 +86,97 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_SERVICO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_PAGAMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO
-import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR
+import br.com.unopay.api.billing.remittance.model.ItauAccountField
+import br.com.unopay.api.billing.remittance.model.PaymentOperationType
+import br.com.unopay.api.billing.remittance.model.PaymentRemittance
+import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem
+import br.com.unopay.api.billing.remittance.model.RemittancePayee
+import br.com.unopay.api.billing.remittance.model.RemittancePayer
+import static br.com.unopay.api.function.FixtureFunctions.instant
+import br.com.unopay.api.util.Rounder
+import org.apache.commons.lang3.StringUtils
+import spock.lang.Unroll
 
-class ItauFilledRecordTest extends FixtureApplicationTest {
+class ItauCnab240GeneratorTest extends FixtureApplicationTest{
 
-    def 'given a unknown key should return error'(){
+    @Unroll
+    'should create remittance header for #operation operation'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def currentDate = instant("now")
+        def generator = new ItauCnab240Generator()
+
         when:
-        new FilledRecord(new HashMap<String, RecordColumnRule>()).fill("key", "1")
+        String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'RULE_COLUMN_REQUIRED'
-    }
-
-    def 'remittance header should be 240 characters'(){
-        when:
+        def payer = remittance.payer
         def record = new FilledRecord(remittanceHeader) {{
-            defaultFill(BANCO_COMPENSACAO)
-            defaultFill(LOTE_SERVICO)
-            defaultFill(TIPO_REGISTRO)
-            defaultFill(BRANCOS_1)
-            defaultFill(LAYOUT_ARQUIVO)
-            defaultFill(TIPO_INSCRICAO)
-            defaultFill(NUMERO_INSCRICAO_EMPRESA)
-            defaultFill(BRANCOS_2)
-            defaultFill(AGENCIA)
-            defaultFill(BRANCOS_3)
-            defaultFill(NUMERO_CONTA)
-            defaultFill(BRANCO_4)
-            defaultFill(DIGITO_AGENCIA_CONTA)
-            defaultFill(NOME_EMPRESA)
-            defaultFill(NOME_BANCO)
-            defaultFill(BRANCOS_5)
-            defaultFill(CODIGO_REMESSA)
-            defaultFill(DATA_GERACAO_ARQUIVO)
-            defaultFill(HORA_GERACAO_ARQUIVO)
-            defaultFill(BRANCOS_6)
-            defaultFill(DENSIDADE_GRAVACAO)
-            defaultFill(RESERVADO_BANCO)
-        }}
-        then:
-        record.build().size() == 240
+                defaultFill(BANCO_COMPENSACAO)
+                defaultFill(LOTE_SERVICO)
+                defaultFill(TIPO_REGISTRO)
+                defaultFill(BRANCOS_1)
+                defaultFill(LAYOUT_ARQUIVO)
+                defaultFill(TIPO_INSCRICAO)
+                fill(NUMERO_INSCRICAO_EMPRESA, payer.documentNumber)
+                defaultFill(BRANCOS_2)
+                fill(AGENCIA, payer.agency)
+                defaultFill(BRANCOS_3)
+                fill(NUMERO_CONTA, payer.accountNumber)
+                defaultFill(BRANCO_4)
+                fill(DIGITO_CONTA, payer.accountDvFirstDigit())
+                fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
+                fill(NOME_EMPRESA, payer.name)
+                fill(NOME_BANCO, payer.getBankName())
+                defaultFill(BRANCOS_5)
+                defaultFill(CODIGO_REMESSA)
+                fill(DATA_GERACAO_ARQUIVO, currentDate.format("ddMMyyyy"))
+                fill(HORA_GERACAO_ARQUIVO, currentDate.format("hhmmss"))
+                defaultFill(BRANCOS_6)
+                defaultFill(DENSIDADE_GRAVACAO)
+                defaultFill(RESERVADO_BANCO)
+            }}
+
+        cnab240.split(SEPARATOR).first() == record.build()
+
     }
 
-    def 'remittance trailer should be 240 characters'(){
+    def 'should create remittance trailer'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def currentDate = instant("now")
+        def generator = new ItauCnab240Generator()
+
         when:
+        String cnab240 = generator.generate(remittance, currentDate)
+
+        then:
+        def segments = 2
+        def headersAndTrailers = 4
         def record = new FilledRecord(remittanceTrailer) {{
             defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            defaultFill(QUANTIDADE_LOTES)
-            defaultFill(QUANTIDADE_REGISTROS)
+            fill(QUANTIDADE_LOTES,"1")
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + headersAndTrailers)
             defaultFill(BRANCOS_1)
         }}
-        then:
-        record.build().size() == 240
+        cnab240.split(SEPARATOR).last() == record.build()
     }
 
-    def 'batch header should be 240 characters'(){
+    def 'should create batch header'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def currentDate = instant("now")
+        def generator = new ItauCnab240Generator()
+
         when:
+        String cnab240 = generator.generate(remittance, currentDate)
+
+        then:
+        RemittancePayer payer = remittance.payer
         def record = new FilledRecord(batchHeader) {{
             defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
@@ -142,50 +187,98 @@ class ItauFilledRecordTest extends FixtureApplicationTest {
             defaultFill(LAYOUT_ARQUIVO)
             defaultFill(INICIO_FEBRABAN)
             defaultFill(TIPO_INSCRICAO)
-            defaultFill(NUMERO_INSCRICAO_EMPRESA)
+            fill(NUMERO_INSCRICAO_EMPRESA, payer.documentNumber)
             defaultFill(IDENTIFICACAO_LANCAMENTO)
             defaultFill(BRANCOS_1)
-            defaultFill(AGENCIA)
+            fill(AGENCIA, payer.agency)
             defaultFill(BRANCOS_2)
-            defaultFill(NUMERO_CONTA)
+            fill(NUMERO_CONTA, payer.accountNumber)
             defaultFill(BRANCOS_3)
-            defaultFill(DIGITO_AGENCIA_CONTA)
-            defaultFill(NOME_EMPRESA)
+            fill(DIGITO_CONTA, payer.accountDvFirstDigit())
+            fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
+            fill(NOME_EMPRESA, payer.name)
             defaultFill(FINALIDADE_COD)
             defaultFill(HISTORICO_CC)
-            defaultFill(LOGRADOURO)
-            defaultFill(NUMERO)
-            defaultFill(COMPLEMENTO)
-            defaultFill(CIDADE)
-            defaultFill(CEP)
-            defaultFill(ESTADO)
+            fill(LOGRADOURO, payer.streetName)
+            fill(NUMERO, payer.number)
+            fill(COMPLEMENTO, payer.complement)
+            fill(CIDADE, payer.city)
+            fill(CEP, payer.zipCode)
+            fill(ESTADO, payer.state.name())
             defaultFill(FIM_FEBRABAN)
             defaultFill(OCORRENCIAS)
         }}
-
-        then:
-        record.build().size() == 240
+        cnab240.split(SEPARATOR)[1] == record.build()
     }
 
-    def 'batch segment A should be 240 characters'(){
+    def 'should create segment A'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def currentDate = instant("now")
+        def generator = new ItauCnab240Generator()
+
         when:
-        def record =  new FilledRecord(batchSegmentA) {{
+        String cnab240 = generator.generate(remittance, currentDate)
+        then:
+        int index = 0
+        List<FilledRecord> records = remittance.remittanceItems.collect {
+            def segmentA = createSegmentA(currentDate, it, index)
+            index+=4
+            segmentA
+        }
+        cnab240.split(SEPARATOR)[2] == records.find().build()
+        cnab240.split(SEPARATOR)[6] == records.last().build()
+    }
+
+    def 'should create batch trailer'(){
+        given:
+        PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
+        def currentDate = instant("now")
+        def generator = new ItauCnab240Generator()
+
+        when:
+        String cnab240 = generator.generate(remittance, currentDate)
+
+        then:
+        def segments = 2
+        def HEADERS_AND_TRAILERS = 4
+        def record = new FilledRecord(batchTrailer) {{
+            fill(BANCO_COMPENSACAO, remittance.payer.getBankCode()).
+            fill(LOTE_SERVICO, "8")
+            defaultFill(TIPO_REGISTRO)
+            defaultFill(INICIO_FEBRABAN)
+            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal()))
+            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.getTotal()))
+            defaultFill(NUMERO_AVISO_DEBITO)
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS)
+            defaultFill(FIM_FEBRABAN)
+            defaultFill(OCORRENCIAS)
+        }}
+        cnab240.split(SEPARATOR)[8] == record.build()
+    }
+
+
+    private FilledRecord createSegmentA(PaymentRemittanceItem item, Integer index) {
+        def headers = 2
+        def payee = item.payee
+        new FilledRecord(batchSegmentA) {
+            {
                 defaultFill(BANCO_COMPENSACAO)
-                defaultFill(LOTE_SERVICO)
+                fill(LOTE_SERVICO, index + headers)
                 defaultFill(TIPO_REGISTRO)
-                defaultFill(NUMERO_REGISTRO)
+                fill(NUMERO_REGISTRO, index + headers)
                 defaultFill(SEGMENTO)
                 defaultFill(TIPO_MOVIMENTO)
                 defaultFill(CAMARA_CENTRALIZADORA)
-                defaultFill(BANCO_FAVORECIDO)
-                defaultFill(AGENCIA_CONTA)
-                defaultFill(NOME_FAVORECIDO)
+                fill(BANCO_FAVORECIDO, payee.getBankCode())
+                fill(AGENCIA_CONTA, new ItauAccountField(payee).get())
+                fill(NOME_FAVORECIDO, payee.getName())
                 defaultFill(SEU_NUMERO)
                 defaultFill(DATA_PAGAMENTO)
                 defaultFill(TIPO_MOEDA)
                 defaultFill(CODIGO_ISPB)
                 defaultFill(BRANCOS_1)
-                defaultFill(VALOR_PAGAMENTO)
+                fill(VALOR_PAGAMENTO, Rounder.roundToString(item.getValue()))
                 defaultFill(NOSSO_NUMERO)
                 defaultFill(BRANCOS_2)
                 defaultFill(DATA_REAL_PAGAMENTO)
@@ -193,64 +286,7 @@ class ItauFilledRecordTest extends FixtureApplicationTest {
                 defaultFill(FINALIDADE_DETALHE)
                 defaultFill(BRANCOS_3)
                 defaultFill(NUMERO_DOCUMENTO)
-                defaultFill(NUMERO_INSCRICAO_FAVORECIDO)
-                defaultFill(FINALIDADE_DOC)
-                defaultFill(FINALIDADE_TED)
-                defaultFill(FIM_FEBRABAN)
-                defaultFill(AVISO)
-                defaultFill(OCORRENCIAS)
-            }}
-
-        then:
-        record.build().size() == 240
-    }
-
-
-    def 'batch trailer should be 240 characters'(){
-        when:
-        def record = new FilledRecord(batchTrailer) {{
-            defaultFill(BANCO_COMPENSACAO)
-            defaultFill(LOTE_SERVICO)
-            defaultFill(TIPO_REGISTRO)
-            defaultFill(INICIO_FEBRABAN)
-            defaultFill(QUANTIDADE_REGISTROS)
-            defaultFill(SOMATORIA_VALORES)
-            defaultFill(BRANCOS_1)
-            defaultFill(BRANCOS_2)
-            defaultFill(OCORRENCIAS)
-        }}
-
-        then:
-        record.build().size() == 240
-    }
-
-    def 'given a record without all layout keys filled should return error'(){
-        given:
-        def record =  new FilledRecord(batchSegmentA) {
-            {
-                defaultFill(BANCO_COMPENSACAO)
-                defaultFill(LOTE_SERVICO)
-                defaultFill(TIPO_REGISTRO)
-                defaultFill(NUMERO_REGISTRO)
-                defaultFill(TIPO_MOVIMENTO)
-                defaultFill(CAMARA_CENTRALIZADORA)
-                defaultFill(BANCO_FAVORECIDO)
-                defaultFill(AGENCIA_CONTA)
-                defaultFill(NOME_FAVORECIDO)
-                defaultFill(SEU_NUMERO)
-                defaultFill(DATA_PAGAMENTO)
-                defaultFill(TIPO_MOEDA)
-                defaultFill(CODIGO_ISPB)
-                defaultFill(BRANCOS_1)
-                defaultFill(VALOR_PAGAMENTO)
-                defaultFill(NOSSO_NUMERO)
-                defaultFill(BRANCOS_2)
-                defaultFill(DATA_REAL_PAGAMENTO)
-                defaultFill(VALOR_REAL_PAGAMENTO)
-                defaultFill(FINALIDADE_DETALHE)
-                defaultFill(BRANCOS_3)
-                defaultFill(NUMERO_DOCUMENTO)
-                defaultFill(NUMERO_INSCRICAO_FAVORECIDO)
+                fill(NUMERO_INSCRICAO_FAVORECIDO, payee.documentNumber)
                 defaultFill(FINALIDADE_DOC)
                 defaultFill(FINALIDADE_TED)
                 defaultFill(FIM_FEBRABAN)
@@ -258,21 +294,6 @@ class ItauFilledRecordTest extends FixtureApplicationTest {
                 defaultFill(OCORRENCIAS)
             }
         }
-        when:
-        record.build()
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'LAYOUT_COLUMN_NOT_FILLED'
-        assert ex.errors.first().arguments.find() == '[segmento]'
     }
 
-    def 'given a unknown key should return error when fill'(){
-        when:
-        new FilledRecord(new HashMap<String, RecordColumnRule>()).defaultFill("key")
-
-        then:
-        def ex = thrown(UnprocessableEntityException)
-        assert ex.errors.first().logref == 'RULE_COLUMN_REQUIRED'
-    }
 }

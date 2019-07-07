@@ -15,14 +15,14 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Cnab240Generator {
+public class BradescoCnab240Generator {
 
     public static final String DATE_FORMAT = "ddMMyyyy";
     public static final String HOUR_FORMAT = "hhmmss";
     public static final int BATCH_LINES = 4;
     private Date currentDate;
 
-    public Cnab240Generator(){}
+    public BradescoCnab240Generator(){}
 
     public String generate(PaymentRemittance remittance, Date currentDate) {
         this.currentDate = ObjectUtils.clone(currentDate);

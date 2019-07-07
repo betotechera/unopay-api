@@ -3,7 +3,7 @@ package br.com.unopay.api.billing.remittance.service;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.billing.boleto.service.TicketService;
-import br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator;
+import br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
 import br.com.unopay.api.billing.remittance.model.PaymentOperationType;
@@ -69,7 +69,7 @@ public class PaymentRemittanceService {
     private BatchClosingService batchClosingService;
     private PaymentRemittanceItemService paymentRemittanceItemService;
     private IssuerService issuerService;
-    @Setter private Cnab240Generator cnab240Generator;
+    @Setter private BradescoCnab240Generator bradescoCnab240Generator;
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     private UserDetailService userDetailService;
@@ -85,7 +85,7 @@ public class PaymentRemittanceService {
                                     BatchClosingService batchClosingService,
                                     PaymentRemittanceItemService paymentRemittanceItemService,
                                     IssuerService issuerService,
-                                    Cnab240Generator cnab240Generator,
+                                    BradescoCnab240Generator bradescoCnab240Generator,
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
@@ -96,7 +96,7 @@ public class PaymentRemittanceService {
         this.batchClosingService = batchClosingService;
         this.paymentRemittanceItemService = paymentRemittanceItemService;
         this.issuerService = issuerService;
-        this.cnab240Generator = cnab240Generator;
+        this.bradescoCnab240Generator = bradescoCnab240Generator;
         this.fileUploaderService = fileUploaderService;
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.userDetailService = userDetailService;
@@ -183,7 +183,7 @@ public class PaymentRemittanceService {
         Set<PaymentRemittanceItem> remittanceItems = processItems(payees);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         remittance.setOperationType(operationType);
-        String generate = cnab240Generator.generate(remittance, new Date());
+        String generate = bradescoCnab240Generator.generate(remittance, new Date());
         String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
         remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);

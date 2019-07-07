@@ -34,7 +34,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.DATE_FORMAT;
 
 
 @Data
