@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.remittance.cnab240.mapped;
+package br.com.unopay.api.billing.remittance.cnab240.mapped.bradesco;
 
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -35,13 +35,13 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_INSCRICAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_REGISTRO;
 
-public class RemittanceHeader {
+public class BradescoRemittanceHeader {
 
     private Date currentDate;
 
-    public RemittanceHeader(){}
+    public BradescoRemittanceHeader(){}
 
-    public RemittanceHeader(Date currentDate){
+    public BradescoRemittanceHeader(Date currentDate){
         this.currentDate = ObjectUtils.clone(currentDate);
     }
 

@@ -4,7 +4,7 @@ import static org.apache.commons.lang3.StringUtils.leftPad;
 
 public class ItauAccountField {
 
-    public static final String S_000000_S_S = "0%s 000000 %s %s";
+    public static final String S_000000_S_S = "0%s 000000%s %s";
     public static final String S_S_S = "%s %s %s";
     public static final String PAD_STR = "0";
     private RemittancePayee payee;

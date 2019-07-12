@@ -47,7 +47,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
         Fixture.of(RemittancePayer.class).addTemplate("valid", new Rule() {{
             add("agency", regex("\\d{4}"));
             add("agencyDigit", random("a2", "1", "A"));
-            add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
+            add("accountNumber", random("649879", "547869", "88564", "2233"));
             add("accountNumberDigit", random("a2", "1", "A"));
             add("zipCode", "05302030");
             add("streetName", "Rua aaaa");
@@ -69,7 +69,7 @@ public class PaymentRemittanceTemplateLoader implements TemplateLoader {
             add("bankCode", uniqueRandom(341, 318, 33));
             add("payerBankCode", uniqueRandom(341, 318, 33));
             add("agencyDigit", random("a2", "1", "A"));
-            add("accountNumber", random("1649879", "0021547869", "88564", "2233"));
+            add("accountNumber", random("649879", "547869", "88564", "2233"));
             add("accountNumberDigit", random("a2", "1", "A"));
             add("zipCode", "05302030");
             add("streetName", "Rua aaaa");

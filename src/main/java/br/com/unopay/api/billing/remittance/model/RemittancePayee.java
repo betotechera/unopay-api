@@ -98,6 +98,7 @@ public class RemittancePayee implements Serializable {
     @Column(name = "agency")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentRemittance.Payee.class})
+    @Size(max = 4, groups = {Create.class, Update.class})
     private String agency;
 
     @Column(name = "agency_digit")
@@ -107,6 +108,7 @@ public class RemittancePayee implements Serializable {
     @Column(name = "account_number")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentRemittance.Payee.class})
+    @Size(max = 6, groups = {Create.class, Update.class})
     private String accountNumber;
 
     @JsonView({Views.PaymentRemittance.Payee.class})

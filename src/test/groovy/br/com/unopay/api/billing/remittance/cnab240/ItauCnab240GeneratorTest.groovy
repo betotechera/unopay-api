@@ -1,7 +1,6 @@
 package br.com.unopay.api.billing.remittance.cnab240
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord
 import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchHeader
@@ -26,17 +25,12 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_ISPB
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CODIGO_REMESSA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.COMPLEMENTO_CEP
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.CONVEIO_BANCO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_GERACAO_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_PAGAMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DATA_REAL_PAGAMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DENSIDADE_GRAVACAO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_AGENCIA_CONTA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DIGITO_CONTA
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_BANCO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.DOCUMENTO_ATRIBUIDO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.ESTADO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FIM_FEBRABAN
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.FINALIDADE_COD
@@ -47,35 +41,25 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.HISTORICO_CC
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.HORA_GERACAO_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.IDENTIFICACAO_LANCAMENTO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INFORMACAO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INICIO_FEBRABAN
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.INSTITUICAO_MOVIMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LAYOUT_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOGRADOURO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.LOTE_SERVICO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.MEIO_FEBRABAN
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.MENSAGEM
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_BANCO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOME_FAVORECIDO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NOSSO_NUMERO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_AVISO_DEBITO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_DOCUMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_FAVORECIDO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_REGISTRO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.OCORRENCIAS
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_CONTAS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_LOTES
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_MOEDA
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_MOEDAS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_REGISTROS
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.RESERVADO_BANCO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.RESERVADO_EMPRESA
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEGMENTO
-import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEQUENCIAL_ARQUIVO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SEU_NUMERO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.SOMATORIA_VALORES
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_INSCRICAO
@@ -88,20 +72,15 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceRecord.SEPARATOR
 import br.com.unopay.api.billing.remittance.model.ItauAccountField
-import br.com.unopay.api.billing.remittance.model.PaymentOperationType
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem
-import br.com.unopay.api.billing.remittance.model.RemittancePayee
 import br.com.unopay.api.billing.remittance.model.RemittancePayer
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.util.Rounder
-import org.apache.commons.lang3.StringUtils
-import spock.lang.Unroll
 
 class ItauCnab240GeneratorTest extends FixtureApplicationTest{
 
-    @Unroll
-    'should create remittance header for #operation operation'(){
+    def 'should create remittance header'(){
         given:
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
@@ -125,7 +104,6 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
                 defaultFill(BRANCOS_3)
                 fill(NUMERO_CONTA, payer.accountNumber)
                 defaultFill(BRANCO_4)
-                fill(DIGITO_CONTA, payer.accountDvFirstDigit())
                 fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
                 fill(NOME_EMPRESA, payer.name)
                 fill(NOME_BANCO, payer.getBankName())
@@ -152,15 +130,15 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def segments = 2
-        def headersAndTrailers = 4
+        def RemittanceHeaderAndTrailer = 2
+        def batchItems = 3
         def record = new FilledRecord(remittanceTrailer) {{
             defaultFill(BANCO_COMPENSACAO)
             defaultFill(LOTE_SERVICO)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(QUANTIDADE_LOTES,"1")
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + headersAndTrailers)
+            fill(QUANTIDADE_LOTES,remittance.getRemittanceItems().size())
+            fill(QUANTIDADE_REGISTROS, (remittance.getRemittanceItems().size() *  batchItems) + RemittanceHeaderAndTrailer)
             defaultFill(BRANCOS_1)
         }}
         cnab240.split(SEPARATOR).last() == record.build()
@@ -216,14 +194,14 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new ItauCnab240Generator()
-
+        def bachLines = 3
         when:
         String cnab240 = generator.generate(remittance, currentDate)
         then:
         int index = 0
         List<FilledRecord> records = remittance.remittanceItems.collect {
-            def segmentA = createSegmentA(currentDate, it, index)
-            index+=4
+            def segmentA = createSegmentA(it, index)
+            index+= bachLines
             segmentA
         }
         cnab240.split(SEPARATOR)[2] == records.find().build()
@@ -240,21 +218,20 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def segments = 2
+        def segments = 1
         def HEADERS_AND_TRAILERS = 4
         def record = new FilledRecord(batchTrailer) {{
-            fill(BANCO_COMPENSACAO, remittance.payer.getBankCode()).
-            fill(LOTE_SERVICO, "8")
+            defaultFill(BANCO_COMPENSACAO)
+            defaultFill(LOTE_SERVICO)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal()))
-            fill(QUANTIDADE_MOEDAS, Rounder.roundToString(remittance.getTotal()))
-            defaultFill(NUMERO_AVISO_DEBITO)
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS)
-            defaultFill(FIM_FEBRABAN)
+            fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal()))
+            defaultFill(BRANCOS_1)
+            defaultFill(BRANCOS_2)
             defaultFill(OCORRENCIAS)
         }}
-        cnab240.split(SEPARATOR)[8] == record.build()
+        cnab240.split(SEPARATOR)[7] == record.build()
     }
 
 
