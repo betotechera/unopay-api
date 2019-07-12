@@ -172,7 +172,6 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(BRANCOS_2)
             fill(NUMERO_CONTA, payer.accountNumber)
             defaultFill(BRANCOS_3)
-            fill(DIGITO_CONTA, payer.accountDvFirstDigit())
             fill(DIGITO_AGENCIA_CONTA, payer.accountDvLastDigit())
             fill(NOME_EMPRESA, payer.name)
             defaultFill(FINALIDADE_COD)

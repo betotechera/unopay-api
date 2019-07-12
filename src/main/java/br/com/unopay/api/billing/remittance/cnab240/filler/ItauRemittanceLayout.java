@@ -124,9 +124,9 @@ public abstract class ItauRemittanceLayout {
         put(COMPLEMENTO, new RecordColumnRule(23, 178, 192, 15, ColumnType.ALPHA));
         put(CIDADE, new RecordColumnRule(24, 193, 212, 20, ColumnType.ALPHA));
         put(CEP, new RecordColumnRule(25, 213, 220, 8, ColumnType.NUMBER));
-        put(ESTADO, new RecordColumnRule(27, 221, 222, 2, ColumnType.ALPHA));
-        put(FIM_FEBRABAN, new RecordColumnRule(28, 223, 230, 8, ColumnType.ALPHA));
-        put(OCORRENCIAS, new RecordColumnRule(29, 231, 240, 10, ColumnType.ALPHA));
+        put(ESTADO, new RecordColumnRule(26, 221, 222, 2, ColumnType.ALPHA));
+        put(FIM_FEBRABAN, new RecordColumnRule(27, 223, 230, 8, ColumnType.ALPHA));
+        put(OCORRENCIAS, new RecordColumnRule(28, 231, 240, 10, ColumnType.ALPHA));
     }};
 
 
