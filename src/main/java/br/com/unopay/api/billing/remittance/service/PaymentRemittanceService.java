@@ -2,10 +2,10 @@ package br.com.unopay.api.billing.remittance.service;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.IssuerService;
-import br.com.unopay.api.billing.boleto.service.TicketService;
-import br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator;
+import br.com.unopay.api.billing.remittance.cnab240.ItauCnab240Generator;
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector;
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor;
+import br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout;
 import br.com.unopay.api.billing.remittance.model.PaymentOperationType;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
@@ -42,9 +42,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentB;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchSegmentA;
+import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;
@@ -69,12 +69,11 @@ public class PaymentRemittanceService {
     private BatchClosingService batchClosingService;
     private PaymentRemittanceItemService paymentRemittanceItemService;
     private IssuerService issuerService;
-    @Setter private BradescoCnab240Generator bradescoCnab240Generator;
+    @Setter private ItauCnab240Generator bradescoCnab240Generator;
     @Setter private FileUploaderService fileUploaderService;
     @Setter private LayoutExtractorSelector layoutExtractorSelector;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
-    private TicketService ticketService;
     private CreditService creditService;
     @Setter private NotificationService notificationService;
 
@@ -85,11 +84,10 @@ public class PaymentRemittanceService {
                                     BatchClosingService batchClosingService,
                                     PaymentRemittanceItemService paymentRemittanceItemService,
                                     IssuerService issuerService,
-                                    BradescoCnab240Generator bradescoCnab240Generator,
+                                    ItauCnab240Generator bradescoCnab240Generator,
                                     FileUploaderService fileUploaderService,
                                     LayoutExtractorSelector layoutExtractorSelector,
                                     UserDetailService userDetailService, Notifier notifier,
-                                    TicketService ticketService,
                                     CreditService creditService,
                                     NotificationService notificationService) {
         this.repository = repository;
@@ -101,7 +99,6 @@ public class PaymentRemittanceService {
         this.layoutExtractorSelector = layoutExtractorSelector;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
-        this.ticketService = ticketService;
         this.creditService = creditService;
         this.notificationService = notificationService;
     }
@@ -247,7 +244,7 @@ public class PaymentRemittanceService {
     }
 
     private String getRemittanceNumber(String cnab240) {
-        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        RemittanceExtractor remittanceExtractor = new RemittanceExtractor(BradescoRemittanceLayout.getRemittanceHeader(), cnab240);
         String remittanceNumber = remittanceExtractor.extractOnFirstLine(SEQUENCIAL_ARQUIVO);
         return getNumberWithoutLeftPad(remittanceNumber);
     }
@@ -265,7 +262,7 @@ public class PaymentRemittanceService {
     }
 
     private void checkRemittanceInformation(String cnab240, PaymentRemittance remittance) {
-        RemittanceExtractor remittanceHeader = new RemittanceExtractor(getRemittanceHeader(), cnab240);
+        RemittanceExtractor remittanceHeader = new RemittanceExtractor(BradescoRemittanceLayout.getRemittanceHeader(), cnab240);
         String document = remittanceHeader.extractOnFirstLine(NUMERO_INSCRICAO_EMPRESA);
         String agency = remittanceHeader.extractOnFirstLine(AGENCIA);
         String accountNumber = remittanceHeader.extractOnFirstLine(NUMERO_CONTA);
@@ -276,7 +273,7 @@ public class PaymentRemittanceService {
     }
 
     private RemittanceExtractor getRemittanceExtractor(String cnab240) {
-        return layoutExtractorSelector.define(getBatchSegmentA(), cnab240);
+        return layoutExtractorSelector.define(BradescoRemittanceLayout.getBatchSegmentA(), cnab240);
     }
 
     private Optional<PaymentRemittanceItem> remittanceItemByDocument(Set<PaymentRemittanceItem> items, String document){

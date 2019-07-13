@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.BankAccount
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.remittance.cnab240.ItauCnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
@@ -46,7 +47,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
     @Autowired
     FixtureCreator fixtureCreator
 
-    BradescoCnab240Generator cnab240GeneratorMock = Mock(BradescoCnab240Generator)
+    ItauCnab240Generator cnab240GeneratorMock = Mock(ItauCnab240Generator)
     FileUploaderService uploaderServiceMock = Mock(FileUploaderService)
     LayoutExtractorSelector extractorSelectorMock = Mock(LayoutExtractorSelector)
     RemittanceExtractor extractorMock = Mock(RemittanceExtractor)
