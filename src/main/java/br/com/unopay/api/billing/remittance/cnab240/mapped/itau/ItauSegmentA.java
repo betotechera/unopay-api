@@ -39,11 +39,13 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 
 public class ItauSegmentA {
 
-    public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position) {
+
+
+    public FilledRecord create(final PaymentRemittanceItem remittanceItem, Integer position, Integer batchNumber) {
         RemittancePayee payee = remittanceItem.getPayee();
         return new FilledRecord(getBatchSegmentA()).
                 defaultFill(BANCO_COMPENSACAO).
-                fill(LOTE_SERVICO, position).
+                fill(LOTE_SERVICO, batchNumber).
                 defaultFill(TIPO_REGISTRO).
                 fill(NUMERO_REGISTRO, position).
                 defaultFill(SEGMENTO).

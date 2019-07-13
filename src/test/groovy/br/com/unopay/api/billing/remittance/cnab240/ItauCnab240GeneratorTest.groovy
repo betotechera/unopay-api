@@ -198,13 +198,15 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
         then:
         int index = 0
+        int batchNumber = 1
         List<FilledRecord> records = remittance.remittanceItems.collect {
-            def segmentA = createSegmentA(it, index)
+            def segmentA = createSegmentA(it, index, batchNumber)
             index+= bachLines
+            batchNumber+=1
             segmentA
         }
         cnab240.split(SEPARATOR)[2] == records.find().build()
-        cnab240.split(SEPARATOR)[6] == records.last().build()
+        cnab240.split(SEPARATOR)[5] == records.last().build()
     }
 
     def 'should create batch trailer'(){
@@ -218,10 +220,11 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
 
         then:
         def segments = 1
+        def bachSize = 2
         def HEADERS_AND_TRAILERS = 4
         def record = new FilledRecord(batchTrailer) {{
             defaultFill(BANCO_COMPENSACAO)
-            defaultFill(LOTE_SERVICO)
+            fill(LOTE_SERVICO, bachSize)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
             fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS)
@@ -230,17 +233,17 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
             defaultFill(BRANCOS_2)
             defaultFill(OCORRENCIAS)
         }}
-        cnab240.split(SEPARATOR)[7] == record.build()
+        cnab240.split(SEPARATOR)[6] == record.build()
     }
 
 
-    private FilledRecord createSegmentA(PaymentRemittanceItem item, Integer index) {
+    private FilledRecord createSegmentA(PaymentRemittanceItem item, Integer index, Integer batchNumber) {
         def headers = 2
         def payee = item.payee
         new FilledRecord(batchSegmentA) {
             {
                 defaultFill(BANCO_COMPENSACAO)
-                fill(LOTE_SERVICO, index + headers)
+                fill(LOTE_SERVICO, batchNumber)
                 defaultFill(TIPO_REGISTRO)
                 fill(NUMERO_REGISTRO, index + headers)
                 defaultFill(SEGMENTO)
