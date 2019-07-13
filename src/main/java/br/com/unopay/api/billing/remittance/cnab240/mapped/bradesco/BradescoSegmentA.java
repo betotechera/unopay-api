@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.remittance.cnab240.mapped;
+package br.com.unopay.api.billing.remittance.cnab240.mapped.bradesco;
 
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.ObjectUtils;
 
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.DATE_FORMAT;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AVISO;
@@ -41,13 +41,13 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_PAGAMENTO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.VALOR_REAL_PAGAMENTO;
 
-public class SegmentA {
+public class BradescoSegmentA {
 
     private Date currentDate;
 
-    public SegmentA(){}
+    public BradescoSegmentA(){}
 
-    public SegmentA(Date currentDate){
+    public BradescoSegmentA(Date currentDate){
         this.currentDate = ObjectUtils.clone(currentDate);
     }
 

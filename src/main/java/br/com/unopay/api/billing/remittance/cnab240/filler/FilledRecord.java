@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 import static br.com.unopay.api.uaa.exception.Errors.LAYOUT_COLUMN_NOT_FILLED;
 
+@Slf4j
 public class FilledRecord implements RemittanceRecord {
 
     private List<RecordColumn> columns;
@@ -23,6 +25,9 @@ public class FilledRecord implements RemittanceRecord {
     public FilledRecord fill(String ruleKey, String value) {
         RecordColumnRule columnRule = layout.get(ruleKey);
         columns.add(new RecordColumn(columnRule,value));
+        if(columnRule == null){
+            log.warn("Missing column rule={}", ruleKey);
+        }
         return this;
     }
 

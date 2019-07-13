@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.remittance.cnab240.mapped;
+package br.com.unopay.api.billing.remittance.cnab240.mapped.bradesco;
 
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -34,9 +34,9 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_REGISTRO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_SERVICO;
 
-public class BatchHeader {
+public class BradescoBatchHeader {
 
-    public BatchHeader(){}
+    public BradescoBatchHeader(){}
 
     public FilledRecord create(final PaymentRemittance remittance, PaymentRemittanceItem item, Integer position) {
         RemittancePayer bankAccount = remittance.getPayer();

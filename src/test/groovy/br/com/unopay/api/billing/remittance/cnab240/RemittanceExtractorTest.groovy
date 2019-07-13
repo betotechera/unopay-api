@@ -20,7 +20,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
     def 'given a cnab240 should return remittance header document number'(){
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        String cnab240 = new BradescoCnab240Generator().generate(remittance, currentDate)
 
         when:
         RemittanceExtractor remittanceFile = new RemittanceExtractor(remittanceHeader, cnab240)
@@ -33,7 +33,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
     def 'given a cnab240 should return batch header bank'(){
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        String cnab240 = new BradescoCnab240Generator().generate(remittance, currentDate)
 
         when:
         RemittanceExtractor remittanceFile = new RemittanceExtractor(batchHeader, cnab240)
@@ -46,7 +46,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
     def 'given a cnab240 should return batch segment A bank agreement number'(){
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        String cnab240 = new BradescoCnab240Generator().generate(remittance, currentDate)
 
         when:
         RemittanceExtractor remittanceFile = new RemittanceExtractor(batchSegmentA, cnab240)
@@ -59,7 +59,7 @@ class RemittanceExtractorTest extends FixtureApplicationTest {
     def 'given a cnab240 should return batch segment A ted code'(){
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
-        String cnab240 = new Cnab240Generator().generate(remittance, currentDate)
+        String cnab240 = new BradescoCnab240Generator().generate(remittance, currentDate)
 
         when:
         RemittanceExtractor remittanceFile = new RemittanceExtractor(batchSegmentA, cnab240)

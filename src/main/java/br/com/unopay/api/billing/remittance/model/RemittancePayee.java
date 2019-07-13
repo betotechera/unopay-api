@@ -98,6 +98,7 @@ public class RemittancePayee implements Serializable {
     @Column(name = "agency")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentRemittance.Payee.class})
+    @Size(max = 4, groups = {Create.class, Update.class})
     private String agency;
 
     @Column(name = "agency_digit")
@@ -107,6 +108,7 @@ public class RemittancePayee implements Serializable {
     @Column(name = "account_number")
     @NotNull(groups = {Create.class, Update.class})
     @JsonView({Views.PaymentRemittance.Payee.class})
+    @Size(max = 6, groups = {Create.class, Update.class})
     private String accountNumber;
 
     @JsonView({Views.PaymentRemittance.Payee.class})
@@ -162,6 +164,8 @@ public class RemittancePayee implements Serializable {
     public String agentDvFirstDigit(){
         return StringUtils.left(agencyDigit, 1);
     }
+
+
 
     public String agentDvLastDigit(){
         return StringUtils.right(agencyDigit, 1);

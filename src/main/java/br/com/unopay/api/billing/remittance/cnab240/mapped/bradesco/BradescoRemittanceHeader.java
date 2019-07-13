@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.remittance.cnab240.mapped;
+package br.com.unopay.api.billing.remittance.cnab240.mapped.bradesco;
 
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.ObjectUtils;
 
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.DATE_FORMAT;
-import static br.com.unopay.api.billing.remittance.cnab240.Cnab240Generator.HOUR_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.DATE_FORMAT;
+import static br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator.HOUR_FORMAT;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.BANCO_COMPENSACAO;
@@ -35,13 +35,13 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_INSCRICAO;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_REGISTRO;
 
-public class RemittanceHeader {
+public class BradescoRemittanceHeader {
 
     private Date currentDate;
 
-    public RemittanceHeader(){}
+    public BradescoRemittanceHeader(){}
 
-    public RemittanceHeader(Date currentDate){
+    public BradescoRemittanceHeader(Date currentDate){
         this.currentDate = ObjectUtils.clone(currentDate);
     }
 

@@ -11,6 +11,9 @@ public class RemittanceLayoutKeys {
     public static final String NUMERO_INSCRICAO_EMPRESA = "numeroInscricaoEmpresa";
     public static final String CONVEIO_BANCO = "conveioBanco";
     public static final String AGENCIA = "agencia";
+    public static final String BRANCO_4 = "branco_4";
+    public static final String BRANCOS_6 = "brancos_6";
+    public static final String BRANCOS_5 = "brancos_5";
     public static final String DIGITO_AGENCIA = "digitoAgencia";
     public static final String NUMERO_CONTA = "numeroConta";
     public static final String DIGITO_CONTA = "digitoConta";
@@ -67,6 +70,7 @@ public class RemittanceLayoutKeys {
     public static final String NOME_FAVORECIDO = "nomeFavorecido";
     public static final String DOCUMENTO_ATRIBUIDO_EMPRESA = "documentoAtribuidoEmpresa";
     public static final String DATA_PAGAMENTO = "dataPagamento";
+    public static final String SEU_NUMERO = "seuNumero";
     public static final String TIPO_MOEDA = "tipoMoeda";
     public static final String QUANTIDADE_MOEDA = "quantidadeMoeda";
     public static final String VALOR_PAGAMENTO = "valorPagamento";

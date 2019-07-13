@@ -1,4 +1,4 @@
-package br.com.unopay.api.billing.remittance.cnab240.mapped;
+package br.com.unopay.api.billing.remittance.cnab240.mapped.bradesco;
 
 import br.com.unopay.api.billing.remittance.cnab240.filler.FilledRecord;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance;
@@ -13,12 +13,12 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.QUANTIDADE_REGISTROS;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.TIPO_REGISTRO;
 
-public class RemittanceTrailer {
+public class BradescoRemittanceTrailer {
 
     public static final int HEADERS_AND_TRAILERS = 4;
     public static final int SEGMENTS = 2;
 
-    public RemittanceTrailer(){}
+    public BradescoRemittanceTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance) {
         return new FilledRecord(getRemittanceTrailer()).
