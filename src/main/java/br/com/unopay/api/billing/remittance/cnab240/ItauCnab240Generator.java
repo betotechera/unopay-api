@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
-import scala.Int;
 
 @Component
 public class ItauCnab240Generator {
@@ -22,6 +21,8 @@ public class ItauCnab240Generator {
     public static final String DATE_FORMAT = "ddMMyyyy";
     public static final String HOUR_FORMAT = "hhmmss";
     public static final int BATCH_LINES = 3;
+    public static final String SEGMENT_POSITION = "segmentPosition";
+    public static final String BATCH_NUMBER = "batchNumber";
 
     public ItauCnab240Generator(){}
 
@@ -36,14 +37,11 @@ public class ItauCnab240Generator {
     }
 
     private void addBatches(PaymentRemittance remittance, WrappedRecord records) {
-        ConcurrentMap<String, Integer> positions = new ConcurrentHashMap<>();
-        positions.put("segmentPosition",1);
-        positions.put("batchNumber",1);
-
+        ConcurrentMap<String, Integer> positions = getMapCounting();
         remittance.getRemittanceItems().forEach(paymentRemittanceItem -> {
-            records.addRecord(createBatch(remittance, paymentRemittanceItem, positions.get("segmentPosition"), positions.get("batchNumber")));
-            positions.compute("segmentPosition", (key, value) -> value += BATCH_LINES);
-            positions.compute("batchNumber", (key, value) -> value+=1);
+            records.addRecord(createBatch(remittance, paymentRemittanceItem, positions.get(SEGMENT_POSITION), positions.get(BATCH_NUMBER)));
+            positions.compute(SEGMENT_POSITION, (key, value) -> value += BATCH_LINES);
+            positions.compute(BATCH_NUMBER, (key, value) -> value+=1);
         });
     }
 
@@ -53,5 +51,12 @@ public class ItauCnab240Generator {
         return new WrappedRecord().createHeader(batchHeader)
                     .addRecord(new ItauSegmentA().create(item, segmentPosition, batchNumber))
                     .createTrailer(new ItauBatchTrailer().create(remittance, batchNumber));
+    }
+
+    private ConcurrentMap<String, Integer> getMapCounting() {
+        ConcurrentMap<String, Integer> positions = new ConcurrentHashMap<>();
+        positions.put(SEGMENT_POSITION,1);
+        positions.put(BATCH_NUMBER,1);
+        return positions;
     }
 }
