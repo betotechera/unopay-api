@@ -104,7 +104,7 @@ public abstract class ItauRemittanceLayout {
         put(TIPO_REGISTRO, new RecordColumnRule(3, 8, 8, 1, "1", ColumnType.NUMBER));
         put(TIPO_OPERACAO, new RecordColumnRule(4, 9, 9, 1, "C", ColumnType.ALPHA));
         put(TIPO_SERVICO, new RecordColumnRule(5, 10, 11, 2, "20", ColumnType.NUMBER));
-        put(FORMA_LANCAMENTO, new RecordColumnRule(6, 12, 13, 2, ColumnType.NUMBER));
+        put(FORMA_LANCAMENTO, new RecordColumnRule(6, 12, 13, 2, "41",ColumnType.NUMBER));
         put(RemittanceLayoutKeys.LAYOUT_ARQUIVO, new RecordColumnRule(7, 14, 16, 3, "040", ColumnType.NUMBER));
         put(INICIO_FEBRABAN, new RecordColumnRule(8, 17, 17, 1, ColumnType.ALPHA));
         put(TIPO_INSCRICAO, new RecordColumnRule(9, 18, 18, 1, "2", ColumnType.NUMBER));
