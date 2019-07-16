@@ -67,7 +67,7 @@ public class FileUploaderService extends AbstractUploadService {
     }
 
     @SneakyThrows
-    public String uploadCnab240(String generate, String fileUri) {
+    public String uploadCnab(String generate, String fileUri) {
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Stream.of(generate.split(SEPARATOR)).forEach(line -> write(outputStream, line));
             return uploadBytes(fileUri, outputStream.toByteArray());
@@ -106,7 +106,7 @@ public class FileUploaderService extends AbstractUploadService {
 
     @SneakyThrows
     private void write(ByteArrayOutputStream outputStream, String line) {
-        outputStream.write(line.concat("\n").getBytes());
+        outputStream.write(line.concat("\r\n").getBytes());
         outputStream.flush();
     }
 

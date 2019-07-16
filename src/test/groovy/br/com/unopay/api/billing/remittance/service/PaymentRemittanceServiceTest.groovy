@@ -476,7 +476,7 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         service.createForBatch(issuer.id)
 
         then:
-        1 * uploaderServiceMock.uploadCnab240(!null,!null)
+        1 * uploaderServiceMock.uploadCnab(!null,!null)
     }
 
     def 'when create payment remittance should generate cnab240 String'(){

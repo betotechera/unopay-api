@@ -43,8 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentB;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchSegmentA;
-import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getRemittanceHeader;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_CONTA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.NUMERO_INSCRICAO_EMPRESA;
@@ -181,7 +179,7 @@ public class PaymentRemittanceService {
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         remittance.setOperationType(operationType);
         String generate = bradescoCnab240Generator.generate(remittance, new Date());
-        String cnabUri = fileUploaderService.uploadCnab240(generate, remittance.getFileUri());
+        String cnabUri = fileUploaderService.uploadCnab(generate, remittance.getFileUri());
         remittance.setCnabUri(cnabUri);
         updateSituation(remittanceItems, remittance);
         notificationService.sendRemittanceCreatedMail(currentIssuer.getFinancierMailForRemittance(), remittance);
