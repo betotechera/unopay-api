@@ -1,6 +1,7 @@
 package br.com.unopay.api.billing.remittance.cnab240.filler;
 
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +15,8 @@ import static br.com.unopay.api.uaa.exception.Errors.LAYOUT_COLUMN_NOT_FILLED;
 @Slf4j
 public class FilledRecord implements RemittanceRecord {
 
+    public static final String ASCII = "[^\\p{ASCII}]";
+    public static final String ALPHA_P_DIGIT = "[^\\p{Alpha}\\p{Digit}]+";
     private List<RecordColumn> columns;
     private Map<String, RecordColumnRule> layout;
 
@@ -23,12 +26,20 @@ public class FilledRecord implements RemittanceRecord {
     }
 
     public FilledRecord fill(String ruleKey, String value) {
+        String normalizedValue = getNormalizedValue(value);
         RecordColumnRule columnRule = layout.get(ruleKey);
-        columns.add(new RecordColumn(columnRule,value));
+        columns.add(new RecordColumn(columnRule,normalizedValue));
         if(columnRule == null){
             log.warn("Missing column rule={}", ruleKey);
         }
         return this;
+    }
+
+    private String getNormalizedValue(String value) {
+        String alphabetics=  Normalizer
+                .normalize(value, Normalizer.Form.NFD)
+                .replaceAll(ASCII, "");
+        return alphabetics.replaceAll(ALPHA_P_DIGIT," ");
     }
 
     public FilledRecord fill(String ruleKey, Integer value) {

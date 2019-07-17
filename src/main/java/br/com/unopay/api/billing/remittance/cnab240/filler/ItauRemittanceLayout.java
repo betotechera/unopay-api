@@ -77,7 +77,7 @@ public abstract class ItauRemittanceLayout {
         put(TIPO_REGISTRO, new RecordColumnRule(3, 8, 8, 1, "0", ColumnType.NUMBER));
         put(BRANCOS_1, new RecordColumnRule(4, 9, 14, 6, ColumnType.ALPHA));
         put(LAYOUT_ARQUIVO, new RecordColumnRule(5, 15, 17, 3, "081",ColumnType.ALPHA));
-        put(TIPO_INSCRICAO, new RecordColumnRule(6, 18, 18, 1, "1", ColumnType.NUMBER));
+        put(TIPO_INSCRICAO, new RecordColumnRule(6, 18, 18, 1, "2", ColumnType.NUMBER));
         put(NUMERO_INSCRICAO_EMPRESA, new RecordColumnRule(7, 19, 32, 14, ColumnType.NUMBER));
         put(BRANCOS_2, new RecordColumnRule(8, 33, 52, 20, ColumnType.ALPHA));
         put(AGENCIA, new RecordColumnRule(9, 53, 57, 5, ColumnType.NUMBER));
@@ -138,7 +138,7 @@ public abstract class ItauRemittanceLayout {
         put(NUMERO_REGISTRO, new RecordColumnRule(4,9,13,5, ColumnType.NUMBER));
         put(SEGMENTO, new RecordColumnRule(5,14,14,1, "A", ColumnType.ALPHA));
         put(TIPO_MOVIMENTO, new RecordColumnRule(6,15,17,3,  ColumnType.NUMBER));
-        put(CAMARA_CENTRALIZADORA, new RecordColumnRule(7,18,20,3, "18", ColumnType.NUMBER));
+        put(CAMARA_CENTRALIZADORA, new RecordColumnRule(7,18,20,3,  ColumnType.NUMBER));
         put(BANCO_FAVORECIDO, new RecordColumnRule(8,21,23,3, ColumnType.NUMBER));
         put(AGENCIA_CONTA, new RecordColumnRule(9,24,43,20, ColumnType.ALPHA));
         put(NOME_FAVORECIDO, new RecordColumnRule(10,44,73,30, ColumnType.ALPHA));

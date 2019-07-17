@@ -80,6 +80,22 @@ class ItauFilledRecordTest extends FixtureApplicationTest {
         assert ex.errors.first().logref == 'RULE_COLUMN_REQUIRED'
     }
 
+    def 'when fill a value with special characters should normalize it'(){
+        when:
+        def filledRecord = new FilledRecord(["key":new RecordColumnRule(0,1,4,4,ColumnType.ALPHA)]).fill("key", wrongText)
+
+        then:
+        filledRecord.build() == expected
+
+        where:
+        wrongText | expected
+        "àêĩç"    | "aeic"
+        '$@!"'    | "    "
+        '*;:?'    | "    "
+        ".%{]"    | "    "
+
+    }
+
     def 'remittance header should be 240 characters'(){
         when:
         def record = new FilledRecord(remittanceHeader) {{
