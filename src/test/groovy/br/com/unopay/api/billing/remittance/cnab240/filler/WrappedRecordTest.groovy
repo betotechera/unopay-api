@@ -111,9 +111,9 @@ class WrappedRecordTest extends FixtureApplicationTest {
 
         where:
         chars|_
-        "5.5"|_
-        "5/5"|_
-        "5-5"|_
+        "5 5"|_
+        "5 5"|_
+        "5 5"|_
     }
 
     def 'should fill file trailer'(){
