@@ -37,10 +37,10 @@ public class FilledRecord implements RemittanceRecord {
 
     private String getNormalizedValue(String value) {
         if(value != null) {
-            String alphabetics = Normalizer
+            String alphabetical = Normalizer
                     .normalize(value, Normalizer.Form.NFD)
                     .replaceAll(ASCII, "");
-            return alphabetics.replaceAll(ALPHA_P_DIGIT, " ");
+            return alphabetical.replaceAll(ALPHA_P_DIGIT, " ");
         }
         return null;
     }
