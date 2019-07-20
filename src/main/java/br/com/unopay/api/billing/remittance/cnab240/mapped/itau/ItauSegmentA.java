@@ -5,7 +5,10 @@ import br.com.unopay.api.billing.remittance.model.ItauAccountField;
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.billing.remittance.model.RemittancePayee;
 import br.com.unopay.api.util.Rounder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import static br.com.unopay.api.billing.remittance.cnab240.ItauCnab240Generator.DATE_FORMAT;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.ItauRemittanceLayout.getBatchSegmentA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AGENCIA_CONTA;
 import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayoutKeys.AVISO;
@@ -55,7 +58,7 @@ public class ItauSegmentA {
                 fill(AGENCIA_CONTA, new ItauAccountField(payee).get()).
                 fill(NOME_FAVORECIDO, payee.getName()).
                 defaultFill(SEU_NUMERO).
-                defaultFill(DATA_PAGAMENTO).
+                fill(DATA_PAGAMENTO, new SimpleDateFormat(DATE_FORMAT).format(new Date())).
                 defaultFill(TIPO_MOEDA).
                 defaultFill(CODIGO_ISPB).
                 defaultFill(BRANCOS_1).

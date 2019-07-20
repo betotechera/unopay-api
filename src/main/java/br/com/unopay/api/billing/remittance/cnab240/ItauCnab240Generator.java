@@ -20,7 +20,6 @@ public class ItauCnab240Generator {
 
     public static final String DATE_FORMAT = "ddMMyyyy";
     public static final String HOUR_FORMAT = "hhmmss";
-    public static final int BATCH_LINES = 3;
     public static final String SEGMENT_POSITION = "segmentPosition";
     public static final String BATCH_NUMBER = "batchNumber";
 
@@ -40,16 +39,15 @@ public class ItauCnab240Generator {
         ConcurrentMap<String, Integer> positions = getMapCounting();
         remittance.getRemittanceItems().forEach(paymentRemittanceItem -> {
             records.addRecord(createBatch(remittance, paymentRemittanceItem, positions.get(SEGMENT_POSITION), positions.get(BATCH_NUMBER)));
-            positions.compute(SEGMENT_POSITION, (key, value) -> value += BATCH_LINES);
+            positions.compute(SEGMENT_POSITION, (key, value) -> value += 1);
             positions.compute(BATCH_NUMBER, (key, value) -> value+=1);
         });
     }
 
     private WrappedRecord createBatch(PaymentRemittance remittance, PaymentRemittanceItem item, Integer position, Integer batchNumber) {
-        Integer segmentPosition = position + 1;
         FilledRecord batchHeader = new ItauBatchHeader().create(remittance, batchNumber);
         return new WrappedRecord().createHeader(batchHeader)
-                    .addRecord(new ItauSegmentA().create(item, segmentPosition, batchNumber))
+                    .addRecord(new ItauSegmentA().create(item, position, batchNumber))
                     .createTrailer(new ItauBatchTrailer().create(remittance, batchNumber));
     }
 

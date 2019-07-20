@@ -192,15 +192,14 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         PaymentRemittance remittance = Fixture.from(PaymentRemittance.class).gimme("withItems")
         def currentDate = instant("now")
         def generator = new ItauCnab240Generator()
-        def bachLines = 3
         when:
         String cnab240 = generator.generate(remittance, currentDate)
         then:
-        int index = 0
+        int index = 1
         int batchNumber = 1
         List<FilledRecord> records = remittance.remittanceItems.collect {
             def segmentA = createSegmentA(it, index, batchNumber)
-            index+= bachLines
+            index+= 1
             batchNumber+=1
             segmentA
         }
@@ -237,14 +236,13 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
 
 
     private FilledRecord createSegmentA(PaymentRemittanceItem item, Integer index, Integer batchNumber) {
-        def headers = 2
         def payee = item.payee
         new FilledRecord(batchSegmentA) {
             {
                 defaultFill(BANCO_COMPENSACAO)
                 fill(LOTE_SERVICO, batchNumber)
                 defaultFill(TIPO_REGISTRO)
-                fill(NUMERO_REGISTRO, index + headers)
+                fill(NUMERO_REGISTRO, index)
                 defaultFill(SEGMENTO)
                 defaultFill(TIPO_MOVIMENTO)
                 defaultFill(CAMARA_CENTRALIZADORA)
@@ -252,7 +250,7 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
                 fill(AGENCIA_CONTA, new ItauAccountField(payee).get())
                 fill(NOME_FAVORECIDO, payee.getName())
                 defaultFill(SEU_NUMERO)
-                defaultFill(DATA_PAGAMENTO)
+                fill(DATA_PAGAMENTO, new Date().format("ddMMyyyy"))
                 defaultFill(TIPO_MOEDA)
                 defaultFill(CODIGO_ISPB)
                 defaultFill(BRANCOS_1)

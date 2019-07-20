@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Rounder {
 
-    public static final int ROUND_STRATEGY = BigDecimal.ROUND_HALF_EVEN;
+    public static final int ROUND_STRATEGY = BigDecimal.ROUND_HALF_UP;
 
     private Rounder(){}
 
