@@ -217,15 +217,13 @@ class ItauCnab240GeneratorTest extends FixtureApplicationTest{
         String cnab240 = generator.generate(remittance, currentDate)
 
         then:
-        def segments = 1
         def bachSize = 2
-        def HEADERS_AND_TRAILERS = 4
         def record = new FilledRecord(batchTrailer) {{
             defaultFill(BANCO_COMPENSACAO)
             fill(LOTE_SERVICO, bachSize)
             defaultFill(TIPO_REGISTRO)
             defaultFill(INICIO_FEBRABAN)
-            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() * segments + HEADERS_AND_TRAILERS)
+            fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size())
             fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal()))
             defaultFill(BRANCOS_1)
             defaultFill(BRANCOS_2)

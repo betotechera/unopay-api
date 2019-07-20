@@ -17,8 +17,6 @@ import static br.com.unopay.api.billing.remittance.cnab240.filler.RemittanceLayo
 
 public class ItauBatchTrailer {
 
-    public static final int HEADERS_AND_TRAILERS = 4;
-
     public ItauBatchTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance, Integer batchNumber) {
@@ -27,7 +25,7 @@ public class ItauBatchTrailer {
                 fill(LOTE_SERVICO, batchNumber).
                 defaultFill(TIPO_REGISTRO).
                 defaultFill(INICIO_FEBRABAN).
-                fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size() + HEADERS_AND_TRAILERS).
+                fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size()).
                 fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal())).
                 defaultFill(BRANCOS_1).
                 defaultFill(BRANCOS_2).
