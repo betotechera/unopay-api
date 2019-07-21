@@ -175,7 +175,7 @@ public class PaymentRemittanceService {
 
     private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> payees,
                                           PaymentOperationType operationType) {
-        Set<PaymentRemittanceItem> remittanceItems = processItems(payees);
+        Set<PaymentRemittanceItem> remittanceItems = paymentRemittanceItemService.processItems(payees);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);
         remittance.setOperationType(operationType);
         String generate = bradescoCnab240Generator.generate(remittance, new Date());
@@ -210,22 +210,13 @@ public class PaymentRemittanceService {
         return save(paymentRemittance);
     }
 
-    private Set<PaymentRemittanceItem> processItems(Set<RemittancePayee> payees) {
-        return payees.stream().map(payee -> {
-                PaymentRemittanceItem currentItem = getCurrentItem(payee.getDocumentNumber(), payee);
-                currentItem.updateValue(payee.getReceivable());
-                return paymentRemittanceItemService.save(currentItem);
-            }).collect(Collectors.toSet());
-    }
+
 
     private Long getTotal() {
         return repository.count();
     }
 
-    private PaymentRemittanceItem getCurrentItem(String document,RemittancePayee payee){
-        Optional<PaymentRemittanceItem> current = paymentRemittanceItemService.findProcessingByEstablishment(document);
-        return current.orElse(new PaymentRemittanceItem(payee));
-    }
+
 
     private void updateItemsSituation(String cnab240, Set<PaymentRemittanceItem> items){
         for(int currentLine = LINE_POSITION; currentLine < cnab240.split(SEPARATOR).length; currentLine+=LINE_POSITION){

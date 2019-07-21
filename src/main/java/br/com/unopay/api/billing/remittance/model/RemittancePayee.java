@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -28,6 +29,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Data
 @Entity
+@EqualsAndHashCode(of = { "documentNumber", "agency", "accountNumber" })
 @Table(name = "remittance_payee")
 public class RemittancePayee implements Serializable {
 
