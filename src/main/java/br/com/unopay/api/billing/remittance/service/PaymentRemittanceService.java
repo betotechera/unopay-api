@@ -27,6 +27,7 @@ import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.api.util.Time;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -154,26 +155,26 @@ public class PaymentRemittanceService {
     }
 
     private void createFromBatchClosing(Issuer currentIssuer, Set<BatchClosing> batchByEstablishment){
-        Set<RemittancePayee> payees = batchByEstablishment.stream()
+        List<RemittancePayee> payees = batchByEstablishment.stream()
                 .map(batch ->
                         new RemittancePayee(batch.getEstablishment(),
                         currentIssuer.paymentBankCode(),
                         batch.getValue()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.CREDIT);
     }
 
     private void createFromCredit(Issuer currentIssuer, Set<Credit> credits){
-        Set<RemittancePayee> payees = credits.stream()
+        List<RemittancePayee> payees = credits.stream()
                 .map(credit ->
                         new RemittancePayee(credit.getHirer(),
                                 currentIssuer.paymentBankCode(),
                                 credit.getValue()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.DEBIT);
     }
 
-    private void createRemittanceAndItems(Issuer currentIssuer, Set<RemittancePayee> payees,
+    private void createRemittanceAndItems(Issuer currentIssuer, Collection<RemittancePayee> payees,
                                           PaymentOperationType operationType) {
         Set<PaymentRemittanceItem> remittanceItems = paymentRemittanceItemService.processItems(payees);
         PaymentRemittance remittance = createRemittance(currentIssuer, remittanceItems);

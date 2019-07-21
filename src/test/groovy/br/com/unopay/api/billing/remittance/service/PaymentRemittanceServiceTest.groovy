@@ -588,12 +588,33 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
             batchClosingB.establishmentDocument() == it.payee.documentNumber }.value == batchClosingB.value
     }
 
-    def 'remittance item value should be a sum of batch closing value of establishment'(){
+    def 'given the batches closing with different establishments should create one item for each one'(){
+        given:
+        def issuer = fixtureCreator.createIssuer()
+        def (BatchClosing batchClosingA, BatchClosing batchClosingB) = from(BatchClosing.class)
+                                                                    .uses(jpaProcessor).gimme(2, "valid", new Rule() {{
+            add("situation", BatchClosingSituation.FINALIZED)
+            add("issuer", issuer)
+            add("paymentReleaseDateTime", instant("1 day ago"))
+        }})
+
+        when:
+        service.createForBatch(issuer.id)
+        def all = service.findByPayerDocument(issuer.documentNumber())
+
+        then:
+        that all, hasSize(1)
+        that all.find().remittanceItems, hasSize(2)
+        all.find().remittanceItems.find { it.payeeDocumentIs(batchClosingA.establishmentDocument()) } .value == batchClosingA.value
+        all.find().remittanceItems.find { it.payeeDocumentIs(batchClosingB.establishmentDocument()) } .value == batchClosingB.value
+    }
+
+    def 'given the batches closing with the same establishment document number  then the remittance items should have the value consolidated'(){
         given:
         def issuer = fixtureCreator.createIssuer()
         Establishment establishment = from(Establishment.class).uses(jpaProcessor).gimme("valid")
         def (BatchClosing batchClosingA, BatchClosing batchClosingB) = from(BatchClosing.class)
-                                                                    .uses(jpaProcessor).gimme(2, "valid", new Rule() {{
+                .uses(jpaProcessor).gimme(2, "valid", new Rule() {{
             add("situation", BatchClosingSituation.FINALIZED)
             add("establishment", establishment)
             add("issuer", issuer)

@@ -4,6 +4,8 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.billing.remittance.model.RemittancePayee;
 import br.com.unopay.api.billing.remittance.model.RemittanceSituation;
 import br.com.unopay.api.billing.remittance.repository.PaymentRemittanceItemRepository;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +24,7 @@ public class PaymentRemittanceItemService {
         this.repository = repository;
     }
 
-    public Set<PaymentRemittanceItem> processItems(Set<RemittancePayee> payees) {
+    public Set<PaymentRemittanceItem> processItems(Collection<RemittancePayee> payees) {
         return payees.stream().map(payee -> {
             PaymentRemittanceItem currentItem = getCurrentItem(payee.getDocumentNumber(), payee);
             currentItem.updateValue(payee.getReceivable());
