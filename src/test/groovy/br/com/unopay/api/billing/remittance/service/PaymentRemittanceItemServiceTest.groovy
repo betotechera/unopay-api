@@ -36,7 +36,7 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
         given:
         Establishment establishment= from(Establishment.class).uses(jpaProcessor).gimme("valid")
 
-        Set<RemittancePayee> payees = from(RemittancePayee.class).gimme(2,"valid", new Rule() {{
+        List<RemittancePayee> payees = from(RemittancePayee.class).gimme(2,"valid", new Rule() {{
             add("documentNumber", establishment.documentNumber())
             add("agency", "1234")
             add("accountNumber", "5556677")
@@ -52,7 +52,7 @@ class PaymentRemittanceItemServiceTest extends SpockApplicationTests {
 
     def 'given payees with a different document should create a remittance item for each one'(){
         given:
-        Set<RemittancePayee> payees = from(RemittancePayee.class).gimme(2,"valid")
+        List<RemittancePayee> payees = from(RemittancePayee.class).gimme(2,"valid")
 
         when:
         def items = service.processItems(payees)

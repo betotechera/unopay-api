@@ -22,12 +22,14 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 
 @Data
 @Entity
+@EqualsAndHashCode(of = { "payee" })
 @ToString(exclude = { "paymentRemittance", "payee" })
 @Table(name = "payment_remittance_item")
 public class PaymentRemittanceItem  implements Serializable {
@@ -38,8 +40,9 @@ public class PaymentRemittanceItem  implements Serializable {
 
     public PaymentRemittanceItem(){}
 
-    public PaymentRemittanceItem(RemittancePayee payee){
+    public PaymentRemittanceItem(RemittancePayee payee, BigDecimal value){
         this.payee = payee;
+        this.value = value;
         setMeUp(payee.getPayerBankCode());
     }
 
@@ -93,12 +96,8 @@ public class PaymentRemittanceItem  implements Serializable {
     @Version
     private Integer version;
 
-    public void updateValue(BigDecimal value){
-        if(this.value ==null ){
-            this.value = value;
-            return;
-        }
-        this.value = this.value.add(value);
+    public void defineValue(BigDecimal value){
+        this.value = value;
     }
 
     public boolean payeeDocumentIs(String document){

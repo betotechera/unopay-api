@@ -4,8 +4,8 @@ import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem;
 import br.com.unopay.api.billing.remittance.model.RemittancePayee;
 import br.com.unopay.api.billing.remittance.model.RemittanceSituation;
 import br.com.unopay.api.billing.remittance.repository.PaymentRemittanceItemRepository;
+import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,15 +26,16 @@ public class PaymentRemittanceItemService {
 
     public Set<PaymentRemittanceItem> processItems(Collection<RemittancePayee> payees) {
         return payees.stream().map(payee -> {
-            PaymentRemittanceItem currentItem = getCurrentItem(payee.getDocumentNumber(), payee);
-            currentItem.updateValue(payee.getReceivable());
-            return save(currentItem);
+            Optional<PaymentRemittanceItem> existingItem = findProcessingByEstablishment(payee.getDocumentNumber());
+            return existingItem.orElseGet(() -> {
+                BigDecimal payeeReceivable = getAccumulatedReceivableTo(payees, payee);
+                return save(new PaymentRemittanceItem(payee, payeeReceivable));
+            });
         }).collect(Collectors.toSet());
     }
 
-    private PaymentRemittanceItem getCurrentItem(String document, RemittancePayee payee){
-        Optional<PaymentRemittanceItem> current = findProcessingByEstablishment(document);
-        return current.orElse(new PaymentRemittanceItem(payee));
+    private BigDecimal getAccumulatedReceivableTo(Collection<RemittancePayee> payees, RemittancePayee payee) {
+        return payees.stream().filter(it-> it.getDocumentNumber().equals(payee.getDocumentNumber())).map(RemittancePayee::getReceivable).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public PaymentRemittanceItem save(PaymentRemittanceItem paymentRemittance) {
