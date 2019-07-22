@@ -29,6 +29,7 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.notification.service.NotificationService
+import br.com.unopay.api.service.BatchClosingService
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +44,9 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
 
     @Autowired
     PaymentRemittanceItemService itemService
+
+    @Autowired
+    BatchClosingService batchClosingService
 
     @Autowired
     FixtureCreator fixtureCreator
@@ -214,6 +218,20 @@ class PaymentRemittanceServiceTest extends SpockApplicationTests {
         that result, hasSize(1)
         result.find().situation == RemittanceSituation.REMITTANCE_FILE_GENERATED
         result.every { it.situation == RemittanceSituation.REMITTANCE_FILE_GENERATED }
+    }
+
+    def 'a created remittance should change the batch closing situation'(){
+        given:
+        Issuer issuer = fixtureCreator.createIssuer()
+        def issuerBanK = issuer.paymentAccount.bankAccount.bacenCode()
+        createBatchForBank(issuerBanK, issuer)
+
+        when:
+        service.createForBatch(issuer.id)
+        def result = batchClosingService.findAll(). find { it.issuer.documentNumber() == issuer.documentNumber() }
+
+        then:
+        result.situation == BatchClosingSituation.REMITTANCE_FILE_GENERATED
     }
 
     def 'a credit remittance should have debit operation type'(){

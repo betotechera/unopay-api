@@ -20,12 +20,13 @@ public class ItauBatchTrailer {
     public ItauBatchTrailer(){}
 
     public FilledRecord create(final PaymentRemittance remittance, Integer batchNumber) {
+        Integer batchSize = 3;
         return new FilledRecord(getBatchTrailer()).
                 defaultFill(BANCO_COMPENSACAO).
                 fill(LOTE_SERVICO, batchNumber).
                 defaultFill(TIPO_REGISTRO).
                 defaultFill(INICIO_FEBRABAN).
-                fill(QUANTIDADE_REGISTROS, remittance.getRemittanceItems().size()).
+                fill(QUANTIDADE_REGISTROS, batchSize).
                 fill(SOMATORIA_VALORES,Rounder.roundToString(remittance.getTotal())).
                 defaultFill(BRANCOS_1).
                 defaultFill(BRANCOS_2).

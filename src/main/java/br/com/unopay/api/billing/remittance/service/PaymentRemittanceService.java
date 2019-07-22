@@ -20,6 +20,7 @@ import br.com.unopay.api.credit.service.CreditService;
 import br.com.unopay.api.fileuploader.service.FileUploaderService;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.BatchClosing;
+import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.notification.service.NotificationService;
 import br.com.unopay.api.service.BatchClosingService;
 import br.com.unopay.api.uaa.model.UserDetail;
@@ -162,6 +163,14 @@ public class PaymentRemittanceService {
                         batch.getValue()))
                 .collect(Collectors.toList());
         createRemittanceAndItems(currentIssuer, payees, PaymentOperationType.CREDIT);
+        changeTheBatchesSituation(batchByEstablishment);
+    }
+
+    private void changeTheBatchesSituation(Set<BatchClosing> batchByEstablishment) {
+        batchByEstablishment.stream().map(batch -> batchClosingService.findById(batch.getId())).forEach(current -> {
+            current.setSituation(BatchClosingSituation.REMITTANCE_FILE_GENERATED);
+            batchClosingService.save(current);
+        });
     }
 
     private void createFromCredit(Issuer currentIssuer, Set<Credit> credits){
