@@ -299,6 +299,7 @@ public class Establishment implements Serializable, Updatable, Localizable {
         branch.setContactMail(this.contactMail);
         branch.setTechnicalContact(this.technicalContact);
         branch.setBranchPhotoUri(this.facadePhotoUri);
+        branch.setReturningDeadline(this.returningDeadline);
         return branch;
     }
 }
