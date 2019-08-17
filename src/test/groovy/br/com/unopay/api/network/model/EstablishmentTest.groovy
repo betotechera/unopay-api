@@ -29,6 +29,7 @@ class EstablishmentTest extends FixtureApplicationTest {
         branch.contactMail == establishmentA.contactMail
         branch.technicalContact == establishmentA.technicalContact
         branch.branchPhotoUri == establishmentA.facadePhotoUri
+        branch.returningDeadline == establishmentA.returningDeadline
 
     }
 

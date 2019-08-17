@@ -128,6 +128,11 @@ public class Branch implements Serializable, Updatable, Localizable {
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "branch")
     private Set<BranchServicePeriod> servicePeriods = new HashSet<>();
 
+    @NotNull(groups = {Create.class, Update.class})
+    @Column(name = "returning_deadline")
+    @JsonView({Views.Branch.Detail.class})
+    private Integer returningDeadline;
+
     public Set<BranchServicePeriod> cutServicePeriods(){
         Set<BranchServicePeriod> periodsToReturn = this.servicePeriods;
         this.servicePeriods = null;

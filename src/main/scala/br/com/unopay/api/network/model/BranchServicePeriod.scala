@@ -43,6 +43,18 @@ class BranchServicePeriod extends Serializable with Updatable {
   @JsonView(Array(classOf[Views.BranchServicePeriod.List]))
   var endServiceTime: Date = _
 
+  @BeanProperty
+  @NotNull(groups = Array(classOf[Create], classOf[Update]))
+  @Column(name = "begin_lunch_time")
+  @JsonView(Array(classOf[Views.BranchServicePeriod.List]))
+  var beginLunchTime: Date = _
+
+  @BeanProperty
+  @NotNull(groups = Array(classOf[Create], classOf[Update]))
+  @Column(name = "end_lunch_time")
+  @JsonView(Array(classOf[Views.BranchServicePeriod.List]))
+  var endLunchTime: Date = _
+
   @Column(name = "situation")
   @BeanProperty
   @Enumerated(EnumType.STRING)
