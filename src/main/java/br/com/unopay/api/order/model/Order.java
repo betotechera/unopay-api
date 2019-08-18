@@ -167,6 +167,12 @@ public class Order implements Updatable, Billable, Serializable {
             throw UnovationExceptions.unauthorized().withErrors(Errors.UNABLE_TO_UPDATE_ORDER_STATUS);
     }
 
+    public void defineCardToken(String token){
+        if(getPaymentRequest() != null && getPaymentRequest().getCreditCard() != null) {
+            getPaymentRequest().getCreditCard().setToken(token);
+        }
+    }
+
     public void defineStatus(TransactionStatus transactionStatus) {
         if (Arrays.asList(CANCELED, CANCEL_PENDING, REFUND).contains(transactionStatus)) {
             this.status = PaymentStatus.CANCELED;
@@ -250,6 +256,13 @@ public class Order implements Updatable, Billable, Serializable {
     public BigDecimal getProductInstallmentValue() {
         if (getProduct() != null) {
             return getProduct().getInstallmentValue();
+        }
+        return null;
+    }
+
+    public String personEmail() {
+        if (getPerson() != null){
+            return getPerson().getPhysicalPersonEmail();
         }
         return null;
     }

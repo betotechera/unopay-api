@@ -2,6 +2,7 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javafx.util.Pair;
 import javax.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -150,7 +150,14 @@ public class OrderService {
     public Order create(Order order) {
         log.info("Creating order={}", order);
         orderValidator.validateProduct(order);
+        defineCardTokenWhenRequired(order);
         return createOrder(order);
+    }
+
+    private void defineCardTokenWhenRequired(Order order) {
+        if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
+            order.defineCardToken(userCreditCardService.getLastActiveTokenByUser(order.personEmail()));
+        }
     }
 
     @Transactional

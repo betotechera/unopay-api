@@ -37,6 +37,12 @@ public class CreditCard implements Serializable {
     private static final long serialVersionUID = -1060942228795287069L;
     public static final String EMPTY = "";
 
+    public CreditCard() { }
+
+    public CreditCard(String token) {
+        this.token = token;
+    }
+
     @NotNull
     @Pattern(message = "invalid expiration month format", regexp = "^(0?[1-9])|(1[0-2])", groups = {Create.class, Update.class})
     private String expiryMonth;

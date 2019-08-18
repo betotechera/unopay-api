@@ -2,6 +2,7 @@ package br.com.unopay.api.job
 
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.ContractInstallment
@@ -32,7 +33,7 @@ class ContractInstallmentOrderJobTest extends SpockApplicationTests {
     @Override
     void setup() {
         orderService.notifier = notifierMock
-        job = new ContractInstallmentOrderJob(contractInstallmentService,orderService)
+        job = new ContractInstallmentOrderJob(contractInstallmentService, orderService)
 
         def hirer = fixtureCreator.createHirer()
         def product = fixtureCreator.createProductWithSameIssuerOfHirer(BigDecimal.TEN, hirer)

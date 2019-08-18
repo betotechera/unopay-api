@@ -9,6 +9,7 @@ import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.Date;
 import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.Setter;
@@ -80,6 +81,12 @@ public class UserCreditCardService {
 
     public UserCreditCard findById(String id) {
         return getUserCreditCardWithMonthAndYear(id, () -> userCreditCardRepository.findById(id));
+    }
+
+    public String getLastActiveTokenByUser(String userEmail) {
+        return userCreditCardRepository
+                .findByUserEmailAndExpirationDateGreaterThanEqual(userEmail, new Date())
+                .map(UserCreditCard::getGatewayToken).orElse(null);
     }
 
     public UserCreditCard findByTokenForUser(String token, UserDetail user) {

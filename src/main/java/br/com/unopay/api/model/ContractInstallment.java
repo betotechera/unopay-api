@@ -153,7 +153,7 @@ public class ContractInstallment implements Serializable, Updatable {
     public Order toOrder() {
         Order order = new Order();
         PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setMethod(PaymentMethod.BOLETO);
+        paymentRequest.setMethod(this.contract.getRecurrencePaymentMethod());
         paymentRequest.setValue(this.value);
         order.setPaymentRequest(paymentRequest);
         order.setContract(this.contract);
