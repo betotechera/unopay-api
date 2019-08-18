@@ -245,7 +245,10 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public boolean is(PaymentMethod method) {
-        return paymentRequest.getMethod().equals(method);
+        if(paymentRequest != null) {
+            return paymentRequest.getMethod().equals(method);
+        }
+        return false;
     }
 
     public boolean isType(OrderType type) {

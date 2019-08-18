@@ -131,6 +131,7 @@ public class NetworkTemplateLoader implements TemplateLoader {
             add("contactMail", random("teste@teste.com", "joao@gmail.com.br", "david@terra.com.br", "ze@org.me"));
             add("branchPhotoUri", "/tmp/path");
             add("gatheringChannels", has(2).of(GatheringChannel.class));
+            add("returningDeadline", 15);
         }});
 
         Fixture.of(AccreditedNetworkIssuer.class).addTemplate("valid", new Rule(){{
@@ -144,6 +145,8 @@ public class NetworkTemplateLoader implements TemplateLoader {
         Fixture.of(BranchServicePeriod.class).addTemplate("valid", new Rule(){{
             add("beginServiceTime", instant("1 day from now"));
             add("endServiceTime", instant("2 day from now"));
+            add("beginLunchTime", instant("1 day from now"));
+            add("endLunchTime", instant("2 day from now"));
             add("situation", random(ServicePeriodSituation.class));
             add("weekday", random(Weekday.class));
             add("createdDateTime", instant("now"));
