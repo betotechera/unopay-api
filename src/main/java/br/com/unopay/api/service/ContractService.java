@@ -73,6 +73,10 @@ public class ContractService {
         this.paymentInstrumentService = paymentInstrumentService;
     }
 
+    public void createInstallmentOrders(){
+        installmentService.createOrders();
+    }
+
     public Contract create(Contract contract) {
         return create(contract, false);
     }

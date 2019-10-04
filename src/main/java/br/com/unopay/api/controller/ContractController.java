@@ -82,6 +82,14 @@ public class ContractController {
 
     @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
+    @RequestMapping(value = "/contracts/installments", method = RequestMethod.PUT)
+    public void installments() {
+        log.info("processing the contract installments");
+        service.createInstallmentOrders();
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_MANAGE_CONTRACT')")
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing contract id={}", id);
