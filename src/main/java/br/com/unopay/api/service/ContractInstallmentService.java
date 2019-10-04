@@ -4,7 +4,6 @@ import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.market.service.HirerNegotiationService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
-import br.com.unopay.api.order.service.OrderService;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import lombok.Getter;
@@ -37,18 +36,15 @@ public class ContractInstallmentService {
     private HirerNegotiationService hirerNegotiationService;
     @Setter private Date currentDate = new Date();
     @Getter private final Integer boletoDeadlineInDays;
-    private OrderService orderService;
-
 
     @Autowired
     public ContractInstallmentService(ContractInstallmentRepository repository,
                                       HirerNegotiationService hirerNegotiationService,
-                                      @Value("${unopay.boleto.deadline_in_days}") Integer boletoDeadlineInDays,
-                                      OrderService orderService) {
+                                      @Value("${unopay.boleto.deadline_in_days}")Integer boletoDeadlineInDays
+                                      ) {
         this.repository = repository;
         this.hirerNegotiationService = hirerNegotiationService;
         this.boletoDeadlineInDays = boletoDeadlineInDays;
-        this.orderService = orderService;
     }
 
     @Transactional
@@ -106,18 +102,17 @@ public class ContractInstallmentService {
         repository.delete(id);
     }
 
-    public void createOrders(){
-        Stream<ContractInstallment> installments = findInstallmentAboutToExpire();
-        installments.map(ContractInstallment::toOrder)
-                .forEach(order -> orderService.create(order));
-    }
-
     public Stream<ContractInstallment> findInstallmentAboutToExpire(){
         LocalDateTime expirationDayBegin = LocalDateTime.now().plusDays(boletoDeadlineInDays)
                 .withTime(0,0,0,0);
         LocalDateTime expirationDayEnd = LocalDateTime.now().plusDays(boletoDeadlineInDays)
                 .withTime(23,59,59,0);
         Set<ContractInstallment> installments = repository.findInstallmentAboutToExpire(expirationDayBegin.toDate(), expirationDayEnd.toDate());
+        return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
+    }
+
+    public Stream<ContractInstallment> findAllNotPaidInstallments(){
+        Set<ContractInstallment> installments = repository.findAllNotPaidInstallments();
         return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
     }
 

@@ -5,13 +5,15 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
+import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.model.ContractSituation;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.network.model.AccreditedNetwork;
-import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.repository.ContractEstablishmentRepository;
@@ -28,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,8 @@ public class ContractService {
     private UserDetailService userDetailService;
     private ContractInstallmentService installmentService;
     private PaymentInstrumentService paymentInstrumentService;
+    private Notifier notifier;
+
 
     @Autowired
     public ContractService(ContractRepository repository, HirerService hirerService,
@@ -62,7 +67,7 @@ public class ContractService {
                            ContractEstablishmentRepository contractEstablishmentRepository,
                            UserDetailService userDetailService,
                            ContractInstallmentService installmentService,
-                           PaymentInstrumentService paymentInstrumentService) {
+                           PaymentInstrumentService paymentInstrumentService, Notifier notifier) {
         this.repository = repository;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -71,10 +76,13 @@ public class ContractService {
         this.userDetailService = userDetailService;
         this.installmentService = installmentService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.notifier = notifier;
     }
 
     public void createInstallmentOrders(){
-        installmentService.createOrders();
+        Stream<ContractInstallment> installments = installmentService.findAllNotPaidInstallments();
+        installments.map(ContractInstallment::toOrder)
+                .forEach(order -> notifier.notify(Queues.ORDER_CREATED, order));
     }
 
     public Contract create(Contract contract) {
