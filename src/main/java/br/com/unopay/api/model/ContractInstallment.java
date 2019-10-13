@@ -12,6 +12,7 @@ import br.com.unopay.api.util.Time;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.persistence.FetchType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -68,7 +69,7 @@ public class ContractInstallment implements Serializable, Updatable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name="contract_id")
     @NotNull(groups = {Create.class})
@@ -156,6 +157,7 @@ public class ContractInstallment implements Serializable, Updatable {
         paymentRequest.setMethod(this.contract.getRecurrencePaymentMethod());
         paymentRequest.setValue(this.value);
         order.setPaymentRequest(paymentRequest);
+        order.setValue(this.value);
         order.setContract(this.contract);
         order.setProduct(this.contract.getProduct());
         order.setType(OrderType.INSTALLMENT_PAYMENT);
