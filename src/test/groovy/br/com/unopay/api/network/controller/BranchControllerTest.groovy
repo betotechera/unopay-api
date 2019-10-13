@@ -2,10 +2,10 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.BranchServicePeriod
 import br.com.unopay.api.network.model.Establishment
-import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue

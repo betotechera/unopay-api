@@ -4,16 +4,17 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
-import static br.com.unopay.api.model.PaymentInstrumentType.*
+import static br.com.unopay.api.model.PaymentInstrumentType.DIGITAL_WALLET
+import static br.com.unopay.api.model.PaymentInstrumentType.PREPAID_CARD
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.uaa.exception.Errors

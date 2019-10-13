@@ -6,6 +6,7 @@ import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractInstallment;
 import br.com.unopay.api.repository.ContractInstallmentRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.LocalDate;
@@ -111,9 +112,9 @@ public class ContractInstallmentService {
         return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
     }
 
-    public Stream<ContractInstallment> findAllNotPaidInstallments(){
+    public Set<ContractInstallment> findAllNotPaidInstallments(){
         Set<ContractInstallment> installments = repository.findAllNotPaidInstallments();
-        return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer());
+        return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer()).collect(Collectors.toSet());
     }
 
     public Set<ContractInstallment> findByContractId(String contractId) {
@@ -139,8 +140,7 @@ public class ContractInstallmentService {
     public ContractInstallment findFirstNotPaid(String contractId) {
         Set<ContractInstallment> installments = findByContractId(contractId);
         return installments.stream().filter(inst -> inst.getPaymentDateTime() == null)
-                .sorted(Comparator.comparing(ContractInstallment::getInstallmentNumber))
-                .findFirst().orElseThrow(() ->
+                .min(Comparator.comparing(ContractInstallment::getInstallmentNumber)).orElseThrow(() ->
                         UnovationExceptions.unprocessableEntity()
                                 .withErrors(CONTRACT_INSTALLMENT_NOT_FOUND.withOnlyArgument(contractId)));
     }

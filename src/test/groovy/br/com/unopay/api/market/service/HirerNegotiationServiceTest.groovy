@@ -6,7 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.HirerNegotiation
-import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
@@ -14,7 +13,6 @@ import org.apache.commons.beanutils.BeanUtils
 import org.joda.time.DateTimeComparator
 import org.joda.time.DateTimeFieldType
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.util.ObjectUtils
 
 class HirerNegotiationServiceTest extends SpockApplicationTests{
 

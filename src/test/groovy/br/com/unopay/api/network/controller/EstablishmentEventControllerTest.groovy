@@ -2,11 +2,11 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.network.model.ServiceType
-import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.GroupService

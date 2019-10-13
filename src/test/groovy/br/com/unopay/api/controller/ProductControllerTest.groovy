@@ -2,11 +2,11 @@ package br.com.unopay.api.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is

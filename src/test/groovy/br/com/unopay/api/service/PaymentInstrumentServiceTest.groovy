@@ -4,12 +4,10 @@ import br.com.unopay.api.InstrumentNumberGenerator
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.PaymentInstrument
-import br.com.unopay.api.model.PaymentInstrumentSituation
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.access.method.P
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentInstrumentServiceTest extends SpockApplicationTests {

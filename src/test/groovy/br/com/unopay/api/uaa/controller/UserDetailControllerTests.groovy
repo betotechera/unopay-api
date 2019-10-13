@@ -12,25 +12,22 @@ import br.com.unopay.api.uaa.model.RequestOrigin
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is
 import static org.hamcrest.core.IsNull.notNullValue
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

@@ -1,8 +1,8 @@
 package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.unopay.api.network.model.Partner
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.network.model.Partner
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan

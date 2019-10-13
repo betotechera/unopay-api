@@ -4,7 +4,6 @@ import br.com.six2six.fixturefactory.Fixture
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.config.Queues
@@ -17,6 +16,7 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.IssueInvoiceType
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

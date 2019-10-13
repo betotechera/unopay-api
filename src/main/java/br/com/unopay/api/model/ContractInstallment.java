@@ -1,6 +1,5 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.market.model.HirerNegotiation;
 import br.com.unopay.api.model.validation.group.Create;
@@ -12,13 +11,9 @@ import br.com.unopay.api.util.Time;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import javax.persistence.FetchType;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
-import org.joda.time.DateTime;
-
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,9 +24,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
 
 @Data
 @Entity
@@ -69,7 +66,7 @@ public class ContractInstallment implements Serializable, Updatable {
     @GeneratedValue(generator="system-uuid")
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name="contract_id")
     @NotNull(groups = {Create.class})
@@ -156,6 +153,7 @@ public class ContractInstallment implements Serializable, Updatable {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setMethod(this.contract.getRecurrencePaymentMethod());
         paymentRequest.setValue(this.value);
+        order.setRecurrencePaymentMethod(contract.getRecurrencePaymentMethod());
         order.setPaymentRequest(paymentRequest);
         order.setValue(this.value);
         order.setContract(this.contract);

@@ -1,13 +1,12 @@
 package br.com.unopay.api.bacen.controller
 
-import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post

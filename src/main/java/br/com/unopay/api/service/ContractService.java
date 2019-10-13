@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
@@ -80,9 +81,9 @@ public class ContractService {
     }
 
     public void createInstallmentOrders(){
-        Stream<ContractInstallment> installments = installmentService.findAllNotPaidInstallments();
-        installments.map(ContractInstallment::toOrder)
-                .forEach(order -> notifier.notify(Queues.ORDER_CREATED, order));
+        Set<ContractInstallment> installments = installmentService.findAllNotPaidInstallments();
+        installments.stream().map(ContractInstallment::toOrder)
+                .forEach(order -> notifier.notify(Queues.ORDER_CREATE, order));
     }
 
     public Contract create(Contract contract) {

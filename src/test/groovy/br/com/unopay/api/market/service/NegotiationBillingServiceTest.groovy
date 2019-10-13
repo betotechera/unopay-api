@@ -11,16 +11,19 @@ import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.market.model.PaymentDayCalculator
+import static br.com.unopay.api.model.ContractSituation.ACTIVE
+import static br.com.unopay.api.model.ContractSituation.CANCELLED
+import static br.com.unopay.api.model.ContractSituation.EXPIRED
+import static br.com.unopay.api.model.ContractSituation.FINALIZED
+import static br.com.unopay.api.model.ContractSituation.SUSPENDED
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException
+import static org.hamcrest.Matchers.hasSize
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-
-import static br.com.unopay.api.model.ContractSituation.*
-import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.that
 
 class NegotiationBillingServiceTest extends SpockApplicationTests{

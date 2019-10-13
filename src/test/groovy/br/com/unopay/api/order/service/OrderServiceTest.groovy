@@ -659,6 +659,60 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | OrderType.CREDIT
     }
 
+
+    def """given an order with the credit card payment method and a user without a card
+        token then the payment method should be changed to the ticket method"""(){
+        given:
+        def contractor = fixtureCreator.createContractor()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, contractor)
+        fixtureCreator.createInstrumentToProduct(product, contractor)
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", contractor.person)
+            add("product", product)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", instrument)
+            add("paymentMethod", PaymentMethod.CARD)
+            add("value", 10.0)
+        }})
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.paymentMethod == PaymentMethod.BOLETO
+    }
+
+
+    def """given an order with the credit card payment method and a user with a card
+        token then the payment method should be changed to the ticket card"""(){
+        given:
+        def userContractor = fixtureCreator.createContractorUser()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        def instrument = fixtureCreator.createInstrumentToProduct(product, userContractor.contractor)
+        fixtureCreator.createInstrumentToProduct(product, userContractor.contractor)
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", true)
+        }})
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", userContractor.contractor.person)
+            add("product", product)
+            add("contract", contractUnderTest)
+            add("paymentInstrument", instrument)
+            add("paymentMethod", PaymentMethod.CARD)
+            add("paymentRequest", paymentRequest)
+            add("value", 10.0)
+        }})
+
+        when:
+        def created = service.create(userContractor.email, creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result.paymentMethod == PaymentMethod.CARD
+    }
+
     def 'given a known contractor and INSTALLMENT_PAYMENT order without value should be created'(){
         given:
         def contractor = fixtureCreator.createContractor()
@@ -1096,7 +1150,7 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
-    private UserDetail crateOrderWithStoreCard(creditCard, Boolean storeCard = true,
+    private UserDetail crateOrderWithStoreCard(creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true,
                                                UserDetail userDetail = fixtureCreator.createContractorUser()) {
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
                 add("method", PaymentMethod.CARD)

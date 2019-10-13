@@ -1,27 +1,25 @@
 package br.com.unopay.api.market.service
 
-
-import br.com.unopay.api.model.Gender
-import br.com.unopay.api.model.Relatedness
-
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
 import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Document
 import br.com.unopay.api.model.DocumentType
+import br.com.unopay.api.model.Gender
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.model.Relatedness
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest

@@ -3,11 +3,11 @@ package br.com.unopay.api.uaa.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
+import br.com.unopay.api.network.model.AccreditedNetwork
+import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.notification.model.EventType
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.infra.PasswordTokenService

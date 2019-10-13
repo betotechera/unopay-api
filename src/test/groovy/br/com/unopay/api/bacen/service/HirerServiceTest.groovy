@@ -1,7 +1,6 @@
 package br.com.unopay.api.bacen.service
 
 import br.com.six2six.fixturefactory.Fixture
-import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.filter.HirerFilter

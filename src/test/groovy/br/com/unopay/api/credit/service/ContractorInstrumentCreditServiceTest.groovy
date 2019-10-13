@@ -6,7 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.ContractorInstrumentCreditType
@@ -20,6 +19,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.service.ContractService

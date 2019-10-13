@@ -1,10 +1,5 @@
 package br.com.unopay.api.receiver
 
-import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.model.BatchClosing
-import br.com.unopay.api.service.BatchClosingService
-import br.com.unopay.api.util.GenericObjectMapper
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.BatchClosing

@@ -4,19 +4,16 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.network.model.Establishment
-import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
-import br.com.unopay.api.market.model.ContractorBonus
-import br.com.unopay.api.market.service.ContractorBonusService
-
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
+import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.model.HirerNegotiation
+import br.com.unopay.api.market.service.ContractorBonusService
 import br.com.unopay.api.market.service.DealService
+import br.com.unopay.api.model.AuthorizationSituation
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.Deal
@@ -25,7 +22,9 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.ServiceAuthorizeEvent
-import br.com.unopay.api.model.AuthorizationSituation
+import br.com.unopay.api.network.model.Establishment
+import br.com.unopay.api.network.model.EstablishmentEvent
+import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.NotFoundException

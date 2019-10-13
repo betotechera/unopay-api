@@ -1,7 +1,7 @@
 package br.com.unopay.api.`implicit`
 
-import java.time.{LocalDateTime, Month, ZoneId, ZoneOffset}
-import java.util.{Calendar, Date}
+import java.time.{LocalDateTime, Month, ZoneId}
+import java.util.Date
 
 import br.com.unopay.api.ScalaFixtureTest
 import org.junit.runner.RunWith

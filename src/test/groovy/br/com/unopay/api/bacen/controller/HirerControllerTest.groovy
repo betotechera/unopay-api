@@ -6,10 +6,9 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditSituation
-import br.com.unopay.api.market.model.NegotiationBilling
-
-import static br.com.unopay.api.function.FixtureFunctions.*
+import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.HirerNegotiation
+import br.com.unopay.api.market.model.NegotiationBilling
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail

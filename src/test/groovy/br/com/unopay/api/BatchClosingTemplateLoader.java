@@ -3,8 +3,6 @@ package br.com.unopay.api;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import br.com.unopay.api.network.model.AccreditedNetwork;
-import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.RecurrencePeriod;
@@ -15,6 +13,8 @@ import br.com.unopay.api.model.BatchClosingSituation;
 import br.com.unopay.api.model.DocumentSituation;
 import br.com.unopay.api.model.IssueInvoiceType;
 import br.com.unopay.api.model.ServiceAuthorize;
+import br.com.unopay.api.network.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.Establishment;
 import java.math.BigDecimal;
 
 public class BatchClosingTemplateLoader  implements TemplateLoader {

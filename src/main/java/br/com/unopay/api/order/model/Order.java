@@ -2,6 +2,7 @@ package br.com.unopay.api.order.model;
 
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.TransactionStatus;
@@ -169,6 +170,11 @@ public class Order implements Updatable, Billable, Serializable {
 
     public void defineCardToken(String token){
         if(getPaymentRequest() != null && getPaymentRequest().getCreditCard() != null) {
+            getPaymentRequest().getCreditCard().setToken(token);
+            return;
+        }
+        if(getPaymentRequest() != null && getPaymentRequest().getCreditCard() == null) {
+            getPaymentRequest().setCreditCard(new CreditCard());
             getPaymentRequest().getCreditCard().setToken(token);
         }
     }
@@ -387,9 +393,13 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public boolean hasCardToken() {
-        return hasPaymentRequest() &&
-                getPaymentRequest().getCreditCard() != null &&
+        return hasCard() &&
                 getPaymentRequest().getCreditCard().getToken() != null;
+    }
+
+    public boolean hasCard() {
+        return hasPaymentRequest() &&
+                getPaymentRequest().getCreditCard() != null;
     }
 
     public String creditCardToken() {

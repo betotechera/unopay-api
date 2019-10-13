@@ -2,21 +2,19 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
-import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.ServiceAuthorize
+import br.com.unopay.api.network.model.AccreditedNetwork
+import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.core.Is.is
+import static org.hamcrest.core.IsNull.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-
-import static org.hamcrest.core.IsNull.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post

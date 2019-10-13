@@ -5,14 +5,22 @@ import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
 import br.com.unopay.api.billing.boleto.model.Ticket;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
-import br.com.unopay.api.billing.creditcard.model.*;
+import br.com.unopay.api.billing.creditcard.model.Amount;
+import br.com.unopay.api.billing.creditcard.model.CardBrand;
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
+import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
+import br.com.unopay.api.billing.creditcard.model.GatewaySource;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
+import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
+import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.order.model.Order;
-import br.com.unopay.api.order.model.PaymentStatus;
 import br.com.unopay.api.order.model.OrderType;
+import br.com.unopay.api.order.model.PaymentStatus;
 import java.math.BigDecimal;
 
 public class BillingTemplateLoader  implements TemplateLoader {

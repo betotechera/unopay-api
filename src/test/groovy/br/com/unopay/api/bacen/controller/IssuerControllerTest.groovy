@@ -3,19 +3,13 @@ package br.com.unopay.api.bacen.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.AccreditedNetworkIssuer
-import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.service.IssuerService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.job.UnopayScheduler
-import br.com.unopay.api.market.model.ContractorBonus
-import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.service.BonusBillingService
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.core.Is.is

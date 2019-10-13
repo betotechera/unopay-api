@@ -1,11 +1,10 @@
 package br.com.unopay.api.util
 
-import javax.persistence.{Embeddable, EntityManager, Id, PersistenceContext}
-import javax.transaction.Transactional
-
 import br.com.six2six.fixturefactory.processor.Processor
 import br.com.unopay.api.bacen.model.Bank
 import br.com.unopay.api.uaa.model.Authority
+import javax.persistence.{Embeddable, EntityManager, Id, PersistenceContext}
+import javax.transaction.Transactional
 import org.apache.commons.lang3.text.WordUtils
 import org.springframework.context.annotation.{Scope, ScopedProxyMode}
 import org.springframework.stereotype.Component

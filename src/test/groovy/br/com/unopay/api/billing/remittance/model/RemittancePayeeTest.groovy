@@ -2,8 +2,8 @@ package br.com.unopay.api.billing.remittance.model
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Hirer
+import br.com.unopay.api.network.model.Establishment
 
 class RemittancePayeeTest  extends FixtureApplicationTest{
 

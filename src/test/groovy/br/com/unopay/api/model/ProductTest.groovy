@@ -3,7 +3,6 @@ package br.com.unopay.api.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.FixtureApplicationTest
 import br.com.unopay.api.credit.model.CreditInsertionType
-import br.com.unopay.api.util.Rounder
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 
 class ProductTest  extends FixtureApplicationTest {

@@ -4,13 +4,13 @@ import java.util.{Date, UUID}
 
 import br.com.six2six.fixturefactory.loader.TemplateLoader
 import br.com.six2six.fixturefactory.{Fixture, Rule}
+import br.com.unopay.api.`implicit`.DateImplicit._
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.{Contract, PaymentInstrument}
 import br.com.unopay.api.network.model.{Branch, ServiceType}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
-import br.com.unopay.api.`implicit`.DateImplicit._
 
 class SchedulingTemplateLoader extends TemplateLoader {
 

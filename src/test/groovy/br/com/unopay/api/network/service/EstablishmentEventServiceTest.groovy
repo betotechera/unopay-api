@@ -3,12 +3,12 @@ package br.com.unopay.api.network.service
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
+import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Person
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.network.model.Event
 import br.com.unopay.api.network.model.ServiceType
-import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.model.Person
 import br.com.unopay.api.network.service.EstablishmentEventService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

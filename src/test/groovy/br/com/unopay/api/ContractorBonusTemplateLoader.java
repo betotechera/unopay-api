@@ -8,7 +8,6 @@ import br.com.unopay.api.market.model.BonusSituation;
 import br.com.unopay.api.market.model.ContractorBonus;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
-
 import java.math.BigDecimal;
 
 public class ContractorBonusTemplateLoader implements TemplateLoader {

@@ -2,7 +2,6 @@ package br.com.unopay.api
 
 import br.com.six2six.fixturefactory.function.impl.ChronicFunction
 import br.com.unopay.api.util.FixtureCreatorScala
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
 import org.flywaydb.test.annotation.FlywayTest
 import org.flywaydb.test.junit.FlywayTestExecutionListener

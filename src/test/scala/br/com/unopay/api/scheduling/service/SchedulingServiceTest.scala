@@ -8,20 +8,17 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.market.service.AuthorizedMemberService
 import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.network.service.{BranchService, EstablishmentEventService, EventService}
+import br.com.unopay.api.network.service.{BranchService, EstablishmentEventService}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
-import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
-import org.assertj.core.api.Assert
-import org.junit.Assert
 import org.junit.runner.RunWith
 import org.mockito.Matchers.{any, isA}
 import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Matchers, Mockito}
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.junit.JUnitRunner
 import org.springframework.data.domain.PageRequest
 

@@ -2,11 +2,11 @@ package br.com.unopay.api.network.service
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.network.model.Partner
-import br.com.unopay.api.network.model.filter.PartnerFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Product
+import br.com.unopay.api.network.model.Partner
+import br.com.unopay.api.network.model.filter.PartnerFilter
 import br.com.unopay.api.network.service.PartnerService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException

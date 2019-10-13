@@ -156,7 +156,12 @@ public class OrderService {
 
     private void defineCardTokenWhenRequired(Order order) {
         if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
-            order.defineCardToken(userCreditCardService.getLastActiveTokenByUser(order.personEmail()));
+            String token = userCreditCardService.getLastActiveTokenByUser(order.personEmail());
+            if(token == null && !order.hasCardToken()) {
+                order.setPaymentMethod(PaymentMethod.BOLETO);
+                return;
+            }
+            order.defineCardToken(token);
         }
     }
 

@@ -5,10 +5,9 @@ import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.model.validation.group.Views
 import br.com.unopay.api.uaa.AuthServerApplicationTests
+import static org.hamcrest.Matchers.notNullValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-
-import static org.hamcrest.Matchers.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post

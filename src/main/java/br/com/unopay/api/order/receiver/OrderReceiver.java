@@ -36,19 +36,18 @@ public class OrderReceiver {
         this.ticketService = ticketService;
     }
 
+    @Transactional
     @RabbitListener(queues = Queues.ORDER_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void orderCreated(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
-        log.info("creating payment for order={} type={} of value={}",
-                order.getId(),order.getType(), order.getValue());
-        if(order.is(PaymentMethod.CARD)) {
-            order.getPaymentRequest().setValue(order.paymentValue());
-            Transaction transaction = transactionService.create(order.getPaymentRequest());
-            orderProcessor.processWithStatus(order.getId(), transaction.getStatus());
-        }
-        if(order.is(PaymentMethod.BOLETO)){
-            ticketService.createForOrder(order.getId());
-        }
+        processPayment(order);
+    }
+
+    @Transactional
+    @RabbitListener(queues = Queues.ORDER_CREATE, containerFactory = Queues.DURABLE_CONTAINER)
+    public void orderCreating(String objectAsString){
+        Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
+        orderProcessor.createOrder(order);
     }
 
     @Transactional
@@ -58,5 +57,18 @@ public class OrderReceiver {
         log.info("update order payment status for order={} type={} of value={}",
                 order.getId(),order.getType(), order.getValue());
             orderProcessor.process(order);
+    }
+
+    private void processPayment(Order order) {
+        log.info("creating payment for order={} method={} type={} of value={}",
+                order.getId(), order.getRecurrencePaymentMethod(), order.getType(), order.getValue());
+        if(order.is(PaymentMethod.CARD)) {
+            order.getPaymentRequest().setValue(order.paymentValue());
+            Transaction transaction = transactionService.create(order.getPaymentRequest());
+            orderProcessor.processWithStatus(order.getId(), transaction.getStatus());
+        }
+        if(order.is(PaymentMethod.BOLETO)){
+            ticketService.createForOrder(order.getId());
+        }
     }
 }

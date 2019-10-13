@@ -1,11 +1,9 @@
 package br.com.unopay.api.market.controller
 
 import br.com.unopay.api.AuthServerApplicationTests
-import br.com.unopay.api.util.FixtureCreatorScala
 import org.hamcrest.Matchers.notNullValue
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, post, put}
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, put}
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{jsonPath, status}
 
 class BonusBillingControllerTest  extends AuthServerApplicationTests {

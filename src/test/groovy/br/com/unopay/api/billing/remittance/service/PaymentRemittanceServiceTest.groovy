@@ -4,11 +4,10 @@ import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.BankAccount
-import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.remittance.cnab240.ItauCnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.BradescoCnab240Generator
+import br.com.unopay.api.billing.remittance.cnab240.ItauCnab240Generator
 import br.com.unopay.api.billing.remittance.cnab240.LayoutExtractorSelector
 import br.com.unopay.api.billing.remittance.cnab240.RemittanceExtractor
 import static br.com.unopay.api.billing.remittance.cnab240.filler.BradescoRemittanceLayout.getBatchSegmentA
@@ -28,6 +27,7 @@ import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingSituation
+import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.service.BatchClosingService
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException

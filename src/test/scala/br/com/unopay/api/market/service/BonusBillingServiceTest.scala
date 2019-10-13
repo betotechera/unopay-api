@@ -2,17 +2,17 @@ package br.com.unopay.api.market.service
 
 import java.util.Calendar
 
+import br.com.unopay.api.UnopayApiScalaApplicationTest
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.model.BonusSituation
 import br.com.unopay.api.market.model.filter.BonusBillingFilter
 import br.com.unopay.api.market.repository.ContractorBonusBillingRepository
 import br.com.unopay.api.order.model.PaymentStatus
-import br.com.unopay.api.{UnopayApiScalaApplicationTest, util}
 import br.com.unopay.bootcommons.exception.{NotFoundException, UnprocessableEntityException}
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
-import org.scalatest.mockito._
 import org.mockito.Mockito.verify
+import org.scalatest.mockito._
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.collection.JavaConverters._

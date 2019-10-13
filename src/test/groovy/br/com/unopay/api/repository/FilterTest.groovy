@@ -5,19 +5,19 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.network.model.Service
-import static br.com.unopay.api.network.model.ServiceType.DIAGNOSIS_AND_THERAPY
-import static br.com.unopay.api.network.model.ServiceType.DOCTORS_APPOINTMENTS
-import static br.com.unopay.api.network.model.ServiceType.MEDICINES
 import br.com.unopay.api.bacen.model.filter.HirerFilter
-import br.com.unopay.api.network.model.filter.ServiceFilter
 import br.com.unopay.api.bacen.repository.HirerRepository
-import br.com.unopay.api.network.repository.ServiceRepository
 import br.com.unopay.api.bacen.util.FixtureCreator
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.filter.ContractFilter
+import br.com.unopay.api.network.model.Service
+import static br.com.unopay.api.network.model.ServiceType.DIAGNOSIS_AND_THERAPY
+import static br.com.unopay.api.network.model.ServiceType.DOCTORS_APPOINTMENTS
+import static br.com.unopay.api.network.model.ServiceType.MEDICINES
+import br.com.unopay.api.network.model.filter.ServiceFilter
+import br.com.unopay.api.network.repository.ServiceRepository
 import br.com.unopay.bootcommons.model.Period
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired

@@ -107,4 +107,8 @@ public class OrderProcessor {
             notificationService.sendPaymentEmail(order, EventType.PAYMENT_APPROVED);
         }
     }
+
+    public Order createOrder(Order order) {
+        return orderService.create(order);
+    }
 }

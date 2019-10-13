@@ -2,23 +2,16 @@ package br.com.unopay.api.billing.remittance.service
 
 import br.com.six2six.fixturefactory.Fixture
 import static br.com.six2six.fixturefactory.Fixture.from
-import static br.com.six2six.fixturefactory.Fixture.from
-import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
-import br.com.unopay.api.bacen.model.BankAccount
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.remittance.model.PaymentRemittance
 import br.com.unopay.api.billing.remittance.model.PaymentRemittanceItem
 import br.com.unopay.api.billing.remittance.model.RemittancePayee
 import br.com.unopay.api.billing.remittance.model.RemittanceSituation
-import br.com.unopay.api.model.BatchClosing
-import br.com.unopay.api.model.BatchClosingSituation
 import br.com.unopay.api.network.model.Establishment
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
-import static spock.util.matcher.HamcrestSupport.that
 import static spock.util.matcher.HamcrestSupport.that
 
 class PaymentRemittanceItemServiceTest extends SpockApplicationTests {

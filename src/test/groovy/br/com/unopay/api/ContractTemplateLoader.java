@@ -16,7 +16,8 @@ import br.com.unopay.api.model.Product;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static br.com.unopay.api.network.model.ServiceType.*;
+import static br.com.unopay.api.network.model.ServiceType.DIAGNOSIS_AND_THERAPY;
+import static br.com.unopay.api.network.model.ServiceType.MEDICINES;
 import static java.util.Collections.singletonList;
 
 public class ContractTemplateLoader implements TemplateLoader {

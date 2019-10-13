@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.client.token.grant.client.ClientCrede
 @Configuration
 public class ItauClientConfig {
 
-    @Value("${itau.api}")
+    @Value("${itau.api:}")
     private String itauApi;
 
     @Bean

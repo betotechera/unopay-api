@@ -60,7 +60,9 @@ class AmqpConfig {
             declareQueue(amqpAdmin, Queues.CREDIT_PROCESSED, Queues.CREDIT_PROCESSED);
             declareQueue(amqpAdmin, Queues.DLQ_CREDIT_PROCESSED, Queues.DLQ_CREDIT_PROCESSED);
             declareQueue(amqpAdmin, Queues.ORDER_CREATED, Queues.ORDER_CREATED);
+            declareQueue(amqpAdmin, Queues.ORDER_CREATE, Queues.ORDER_CREATE);
             declareQueue(amqpAdmin, Queues.DLQ_ORDER_CREATED, Queues.DLQ_ORDER_CREATED);
+            declareQueue(amqpAdmin, Queues.DLQ_ORDER_CREATE, Queues.DLQ_ORDER_CREATE);
             declareQueue(amqpAdmin, Queues.HIRER_CREDIT_CREATED, Queues.HIRER_CREDIT_CREATED);
             declareQueue(amqpAdmin, Queues.DLQ_HIRER_CREDIT_CREATED, Queues.DLQ_HIRER_CREDIT_CREATED);
             declareQueue(amqpAdmin, Queues.HIRER_BILLING_CREATED, Queues.HIRER_BILLING_CREATED);

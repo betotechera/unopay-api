@@ -1,35 +1,25 @@
 package br.com.unopay.api.bacen.util
 
-import br.com.unopay.api.market.model.BonusBilling
-import br.com.unopay.api.market.model.ContractorBonus
-import br.com.unopay.api.model.PaymentInstrumentType
-import br.com.unopay.api.scheduling.model.Scheduling
-
-import static br.com.six2six.fixturefactory.Fixture.*
 import br.com.six2six.fixturefactory.Fixture
+import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
 import br.com.unopay.api.JpaProcessor
-import br.com.unopay.api.network.model.AccreditedNetwork
-import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.bacen.model.Contractor
-import br.com.unopay.api.network.model.Branch
-import br.com.unopay.api.network.model.Establishment
-import br.com.unopay.api.network.model.EstablishmentEvent
-import br.com.unopay.api.network.model.Event
 import br.com.unopay.api.bacen.model.Hirer
-import br.com.unopay.api.market.model.AuthorizedMemberCandidate
-import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
-import br.com.unopay.api.network.model.Service
-import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
 import br.com.unopay.api.credit.model.InstrumentBalance
 import br.com.unopay.api.function.FixtureFunctions
+import br.com.unopay.api.market.model.AuthorizedMember
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate
+import br.com.unopay.api.market.model.BonusBilling
+import br.com.unopay.api.market.model.ContractorBonus
+import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.market.model.PaymentDayCalculator
 import br.com.unopay.api.model.BatchClosing
 import br.com.unopay.api.model.BatchClosingItem
@@ -39,13 +29,22 @@ import br.com.unopay.api.model.ContractInstallment
 import br.com.unopay.api.model.ContractSituation
 import br.com.unopay.api.model.DocumentSituation
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.PaymentInstrumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.model.ServiceAuthorize
 import br.com.unopay.api.model.ServiceAuthorizeEvent
+import br.com.unopay.api.network.model.AccreditedNetwork
+import br.com.unopay.api.network.model.Branch
+import br.com.unopay.api.network.model.Establishment
+import br.com.unopay.api.network.model.EstablishmentEvent
+import br.com.unopay.api.network.model.Event
+import br.com.unopay.api.network.model.Service
+import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.order.model.Order
-import br.com.unopay.api.order.model.PaymentStatus
 import br.com.unopay.api.order.model.OrderType
+import br.com.unopay.api.order.model.PaymentStatus
+import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
