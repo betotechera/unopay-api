@@ -660,7 +660,7 @@ class OrderServiceTest extends SpockApplicationTests{
     }
 
 
-    def """given an order with the credit card payment method and a user without a card
+    def """given an order with the creditCard payment method and a user without a card
         token then the payment method should be changed to the ticket method"""(){
         given:
         def contractor = fixtureCreator.createContractor()
@@ -672,6 +672,7 @@ class OrderServiceTest extends SpockApplicationTests{
             add("product", product)
             add("contract", contractUnderTest)
             add("paymentInstrument", instrument)
+            add("type", OrderType.INSTALLMENT_PAYMENT)
             add("paymentMethod", PaymentMethod.CARD)
             add("value", 10.0)
         }})

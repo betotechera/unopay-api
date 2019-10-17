@@ -92,7 +92,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'PERSON_ISSUER_ALREADY_EXISTS'
     }
 
-    def 'should not create issuer with existing document'(){
+    def 'should not create issuer with existing id'(){
         given:
         Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
 
@@ -102,7 +102,7 @@ class IssuerServiceTest  extends SpockApplicationTests {
 
         then:
         def ex = thrown(ConflictException)
-        ex.errors.find().logref == 'PERSON_DOCUMENT_ALREADY_EXISTS'
+        ex.errors.find().logref == 'PERSON_ISSUER_ALREADY_EXISTS'
     }
 
     def 'a valid issuer without person should not be created'(){

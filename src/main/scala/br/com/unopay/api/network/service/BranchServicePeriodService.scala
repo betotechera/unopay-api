@@ -26,12 +26,11 @@ class BranchServicePeriodService(branchServicePeriodRepository: BranchServicePer
 
   def updateOrCreate(id: String, servicePeriod: BranchServicePeriod): BranchServicePeriod  = {
     val currentOptional = branchServicePeriodRepository.findById(id)
-    currentOptional.ifPresent(current => {
+    currentOptional.map[BranchServicePeriod](current => {
       checkBranch(servicePeriod, current)
       current.updateMe(servicePeriod)
-      branchServicePeriodRepository.save(current)
-    })
-    currentOptional.orElseGet(() => create(servicePeriod))
+      return branchServicePeriodRepository.save(current)
+    }).orElseGet(() => create(servicePeriod))
   }
 
   private def checkBranch(servicePeriod: BranchServicePeriod, current: BranchServicePeriod) = {

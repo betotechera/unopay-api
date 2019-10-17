@@ -74,6 +74,13 @@ public class EstablishmentEvent implements Updatable, Serializable {
         return establishment.getId().equals(establishmentId);
     }
 
+    public String establishmentId(){
+        if(this.establishment != null){
+            return this.establishment.getId();
+        }
+        return null;
+    }
+
     public ServiceType serviceType() {
         return event.serviceType();
     }

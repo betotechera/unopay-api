@@ -94,8 +94,7 @@ public class Person implements Serializable{
     private String cellPhone;
 
     public void validate() {
-
-        if(!this.document.getType().isValidDocumentFor(this.type)) {
+        if(this.document == null || !this.document.getType().isValidDocumentFor(this.type)) {
             throw UnovationExceptions.unprocessableEntity()
                     .withErrors(Errors.INVALID_DOCUMENT_TYPE_FOR_USER);
         }

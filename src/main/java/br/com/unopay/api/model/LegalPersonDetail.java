@@ -30,7 +30,7 @@ import static javax.persistence.EnumType.STRING;
 @Data
 @Entity
 @Table(name = "legal_person_detail")
-public class LegalPersonDetail implements Serializable{
+public class LegalPersonDetail implements Serializable, Updatable{
 
     public static final long serialVersionUID = 1L;
 

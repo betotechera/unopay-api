@@ -47,18 +47,34 @@ public class PersonService {
             person.validate();
             person.normalize();
             addressRepository.save(person.getAddress());
-            if(person.isLegal()) {
-                legalPersonDetailRepository.save(person.getLegalPersonDetail());
-            }
-            if(person.isPhysical()) {
-                physicalPersonDetailRepository.save(person.getPhysicalPersonDetail());
-            }
-            return repository.save(person);
+            Optional<Person> byDocumentNumber = repository.findByIdOrDocumentNumber(person.getId(), person.documentNumber());
+            return byDocumentNumber.map(current -> update(current, person)).orElseGet(() -> save(person));
         } catch (DataIntegrityViolationException e) {
             log.warn(String.format("Person document already exists %s", person.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.PERSON_DOCUMENT_ALREADY_EXISTS)
                     .withArguments(person.getDocument());
         }
+    }
+
+    private Person update(Person current, Person person) {
+        current.update(person);
+        if(current.isLegal()) {
+            current.getLegalPersonDetail().updateMe(person.getLegalPersonDetail());
+        }
+        if(current.isPhysical()) {
+            current.getPhysicalPersonDetail().updateMe(person.getPhysicalPersonDetail());
+        }
+        return save(current);
+    }
+
+    private Person save(Person person) {
+        if(person.isLegal()) {
+            legalPersonDetailRepository.save(person.getLegalPersonDetail());
+        }
+        if(person.isPhysical()) {
+            physicalPersonDetailRepository.save(person.getPhysicalPersonDetail());
+        }
+        return repository.save(person);
     }
 
     public Person findByFilter(PersonFilter personFilter){

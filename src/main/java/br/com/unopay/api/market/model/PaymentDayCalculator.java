@@ -36,8 +36,8 @@ public class PaymentDayCalculator {
 
     public Date getNearDate(){
         if(nearDay() > MAX_PAYMENT_DAY){
-            return date.plusMonths(ONE_MONTH).withDayOfMonth(getNearDay()).withMillisOfDay(0).toDate();
+            return date.plusMonths(ONE_MONTH).withDayOfMonth(getNearDay()).withMillisOfDay(1).toDate();
         }
-        return date.withDayOfMonth(getNearDay()).withMillisOfDay(0).toDate();
+        return date.withDayOfMonth(getNearDay()).withMillisOfDay(1).toDate();
     }
 }

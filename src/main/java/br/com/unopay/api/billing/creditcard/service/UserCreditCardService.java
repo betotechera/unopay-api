@@ -113,8 +113,7 @@ public class UserCreditCardService {
 
     private UserCreditCard getUserCreditCardWithMonthAndYear(String id, Supplier<Optional<UserCreditCard>> userCreditCard){
         Optional<UserCreditCard> credit = userCreditCard.get();
-        credit.ifPresent(UserCreditCard::defineMonthAndYearBasedOnExpirationDate);
-        return credit.orElseThrow(() ->
+        return credit.map(UserCreditCard::defineMonthAndYearBasedOnExpirationDate).orElseThrow(() ->
                 UnovationExceptions.notFound().withErrors(USER_CREDIT_CARD_NOT_FOUND.withOnlyArgument(id)));
     }
 

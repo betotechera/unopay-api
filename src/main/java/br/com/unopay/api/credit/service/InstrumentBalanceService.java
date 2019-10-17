@@ -37,13 +37,10 @@ public class InstrumentBalanceService {
     public void add(String instrumentId, BigDecimal value) {
         PaymentInstrument instrument = paymentInstrumentService.findById(instrumentId);
         Optional<InstrumentBalance> current = repository.findByPaymentInstrumentId(instrumentId);
-        current.ifPresent(balance -> {
+        current.map(balance -> {
             balance.add(value);
-            save(balance);
-        });
-        if(!current.isPresent()){
-            save(new InstrumentBalance(instrument, value));
-        }
+            return save(balance);
+        }).orElseGet(() -> save(new InstrumentBalance(instrument, value)));
     }
 
     public InstrumentBalance findByInstrumentId(String instrumentId) {

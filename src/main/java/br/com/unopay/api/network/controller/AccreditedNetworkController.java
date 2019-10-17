@@ -306,7 +306,7 @@ public class AccreditedNetworkController {
     public ResponseEntity<EstablishmentEvent> createEstablishmentEvent(@Validated(Create.class) @RequestBody EstablishmentEvent establishmentEvent,
                                                                   AccreditedNetwork accreditedNetwork) {
         log.info("create an establishmentEvent for network={}", accreditedNetwork.documentNumber());
-        EstablishmentEvent created = establishmentEventService.create(establishmentEvent.getEstablishment().getId(), establishmentEvent, accreditedNetwork);
+        EstablishmentEvent created = establishmentEventService.create(establishmentEvent.establishmentId(), establishmentEvent, accreditedNetwork);
         return ResponseEntity
                 .created(URI.create("/accredited-networks/me/event-fees/"+created.getId()))
                 .body(created);

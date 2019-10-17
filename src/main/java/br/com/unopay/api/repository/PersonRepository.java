@@ -12,5 +12,7 @@ public interface PersonRepository extends UnovationFilterRepository<Person,Strin
     Optional<Person> findById(String id);
 
     Optional<Person> findByDocumentNumber(String document);
+
+    Optional<Person> findByIdOrDocumentNumber(String id, String document);
 }
 

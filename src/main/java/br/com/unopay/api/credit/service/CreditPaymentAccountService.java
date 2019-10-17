@@ -51,11 +51,10 @@ public class CreditPaymentAccountService {
     public CreditPaymentAccount register(Credit credit) {
         List<CreditPaymentAccount> creditPayments = findByHirerDocument(credit.getHirer().getDocumentNumber());
         Optional<CreditPaymentAccount> creditPaymentAccount = credit.filterLastByProductAndService(creditPayments);
-        creditPaymentAccount.ifPresent(creditPayment -> {
+        return creditPaymentAccount.map(creditPayment -> {
             creditPayment.updateMyBalance(credit);
-            repository.save(creditPayment);
-        });
-        return creditPaymentAccount.orElseGet(()-> save(new CreditPaymentAccount(credit)));
+            return repository.save(creditPayment);
+        }).orElseGet(()-> save(new CreditPaymentAccount(credit)));
     }
 
     public List<CreditPaymentAccount> findByHirerDocument(String hirerDocument) {

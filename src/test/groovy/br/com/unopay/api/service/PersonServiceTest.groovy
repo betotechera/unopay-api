@@ -31,7 +31,6 @@ class PersonServiceTest extends SpockApplicationTests {
         assert result.address.id != null
     }
 
-
     void 'should save LEGAL Person'(){
         given:
         Person person = Fixture.from(Person.class).gimme("legal")
@@ -45,22 +44,49 @@ class PersonServiceTest extends SpockApplicationTests {
         assert result.legalPersonDetail.id != null
     }
 
-    void 'should not allow create Person with same document'(){
+    void 'given a person without id and an existing document number should update it'(){
         given:
-        Person person = Fixture.from(Person.class).gimme("legal")
-
+        Person person = Fixture.from(Person.class).gimme(type)
+        def expectedName = 'Teste'
         when:
         service.create(person)
-        service.create(person.with { id = null; it })
+        service.create(person.with { id = null; name = expectedName; it })
+
+        def result = service.findByDocument(person.documentNumber())
 
         then:
-        def ex = thrown(ConflictException)
-        assert ex.errors.first().logref == 'PERSON_DOCUMENT_ALREADY_EXISTS'
+        result.documentNumber() == person.documentNumber()
+        result.name == expectedName
+
+        where:
+        _ | type
+        _ | 'legal'
+        _ | 'physical'
+    }
+
+    void 'given a person without document and an existing id should update it'(){
+        given:
+        Person person = Fixture.from(Person.class).gimme(type)
+        def expectedName = 'Teste'
+        when:
+        service.create(person)
+        service.create(person.with { document.number = null; name = expectedName; it })
+
+        def result = service.findById(person.getId())
+
+        then:
+        result.getId() == person.getId()
+        result.name == expectedName
+
+        where:
+        _ | type
+        _ | 'legal'
+        _ | 'physical'
     }
 
     void 'given a document, should find a Person'(){
         given:
-        Person person = Fixture.from(Person.class).gimme("legal")
+        Person person = Fixture.from(Person.class).gimme(type)
 
         when:
         service.create(person)
@@ -70,11 +96,16 @@ class PersonServiceTest extends SpockApplicationTests {
         then:
         assert result.id == person.id
         assert result.document.number == person.document.number
+
+        where:
+        _ | type
+        _ | 'legal'
+        _ | 'physical'
     }
 
     void 'given a invalid document, should return not found'(){
         given:
-        Person person = Fixture.from(Person.class).gimme("legal")
+        Person person = Fixture.from(Person.class).gimme(type)
 
         when:
         service.create(person)
@@ -84,6 +115,11 @@ class PersonServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'PERSON_WITH_DOCUMENT_NOT_FOUND'
+
+        where:
+        _ | type
+        _ | 'legal'
+        _ | 'physical'
     }
 
 

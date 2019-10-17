@@ -71,3 +71,5 @@ spring:
     test-connection: false
     properties:
       mail.smtp.host: smtp.gmail.com
+  boleto:
+    deadline_in_days: 1
