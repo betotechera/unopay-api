@@ -301,6 +301,7 @@ public class Order implements Updatable, Billable, Serializable {
                 this.recurrencePaymentMethod = PaymentMethod.BOLETO;
             }
         }
+        this.status = PaymentStatus.WAITING_PAYMENT;
     }
 
     private boolean shouldApplyFee() {
