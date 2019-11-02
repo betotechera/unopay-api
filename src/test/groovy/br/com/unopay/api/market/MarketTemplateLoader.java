@@ -9,6 +9,7 @@ import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.market.model.BonusBilling;
 import br.com.unopay.api.market.model.HirerNegotiation;
+import br.com.unopay.api.market.model.HirerProduct;
 import br.com.unopay.api.market.model.NegotiationBilling;
 import br.com.unopay.api.market.model.NegotiationBillingDetail;
 import br.com.unopay.api.model.Contract;
@@ -103,6 +104,13 @@ public class MarketTemplateLoader implements TemplateLoader {
             add("expiration", instant("tomorrow"));
             add("status", random(PaymentStatus.class));
             add("issuer", one(Issuer.class, "valid"));
+        }});
+
+        Fixture.of(HirerProduct.class).addTemplate("valid", new Rule(){{
+            add("createdDateTime", instant("now"));
+            add("expiration", instant("tomorrow"));
+            add("product", one(Product.class, "valid"));
+            add("hirer", one(Hirer.class, "valid"));
         }});
     }
 }

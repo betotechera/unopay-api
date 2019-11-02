@@ -209,4 +209,9 @@ public interface Views {
         interface List {}
     }
 
+    interface HirerProduct {
+        interface Detail extends List {}
+        interface List{}
+    }
+
 }

@@ -692,4 +692,12 @@ public final class Errors {
             new UnovationError("INVALID_SOURCE_VALUE","Invalid source value");
     public static final UnovationError SCHEDULING_NOT_FOUND =
             new UnovationError("SCHEDULING_NOT_FOUND","Scheduling not found");
+
+    /* Hirer Product*/
+    public static final UnovationError HIRER_REQUIRED =
+            new UnovationError("HIRER_REQUIRED","hirer required");
+    public static final UnovationError HIRER_PRODUCT_NOT_FOUND =
+            new UnovationError("HIRER_PRODUCT_NOT_FOUND","hirer product not found");
+
+
 }

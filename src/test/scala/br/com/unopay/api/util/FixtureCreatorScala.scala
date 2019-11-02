@@ -349,6 +349,16 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         })
     }
 
+    def validHirerProduct = {
+        val hirer = createHirer()
+        val product = createProduct()
+        val hirerProduct: HirerProduct = from(classOf[HirerProduct]).gimme("valid", new Rule() {{
+            add("hirer", hirer)
+            add("product", product)
+        }})
+        hirerProduct
+    }
+
     def createHirer(): Hirer = {
         from(classOf[Hirer]).uses(jpaProcessor).gimme("valid",  new Rule())
     }
