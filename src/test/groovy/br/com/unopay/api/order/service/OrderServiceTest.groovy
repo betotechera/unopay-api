@@ -402,7 +402,7 @@ class OrderServiceTest extends SpockApplicationTests{
         result.value == creditOrder.contract.installmentValue()
     }
 
-    def 'when create a installment order should get the last installment value'(){
+    def 'when create an installment order should get the last installment value'(){
         given:
         fixtureCreator.createInstrumentToProduct(contractUnderTest.product, contractUnderTest.contractor)
         Order creditOrderA = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -440,7 +440,7 @@ class OrderServiceTest extends SpockApplicationTests{
     }
 
 
-    def 'given a adhesion order for product without membership fee then the payment value should be product installment value'(){
+    def 'given an adhesion order for a product without the membership fee then the payment value should be the product installment value'(){
         given:
         BigDecimal membershipFee = fee
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
@@ -464,7 +464,7 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | 0
     }
 
-    def 'given a adhesion order with candidates should create member candidates'(){
+    def 'given an adhesion order with candidates should create the member candidates'(){
         given:
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
@@ -485,7 +485,26 @@ class OrderServiceTest extends SpockApplicationTests{
         that candidates, hasSize(1)
     }
 
-    def 'given a adhesion order with candidates should be created including candidates annuity total in value'(){
+    def 'given an adhesion order without the type should not be created'(){
+        given:
+        Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("person", person)
+            add("product", product)
+            add("type",null)
+            add("contract", contractUnderTest)
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'TYPE_REQUIRED'
+    }
+
+    def 'given an adhesion order with candidates should be created including candidates annuity total in value'(){
         given:
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def membershipFee = 0.0
@@ -535,7 +554,7 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | OrderType.INSTALLMENT_PAYMENT
     }
 
-    def 'given a adhesion order for product with membership fee then the payment value should be membership fee value'(){
+    def 'given an adhesion order for product with membership fee then the payment value should be membership fee value'(){
         given:
         BigDecimal membershipFee = 25.0
         Person person =  Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
@@ -775,7 +794,7 @@ class OrderServiceTest extends SpockApplicationTests{
         result.createDateTime != null
     }
 
-    def 'given a adhesion order and issuer without hirer document should not be created'(){
+    def 'given an adhesion order and issuer without hirer document should not be created'(){
         given:
         def product = fixtureCreator.createProduct()
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -821,7 +840,7 @@ class OrderServiceTest extends SpockApplicationTests{
 
     }
 
-    def "given a adhesion order for an unknown contractor with unknown email and createUser disabled should be created"(){
+    def "given an adhesion order for an unknown contractor with unknown email and createUser disabled should be created"(){
         given:
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
             add("physicalPersonDetail.email", 'new@valid.com.br')
@@ -839,7 +858,7 @@ class OrderServiceTest extends SpockApplicationTests{
         notThrown(ConflictException)
     }
 
-    def "given a adhesion order for an unknown contractor with known email and createUser disabled should return error"(){
+    def "given an adhesion order for an unknown contractor with known email and createUser disabled should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
@@ -859,7 +878,7 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'USER_ALREADY_EXISTS'
     }
 
-    def "given a adhesion order for an unknown contractor with a known email and createUser enabled should return error"(){
+    def "given an adhesion order for an unknown contractor with a known email and createUser enabled should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
@@ -884,7 +903,7 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | null
     }
 
-    def "given a adhesion order for an unknown contractor with an invalid email and any createUser should return error"(){
+    def "given an adhesion order for an unknown contractor with an invalid email and any createUser should return error"(){
         given:
         def invalidMail = mail
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
@@ -910,7 +929,7 @@ class OrderServiceTest extends SpockApplicationTests{
         'ze@'      | false
     }
 
-    def "given a adhesion order for an unknown contractor with an empty email and createUser disable should not return error"(){
+    def "given an adhesion order for an unknown contractor with an empty email and createUser disable should not return error"(){
         given:
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
             add("physicalPersonDetail.email", null)
@@ -933,7 +952,7 @@ class OrderServiceTest extends SpockApplicationTests{
         _ | false
     }
 
-    def "given a adhesion order for an unknown contractor with known email should return error"(){
+    def "given an adhesion order for an unknown contractor with known email should return error"(){
         given:
         def user = fixtureCreator.createUser()
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{

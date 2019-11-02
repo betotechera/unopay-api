@@ -128,7 +128,6 @@ public class Order implements Updatable, Billable, Serializable {
     private Date createDateTime;
 
     @Column(name = "type")
-    @NotNull(groups = {Create.Order.class, Update.class})
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Order.Detail.class, Views.Order.List.class})
     private OrderType type;
@@ -311,6 +310,9 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public void validateMe() {
+        if(this.type == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.TYPE_REQUIRED);
+        }
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
             if(this.candidates!= null) {
