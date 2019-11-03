@@ -287,4 +287,8 @@ public class Product implements Serializable, Updatable {
     public boolean hasBonusExpiration() {
         return this.getMonthsToExpireBonus() != null;
     }
+
+    public String getId() {
+        return id;
+    }
 }

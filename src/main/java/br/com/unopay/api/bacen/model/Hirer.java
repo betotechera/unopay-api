@@ -97,4 +97,8 @@ public class Hirer implements Serializable {
         }
         return null;
     }
+
+    public String getId() {
+        return id;
+    }
 }
