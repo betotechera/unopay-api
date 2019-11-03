@@ -8,6 +8,13 @@ create table hirer_product (
     constraint fk_hirer_product_product foreign key(product_id) references product(id)
 );
 
+alter table "order" add column recurrence_credit_card_token varchar(256);
+alter table "order" add column recurrence_credit_card_month varchar(2);
+alter table "order" add column recurrence_credit_card_year varchar(4);
+alter table "order" add column recurrence_credit_card_last_four_digits varchar(4);
+alter table "order" add column recurrence_credit_card_brand varchar(30);
+alter table "order" add column recurrence_credit_card_holder_name varchar(55);
+
 insert into AUTHORITY(name, description) values('ROLE_LIST_HIRER_PRODUCT','Permite listar produtos do contratante');
 insert into AUTHORITY(name, description) values('ROLE_MANAGE_HIRER_PRODUCT','Permite gerenciar produtos do contratante');
 

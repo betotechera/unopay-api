@@ -135,7 +135,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     public void validateMonth(){
         if (getExpirationMonth() == null
-                || getExpirationMonth() == ""
+                || "".equals(getExpirationMonth())
                 || !isNumber(getExpirationMonth())
                 || !MonthRangeValid()) {
             throw UnovationExceptions.unprocessableEntity()
@@ -155,7 +155,7 @@ public class UserCreditCard implements Serializable, Updatable {
 
     public void validateYear(){
         if (getExpirationYear() == null
-                || getExpirationYear() == ""
+                || "".equals(getExpirationYear())
                 || !isNumber(getExpirationYear())
                 || !YearRangeValid()){
             throw UnovationExceptions.unprocessableEntity()

@@ -211,7 +211,7 @@ public interface Views {
 
     interface HirerProduct {
         interface Detail extends List {}
-        interface List{}
+        interface List extends Product.List{}
     }
 
 }

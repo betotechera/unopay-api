@@ -63,7 +63,8 @@ public class OrderReceiver {
         log.info("creating payment for order={} method={} type={} of value={}",
                 order.getId(), order.getRecurrencePaymentMethod(), order.getType(), order.getValue());
         if(order.is(PaymentMethod.CARD)) {
-            order.getPaymentRequest().setValue(order.paymentValue());
+            order.definePaymentValue(order.paymentValue());
+            order.defineCardToken(order.getRecurrenceCreditCardToken());
             Transaction transaction = transactionService.create(order.getPaymentRequest());
             orderProcessor.processWithStatus(order.getId(), transaction.getStatus());
         }

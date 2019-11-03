@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -153,10 +154,10 @@ public class Order implements Updatable, Billable, Serializable {
     @JsonView({Views.Order.Detail.class})
     private String userPassword;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "recurrence_payment_method")
-    @JsonView({Views.Establishment.Detail.class})
-    private PaymentMethod recurrencePaymentMethod;
+    @Valid
+    @Embedded
+    @JsonView({Views.Order.Detail.class})
+    private RecurrencePaymentInformation recurrencePaymentInformation;
 
     @JsonIgnore
     @Version
@@ -165,6 +166,12 @@ public class Order implements Updatable, Billable, Serializable {
     public void validateUpdate() {
         if (this.status == PaymentStatus.CANCELED)
             throw UnovationExceptions.unauthorized().withErrors(Errors.UNABLE_TO_UPDATE_ORDER_STATUS);
+    }
+
+    public void definePaymentValue(BigDecimal value){
+        if(getPaymentRequest() != null) {
+            getPaymentRequest().setValue(value);
+        }
     }
 
     public void defineCardToken(String token){
@@ -297,8 +304,9 @@ public class Order implements Updatable, Billable, Serializable {
             this.paymentMethod = this.paymentRequest.getMethod();
         }
         if(isType(OrderType.ADHESION)){
-            if(this.recurrencePaymentMethod == null){
-                this.recurrencePaymentMethod = PaymentMethod.BOLETO;
+            if(this.recurrencePaymentInformation == null){
+                this.recurrencePaymentInformation = new RecurrencePaymentInformation();
+                this.recurrencePaymentInformation.setPaymentMethod(PaymentMethod.BOLETO);
             }
         }
         this.status = PaymentStatus.WAITING_PAYMENT;
@@ -421,5 +429,26 @@ public class Order implements Updatable, Billable, Serializable {
             return this.candidates.size();
         }
         return 0;
+    }
+
+    public void defineRecurrencePaymentMethod(PaymentMethod recurrencePaymentMethod) {
+        if(this.recurrencePaymentInformation == null){
+            this.recurrencePaymentInformation = new RecurrencePaymentInformation();
+        }
+        this.recurrencePaymentInformation.setPaymentMethod(recurrencePaymentMethod);
+    }
+
+    public PaymentMethod getRecurrencePaymentMethod() {
+        if(recurrencePaymentInformation != null){
+            return this.recurrencePaymentInformation.getPaymentMethod();
+        }
+        return null;
+    }
+
+    public String getRecurrenceCreditCardToken() {
+        if(recurrencePaymentInformation != null){
+            return this.recurrencePaymentInformation.getCreditCardToken();
+        }
+        return null;
     }
 }
