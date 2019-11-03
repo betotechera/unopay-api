@@ -66,10 +66,13 @@ public class Deal {
     }
 
     public PaymentMethod getRecurrencePaymentMethod() {
-        if(recurrencePaymentInformation != null){
+        if(recurrencePaymentInformation != null && this.recurrencePaymentInformation.getPaymentMethod() != null){
             return this.recurrencePaymentInformation.getPaymentMethod();
         }
-        return null;
+        return PaymentMethod.BOLETO;
     }
 
+    public boolean hasRecurrenceCardInformation() {
+        return this.recurrencePaymentInformation != null && this.recurrencePaymentInformation.isValid();
+    }
 }

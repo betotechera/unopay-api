@@ -130,7 +130,9 @@ public class DealService {
         paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         if(deal.mustCreateUser()) {
             UserDetail userDetail = createUserWhenRequired(contractor, product, deal.getPassword());
-            userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
+            if(deal.hasRecurrenceCardInformation()) {
+                userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
+            }
         }
         sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);

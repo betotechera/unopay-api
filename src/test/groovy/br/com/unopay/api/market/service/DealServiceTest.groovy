@@ -7,6 +7,9 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.CardBrand
+import br.com.unopay.api.billing.creditcard.model.UserCreditCard
+import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.model.HirerNegotiation
@@ -17,6 +20,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
+import br.com.unopay.api.order.model.RecurrencePaymentInformation
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PaymentInstrumentService
@@ -52,6 +56,8 @@ class DealServiceTest extends SpockApplicationTests{
     private ContractService contractService
     @Autowired
     private ContractInstallmentService installmentService
+    @Autowired
+    private UserCreditCardService userCreditCardService
 
     private Boolean createUser = true
 
@@ -82,6 +88,29 @@ class DealServiceTest extends SpockApplicationTests{
 
         then:
         result.product.issuer.documentNumber() == contract.hirerDocumentNumber()
+    }
+
+
+    void 'when deal close with recurrence information should create the user credit card'(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def token = "token_2019"
+        def information = new RecurrencePaymentInformation()
+        information.setCreditCardBrand(CardBrand.AMEX)
+        information.setCreditCardHolderName("holder")
+        information.setCreditCardMonth("12")
+        information.setCreditCardYear("2099")
+        information.setCreditCardLastFourDigits("1234")
+        information.setCreditCardToken(token)
+
+        when:
+        service.closeWithIssuerAsHirer(new Deal(person, product.code, createUser, [] as Set, "123456", information))
+        def user = userDetailService.getByEmail(person.physicalPersonEmail)
+        def userCreditCard = userCreditCardService.findByTokenForUser(token, user)
+
+        then:
+        userCreditCard
     }
 
     void 'when deal close the contract period should be of one year'(){

@@ -8,8 +8,8 @@ wingoo:
         clientId: api-gateway
         clientSecret: 5yRt6BPsdusq8AP
         accessTokenUri: ${wingoo.api}/uaa/oauth/token
-        username: emerson@unovation.com.br
-        password: backwin567
+        username: gerente@wingoo.com.br
+        password: userwin010
 payment:
   gateway:
     config:

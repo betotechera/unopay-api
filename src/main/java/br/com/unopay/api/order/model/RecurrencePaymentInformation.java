@@ -67,4 +67,9 @@ public class RecurrencePaymentInformation {
         return userCreditCard;
     }
 
+    public boolean isValid() {
+        return  this.creditCardBrand != null && this.creditCardHolderName != null &&
+                this.creditCardLastFourDigits != null && this.creditCardMonth != null &&
+                this.creditCardYear != null && this.creditCardToken != null;
+    }
 }
