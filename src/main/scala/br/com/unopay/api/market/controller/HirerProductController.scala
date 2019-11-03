@@ -9,7 +9,6 @@ import br.com.unopay.bootcommons.jsoncollections.{PageableResults, Results, Unov
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus.{NO_CONTENT, OK}
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -21,10 +20,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromC
 @Autowired
 class HirerProductController(service: HirerProductService) extends Logging {
 
-    @ResponseStatus(OK)
     @JsonView(Array(classOf[Views.HirerProduct.Detail]))
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_PRODUCT')")
-    @PostMapping(value = Array("/bonus-billings"))
+    @PostMapping(value = Array("/hirer-products"))
     def process(@Validated(Array(classOf[Create])) @RequestBody hirerProduct: HirerProduct): ResponseEntity[HirerProduct] = {
         log.info("processing hirer products")
         val created = service.create(hirerProduct)
@@ -33,7 +31,6 @@ class HirerProductController(service: HirerProductService) extends Logging {
     }
 
     @JsonView(Array(classOf[Views.HirerProduct.Detail]))
-    @ResponseStatus(OK)
     @PreAuthorize("hasRole('ROLE_LIST_HIRER_PRODUCT')")
     @GetMapping(value = Array("/hirer-products/{id}"))
     def get(@PathVariable id: String): HirerProduct = {
@@ -42,7 +39,6 @@ class HirerProductController(service: HirerProductService) extends Logging {
     }
 
     @JsonView(Array(classOf[Views.HirerProduct.Detail]))
-    @ResponseStatus(NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_PRODUCT')")
     @DeleteMapping(value = Array("/hirer-products/{id}"))
     def delete(@PathVariable id: String) {
@@ -51,8 +47,7 @@ class HirerProductController(service: HirerProductService) extends Logging {
     }
 
     @JsonView(Array(classOf[Views.HirerProduct.List]))
-    @ResponseStatus(OK)
-    @PreAuthorize("hasRole('ROLE_LIST_HIRER_PRODUCT')")
+    @PreAuthorize("hasRole('ROLE_LIST_HIRER_PRODUCT') || #oauth2.isClient()")
     @GetMapping(value = Array("/hirer-products"))
     def getByParams(filter: HirerProductFilter,
                     @Validated pageable: UnovationPageRequest): Results[HirerProduct] = {

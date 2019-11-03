@@ -9,9 +9,6 @@ public class HirerProductFilter {
     @SearchableField(field = "product.id")
     private String product;
 
-    @SearchableField(field = "product.issuer.person.document.number")
-    private String issuerDocument;
-
     @SearchableField(field = "hirer.id")
     private String hirer;
 

@@ -4,6 +4,7 @@ import java.util.Date
 
 import br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.function.impl.{ChronicFunction, RegexFunction}
+import br.com.six2six.fixturefactory.processor.Processor
 import br.com.six2six.fixturefactory.{Fixture, Rule}
 import br.com.unopay.api.bacen.model.{PaymentRuleGroup, _}
 import br.com.unopay.api.credit.model._
@@ -349,10 +350,10 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         })
     }
 
-    def validHirerProduct = {
+    def validHirerProduct(processor: Processor = new DummyProcessor) = {
         val hirer = createHirer()
         val product = createProduct()
-        val hirerProduct: HirerProduct = from(classOf[HirerProduct]).gimme("valid", new Rule() {{
+        val hirerProduct: HirerProduct = from(classOf[HirerProduct]).uses(processor).gimme("valid", new Rule() {{
             add("hirer", hirer)
             add("product", product)
         }})
@@ -673,4 +674,9 @@ class FixtureCreatorScala(passwordEncoder: PasswordEncoder,
         val random : scala.math.BigDecimal = Math.random() * 100
         return random.bigDecimal
     }
+
+    class DummyProcessor extends Processor {
+        override def execute(result: Any): Unit = {}
+    }
+
 }

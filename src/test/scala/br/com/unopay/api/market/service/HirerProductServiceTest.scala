@@ -18,13 +18,13 @@ class HirerProductServiceTest extends UnopayApiScalaApplicationTest  {
   var service: HirerProductService = _
 
   it should "save a valid hirer product" in {
-    val hirerProduct :HirerProduct = fixtureCreator.validHirerProduct
+    val hirerProduct :HirerProduct = fixtureCreator.validHirerProduct()
     val result = service.save(hirerProduct)
     result should be
   }
 
   it should "create a valid hirer product" in {
-    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct
+    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct()
 
     val created = service.create(hirerProduct)
     val result = service.findById(created.id)
@@ -42,7 +42,7 @@ class HirerProductServiceTest extends UnopayApiScalaApplicationTest  {
     thrown.getErrors.asScala.head.getLogref shouldEqual "HIRER_REQUIRED"
   }
   "given it with an unknown hirer" should "not be created" in {
-    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct
+    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct()
     hirerProduct.hirer = new Hirer
 
     val thrown = the[NotFoundException] thrownBy {
@@ -64,7 +64,7 @@ class HirerProductServiceTest extends UnopayApiScalaApplicationTest  {
   }
 
   "given it with an unknown product" should "not be created" in {
-    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct
+    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct()
     hirerProduct.product = new Product
 
     val thrown = the[NotFoundException] thrownBy {
