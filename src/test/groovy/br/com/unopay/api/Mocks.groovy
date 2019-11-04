@@ -39,6 +39,7 @@ class Mocks {
     Gateway mockGateway(){
         Gateway mock = Mockito.mock(Gateway)
         CreditCard creditCard = Mockito.mock(CreditCard)
+        Mockito.when(creditCard.getToken()).thenReturn("token")
         Mockito.when(mock.storeCard(Mockito.any(UserDetail.class), Mockito.any(CreditCard.class)))
                 .thenReturn(creditCard)
         mock

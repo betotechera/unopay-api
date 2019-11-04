@@ -1268,6 +1268,19 @@ class OrderServiceTest extends SpockApplicationTests{
         that userCreditCardService.findAll(), hasSize(1)
     }
 
+    def 'when create order with a valid credit card without a token should be created'(){
+        given:
+        CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
+        creditCard.token = null
+
+
+        when:
+        crateAdhesionOrderWithStoreCard(creditCard, true)
+
+        then:
+        that userCreditCardService.findAll(), hasSize(1)
+    }
+
     def 'when create order with unknown card token should not be created'(){
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
@@ -1295,6 +1308,23 @@ class OrderServiceTest extends SpockApplicationTests{
         order.paymentRequest = paymentRequest
         service.create(userDetail.email, order)
         userDetail
+    }
+
+
+    private Order crateAdhesionOrderWithStoreCard(creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true) {
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
+            add("method", PaymentMethod.CARD)
+            add("storeCard", storeCard)
+            add("creditCard", creditCard)
+        }})
+        Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", fixtureCreator.createProduct())
+            add("paymentInstrument", null)
+            add("type", OrderType.ADHESION)
+        }})
+        order.type = OrderType.ADHESION
+        order.paymentRequest = paymentRequest
+        service.create(order)
     }
 
 }

@@ -1,5 +1,6 @@
 package br.com.unopay.api.model;
 
+import br.com.unopay.api.billing.creditcard.model.StoreCard;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -30,7 +31,7 @@ import static javax.persistence.EnumType.STRING;
 @Data
 @Entity
 @Table(name = "person")
-public class Person implements Serializable, Updatable{
+public class Person implements Serializable, Updatable, StoreCard {
 
     public static final long serialVersionUID = 1L;
     public static final String NOT_NUMBER = "[^\\d]";
@@ -181,5 +182,10 @@ public class Person implements Serializable, Updatable{
             return getPhysicalPersonDetail().getEmail();
         }
         return null;
+    }
+
+    @Override
+    public String getEmail() {
+        return getPhysicalPersonEmail();
     }
 }

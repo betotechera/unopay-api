@@ -141,7 +141,7 @@ public class OrderService {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         order.setPerson(currentUser.myContractor()
                 .map(Contractor::getPerson).orElseThrow(UnovationExceptions::unauthorized));
-        storeCreditCardWhenRequired(currentUser, order);
+        storeCreditCardForUserWhenRequired(currentUser, order);
         orderValidator.checkCreditCardWhenRequired(currentUser, order);
         return create(order);
     }
@@ -158,6 +158,10 @@ public class OrderService {
         if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
             String token = userCreditCardService.getLastActiveTokenByUser(order.personEmail());
             if(token == null && !order.hasCardToken()) {
+                if(order.shouldStoreCard()){
+                    generatorCardTokenWhenRequired(order);
+                    return;
+                }
                 order.setPaymentMethod(PaymentMethod.BOLETO);
                 return;
             }
@@ -258,9 +262,16 @@ public class OrderService {
         }
     }
 
-    private void storeCreditCardWhenRequired(UserDetail userDetail, Order order) {
+    private void storeCreditCardForUserWhenRequired(UserDetail userDetail, Order order) {
         if (order.shouldStoreCard()) {
             userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
+        }
+    }
+
+    private void generatorCardTokenWhenRequired(Order order) {
+        if (order.shouldStoreCard()) {
+            String token = userCreditCardService.storeCard(order.getPerson(), order.getPaymentRequest().getCreditCard()).getToken();
+            order.getPaymentRequest().getCreditCard().setToken(token);
         }
     }
 

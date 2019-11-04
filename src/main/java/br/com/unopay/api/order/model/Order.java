@@ -420,8 +420,7 @@ public class Order implements Updatable, Billable, Serializable {
 
     public boolean shouldStoreCard() {
         return hasPaymentRequest()
-                && paymentRequest.shouldStoreCard()
-                && !isType(OrderType.ADHESION);
+                && paymentRequest.shouldStoreCard();
     }
 
     public boolean hasCardToken() {
@@ -472,4 +471,5 @@ public class Order implements Updatable, Billable, Serializable {
         }
         return null;
     }
+
 }
