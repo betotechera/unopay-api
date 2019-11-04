@@ -58,7 +58,7 @@ public interface Updatable {
     }
 
     default void updateMe(Updatable source){
-        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD));
+        BeanUtils.copyProperties(source, this, ArrayUtils.addAll(source.myNullFields(), IGNORED_FIELD, FIELD_ID));
     }
 
     default void updateAllExcept(Updatable source, String... ignoredField){
