@@ -202,7 +202,7 @@ public class EstablishmentService {
         if(establishment.hasOperationalContact()) {
             contactService.save(establishment.getOperationalContact());
         }
-        personService.create(establishment.getPerson());
+        personService.createOrUpdate(establishment.getPerson());
         bankAccountService.create(establishment.getBankAccount());
     }
 

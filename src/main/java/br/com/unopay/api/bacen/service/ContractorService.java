@@ -50,7 +50,7 @@ public class ContractorService {
             if(contractor.withBankAccount()) {
                 bankAccountService.create(contractor.getBankAccount());
             }
-            personService.create(contractor.getPerson());
+            personService.createOrUpdate(contractor.getPerson());
             return repository.save(contractor);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person contractor already exists %s", contractor.getPerson()), e);
@@ -135,7 +135,7 @@ public class ContractorService {
         if(!current.withBankAccount() && contractor.withBankAccount()) {
             current.setBankAccount(bankAccountService.create(contractor.getBankAccount()));
         }
-        personService.create(contractor.getPerson());
+        personService.createOrUpdate(contractor.getPerson());
         repository.save(current);
     }
 

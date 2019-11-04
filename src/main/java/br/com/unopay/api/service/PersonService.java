@@ -42,7 +42,7 @@ public class PersonService {
         this.physicalPersonDetailRepository = physicalPersonDetailRepository;
     }
 
-    public Person create(Person person){
+    public Person createOrUpdate(Person person){
         try {
             person.validate();
             person.normalize();
@@ -57,7 +57,7 @@ public class PersonService {
     }
 
     private Person update(Person current, Person person) {
-        current.update(person);
+        current.updateMe(person);
         if(current.isLegal()) {
             current.getLegalPersonDetail().updateMe(person.getLegalPersonDetail());
         }

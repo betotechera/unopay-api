@@ -40,7 +40,7 @@ public class AccreditedNetworkService {
 
     public AccreditedNetwork create(AccreditedNetwork accreditedNetwork) {
         try {
-            personService.create(accreditedNetwork.getPerson());
+            personService.createOrUpdate(accreditedNetwork.getPerson());
             bankAccountService.create(accreditedNetwork.getBankAccount());
             return repository.save(accreditedNetwork);
         } catch (DataIntegrityViolationException e){
@@ -62,7 +62,7 @@ public class AccreditedNetworkService {
     public void update(String id, AccreditedNetwork accreditedNetwork) {
         AccreditedNetwork current = repository.findOne(id);
         current.updateModel(accreditedNetwork);
-        personService.create(accreditedNetwork.getPerson());
+        personService.createOrUpdate(accreditedNetwork.getPerson());
         bankAccountService.update(current.getBankAccount().getId(),current.getBankAccount());
         repository.save(current);
     }

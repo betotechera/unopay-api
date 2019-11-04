@@ -30,7 +30,7 @@ import static javax.persistence.EnumType.STRING;
 @Data
 @Entity
 @Table(name = "person")
-public class Person implements Serializable{
+public class Person implements Serializable, Updatable{
 
     public static final long serialVersionUID = 1L;
     public static final String NOT_NUMBER = "[^\\d]";
@@ -108,19 +108,12 @@ public class Person implements Serializable{
 
     public void updatePhysical(Person person, Consumer<PhysicalPersonDetail> consumer) {
         consumer.accept(person.getPhysicalPersonDetail());
-        update(person);
+        updateMe(person);
     }
 
-    public void update(Person person) {
-        this.setName(person.getName());
-        this.setAddress(person.getAddress());
-        this.setTelephone(person.getTelephone());
-        this.setCellPhone(person.getCellPhone());
-    }
-
-    public void update(Person person, Consumer<LegalPersonDetail> consumer) {
+    public void updateMe(Person person, Consumer<LegalPersonDetail> consumer) {
         consumer.accept(person.getLegalPersonDetail());
-        update(person);
+        updateMe(person);
     }
 
     @JsonIgnore

@@ -88,7 +88,7 @@ public class IssuerService {
         Issuer current = findById(id);
         validateReferences(issuer);
         current.updateMe(issuer);
-        personService.create(current.getPerson());
+        personService.createOrUpdate(current.getPerson());
         bankAccountService.update(issuer.getMomentAccountId(),issuer.getMovementAccount());
         paymentBankAccountService.update(issuer.getPaymentAccountId(),issuer.getPaymentAccount());
         scheduleClosingJob(current);
@@ -117,7 +117,7 @@ public class IssuerService {
     }
 
     private void createRequiredReferences(Issuer issuer) {
-        Person person = personService.create(issuer.getPerson());
+        Person person = personService.createOrUpdate(issuer.getPerson());
         PaymentBankAccount paymentBankAccount = paymentBankAccountService.create(issuer.getPaymentAccount());
         bankAccountService.create(issuer.getMovementAccount());
         issuer.setPaymentAccount(paymentBankAccount);

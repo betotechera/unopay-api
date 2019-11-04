@@ -55,7 +55,7 @@ public class HirerBranch implements Serializable {
 
 
     public void updateMe(HirerBranch hirer) {
-        person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
+        person.updateMe(hirer.getPerson(), (o) -> o.updateForHirer(o));
         this.bankAccount.updateMe(hirer.getBankAccount());
     }
 }

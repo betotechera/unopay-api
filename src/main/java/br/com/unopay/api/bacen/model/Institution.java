@@ -40,7 +40,7 @@ public class Institution implements Serializable {
 
 
     public void updateModel(Institution institution) {
-        person.update(institution.getPerson(), (o) -> o.updateForInstitution(o));
+        person.updateMe(institution.getPerson(), (o) -> o.updateForInstitution(o));
     }
 
     public String documentNumber(){

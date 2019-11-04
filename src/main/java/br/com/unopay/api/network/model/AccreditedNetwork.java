@@ -114,7 +114,7 @@ public class AccreditedNetwork implements Serializable {
     }
 
     public void updateModel(AccreditedNetwork accreditedNetwork) {
-        person.update(accreditedNetwork.getPerson(), (o) -> o.updateForAccreditedNetwork(o));
+        person.updateMe(accreditedNetwork.getPerson(), (o) -> o.updateForAccreditedNetwork(o));
         this.merchantDiscountRate = accreditedNetwork.getMerchantDiscountRate();
         this.bankAccount = accreditedNetwork.getBankAccount();
         this.checkout.updateModel(this.getCheckout());

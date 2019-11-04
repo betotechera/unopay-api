@@ -72,7 +72,7 @@ public class Hirer implements Serializable {
 
     public void updateModel(Hirer hirer) {
         if(person.isLegal()) {
-            person.update(hirer.getPerson(), (o) -> o.updateForHirer(o));
+            person.updateMe(hirer.getPerson(), (o) -> o.updateForHirer(o));
         }
         else {
             person.updatePhysical(hirer.getPerson(), (o) -> o.updateForHirer(o));

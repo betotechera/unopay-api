@@ -45,7 +45,7 @@ public class HirerService {
     public Hirer create(Hirer hirer) {
         try {
             bankAccountService.create(hirer.getBankAccount());
-            personService.create(hirer.getPerson());
+            personService.createOrUpdate(hirer.getPerson());
             return repository.save(hirer);
         } catch (DataIntegrityViolationException e){
             log.warn(String.format("Person hirer already exists %s", hirer.getPerson()), e);
@@ -76,7 +76,7 @@ public class HirerService {
 
     private void update(Hirer hirer, Hirer current) {
         current.updateModel(hirer);
-        personService.create(hirer.getPerson());
+        personService.createOrUpdate(hirer.getPerson());
         repository.save(current);
     }
 

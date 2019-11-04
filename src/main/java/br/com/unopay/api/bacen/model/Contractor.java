@@ -75,7 +75,7 @@ public class Contractor implements Serializable {
     private String documentType;
 
     public void updateModel(Contractor contractor) {
-        person.update(contractor.getPerson());
+        person.updateMe(contractor.getPerson());
         if(contractor.withBankAccount() && this.bankAccount != null) {
             this.bankAccount.updateMe(contractor.getBankAccount());
             return;

@@ -6,7 +6,6 @@ import br.com.unopay.api.model.DocumentType
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.filter.PersonFilter
 import br.com.unopay.api.repository.PersonRepository
-import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -24,7 +23,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("physical")
 
         when:
-        def result  = service.create(person)
+        def result  = service.createOrUpdate(person)
 
         then:
         assert result.id != null
@@ -36,7 +35,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme("legal")
 
         when:
-        def result  = service.create(person)
+        def result  = service.createOrUpdate(person)
 
         then:
         assert result.id != null
@@ -49,8 +48,8 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme(type)
         def expectedName = 'Teste'
         when:
-        service.create(person)
-        service.create(person.with { id = null; name = expectedName; it })
+        service.createOrUpdate(person)
+        service.createOrUpdate(person.with { id = null; name = expectedName; it })
 
         def result = service.findByDocument(person.documentNumber())
 
@@ -69,8 +68,8 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme(type)
         def expectedName = 'Teste'
         when:
-        service.create(person)
-        service.create(person.with { document.number = null; name = expectedName; it })
+        service.createOrUpdate(person)
+        service.createOrUpdate(person.with { document.number = null; name = expectedName; it })
 
         def result = service.findById(person.getId())
 
@@ -89,7 +88,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme(type)
 
         when:
-        service.create(person)
+        service.createOrUpdate(person)
         def filter = new PersonFilter(documentType: person.document.type, documentNumber: person.document.number)
         def result = service.findByFilter(filter)
 
@@ -108,7 +107,7 @@ class PersonServiceTest extends SpockApplicationTests {
         Person person = Fixture.from(Person.class).gimme(type)
 
         when:
-        service.create(person)
+        service.createOrUpdate(person)
         def filter = new PersonFilter(documentType: DocumentType.CNH, documentNumber: person.document.number)
          service.findByFilter(filter)
 

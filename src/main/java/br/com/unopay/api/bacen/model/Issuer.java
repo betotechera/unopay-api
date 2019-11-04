@@ -137,7 +137,7 @@ public class Issuer implements Serializable{
         this.logoUri = other.logoUri;
         this.backgroundColor = other.backgroundColor;
         this.textColor = other.textColor;
-        person.update(other.getPerson(), (x) -> x.updateForIssuer(x));
+        person.updateMe(other.getPerson(), (x) -> x.updateForIssuer(x));
     }
 
     public void setMeUp() {
