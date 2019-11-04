@@ -1,5 +1,6 @@
 package br.com.unopay.api.billing.creditcard.model;
 
+import br.com.unopay.api.order.model.RecurrencePaymentInformation;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.validation.Valid;
@@ -30,6 +31,20 @@ public class PaymentRequest implements Serializable{
         transaction.setPaymentMethod(method);
         transaction.setAmount(new Amount(CurrencyCode.BRL, value));
         return transaction;
+    }
+
+    public RecurrencePaymentInformation toRecurrencePaymentInformation() {
+        RecurrencePaymentInformation paymentInformation = new RecurrencePaymentInformation();
+        if(creditCard != null) {
+            paymentInformation.setCreditCardHolderName(creditCard.getHolderName());
+            paymentInformation.setCreditCardBrand(creditCard.getCardBrand());
+            paymentInformation.setCreditCardLastFourDigits(creditCard.lastValidFourDigits());
+            paymentInformation.setCreditCardMonth(creditCard.getExpiryMonth());
+            paymentInformation.setCreditCardYear(creditCard.getExpiryYear());
+            paymentInformation.setCreditCardToken(creditCard.getToken());
+            paymentInformation.setPaymentMethod(PaymentMethod.CARD);
+        }
+        return paymentInformation;
     }
 
     public boolean isMethod(PaymentMethod method) {

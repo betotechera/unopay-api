@@ -1,5 +1,6 @@
 package br.com.unopay.api.uaa.model;
 
+import br.com.unopay.api.billing.creditcard.model.StoreCard;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.network.model.Establishment;
@@ -47,7 +48,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Table(name = "oauth_user_details")
 @Data
 @EqualsAndHashCode(exclude = { "groups" })
-public class UserDetail implements Serializable, Updatable {
+public class UserDetail implements Serializable, Updatable, StoreCard {
 
     public static final long serialVersionUID = 1L;
 

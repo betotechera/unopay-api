@@ -2,6 +2,7 @@ package br.com.unopay.api.billing.creditcard.service;
 
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.Gateway;
+import br.com.unopay.api.billing.creditcard.model.StoreCard;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
 import br.com.unopay.api.billing.creditcard.repository.UserCreditCardRepository;
@@ -54,6 +55,10 @@ public class UserCreditCardService {
             UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard);
             return create(userCreditCard);
         });
+    }
+
+    public CreditCard storeCard(StoreCard user, CreditCard card) {
+        return gateway.storeCard(user, card);
     }
 
     public UserCreditCard update(String id, UserCreditCard userCreditCard){

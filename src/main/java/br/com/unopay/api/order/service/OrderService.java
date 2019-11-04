@@ -172,6 +172,7 @@ public class OrderService {
     }
 
     private Order createOrder(Order order) {
+        order.setMeUp();
         order.validateMe();
         orderValidator.validateReferences(order);
         order.normalize();
@@ -179,7 +180,6 @@ public class OrderService {
         incrementNumber(order);
         orderValidator.checkContractorRules(order);
         definePaymentValueWhenRequired(order);
-        order.setMeUp();
         orderValidator.checkHirerWhenRequired(order);
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());

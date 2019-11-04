@@ -545,8 +545,8 @@ public final class Errors {
             new UnovationError("USER_ALREADY_EXISTS","User already exists.");
     public static final UnovationError UNABLE_TO_UPDATE_ORDER_STATUS =
             new UnovationError("UNABLE_TO_UPDATE_ORDER_STATUS", "Unable to update order status.");
-    public static final UnovationError RECURRENCE_PAYMENT_METHOD_REQUIRED =
-            new UnovationError("RECURRENCE_PAYMENT_METHOD_REQUIRED", "recurrence payment method required");
+    public static final UnovationError RECURRENCE_PAYMENT_INFORMATION_REQUIRED =
+            new UnovationError("RECURRENCE_PAYMENT_INFORMATION_REQUIRED", "recurrence payment information required");
 
     /* Ticket */
     public static final UnovationError CLIENT_REQUIRED =

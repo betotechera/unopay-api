@@ -5,6 +5,7 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.billing.creditcard.model.CardBrand
 import br.com.unopay.api.billing.creditcard.model.CreditCard
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
@@ -19,6 +20,7 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.model.PaymentStatus
+import br.com.unopay.api.order.model.RecurrencePaymentInformation
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
@@ -792,6 +794,117 @@ class OrderServiceTest extends SpockApplicationTests{
 
         then:
         result.createDateTime != null
+    }
+
+
+    def 'given an order without card token and for a product which accept only credit card payment should not be created'(){
+        given:
+        def product = fixtureCreator.createProductPFWithMethods([PaymentMethod.CARD])
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentInstrument", null)
+            add("type", OrderType.ADHESION)
+            add("paymentMethod", PaymentMethod.CARD)
+        }})
+        def creditCard = new CreditCard()
+        creditCard.setHolderName("Name")
+        creditCard.setNumber("1234")
+        creditCard.setExpiryMonth("12")
+        creditCard.setExpiryYear("2089")
+        creditCard.setToken(null)
+        def paymentRequest = new PaymentRequest()
+        paymentRequest.setCreditCard(creditCard)
+        creditOrder.paymentRequest = paymentRequest
+
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'RECURRENCE_PAYMENT_INFORMATION_REQUIRED'
+    }
+
+    def 'given an order without card token and for a product which accept only ticket payment should be created'(){
+        given:
+        def product = fixtureCreator.createProductPFWithMethods([PaymentMethod.BOLETO])
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentInstrument", null)
+            add("type", OrderType.ADHESION)
+            add("paymentMethod", PaymentMethod.CARD)
+        }})
+        def creditCard = new CreditCard()
+        creditCard.setHolderName("Name")
+        creditCard.setNumber("1234")
+        creditCard.setExpiryMonth("12")
+        creditCard.setExpiryYear("2089")
+        creditCard.setToken(null)
+        def paymentRequest = new PaymentRequest()
+        paymentRequest.setCreditCard(creditCard)
+        creditOrder.paymentRequest = paymentRequest
+
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result != null
+    }
+
+
+    def 'given an order without card token and for a order with ticket payment method should be created'(){
+        given:
+        def product = fixtureCreator.createProductPFWithMethods([PaymentMethod.BOLETO, PaymentMethod.CARD])
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentInstrument", null)
+            add("type", OrderType.ADHESION)
+            add("paymentMethod", PaymentMethod.BOLETO)
+        }})
+        def creditCard = new CreditCard()
+        creditCard.setHolderName("Name")
+        creditCard.setNumber("1234")
+        creditCard.setExpiryMonth("12")
+        creditCard.setExpiryYear("2089")
+        creditCard.setToken(null)
+        def paymentRequest = new PaymentRequest()
+        paymentRequest.setCreditCard(creditCard)
+        creditOrder.paymentRequest = paymentRequest
+
+
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result != null
+    }
+
+    def 'given an order with card token and for a product which accept all payment methods should be created'(){
+        given:
+        def product = fixtureCreator.createProductPFWithMethods([PaymentMethod.BOLETO, PaymentMethod.CARD])
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("product", product)
+            add("paymentInstrument", null)
+            add("type", OrderType.ADHESION)
+        }})
+        def creditCard = new CreditCard()
+        creditCard.setHolderName("Name")
+        creditCard.setNumber("1234")
+        creditCard.setExpiryMonth("12")
+        creditCard.setExpiryYear("2089")
+        creditCard.setToken("token")
+        def paymentRequest = new PaymentRequest()
+        paymentRequest.setCreditCard(creditCard)
+        creditOrder.paymentRequest = paymentRequest
+
+        when:
+        def created = service.create(creditOrder)
+        Order result = service.findById(created.id)
+
+        then:
+        result != null
     }
 
     def 'given an adhesion order and issuer without hirer document should not be created'(){

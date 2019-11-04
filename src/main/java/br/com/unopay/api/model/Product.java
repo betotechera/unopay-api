@@ -284,6 +284,11 @@ public class Product implements Serializable, Updatable {
         return withPartnerIntegration == null ? Boolean.FALSE : withPartnerIntegration;
     }
 
+    public boolean acceptOnlyCard(){
+        return this.getPaymentMethods().size() == 1 &&
+                this.getPaymentMethods().contains(PaymentMethod.CARD);
+    }
+
     public boolean hasBonusExpiration() {
         return this.getMonthsToExpireBonus() != null;
     }

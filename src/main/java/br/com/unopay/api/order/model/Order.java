@@ -50,7 +50,6 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CANCELED;
@@ -59,7 +58,6 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTU
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURE_RECEIVED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.DENIED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUND;
-import static br.com.unopay.api.uaa.exception.Errors.RECURRENCE_PAYMENT_METHOD_REQUIRED;
 
 @Data
 @Entity
@@ -257,7 +255,7 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public boolean is(PaymentMethod method) {
-        if(paymentRequest != null) {
+        if(paymentRequest != null && paymentRequest.getMethod() != null) {
             return paymentRequest.getMethod().equals(method);
         }
         return false;
@@ -291,6 +289,7 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public void setMeUp() {
+        checkType();
         setCreateDateTime(new Date());
         if (!isType(OrderType.ADHESION)) {
             setCandidates(new HashSet<>());
@@ -303,13 +302,19 @@ public class Order implements Updatable, Billable, Serializable {
         if(hasPaymentRequest()) {
             this.paymentMethod = this.paymentRequest.getMethod();
         }
-        if(isType(OrderType.ADHESION)){
-            if(this.recurrencePaymentInformation == null){
-                this.recurrencePaymentInformation = new RecurrencePaymentInformation();
-                this.recurrencePaymentInformation.setPaymentMethod(PaymentMethod.BOLETO);
-            }
-        }
         this.status = PaymentStatus.WAITING_PAYMENT;
+
+        if(isType(OrderType.ADHESION)){
+            if(this.recurrencePaymentInformation == null &&
+                    this.paymentRequest != null &&
+                    this.paymentRequest.isMethod(PaymentMethod.CARD)){
+                this.recurrencePaymentInformation = this.paymentRequest.toRecurrencePaymentInformation();
+                return;
+            }
+            this.recurrencePaymentInformation = new RecurrencePaymentInformation();
+            this.recurrencePaymentInformation.setPaymentMethod(PaymentMethod.BOLETO);
+        }
+
     }
 
     private boolean shouldApplyFee() {
@@ -319,9 +324,7 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public void validateMe() {
-        if(this.type == null){
-            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.TYPE_REQUIRED);
-        }
+        checkType();
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
             if(this.candidates!= null) {
@@ -330,6 +333,24 @@ public class Order implements Updatable, Billable, Serializable {
                     candidate.setMeUp();
                 });
             }
+            if(this.product == null){
+                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PRODUCT_REQUIRED);
+            }
+            if(this.product.acceptOnlyCard() &&
+                    !recurrencePaymentInformation.isValid()){
+                    throw UnovationExceptions.unprocessableEntity().withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED);
+            }
+            if(recurrencePaymentInformation.isCardPayment() &&
+                   !recurrencePaymentInformation.isValid()){
+                throw UnovationExceptions.unprocessableEntity()
+                        .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED);
+            }
+        }
+    }
+
+    private void checkType() {
+        if(this.type == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.TYPE_REQUIRED);
         }
     }
 

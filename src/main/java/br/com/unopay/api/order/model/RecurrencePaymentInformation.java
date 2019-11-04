@@ -6,7 +6,13 @@ import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -24,8 +30,8 @@ public class RecurrencePaymentInformation {
     @JsonView({Views.Establishment.Detail.class})
     private PaymentMethod paymentMethod;
 
+    @JsonIgnore
     @Column(name = "recurrence_credit_card_token")
-    @JsonView({Views.Order.Detail.class})
     private String creditCardToken;
 
     @Column(name = "recurrence_credit_card_month")
@@ -71,5 +77,9 @@ public class RecurrencePaymentInformation {
         return  this.creditCardBrand != null && this.creditCardHolderName != null &&
                 this.creditCardLastFourDigits != null && this.creditCardMonth != null &&
                 this.creditCardYear != null && this.creditCardToken != null;
+    }
+
+    public boolean isCardPayment() {
+        return this.paymentMethod != null && this.paymentMethod.equals(PaymentMethod.CARD);
     }
 }

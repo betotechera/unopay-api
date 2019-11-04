@@ -10,6 +10,7 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.model.PaymentRuleGroup
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.credit.model.ContractorInstrumentCredit
 import br.com.unopay.api.credit.model.Credit
 import br.com.unopay.api.credit.model.CreditPaymentAccount
@@ -441,6 +442,23 @@ class FixtureCreator {
             add("membershipFee", membershipFee)
         }})
         createCreditPaymentAccount(hirer.documentNumber, product)
+        product
+    }
+
+
+    Product createProductPFWithMethods(List<PaymentMethod> methods){
+        def hirerDocument = createHirer().documentNumber
+        Person issuerPerson = from(Person.class).uses(jpaProcessor).gimme("physical", new Rule(){{
+            add("document.number", hirerDocument)
+        }})
+        Issuer issuer = from(Issuer.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("person", issuerPerson)
+        }})
+        Product product = from(Product.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("issuer", issuer)
+            add("paymentMethods", methods)
+        }})
+        createCreditPaymentAccount(hirerDocument, product)
         product
     }
 

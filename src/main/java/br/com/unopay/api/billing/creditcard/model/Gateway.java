@@ -1,12 +1,11 @@
 package br.com.unopay.api.billing.creditcard.model;
 
 
-import br.com.unopay.api.uaa.model.UserDetail;
 import java.util.Set;
 
 public interface Gateway {
 
-    CreditCard storeCard(UserDetail user, CreditCard card);
+    CreditCard storeCard(StoreCard user, CreditCard card);
 
     Set<CreditCard> getCards(String userId);
 

@@ -2,8 +2,8 @@ package br.com.unopay.api.billing.creditcard.gateway.payzen.model;
 
 import br.com.unopay.api.billing.creditcard.gateway.payzen.config.PayzenConfig;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
+import br.com.unopay.api.billing.creditcard.model.StoreCard;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
-import br.com.unopay.api.uaa.model.UserDetail;
 import com.lyra.vads.ws.v5.BillingDetailsRequest;
 import com.lyra.vads.ws.v5.CardRequest;
 import com.lyra.vads.ws.v5.CreatePayment;
@@ -55,7 +55,7 @@ public class Payzen {
     }
 
 
-    public String storeCard(UserDetail user, CreditCard creditCard){
+    public String storeCard(StoreCard user, CreditCard creditCard){
         CardRequest cardRequest = getCardRequest(creditCard);
         HashMap<String, String> config = new HashMap<>(payzenConfig.getConfig());
         CreatePayment createPayment = PaymentBuilder
