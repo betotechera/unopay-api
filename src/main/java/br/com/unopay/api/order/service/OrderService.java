@@ -269,7 +269,7 @@ public class OrderService {
     }
 
     private void generatorCardTokenWhenRequired(Order order) {
-        if (order.shouldStoreCard()) {
+        if (order.shouldStoreCard() && order.hasCard()) {
             String token = userCreditCardService.storeCard(order.getPerson(), order.getPaymentRequest().getCreditCard()).getToken();
             order.getPaymentRequest().getCreditCard().setToken(token);
         }

@@ -211,7 +211,7 @@ class OrderTest extends FixtureApplicationTest {
         boolean result = order.shouldStoreCard()
 
         then:
-        !result
+        result
 
     }
 

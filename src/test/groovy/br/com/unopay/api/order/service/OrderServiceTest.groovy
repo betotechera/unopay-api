@@ -706,8 +706,8 @@ class OrderServiceTest extends SpockApplicationTests{
     }
 
 
-    def """given an order with the credit card payment method and a user with a card
-        token then the payment method should be changed to the ticket card"""(){
+    def """given an order with the ticket payment method and a user with a card
+        token then the payment method should be changed to card"""(){
         given:
         def userContractor = fixtureCreator.createContractorUser()
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
@@ -722,8 +722,9 @@ class OrderServiceTest extends SpockApplicationTests{
             add("product", product)
             add("contract", contractUnderTest)
             add("paymentInstrument", instrument)
-            add("paymentMethod", PaymentMethod.CARD)
+            add("paymentMethod", PaymentMethod.BOLETO)
             add("paymentRequest", paymentRequest)
+            add("type", OrderType.CREDIT)
             add("value", 10.0)
         }})
 
@@ -1318,7 +1319,7 @@ class OrderServiceTest extends SpockApplicationTests{
             add("creditCard", creditCard)
         }})
         Order order = Fixture.from(Order.class).gimme("valid", new Rule(){{
-            add("product", fixtureCreator.createProduct())
+            add("product", fixtureCreator.createProductWithSameIssuerOfHirer())
             add("paymentInstrument", null)
             add("type", OrderType.ADHESION)
         }})
