@@ -34,7 +34,6 @@ class HirerProduct extends Serializable with Updatable {
   @JsonView(Array(classOf[Views.HirerProduct.Detail]))
   var createdDateTime: Date = _
 
-  @Valid
   @BeanProperty
   @ManyToOne
   @JoinColumn(name = "product_id")
