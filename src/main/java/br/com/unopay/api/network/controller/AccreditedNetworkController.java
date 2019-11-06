@@ -34,7 +34,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -287,8 +291,7 @@ public class AccreditedNetworkController {
     }
 
     @JsonView(Views.EstablishmentEvent.List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.GET)
+    @GetMapping(value = "/accredited-networks/me/event-fees")
     public Results<EstablishmentEvent> getEstablishmentEventsByParams(AccreditedNetwork accreditedNetwork,
                                                            EstablishmentEventFilter filter,
                                                            @Validated UnovationPageRequest pageable) {
@@ -301,24 +304,29 @@ public class AccreditedNetworkController {
     }
 
     @JsonView(Views.EstablishmentEvent.Detail.class)
-    @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/accredited-networks/me/event-fees", method = RequestMethod.POST)
+    @PostMapping(value = "/accredited-networks/me/event-fees")
     public ResponseEntity<EstablishmentEvent> createEstablishmentEvent(@Validated(Create.class) @RequestBody EstablishmentEvent establishmentEvent,
                                                                   AccreditedNetwork accreditedNetwork) {
-        log.info("create an establishmentEvent for network={}", accreditedNetwork.documentNumber());
+        log.info("create an establishmentEvent event fee for network={}", accreditedNetwork.documentNumber());
         EstablishmentEvent created = establishmentEventService.create(establishmentEvent.establishmentId(), establishmentEvent, accreditedNetwork);
         return ResponseEntity
                 .created(URI.create("/accredited-networks/me/event-fees/"+created.getId()))
                 .body(created);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/accredited-networks/me/event-fees/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/accredited-networks/me/event-fees/{id}")
     public void updateEstablishmentEvent(@PathVariable  String id, @Validated(Update.class) @RequestBody EstablishmentEvent establishment,
                                     AccreditedNetwork accreditedNetwork) {
         establishment.setId(id);
-        log.info("update an establishment={} for network={}", id, accreditedNetwork.documentNumber());
+        log.info("update an establishment event fee={} for network={}", id, accreditedNetwork.documentNumber());
         establishmentEventService.update(id,establishment, accreditedNetwork);
+    }
+
+    @DeleteMapping(value = "/accredited-networks/me/event-fees/{id}")
+    public void deleteEstablishmentEvent(@PathVariable  String id,
+                                         AccreditedNetwork accreditedNetwork) {
+        log.info("update an establishment event fee={} for network={}", id, accreditedNetwork.documentNumber());
+        establishmentEventService.delete(id, accreditedNetwork);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
