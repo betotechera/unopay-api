@@ -51,7 +51,6 @@ class HirerProduct extends Serializable with Updatable {
 
   @Column(name = "expiration")
   @BeanProperty
-  @NotNull(groups = Array(classOf[Create], classOf[Update]))
   @JsonView(Array(classOf[Views.HirerProduct.List]))
   var expiration: Date = _
 
