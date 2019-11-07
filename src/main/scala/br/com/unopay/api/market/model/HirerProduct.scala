@@ -41,7 +41,6 @@ class HirerProduct extends Serializable with Updatable {
   @JsonView(Array(classOf[Views.HirerProduct.List]))
   var product: Product = _
 
-  @Valid
   @BeanProperty
   @ManyToOne
   @JoinColumn(name = "hirer_id")
