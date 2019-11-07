@@ -3,7 +3,7 @@ create table hirer_product (
     created_date_time timestamp,
     hirer_id varchar(256) not null,
     product_id varchar(256) not null,
-    expiration timestamp not null,
+    expiration timestamp,
     constraint fk_hirer_product_hirer foreign key(hirer_id) references hirer(id),
     constraint fk_hirer_product_product foreign key(product_id) references product(id)
 );
