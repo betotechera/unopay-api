@@ -8,11 +8,12 @@ import br.com.unopay.api.service.ProductService
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
-
+@Timed
 @Service
 @Autowired
 class HirerProductService(repository: HirerProductRepository, productService: ProductService, hirerService: HirerService) {

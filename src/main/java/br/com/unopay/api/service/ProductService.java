@@ -9,6 +9,7 @@ import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.repository.ProductRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_NOT_FOUND;
 
+@Timed
 @Slf4j
 @Service
 public class ProductService {

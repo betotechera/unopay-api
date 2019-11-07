@@ -1,15 +1,15 @@
 package br.com.unopay.api.model;
 
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
-import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.network.model.Partner;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.network.model.ServiceType;
+import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.credit.model.CreditInsertionType;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.network.model.AccreditedNetwork;
+import br.com.unopay.api.network.model.Partner;
+import br.com.unopay.api.network.model.ServiceType;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.util.Rounder;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
