@@ -6,13 +6,13 @@ public class Queues {
     public static final String BATCH_CLOSING = "unopay.batch.closing";
     public static final String PAYMENT_REMITTANCE = "unopay.payment.remittance";
     public static final String CREDIT_PROCESSED = "unopay.credit.processed";
-    public static final String ORDER_CREATED = "unopay.order.created.test";
+    public static final String ORDER_CREATED = "unopay.order.created";
     public static final String ORDER_CREATE = "unopay.order.create";
     public static final String ORDER_UPDATED = "unopay.order.updated";
     public static final String HIRER_CREDIT_CREATED = "unopay.hirer.credit.created";
     public static final String HIRER_BILLING_CREATED = "unopay.hirer.billing.created";
     public static final String BONUS_BILLING_CREATED = "unopay.bonus.billing.created";
-    public static final String CONTRACTOR_CREATED = "unopay.contractor.created.test";
+    public static final String CONTRACTOR_CREATED = "unopay.contractor.created";
     public static final String DLQ_NOTIFICATION = "dlq.unopay.notification";
     public static final String DLQ_BATCH_CLOSING = "dlq.unopay.batch.closing";
     public static final String DLQ_PAYMENT_REMITTANCE = "dlq.unopay.payment.remittance";
