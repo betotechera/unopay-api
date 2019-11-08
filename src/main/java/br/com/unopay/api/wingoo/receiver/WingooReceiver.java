@@ -34,7 +34,6 @@ public class WingooReceiver {
         this.paymentInstrumentService = paymentInstrumentService;
     }
 
-    @Transactional
     @RabbitListener(queues = Queues.CONTRACTOR_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void wingooReceiptNotify(String objectAsString) {
         Contractor contractor = genericObjectMapper.getAsObject(objectAsString, Contractor.class);

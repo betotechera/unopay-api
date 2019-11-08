@@ -74,6 +74,9 @@ public class Contractor implements Serializable {
     @Transient
     private String documentType;
 
+    @Transient
+    private String password;
+
     public void updateModel(Contractor contractor) {
         person.updateMe(contractor.getPerson());
         if(contractor.withBankAccount() && this.bankAccount != null) {

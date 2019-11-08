@@ -133,6 +133,7 @@ public class DealService {
             if(deal.hasRecurrenceCardInformation()) {
                 userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
             }
+            contractor.setPassword(deal.getPassword());
         }
         sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);

@@ -68,7 +68,7 @@ public class OrderController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("#oauth2.isClient() || #oauth2.isUser()")
     @RequestMapping(value = "/orders", method = POST, params = "type=ADHESION")
     public ResponseEntity<Order> createAdhesion(@Validated(Create.Order.Adhesion.class) @RequestBody Order order) {
         log.info("creating adhesion order {}", order);

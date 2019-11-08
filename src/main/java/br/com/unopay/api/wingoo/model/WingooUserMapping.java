@@ -1,6 +1,7 @@
 package br.com.unopay.api.wingoo.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.uaa.config.PasswordEncoderConfig;
 import br.com.wingoo.userclient.model.User;
 import java.io.Serializable;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.Data;
 public class WingooUserMapping implements Serializable{
 
     public static final String TYPE = "Aluno";
-    public static final int STATUS = 2;
+    public static final int STATUS = 3;
     public static final String FORMAT = "%s-%s";
 
     public static User fromContractor(Contractor contractor, String instrumentNumber, String issuerDocument){
@@ -26,6 +27,7 @@ public class WingooUserMapping implements Serializable{
         user.setStudentId(instrumentNumber);
         user.setStatus(STATUS);
         user.setType(TYPE);
+        user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
         user.setHirerDocument(issuerDocument);
         return user;
     }
