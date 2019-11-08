@@ -111,6 +111,8 @@ public class BacenTemplateLoader implements TemplateLoader {
             add("movementAccount", one(BankAccount.class, "persisted"));
             add("financierMailForRemittance", "financeiro@gmail.com");
             add("bin", regex("\\d{4}"));
+            add("integrationInformation.payzenShopId", "12345");
+            add("integrationInformation.payzenShopKey", "12345");
 
         }});
 

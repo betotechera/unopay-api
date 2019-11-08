@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -93,6 +94,9 @@ public class Person implements Serializable, Updatable, StoreCard {
     @JsonView({Views.Person.class, Views.Person.Detail.class})
     @Pattern(regexp = "^[-() 0-9]+$", groups = {Create.class, Update.class})
     private String cellPhone;
+
+    @Transient
+    private String issuerDocument;
 
     public void validate() {
         if(this.document == null || !this.document.getType().isValidDocumentFor(this.type)) {
@@ -187,5 +191,10 @@ public class Person implements Serializable, Updatable, StoreCard {
     @Override
     public String getEmail() {
         return getPhysicalPersonEmail();
+    }
+
+    @Override
+    public String getIssuerDocument() {
+        return this.issuerDocument;
     }
 }

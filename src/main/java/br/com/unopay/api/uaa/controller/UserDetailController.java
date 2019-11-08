@@ -244,7 +244,7 @@ public class UserDetailController {
     @JsonView(Views.UserCreditCard.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.POST)
-    public ResponseEntity<UserCreditCard> createCreditCard(@Validated(Create.class) @RequestBody CreditCard creditCard,
+    public ResponseEntity<UserCreditCard> createCreditCard(@Validated(UserCreditCard.class) @RequestBody CreditCard creditCard,
                                                            UserDetail user) {
         LOGGER.info("adding a user credit card to user={}", user);
         UserCreditCard created = userCreditCardService.storeForUser(user, creditCard);

@@ -522,6 +522,8 @@ public final class Errors {
             new UnovationError("INVALID_ORDER_TYPE","invalid order type");
     public static final UnovationError ALREADY_PAID_ORDER =
             new UnovationError("ALREADY_PAID_ORDER","already paid order");
+    public static final UnovationError PAYZEN_ERROR =
+            new UnovationError("PAYZEN_ERROR","payzen error");
 
     /* Order */
     public static final UnovationError INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR =

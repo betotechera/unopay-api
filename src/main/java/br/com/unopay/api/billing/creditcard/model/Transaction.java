@@ -96,6 +96,11 @@ public class Transaction {
     @Transient
     private CreditCard creditCard;
 
+    @Column(name = "issuer_document")
+    @NotNull(groups = {Create.class})
+    @JsonView({Views.Billing.List.class})
+    private String issuerDocument;
+
     @JsonIgnore
     @Version
     private Integer version;

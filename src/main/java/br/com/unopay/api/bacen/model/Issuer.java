@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -121,6 +122,11 @@ public class Issuer implements Serializable{
     @JsonView({Views.Issuer.List.class})
     private Boolean authorizeServiceWithoutContractorPassword;
 
+    @Valid
+    @Embedded
+    @JsonView({Views.Issuer.Detail.class})
+    private IntegrationInformation integrationInformation;
+
     @Version
     @JsonIgnore
     Long version;
@@ -214,5 +220,19 @@ public class Issuer implements Serializable{
 
     public String getId(){
         return this.id;
+    }
+
+    public String payzenShopId() {
+        if(this.integrationInformation != null){
+            return this.integrationInformation.getPayzenShopId();
+        }
+        return null;
+    }
+
+    public String payzenShopKey() {
+        if(this.integrationInformation != null){
+            return this.integrationInformation.getPayzenShopKey();
+        }
+        return null;
     }
 }

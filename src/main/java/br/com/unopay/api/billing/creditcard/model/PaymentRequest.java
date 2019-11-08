@@ -22,6 +22,7 @@ public class PaymentRequest implements Serializable{
     private Integer installments = DEFAULT_INSTALLMENT;
     private Boolean storeCard;
     private Boolean oneClickPayment;
+    private String issuerDocument;
 
     public Transaction toTransaction() {
         Transaction transaction = new Transaction();
@@ -30,6 +31,7 @@ public class PaymentRequest implements Serializable{
         transaction.setInstallments(DEFAULT_INSTALLMENT);
         transaction.setPaymentMethod(method);
         transaction.setAmount(new Amount(CurrencyCode.BRL, value));
+        transaction.setIssuerDocument(this.issuerDocument);
         return transaction;
     }
 

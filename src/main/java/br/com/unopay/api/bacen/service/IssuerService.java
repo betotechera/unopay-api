@@ -76,6 +76,11 @@ public class IssuerService {
         return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
     }
 
+    public Issuer findByDocument(String documentNumber) {
+        Optional<Issuer> issuer = repository.findByPersonDocumentNumber(documentNumber);
+        return  issuer.orElseThrow(()->UnovationExceptions.notFound().withErrors(ISSUER_NOT_FOUND));
+    }
+
     @Transactional
     public Issuer updateMe(String id, Issuer issuer) {
         issuer.setAuthorizeServiceWithoutContractorPassword(null);

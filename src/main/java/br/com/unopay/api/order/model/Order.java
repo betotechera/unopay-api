@@ -472,4 +472,9 @@ public class Order implements Updatable, Billable, Serializable {
         return null;
     }
 
+    public void definePaymentIssuer(String issuerDocumentNumber) {
+        if(this.paymentRequest != null){
+            this.paymentRequest.setIssuerDocument(issuerDocumentNumber);
+        }
+    }
 }

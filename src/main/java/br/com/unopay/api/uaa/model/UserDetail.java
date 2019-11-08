@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -134,6 +135,10 @@ public class UserDetail implements Serializable, Updatable, StoreCard {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "group_id") })
     private Set<Group> groups;
+
+    @Transient
+    @NotNull(groups = Create.UserCreditCard.class)
+    private String issuerDocument;
 
     @Version
     @JsonIgnore
@@ -335,5 +340,10 @@ public class UserDetail implements Serializable, Updatable, StoreCard {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getIssuerDocument() {
+        return this.issuerDocument;
     }
 }

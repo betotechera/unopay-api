@@ -264,13 +264,18 @@ public class OrderService {
 
     private void storeCreditCardForUserWhenRequired(UserDetail userDetail, Order order) {
         if (order.shouldStoreCard()) {
+            userDetail.setIssuerDocument(order.issuerDocumentNumber());
             userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
         }
     }
 
     private void generatorCardTokenWhenRequired(Order order) {
         if (order.shouldStoreCard() && order.hasCard()) {
-            String token = userCreditCardService.storeCard(order.getPerson(), order.getPaymentRequest().getCreditCard()).getToken();
+            Person person = order.getPerson();
+            if(person != null){
+                person.setIssuerDocument(order.issuerDocumentNumber());
+            }
+            String token = userCreditCardService.storeCard(person, order.getPaymentRequest().getCreditCard()).getToken();
             order.getPaymentRequest().getCreditCard().setToken(token);
         }
     }

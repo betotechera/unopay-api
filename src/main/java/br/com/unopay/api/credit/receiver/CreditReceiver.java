@@ -70,6 +70,7 @@ public class CreditReceiver {
         credit.getPaymentRequest().setValue(credit.getValue());
         credit.getPaymentRequest().setOrderId(credit.getId());
         credit.getPaymentRequest().setMethod(PaymentMethod.CARD);
+        credit.getPaymentRequest().setIssuerDocument(credit.issuerId());
     }
 
 }

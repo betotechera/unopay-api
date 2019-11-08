@@ -5,4 +5,6 @@ public interface StoreCard {
     String getEmail();
 
     String getName();
+
+    String getIssuerDocument();
 }

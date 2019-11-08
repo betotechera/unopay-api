@@ -11,8 +11,6 @@ wingoo:
 payment:
   gateway:
     config:
-      shopId: 39572022
-      shopKey: 1652724655003284
       mode: TEST
       endpointHost: secure.payzen.com.br
   soap:

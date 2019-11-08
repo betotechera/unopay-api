@@ -46,6 +46,22 @@ class TransactionServiceTest extends SpockApplicationTests{
         1 * gatewayMock.createTransaction(_)
     }
 
+    def 'given a payment request without the issuer document should not be processed'(){
+        given:
+        PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
+            add("issuerDocument", null)
+        }})
+
+        when:
+        service.create(paymentRequest)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'ISSUER_REQUIRED'
+    }
+
+
+
     def 'when create transaction should saved'(){
         given:
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard")
@@ -100,7 +116,7 @@ class TransactionServiceTest extends SpockApplicationTests{
         service.create(paymentRequest)
 
         then:
-        def ex = thrown(ConflictException)
+        def ex = thrown(UnprocessableEntityException)
         assert ex.errors.first().logref == 'ORDER_REQUIRED'
     }
 

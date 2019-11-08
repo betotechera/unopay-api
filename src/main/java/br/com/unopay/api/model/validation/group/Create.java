@@ -5,4 +5,6 @@ public interface Create {
     interface Order extends Create {
         interface Adhesion extends Order{}
     }
+
+    interface UserCreditCard extends Create { }
 }

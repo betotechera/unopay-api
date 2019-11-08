@@ -273,6 +273,14 @@ public class Credit implements Updatable, Billable, Serializable {
     }
 
     @JsonIgnore
+    public String issuerDocument(){
+        if(issuer != null){
+            return issuer.documentNumber();
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public String hirerId(){
         if(hirer != null){
             return hirer.getId();

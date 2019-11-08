@@ -1,9 +1,12 @@
 package br.com.unopay.api.billing.creditcard.gateway.payzen.model;
 
+import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.billing.creditcard.gateway.payzen.config.PayzenConfig;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.StoreCard;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.lyra.vads.ws.v5.BillingDetailsRequest;
 import com.lyra.vads.ws.v5.CardRequest;
 import com.lyra.vads.ws.v5.CreatePayment;
@@ -22,13 +25,21 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static br.com.unopay.api.uaa.exception.Errors.PAYZEN_ERROR;
 import static eu.payzen.webservices.sdk.Payment.create;
 
 @Component
 public class Payzen {
 
-    @Autowired
     private PayzenConfig payzenConfig;
+    private IssuerService issuerService;
+
+    @Autowired
+    public Payzen(PayzenConfig payzenConfig,
+                  IssuerService issuerService) {
+        this.payzenConfig = payzenConfig;
+        this.issuerService = issuerService;
+    }
 
     public ServiceResult createTransaction(Transaction transaction) {
         OrderRequestBuilder orderRequestBuilder
@@ -38,13 +49,16 @@ public class Payzen {
 
         PaymentRequestBuilder paymentRequestBuilder = getPaymentRequestBuilder(transaction);
         CardRequest cardRequest = getCardRequest(transaction);
-
-        return create(PaymentBuilder
+        try {
+            return create(PaymentBuilder
                         .getBuilder()
                         .order(orderRequestBuilder.build())
                         .payment(paymentRequestBuilder.build())
                         .card(cardRequest)
-                        .buildCreate(), new HashMap<>(payzenConfig.getConfig()));
+                        .buildCreate(), getStringStringHashMap(transaction.getIssuerDocument()));
+        } catch (Exception e){
+            throw UnovationExceptions.failedDependency().withErrors(PAYZEN_ERROR.withOnlyArguments(e.getMessage()));
+        }
     }
 
     private CardRequest getCardRequest(Transaction transaction) {
@@ -57,7 +71,7 @@ public class Payzen {
 
     public String storeCard(StoreCard user, CreditCard creditCard){
         CardRequest cardRequest = getCardRequest(creditCard);
-        HashMap<String, String> config = new HashMap<>(payzenConfig.getConfig());
+        HashMap<String, String> config = getStringStringHashMap(user.getIssuerDocument());
         CreatePayment createPayment = PaymentBuilder
                 .getBuilder()
                 .card(cardRequest)
@@ -97,12 +111,24 @@ public class Payzen {
                 .currency(transaction.getAmountCurrencyIsoCode());
     }
 
+    private HashMap<String, String> getStringStringHashMap(String issuerDocument) {
+        Map<String, String> config = payzenConfig.getConfig();
+        Issuer issuer = issuerService.findByDocument(issuerDocument);
+        config.put("shopId", issuer.payzenShopId());
+        config.put("shopKey", issuer.payzenShopKey());
+        return new HashMap<>(config);
+    }
+
     private CreateTokenResponse.CreateTokenResult createToken(Map<String, String> config,
                                                               CreatePayment createPaymentRequest) {
         PaymentAPI api = new ClientV5(config).getPaymentAPIImplPort();
-        return api.createToken(
-                createPaymentRequest.getCommonRequest(),
-                createPaymentRequest.getCardRequest(),
-                createPaymentRequest.getCustomerRequest());
+        try {
+            return api.createToken(
+                    createPaymentRequest.getCommonRequest(),
+                    createPaymentRequest.getCardRequest(),
+                    createPaymentRequest.getCustomerRequest());
+        } catch (Exception e){
+            throw UnovationExceptions.failedDependency().withErrors(PAYZEN_ERROR.withOnlyArguments(e.getMessage()));
+        }
     }
 }

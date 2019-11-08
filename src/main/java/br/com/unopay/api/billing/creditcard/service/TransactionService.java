@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import static br.com.unopay.api.uaa.exception.Errors.INVALID_PAYMENT_VALUE;
+import static br.com.unopay.api.uaa.exception.Errors.ISSUER_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ORDER_REQUIRED;
 import static br.com.unopay.api.uaa.exception.Errors.ORDER_WITH_PENDING_TRANSACTION;
 import static br.com.unopay.api.uaa.exception.Errors.ORDER_WITH_PROCESSED_TRANSACTION;
@@ -62,7 +63,10 @@ public class TransactionService {
 
     private void validate(Transaction transaction) {
         if(transaction.getOrderId() == null){
-            throw UnovationExceptions.conflict().withErrors(ORDER_REQUIRED);
+            throw UnovationExceptions.unprocessableEntity().withErrors(ORDER_REQUIRED);
+        }
+        if(transaction.getIssuerDocument() == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(ISSUER_REQUIRED);
         }
         transaction.checkValue();
         checkAlreadyCreated(transaction.getOrderId());

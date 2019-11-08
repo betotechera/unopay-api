@@ -34,6 +34,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("amount", one(Amount.class, "valid"));
             add("orderId", regex("\\d{8}"));
             add("creditCard", one(CreditCard.class, "payzenCard"));
+            add("issuerDocument", cnpj());
         }});
 
         Fixture.of(PaymentRequest.class).addTemplate("creditCard", new Rule() {{
@@ -41,6 +42,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("value", random(BigDecimal.class, range(40,1000)));
             add("orderId", regex("\\d{8}"));
             add("creditCard", one(CreditCard.class, "payzenCard"));
+            add("issuerDocument", cnpj());
         }});
 
         Fixture.of(PaymentRequest.class).addTemplate("ticket").inherits("creditCard", new Rule() {{
