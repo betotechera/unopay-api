@@ -127,7 +127,7 @@ public class DealService {
     private Contract close(Deal deal, Contractor contractor) {
         Product product = productService.findByCode(deal.getProductCode());
         Contract contract = createContract(deal, contractor, product);
-        paymentInstrumentService.save(new PaymentInstrument(contractor, product));
+        PaymentInstrument paymentInstrument = paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         if(deal.mustCreateUser()) {
             UserDetail userDetail = createUserWhenRequired(contractor, product, deal.getPassword());
             if(deal.hasRecurrenceCardInformation()) {
@@ -135,9 +135,11 @@ public class DealService {
             }
             contractor.setPassword(deal.getPassword());
         }
-        sendContractorToPartner(contractor, product);
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(deal, contract);
+        contractor.setPaymentInstrumentNumber(paymentInstrument.getNumber());
+        contractor.setIssuerDocument(product.issuerDocumentNumber());
+        sendContractorToPartner(contractor, product);
         return contract;
     }
 

@@ -37,13 +37,9 @@ public class WingooReceiver {
     @RabbitListener(queues = Queues.CONTRACTOR_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void wingooReceiptNotify(String objectAsString) {
         Contractor contractor = genericObjectMapper.getAsObject(objectAsString, Contractor.class);
-        log.info("sending contractor={} to Wingoo system", contractor.getDocumentNumber());
-        Optional<PaymentInstrument> paymentInstrument = getContractorInstrument(contractor);
-        String instrumentNumber = paymentInstrument.map(PaymentInstrument::getNumber).orElse(null);
-        String issuerDocument = paymentInstrument.map(PaymentInstrument::getProduct)
-                                .map(Product::getIssuer).map(Issuer::documentNumber).orElse(null);
-        service.create(contractor, instrumentNumber,issuerDocument);
-        log.info("contractor={} sent to Wingoo system", contractor.getDocumentNumber());
+        log.info("sending the contractor={} of the issuer={} to the Wingoo's system", contractor.getDocumentNumber(), contractor.getIssuerDocument());
+        service.create(contractor);
+        log.info("the contractor={} was sent to the wingoo's system", contractor.getDocumentNumber());
     }
 
     private Optional<PaymentInstrument> getContractorInstrument(Contractor contractor) {

@@ -13,7 +13,7 @@ public class WingooUserMapping implements Serializable{
     public static final int STATUS = 3;
     public static final String FORMAT = "%s-%s";
 
-    public static User fromContractor(Contractor contractor, String instrumentNumber, String issuerDocument){
+    public static User fromContractor(Contractor contractor){
         User user = new User();
         user.setName(contractor.getPerson().getShortName());
         user.setLastName(contractor.getPerson().getName());
@@ -24,11 +24,11 @@ public class WingooUserMapping implements Serializable{
         user.setGender(contractor.getPerson().getPhysicalPersonDetail().getGender().getDescription());
         String originalZipCode = contractor.getPerson().getAddress().getZipCode();
         user.setZipCode(String.format(FORMAT, originalZipCode.substring(0, 5), originalZipCode.substring(5)));
-        user.setStudentId(instrumentNumber);
+        user.setStudentId(contractor.getPaymentInstrumentNumber());
         user.setStatus(STATUS);
         user.setType(TYPE);
         user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
-        user.setHirerDocument(issuerDocument);
+        user.setHirerDocument(contractor.getDocumentNumber());
         return user;
     }
 }

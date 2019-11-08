@@ -273,6 +273,13 @@ public class Product implements Serializable, Updatable {
         return null;
     }
 
+    public String issuerDocumentNumber() {
+        if (getIssuer() != null) {
+            return getIssuer().documentNumber();
+        }
+        return null;
+    }
+
     public Double returnBonusPercentage() {
         if (getBonusPercentage() != null && !getBonusPercentage().toString().equals(EMPTY)) {
             return getBonusPercentage();

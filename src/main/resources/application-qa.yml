@@ -5,11 +5,9 @@ wingoo:
       resource:
         tokenInfoUri: ${wingoo.api}/uaa/oauth/check_token
       client:
-        clientId: api-gateway
-        clientSecret: 5yRt6BPsdusq8AP
+        clientId: frotanet
+        clientSecret: KvGqfyKp4zt5Aahn
         accessTokenUri: ${wingoo.api}/uaa/oauth/token
-        username: gerente@wingoo.com.br
-        password: userwin010
 payment:
   gateway:
     config:

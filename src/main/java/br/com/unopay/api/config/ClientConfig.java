@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
@@ -28,8 +29,8 @@ public class ClientConfig {
 
     @Bean
     @ConfigurationProperties("wingoo.security.oauth2.client")
-    public ResourceOwnerPasswordResourceDetails WingooOauth2Client() {
-        return new ResourceOwnerPasswordResourceDetails();
+    public ClientCredentialsResourceDetails WingooOauth2Client() {
+        return new ClientCredentialsResourceDetails();
     }
 
     @Bean
@@ -69,7 +70,7 @@ public class ClientConfig {
 
     @Bean("wingooUserClient")
     public UserClient wingooUserClient(){
-        return new UserClient(wingooOauth2RestTemplate(), wingooApi);
+        return new UserClient(wingooOauth2RestTemplate(), String.format("%s/users", wingooApi));
     }
 
 
