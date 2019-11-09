@@ -72,6 +72,9 @@ public class Contractor implements Serializable {
     private String issuerDocument;
 
     @Transient
+    private String hirerDocument;
+
+    @Transient
     private String paymentInstrumentNumber;
 
     @Transient

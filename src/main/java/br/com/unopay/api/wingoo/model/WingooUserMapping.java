@@ -19,7 +19,7 @@ public class WingooUserMapping implements Serializable{
         user.setLastName(contractor.getPerson().getName());
         user.setEmail(contractor.getPerson().getPhysicalPersonDetail().getEmail());
         user.setBirthDate(contractor.getPerson().getPhysicalPersonDetail().getBirthDate());
-        user.setDocumentNumber(contractor.getPerson().getDocument().getNumber());
+        user.setDocumentNumber(contractor.getDocumentNumber());
         user.setCellphone(contractor.getPerson().getCellPhone());
         user.setGender(contractor.getPerson().getPhysicalPersonDetail().getGender().getDescription());
         String originalZipCode = contractor.getPerson().getAddress().getZipCode();
@@ -28,7 +28,7 @@ public class WingooUserMapping implements Serializable{
         user.setStatus(STATUS);
         user.setType(TYPE);
         user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
-        user.setHirerDocument(contractor.getDocumentNumber());
+        user.setHirerDocument(contractor.getHirerDocument());
         return user;
     }
 }

@@ -37,7 +37,7 @@ public class WingooReceiver {
     @RabbitListener(queues = Queues.CONTRACTOR_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void wingooReceiptNotify(String objectAsString) {
         Contractor contractor = genericObjectMapper.getAsObject(objectAsString, Contractor.class);
-        log.info("sending the contractor={} of the issuer={} to the Wingoo's system", contractor.getDocumentNumber(), contractor.getIssuerDocument());
+        log.info("sending the contractor={} of the hirer={} to the Wingoo's system", contractor.getDocumentNumber(), contractor.getHirerDocument());
         service.create(contractor);
         log.info("the contractor={} was sent to the wingoo's system", contractor.getDocumentNumber());
     }

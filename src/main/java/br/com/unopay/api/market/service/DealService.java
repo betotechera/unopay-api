@@ -139,6 +139,7 @@ public class DealService {
         createMembers(deal, contract);
         contractor.setPaymentInstrumentNumber(paymentInstrument.getNumber());
         contractor.setIssuerDocument(product.issuerDocumentNumber());
+        contractor.setHirerDocument(contract.hirerDocumentNumber());
         sendContractorToPartner(contractor, product);
         return contract;
     }
