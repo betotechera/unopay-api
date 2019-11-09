@@ -235,4 +235,18 @@ public class Issuer implements Serializable{
         }
         return null;
     }
+
+    public String wingooClientSecret() {
+        if(this.integrationInformation != null){
+            return this.integrationInformation.getWingooClientSecret();
+        }
+        return null;
+    }
+
+    public String wingooClientId() {
+        if(this.integrationInformation != null){
+            return this.integrationInformation.getWingooClientId();
+        }
+        return null;
+    }
 }

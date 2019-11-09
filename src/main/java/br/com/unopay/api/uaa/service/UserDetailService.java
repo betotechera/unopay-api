@@ -69,7 +69,6 @@ public class UserDetailService implements UserDetailsService {
     private ContractorService contractorService;
     private UserReferencesValidator userReferencesValidator;
     private UserTypeRepository userTypeRepository;
-    private WingooService wingooService;
 
     @Autowired
     public UserDetailService(UserDetailRepository userDetailRepository,
@@ -81,8 +80,7 @@ public class UserDetailService implements UserDetailsService {
                              MailValidator mailValidator,
                              ContractorService contractorService,
                              UserReferencesValidator userReferencesValidator,
-                             UserTypeRepository userTypeRepository,
-                             WingooService wingooService) {
+                             UserTypeRepository userTypeRepository) {
         this.userDetailRepository = userDetailRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
@@ -93,7 +91,6 @@ public class UserDetailService implements UserDetailsService {
         this.contractorService = contractorService;
         this.userReferencesValidator = userReferencesValidator;
         this.userTypeRepository = userTypeRepository;
-        this.wingooService = wingooService;
     }
 
     public UserDetailService(){}
@@ -170,7 +167,6 @@ public class UserDetailService implements UserDetailsService {
         }
         if (user.hasPassword()) {
             encodePassword(current, user.getPassword());
-            updatePasswordOnWingoo(user.getPassword(), current);
         }
         current.updateMe(user);
         userReferencesValidator.defineValidReferences(current);
@@ -180,17 +176,6 @@ public class UserDetailService implements UserDetailsService {
             log.warn(String.format("user email already exists %s", user.toString()), e);
             throw UnovationExceptions.conflict().withErrors(Errors.USER_EMAIL_ALREADY_EXISTS)
                     .withArguments(user.getEmail());
-        }
-    }
-
-    private void updatePasswordOnWingoo(String newPassword, UserDetail current) {
-        try {
-            current.myContractor().ifPresent(contractor -> {
-                Password password = new Password(current.getEmail(), contractor.getDocumentNumber(), newPassword);
-                wingooService.update(password);
-            });
-        } catch (Exception e){
-            log.warn("Cannot update password on wingoo system",e);
         }
     }
 
@@ -272,7 +257,6 @@ public class UserDetailService implements UserDetailsService {
 
     private void updatePasswordByUser(UserDetail user, NewPassword newPassword) {
         encodePassword(user, newPassword.getPassword());
-        updatePasswordOnWingoo(newPassword.getPassword(), user);
         userDetailRepository.save(user);
     }
 
