@@ -2,6 +2,7 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
@@ -272,11 +273,11 @@ public class OrderService {
     private void generatorCardTokenWhenRequired(Order order) {
         if (order.shouldStoreCard() && order.hasCard()) {
             Person person = order.getPerson();
-            if(person != null){
-                person.setIssuerDocument(order.issuerDocumentNumber());
+            person.setIssuerDocument(order.issuerDocumentNumber());
+            CreditCard creditCard = userCreditCardService.storeCard(person, order.creditCard());
+            if(creditCard != null) {
+                order.defineCardToken(creditCard.getToken());
             }
-            String token = userCreditCardService.storeCard(person, order.creditCard()).getToken();
-            order.defineCardToken(token);
         }
     }
 
