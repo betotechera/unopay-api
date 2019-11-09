@@ -275,7 +275,7 @@ public class OrderService {
             if(person != null){
                 person.setIssuerDocument(order.issuerDocumentNumber());
             }
-            String token = userCreditCardService.storeCard(person, order.getPaymentRequest().getCreditCard()).getToken();
+            String token = userCreditCardService.storeCard(person, order.creditCard()).getToken();
             order.defineCardToken(token);
         }
     }

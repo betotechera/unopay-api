@@ -440,6 +440,13 @@ public class Order implements Updatable, Billable, Serializable {
         return null;
     }
 
+    public CreditCard creditCard() {
+        if (hasPaymentRequest()) {
+            return getPaymentRequest().getCreditCard();
+        }
+        return null;
+    }
+
     public BigDecimal paymentValue() {
         return value.add(fee);
     }
