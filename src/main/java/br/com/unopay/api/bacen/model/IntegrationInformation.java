@@ -3,6 +3,8 @@ package br.com.unopay.api.bacen.model;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
+import br.com.unopay.api.uaa.exception.Errors;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -35,4 +37,19 @@ public class IntegrationInformation {
     @Column(name = "wingoo_client_secret")
     @JsonView({Views.Issuer.Detail.class})
     private String wingooClientSecret;
+
+    public void updateMe(IntegrationInformation integrationInformation){
+        validate();
+        this.payzenShopId = integrationInformation.getPayzenShopId();
+        this.payzenShopKey = integrationInformation.getPayzenShopKey();
+        this.wingooClientId = integrationInformation.getWingooClientId();
+        this.wingooClientSecret = integrationInformation.getWingooClientSecret();
+    }
+
+    public void validate() {
+        if (payzenShopId == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYZEN_SHOP_ID_REQUIRED);
+        if (payzenShopKey == null)
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PAYZEN_SHOP_KEY_REQUIRED);
+    }
 }
