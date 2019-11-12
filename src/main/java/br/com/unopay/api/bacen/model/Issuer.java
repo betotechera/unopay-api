@@ -1,6 +1,7 @@
 package br.com.unopay.api.bacen.model;
 
 import br.com.unopay.api.model.Person;
+import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
@@ -44,7 +45,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PERSON_REQUIRED;
 @ToString(exclude = "paymentRuleGroups")
 @EqualsAndHashCode(exclude = "paymentRuleGroups")
 @Table(name = "issuer")
-public class Issuer implements Serializable{
+public class Issuer implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -131,22 +132,6 @@ public class Issuer implements Serializable{
     @JsonIgnore
     Long version;
 
-    public void updateMe(Issuer other){
-        setFee(other.getFee());
-        setMovementAccount(other.getMovementAccount());
-        setPaymentAccount(other.getPaymentAccount());
-        setPaymentRuleGroups(other.getPaymentRuleGroups());
-        updateServicePasswordRequired(other.authorizeServiceWithoutContractorPassword);
-        this.bin = other.getBin();
-        this.creditCardFee = other.getCreditCardFee();
-        this.financierMailForRemittance = other.getFinancierMailForRemittance();
-        this.logoUri = other.logoUri;
-        this.backgroundColor = other.backgroundColor;
-        this.textColor = other.textColor;
-        person.updateMe(other.getPerson(), (x) -> x.updateForIssuer(x));
-        integrationInformation.updateMe(other.getIntegrationInformation());
-    }
-
     public void setMeUp() {
         if(authorizeServiceWithoutContractorPassword == null) {
             authorizeServiceWithoutContractorPassword = false;
@@ -163,6 +148,8 @@ public class Issuer implements Serializable{
         if(movementAccount == null) {
             throw UnovationExceptions.unprocessableEntity().withErrors(MOVEMENT_ACCOUNT_REQUIRED);
         }
+
+        integrationInformation.validate();
     }
 
     @JsonIgnore
