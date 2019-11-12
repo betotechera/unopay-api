@@ -144,6 +144,7 @@ public class Issuer implements Serializable{
         this.backgroundColor = other.backgroundColor;
         this.textColor = other.textColor;
         person.updateMe(other.getPerson(), (x) -> x.updateForIssuer(x));
+        integrationInformation.updateMe(other.getIntegrationInformation());
     }
 
     public void setMeUp() {
