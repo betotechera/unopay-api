@@ -61,9 +61,10 @@ public class EstablishmentEventService {
         establishmentEvent.setEstablishment(establishment);
     }
 
-    public void update(String establishmentId, EstablishmentEvent establishmentEvent, AccreditedNetwork accreditedNetwork) {
-        establishmentService.findByIdAndNetworks(establishmentId, accreditedNetwork);
-        update(establishmentId, establishmentEvent);
+    public void update(String establishmentEventId, EstablishmentEvent establishmentEvent, AccreditedNetwork accreditedNetwork) {
+        findByNetworkIdAndId(establishmentEventId, accreditedNetwork);
+        establishmentService.findByIdAndNetworks(establishmentEvent.establishmentId(), accreditedNetwork);
+        update(establishmentEvent.establishmentId(), establishmentEvent);
     }
 
     public void update(String establishmentId, EstablishmentEvent establishmentEvent) {
