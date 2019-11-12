@@ -132,6 +132,22 @@ public class Issuer implements Serializable, Updatable {
     @JsonIgnore
     Long version;
 
+    public void updateMe(Issuer other){
+        setFee(other.getFee());
+        setMovementAccount(other.getMovementAccount());
+        setPaymentAccount(other.getPaymentAccount());
+        setPaymentRuleGroups(other.getPaymentRuleGroups());
+        updateServicePasswordRequired(other.authorizeServiceWithoutContractorPassword);
+        this.bin = other.getBin();
+        this.creditCardFee = other.getCreditCardFee();
+        this.financierMailForRemittance = other.getFinancierMailForRemittance();
+        this.logoUri = other.logoUri;
+        this.backgroundColor = other.backgroundColor;
+        this.textColor = other.textColor;
+        person.updateMe(other.getPerson(), (x) -> x.updateForIssuer(x));
+        integrationInformation.updateMe(other.getIntegrationInformation());
+    }
+
     public void setMeUp() {
         if(authorizeServiceWithoutContractorPassword == null) {
             authorizeServiceWithoutContractorPassword = false;
