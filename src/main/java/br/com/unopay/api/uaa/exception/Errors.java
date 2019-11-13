@@ -701,5 +701,10 @@ public final class Errors {
     public static final UnovationError HIRER_PRODUCT_NOT_FOUND =
             new UnovationError("HIRER_PRODUCT_NOT_FOUND","hirer product not found");
 
+    /* IntegrationInformation */
+    public static final UnovationError PAYZEN_SHOP_ID_REQUIRED =
+            new UnovationError("PAYZEN_SHOP_ID_REQUIRED","payzenShopId required");
+    public static final UnovationError PAYZEN_SHOP_KEY_REQUIRED =
+            new UnovationError("PAYZEN_SHOP_KEY_REQUIRED","payzenShopKey required");
 
 }
