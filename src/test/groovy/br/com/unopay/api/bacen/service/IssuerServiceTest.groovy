@@ -555,5 +555,31 @@ class IssuerServiceTest  extends SpockApplicationTests {
         ex.errors.find().logref == 'ISSUER_NOT_FOUND'
     }
 
+    def 'a issuer without integrationInformation.payzenShopId should not be created'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        issuer.integrationInformation.payzenShopId = null
+
+        when:
+        service.create(issuer)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'PAYZEN_SHOP_ID_REQUIRED'
+    }
+
+    def 'a issuer without integrationInformation.payzenShopKey should not be created'(){
+        given:
+        Issuer issuer = Fixture.from(Issuer.class).gimme("valid")
+        issuer.integrationInformation.payzenShopKey = null
+
+        when:
+        service.create(issuer)
+
+        then:
+        def ex = thrown(UnprocessableEntityException)
+        ex.errors.find()?.logref == 'PAYZEN_SHOP_KEY_REQUIRED'
+    }
+
 
 }
