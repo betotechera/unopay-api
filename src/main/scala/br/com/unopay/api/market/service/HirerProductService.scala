@@ -41,6 +41,12 @@ class HirerProductService(repository: HirerProductRepository, productService: Pr
     repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()))
   }
 
+  def update(id: String, otherHirerProduct: HirerProduct) : HirerProduct = {
+    val actualHirerProduct = findById(id)
+    actualHirerProduct.updateMe(otherHirerProduct)
+    defineValidReferences(actualHirerProduct)
+    repository.save(actualHirerProduct)
+  }
 
   private def defineValidReferences(hirerProduct: HirerProduct) = {
     hirerProduct.setHirer(hirerService.getById(hirerProduct.hirer.getId))
