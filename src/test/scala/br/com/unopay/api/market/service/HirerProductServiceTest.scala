@@ -90,7 +90,12 @@ class HirerProductServiceTest extends UnopayApiScalaApplicationTest  {
     thrown.getErrors.asScala.head.getLogref shouldEqual "HIRER_PRODUCT_NOT_FOUND"
   }
 
+  "a known valid hirer product" should "be updated" in {
+    val hirerProduct: HirerProduct = fixtureCreator.validHirerProduct(jpaProcessor)
 
-
+    val updated = service.update(hirerProduct.id ,hirerProduct)
+    val result = service.findById(updated.id)
+    result should be
+  }
 
 }
