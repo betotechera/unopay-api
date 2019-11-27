@@ -159,11 +159,12 @@ public class OrderService {
         if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
             String token = userCreditCardService.getLastActiveTokenByUser(order.personEmail());
             if(token == null && !order.hasCardToken()) {
+                log.info("The credit card token was not found and the store flag is={}", order.shouldStoreCard());
                 if(order.shouldStoreCard()){
                     generatorCardTokenWhenRequired(order);
                     return;
                 }
-                order.setPaymentMethod(PaymentMethod.BOLETO);
+                order.definePaymentMethod(PaymentMethod.BOLETO);
                 return;
             }
             order.defineCardToken(token);

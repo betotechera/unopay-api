@@ -484,4 +484,18 @@ public class Order implements Updatable, Billable, Serializable {
             this.paymentRequest.setIssuerDocument(issuerDocumentNumber);
         }
     }
+
+    public void definePaymentMethod(PaymentMethod method) {
+        this.paymentMethod = method;
+        if(hasPaymentRequest()){
+            this.paymentRequest.setMethod(method);
+        }
+        if(hasPaymentInformation()){
+            this.getRecurrencePaymentInformation().setPaymentMethod(method);
+        }
+    }
+
+    private boolean hasPaymentInformation() {
+        return this.recurrencePaymentInformation != null;
+    }
 }
