@@ -11,6 +11,7 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.HirerBranch;
 import br.com.unopay.api.bacen.model.Institution;
+import br.com.unopay.api.bacen.model.IntegrationInformation;
 import br.com.unopay.api.bacen.model.InvoiceReceipt;
 import br.com.unopay.api.bacen.model.InvoiceReceiptType;
 import br.com.unopay.api.bacen.model.Issuer;
@@ -173,6 +174,13 @@ public class BacenTemplateLoader implements TemplateLoader {
 
         Fixture.of(Contact.class).addTemplate("persisted").inherits("valid", new Rule(){{
             add("id", "1");
+        }});
+
+        Fixture.of(IntegrationInformation.class).addTemplate("valid", new Rule(){{
+            add("payzenShopId", regex("\\d{3,20}"));
+            add("payzenShopKey", regex("\\d{5,20}"));
+            add("wingooClientId", regex("\\d{3,20}"));
+            add("wingooClientSecret", regex("\\d{5,20}"));
         }});
 
     }
