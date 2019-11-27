@@ -47,7 +47,7 @@ class HirerProductController(service: HirerProductService) extends Logging {
         service.deleteById(id)
     }
 
-    @PutMapping(Array("/{id}"))
+    @PutMapping(Array("/hirer-products/{id}"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_MANAGE_HIRER_PRODUCT')")
     def update (@PathVariable id: String, @RequestBody @Validated(Array(classOf[Update])) hirerProduct: HirerProduct): Unit = {
