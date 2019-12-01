@@ -90,6 +90,7 @@ public class BranchService {
         branch.validateUpdate(current);
         validateExistingReferences(branch);
         current.updateMe(branch);
+        geoService.defineAddressLatLong(branch);
         saveAddress(branch);
         updateServicePeriods(branch.getServicePeriods(), current);
         repository.save(current);
