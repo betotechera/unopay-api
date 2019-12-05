@@ -419,8 +419,9 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public boolean shouldStoreCard() {
-        return hasPaymentRequest()
-                && paymentRequest.shouldStoreCard();
+        return (hasPaymentRequest()
+                && paymentRequest.shouldStoreCard()) ||
+                (PaymentMethod.CARD.equals(paymentMethod) && isType(OrderType.ADHESION));
     }
 
     public boolean hasCardToken() {
