@@ -3,7 +3,7 @@ package br.com.unopay.api.market.controller
 import br.com.unopay.api.AuthServerApplicationTests
 import org.hamcrest.Matchers.notNullValue
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, post}
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.{delete, get, post, put}
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{jsonPath, status}
 
 class HirerProductControllerTest  extends AuthServerApplicationTests {
@@ -53,6 +53,15 @@ class HirerProductControllerTest  extends AuthServerApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
 
         result.andExpect(status().isOk)
+    }
+
+    it should "be updated" in {
+        val accessToken = getUserAccessToken()
+        val hirerProduct = fixtureCreator.validHirerProduct(jpaProcessor)
+        val result = this.mvc.perform(put("/hirer-products/{id}?access_token={access_token}", hirerProduct.id, accessToken)
+          .contentType(MediaType.APPLICATION_JSON).content(toJson(hirerProduct)))
+
+        result.andExpect(status().isNoContent)
     }
 
 }

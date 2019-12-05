@@ -110,6 +110,7 @@ public class EstablishmentService {
         Establishment current = findById(id);
         validateReferences(establishment);
         saveReferences(establishment);
+        geoService.defineAddressLatLong(current);
         current.updateMe(establishment);
         repository.save(current);
         scheduleClosingJob(current);
