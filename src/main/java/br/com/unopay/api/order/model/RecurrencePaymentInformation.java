@@ -79,6 +79,23 @@ public class RecurrencePaymentInformation {
                 this.creditCardYear != null && this.creditCardToken != null;
     }
 
+    public String fieldsStatus() {
+        return  "paymentMethod=" + getFieldStatus(paymentMethod) +
+                ", creditCardToken='" + getFieldStatus(creditCardToken) + '\'' +
+                ", creditCardMonth='" + getFieldStatus(creditCardMonth) + '\'' +
+                ", creditCardYear='" + getFieldStatus(creditCardYear) + '\'' +
+                ", creditCardLastFourDigits='" + getFieldStatus(creditCardLastFourDigits) + '\'' +
+                ", creditCardBrand=" + getFieldStatus(creditCardBrand) +
+                ", creditCardHolderName='" + getFieldStatus(creditCardHolderName);
+    }
+
+    private String getFieldStatus(Object field) {
+        if(field != null) {
+            return "Present";
+        }
+        return "Absent/Required";
+    }
+
     public boolean isCardPayment() {
         return this.paymentMethod != null && this.paymentMethod.equals(PaymentMethod.CARD);
     }

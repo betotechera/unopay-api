@@ -22,15 +22,18 @@ import eu.payzen.webservices.sdk.client.ClientV5;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static br.com.unopay.api.uaa.exception.Errors.PAYZEN_ERROR;
 import static eu.payzen.webservices.sdk.Payment.create;
 
+@Slf4j
 @Component
 public class Payzen {
 
+    public static final int PAYZEN_ERROR_INITIAL_RANGE = 1;
     private PayzenConfig payzenConfig;
     private IssuerService issuerService;
 
@@ -84,6 +87,11 @@ public class Payzen {
         customerRequest.setBillingDetails(billingDetailsRequest);
         createPayment.setCustomerRequest(customerRequest);
         CreateTokenResponse.CreateTokenResult tokenResult = createToken(config, createPayment);
+        Integer responseCode = tokenResult.getCommonResponse().getResponseCode();
+        if(responseCode >= PAYZEN_ERROR_INITIAL_RANGE){
+            log.warn("The Payzen reponse is={}",tokenResult.getCommonResponse().getResponseCodeDetail());
+            throw UnovationExceptions.failedDependency().withErrors(PAYZEN_ERROR.withOnlyArguments(tokenResult.getCommonResponse().getResponseCodeDetail(), "Trying to store the card"));
+        }
         return tokenResult.getCommonResponse().getPaymentToken();
     }
 

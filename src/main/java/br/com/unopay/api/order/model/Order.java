@@ -338,12 +338,15 @@ public class Order implements Updatable, Billable, Serializable {
             }
             if(this.product.acceptOnlyCard() &&
                     !recurrencePaymentInformation.isValid()){
-                    throw UnovationExceptions.unprocessableEntity().withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED);
+                    throw UnovationExceptions.unprocessableEntity()
+                            .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED
+                                    .withOnlyArguments("the product accepts only card","all the following fields are required", recurrencePaymentInformation.fieldsStatus()));
             }
             if(recurrencePaymentInformation.isCardPayment() &&
                    !recurrencePaymentInformation.isValid()){
                 throw UnovationExceptions.unprocessableEntity()
-                        .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED);
+                        .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED
+                                .withOnlyArguments("the payment method is card", "all the following fields are required",recurrencePaymentInformation.fieldsStatus()));
             }
         }
     }
