@@ -85,7 +85,7 @@ public class Branch implements Serializable, Updatable, Localizable {
     @ManyToOne
     @JoinColumn(name="head_office_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.Branch.Detail.class})
+    @JsonView({Views.Branch.Detail.class, Views.Branch.List.class})
     private Establishment headOffice;
 
     @Column(name="contact_mail")
