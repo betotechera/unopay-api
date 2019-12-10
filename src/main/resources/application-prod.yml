@@ -5,11 +5,7 @@ wingoo:
       resource:
         tokenInfoUri: ${wingoo.api}/uaa/oauth/check_token
       client:
-        clientId: api-gateway
-        clientSecret: 5yRt6BPsdusq8AP
         accessTokenUri: ${wingoo.api}/uaa/oauth/token
-        username: emerson@unovation.com.br
-        password: backwin567
 payment:
   gateway:
     config:
