@@ -46,7 +46,6 @@ public class PhysicalPersonDetail implements Serializable, Updatable{
     @JsonView({Views.Person.class, Views.Person.Detail.class})
     private Date birthDate;
 
-    @NotNull(groups = {Create.class, Update.class})
     @Enumerated(STRING)
     @Column(name="gender")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
