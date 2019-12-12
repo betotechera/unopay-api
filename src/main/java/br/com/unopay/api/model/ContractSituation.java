@@ -3,7 +3,7 @@ package br.com.unopay.api.model;
 import br.com.unopay.api.http.DescriptableEnum;
 
 public enum ContractSituation implements DescriptableEnum {
-    ACTIVE("Ativo"), SUSPENDED("Suspenso"),CANCELLED("Canclado"),FINALIZED("Finalizado"),EXPIRED("Expirado");
+    ACTIVE("Ativo"), SUSPENDED("Suspenso"),CANCELLED("Cancelado"),FINALIZED("Finalizado"),EXPIRED("Expirado");
 
     private String description;
 
