@@ -154,7 +154,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
         if (scheduling.hasEvents()){
             scheduling.events = scheduling.events.asScala.map(event =>
-                establishmentEventService.findByEventIdAndEstablishmentId(event.getId, scheduling.getBranch.headOfficeId())).map(_.getEvent).asJava;
+                establishmentEventService.findByEventIdAndEstablishmentId(event.getId, scheduling.getBranch.headOfficeId())).map(_.getEvent).asJava
         }
     }
 
