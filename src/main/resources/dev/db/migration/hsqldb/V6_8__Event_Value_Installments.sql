@@ -6,7 +6,7 @@ alter table establishment drop column brand_flag_id;
 alter table establishment add facade_photo_uri varchar(256) null;
 alter table event add request_value char(1) default '1' not null;
 alter table payment_instrument add gateway_token varchar(256) null;
-alter table physical_person_detail add gender varchar(10) default 'MAN' not null;
+alter table physical_person_detail add gender varchar(10);
 alter table contract add annuity decimal(20,2) default 100.50 not null;
 alter table contract add membership_fee decimal(20,2);
 alter table contract add payment_installments integer default 10 not null;
