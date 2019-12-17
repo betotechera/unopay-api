@@ -143,7 +143,6 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         this.setCommonReferences(scheduling)
     }
 
-
     private def setCommonReferences(scheduling: Scheduling): Unit = {
         val contract = contractService.findById(scheduling.contract.getId)
         scheduling.setContract(contract)
@@ -152,9 +151,11 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
             val authorizedMember = authorizedMemberService.findById(scheduling.authorizedMember.getId)
             scheduling.setAuthorizedMember(authorizedMember)
         }
+
         if (scheduling.hasEvents()){
             scheduling.events = scheduling.events.asScala.map(event =>
-                establishmentEventService.findByEstablishmentIdAndId(scheduling.getBranch.headOfficeId, event.getId)).map(_.getEvent).asJava
+                establishmentEventService.findByEstablishmentIdAndId(scheduling.getBranch.getHeadOffice.getId,
+                    establishmentEventService.findByEventIdAndEstablishmentId(event.getId, scheduling.getBranch.headOfficeId).getId)).map(_.getEvent).asJava
         }
     }
 
