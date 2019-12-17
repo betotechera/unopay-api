@@ -167,7 +167,7 @@ public class Branch implements Serializable, Updatable, Localizable {
 
     public String headOfficeId(){
         if(this.headOffice != null){
-            this.headOffice.getId();
+            return this.headOffice.getId();
         }
         return null;
     }
