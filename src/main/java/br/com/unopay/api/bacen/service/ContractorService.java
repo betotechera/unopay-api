@@ -99,6 +99,12 @@ public class ContractorService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(id)));
     }
 
+    public Contractor getByEmail(String email) {
+        Optional<Contractor> contractor = repository.findByPersonPhysicalPersonDetailEmail(email);
+        return contractor.orElseThrow(()->
+                UnovationExceptions.notFound().withErrors(CONTRACTOR_NOT_FOUND.withOnlyArgument(email)));
+    }
+
     public Contractor getById(String id) {
         Optional<Contractor> contractor = repository.findById(id);
         return contractor.orElseThrow(()->
@@ -122,6 +128,11 @@ public class ContractorService {
 
     public void updateForIssuer(String id, Set<String> issuersIds, Contractor contractor) {
         Contractor current = getByIdForIssuers(id, issuersIds);
+        update(contractor, current);
+    }
+
+    public void updateMe(String email, Contractor contractor) {
+        Contractor current = getByEmail(email);
         update(contractor, current);
     }
 

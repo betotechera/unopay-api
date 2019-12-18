@@ -188,6 +188,13 @@ public class ContractorController {
         return new Results<>(contracts);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/contractors/me", method = RequestMethod.PUT)
+    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Contractor contractor) {
+        log.info("updating contractor {}", contractor);
+        service.updateMe(authentication.getName(), contractor);
+    }
+
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)
