@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
@@ -26,7 +27,7 @@ import static org.joda.time.DateTimeConstants.DECEMBER;
 import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
-@ToString(exclude = {"number", "token"})
+@ToString(exclude = {"number", "token", "issuerDocument"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
 
@@ -61,6 +62,9 @@ public class CreditCard implements Serializable {
     private String securityCode;
 
     private String token;
+
+    @NotNull(groups = Create.UserCreditCard.class)
+    private String issuerDocument;
 
     public void normalize() {
         if(this.number != null) {

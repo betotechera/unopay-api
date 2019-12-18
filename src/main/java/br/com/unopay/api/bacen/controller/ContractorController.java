@@ -195,6 +195,7 @@ public class ContractorController {
         service.updateMe(authentication.getName(), contractor);
     }
 
+
     @JsonView(Views.Contract.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/contracts", method = RequestMethod.GET)

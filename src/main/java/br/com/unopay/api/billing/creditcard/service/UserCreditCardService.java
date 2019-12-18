@@ -51,6 +51,7 @@ public class UserCreditCardService {
     public UserCreditCard storeForUser(UserDetail userDetail, CreditCard creditCard) {
         Optional<UserCreditCard> found = findOptionalByLastFourDigitsForUser(creditCard.lastValidFourDigits(), userDetail);
         return found.orElseGet(() -> {
+            userDetail.setIssuerDocument(creditCard.getIssuerDocument());
             gateway.storeCard(userDetail, creditCard);
             UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard);
             return create(userCreditCard);
