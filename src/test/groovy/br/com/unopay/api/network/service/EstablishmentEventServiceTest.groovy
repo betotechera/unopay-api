@@ -291,6 +291,26 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         ex.errors.find().logref == 'ESTABLISHMENT_EVENT_NOT_FOUND'
     }
 
+    def 'when find by event and establishment should be found'(){
+        given:
+        def created = create()
+
+        when:
+        EstablishmentEvent result = service.findByEventIdAndEstablishmentId(created.event.id, created.establishment.id)
+
+        then:
+        result != null
+    }
+
+    def 'when find by event and establishment should not be found'(){
+        when:
+        service.findByEventIdAndEstablishmentId('', '')
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.find().logref == 'ESTABLISHMENT_EVENT_NOT_FOUND'
+    }
+    
     private EstablishmentEvent create(Establishment establishment = fixtureCreator.createEstablishment()){
         def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
         return Fixture.from(EstablishmentEvent.class).uses(jpaProcessor)
