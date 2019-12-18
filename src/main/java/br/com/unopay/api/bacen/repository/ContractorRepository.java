@@ -24,5 +24,4 @@ public interface ContractorRepository extends UnovationFilterRepository<Contract
 
     Optional<Contractor> findByPersonDocumentNumber(String document);
 
-    Optional<Contractor> findByPersonPhysicalPersonDetailEmail(String email);
 }

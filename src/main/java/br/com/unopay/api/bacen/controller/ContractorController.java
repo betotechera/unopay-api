@@ -190,9 +190,9 @@ public class ContractorController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/contractors/me", method = RequestMethod.PUT)
-    public void updateMe(OAuth2Authentication authentication, @Validated(Update.class) @RequestBody Contractor contractor) {
+    public void updateMe(Contractor current, @Validated(Update.class) @RequestBody Contractor contractor) {
         log.info("updating contractor {}", contractor);
-        service.updateMe(authentication.getName(), contractor);
+        service.update(current.getId(), contractor);
     }
 
 
