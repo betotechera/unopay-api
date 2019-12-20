@@ -36,7 +36,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @Column(name = "token")
-    var token: String = System.currentTimeMillis().toString
+    var token: String = _
 
     @BeanProperty
     @Column(name = "created_date_time")
