@@ -17,6 +17,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
+import scala.util.Random
 
 @Service
 class SchedulingService(val schedulingRepository: SchedulingRepository,
@@ -30,12 +31,14 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
     private val MAX_EXPIRATION_IN_DAYS = 5
 
     def create(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
+        setSchedulingToken(scheduling)
         setReferences(scheduling, accreditedNetwork)
         setExpiration(scheduling)
         schedulingRepository.save(scheduling)
     }
 
     def create(scheduling: Scheduling) : Scheduling = {
+        setSchedulingToken(scheduling)
         setReferences(scheduling)
         setExpiration(scheduling)
         schedulingRepository.save(scheduling)
@@ -160,5 +163,13 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     private def setExpiration(scheduling: Scheduling) : Unit = {
         scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
+    }
+
+    def generateSchedulingToken() : String = {
+        Random.alphanumeric.take(9).mkString.toUpperCase
+    }
+
+    def setSchedulingToken(scheduling: Scheduling) : Unit = {
+        scheduling.setToken(generateSchedulingToken())
     }
 }
