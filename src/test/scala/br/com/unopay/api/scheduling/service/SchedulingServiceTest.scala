@@ -82,6 +82,40 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         expectCallReferences(scheduling)
     }
 
+    it should "create a Scheduling and verify token" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
+        mockReturnReferences(scheduling)
+
+        schedulingService.create(scheduling)
+
+        val captor = ArgumentCaptor.forClass(classOf[Scheduling])
+
+        verify(mockSchedulingRepository).save(captor.capture())
+
+        val schedulingSaved = captor.getValue
+
+        assert(schedulingSaved.token != null, "Token should not be null")
+        expectCallReferences(scheduling)
+    }
+
+    it should "create a Scheduling and ignore passed token" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
+        val initialToken = "GDF87BVKN"
+        scheduling.token = initialToken
+        mockReturnReferences(scheduling)
+
+        schedulingService.create(scheduling)
+
+        val captor = ArgumentCaptor.forClass(classOf[Scheduling])
+
+        verify(mockSchedulingRepository).save(captor.capture())
+
+        val schedulingSaved = captor.getValue
+
+        assert(schedulingSaved.token != initialToken, "Token should not be equal")
+        expectCallReferences(scheduling)
+    }
+
 
 
     it should "create a Scheduling by accreditedNetwork" in {
