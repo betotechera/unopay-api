@@ -165,11 +165,11 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
     }
 
-    private def generateSchedulingToken() : String = {
-        Random.alphanumeric.take(9).mkString
+    def generateSchedulingToken() : String = {
+        Random.alphanumeric.take(9).mkString.toUpperCase
     }
 
-    private def setSchedulingToken(scheduling: Scheduling) : Unit = {
+    def setSchedulingToken(scheduling: Scheduling) : Unit = {
         scheduling.setToken(generateSchedulingToken())
     }
 }
