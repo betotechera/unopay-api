@@ -11,6 +11,7 @@ import br.com.unopay.api.model.{Contract, PaymentInstrument}
 import br.com.unopay.api.network.model.{Branch, ServiceType}
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.model.UserDetail
+import br.com.unopay.api.util.TokenFactory
 
 class SchedulingTemplateLoader extends TemplateLoader {
 
@@ -18,6 +19,7 @@ class SchedulingTemplateLoader extends TemplateLoader {
         val contract: Contract = createContract()
 
         Fixture.of(classOf[Scheduling]).addTemplate("valid", new Rule() {
+            add("token", TokenFactory.generateToken())
             add("date", new Date().plusDays(10))
             add("branch", createBranch)
             add("contract", contract)
@@ -30,7 +32,7 @@ class SchedulingTemplateLoader extends TemplateLoader {
         })
 
         Fixture.of(classOf[Scheduling]).addTemplate("invalid", new Rule() {
-            add("token", UUID.randomUUID().toString)
+            add("token", TokenFactory.generateToken())
         })
     }
 
