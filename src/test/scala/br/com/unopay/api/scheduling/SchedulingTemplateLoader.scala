@@ -1,6 +1,6 @@
 package br.com.unopay.api.scheduling
 
-import java.util.{Date}
+import java.util.Date
 
 import br.com.six2six.fixturefactory.loader.TemplateLoader
 import br.com.six2six.fixturefactory.{Fixture, Rule}
