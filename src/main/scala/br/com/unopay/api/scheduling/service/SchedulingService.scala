@@ -11,13 +11,13 @@ import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.exception.Errors.SCHEDULING_NOT_FOUND
+import br.com.unopay.api.util.TokenFactory
 import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
-import scala.util.Random
 
 @Service
 class SchedulingService(val schedulingRepository: SchedulingRepository,
@@ -165,11 +165,7 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
     }
 
-    def generateSchedulingToken() : String = {
-        Random.alphanumeric.take(9).mkString.toUpperCase
-    }
-
     def setSchedulingToken(scheduling: Scheduling) : Unit = {
-        scheduling.setToken(generateSchedulingToken())
+        scheduling.setToken(TokenFactory.generateToken())
     }
 }
