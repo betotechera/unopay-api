@@ -241,12 +241,6 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         verify(mockSchedulingRepository).findAll(Matchers.eq(schedulingFilter), isA(classOf[PageRequest]))
     }
 
-    it should "generate scheduling token" in {
-        val token: String = schedulingService.generateSchedulingToken()
-
-        assert(token != null, "Token should not be null")
-    }
-
     private def expectCallReferences(scheduling: Scheduling) = {
         verify(mockBranchService, never()).findById(Matchers.eq(scheduling.branchId()), Matchers.any(classOf[AccreditedNetwork]))
         verify(mockContractorService).getById(scheduling.getContractor.getId)
