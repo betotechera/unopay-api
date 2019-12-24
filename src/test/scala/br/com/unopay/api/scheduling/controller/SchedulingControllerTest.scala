@@ -8,6 +8,7 @@ import br.com.unopay.api.ControllerTest
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.service.SchedulingService
+import br.com.unopay.api.util.TokenFactory
 import br.com.unopay.bootcommons.exception.UnovationExceptions
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.notNullValue
@@ -125,7 +126,7 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
     }
 
     it should "filter Schedules" in {
-        val token = UUID.randomUUID().toString
+        val token = TokenFactory.generateToken()
         val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
 
         when(mockSchedulingService.findAll(any(), any())).thenReturn(new PageImpl[Scheduling](asList(scheduling)))
@@ -143,7 +144,7 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
     }
 
     it should "not authorize filter Schedules" in {
-        val token = UUID.randomUUID().toString
+        val token = TokenFactory.generateToken()
 
         val result = this.mockMvc.perform(get(SCHEDULING_URI+ "?token={token}", token)
                 .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED)))
