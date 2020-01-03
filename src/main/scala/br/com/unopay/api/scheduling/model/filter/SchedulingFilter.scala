@@ -16,6 +16,10 @@ class SchedulingFilter {
     var createdDateTime: Date = _
 
     @BeanProperty
+    @SearchableField(field = "scheduling.date")
+    var date: Date = _
+
+    @BeanProperty
     @SearchableField(field = "branch.name")
     var branch: String = _
 
