@@ -61,7 +61,7 @@ class Scheduling extends Serializable with Updatable {
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contractor_id")
-    @JsonView(Array(classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var contractor: Contractor = _
 
     @BeanProperty
