@@ -14,4 +14,7 @@ public class EstablishmentEventFilter implements Serializable {
 
     @SearchableField(field = "establishment.id")
     private String establishment;
+
+    @SearchableField(field = "event.id")
+    private String event;
 }
