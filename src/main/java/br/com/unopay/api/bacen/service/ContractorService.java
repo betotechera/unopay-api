@@ -155,4 +155,10 @@ public class ContractorService {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
 
+    public Page<Contractor> findByFilterForAccreditedNetwork(AccreditedNetwork accreditedNetwork,
+                                                             ContractorFilter filter, UnovationPageRequest pageable) {
+        filter.setIssuers(accreditedNetwork.issuersIds());
+        return findByFilter(filter, pageable);
+    }
+
 }
