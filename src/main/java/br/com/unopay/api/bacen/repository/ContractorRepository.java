@@ -5,6 +5,9 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
 import java.util.Set;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,5 +26,8 @@ public interface ContractorRepository extends UnovationFilterRepository<Contract
     Optional<Contractor> findByIdAndContractsProductIssuerIdIn(String id, Set<String> issuersIds);
 
     Optional<Contractor> findByPersonDocumentNumber(String document);
+
+    Page<Contractor> findAllByPersonDocumentNumberAndContractsProductAccreditedNetworkId
+            (ContractorFilter filter, Pageable pageable);
 
 }
