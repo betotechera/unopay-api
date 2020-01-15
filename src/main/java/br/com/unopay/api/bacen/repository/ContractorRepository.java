@@ -27,7 +27,4 @@ public interface ContractorRepository extends UnovationFilterRepository<Contract
 
     Optional<Contractor> findByPersonDocumentNumber(String document);
 
-    Page<Contractor> findAllByPersonDocumentNumberAndContractsProductAccreditedNetworkId
-            (ContractorFilter filter, Pageable pageable);
-
 }

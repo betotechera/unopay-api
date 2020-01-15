@@ -345,18 +345,12 @@ public class AccreditedNetworkController {
         establishmentEventService.createFromCsv(establishment, file,accreditedNetwork);
     }
 
-    @JsonView(Views.Contractor.List.class)
+    @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/accredited-networks/me/contractors")
-    public Results<Contractor> getContractorByParams(AccreditedNetwork accreditedNetwork,
-                                                     ContractorFilter filter,
-                                                     @Validated UnovationPageRequest pageable) {
-        log.info("search contract with filter={} for network={}", filter, accreditedNetwork.documentNumber());
-        Page<Contractor> page =  contractorService
-                .findByFilterForAccreditedNetwork(accreditedNetwork, filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/accredited-networks/me/contractors", api));
+    @RequestMapping(value = "/accredited-networks/me/contractors/{id}", method = RequestMethod.GET)
+    public Contractor getContractorForNetwork(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
+        log.info("get contractor={} for network={}", id, accreditedNetwork.documentNumber());
+        return contractorService.getByIdForNetwork(id, accreditedNetwork);
     }
 
 }
