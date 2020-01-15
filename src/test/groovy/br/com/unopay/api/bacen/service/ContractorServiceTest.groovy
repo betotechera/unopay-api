@@ -6,6 +6,9 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.filter.ContractorFilter
 import br.com.unopay.api.bacen.repository.PaymentRuleGroupRepository
+import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Contract
+import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
@@ -16,7 +19,7 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     @Autowired
     ContractorService service
-
+    
     @Autowired
     PaymentRuleGroupRepository repository
 
@@ -129,6 +132,21 @@ class ContractorServiceTest extends SpockApplicationTests {
         result.person.name == 'Updated'
         result.person.legalPersonDetail.fantasyName == 'Test Update'
         result.bankAccount != null
+    }
+
+    void 'should return contractor for a logged network'() {
+        given:
+        Contractor contractor = Fixture.from(Contractor.class).gimme("forLoggedNetwork")
+        AccreditedNetwork network = contractor.getContracts().getAt(0).getProduct().getAccreditedNetwork()
+        def created = service.create(contractor)
+
+
+        when:
+        def result = service.getByIdForNetwork(created.id, network)
+
+
+        then:
+        result != null
     }
 
 }
