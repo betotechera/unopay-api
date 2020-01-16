@@ -189,6 +189,7 @@ public class OrderService {
         orderValidator.checkHirerWhenRequired(order);
         Order created = repository.save(order);
         created.getPaymentRequest().setOrderId(order.getId());
+        log.info("The created order is={}", order.toString());
         notifier.notify(Queues.ORDER_CREATED, created);
         return created;
     }

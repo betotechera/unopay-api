@@ -65,6 +65,8 @@ public class Payzen {
     }
 
     private CardRequest getCardRequest(Transaction transaction) {
+        log.info("Transaction hasCardToken={}", transaction.hasCardToken());
+        log.info("Transaction={}", transaction.toString());
         if(transaction.hasCardToken()) {
             return getCardTokenRequest(transaction.getCreditCard());
         }

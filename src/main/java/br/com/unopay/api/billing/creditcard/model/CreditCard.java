@@ -27,7 +27,7 @@ import static org.joda.time.DateTimeConstants.DECEMBER;
 import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
-@ToString(exclude = {"number", "token", "issuerDocument"})
+@ToString(exclude = {"securityCode", "issuerDocument"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreditCard implements Serializable {
 
