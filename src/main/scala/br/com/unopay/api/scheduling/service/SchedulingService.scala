@@ -11,6 +11,7 @@ import br.com.unopay.api.scheduling.model.filter.SchedulingFilter
 import br.com.unopay.api.scheduling.repository.SchedulingRepository
 import br.com.unopay.api.service.{ContractService, PaymentInstrumentService}
 import br.com.unopay.api.uaa.exception.Errors.SCHEDULING_NOT_FOUND
+import br.com.unopay.api.util.TokenFactory
 import br.com.unopay.bootcommons.exception.UnovationExceptions.notFound
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
 import org.springframework.data.domain.{Page, PageRequest}
@@ -30,12 +31,14 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
     private val MAX_EXPIRATION_IN_DAYS = 5
 
     def create(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Scheduling = {
+        setSchedulingToken(scheduling)
         setReferences(scheduling, accreditedNetwork)
         setExpiration(scheduling)
         schedulingRepository.save(scheduling)
     }
 
     def create(scheduling: Scheduling) : Scheduling = {
+        setSchedulingToken(scheduling)
         setReferences(scheduling)
         setExpiration(scheduling)
         schedulingRepository.save(scheduling)
@@ -160,5 +163,9 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     private def setExpiration(scheduling: Scheduling) : Unit = {
         scheduling.setExpirationDate(scheduling.date.plusDays(MAX_EXPIRATION_IN_DAYS))
+    }
+
+    def setSchedulingToken(scheduling: Scheduling) : Unit = {
+        scheduling.setToken(TokenFactory.generateToken())
     }
 }

@@ -36,7 +36,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BeanProperty
     @Column(name = "token")
-    var token: String = System.currentTimeMillis().toString
+    var token: String = _
 
     @BeanProperty
     @Column(name = "created_date_time")
@@ -61,7 +61,7 @@ class Scheduling extends Serializable with Updatable {
     @NotNull(groups = Array(classOf[Create], classOf[Update]))
     @ManyToOne
     @JoinColumn(name = "contractor_id")
-    @JsonView(Array(classOf[Views.Scheduling.Detail]))
+    @JsonView(Array(classOf[Views.Scheduling.List]))
     var contractor: Contractor = _
 
     @BeanProperty
