@@ -19,7 +19,10 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     @Autowired
     ContractorService service
-    
+
+    @Autowired
+    FixtureCreator fixtureCreator
+
     @Autowired
     PaymentRuleGroupRepository repository
 
@@ -140,13 +143,37 @@ class ContractorServiceTest extends SpockApplicationTests {
         AccreditedNetwork network = contractor.getContracts().getAt(0).getProduct().getAccreditedNetwork()
         def created = service.create(contractor)
 
-
         when:
         def result = service.getByIdForNetwork(created.id, network)
 
-
         then:
         result != null
+    }
+
+    void 'should not return contractor with unknown id for a logged network'() {
+        given:
+        AccreditedNetwork network = fixtureCreator.createNetwork()
+
+        when:
+        service.getByIdForNetwork("0110", network)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'CONTRACTOR_NOT_FOUND'
+    }
+
+    void 'should not return contractor if he dont belongs to the logged network'() {
+        given:
+        AccreditedNetwork network = fixtureCreator.createNetwork()
+        Contractor contractor = Fixture.from(Contractor.class).gimme("forLoggedNetwork")
+        def created = service.create(contractor)
+
+        when:
+        service.getByIdForNetwork(created.id, network)
+
+        then:
+        def ex = thrown(NotFoundException)
+        ex.errors.first().logref == 'CONTRACTOR_NOT_FOUND'
     }
 
 }
