@@ -116,7 +116,7 @@ class Scheduling extends Serializable with Updatable {
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonView(Array(classOf[Views.Scheduling.List]))
+    @JsonView(Array(classOf[Views.Scheduling.Detail]))
     @JoinTable(name = "scheduling_event",
         joinColumns = Array(new JoinColumn(name = "scheduling_id")),
         inverseJoinColumns = Array(new JoinColumn(name = "event_id")))
