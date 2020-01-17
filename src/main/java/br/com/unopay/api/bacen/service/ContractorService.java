@@ -154,5 +154,5 @@ public class ContractorService {
     public Page<Contractor> findByFilter(ContractorFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
     }
-
+    
 }

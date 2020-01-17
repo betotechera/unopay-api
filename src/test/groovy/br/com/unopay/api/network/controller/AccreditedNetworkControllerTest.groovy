@@ -2,7 +2,9 @@ package br.com.unopay.api.network.controller
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
@@ -336,7 +338,56 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(jsonPath('$.total', notNullValue()))
     }
 
+    void "find a contractor for an accredited network"() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
+        def contractorId = contract.getContractor().getId()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
 
+        when:
+        def result = this.mvc.perform(get('/accredited-networks/me/contractors/{id}', contractorId)
+                .param("access_token", accessToken))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.id', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.person.name',
+                        is(equalTo(contract.contractor.person.name))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.person.document.number',
+                        is(equalTo(contract.contractor.person.document.number))))
+    }
+
+    void "should not find a contractor with unknown id for an accredited network"() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get('/accredited-networks/me/contractors/{id}', "0110")
+                .param("access_token", accessToken))
+        then:
+        result.andExpect(status().isNotFound())
+    }
+
+    void "should not find a contractor if he dont belongs to the logged network"() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = fixtureCreator.createNetwork()
+        def contractorId = contract.getContractor().getId()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get('/accredited-networks/me/contractors/{id}', contractorId)
+                .param("access_token", accessToken))
+
+        then:
+        result.andExpect(status().isNotFound())
+    }
+    
     AccreditedNetwork getAccreditedNetwork() {
         Fixture.from(AccreditedNetwork.class).gimme("valid")
     }

@@ -1,5 +1,8 @@
 package br.com.unopay.api.network.controller;
 
+import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
+import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Branch;
 import br.com.unopay.api.network.model.Establishment;
@@ -60,6 +63,7 @@ public class AccreditedNetworkController {
     private SchedulingService schedulingService;
     private EstablishmentEventService establishmentEventService;
     private EstablishmentBranchService establishmentBranchService;
+    private ContractorService contractorService;
 
 
     @Value("${unopay.api}")
@@ -71,13 +75,15 @@ public class AccreditedNetworkController {
                                        BranchService branchService,
                                        SchedulingService schedulingService,
                                        EstablishmentEventService establishmentEventService,
-                                       EstablishmentBranchService establishmentBranchService) {
+                                       EstablishmentBranchService establishmentBranchService,
+                                       ContractorService contractorService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
         this.schedulingService = schedulingService;
         this.establishmentEventService = establishmentEventService;
         this.establishmentBranchService = establishmentBranchService;
+        this.contractorService = contractorService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -337,6 +343,14 @@ public class AccreditedNetworkController {
         String fileName = file.getOriginalFilename();
         log.info("reading establishment event fee csv file {}", fileName);
         establishmentEventService.createFromCsv(establishment, file,accreditedNetwork);
+    }
+
+    @JsonView(Views.Contractor.Detail.class)
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/accredited-networks/me/contractors/{id}")
+    public Contractor getContractorForNetwork(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
+        log.info("get contractor={} for network={}", id, accreditedNetwork.documentNumber());
+        return contractorService.getByIdForNetwork(id, accreditedNetwork);
     }
 
 }

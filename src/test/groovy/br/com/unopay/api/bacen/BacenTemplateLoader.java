@@ -23,6 +23,7 @@ import br.com.unopay.api.bacen.model.Scope;
 import br.com.unopay.api.bacen.model.UserRelationship;
 import br.com.unopay.api.model.BrandFlag;
 import br.com.unopay.api.model.Contact;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Person;
 import java.math.BigDecimal;
 
@@ -86,6 +87,12 @@ public class BacenTemplateLoader implements TemplateLoader {
         Fixture.of(Contractor.class).addTemplate("valid", new Rule(){{
             add("person", one(Person.class, "legal"));
             add("bankAccount", one(BankAccount.class, "persisted"));
+        }});
+
+        Fixture.of(Contractor.class).addTemplate("forLoggedNetwork", new Rule(){{
+            add("person", one(Person.class, "legal"));
+            add("bankAccount", one(BankAccount.class, "persisted"));
+            add("contracts", has(1).of(Contract.class, "valid"));
         }});
 
         Fixture.of(Contractor.class).addTemplate("physical").inherits("valid", new Rule(){{

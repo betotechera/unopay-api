@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.bootcommons.repository.filter.UnovationFilterRepository;
 import java.util.Optional;
 import java.util.Set;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
