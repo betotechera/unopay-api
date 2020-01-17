@@ -347,7 +347,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.Contractor.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/accredited-networks/me/contractors/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/accredited-networks/me/contractors/{id}")
     public Contractor getContractorForNetwork(AccreditedNetwork accreditedNetwork, @PathVariable  String id) {
         log.info("get contractor={} for network={}", id, accreditedNetwork.documentNumber());
         return contractorService.getByIdForNetwork(id, accreditedNetwork);

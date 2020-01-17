@@ -139,12 +139,12 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     void 'should return contractor for a logged network'() {
         given:
-        Contractor contractor = Fixture.from(Contractor.class).gimme("forLoggedNetwork")
-        AccreditedNetwork network = contractor.getContracts().getAt(0).getProduct().getAccreditedNetwork()
-        def created = service.create(contractor)
+        Contract contract = fixtureCreator.createPersistedContract()
+        def network = contract.getProduct().getAccreditedNetwork()
+        def contractorId = contract.getContractor().getId()
 
         when:
-        def result = service.getByIdForNetwork(created.id, network)
+        def result = service.getByIdForNetwork(contractorId, network)
 
         then:
         result != null
@@ -152,7 +152,8 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     void 'should not return contractor with unknown id for a logged network'() {
         given:
-        AccreditedNetwork network = fixtureCreator.createNetwork()
+        Contract contract = fixtureCreator.createPersistedContract()
+        def network = contract.getProduct().getAccreditedNetwork()
 
         when:
         service.getByIdForNetwork("0110", network)
@@ -164,16 +165,17 @@ class ContractorServiceTest extends SpockApplicationTests {
 
     void 'should not return contractor if he dont belongs to the logged network'() {
         given:
-        AccreditedNetwork network = fixtureCreator.createNetwork()
-        Contractor contractor = Fixture.from(Contractor.class).gimme("forLoggedNetwork")
-        def created = service.create(contractor)
+        Contract contract = fixtureCreator.createPersistedContract()
+        def contractorId = contract.getContractor().getId()
+        def network = fixtureCreator.createNetwork()
 
         when:
-        service.getByIdForNetwork(created.id, network)
+        service.getByIdForNetwork(contractorId, network)
 
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'CONTRACTOR_NOT_FOUND'
     }
+
 
 }
