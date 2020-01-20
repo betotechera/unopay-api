@@ -353,4 +353,17 @@ public class AccreditedNetworkController {
         return contractorService.getByIdForNetwork(id, accreditedNetwork);
     }
 
+    @JsonView(Views.Contractor.List.class)
+    @GetMapping(value = "/accredited-networks/me/contractors")
+    public Results<Contractor> getContractorByParams(AccreditedNetwork accreditedNetwork,
+                                                                      ContractorFilter filter,
+                                                                      @Validated UnovationPageRequest pageable) {
+        log.info("search contractor with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        filter.setAccreditedNetwork(accreditedNetwork.getId());
+        Page<Contractor> page =  contractorService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/accredited-networks/me/contractors", api));
+    }
+
 }
