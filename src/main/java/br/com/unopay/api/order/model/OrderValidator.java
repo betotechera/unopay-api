@@ -99,6 +99,9 @@ public class OrderValidator {
 
     public void checkHirerWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
+            if (order.hasHirer())
+                hirerService.findByDocumentNumber(order.hirerDocumentNumber());
+
             hirerService.findByDocumentNumber(order.issuerDocumentNumber());
         }
     }
