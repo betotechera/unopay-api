@@ -8,11 +8,13 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Deal;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractInstallmentService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 import lombok.SneakyThrows;
@@ -78,7 +81,8 @@ public class DealService {
     }
 
     @Transactional
-    public Contract closeWithIssuerAsHirer(final Deal deal){
+    public Contract closeWithIssuerAsHirer(final Order order, Set<AuthorizedMemberCandidate> candidates){
+        Deal deal = new Deal(order, candidates);
         checkContractor(deal.getPerson().documentNumber());
         Contractor contractor = contractorService.create(new Contractor(deal.getPerson()));
         return close(deal, contractor);
