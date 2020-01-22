@@ -177,7 +177,7 @@ class ContractorServiceTest extends SpockApplicationTests {
         ex.errors.first().logref == 'CONTRACTOR_NOT_FOUND'
     }
 
-    void 'given a filter for a known contractor should return all for a logged network'(){
+    void 'given a known contractor document number as filter should return a contractor for a logged network'(){
         given:
         Contract contract = fixtureCreator.createPersistedContract()
         def network = contract.getProduct().getAccreditedNetwork().getId()
@@ -192,6 +192,39 @@ class ContractorServiceTest extends SpockApplicationTests {
 
         then:
         assert Contractors.content.size() == 1
+    }
+
+    void 'given a unknown contractor document number as filter should not return a contractor for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def network = contract.getProduct().getAccreditedNetwork().getId()
+        ContractorFilter filter = new ContractorFilter()
+        filter.documentNumber = "00000"
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contractor> Contractors = service.findByFilter(filter, page)
+
+        then:
+        assert Contractors.content.size() == 0
+    }
+
+    void 'given a known contractor document number as filter should not return a contractor for a unlogged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def network = fixtureCreator.createNetwork()
+        def documentNumber = contract.getContractor().getPerson().getDocument().getNumber()
+        ContractorFilter filter = new ContractorFilter()
+        filter.documentNumber = documentNumber
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contractor> Contractors = service.findByFilter(filter, page)
+
+        then:
+        assert Contractors.content.size() == 0
     }
 
 
