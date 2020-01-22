@@ -7,10 +7,13 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
+import br.com.unopay.api.order.model.Order
+
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.market.model.HirerNegotiation
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.service.ContractorBonusService
 import br.com.unopay.api.market.service.DealService
 import br.com.unopay.api.model.AuthorizationSituation
@@ -253,10 +256,11 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
 
     void 'given a service authorize without active hirer negotiation and issuer as hirer should be created'() {
         given:
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def createUser= true
-        Contract contract =  dealCloseService.closeWithIssuerAsHirer(new Deal(person, product.code, createUser))
+        Contract contract =  dealCloseService.closeWithIssuerAsHirer(new Order(person, product, createUser), candidates)
         def instrument = fixtureCreator.createInstrumentToProduct(product)
         updateBalance(instrument, establishmentEventUnderTest)
         ServiceAuthorize serviceAuthorize = Fixture.from(ServiceAuthorize.class).gimme("valid", new Rule(){ {
