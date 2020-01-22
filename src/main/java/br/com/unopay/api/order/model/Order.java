@@ -73,6 +73,20 @@ public class Order implements Updatable, Billable, Serializable {
 
     public Order() {}
 
+    public Order(Person person, Product product, Boolean createUser) {
+        this.person = person;
+        this.product = product;
+        this.createUser = createUser;
+    }
+
+    public Order(Person person, Product product, Boolean createUser, String userPassword) {
+        this.person = person;
+        this.product = product;
+        this.createUser = createUser;
+        this.userPassword = userPassword;
+    }
+
+
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "system-uuid")
