@@ -392,4 +392,37 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         Fixture.from(AccreditedNetwork.class).gimme("valid")
     }
 
+    void 'should found contractors when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
+                                          accessToken)
+                                            .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
+    }
+
+    void 'should not found contractors for a unlogged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
+                getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
 }
