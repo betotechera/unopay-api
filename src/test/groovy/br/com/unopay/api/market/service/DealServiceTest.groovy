@@ -161,7 +161,7 @@ class DealServiceTest extends SpockApplicationTests{
 
     void 'given an existing user when deal close should deal with him'(){
         given:
-        Set<AuthorizedMemberCandidate> candidates = new HashSet<>()
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def currentUser = fixtureCreator.createUser(person.getPhysicalPersonEmail())
@@ -177,7 +177,7 @@ class DealServiceTest extends SpockApplicationTests{
 
     void 'an non existing user and createUser disabled when deal close should not create user'(){
         given:
-        Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def createUser = false
@@ -194,7 +194,7 @@ class DealServiceTest extends SpockApplicationTests{
     void """an non existing user, createUser enabled end a user password define
             when deal close should create a user with the informed password"""(){
         given:
-        Set<AuthorizedMemberCandidate> candidates = new HashSet<>();
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def createUser = true
@@ -457,7 +457,7 @@ class DealServiceTest extends SpockApplicationTests{
 
     def 'given a installment payment order should mark next contract installment as paid'(){
         given:
-        Set<AuthorizedMemberCandidate> candidates = new HashSet<>()
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
