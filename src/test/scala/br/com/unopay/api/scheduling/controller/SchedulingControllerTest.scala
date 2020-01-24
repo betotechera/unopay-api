@@ -215,4 +215,25 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
         result.andExpect(status().isForbidden)
         verify(mockSchedulingService, never()).deleteById(any())
     }
+
+    it should "cancel a Schedule" in {
+        val id = UUID.randomUUID().toString
+
+        val result = this.mockMvc.perform(delete(SCHEDULING_URI+ "/{id}/cancel", id)
+          .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED, "LIST_SCHEDULING")))
+
+        result.andExpect(status().isNoContent)
+
+        verify(mockSchedulingService).cancelById(id)
+    }
+
+    it should "not authorize cancel a Scheduling by id" in {
+        val id = UUID.randomUUID().toString
+
+        val result = this.mockMvc.perform(delete(SCHEDULING_URI+ "/{id}/cancel", id)
+          .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED)))
+
+        result.andExpect(status().isForbidden)
+        verify(mockSchedulingService, never()).cancelById(any())
+    }
 }
