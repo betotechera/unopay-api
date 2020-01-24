@@ -71,7 +71,7 @@ class SchedulingController(var schedulingService: SchedulingService) extends Log
     @DeleteMapping(Array("/{id}/cancel"))
     @PreAuthorize("hasRole('ROLE_LIST_SCHEDULING')")
     def cancelById(@PathVariable id: String): Unit = {
-        log.info("deleting scheduling with id={}", id)
+        log.info("canceling scheduling with id={}", id)
         schedulingService.cancelById(id)
     }
 
