@@ -1,11 +1,18 @@
 package br.com.unopay.api.service
 
+import br.com.six2six.fixturefactory.Fixture
+import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.InstrumentNumberGenerator
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.springframework.data.domain.Page
+
 import static org.hamcrest.Matchers.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import static spock.util.matcher.HamcrestSupport.that
@@ -309,5 +316,98 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
 
         then:
         that result, hasSize(1)
+    }
+
+    void 'given a known contractor document number as filter should return a payment instrument for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                                                  .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contractor", contract.getContractor())
+            add("product", contract.getProduct())
+        }})
+        def network = contract.getProduct().getAccreditedNetwork().getId()
+        def contractorDocumentNumber = contract.getContractor().getPerson().getDocument().getNumber()
+
+
+        PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
+        filter.contractorDocumentNumber = contractorDocumentNumber
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<PaymentInstrument> paymentInstruments = service.findByFilter(filter, page)
+
+        then:
+        assert paymentInstruments.content.size() > 0
+    }
+
+    void 'given a unknown contractor document number as filter should not return a payment instrument for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                                                 .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", contract.getProduct())
+        }})
+        def network = contract.getProduct().getAccreditedNetwork().getId()
+        def contractorDocumentNumber = '00000'
+
+
+        PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
+        filter.contractorDocumentNumber = contractorDocumentNumber
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<PaymentInstrument> paymentInstruments = service.findByFilter(filter, page)
+
+        then:
+        assert paymentInstruments.content.size() == 0
+    }
+
+    void 'given a known contractor document number as filter should not return a payment instrument for a unlogged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                                                  .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contractor", contract.getContractor())
+        }})
+        def network = fixtureCreator.createNetwork()
+        def contractorDocumentNumber = contract.getContractor().getPerson().getDocument().getNumber()
+
+
+        PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
+        filter.contractorDocumentNumber = contractorDocumentNumber
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<PaymentInstrument> paymentInstruments = service.findByFilter(filter, page)
+
+        then:
+        assert paymentInstruments.content.size() == 0
+    }
+
+    void 'given a known payment instrument number as filter should return a payment instrument for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        PaymentInstrument paymentInstrument = Fixture.from(PaymentInstrument.class)
+                .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", contract.getProduct())
+        }})
+        def network = contract.getProduct().getAccreditedNetwork().getId()
+        def paymentInstrumentNumber = paymentInstrument.getNumber()
+
+
+        PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
+        filter.number = paymentInstrumentNumber
+        filter.accreditedNetwork = network
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<PaymentInstrument> paymentInstruments = service.findByFilter(filter, page)
+
+        then:
+        assert paymentInstruments.content.size() > 0
     }
 }

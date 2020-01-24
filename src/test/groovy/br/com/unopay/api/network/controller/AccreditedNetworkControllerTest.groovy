@@ -5,6 +5,8 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
@@ -419,6 +421,35 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
 
         when:
         def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
+                getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
+    void 'should found payment instrument when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        PaymentInstrument paymentinstrument = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", contract.getProduct())
+        }})
+        def loggedNetwork = paymentinstrument.getProduct().getAccreditedNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/payment-instruments?access_token={access_token}",
+                accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not found payment instrument for a unlogged network'() {
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/payment-instruments?access_token={access_token}",
                 getClientAccessToken())
                 .contentType(MediaType.APPLICATION_JSON))
         then:
