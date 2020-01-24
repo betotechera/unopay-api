@@ -373,7 +373,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
             add("contractor", contract.getContractor())
         }})
         def network = fixtureCreator.createNetwork()
-        def contractorDocumentNumber = contract.getContractor().getPerson().getDocument().getNumber()
+        def contractorDocumentNumber = contract.contractorDocumentNumber()
 
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()

@@ -293,6 +293,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public String contractorDocumentNumber(){
+        if(getContractor() != null){
+            return  getContractor().getDocumentNumber();
+        }
+        return null;
+    }
+
     public String hirerId(){
         if(getHirer() != null){
             return  getHirer().getId();
