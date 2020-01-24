@@ -326,13 +326,10 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
             add("contractor", contract.getContractor())
             add("product", contract.getProduct())
         }})
-        def network = contract.getProduct().getAccreditedNetwork().getId()
-        def contractorDocumentNumber = contract.contractorDocumentNumber()
-
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
-        filter.contractorDocumentNumber = contractorDocumentNumber
-        filter.accreditedNetwork = network
+        filter.contractorDocumentNumber = contract.contractorDocumentNumber()
+        filter.accreditedNetwork = contract.productNetworkId()
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
@@ -349,13 +346,10 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
                                                  .uses(jpaProcessor).gimme("valid", new Rule(){{
             add("product", contract.getProduct())
         }})
-        def network = contract.getProduct().getAccreditedNetwork().getId()
-        def contractorDocumentNumber = '00000'
-
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
-        filter.contractorDocumentNumber = contractorDocumentNumber
-        filter.accreditedNetwork = network
+        filter.contractorDocumentNumber = '00000'
+        filter.accreditedNetwork = contract.productNetworkId()
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
@@ -372,13 +366,10 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
                                                   .uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contractor", contract.getContractor())
         }})
-        def network = fixtureCreator.createNetwork()
-        def contractorDocumentNumber = contract.contractorDocumentNumber()
-
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
-        filter.contractorDocumentNumber = contractorDocumentNumber
-        filter.accreditedNetwork = network
+        filter.contractorDocumentNumber = contract.contractorDocumentNumber()
+        filter.accreditedNetwork = fixtureCreator.createNetwork()
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
@@ -395,13 +386,10 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
                 .uses(jpaProcessor).gimme("valid", new Rule(){{
             add("product", contract.getProduct())
         }})
-        def network = contract.getProduct().getAccreditedNetwork().getId()
-        def paymentInstrumentNumber = paymentInstrument.getNumber()
-
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
-        filter.number = paymentInstrumentNumber
-        filter.accreditedNetwork = network
+        filter.number = paymentInstrument.getNumber()
+        filter.accreditedNetwork = contract.productNetworkId()
 
         when:
         UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}

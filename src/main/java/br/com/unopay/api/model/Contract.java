@@ -300,6 +300,13 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public String productNetworkId(){
+        if(getProduct() != null){
+            return  getProduct().networkId();
+        }
+        return null;
+    }
+
     public String hirerId(){
         if(getHirer() != null){
             return  getHirer().getId();
