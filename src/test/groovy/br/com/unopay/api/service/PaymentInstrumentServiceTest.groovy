@@ -327,7 +327,7 @@ class PaymentInstrumentServiceTest extends SpockApplicationTests {
             add("product", contract.getProduct())
         }})
         def network = contract.getProduct().getAccreditedNetwork().getId()
-        def contractorDocumentNumber = contract.getContractor().getPerson().getDocument().getNumber()
+        def contractorDocumentNumber = contract.contractorDocumentNumber()
 
 
         PaymentInstrumentFilter filter = new PaymentInstrumentFilter()
