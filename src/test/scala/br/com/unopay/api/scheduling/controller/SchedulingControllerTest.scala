@@ -220,7 +220,7 @@ class SchedulingControllerTest extends ControllerTest { this: Suite =>
         val id = UUID.randomUUID().toString
 
         val result = this.mockMvc.perform(delete(SCHEDULING_URI+ "/{id}/cancel", id)
-          .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED, "LIST_SCHEDULING")))
+          .`with`(user("user").roles(ROLE_DEFAULT_REQUIRED, "MANAGE_SCHEDULING")))
 
         result.andExpect(status().isNoContent)
 
