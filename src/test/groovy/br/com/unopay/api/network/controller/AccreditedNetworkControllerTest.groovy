@@ -456,4 +456,50 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isForbidden())
     }
 
+    void 'should find contract that belongs to a contractor when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def id = contract.contractorId()
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                        id, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not find contract for a unknown contractor when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                "00000", accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNotFound())
+    }
+
+    void 'should not find contract for a contractor when find all for a unlogged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def id = contract.contractorId()
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                id, getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
 }

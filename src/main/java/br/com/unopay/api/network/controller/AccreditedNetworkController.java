@@ -3,7 +3,9 @@ package br.com.unopay.api.network.controller;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Branch;
@@ -24,6 +26,7 @@ import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.scheduling.model.Scheduling;
 import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
 import br.com.unopay.api.scheduling.service.SchedulingService;
+import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
@@ -68,6 +71,7 @@ public class AccreditedNetworkController {
     private EstablishmentBranchService establishmentBranchService;
     private ContractorService contractorService;
     private PaymentInstrumentService paymentInstrumentService;
+    private ContractService contractService;
 
 
     @Value("${unopay.api}")
@@ -81,7 +85,8 @@ public class AccreditedNetworkController {
                                        EstablishmentEventService establishmentEventService,
                                        EstablishmentBranchService establishmentBranchService,
                                        ContractorService contractorService,
-                                       PaymentInstrumentService paymentInstrumentService) {
+                                       PaymentInstrumentService paymentInstrumentService,
+                                       ContractService contractService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
@@ -90,6 +95,7 @@ public class AccreditedNetworkController {
         this.establishmentBranchService = establishmentBranchService;
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
+        this.contractService = contractService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -383,6 +389,23 @@ public class AccreditedNetworkController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/accredited-networks/me/payment-instruments", api));
+    }
+
+    @JsonView(Views.Contractor.List.class)
+    @GetMapping(value = "/accredited-networks/me/contractors/{id}/contracts")
+    public Results<Contract> getContractByParams(AccreditedNetwork accreditedNetwork,
+                                                 @PathVariable  String id,
+                                                 ContractFilter filter,
+                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search contract with filter={} for contractor={} and logged network={}",
+                 filter, id, accreditedNetwork.documentNumber());
+        contractorService.getById(id);
+        filter.setContractor(id);
+        filter.setAccreditedNetwork(accreditedNetwork.getId());
+        Page<Contract> page =  contractService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/accredited-networks/me/contractors/{%s}/contracts", api, id));
     }
 
 }
