@@ -33,5 +33,7 @@ public class PaymentInstrumentFilter  implements Serializable{
     @SearchableField(field = "product.issuer.id")
     private Set<String> issuer;
 
+    @SearchableField(field = "product.accreditedNetwork.id")
+    private String accreditedNetwork;
 
 }

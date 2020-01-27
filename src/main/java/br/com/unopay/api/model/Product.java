@@ -280,6 +280,13 @@ public class Product implements Serializable, Updatable {
         return null;
     }
 
+    public String networkId() {
+        if (getAccreditedNetwork() != null) {
+            return getAccreditedNetwork().getId();
+        }
+        return null;
+    }
+
     public Double returnBonusPercentage() {
         if (getBonusPercentage() != null && !getBonusPercentage().toString().equals(EMPTY)) {
             return getBonusPercentage();

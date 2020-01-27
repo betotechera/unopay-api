@@ -10,6 +10,10 @@ import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.ContractEstablishment
 import br.com.unopay.api.model.ContractOrigin
 import br.com.unopay.api.model.ContractSituation
+import br.com.unopay.api.model.filter.ContractFilter
+import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest
+import org.springframework.data.domain.Page
+
 import static br.com.unopay.api.model.PaymentInstrumentType.DIGITAL_WALLET
 import static br.com.unopay.api.model.PaymentInstrumentType.PREPAID_CARD
 import br.com.unopay.api.model.Person
@@ -535,6 +539,70 @@ class ContractServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'CONTRACT_ESTABLISHMENT_NOT_FOUND'
+    }
+
+    void 'given a known product code and contractor id as filter should return contract for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractFilter filter = new ContractFilter()
+        filter.product = contract.productCode()
+        filter.accreditedNetwork = contract.productNetworkId()
+        filter.contractor = contract.contractorId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contract> contracts = service.findByFilter(filter, page)
+
+        then:
+        assert contracts.content.size() == 1
+    }
+
+    void 'given a unknown product code as filter should not return contract for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractFilter filter = new ContractFilter()
+        filter.product = "00000"
+        filter.accreditedNetwork = contract.productNetworkId()
+        filter.contractor = contract.contractorId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contract> contracts = service.findByFilter(filter, page)
+
+        then:
+        assert contracts.content.size() == 0
+    }
+
+    void 'given a unknown contractor id as filter should not return contract for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractFilter filter = new ContractFilter()
+        filter.product = contract.productCode()
+        filter.accreditedNetwork = contract.productNetworkId()
+        filter.contractor = "00000"
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contract> contracts = service.findByFilter(filter, page)
+
+        then:
+        assert contracts.content.size() == 0
+    }
+
+    void 'given a known product code and contractor id as filter should not return contract for a unlogged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractFilter filter = new ContractFilter()
+        filter.product = contract.productCode()
+        filter.accreditedNetwork = fixtureCreator.createNetwork()
+        filter.contractor = contract.contractorId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contract> contracts = service.findByFilter(filter, page)
+
+        then:
+        assert contracts.content.size() == 0
     }
 
     private Contract createContract() {

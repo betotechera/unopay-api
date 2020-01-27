@@ -140,8 +140,8 @@ class ContractorServiceTest extends SpockApplicationTests {
     void 'should return contractor for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
-        def network = contract.getProduct().getAccreditedNetwork()
-        def contractorId = contract.getContractor().getId()
+        def network = contract.productNetwork()
+        def contractorId = contract.contractorId()
 
         when:
         def result = service.getByIdForNetwork(contractorId, network)
@@ -153,7 +153,7 @@ class ContractorServiceTest extends SpockApplicationTests {
     void 'should not return contractor with unknown id for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
-        def network = contract.getProduct().getAccreditedNetwork()
+        def network = contract.productNetwork()
 
         when:
         service.getByIdForNetwork("0110", network)
@@ -166,7 +166,7 @@ class ContractorServiceTest extends SpockApplicationTests {
     void 'should not return contractor if he dont belongs to the logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
-        def contractorId = contract.getContractor().getId()
+        def contractorId = contract.contractorId()
         def network = fixtureCreator.createNetwork()
 
         when:
@@ -175,6 +175,51 @@ class ContractorServiceTest extends SpockApplicationTests {
         then:
         def ex = thrown(NotFoundException)
         ex.errors.first().logref == 'CONTRACTOR_NOT_FOUND'
+    }
+
+    void 'given a known contractor document number as filter should return a contractor for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractorFilter filter = new ContractorFilter()
+        filter.documentNumber = contract.contractorDocumentNumber()
+        filter.accreditedNetwork = contract.productNetworkId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contractor> Contractors = service.findByFilter(filter, page)
+
+        then:
+        assert Contractors.content.size() == 1
+    }
+
+    void 'given a unknown contractor document number as filter should not return a contractor for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractorFilter filter = new ContractorFilter()
+        filter.documentNumber = "00000"
+        filter.accreditedNetwork = contract.productNetworkId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contractor> Contractors = service.findByFilter(filter, page)
+
+        then:
+        assert Contractors.content.size() == 0
+    }
+
+    void 'given a known contractor document number as filter should not return a contractor for a unlogged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        ContractorFilter filter = new ContractorFilter()
+        filter.documentNumber = contract.contractorDocumentNumber()
+        filter.accreditedNetwork = fixtureCreator.createNetwork()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<Contractor> Contractors = service.findByFilter(filter, page)
+
+        then:
+        assert Contractors.content.size() == 0
     }
 
 
