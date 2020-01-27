@@ -219,6 +219,22 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         assert(captor.getValue.cancellationDate != null, "Cancellation date should not be null")
     }
 
+    it should "cancel a Scheduling" in {
+        val id = UUID.randomUUID().toString
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid", new Rule {{
+            add("id", id)
+        }})
+
+        when(mockSchedulingRepository.findById(id))
+          .thenReturn(Optional.of(scheduling))
+
+        schedulingService.cancelById(id)
+
+        val captor = ArgumentCaptor.forClass(classOf[Scheduling])
+        verify(mockSchedulingRepository).save(captor.capture())
+        assert(captor.getValue.cancellationDate != null, "Cancellation date should not be null")
+    }
+
     it should "delete a Scheduling" in {
         val id = UUID.randomUUID().toString
         val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid", new Rule {{

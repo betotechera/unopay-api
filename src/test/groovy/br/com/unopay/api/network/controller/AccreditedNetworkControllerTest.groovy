@@ -4,7 +4,10 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.Contract
+import br.com.unopay.api.model.PaymentInstrument
+import br.com.unopay.api.model.Product
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
@@ -392,7 +395,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         Fixture.from(AccreditedNetwork.class).gimme("valid")
     }
 
-    void 'should found contractors when find all for a logged network'() {
+    void 'should find contractors when find all for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
         def loggedNetwork = contract.getProduct().getAccreditedNetwork()
@@ -410,15 +413,114 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
     }
 
-    void 'should not found contractors for a unlogged network'() {
+    void 'should not find contractors for a unlogged network'() {
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
+                getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
+    void 'should find payment instrument when find all for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
-        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
+        PaymentInstrument paymentinstrument = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("product", contract.getProduct())
+        }})
+        def loggedNetwork = paymentinstrument.getProduct().getAccreditedNetwork()
         def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
         String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
 
         when:
-        def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
+        def result = this.mvc.perform(get("/accredited-networks/me/payment-instruments?access_token={access_token}",
+                accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not find payment instrument for a unlogged network'() {
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/payment-instruments?access_token={access_token}",
+                getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
+    void 'should find contract that belongs to a contractor when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def id = contract.contractorId()
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                        id, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not find contract for a unknown contractor when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                "00000", accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isNotFound())
+    }
+
+    void 'should not find contract for a contractor when find all for a unlogged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        def id = contract.contractorId()
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
+                id, getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
+    void 'should find authorized member when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+        }})
+
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/authorized-members?access_token={access_token}",
+                accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not find authorized member when find all for a unlogged network'() {
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/authorized-members?access_token={access_token}",
                 getClientAccessToken())
                 .contentType(MediaType.APPLICATION_JSON))
         then:

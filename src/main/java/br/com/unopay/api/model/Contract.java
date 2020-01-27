@@ -2,6 +2,7 @@ package br.com.unopay.api.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.network.model.ServiceType;
@@ -293,9 +294,44 @@ public class Contract implements Serializable {
         return null;
     }
 
+    public String contractorDocumentNumber(){
+        if(getContractor() != null){
+            return  getContractor().getDocumentNumber();
+        }
+        return null;
+    }
+
+    public String productNetworkId(){
+        if(getProduct() != null){
+            return  getProduct().networkId();
+        }
+        return null;
+    }
+
+    public AccreditedNetwork productNetwork(){
+        if(getProduct() != null){
+            return  getProduct().getAccreditedNetwork();
+        }
+        return null;
+    }
+
+    public String productCode(){
+        if(getProduct() != null){
+            return  getProduct().getCode();
+        }
+        return null;
+    }
+
     public String hirerId(){
         if(getHirer() != null){
             return  getHirer().getId();
+        }
+        return null;
+    }
+
+    public String contractorId(){
+        if(getContractor() != null){
+            return  getContractor().getId();
         }
         return null;
     }

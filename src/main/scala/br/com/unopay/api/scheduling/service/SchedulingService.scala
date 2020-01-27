@@ -83,6 +83,11 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
           .orElseThrow(() => throw notFound.withErrors(SCHEDULING_NOT_FOUND.withOnlyArguments(token)))
     }
 
+    def cancelById(id: String): Unit = {
+        val current = findById(id)
+        cancelById(id, current)
+    }
+
     def cancelById(id: String, accreditedNetwork: AccreditedNetwork): Unit = {
         val current = findById(id, accreditedNetwork)
         cancelById(id, current)

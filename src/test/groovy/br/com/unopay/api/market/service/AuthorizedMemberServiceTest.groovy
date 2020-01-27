@@ -534,6 +534,62 @@ class AuthorizedMemberServiceTest extends SpockApplicationTests {
         result.content.size() > 0
     }
 
+    void 'given a known contract id as filter should return an authorized member for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember = from(AuthorizedMember.class)
+                .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+        }})
+
+        AuthorizedMemberFilter filter = new AuthorizedMemberFilter()
+        filter.contractId = contract.getId()
+        filter.networkId = contract.productNetworkId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> authorizedMembers = service.findByFilter(filter, page)
+
+        then:
+        assert authorizedMembers.content.size() > 0
+    }
+
+    void 'given a unknown contract id as filter should not return an authorized member for a logged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+
+        AuthorizedMemberFilter filter = new AuthorizedMemberFilter()
+        filter.contractId = contract.getId()
+        filter.networkId = contract.productNetworkId()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> authorizedMembers = service.findByFilter(filter, page)
+
+        then:
+        assert authorizedMembers.content.size() == 0
+    }
+
+    void 'given a known contract id as filter should not return an authorized member for a unlogged network'(){
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember = from(AuthorizedMember.class)
+                .uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+        }})
+
+        AuthorizedMemberFilter filter = new AuthorizedMemberFilter()
+        filter.contractId = contract.getId()
+        filter.networkId = fixtureCreator.createNetwork()
+
+        when:
+        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
+        Page<AuthorizedMember> authorizedMembers = service.findByFilter(filter, page)
+
+        then:
+        assert authorizedMembers.content.size() == 0
+    }
+
     private Contractor createContractor(String documentNumber) {
         Document document = new Document() {{
             type = DocumentType.CNPJ
