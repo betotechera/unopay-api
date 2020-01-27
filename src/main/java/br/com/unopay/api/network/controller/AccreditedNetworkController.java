@@ -384,7 +384,7 @@ public class AccreditedNetworkController {
                 String.format("%s/accredited-networks/me/contractors", api));
     }
 
-    @JsonView(Views.Contractor.List.class)
+    @JsonView(Views.PaymentInstrument.List.class)
     @GetMapping(value = "/accredited-networks/me/payment-instruments")
     public Results<PaymentInstrument> getPaymentInstrumentByParams(AccreditedNetwork accreditedNetwork,
                                                                    PaymentInstrumentFilter filter,
@@ -397,7 +397,7 @@ public class AccreditedNetworkController {
                 String.format("%s/accredited-networks/me/payment-instruments", api));
     }
 
-    @JsonView(Views.Contractor.List.class)
+    @JsonView(Views.Contract.List.class)
     @GetMapping(value = "/accredited-networks/me/contractors/{id}/contracts")
     public Results<Contract> getContractByParams(AccreditedNetwork accreditedNetwork,
                                                  @PathVariable  String id,
@@ -414,12 +414,12 @@ public class AccreditedNetworkController {
                 String.format("%s/accredited-networks/me/contractors/{%s}/contracts", api, id));
     }
 
-    @JsonView(Views.Contractor.List.class)
+    @JsonView(Views.AuthorizedMember.List.class)
     @GetMapping(value = "/accredited-networks/me/authorized-members")
     public Results<AuthorizedMember> getAuthorizedMemberByParams(AccreditedNetwork accreditedNetwork,
                                                                  AuthorizedMemberFilter filter,
                                                                  @Validated UnovationPageRequest pageable) {
-        log.info("search authorized memer with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        log.info("search authorized member with filter={} for network={}", filter, accreditedNetwork.documentNumber());
         filter.setNetworkId(accreditedNetwork.getId());
         Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
