@@ -413,12 +413,6 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     }
 
     void 'should not find contractors for a unlogged network'() {
-        given:
-        Contract contract = fixtureCreator.createPersistedContract()
-        def loggedNetwork = contract.getProduct().getAccreditedNetwork()
-        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
-        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
-
         when:
         def result = this.mvc.perform(get("/accredited-networks/me/contractors?access_token={access_token}",
                 getClientAccessToken())
