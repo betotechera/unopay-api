@@ -31,6 +31,7 @@ public class Deal {
         this.createUser = order.getCreateUser();
         this.members = members;
         this.password = order.getUserPassword();
+        this.hirerDocument = order.hirerDocumentNumber();
         this.recurrencePaymentInformation = order.getRecurrencePaymentInformation();
     }
 

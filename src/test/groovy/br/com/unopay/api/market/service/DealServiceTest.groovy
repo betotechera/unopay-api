@@ -105,9 +105,11 @@ class DealServiceTest extends SpockApplicationTests{
         information.setCreditCardYear("2099")
         information.setCreditCardLastFourDigits("1234")
         information.setCreditCardToken(token)
+        def order = new Order(person, product, createUser)
+        order.setRecurrencePaymentInformation(information)
 
         when:
-        service.closeWithIssuerAsHirer(new Deal(person, product.code, createUser, [] as Set, "123456", information))
+        service.closeWithIssuerAsHirer(order, [] as Set)
         def user = userDetailService.getByEmail(person.physicalPersonEmail)
         def userCreditCard = userCreditCardService.findByTokenForUser(token, user)
 
@@ -117,12 +119,13 @@ class DealServiceTest extends SpockApplicationTests{
 
     void 'when deal close the contract period should be of one year'(){
         given:
-        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
+        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set<AuthorizedMemberCandidate>
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+        def order = new Order(person, product, createUser)
 
         when:
-        Contract contract =  service.closeWithIssuerAsHirer(new Order(person, product, createUser), candidates)
+        Contract contract =  service.closeWithIssuerAsHirer(order, candidates)
         Contract result  = contractService.findById(contract.getId())
 
         then:
@@ -345,7 +348,7 @@ class DealServiceTest extends SpockApplicationTests{
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
         when:
-        Contract contract =  service.closeWithIssuerAsHirer(new Deal(person, product.code, createUser))
+        Contract contract =  service.closeWithIssuerAsHirer(new Order(person, product, createUser), [] as Set)
         def result  = installmentService.findByContractId(contract.getId())
         then:
         def installment = result.sort { it.installmentNumber }.find()
