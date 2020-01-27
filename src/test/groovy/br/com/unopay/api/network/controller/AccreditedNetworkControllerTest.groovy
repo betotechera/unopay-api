@@ -394,7 +394,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         Fixture.from(AccreditedNetwork.class).gimme("valid")
     }
 
-    void 'should found contractors when find all for a logged network'() {
+    void 'should find contractors when find all for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
         def loggedNetwork = contract.getProduct().getAccreditedNetwork()
@@ -412,7 +412,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].person', is(notNullValue())))
     }
 
-    void 'should not found contractors for a unlogged network'() {
+    void 'should not find contractors for a unlogged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
         def loggedNetwork = contract.getProduct().getAccreditedNetwork()
@@ -427,7 +427,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isForbidden())
     }
 
-    void 'should found payment instrument when find all for a logged network'() {
+    void 'should find payment instrument when find all for a logged network'() {
         given:
         Contract contract = fixtureCreator.createPersistedContract()
         PaymentInstrument paymentinstrument = Fixture.from(PaymentInstrument.class).uses(jpaProcessor).gimme("valid", new Rule(){{
@@ -447,7 +447,7 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
     }
 
-    void 'should not found payment instrument for a unlogged network'() {
+    void 'should not find payment instrument for a unlogged network'() {
         when:
         def result = this.mvc.perform(get("/accredited-networks/me/payment-instruments?access_token={access_token}",
                 getClientAccessToken())
