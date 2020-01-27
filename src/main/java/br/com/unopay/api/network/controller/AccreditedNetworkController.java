@@ -1,8 +1,11 @@
 package br.com.unopay.api.network.controller;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.bacen.model.filter.AuthorizedMemberFilter;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
+import br.com.unopay.api.market.model.AuthorizedMember;
+import br.com.unopay.api.market.service.AuthorizedMemberService;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.filter.ContractFilter;
@@ -72,6 +75,7 @@ public class AccreditedNetworkController {
     private ContractorService contractorService;
     private PaymentInstrumentService paymentInstrumentService;
     private ContractService contractService;
+    private AuthorizedMemberService authorizedMemberService;
 
 
     @Value("${unopay.api}")
@@ -86,7 +90,8 @@ public class AccreditedNetworkController {
                                        EstablishmentBranchService establishmentBranchService,
                                        ContractorService contractorService,
                                        PaymentInstrumentService paymentInstrumentService,
-                                       ContractService contractService) {
+                                       ContractService contractService,
+                                       AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
@@ -96,6 +101,7 @@ public class AccreditedNetworkController {
         this.contractorService = contractorService;
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractService = contractService;
+        this.authorizedMemberService = authorizedMemberService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -406,6 +412,19 @@ public class AccreditedNetworkController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/accredited-networks/me/contractors/{%s}/contracts", api, id));
+    }
+
+    @JsonView(Views.Contractor.List.class)
+    @GetMapping(value = "/accredited-networks/me/authorized-members")
+    public Results<AuthorizedMember> getAuthorizedMemberByParams(AccreditedNetwork accreditedNetwork,
+                                                                 AuthorizedMemberFilter filter,
+                                                                 @Validated UnovationPageRequest pageable) {
+        log.info("search authorized memer with filter={} for network={}", filter, accreditedNetwork.documentNumber());
+        filter.setNetworkId(accreditedNetwork.getId());
+        Page<AuthorizedMember> page =  authorizedMemberService.findByFilter(filter, pageable);
+        pageable.setTotal(page.getTotalElements());
+        return PageableResults.create(pageable, page.getContent(),
+                String.format("%s/accredited-networks/me/authorized-members", api));
     }
 
 }

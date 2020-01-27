@@ -4,6 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
+import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.Contract
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Product
@@ -491,6 +492,36 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
         when:
         def result = this.mvc.perform(get("/accredited-networks/me/contractors/{id}/contracts?access_token={access_token}",
                 id, getClientAccessToken())
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isForbidden())
+    }
+
+    void 'should find authorized member when find all for a logged network'() {
+        given:
+        Contract contract = fixtureCreator.createPersistedContract()
+        AuthorizedMember authorizedMember = Fixture.from(AuthorizedMember.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+        }})
+
+        def loggedNetwork = contract.productNetwork()
+        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
+        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
+
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/authorized-members?access_token={access_token}",
+                accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath('$.items', notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
+    }
+
+    void 'should not find authorized member when find all for a unlogged network'() {
+        when:
+        def result = this.mvc.perform(get("/accredited-networks/me/authorized-members?access_token={access_token}",
+                getClientAccessToken())
                 .contentType(MediaType.APPLICATION_JSON))
         then:
         result.andExpect(status().isForbidden())
