@@ -16,10 +16,4 @@ public class UserFilter {
 
     @SearchableField(field = "groups.name")
     private String groupName;
-
-    @SearchableField(field = "accreditedNetwork.id")
-    private String accreditedNetworkId;
-
-    @SearchableField(field = "contractor.person.name")
-    private String contractorName;
 }

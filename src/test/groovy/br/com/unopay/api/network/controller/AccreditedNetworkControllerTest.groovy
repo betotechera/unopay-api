@@ -13,8 +13,6 @@ import br.com.unopay.api.network.model.Branch
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.uaa.AuthServerApplicationTests
-import br.com.unopay.api.uaa.model.UserDetail
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThan
 import static org.hamcrest.core.Is.is
@@ -523,36 +521,6 @@ class AccreditedNetworkControllerTest extends AuthServerApplicationTests {
     void 'should not find authorized member when find all for a unlogged network'() {
         when:
         def result = this.mvc.perform(get("/accredited-networks/me/authorized-members?access_token={access_token}",
-                getClientAccessToken())
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isForbidden())
-    }
-
-    void 'should find user detail when find all for a logged network'() {
-        given:
-        Contract contract = fixtureCreator.createPersistedContract()
-        UserDetail userDetail = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule(){{
-            add("accreditedNetwork", contract.productNetwork())
-        }})
-
-        def loggedNetwork = contract.productNetwork()
-        def accreditedNetworkUser = fixtureCreator.createAccreditedNetworkUser(loggedNetwork)
-        String accessToken = getUserAccessToken(accreditedNetworkUser.email, accreditedNetworkUser.password)
-
-        when:
-        def result = this.mvc.perform(get("/accredited-networks/me/users?access_token={access_token}",
-                accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-        then:
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath('$.items', notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath('$.total', is(greaterThan(0))))
-    }
-
-    void 'should not find user detail when find all for a unlogged network'() {
-        when:
-        def result = this.mvc.perform(get("/accredited-networks/me/users?access_token={access_token}",
                 getClientAccessToken())
                 .contentType(MediaType.APPLICATION_JSON))
         then:

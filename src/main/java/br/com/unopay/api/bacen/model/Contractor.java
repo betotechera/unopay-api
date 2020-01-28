@@ -129,13 +129,6 @@ public class Contractor implements Serializable {
         return null;
     }
 
-    public String getPersonName(){
-        if(getPerson() != null){
-            return getPerson().getName();
-        }
-        return null;
-    }
-
     public Person getPerson(){
         return this.person;
     }

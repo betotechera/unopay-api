@@ -32,8 +32,6 @@ import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
 import br.com.unopay.api.uaa.model.UserDetail;
-import br.com.unopay.api.uaa.model.filter.UserFilter;
-import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -78,7 +76,6 @@ public class AccreditedNetworkController {
     private PaymentInstrumentService paymentInstrumentService;
     private ContractService contractService;
     private AuthorizedMemberService authorizedMemberService;
-    private UserDetailService userDetailService;
 
 
     @Value("${unopay.api}")
@@ -94,8 +91,7 @@ public class AccreditedNetworkController {
                                        ContractorService contractorService,
                                        PaymentInstrumentService paymentInstrumentService,
                                        ContractService contractService,
-                                       AuthorizedMemberService authorizedMemberService,
-                                       UserDetailService userDetailService) {
+                                       AuthorizedMemberService authorizedMemberService) {
         this.service = service;
         this.establishmentService = establishmentService;
         this.branchService = branchService;
@@ -106,7 +102,6 @@ public class AccreditedNetworkController {
         this.paymentInstrumentService = paymentInstrumentService;
         this.contractService = contractService;
         this.authorizedMemberService = authorizedMemberService;
-        this.userDetailService = userDetailService;
     }
 
     @JsonView(Views.AccreditedNetwork.Detail.class)
@@ -430,19 +425,6 @@ public class AccreditedNetworkController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/accredited-networks/me/authorized-members", api));
-    }
-
-    @JsonView(Views.User.List.class)
-    @GetMapping(value = "/accredited-networks/me/users")
-    public Results<UserDetail> getUserDetailByParams(AccreditedNetwork accreditedNetwork,
-                                                     UserFilter filter,
-                                                     @Validated UnovationPageRequest pageable) {
-        log.info("search user detail with filter={} for network={}", filter, accreditedNetwork.documentNumber());
-        filter.setAccreditedNetworkId(accreditedNetwork.getId());
-        Page<UserDetail> page =  userDetailService.findByFilter(filter, pageable);
-        pageable.setTotal(page.getTotalElements());
-        return PageableResults.create(pageable, page.getContent(),
-                String.format("%s/accredited-networks/me/users", api));
     }
 
 }

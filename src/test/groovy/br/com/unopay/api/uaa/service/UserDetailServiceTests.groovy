@@ -6,8 +6,6 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.model.Institution
 import br.com.unopay.api.bacen.model.Issuer
-import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.model.Contract
 import br.com.unopay.api.network.model.AccreditedNetwork
 import br.com.unopay.api.network.model.Establishment
 import br.com.unopay.api.notification.model.EventType
@@ -42,9 +40,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
 
     @Autowired
     GroupService groupService
-
-    @Autowired
-    private FixtureCreator fixtureCreator
 
     NotificationService notificationService = Mock(NotificationService)
     PasswordEncoder passwordEncoder = Mock(PasswordEncoder)
@@ -493,66 +488,6 @@ class UserDetailServiceTests extends SpockApplicationTests {
         0 * passwordEncoder.encode(_) >> newPassword
         0 * passwordTokenService.remove(token)
         thrown(NotFoundException)
-    }
-
-    void 'given a known contractor name as filter should return user detail for a logged network'(){
-        given:
-        Contract contract = fixtureCreator.createPersistedContract()
-        UserDetail userDetail = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule(){{
-            add("accreditedNetwork", contract.productNetwork())
-            add("contractor", contract.getContractor())
-        }})
-
-        UserFilter filter = new UserFilter()
-        filter.contractorName = contract.getContractor().getPerson().getName()
-        filter.accreditedNetworkId = contract.productNetworkId()
-
-        when:
-        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
-        Page<UserDetail> userDetails = service.findByFilter(filter, page)
-
-        then:
-        assert userDetails.content.size() > 0
-    }
-
-    void 'given a unknown contractor name as filter should not return user detail for a logged network'(){
-        given:
-        Contract contract = fixtureCreator.createPersistedContract()
-        UserDetail userDetail = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule(){{
-            add("accreditedNetwork", contract.productNetwork())
-            add("contractor", contract.getContractor())
-        }})
-
-        UserFilter filter = new UserFilter()
-        filter.contractorName = 'wrong-name'
-        filter.accreditedNetworkId = contract.productNetworkId()
-
-        when:
-        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
-        Page<UserDetail> userDetails = service.findByFilter(filter, page)
-
-        then:
-        assert userDetails.content.size() == 0
-    }
-
-    void 'given a known contractor name as filter should not return user detail for a unlogged network'(){
-        given:
-        Contract contract = fixtureCreator.createPersistedContract()
-        UserDetail userDetail = Fixture.from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule(){{
-            add("accreditedNetwork", contract.productNetwork())
-            add("contractor", contract.getContractor())
-        }})
-
-        UserFilter filter = new UserFilter()
-        filter.contractorName = contract.getContractor().getPerson().getName()
-        filter.accreditedNetworkId = fixtureCreator.createNetwork()
-
-        when:
-        UnovationPageRequest page = new UnovationPageRequest() {{ setPage(1); setSize(10)}}
-        Page<UserDetail> userDetails = service.findByFilter(filter, page)
-
-        then:
-        assert userDetails.content.size() == 0
     }
 
 }

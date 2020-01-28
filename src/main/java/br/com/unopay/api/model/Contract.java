@@ -315,13 +315,6 @@ public class Contract implements Serializable {
         return null;
     }
 
-    public String getContractorName(){
-        if(getContractor() != null){
-            return  getContractor().getPersonName();
-        }
-        return null;
-    }
-
     public String productCode(){
         if(getProduct() != null){
             return  getProduct().getCode();
