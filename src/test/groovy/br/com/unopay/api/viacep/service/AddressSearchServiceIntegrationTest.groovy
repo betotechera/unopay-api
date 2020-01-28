@@ -4,8 +4,9 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.address.service.AddressSearchService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.HttpClientErrorException
+import spock.lang.Ignore
 
-
+@Ignore
 class AddressSearchServiceIntegrationTest extends SpockApplicationTests{
 
     @Autowired

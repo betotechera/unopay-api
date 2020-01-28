@@ -3,7 +3,9 @@ package br.com.unopay.api.service
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.model.State
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
+@Ignore
 class AddressServiceTest extends SpockApplicationTests {
 
     @Autowired
