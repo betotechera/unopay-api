@@ -87,16 +87,24 @@ public class HirerService {
         if(userDetailService.hasHirer(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_USERS.withOnlyArgument(id));
         }
-        if(hirerNegotiationRepository.countByHirerId(id) > 0){
+        if(hasNegotiation(id)){
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_NEGOTIATION.withOnlyArgument(id));
         }
         repository.delete(id);
     }
 
+    public boolean hasNegotiation(String id) {
+        return hirerNegotiationRepository.countByHirerId(id) > 0;
+    }
+
     public Hirer findByDocumentNumber(String documentNumber){
-        Optional<Hirer> hirer = repository.findByPersonDocumentNumber(documentNumber);
+        Optional<Hirer> hirer = getByDocumentNumber(documentNumber);
         return hirer.orElseThrow(()->
                 UnovationExceptions.notFound().withErrors(HIRER_DOCUMENT_NOT_FOUND.withOnlyArgument(documentNumber)));
+    }
+
+    public Optional<Hirer> getByDocumentNumber(String documentNumber) {
+        return repository.findByPersonDocumentNumber(documentNumber);
     }
 
     public Page<Hirer> findByFilter(HirerFilter filter, UnovationPageRequest pageable) {

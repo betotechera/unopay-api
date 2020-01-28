@@ -58,10 +58,6 @@ public class Deal {
     private String password;
     private RecurrencePaymentInformation recurrencePaymentInformation = new RecurrencePaymentInformation();
 
-    public Boolean hasHirerDocument() {
-        return this.hirerDocument != null;
-    }
-
     public boolean mustCreateUser() {
         return createUser == null || createUser;
     }

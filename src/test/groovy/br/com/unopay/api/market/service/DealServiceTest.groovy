@@ -570,7 +570,7 @@ class DealServiceTest extends SpockApplicationTests{
     void """given unknown negotiation for contract product and hirer
             when deal close with hirer should not be created"""(){
         given:
-        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        def product = fixtureCreator.createProduct()
         def hirer = fixtureCreator.createHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
 
@@ -580,6 +580,21 @@ class DealServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'HIRER_NEGOTIATION_NOT_FOUND'
+    }
+
+    void """given unknown negotiation for contract product and hirer
+            with an issuer as hirer when deal close with hirer should be created"""(){
+        given:
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
+        def hirer = fixtureCreator.createHirer()
+        Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
+
+        when:
+        def created  = service.close(person, product.code, hirer.documentNumber)
+        def result = contractService.findById(created.id)
+
+        then:
+        result
     }
 
 
