@@ -67,7 +67,7 @@ class SchedulingControllerIT extends AuthServerApplicationTests { this: Suite =>
 
     }
 
-    it should "delete a Schedule" in {
+    it should "cancel a Schedule" in {
         val accessToken = getUserAccessToken()
         val schedulingPersisted: Scheduling = fixtureCreator.createSchedulingPersisted()
 
