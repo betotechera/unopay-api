@@ -8,11 +8,13 @@ import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
+import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Deal;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Product;
+import br.com.unopay.api.order.model.Order;
 import br.com.unopay.api.service.ContractInstallmentService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 import lombok.SneakyThrows;
@@ -78,7 +81,8 @@ public class DealService {
     }
 
     @Transactional
-    public Contract closeWithIssuerAsHirer(final Deal deal){
+    public Contract closeWithIssuerAsHirer(final Order order, Set<AuthorizedMemberCandidate> candidates){
+        Deal deal = new Deal(order, candidates);
         checkContractor(deal.getPerson().documentNumber());
         Contractor contractor = contractorService.create(new Contractor(deal.getPerson()));
         return close(deal, contractor);
@@ -129,11 +133,7 @@ public class DealService {
         Contract contract = createContract(deal, contractor, product);
         PaymentInstrument paymentInstrument = paymentInstrumentService.save(new PaymentInstrument(contractor, product));
         if(deal.mustCreateUser()) {
-            UserDetail userDetail = createUserWhenRequired(contractor, product, deal.getPassword());
-            if(deal.hasRecurrenceCardInformation()) {
-                userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
-            }
-            contractor.setPassword(deal.getPassword());
+            processUserFlow(deal, contractor, product);
         }
         markInstallmentAsPaidWhenRequired(product, contract);
         createMembers(deal, contract);
@@ -142,6 +142,14 @@ public class DealService {
         contractor.setHirerDocument(contract.hirerDocumentNumber());
         sendContractorToPartner(contractor, product);
         return contract;
+    }
+
+    private void processUserFlow(Deal deal, Contractor contractor, Product product) {
+        UserDetail userDetail = createUserWhenRequired(contractor, product, deal.getPassword());
+        if(deal.hasRecurrenceCardInformation()) {
+            userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
+        }
+        contractor.setPassword(deal.getPassword());
     }
 
     private UserDetail createUserWhenRequired(Contractor contractor, Product product, String password) {
@@ -160,11 +168,12 @@ public class DealService {
 
     private Contract createContract(Deal deal, Contractor contractor, Product product) {
         Hirer hirer = getHirer(deal.getHirerDocument(), product);
+        log.info("Closing deal with hirer={} for the  product{} and contractor={}", hirer.getDocumentNumber(), product.getCode(), contractor.getDocumentNumber());
         Contract contract = new Contract(product, deal.getMembers().size());
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         contract.setRecurrencePaymentMethod(deal.getRecurrencePaymentMethod());
-        return contractService.create(contract, deal.hasHirerDocument());
+        return contractService.create(contract, hirerService.hasNegotiation(hirer.getId()));
     }
 
     private void createMembers(Deal deal, Contract contract) {
@@ -182,7 +191,7 @@ public class DealService {
         if(hirerDocument != null) {
             return hirerService.findByDocumentNumber(hirerDocument);
         }
-        return hirerService.findByDocumentNumber(product.getIssuer().documentNumber());
+        return hirerService.findByDocumentNumber(product.issuerDocumentNumber());
     }
 
     private void checkContractor(String documentNumber) {

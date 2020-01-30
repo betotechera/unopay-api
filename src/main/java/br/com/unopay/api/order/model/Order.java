@@ -1,5 +1,6 @@
 package br.com.unopay.api.order.model;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.boleto.model.TicketPaymentSource;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
@@ -71,6 +72,20 @@ public class Order implements Updatable, Billable, Serializable {
     private static final long serialVersionUID = 2732233885546623588L;
 
     public Order() {}
+
+    public Order(Person person, Product product, Boolean createUser) {
+        this.person = person;
+        this.product = product;
+        this.createUser = createUser;
+    }
+
+    public Order(Person person, Product product, Boolean createUser, String userPassword) {
+        this.person = person;
+        this.product = product;
+        this.createUser = createUser;
+        this.userPassword = userPassword;
+    }
+
 
     @Id
     @Column(name = "id")
@@ -156,6 +171,11 @@ public class Order implements Updatable, Billable, Serializable {
     @Embedded
     @JsonView({Views.Order.Detail.class})
     private RecurrencePaymentInformation recurrencePaymentInformation;
+
+    @ManyToOne
+    @JoinColumn(name = "hirer_id")
+    @JsonView({Views.Order.List.class})
+    private Hirer hirer;
 
     @JsonIgnore
     @Version
@@ -392,6 +412,13 @@ public class Order implements Updatable, Billable, Serializable {
         return null;
     }
 
+    public String hirerDocumentNumber() {
+        if (hasHirer()) {
+            return getHirer().getDocumentNumber();
+        }
+        return null;
+    }
+
     public boolean productWithMembershipFee() {
         return this.product != null && this.product.getMembershipFee() != null
                 && this.product.getMembershipFee().compareTo(BigDecimal.ZERO) != 0;
@@ -419,6 +446,10 @@ public class Order implements Updatable, Billable, Serializable {
 
     public boolean hasPaymentRequest() {
         return paymentRequest != null;
+    }
+
+    public boolean hasHirer() {
+        return hirer != null;
     }
 
     public boolean shouldStoreCard() {
