@@ -97,6 +97,10 @@ public class HirerService {
         return hirerNegotiationRepository.countByHirerId(id) > 0;
     }
 
+    public boolean hasNegotiationForTheProduct(String id, String productId) {
+        return hirerNegotiationRepository.countByHirerIdAndProductId(id, productId) > 0;
+    }
+
     public Hirer findByDocumentNumber(String documentNumber){
         Optional<Hirer> hirer = getByDocumentNumber(documentNumber);
         return hirer.orElseThrow(()->

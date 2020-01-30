@@ -20,6 +20,8 @@ public interface HirerNegotiationRepository
 
     Integer countByHirerId(String id);
 
+    Integer countByHirerIdAndProductId(String id, String productId);
+
     Optional<HirerNegotiation> findByIdAndProductIssuerId(String id, String issuerId);
 
     Optional<HirerNegotiation> findByHirerIdAndProductIdAndActiveTrue(String hirerId, String productId);

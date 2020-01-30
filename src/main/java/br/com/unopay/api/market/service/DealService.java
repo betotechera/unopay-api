@@ -173,7 +173,7 @@ public class DealService {
         contract.setHirer(hirer);
         contract.setContractor(contractor);
         contract.setRecurrencePaymentMethod(deal.getRecurrencePaymentMethod());
-        return contractService.create(contract, hirerService.hasNegotiation(hirer.getId()));
+        return contractService.create(contract, hirerService.hasNegotiationForTheProduct(hirer.getId(), product.getId()));
     }
 
     private void createMembers(Deal deal, Contract contract) {
