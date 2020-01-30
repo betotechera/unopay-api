@@ -100,7 +100,7 @@ public class OrderValidator {
     public void checkHirerWhenRequired(Order order) {
         if(order.isType(OrderType.ADHESION)) {
             if (order.hasHirer()) {
-                hirerService.findByDocumentNumber(order.hirerDocumentNumber());
+                order.setHirer(hirerService.findByDocumentNumber(order.hirerDocumentNumber()));
                 return;
             }
 
