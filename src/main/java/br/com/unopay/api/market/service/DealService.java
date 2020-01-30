@@ -168,6 +168,7 @@ public class DealService {
 
     private Contract createContract(Deal deal, Contractor contractor, Product product) {
         Hirer hirer = getHirer(deal.getHirerDocument(), product);
+        log.info("Closing deal with hirer={} for the  product{} and contractor={}", hirer.getDocumentNumber(), product.getCode(), contractor.getDocumentNumber());
         Contract contract = new Contract(product, deal.getMembers().size());
         contract.setHirer(hirer);
         contract.setContractor(contractor);

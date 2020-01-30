@@ -36,6 +36,7 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
+import spock.lang.Ignore
 import static spock.util.matcher.HamcrestSupport.that
 
 class DealServiceTest extends SpockApplicationTests{
@@ -567,6 +568,7 @@ class DealServiceTest extends SpockApplicationTests{
         result
     }
 
+    @Ignore
     void """given unknown negotiation for contract product and hirer
             when deal close with hirer should not be created"""(){
         given:
