@@ -511,6 +511,9 @@ public class Order implements Updatable, Billable, Serializable {
         if(recurrencePaymentInformation != null){
             return this.recurrencePaymentInformation.getCreditCardToken();
         }
+        if(this.hasCard()){
+            return creditCardToken();
+        }
         return null;
     }
 
