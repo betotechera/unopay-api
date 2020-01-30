@@ -257,7 +257,7 @@ public class AccreditedNetworkController {
         return PageableResults.create(pageable, page.getContent(), String.format("%s/accredited-networks/me/establishments/branches", api));
     }
 
-    @JsonView(Views.Branch.Detail.class)
+    @JsonView(Views.Scheduling.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/accredited-networks/me/establishments/schedules", method = RequestMethod.POST)
     public ResponseEntity<Scheduling> createScheduling(@Validated(Create.class) @RequestBody Scheduling scheduling,
