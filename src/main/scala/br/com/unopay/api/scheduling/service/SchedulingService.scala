@@ -85,22 +85,22 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
 
     def cancelById(id: String): Unit = {
         val current = findById(id)
-        cancelById(id, current)
+        cancel(current)
     }
 
     def cancelById(id: String, accreditedNetwork: AccreditedNetwork): Unit = {
         val current = findById(id, accreditedNetwork)
-        cancelById(id, current)
+        cancel(current)
     }
 
-    private def cancelById(id: String, current: Scheduling) = {
+    private def cancel(current: Scheduling) = {
         current.cancelMe()
         schedulingRepository.save(current)
     }
 
     def cancelById(id: String, contractor: Contractor): Unit = {
         val current = findById(id, contractor)
-        cancelById(id, current)
+        cancel(current)
     }
 
     def deleteById(id: String): Unit = {
