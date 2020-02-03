@@ -55,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -249,12 +250,19 @@ public class ContractorController {
     @JsonView(Views.Scheduling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/schedules", method = RequestMethod.GET)
-    public Results<Scheduling> getMyContractsSchedules(@Validated UnovationPageRequest pageable, SchedulingFilter filter,
+    public Results<Scheduling> getMyContractorSchedules(@Validated UnovationPageRequest pageable, SchedulingFilter filter,
                                                        Contractor contractor) {
         log.info("searching the contractor={} schedules",contractor.getDocumentNumber());
         Page<Scheduling> page = schedulingService.findAll(filter, contractor, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/schedules", api));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/contractors/me/schedules/{id}")
+    public void cancelScheduling(@PathVariable  String id, Contractor contractor) {
+        log.info("cancelling a scheduling={} for contractor={}", id, contractor.getDocumentNumber());
+        schedulingService.cancelById(id, contractor);
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
