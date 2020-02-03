@@ -37,6 +37,13 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         schedulingRepository.save(scheduling)
     }
 
+    def create(scheduling: Scheduling, contractor: Contractor) : Scheduling = {
+        setSchedulingToken(scheduling)
+        setReferences(scheduling, contractor)
+        setExpiration(scheduling)
+        schedulingRepository.save(scheduling)
+    }
+
     def create(scheduling: Scheduling) : Scheduling = {
         setSchedulingToken(scheduling)
         setReferences(scheduling)
@@ -121,6 +128,20 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
     def findAll(schedulingFilter: SchedulingFilter, pageable: UnovationPageRequest): Page[Scheduling] = {
         val pageRequest = new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize())
         schedulingRepository.findAll(schedulingFilter, pageRequest)
+    }
+
+    private def setReferences(scheduling: Scheduling, contractor: Contractor) : Unit = {
+        val branch = branchService.findById(scheduling.branchId())
+        scheduling.setBranch(branch)
+
+        contractorService.getById(scheduling.contractorId())
+        val contractor = contractorService.getByIdForConctract(scheduling.contractorId(), scheduling.getContract)
+        scheduling.setContractor(contractor)
+
+        val paymentInstrument = paymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), scheduling.contractorId())
+        scheduling.setPaymentInstrument(paymentInstrument)
+
+        this.setCommonReferences(scheduling)
     }
 
     private def setReferences(scheduling: Scheduling, accreditedNetwork: AccreditedNetwork) : Unit = {

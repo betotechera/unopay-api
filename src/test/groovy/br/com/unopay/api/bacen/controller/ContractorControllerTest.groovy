@@ -461,6 +461,39 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         result.andExpect(status().isNotFound())
     }
 
+    void 'should create scheduling for logged contractor'() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def contractor = contract.getContractor()
+        def contractorUser = fixtureCreator.createContractorUser(contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract)
+        when:
+        def result = this.mvc.perform(post('/contractors/me/schedules')
+                .param("access_token", accessToken)
+                .content(toJson(scheduling))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
+    void 'should not create if scheduling was not sent for logged contractor'() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def contractor = contract.getContractor()
+        def contractorUser = fixtureCreator.createContractorUser(contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        when:
+        def result = this.mvc.perform(post('/contractors/me/schedules')
+                .param("access_token", accessToken)
+                .content(toJson(null))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isBadRequest())
+    }
+
     Contractor getContractor() {
         Fixture.from(Contractor.class).gimme("valid")
     }

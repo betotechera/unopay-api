@@ -38,6 +38,7 @@ import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
 import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -57,6 +58,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -237,6 +239,19 @@ public class ContractorController {
         Page<Branch> page = branchService.getContractorBranches(authentication.getName(), filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/contracts/branches", api));
+    }
+
+    @JsonView(Views.Scheduling.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/contractors/me/schedules")
+    public ResponseEntity<Scheduling> createScheduling(@Validated(Create.class) @RequestBody Scheduling scheduling,
+                                                       Contractor contractor, UserDetail currentUser) {
+        scheduling.setUser(currentUser);
+        log.info("create a scheduling for contractor={}", contractor.getDocumentNumber());
+        Scheduling created = schedulingService.create(scheduling, contractor);
+        return ResponseEntity
+                .created(URI.create("/contractors/me/schedules/"+created.getId()))
+                .body(created);
     }
 
     @JsonView(Views.Scheduling.Detail.class)
