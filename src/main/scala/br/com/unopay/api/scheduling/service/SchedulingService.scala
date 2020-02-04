@@ -134,8 +134,6 @@ class SchedulingService(val schedulingRepository: SchedulingRepository,
         val branch = branchService.findById(scheduling.branchId())
         scheduling.setBranch(branch)
 
-        contractorService.getById(scheduling.contractorId())
-        val contractor = contractorService.getByIdForConctract(scheduling.contractorId(), scheduling.getContract)
         scheduling.setContractor(contractor)
 
         val paymentInstrument = paymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), scheduling.contractorId())
