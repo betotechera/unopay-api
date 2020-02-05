@@ -18,6 +18,7 @@ import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
+import br.com.unopay.api.scheduling.model.Scheduling
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.UserDetail
@@ -427,6 +428,70 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[0].id', is(notNullValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath('$.items[1].id', is(notNullValue())))
 
+    }
+
+    void "cancel a known scheduling for contractor"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        def contractorUser = fixtureCreator.createContractorUser(contract.getContractor())
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract, contractorUser)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        when:
+        def result = this.mvc.perform(delete('/contractors/me/schedules/{id}', scheduling.id)
+                .param("access_token", accessToken))
+
+        then:
+        result.andExpect(status().isNoContent())
+    }
+
+    void "should not cancel a unknown scheduling for contractor"() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+
+        def contractorUser = fixtureCreator.createContractorUser(contract.getContractor())
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        when:
+        def result = this.mvc.perform(delete('/contractors/me/schedules/{id}', "00000")
+                .param("access_token", accessToken))
+
+        then:
+        result.andExpect(status().isNotFound())
+    }
+
+    void 'should create scheduling for logged contractor'() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def contractor = contract.getContractor()
+        def contractorUser = fixtureCreator.createContractorUser(contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        Scheduling scheduling = fixtureCreator.createSchedulingPersisted(contract)
+        when:
+        def result = this.mvc.perform(post('/contractors/me/schedules')
+                .param("access_token", accessToken)
+                .content(toJson(scheduling))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isCreated())
+    }
+
+    void 'should not create if scheduling was not sent for logged contractor'() {
+        given:
+        def contract = fixtureCreator.createPersistedContract()
+        def contractor = contract.getContractor()
+        def contractorUser = fixtureCreator.createContractorUser(contractor)
+        String accessToken = getUserAccessToken(contractorUser.email, contractorUser.password)
+
+        when:
+        def result = this.mvc.perform(post('/contractors/me/schedules')
+                .param("access_token", accessToken)
+                .content(toJson(null))
+                .contentType(MediaType.APPLICATION_JSON))
+        then:
+        result.andExpect(status().isBadRequest())
     }
 
     Contractor getContractor() {

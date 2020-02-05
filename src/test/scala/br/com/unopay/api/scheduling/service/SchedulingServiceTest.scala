@@ -257,6 +257,26 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         verify(mockSchedulingRepository).findAll(Matchers.eq(schedulingFilter), isA(classOf[PageRequest]))
     }
 
+    it should "create a Scheduling by contractor" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
+        val contractor = scheduling.contractor
+
+        mockReturnReferences(scheduling, contractor)
+
+        schedulingService.create(scheduling, contractor)
+
+        val captor = ArgumentCaptor.forClass(classOf[Scheduling])
+
+        verify(mockSchedulingRepository).save(captor.capture())
+
+        val schedulingSaved = captor.getValue
+
+        assert(schedulingSaved.token != null, "Token should not be null")
+        assert(schedulingSaved.expirationDate != null, "ExpirationDate should not be null")
+
+        expectCallReferences(scheduling, contractor)
+    }
+
     private def expectCallReferences(scheduling: Scheduling) = {
         verify(mockBranchService, never()).findById(Matchers.eq(scheduling.branchId()), Matchers.any(classOf[AccreditedNetwork]))
         verify(mockContractorService).getById(scheduling.getContractor.getId)
@@ -277,6 +297,13 @@ class SchedulingServiceTest extends ScalaFixtureTest {
 
         verify(mockBranchService, never()).findById(scheduling.branch.getId)
         verify(mockPaymentInstrumentService, never()).findById(scheduling.paymentInstrument.getId)
+    }
+
+    private def expectCallReferences(scheduling: Scheduling, contractor: Contractor) = {
+        verify(mockBranchService).findById(scheduling.branchId())
+        verify(mockPaymentInstrumentService).findByIdAndContractorId(scheduling.instrumentId(), contractor.getId)
+        verify(mockContractService).findById(scheduling.contract.getId)
+        verify(mockAuthorizedMemberService).findById(scheduling.authorizedMember.getId)
     }
 
     private def mockReturnReferences(scheduling: Scheduling) = {
@@ -300,6 +327,14 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         when(mockAuthorizedMemberService.findById(scheduling.authorizedMember.getId))
                 .thenReturn(scheduling.authorizedMember)
         when(mockContractService.findById(scheduling.contract.getId)).thenReturn(scheduling.contract)
+    }
 
+    def mockReturnReferences(scheduling: Scheduling, contractor: Contractor) : Unit = {
+        when(mockBranchService.findById(scheduling.branchId())).thenReturn(scheduling.branch)
+        when(mockPaymentInstrumentService.findByIdAndContractorId(scheduling.instrumentId(), contractor.getId))
+          .thenReturn(scheduling.paymentInstrument)
+        when(mockAuthorizedMemberService.findById(scheduling.authorizedMember.getId))
+          .thenReturn(scheduling.authorizedMember)
+        when(mockContractService.findById(scheduling.contract.getId)).thenReturn(scheduling.contract)
     }
 }
