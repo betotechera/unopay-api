@@ -118,6 +118,7 @@ public class Payzen {
                 .create()
                 .expectedCaptureDate(new Date())
                 .amount(transaction.getLongAmountValue())
+                .paymentOptionCode(String.valueOf(transaction.getInstallments()))
                 .currency(transaction.getAmountCurrencyIsoCode());
     }
 
