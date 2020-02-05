@@ -38,6 +38,7 @@ import br.com.unopay.api.scheduling.model.filter.SchedulingFilter;
 import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.service.ContractService;
 import br.com.unopay.api.service.PaymentInstrumentService;
+import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -55,7 +56,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -239,6 +242,19 @@ public class ContractorController {
     }
 
     @JsonView(Views.Scheduling.Detail.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/contractors/me/schedules")
+    public ResponseEntity<Scheduling> createScheduling(@Validated(Create.class) @RequestBody Scheduling scheduling,
+                                                       Contractor contractor, UserDetail currentUser) {
+        scheduling.setUser(currentUser);
+        log.info("create a scheduling for contractor={}", contractor.getDocumentNumber());
+        Scheduling created = schedulingService.create(scheduling, contractor);
+        return ResponseEntity
+                .created(URI.create("/contractors/me/schedules/"+created.getId()))
+                .body(created);
+    }
+
+    @JsonView(Views.Scheduling.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/schedules/{id}", method = RequestMethod.GET)
     public Scheduling getScheduling(Contractor contractor, @PathVariable  String id) {
@@ -249,12 +265,19 @@ public class ContractorController {
     @JsonView(Views.Scheduling.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/contractors/me/schedules", method = RequestMethod.GET)
-    public Results<Scheduling> getMyContractsSchedules(@Validated UnovationPageRequest pageable, SchedulingFilter filter,
+    public Results<Scheduling> getMyContractorSchedules(@Validated UnovationPageRequest pageable, SchedulingFilter filter,
                                                        Contractor contractor) {
         log.info("searching the contractor={} schedules",contractor.getDocumentNumber());
         Page<Scheduling> page = schedulingService.findAll(filter, contractor, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/contractors/me/schedules", api));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/contractors/me/schedules/{id}")
+    public void cancelScheduling(@PathVariable  String id, Contractor contractor) {
+        log.info("cancelling a scheduling={} for contractor={}", id, contractor.getDocumentNumber());
+        schedulingService.cancelById(id, contractor);
     }
 
     @JsonView(Views.ContractorInstrumentCredit.List.class)
