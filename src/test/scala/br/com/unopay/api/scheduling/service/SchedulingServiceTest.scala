@@ -116,8 +116,6 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         expectCallReferences(scheduling)
     }
 
-
-
     it should "create a Scheduling by accreditedNetwork" in {
         val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
         val network: AccreditedNetwork = Fixture.from(classOf[AccreditedNetwork]).gimme("valid")
@@ -255,6 +253,31 @@ class SchedulingServiceTest extends ScalaFixtureTest {
         schedulingService.findAll(schedulingFilter, pageRequest)
 
         verify(mockSchedulingRepository).findAll(Matchers.eq(schedulingFilter), isA(classOf[PageRequest]))
+    }
+
+    it should "filter schedules for contractor" in {
+        val loggedContractor = new Contractor
+        val schedulingFilter = new SchedulingFilter
+        val pageRequest = new UnovationPageRequest
+
+        schedulingService.findAll(schedulingFilter, loggedContractor, pageRequest)
+
+        verify(mockSchedulingRepository).findAll(Matchers.eq(schedulingFilter), isA(classOf[PageRequest]))
+    }
+
+    it should "find scheduling by id for logged contractor" in {
+        val scheduling: Scheduling = Fixture.from(classOf[Scheduling]).gimme("valid")
+
+        when(mockSchedulingRepository.findByIdAndContractorId(any(), any())).thenReturn(Optional.of(scheduling))
+
+        assert(schedulingService.findById("1244AABBSS", scheduling.contractor) != null)
+    }
+
+    it should "throw exception when not found scheduling for logged contractor" in {
+        when(mockSchedulingRepository.findByIdAndContractorId(any(), any())).thenReturn(Optional.empty[Scheduling]())
+        assertThrows[NotFoundException] {
+            schedulingService.findById("1244AABBSS", new Contractor)
+        }
     }
 
     it should "create a Scheduling by contractor" in {
