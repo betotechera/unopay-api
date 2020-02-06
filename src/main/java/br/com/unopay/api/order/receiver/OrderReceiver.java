@@ -36,7 +36,6 @@ public class OrderReceiver {
         this.ticketService = ticketService;
     }
 
-    @Transactional
     @RabbitListener(queues = Queues.ORDER_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void orderCreated(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);

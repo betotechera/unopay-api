@@ -90,10 +90,12 @@ class TransactionServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'ORDER_WITH_PENDING_TRANSACTION'
     }
 
-    def 'given a order with processed transaction should not be created again'(){
+    @Unroll
+    def 'given a order with processed transaction and status #status should not be created again'(){
         given:
+        def st = status
         Transaction transaction = Fixture.from(Transaction.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("status", TransactionStatus.AUTHORIZED)
+            add("status", st)
         }})
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest.class).gimme("creditCard", new Rule(){{
             add("orderId", transaction.orderId)
@@ -104,6 +106,11 @@ class TransactionServiceTest extends SpockApplicationTests{
         then:
         def ex = thrown(ConflictException)
         assert ex.errors.first().logref == 'ORDER_WITH_PROCESSED_TRANSACTION'
+
+        where:
+        _ | status
+        _ | TransactionStatus.AUTHORIZED
+        _ | TransactionStatus.CAPTURED
     }
 
 

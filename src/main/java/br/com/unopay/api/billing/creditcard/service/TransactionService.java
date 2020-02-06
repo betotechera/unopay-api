@@ -80,7 +80,8 @@ public class TransactionService {
             if(transaction.getStatus() == TransactionStatus.PENDING){
                 throw UnovationExceptions.conflict().withErrors(ORDER_WITH_PENDING_TRANSACTION);
             }
-            if(transaction.getStatus() == TransactionStatus.AUTHORIZED){
+            if(transaction.getStatus() == TransactionStatus.AUTHORIZED ||
+                    transaction.getStatus() == TransactionStatus.CAPTURED){
                 throw UnovationExceptions.conflict().withErrors(ORDER_WITH_PROCESSED_TRANSACTION);
             }
         });
