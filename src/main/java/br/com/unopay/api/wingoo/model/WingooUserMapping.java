@@ -1,6 +1,7 @@
 package br.com.unopay.api.wingoo.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.model.Address;
 import br.com.unopay.api.uaa.config.PasswordEncoderConfig;
 import br.com.wingoo.userclient.model.User;
 import java.io.Serializable;
@@ -22,8 +23,15 @@ public class WingooUserMapping implements Serializable{
         user.setDocumentNumber(contractor.getDocumentNumber());
         user.setCellphone(contractor.getPerson().getCellPhone());
         user.setGender(contractor.getPerson().getPhysicalPersonDetail().getGender().getDescription());
-        String originalZipCode = contractor.getPerson().getAddress().getZipCode();
+        Address address = contractor.getPerson().getAddress();
+        String originalZipCode = address.getZipCode();
         user.setZipCode(String.format(FORMAT, originalZipCode.substring(0, 5), originalZipCode.substring(5)));
+        user.setStreet(address.getStreetName());
+        user.setNumber(address.getNumber());
+        user.setComplement(address.getComplement());
+        user.setDistrict(address.getDistrict());
+        user.setCity(address.getCity());
+        user.setState(address.getState().name());
         user.setStudentId(contractor.getPaymentInstrumentNumber());
         user.setStatus(STATUS);
         user.setType(TYPE);
