@@ -15,7 +15,7 @@ public class WingooUserMapping implements Serializable{
     public static User fromContractor(Contractor contractor){
         User user = new User();
         user.setName(contractor.getPerson().getShortName());
-        user.setLastName(contractor.getPerson().getName().replaceAll(contractor.getPerson().getShortName(), ""));
+        user.setLastName(contractor.getPerson().getName().replaceAll(contractor.getPerson().getShortName(), "").trim());
         user.setEmail(contractor.getPerson().getPhysicalPersonDetail().getEmail());
         user.setBirthDate(contractor.getPerson().getPhysicalPersonDetail().getBirthDate());
         user.setDocumentNumber(contractor.getDocumentNumber());
