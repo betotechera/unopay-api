@@ -8,7 +8,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.market.model.AuthorizedMember
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import br.com.unopay.api.model.{Contract, PaymentInstrument, Updatable}
-import br.com.unopay.api.network.model.{Branch, Event, ServiceType}
+import br.com.unopay.api.network.model.{Branch, Event}
 import br.com.unopay.api.uaa.model.UserDetail
 import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence._
@@ -83,13 +83,6 @@ class Scheduling extends Serializable with Updatable {
     @JsonView(Array(classOf[Views.Scheduling.List]))
     @Size(min = 3, max = 30)
     var serviceDescription: String = _
-
-    @BeanProperty
-    @Enumerated(EnumType.STRING)
-    @NotNull(groups = Array(classOf[Create], classOf[Update]))
-    @Column(name = "service_type")
-    @JsonView(Array(classOf[Views.Scheduling.List]))
-    var serviceType: ServiceType = _
 
     @BeanProperty
     @ManyToOne
