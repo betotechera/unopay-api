@@ -1,0 +1,1 @@
+alter table scheduling drop column service_type;
