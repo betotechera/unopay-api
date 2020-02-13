@@ -26,7 +26,6 @@ class SchedulingTemplateLoader extends TemplateLoader {
             add("contractor", contract.getContractor)
             add("paymentInstrument", createPaymentInstrument)
             add("serviceDescription", name())
-            add("serviceType", random(classOf[ServiceType]))
             add("user", createUser)
             add("authorizedMember", createAuthorizedMember)
         })
