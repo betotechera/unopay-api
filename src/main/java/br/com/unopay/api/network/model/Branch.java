@@ -186,14 +186,6 @@ public class Branch implements Serializable, Updatable, Localizable {
         }
     }
 
-    @Override
-    public String formattedAddress() {
-        if(hasAddress()) {
-            return this.address.toString();
-        }
-        return null;
-    }
-
     public String getFormattedAddress() {
         if(hasAddress()) {
             return this.address.toString();

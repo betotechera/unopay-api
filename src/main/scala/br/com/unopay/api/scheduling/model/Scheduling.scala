@@ -155,7 +155,7 @@ class Scheduling extends Serializable with Updatable {
 
     def getFormattedAddress(): java.lang.String = {
         if(this.branch != null) {
-            return this.branch.formattedAddress()
+            return this.branch.getFormattedAddress()
         }
         null
     }
