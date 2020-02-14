@@ -194,6 +194,13 @@ public class Branch implements Serializable, Updatable, Localizable {
         return null;
     }
 
+    public String getFormattedAddress() {
+        if(hasAddress()) {
+            return this.address.toString();
+        }
+        return null;
+    }
+
     public boolean hasAddress(){
         return this.address != null;
     }
