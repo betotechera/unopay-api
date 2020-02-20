@@ -10,6 +10,7 @@ import scala.beans.BeanProperty
 class SchedulingFilter {
 
     @BeanProperty
+    @SearchableField
     var token: String = _
 
     @BeanProperty
