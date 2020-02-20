@@ -426,4 +426,8 @@ public class ServiceAuthorize implements Serializable {
     public boolean withAuthorizedMember() {
         return authorizedMember != null;
     }
+
+    public boolean hasSchedulingToken() {
+        return schedulingToken != null;
+    }
 }

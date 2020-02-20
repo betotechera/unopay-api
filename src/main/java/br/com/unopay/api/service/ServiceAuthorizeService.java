@@ -16,6 +16,8 @@ import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.ServiceAuthorize;
 import br.com.unopay.api.model.filter.ServiceAuthorizeFilter;
 import br.com.unopay.api.repository.ServiceAuthorizeRepository;
+import br.com.unopay.api.scheduling.model.Scheduling;
+import br.com.unopay.api.scheduling.service.SchedulingService;
 import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -55,6 +57,7 @@ public class ServiceAuthorizeService {
     private NumberGenerator numberGenerator;
     private AuthorizedMemberService authorizedMemberService;
     private ContractorBonusService contractorBonusService;
+    private SchedulingService schedulingService;
 
     @Autowired
     public ServiceAuthorizeService(ServiceAuthorizeRepository repository,
@@ -66,7 +69,8 @@ public class ServiceAuthorizeService {
                                    InstrumentBalanceService instrumentBalanceService,
                                    HirerNegotiationService hirerNegotiationService,
                                    AuthorizedMemberService authorizedMemberService,
-                                   ContractorBonusService contractorBonusService) {
+                                   ContractorBonusService contractorBonusService,
+                                   SchedulingService schedulingService) {
         this.repository = repository;
         this.establishmentService = establishmentService;
         this.contractService = contractService;
@@ -78,6 +82,7 @@ public class ServiceAuthorizeService {
         this.hirerNegotiationService = hirerNegotiationService;
         this.authorizedMemberService = authorizedMemberService;
         this.contractorBonusService = contractorBonusService;
+        this.schedulingService = schedulingService;
     }
 
     @Transactional
@@ -94,7 +99,22 @@ public class ServiceAuthorizeService {
         instrumentBalanceService.subtract(paymentInstrument.getId(), authorize.getPaid());
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         createBonusIfProductBonus(authorize);
+
+        if (authorize.hasSchedulingToken()){
+            loadFromScheduling(authorize);
+        }
+
         return repository.save(authorize);
+    }
+
+    private ServiceAuthorize loadFromScheduling(ServiceAuthorize authorize){
+        Scheduling scheduling = schedulingService.findByToken(authorize.getSchedulingToken());
+        authorize.setContract(scheduling.getContract());
+        authorize.setContractor(scheduling.getContractor());
+        authorize.setPaymentInstrument(scheduling.getPaymentInstrument());
+        authorize.setAuthorizedMember(scheduling.getAuthorizedMember());
+
+        return authorize;
     }
 
     @Transactional

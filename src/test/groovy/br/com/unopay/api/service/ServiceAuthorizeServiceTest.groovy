@@ -8,6 +8,7 @@ import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
 import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.scheduling.model.Scheduling
 
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
@@ -116,6 +117,17 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert result.rating != null
     }
 
+    void 'new service authorize should be created by scheduling token'() {
+        given:
+        ServiceAuthorize serviceAuthorize = createServiceAuthorizeByScheduling()
+
+        when:
+        def created = service.create(userUnderTest, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.schedulingToken == serviceAuthorize.schedulingToken
+    }
 
     void 'given a known service authorize when cancel should be cancelled'() {
         given:
@@ -1186,5 +1198,15 @@ permission to authorize service without contractor password  in exceptional circ
             add("establishment",establishment)
             add("exceptionalCircumstance", true)
         }})
+    }
+
+    private ServiceAuthorize createServiceAuthorizeByScheduling() {
+        def schedulingResult = fixtureCreator.createSchedulingPersisted()
+        ServiceAuthorize serviceAuthorize = createServiceAuthorize()
+        serviceAuthorize.with {
+            scheduling = schedulingResult
+            schedulingToken = schedulingResult.token
+        }
+        serviceAuthorize
     }
 }
