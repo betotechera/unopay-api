@@ -1201,10 +1201,16 @@ permission to authorize service without contractor password  in exceptional circ
     }
 
     private ServiceAuthorize createServiceAuthorizeByScheduling() {
-        def schedulingResult = fixtureCreator.createSchedulingPersisted()
+        def schedulingContract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def schedulingResult = fixtureCreator.createSchedulingPersisted(schedulingContract)
+
         ServiceAuthorize serviceAuthorize = createServiceAuthorize()
         serviceAuthorize.with {
             scheduling = schedulingResult
+            contract = schedulingResult.contract
+            contractor = schedulingResult.contractor
+            paymentInstrument = schedulingResult.paymentInstrument
+            authorizedMember = schedulingResult.authorizedMember
             schedulingToken = schedulingResult.token
         }
         serviceAuthorize
