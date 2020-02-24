@@ -87,6 +87,9 @@ public class ServiceAuthorizeService {
 
     @Transactional
     public ServiceAuthorize create(UserDetail currentUser, ServiceAuthorize authorize) {
+        if (authorize.hasSchedulingToken()){
+            authorize = loadFromScheduling(authorize);
+        }
         authorize.validateMe();
         Contract contract = getValidContract(authorize, currentUser);
         defineEstablishment(authorize, currentUser);
@@ -100,21 +103,20 @@ public class ServiceAuthorizeService {
         authorize.setAuthorizationNumber(numberGenerator.createNumber());
         createBonusIfProductBonus(authorize);
 
-        if (authorize.hasSchedulingToken()){
-            loadFromScheduling(authorize);
-        }
-
         return repository.save(authorize);
     }
 
-    private ServiceAuthorize loadFromScheduling(ServiceAuthorize authorize){
-        Scheduling scheduling = schedulingService.findByToken(authorize.getSchedulingToken());
-        authorize.setContract(scheduling.getContract());
-        authorize.setContractor(scheduling.getContractor());
-        authorize.setPaymentInstrument(scheduling.getPaymentInstrument());
-        authorize.setAuthorizedMember(scheduling.getAuthorizedMember());
+    private ServiceAuthorize loadFromScheduling(ServiceAuthorize current){
+        ServiceAuthorize authorization = new ServiceAuthorize();
+        authorization.updateMe(current);
+        Scheduling scheduling = schedulingService.findByToken(authorization.getSchedulingToken());
+        authorization.setScheduling(scheduling);
+        authorization.setContract(scheduling.getContract());
+        authorization.setContractor(scheduling.getContractor());
+        authorization.setPaymentInstrument(scheduling.getPaymentInstrument());
+        authorization.setAuthorizedMember(scheduling.getAuthorizedMember());
 
-        return authorize;
+        return authorization;
     }
 
     @Transactional
