@@ -223,6 +223,23 @@ class FixtureCreator {
         })
     }
 
+    Contract createPersistedContractWithProductIssuerAsHirer(hirer = createHirer(), contractor = createContractor(),
+                                                             situation = ContractSituation.ACTIVE,
+                                                             BigDecimal membershipFee = (Math.random() * 100)) {
+        Product product = createProductWithSameIssuerOfHirer(membershipFee, hirer)
+
+        from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("hirer", hirer)
+                add("contractor", contractor)
+                add("product", product)
+                add("serviceTypes", product.serviceTypes)
+                add("situation", situation)
+                add("membershipFee", membershipFee)
+            }
+        })
+    }
+
     List addContractsToEstablishment(Establishment establishment, Product product) {
         def contractA = createPersistedContract(createContractor(), product)
         def contractB = createPersistedContract(createContractor(), product)
