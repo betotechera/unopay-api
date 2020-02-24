@@ -58,7 +58,7 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_SHOULD_NO
 @Entity
 @EqualsAndHashCode(exclude = {"contract"})
 @Table(name = "service_authorize")
-public class ServiceAuthorize implements Serializable {
+public class ServiceAuthorize implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
