@@ -144,6 +144,21 @@ class FixtureCreator {
         user.with { password = generatePassword; it }
     }
 
+    UserDetail createUserWithoutGroup(String email = null) {
+        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
+        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
+            {
+                add("password", passwordEncoder.encode(generatePassword))
+                if (!email) {
+                    add("email", '${name}@gmail.com')
+                } else {
+                    add("email", email)
+                }
+            }
+        })
+        user.with { password = generatePassword; it }
+    }
+
     PaymentInstrument createPaymentInstrument(String label = "valid") {
         from(PaymentInstrument.class).gimme(label, new Rule() {
             {
@@ -348,6 +363,32 @@ class FixtureCreator {
         authorize.authorizeEvents = authorizeEvent
         authorize
     }
+
+    ServiceAuthorize createServiceAuthorizeWithoutGroup(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
+                                            Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
+
+        def establishmentEvent = createEstablishmentEvent(establishment)
+        ServiceAuthorize authorize = from(ServiceAuthorize.class).gimme("valid", new Rule() {{
+            createInstrumenBalance(credit.paymentInstrument, establishmentEvent.value)
+            add("contract", credit.contract)
+            add("contractor", credit.contract.contractor)
+            add("user", createUserWithoutGroup())
+            add("authorizationDateTime", instant(dateAsText))
+            add("paymentInstrument", credit.paymentInstrument)
+            add("establishment", establishment)
+            add("paymentInstrument.password", credit.paymentInstrument.password)
+        }})
+
+        def authorizeEvent = from(ServiceAuthorizeEvent.class).uses(jpaProcessor).gimme(1,"valid", new Rule() {{
+            add("establishmentEvent", establishmentEvent)
+            add("event", establishmentEvent.event)
+            add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
+            add("eventValue", 0.1)
+        }})
+        authorize.authorizeEvents = authorizeEvent
+        authorize
+    }
+
 
     ServiceAuthorize createServiceAuthorizePersisted(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                                      Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
