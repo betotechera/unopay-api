@@ -108,15 +108,15 @@ public class ServiceAuthorizeService {
 
     private ServiceAuthorize loadFromScheduling(ServiceAuthorize current){
         ServiceAuthorize authorization = new ServiceAuthorize();
-        authorization.updateMe(current);
-        Scheduling scheduling = schedulingService.findByToken(authorization.getSchedulingToken());
+        Scheduling scheduling = schedulingService.findByToken(current.getSchedulingToken());
         authorization.setScheduling(scheduling);
         authorization.setContract(scheduling.getContract());
         authorization.setContractor(scheduling.getContractor());
         authorization.setPaymentInstrument(scheduling.getPaymentInstrument());
-        authorization.setAuthorizedMember(scheduling.getAuthorizedMember());
+        authorization.updateMe(current);
 
         return authorization;
+
     }
 
     @Transactional

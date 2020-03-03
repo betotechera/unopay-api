@@ -1,6 +1,8 @@
 package br.com.unopay.api.bacen.util
 
 import br.com.six2six.fixturefactory.Fixture
+import org.springframework.security.access.event.AuthorizedEvent
+
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
@@ -364,22 +366,25 @@ class FixtureCreator {
         authorize
     }
 
-    ServiceAuthorize createServiceAuthorizeWithoutGroup(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
+    ServiceAuthorize createServiceAuthorizeByScheduling(Scheduling scheduling, ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                             Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
 
         def establishmentEvent = createEstablishmentEvent(establishment)
         ServiceAuthorize authorize = from(ServiceAuthorize.class).gimme("valid", new Rule() {{
-            createInstrumenBalance(credit.paymentInstrument, establishmentEvent.value)
-            add("contract", credit.contract)
-            add("contractor", credit.contract.contractor)
+            createInstrumenBalance(scheduling.paymentInstrument, establishmentEvent.value)
+            add("scheduling", scheduling)
+            add("contract", scheduling.contract)
+            add("contractor", scheduling.contractor)
+            add("schedulingToken", scheduling.token)
             add("user", createUserWithoutGroup())
             add("authorizationDateTime", instant(dateAsText))
-            add("paymentInstrument", credit.paymentInstrument)
+            add("paymentInstrument", scheduling.paymentInstrument)
             add("establishment", establishment)
-            add("paymentInstrument.password", credit.paymentInstrument.password)
+            add("paymentInstrument.password", scheduling.paymentInstrument.password)
         }})
+        authorize.with {paymentInstrument.password = scheduling.paymentInstrument.password; it}
 
-        def authorizeEvent = from(ServiceAuthorizeEvent.class).uses(jpaProcessor).gimme(1,"valid", new Rule() {{
+        def authorizeEvent = from(ServiceAuthorizeEvent.class).gimme(1,"valid", new Rule() {{
             add("establishmentEvent", establishmentEvent)
             add("event", establishmentEvent.event)
             add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)

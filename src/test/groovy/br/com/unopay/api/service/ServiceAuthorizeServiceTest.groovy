@@ -1203,18 +1203,7 @@ permission to authorize service without contractor password  in exceptional circ
     private ServiceAuthorize createServiceAuthorizeByScheduling() {
         def schedulingContract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
         def schedulingResult = fixtureCreator.createSchedulingPersisted(schedulingContract)
-        def hirerNegociation = fixtureCreator.createNegotiation(schedulingContract.hirer, schedulingContract.product)
-        ServiceAuthorize serviceAuthorize = fixtureCreator.createServiceAuthorizeWithoutGroup()
-
-        Fixture.from(ServiceAuthorize.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("scheduling", schedulingResult)
-            add("contract",schedulingResult.contract)
-            add("contractor",schedulingResult.contractor)
-            add("paymentInstrument",schedulingResult.paymentInstrument)
-            add("authorizedMember", schedulingResult.authorizedMember)
-            add("schedulingToken", schedulingResult.token)
-            add("establishment", establishmentUnderTest)
-        }})
+        ServiceAuthorize serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(schedulingResult)
 
         serviceAuthorize
     }
