@@ -31,7 +31,9 @@ public class WingooUserMapping implements Serializable{
         user.setCity(address.getCity());
         user.setState(address.getState().name());
         user.setStudentId(contractor.getPaymentInstrumentNumber());
-        user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
+        if(contractor.getPassword() != null) {
+            user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
+        }
         user.setHirerDocument(contractor.getHirerDocument());
         return user;
     }
