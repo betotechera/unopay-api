@@ -8,6 +8,7 @@ import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -187,6 +188,7 @@ public class Branch implements Serializable, Updatable, Localizable {
     }
 
     @Override
+    @JsonProperty
     public String formattedAddress() {
         if(hasAddress()) {
             return this.address.toString();
