@@ -797,8 +797,7 @@ class OrderServiceTest extends SpockApplicationTests{
         result.createDateTime != null
     }
 
-
-    def 'given an order without card token and for a product which accept only credit card payment should not be created'(){
+    def 'given an order without card information and for a product which accept only credit card payment should not be created'(){
         given:
         def product = fixtureCreator.createProductPFWithMethods([PaymentMethod.CARD])
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
@@ -810,7 +809,7 @@ class OrderServiceTest extends SpockApplicationTests{
         def creditCard = new CreditCard()
         creditCard.setHolderName("Name")
         creditCard.setNumber("1234")
-        creditCard.setExpiryMonth("12")
+        creditCard.setExpiryMonth(null)
         creditCard.setExpiryYear("2089")
         creditCard.setToken(null)
         def paymentRequest = new PaymentRequest()
