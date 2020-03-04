@@ -193,11 +193,16 @@ public class Order implements Updatable, Billable, Serializable {
     }
 
     public void defineCardToken(String token){
-        if(getPaymentRequest() != null && getPaymentRequest().getCreditCard() != null) {
+        if(getPaymentRequest() == null){
+            setPaymentRequest(new PaymentRequest());
+        }
+        if(getPaymentRequest().getCreditCard() != null) {
+            getPaymentRequest().setMethod(PaymentMethod.CARD);
             getPaymentRequest().getCreditCard().setToken(token);
             return;
         }
-        if(getPaymentRequest() != null && getPaymentRequest().getCreditCard() == null) {
+        if(getPaymentRequest().getCreditCard() == null) {
+            getPaymentRequest().setMethod(PaymentMethod.CARD);
             getPaymentRequest().setCreditCard(new CreditCard());
             getPaymentRequest().getCreditCard().setToken(token);
         }
@@ -277,6 +282,9 @@ public class Order implements Updatable, Billable, Serializable {
     public boolean is(PaymentMethod method) {
         if(paymentRequest != null && paymentRequest.getMethod() != null) {
             return paymentRequest.getMethod().equals(method);
+        }
+        if(paymentMethod != null) {
+            return paymentMethod.equals(method);
         }
         return false;
     }

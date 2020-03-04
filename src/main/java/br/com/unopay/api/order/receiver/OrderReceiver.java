@@ -53,14 +53,14 @@ public class OrderReceiver {
     @RabbitListener(queues = Queues.ORDER_UPDATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void orderUpdated(String objectAsString) {
         Order order = genericObjectMapper.getAsObject(objectAsString, Order.class);
-        log.info("update order payment status for order={} type={} of value={}",
-                order.getId(),order.getType(), order.getValue());
+        log.info("update order payment status for order={} type={} of value={} and number={}",
+                order.getId(),order.getType(), order.getValue(), order.getNumber());
             orderProcessor.process(order);
     }
 
     private void processPayment(Order order) {
-        log.info("creating payment for order={} method={} type={} of value={}",
-                order.getId(), order.getRecurrencePaymentMethod(), order.getType(), order.getValue());
+        log.info("creating payment for order={} method={} type={} of value={} and number={}",
+                order.getId(), order.getRecurrencePaymentMethod(), order.getType(), order.getValue(), order.getNumber());
         if(order.is(PaymentMethod.CARD)) {
             order.definePaymentValue(order.paymentValue());
             order.defineCardToken(order.getRecurrenceCreditCardToken());

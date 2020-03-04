@@ -596,6 +596,8 @@ public final class Errors {
     /* User Credit Card */
     public static final UnovationError USER_CREDIT_CARD_NOT_FOUND =
             new UnovationError("USER_CREDIT_CARD_NOT_FOUND","User credit card not found.");
+    public static final UnovationError CREDIT_CARD_NUMBER_REQUIRED =
+            new UnovationError("CREDIT_CARD_NUMBER_REQUIRED","credit card number required");
     public static final UnovationError INVALID_MONTH =
             new UnovationError("INVALID_MONTH", "" +
                     "Invalid month");

@@ -1,6 +1,9 @@
 package br.com.unopay.api.billing.creditcard.model;
 
 import br.com.unopay.api.http.DescriptableEnum;
+import br.com.unopay.bootcommons.exception.UnovationExceptions;
+
+import static br.com.unopay.api.uaa.exception.Errors.CREDIT_CARD_NUMBER_REQUIRED;
 
 public enum CardBrand implements DescriptableEnum {
 
@@ -22,7 +25,7 @@ public enum CardBrand implements DescriptableEnum {
     }
 
     public static CardBrand fromCardNumber(final String creditCardNumber) {
-
+        if(creditCardNumber == null) throw UnovationExceptions.unprocessableEntity().withErrors(CREDIT_CARD_NUMBER_REQUIRED);
         String visa = "^4[0-9]{12}(?:[0-9]{3})?$";
         String master = "^5[1-5][0-9]{14}$";
         String americanExpress = "^3[47][0-9]{13}$";
