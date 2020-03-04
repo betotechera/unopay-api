@@ -11,11 +11,12 @@ import lombok.Getter;
 @Getter
 public class Deal {
 
-    public Deal(Person person, String hirerDocument, String productCode) {
+    public Deal(Person person, String hirerDocument, String productCode, Boolean createUser) {
         this.person = person;
         this.hirerDocument = hirerDocument;
         this.productCode = productCode;
         this.members = new HashSet<>();
+        this.createUser = createUser;
     }
 
     public Deal(Person person, String productCode, Boolean createUser, Set<AuthorizedMemberCandidate> members) {

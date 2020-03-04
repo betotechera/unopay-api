@@ -132,6 +132,9 @@ public class ContractorCsv {
     @Size(max = 4)
     private String product;
 
+    @CsvBindByName
+    private Boolean createUser = true;
+
     public void validate(Validator validator, Integer line) {
         Set<ConstraintViolation<ContractorCsv>> constraintViolations = validator.validate(this);
         if(!constraintViolations.isEmpty()){

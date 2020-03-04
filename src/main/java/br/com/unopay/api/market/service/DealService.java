@@ -89,8 +89,8 @@ public class DealService {
     }
 
     @Transactional
-    public Contract close(final Person person, final String productCode, final String hirerDocument){
-        Deal deal = new Deal(person, hirerDocument, productCode);
+    public Contract close(final Person person, final String productCode, final String hirerDocument, final Boolean createUser){
+        Deal deal = new Deal(person, hirerDocument, productCode, createUser);
         Optional<Contractor> currentContractor = contractorService.getOptionalByDocument(person.documentNumber());
         Contractor contractor = currentContractor.orElseGet(() -> contractorService.create(new Contractor(person)));
         return close(deal, contractor);
@@ -102,7 +102,7 @@ public class DealService {
     public void closeFromCsv(String hirerDocument, MultipartFile file) {
         List<ContractorCsv> dealCsvs = getDealsCsv(file);
         validate(dealCsvs);
-        dealCsvs.forEach(line -> close(line.toPerson(), line.getProduct(), hirerDocument));
+        dealCsvs.forEach(line -> close(line.toPerson(), line.getProduct(), hirerDocument, line.getCreateUser()));
     }
 
     private void validate(List<ContractorCsv> dealCsvs) {
