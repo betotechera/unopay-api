@@ -28,7 +28,7 @@ public class PaymentRequest implements Serializable{
         Transaction transaction = new Transaction();
         transaction.setCreditCard(creditCard);
         transaction.setOrderId(orderId);
-        transaction.setInstallments(installments);
+        transaction.setInstallments(installments != null ? installments : DEFAULT_INSTALLMENT);
         transaction.setPaymentMethod(method);
         transaction.setAmount(new Amount(CurrencyCode.BRL, value));
         transaction.setIssuerDocument(this.issuerDocument);
