@@ -146,21 +146,6 @@ class FixtureCreator {
         user.with { password = generatePassword; it }
     }
 
-    UserDetail createUserWithoutGroup(String email = null) {
-        String generatePassword = new RegexFunction("\\d{3}\\w{5}").generateValue()
-        UserDetail user = from(UserDetail.class).uses(jpaProcessor).gimme("without-group", new Rule() {
-            {
-                add("password", passwordEncoder.encode(generatePassword))
-                if (!email) {
-                    add("email", '${name}@gmail.com')
-                } else {
-                    add("email", email)
-                }
-            }
-        })
-        user.with { password = generatePassword; it }
-    }
-
     PaymentInstrument createPaymentInstrument(String label = "valid") {
         from(PaymentInstrument.class).gimme(label, new Rule() {
             {
@@ -376,21 +361,21 @@ class FixtureCreator {
             add("contract", scheduling.contract)
             add("contractor", scheduling.contractor)
             add("schedulingToken", scheduling.token)
-            add("user", createUserWithoutGroup())
+            add("user", scheduling.user)
             add("authorizationDateTime", instant(dateAsText))
             add("paymentInstrument", scheduling.paymentInstrument)
             add("establishment", establishment)
             add("paymentInstrument.password", scheduling.paymentInstrument.password)
         }})
-        authorize.with {paymentInstrument.password = scheduling.paymentInstrument.password; it}
 
         def authorizeEvent = from(ServiceAuthorizeEvent.class).gimme(1,"valid", new Rule() {{
             add("establishmentEvent", establishmentEvent)
-            add("event", establishmentEvent.event)
+            add("event", scheduling.events().get(0))
             add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
             add("eventValue", 0.1)
         }})
         authorize.authorizeEvents = authorizeEvent
+
         authorize
     }
 

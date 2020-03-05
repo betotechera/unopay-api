@@ -7,6 +7,7 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
+import br.com.unopay.api.network.model.Event
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.scheduling.model.Scheduling
 
@@ -122,7 +123,7 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         ServiceAuthorize serviceAuthorize = createServiceAuthorizeByScheduling()
 
         when:
-        def created = service.create(userUnderTest, serviceAuthorize)
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
         def result = service.findById(created.id)
 
         then:
@@ -1201,9 +1202,17 @@ permission to authorize service without contractor password  in exceptional circ
     }
 
     private ServiceAuthorize createServiceAuthorizeByScheduling() {
-        def schedulingContract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
-        def schedulingResult = fixtureCreator.createSchedulingPersisted(schedulingContract)
-        ServiceAuthorize serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(schedulingResult)
+        Contract contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        Scheduling scheduling = Fixture.from(Scheduling.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+            add("contractor", contract.contractor)
+            add("authorizedMember", fixtureCreator.createPersistedAuthorizedMember(contract.contractor))
+            add("paymentInstrument", fixtureCreator.createInstrumentToProduct(contract.product, contract.contractor))
+            add("branch", fixtureCreator.createBranchForContract(contract))
+            add("user", fixtureCreator.createUser())
+            add("events", has(1).of(Event.class, "valid"))
+        }})
+        ServiceAuthorize serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(scheduling)
 
         serviceAuthorize
     }
