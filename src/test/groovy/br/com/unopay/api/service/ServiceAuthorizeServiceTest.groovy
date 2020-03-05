@@ -127,7 +127,13 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         def result = service.findById(created.id)
 
         then:
-        assert result.schedulingToken == serviceAuthorize.schedulingToken
+        assert (result.schedulingToken == serviceAuthorize.schedulingToken
+                && result.contract.id == serviceAuthorize.scheduling.contract.id
+                && result.contractor.id == serviceAuthorize.scheduling.contractor.id
+                && result.paymentInstrument.id == serviceAuthorize.scheduling.paymentInstrument.id
+                && result.user.id == serviceAuthorize.scheduling.user.id
+                && result.authorizedMember.id == serviceAuthorize.scheduling.authorizedMember.id
+                )
     }
 
     void 'given a known service authorize when cancel should be cancelled'() {

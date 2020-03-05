@@ -113,6 +113,8 @@ public class ServiceAuthorizeService {
         authorization.setContract(scheduling.getContract());
         authorization.setContractor(scheduling.getContractor());
         authorization.setPaymentInstrument(scheduling.getPaymentInstrument());
+        authorization.setUser(scheduling.getUser());
+        authorization.setAuthorizedMember(scheduling.getAuthorizedMember());
         authorization.updateMe(current);
 
         return authorization;

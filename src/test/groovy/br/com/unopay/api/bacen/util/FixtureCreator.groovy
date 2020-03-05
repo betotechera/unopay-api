@@ -364,6 +364,7 @@ class FixtureCreator {
             add("user", scheduling.user)
             add("authorizationDateTime", instant(dateAsText))
             add("paymentInstrument", scheduling.paymentInstrument)
+            add("authorizedMember", scheduling.authorizedMember)
             add("establishment", establishment)
             add("paymentInstrument.password", scheduling.paymentInstrument.password)
         }})
