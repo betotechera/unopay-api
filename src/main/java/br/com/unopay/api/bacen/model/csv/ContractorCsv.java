@@ -58,7 +58,7 @@ public class ContractorCsv {
 
     @NotNull
     @CsvBindByName
-    @Pattern(regexp = "^[-() 0-9]+$")
+    @Pattern(regexp = "\\d{11}")
     private String cellPhone;
 
     @CsvBindByName

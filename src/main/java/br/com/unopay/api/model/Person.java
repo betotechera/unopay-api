@@ -92,7 +92,7 @@ public class Person implements Serializable, Updatable, StoreCard {
 
     @Column(name="cell_phone")
     @JsonView({Views.Person.class, Views.Person.Detail.class})
-    @Pattern(regexp = "^[-() 0-9]+$", groups = {Create.class, Update.class})
+    @Pattern(regexp = "\\d{11}", groups = {Create.class, Update.class})
     private String cellPhone;
 
     @Transient
