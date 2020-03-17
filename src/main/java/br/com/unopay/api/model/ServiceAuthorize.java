@@ -165,7 +165,7 @@ public class ServiceAuthorize implements Serializable, Updatable {
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private AuthorizedMember authorizedMember;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="scheduling_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Scheduling scheduling;
@@ -424,10 +424,27 @@ public class ServiceAuthorize implements Serializable, Updatable {
     }
 
     public boolean withAuthorizedMember() {
-        return authorizedMember != null;
+        return authorizedMember != null && authorizedMember.getId() != null;
     }
 
     public boolean hasSchedulingToken() {
         return schedulingToken != null;
     }
+
+    public boolean hasScheduling(){
+        return scheduling != null && scheduling.getId() != null;
+    }
+
+    public boolean hasContract(){
+        return contract != null && contract.getId() != null;
+    }
+
+    public boolean hasContractor(){
+        return contractor != null && contractor.getId() != null;
+    }
+
+    public boolean hasPaymentInstrument(){
+        return paymentInstrument != null && paymentInstrument.getId() != null;
+    }
+
 }

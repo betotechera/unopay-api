@@ -351,27 +351,27 @@ class FixtureCreator {
         authorize
     }
 
-    ServiceAuthorize createServiceAuthorizeByScheduling(Scheduling scheduling, ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
-                                            Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
+    ServiceAuthorize createServiceAuthorizeByScheduling(Contract contract = createPersistedContract(),
+                                                        PaymentInstrument paymentInstrument,
+                                                        UserDetail user,
+                                                        Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
 
         def establishmentEvent = createEstablishmentEvent(establishment)
         ServiceAuthorize authorize = from(ServiceAuthorize.class).gimme("valid", new Rule() {{
-            createInstrumenBalance(scheduling.paymentInstrument, establishmentEvent.value)
-            add("scheduling", scheduling)
-            add("contract", scheduling.contract)
-            add("contractor", scheduling.contractor)
-            add("schedulingToken", scheduling.token)
-            add("user", scheduling.user)
+            createInstrumenBalance(paymentInstrument, establishmentEvent.value)
+            add("contract", contract)
+            add("contractor", contract.contractor)
+            add("user", user)
             add("authorizationDateTime", instant(dateAsText))
-            add("paymentInstrument", scheduling.paymentInstrument)
-            add("authorizedMember", scheduling.authorizedMember)
+            add("paymentInstrument", paymentInstrument)
+            add("authorizedMember", createPersistedAuthorizedMember(contract.contractor))
             add("establishment", establishment)
-            add("paymentInstrument.password", scheduling.paymentInstrument.password)
+            add("paymentInstrument.password", paymentInstrument.password)
         }})
 
         def authorizeEvent = from(ServiceAuthorizeEvent.class).gimme(1,"valid", new Rule() {{
             add("establishmentEvent", establishmentEvent)
-            add("event", scheduling.events().get(0))
+            add("event", establishmentEvent.event)
             add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
             add("eventValue", 0.1)
         }})
@@ -379,7 +379,6 @@ class FixtureCreator {
 
         authorize
     }
-
 
     ServiceAuthorize createServiceAuthorizePersisted(ContractorInstrumentCredit credit = createContractorInstrumentCreditPersisted(),
                                                      Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {

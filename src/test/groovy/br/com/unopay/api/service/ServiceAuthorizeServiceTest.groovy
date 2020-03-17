@@ -118,22 +118,28 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert result.rating != null
     }
 
-    void 'new service authorize should be created by scheduling token'() {
+    void 'service authorize should be created by scheduling'() {
         given:
-        ServiceAuthorize serviceAuthorize = createServiceAuthorizeByScheduling()
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def scheduling = createScheduling(contract)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, scheduling.paymentInstrument.clone(), scheduling.user)
+        serviceAuthorize.schedulingToken = scheduling.token
+        serviceAuthorize.contract = null
+        serviceAuthorize.contractor = null
+        serviceAuthorize.authorizedMember = null
+        serviceAuthorize.paymentInstrument.id = null
 
         when:
         def created = service.create(serviceAuthorize.user, serviceAuthorize)
         def result = service.findById(created.id)
 
         then:
-        assert (result.schedulingToken == serviceAuthorize.schedulingToken
-                && result.contract.id == serviceAuthorize.scheduling.contract.id
-                && result.contractor.id == serviceAuthorize.scheduling.contractor.id
-                && result.paymentInstrument.id == serviceAuthorize.scheduling.paymentInstrument.id
-                && result.user.id == serviceAuthorize.scheduling.user.id
-                && result.authorizedMember.id == serviceAuthorize.scheduling.authorizedMember.id
-                )
+        assert result.schedulingToken == scheduling.token
+               result.scheduling.id == scheduling.id
+               result.contract.id == scheduling.contract.id
+               result.contractor.id == scheduling.contractor.id
+               result.paymentInstrument.id == scheduling.paymentInstrument.id
+               result.authorizedMember.id == scheduling.authorizedMember.id
     }
 
     void 'given a known service authorize when cancel should be cancelled'() {
@@ -1207,9 +1213,8 @@ permission to authorize service without contractor password  in exceptional circ
         }})
     }
 
-    private ServiceAuthorize createServiceAuthorizeByScheduling() {
-        Contract contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
-        Scheduling scheduling = Fixture.from(Scheduling.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+    private Scheduling createScheduling(Contract contract) {
+        def scheduling = Fixture.from(Scheduling.class).uses(jpaProcessor).gimme("valid", new Rule(){{
             add("contract", contract)
             add("contractor", contract.contractor)
             add("authorizedMember", fixtureCreator.createPersistedAuthorizedMember(contract.contractor))
@@ -1218,8 +1223,8 @@ permission to authorize service without contractor password  in exceptional circ
             add("user", fixtureCreator.createUser())
             add("events", has(1).of(Event.class, "valid"))
         }})
-        ServiceAuthorize serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(scheduling)
 
-        serviceAuthorize
+        scheduling
     }
+
 }

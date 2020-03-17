@@ -1,6 +1,7 @@
 package br.com.unopay.api.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.market.model.AuthorizedMember;
 import br.com.unopay.api.network.model.Establishment;
 import br.com.unopay.api.network.model.EstablishmentEvent;
 import br.com.unopay.api.network.service.EstablishmentEventService;
@@ -108,17 +109,42 @@ public class ServiceAuthorizeService {
 
     private ServiceAuthorize loadFromScheduling(ServiceAuthorize current){
         ServiceAuthorize authorization = new ServiceAuthorize();
-        Scheduling scheduling = schedulingService.findByToken(current.getSchedulingToken());
-        authorization.setScheduling(scheduling);
-        authorization.setContract(scheduling.getContract());
-        authorization.setContractor(scheduling.getContractor());
-        authorization.setPaymentInstrument(scheduling.getPaymentInstrument());
-        authorization.setUser(scheduling.getUser());
-        authorization.setAuthorizedMember(scheduling.getAuthorizedMember());
         authorization.updateMe(current);
+        Scheduling scheduling = schedulingService.findByToken(current.getSchedulingToken());
+        fillAuthorizationUsingScheduling(authorization, scheduling, current.getPaymentInstrument().getPassword());
 
         return authorization;
+    }
 
+    public void fillAuthorizationUsingScheduling(ServiceAuthorize authorization, Scheduling scheduling, String instrumentPassword){
+        if(!authorization.hasScheduling()) {
+            authorization.setScheduling(scheduling);
+        }
+
+        if(!authorization.hasContract()){
+            Contract contract = new Contract();
+            contract.setId(scheduling.getContract().getId());
+            authorization.setContract(contract);
+        }
+
+        if(!authorization.hasContractor()){
+            Contractor contractor = new Contractor();
+            contractor.setId(scheduling.getContractor().getId());
+            authorization.setContractor(contractor);
+        }
+
+        if(!authorization.hasPaymentInstrument()){
+            PaymentInstrument paymentInstrument = new PaymentInstrument();
+            paymentInstrument.setId(scheduling.getPaymentInstrument().getId());
+            paymentInstrument.setPassword(instrumentPassword);
+            authorization.setPaymentInstrument(paymentInstrument);
+        }
+
+        if(!authorization.withAuthorizedMember() && scheduling.hasAuthorizedMember()){
+            AuthorizedMember authorizedMember = new AuthorizedMember();
+            authorizedMember.setId(scheduling.getAuthorizedMember().getId());
+            authorization.setAuthorizedMember(authorizedMember);
+        }
     }
 
     @Transactional
@@ -199,7 +225,7 @@ public class ServiceAuthorizeService {
 
     private PaymentInstrument getValidContractorPaymentInstrument(ServiceAuthorize serviceAuthorize, Contract contract){
         PaymentInstrument instrument = paymentInstrumentService.findById(serviceAuthorize.instrumentId());
-        validateContractorInstrument(serviceAuthorize, instrument);
+        validateContractorInstrument(contract, instrument);
         updateValidPasswordWhenRequired(serviceAuthorize, instrument, contract);
         if(!serviceAuthorize.hasExceptionalCircumstance()) {
             paymentInstrumentService.checkPassword(instrument.getId(), serviceAuthorize.instrumentPassword());
@@ -207,8 +233,8 @@ public class ServiceAuthorizeService {
         return instrument;
     }
 
-    private void validateContractorInstrument(ServiceAuthorize serviceAuthorize, PaymentInstrument instrumentCredit){
-        if (!instrumentCredit.productIs(serviceAuthorize.getContract().getProduct().getId())) {
+    private void validateContractorInstrument(Contract contract, PaymentInstrument instrumentCredit){
+        if (!instrumentCredit.productIs(contract.getProduct().getId())) {
             throw UnovationExceptions.unprocessableEntity().withErrors(INSTRUMENT_NOT_QUALIFIED_FOR_THIS_CONTRACT);
         }
     }
