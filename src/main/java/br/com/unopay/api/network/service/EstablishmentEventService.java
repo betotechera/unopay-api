@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_EVENT_ALREADY_EXISTS;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_EVENT_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.ESTABLISHMENT_NOT_QUALIFIED_FOR_THIS_EVENT;
 
@@ -50,6 +51,7 @@ public class EstablishmentEventService {
     }
 
     public EstablishmentEvent create(String establishmentId, EstablishmentEvent establishmentEvent) {
+        checkEstablishmentEventAlreadyExists(establishmentEvent);
         setReferences(establishmentId, establishmentEvent);
         return repository.save(establishmentEvent);
     }
@@ -166,5 +168,11 @@ public class EstablishmentEventService {
         return new CsvToBeanBuilder<EstablishmentEventFeeCsv>(inputStreamReader)
                 .withType(EstablishmentEventFeeCsv.class).withSeparator(SEMICOLON).build().parse();
     }
+
+    private void checkEstablishmentEventAlreadyExists(EstablishmentEvent establishmentEvent){
+        if(repository.countByEventIdAndEstablishmentId(establishmentEvent.getEvent().getId(), establishmentEvent.getEstablishment().getId()) > 0)
+            throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_EVENT_ALREADY_EXISTS);
+    }
+
 
 }
