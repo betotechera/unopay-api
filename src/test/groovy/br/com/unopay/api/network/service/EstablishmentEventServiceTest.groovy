@@ -10,6 +10,7 @@ import br.com.unopay.api.network.model.EstablishmentEvent
 import br.com.unopay.api.network.model.Event
 import br.com.unopay.api.network.model.ServiceType
 import br.com.unopay.api.network.service.EstablishmentEventService
+import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
@@ -123,6 +124,23 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
         then:
         created != null
+    }
+
+    def 'an existing establishment event should not be created again'(){
+        given:
+        def event = fixtureCreator.createEvent(ServiceType.DOCTORS_APPOINTMENTS)
+        def establishment = fixtureCreator.createEstablishment()
+        EstablishmentEvent establishmentEvent = Fixture.from(EstablishmentEvent.class)
+                .gimme("withoutReferences", new Rule(){{
+                    add("event", event)
+                }})
+        when:
+        EstablishmentEvent created = service.create(establishment.id, establishmentEvent)
+        service.create(created.establishment.id, created)
+
+        then:
+        def ex = thrown(ConflictException)
+        ex.errors.find().logref == 'ESTABLISHMENT_EVENT_ALREADY_EXISTS'
     }
 
     def 'a unknown establishment the event should not be created'(){
