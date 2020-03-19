@@ -51,7 +51,7 @@ public class EstablishmentEventService {
     }
 
     public EstablishmentEvent create(String establishmentId, EstablishmentEvent establishmentEvent) {
-        checkEstablishmentEventAlreadyExists(establishmentEvent);
+        checkEstablishmentEventAlreadyExists(establishmentId ,establishmentEvent);
         setReferences(establishmentId, establishmentEvent);
         return repository.save(establishmentEvent);
     }
@@ -169,8 +169,8 @@ public class EstablishmentEventService {
                 .withType(EstablishmentEventFeeCsv.class).withSeparator(SEMICOLON).build().parse();
     }
 
-    private void checkEstablishmentEventAlreadyExists(EstablishmentEvent establishmentEvent){
-        if(repository.countByEventIdAndEstablishmentId(establishmentEvent.getEvent().getId(), establishmentEvent.getEstablishment().getId()) > 0)
+    private void checkEstablishmentEventAlreadyExists(String establishmentId, EstablishmentEvent establishmentEvent){
+        if(repository.countByEventIdAndEstablishmentId(establishmentEvent.getEvent().getId(), establishmentId) > 0)
             throw UnovationExceptions.conflict().withErrors(ESTABLISHMENT_EVENT_ALREADY_EXISTS);
     }
 
