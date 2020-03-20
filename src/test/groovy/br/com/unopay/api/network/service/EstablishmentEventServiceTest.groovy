@@ -13,6 +13,9 @@ import br.com.unopay.api.network.service.EstablishmentEventService
 import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
+
+import java.util.stream.Collectors
+
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -36,8 +39,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     def'should create establishment event fees from csv with establishments in file'(){
         given:
-        Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("ncmCode", "53002")
+        def event = Fixture.from(Event.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
+            add("ncmCode", uniqueRandom("53002", "53003"))
         }})
 
         List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
@@ -61,8 +64,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     def'should create establishment event fees from csv with establishment in param'(){
         given:
-        Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule(){{
-            add("ncmCode", "53002")
+        def event = Fixture.from(Event.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
+            add("ncmCode", uniqueRandom("53002", "53003"))
         }})
 
         List<Person> person = Fixture.from(Person.class).uses(jpaProcessor).gimme(2,"legal", new Rule() {{
@@ -86,8 +89,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
 
     def'should create establishment event fees from csv with valid event'(){
         given:
-        Event event = Fixture.from(Event.class).uses(jpaProcessor).gimme("valid", new Rule() {{
-            add("ncmCode", "53002")
+        def event = Fixture.from(Event.class).uses(jpaProcessor).gimme(2,"valid", new Rule() {{
+            add("ncmCode", uniqueRandom("53002", "53003"))
         }})
 
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("legal", new Rule() {{
@@ -104,10 +107,18 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         when:
         service.createFromCsv(null, file)
         def result = service.findByEstablishmentId(establishment.id)
+        def sentEventsIds = event
+                .stream()
+                .map({sentEventId -> sentEventId.id})
+                .collect(Collectors.toList())
+        def retrievedEventsIds = result
+                .stream()
+                .map({retrievedEventId -> retrievedEventId.event.id})
+                .collect(Collectors.toList())
+                .reverse()
 
         then:
-        result.find().event.id == event.id
-        result.last().event.id == event.id
+        sentEventsIds.equals(retrievedEventsIds)
     }
 
 
