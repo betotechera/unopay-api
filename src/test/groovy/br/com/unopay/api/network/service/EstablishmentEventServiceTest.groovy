@@ -107,18 +107,11 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         when:
         service.createFromCsv(null, file)
         def result = service.findByEstablishmentId(establishment.id)
-        def sentEventsIds = event
-                .stream()
-                .map({sentEventId -> sentEventId.id})
-                .collect(Collectors.toList())
-        def retrievedEventsIds = result
-                .stream()
-                .map({retrievedEventId -> retrievedEventId.event.id})
-                .collect(Collectors.toList())
-                .reverse()
-
+        def sentEventsIds = event.collectEntries{[it.id]}
+        def retrievedEventsIds = result.collectEntries{[it.event.id]}
+        
         then:
-        sentEventsIds.equals(retrievedEventsIds)
+        sentEventsIds.equals(retrievedEventsId)
     }
 
 
