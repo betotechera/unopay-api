@@ -111,7 +111,7 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         def retrievedEventsIds = result.collectEntries{[it.event.id]}
         
         then:
-        sentEventsIds.equals(retrievedEventsId)
+        sentEventsIds.equals(retrievedEventsIds)
     }
 
 
