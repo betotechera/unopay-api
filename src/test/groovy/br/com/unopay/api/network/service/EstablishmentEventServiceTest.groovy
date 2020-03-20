@@ -107,8 +107,8 @@ class EstablishmentEventServiceTest extends SpockApplicationTests {
         when:
         service.createFromCsv(null, file)
         def result = service.findByEstablishmentId(establishment.id)
-        def sentEventsIds = event.collectEntries{[it.id]}
-        def retrievedEventsIds = result.collectEntries{[it.event.id]}
+        def sentEventsIds = event.collect{it.id}
+        def retrievedEventsIds = result.collect{it.event.id}.reverse()
         
         then:
         sentEventsIds.equals(retrievedEventsIds)
