@@ -10,7 +10,7 @@ public interface EstablishmentEventRepository
         extends UnovationFilterRepository<EstablishmentEvent, String, EstablishmentEventFilter > {
 
     Optional<EstablishmentEvent> findById(String id);
-    Optional<EstablishmentEvent> findByEventIdAndEstablishmentId(String eventId, String establishmentId);
+    Optional<EstablishmentEvent> findFirstByEventIdAndEstablishmentIdOrderByExpirationDesc(String eventId, String establishmentId);
     Optional<EstablishmentEvent> findByEstablishmentIdAndId(String establishmentId, String id);
     Optional<EstablishmentEvent> findByEstablishmentNetworkIdAndId(String networkId, String id);
     List<EstablishmentEvent> findByEstablishmentId(String establishmentId);

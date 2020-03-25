@@ -6,7 +6,6 @@ import br.com.unopay.api.network.model.EstablishmentEvent;
 import br.com.unopay.api.network.model.Event;
 import br.com.unopay.api.bacen.model.csv.EstablishmentEventFeeCsv;
 import br.com.unopay.api.network.model.filter.EstablishmentEventFilter;
-import br.com.unopay.api.network.model.filter.EstablishmentFilter;
 import br.com.unopay.api.network.repository.EstablishmentEventRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
@@ -98,7 +97,7 @@ public class EstablishmentEventService {
     }
 
     public EstablishmentEvent findByEventIdAndEstablishmentId(String eventId, String establishmentId) {
-        Optional<EstablishmentEvent> establishment = repository.findByEventIdAndEstablishmentId(eventId, establishmentId);
+        Optional<EstablishmentEvent> establishment = repository.findFirstByEventIdAndEstablishmentIdOrderByExpirationDesc(eventId, establishmentId);
         return establishment.orElseThrow(()->UnovationExceptions.notFound().withErrors(ESTABLISHMENT_EVENT_NOT_FOUND));
     }
 
