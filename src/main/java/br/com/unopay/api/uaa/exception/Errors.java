@@ -270,6 +270,8 @@ public final class Errors {
             new UnovationError("ACCREDITED_NETWORK_ID_REQUIRED","Accredited network id is required.");
     public static final UnovationError ESTABLISHMENT_EVENT_NOT_FOUND =
             new UnovationError("ESTABLISHMENT_EVENT_NOT_FOUND","Establishment event not found.");
+    public static final UnovationError ESTABLISHMENT_EVENT_ALREADY_EXISTS =
+            new UnovationError("ESTABLISHMENT_EVENT_ALREADY_EXISTS","Establishment event already exists.");
     public static final UnovationError CONTACT_REQUIRED =
             new UnovationError("CONTACT_REQUIRED","Contact is required.");
     public static final UnovationError BANK_ACCOUNT_REQUIRED =

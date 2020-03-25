@@ -17,6 +17,7 @@ public interface EstablishmentEventRepository
     List<EstablishmentEvent> findByEstablishmentPersonDocumentNumber(String document);
 
     int countByEstablishmentId(String establishmentId);
+    int countByEventIdAndEstablishmentId(String eventId, String establishmentId);
 
     void deleteByEstablishmentIdAndId(String establishmentId, String id);
 
