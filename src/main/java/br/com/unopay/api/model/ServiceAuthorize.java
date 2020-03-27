@@ -447,4 +447,29 @@ public class ServiceAuthorize implements Serializable, Updatable {
         return paymentInstrument != null && paymentInstrument.getId() != null;
     }
 
+    public void defineContractFrom(Scheduling scheduling){
+        Contract contract = new Contract();
+        contract.setId(scheduling.getContract().getId());
+        this.contract = contract;
+    }
+
+    public void defineContractorFrom(Scheduling scheduling){
+        Contractor contractor = new Contractor();
+        contractor.setId(scheduling.getContractor().getId());
+        this.contractor = contractor;
+    }
+
+    public void definePaymentInstrumentFrom(Scheduling scheduling, String instrumentPassword){
+        PaymentInstrument paymentInstrument = new PaymentInstrument();
+        paymentInstrument.setId(scheduling.getPaymentInstrument().getId());
+        paymentInstrument.setPassword(instrumentPassword);
+        this.paymentInstrument = paymentInstrument;
+    }
+
+    public void defineAuthorizedMemberFrom(Scheduling scheduling){
+        AuthorizedMember authorizedMember = new AuthorizedMember();
+        authorizedMember.setId(scheduling.getAuthorizedMember().getId());
+        this.authorizedMember = authorizedMember;
+    }
+
 }

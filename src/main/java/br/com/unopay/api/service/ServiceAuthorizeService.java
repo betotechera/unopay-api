@@ -117,34 +117,20 @@ public class ServiceAuthorizeService {
     }
 
     public void fillAuthorizationUsingScheduling(ServiceAuthorize authorization, Scheduling scheduling, String instrumentPassword){
-        if(!authorization.hasScheduling()) {
+        if(!authorization.hasScheduling())
             authorization.setScheduling(scheduling);
-        }
 
-        if(!authorization.hasContract()){
-            Contract contract = new Contract();
-            contract.setId(scheduling.getContract().getId());
-            authorization.setContract(contract);
-        }
+        if(!authorization.hasContract())
+            authorization.defineContractFrom(scheduling);
 
-        if(!authorization.hasContractor()){
-            Contractor contractor = new Contractor();
-            contractor.setId(scheduling.getContractor().getId());
-            authorization.setContractor(contractor);
-        }
+        if(!authorization.hasContractor())
+            authorization.defineContractorFrom(scheduling);
 
-        if(!authorization.hasPaymentInstrument()){
-            PaymentInstrument paymentInstrument = new PaymentInstrument();
-            paymentInstrument.setId(scheduling.getPaymentInstrument().getId());
-            paymentInstrument.setPassword(instrumentPassword);
-            authorization.setPaymentInstrument(paymentInstrument);
-        }
+        if(!authorization.hasPaymentInstrument())
+            authorization.definePaymentInstrumentFrom(scheduling, instrumentPassword);
 
-        if(!authorization.withAuthorizedMember() && scheduling.hasAuthorizedMember()){
-            AuthorizedMember authorizedMember = new AuthorizedMember();
-            authorizedMember.setId(scheduling.getAuthorizedMember().getId());
-            authorization.setAuthorizedMember(authorizedMember);
-        }
+        if(!authorization.withAuthorizedMember() && scheduling.hasAuthorizedMember())
+            authorization.defineAuthorizedMemberFrom(scheduling);
     }
 
     @Transactional
