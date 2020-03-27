@@ -142,18 +142,30 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
                result.authorizedMember.id == scheduling.authorizedMember.id
     }
 
+    void 'service authorize should be created by scheduling using only the missing data'() {
+        given:
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def scheduling = createScheduling(contract)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, scheduling.paymentInstrument.clone(), scheduling.user)
+        serviceAuthorize.schedulingToken = scheduling.token
+        serviceAuthorize.contract = null
+        serviceAuthorize.contractor = null
+
+        when:
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.schedulingToken == scheduling.token
+               result.scheduling.id == scheduling.id
+               result.contract.id == scheduling.contract.id
+               result.contractor.id == scheduling.contractor.id
+    }
+
     void 'should create prioritizing common data from service authorize even if scheduling is present'() {
         given:
         def contractForScheduling = fixtureCreator.createPersistedContract()
-        def scheduling = Fixture.from(Scheduling.class).uses(jpaProcessor).gimme("valid",
-                new Rule(){{
-                    add("contract", contractForScheduling)
-                    add("contractor", contractForScheduling.contractor)
-                    add("authorizedMember", fixtureCreator.createPersistedAuthorizedMember(contractForScheduling.contractor))
-                    add("paymentInstrument", fixtureCreator.createInstrumentToProduct(contractForScheduling.product, contractForScheduling.contractor))
-                    add("branch", fixtureCreator.createBranchForContract(contractForScheduling))
-                    add("user", fixtureCreator.createUser())
-                }})
+        def scheduling = createScheduling(contractForScheduling)
         def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
         def paymentInstrument = fixtureCreator.createInstrumentToProduct(contract.product, contract.contractor)
         def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, paymentInstrument, scheduling.user)
