@@ -58,7 +58,7 @@ import static br.com.unopay.api.uaa.exception.Errors.SERVICE_AUTHORIZE_SHOULD_NO
 @Entity
 @EqualsAndHashCode(exclude = {"contract"})
 @Table(name = "service_authorize")
-public class ServiceAuthorize implements Serializable {
+public class ServiceAuthorize implements Serializable, Updatable {
 
     public static final long serialVersionUID = 1L;
 
@@ -165,7 +165,7 @@ public class ServiceAuthorize implements Serializable {
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private AuthorizedMember authorizedMember;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="scheduling_id")
     @JsonView({Views.ServiceAuthorize.Detail.class})
     private Scheduling scheduling;
@@ -424,6 +424,52 @@ public class ServiceAuthorize implements Serializable {
     }
 
     public boolean withAuthorizedMember() {
-        return authorizedMember != null;
+        return authorizedMember != null && authorizedMember.getId() != null;
     }
+
+    public boolean hasSchedulingToken() {
+        return schedulingToken != null;
+    }
+
+    public boolean hasScheduling(){
+        return scheduling != null && scheduling.getId() != null;
+    }
+
+    public boolean hasContract(){
+        return contract != null && contract.getId() != null;
+    }
+
+    public boolean hasContractor(){
+        return contractor != null && contractor.getId() != null;
+    }
+
+    public boolean hasPaymentInstrument(){
+        return paymentInstrument != null && paymentInstrument.getId() != null;
+    }
+
+    public void defineContractFrom(Scheduling scheduling){
+        Contract contract = new Contract();
+        contract.setId(scheduling.getContract().getId());
+        this.contract = contract;
+    }
+
+    public void defineContractorFrom(Scheduling scheduling){
+        Contractor contractor = new Contractor();
+        contractor.setId(scheduling.getContractor().getId());
+        this.contractor = contractor;
+    }
+
+    public void definePaymentInstrumentFrom(Scheduling scheduling, String instrumentPassword){
+        PaymentInstrument paymentInstrument = new PaymentInstrument();
+        paymentInstrument.setId(scheduling.getPaymentInstrument().getId());
+        paymentInstrument.setPassword(instrumentPassword);
+        this.paymentInstrument = paymentInstrument;
+    }
+
+    public void defineAuthorizedMemberFrom(Scheduling scheduling){
+        AuthorizedMember authorizedMember = new AuthorizedMember();
+        authorizedMember.setId(scheduling.getAuthorizedMember().getId());
+        this.authorizedMember = authorizedMember;
+    }
+
 }

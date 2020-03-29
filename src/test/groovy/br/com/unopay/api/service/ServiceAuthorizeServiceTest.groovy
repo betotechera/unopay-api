@@ -7,7 +7,9 @@ import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.model.Issuer
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.credit.service.InstrumentBalanceService
+import br.com.unopay.api.network.model.Event
 import br.com.unopay.api.order.model.Order
+import br.com.unopay.api.scheduling.model.Scheduling
 
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.infra.UnopayEncryptor
@@ -116,6 +118,87 @@ class ServiceAuthorizeServiceTest extends SpockApplicationTests {
         assert result.rating != null
     }
 
+    void 'service authorize should be created using common data from scheduling'() {
+        given:
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def scheduling = createScheduling(contract)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, scheduling.paymentInstrument.clone(), scheduling.user)
+        serviceAuthorize.schedulingToken = scheduling.token
+        serviceAuthorize.contract = null
+        serviceAuthorize.contractor = null
+        serviceAuthorize.authorizedMember = null
+        serviceAuthorize.paymentInstrument.id = null
+
+        when:
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.schedulingToken == scheduling.token
+               result.scheduling.id == scheduling.id
+               result.contract.id == scheduling.contract.id
+               result.contractor.id == scheduling.contractor.id
+               result.paymentInstrument.id == scheduling.paymentInstrument.id
+               result.authorizedMember.id == scheduling.authorizedMember.id
+    }
+
+    void 'service authorize should be created by scheduling using only the missing data'() {
+        given:
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def scheduling = createScheduling(contract)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, scheduling.paymentInstrument.clone(), scheduling.user)
+        serviceAuthorize.schedulingToken = scheduling.token
+        serviceAuthorize.contract = null
+        serviceAuthorize.contractor = null
+
+        when:
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.schedulingToken == scheduling.token
+               result.scheduling.id == scheduling.id
+               result.contract.id == scheduling.contract.id
+               result.contractor.id == scheduling.contractor.id
+    }
+
+    void 'should create prioritizing common data from service authorize even if scheduling is present'() {
+        given:
+        def contractForScheduling = fixtureCreator.createPersistedContract()
+        def scheduling = createScheduling(contractForScheduling)
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def paymentInstrument = fixtureCreator.createInstrumentToProduct(contract.product, contract.contractor)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, paymentInstrument, scheduling.user)
+        serviceAuthorize.schedulingToken = scheduling.token
+
+        when:
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        assert result.schedulingToken == scheduling.token
+               result.scheduling.id == scheduling.id
+               result.contract.id != scheduling.contract.id
+               result.contractor.id != scheduling.contractor.id
+               result.paymentInstrument.id != scheduling.paymentInstrument.id
+               result.authorizedMember.id != scheduling.authorizedMember.id
+    }
+
+    void 'should not create service authorize by scheduling if scheduling token wasnt found'() {
+        given:
+        def contract = fixtureCreator.createPersistedContractWithProductIssuerAsHirer()
+        def scheduling = createScheduling(contract)
+        def serviceAuthorize = fixtureCreator.createServiceAuthorizeByScheduling(contract, scheduling.paymentInstrument.clone(), scheduling.user)
+        serviceAuthorize.schedulingToken = '1111'
+
+        when:
+        def created = service.create(serviceAuthorize.user, serviceAuthorize)
+        def result = service.findById(created.id)
+
+        then:
+        def ex = thrown(NotFoundException)
+        assert ex.errors.first().logref == 'SCHEDULING_NOT_FOUND'
+    }
 
     void 'given a known service authorize when cancel should be cancelled'() {
         given:
@@ -1187,4 +1270,18 @@ permission to authorize service without contractor password  in exceptional circ
             add("exceptionalCircumstance", true)
         }})
     }
+
+    private Scheduling createScheduling(Contract contract) {
+        def scheduling = Fixture.from(Scheduling.class).uses(jpaProcessor).gimme("valid", new Rule(){{
+            add("contract", contract)
+            add("contractor", contract.contractor)
+            add("authorizedMember", fixtureCreator.createPersistedAuthorizedMember(contract.contractor))
+            add("paymentInstrument", fixtureCreator.createInstrumentToProduct(contract.product, contract.contractor))
+            add("branch", fixtureCreator.createBranchForContract(contract))
+            add("user", fixtureCreator.createUser())
+        }})
+
+        scheduling
+    }
+
 }

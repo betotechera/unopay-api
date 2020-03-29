@@ -108,7 +108,7 @@ class Scheduling extends Serializable with Updatable {
     var cancellationDate: Date = _
 
     @BatchSize(size = 10)
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @JsonView(Array(classOf[Views.Scheduling.Detail]))
     @JoinTable(name = "scheduling_event",
         joinColumns = Array(new JoinColumn(name = "scheduling_id")),
