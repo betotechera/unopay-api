@@ -3,6 +3,7 @@ package br.com.unopay.api.scheduling.model.filter
 import java.lang.Long
 import java.util.Date
 
+import br.com.unopay.bootcommons.model.Period
 import br.com.unopay.bootcommons.repository.filter.SearchableField
 
 import scala.beans.BeanProperty
@@ -17,8 +18,8 @@ class SchedulingFilter {
     var createdDateTime: Date = _
 
     @BeanProperty
-    @SearchableField(field = "scheduling.date")
-    var date: Date = _
+    @SearchableField(field = "date")
+    var date: Period = _
 
     @BeanProperty
     @SearchableField(field = "branch.name")
