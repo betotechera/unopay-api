@@ -18,7 +18,7 @@ class SchedulingFilter {
     var createdDateTime: Date = _
 
     @BeanProperty
-    @SearchableField(field = "date")
+    @SearchableField
     var date: Period = _
 
     @BeanProperty
