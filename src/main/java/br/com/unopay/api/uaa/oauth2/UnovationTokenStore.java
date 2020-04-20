@@ -63,9 +63,7 @@ public class UnovationTokenStore implements TokenStore {
     }
 
     @Override
-    public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
-        redisTokenStore.removeAccessTokenUsingRefreshToken(refreshToken);
-    }
+    public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) { }
 
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
