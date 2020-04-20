@@ -1,6 +1,8 @@
 package br.com.unopay.api.bacen.util
 
 import br.com.six2six.fixturefactory.Fixture
+import org.springframework.security.access.event.AuthorizedEvent
+
 import static br.com.six2six.fixturefactory.Fixture.from
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.function.impl.RegexFunction
@@ -223,6 +225,23 @@ class FixtureCreator {
         })
     }
 
+    Contract createPersistedContractWithProductIssuerAsHirer(hirer = createHirer(), contractor = createContractor(),
+                                                             situation = ContractSituation.ACTIVE,
+                                                             BigDecimal membershipFee = (Math.random() * 100)) {
+        Product product = createProductWithSameIssuerOfHirer(membershipFee, hirer)
+
+        from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
+            {
+                add("hirer", hirer)
+                add("contractor", contractor)
+                add("product", product)
+                add("serviceTypes", product.serviceTypes)
+                add("situation", situation)
+                add("membershipFee", membershipFee)
+            }
+        })
+    }
+
     List addContractsToEstablishment(Establishment establishment, Product product) {
         def contractA = createPersistedContract(createContractor(), product)
         def contractB = createPersistedContract(createContractor(), product)
@@ -329,6 +348,35 @@ class FixtureCreator {
             add("eventValue", 0.1)
         }})
         authorize.authorizeEvents = authorizeEvent
+        authorize
+    }
+
+    ServiceAuthorize createServiceAuthorizeByScheduling(Contract contract = createPersistedContract(),
+                                                        PaymentInstrument paymentInstrument,
+                                                        UserDetail user,
+                                                        Establishment establishment = createEstablishment(), String dateAsText = "1 day ago") {
+
+        def establishmentEvent = createEstablishmentEvent(establishment)
+        ServiceAuthorize authorize = from(ServiceAuthorize.class).gimme("valid", new Rule() {{
+            createInstrumenBalance(paymentInstrument, establishmentEvent.value)
+            add("contract", contract)
+            add("contractor", contract.contractor)
+            add("user", user)
+            add("authorizationDateTime", instant(dateAsText))
+            add("paymentInstrument", paymentInstrument)
+            add("authorizedMember", createPersistedAuthorizedMember(contract.contractor))
+            add("establishment", establishment)
+            add("paymentInstrument.password", paymentInstrument.password)
+        }})
+
+        def authorizeEvent = from(ServiceAuthorizeEvent.class).gimme(1,"valid", new Rule() {{
+            add("establishmentEvent", establishmentEvent)
+            add("event", establishmentEvent.event)
+            add("serviceType", ServiceType.DOCTORS_APPOINTMENTS)
+            add("eventValue", 0.1)
+        }})
+        authorize.authorizeEvents = authorizeEvent
+
         authorize
     }
 

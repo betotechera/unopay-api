@@ -43,7 +43,7 @@ import static br.com.unopay.api.uaa.exception.Errors.PRODUCT_ID_NOT_MET;
 @Entity
 @EqualsAndHashCode(of = {"id", "number"})
 @Table(name = "payment_instrument")
-public class PaymentInstrument implements Serializable, Updatable {
+public class PaymentInstrument implements Serializable, Updatable, Cloneable {
 
     public static final long serialVersionUID = 1L;
 
