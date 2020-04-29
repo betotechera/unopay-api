@@ -6,7 +6,6 @@ import br.com.unopay.api.bacen.service.IssuerService;
 import br.com.unopay.api.config.ClientConfig;
 import br.com.unopay.api.wingoo.model.Password;
 import br.com.unopay.api.wingoo.model.WingooUserMapping;
-import br.com.wingoo.userclient.client.UserClient;
 import br.com.wingoo.userclient.model.User;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +30,13 @@ public class WingooService {
 
     public User create(Contractor contractor){
         try {
-            return wingooUserClient(contractor.getIssuerDocument()).create(WingooUserMapping.fromContractor(contractor));
+            return wingooOauth2RestTemplate(contractor.getIssuerDocument())
+                    .postForObject(String.format("%s/payment-returning", wingooApi),
+                            WingooUserMapping.fromContractor(contractor),User.class);
         } catch (HttpClientErrorException e){
             log.error(e.getResponseBodyAsString());
             throw e;
         }
-    }
-
-    public UserClient wingooUserClient(String issuerDocument){
-        return new UserClient(wingooOauth2RestTemplate(issuerDocument), String.format("%s/users", wingooApi));
     }
 
     private OAuth2RestTemplate wingooOauth2RestTemplate(String issuerDocument) {
