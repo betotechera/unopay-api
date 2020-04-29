@@ -31,7 +31,7 @@ public class WingooService {
     public User create(Contractor contractor){
         try {
             return wingooOauth2RestTemplate(contractor.getIssuerDocument())
-                    .postForObject(String.format("%s/payment-returning", wingooApi),
+                    .postForObject(String.format("%s/users/payment-returning", wingooApi),
                             WingooUserMapping.fromContractor(contractor),User.class);
         } catch (HttpClientErrorException e){
             log.error(e.getResponseBodyAsString());
