@@ -13,7 +13,6 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath 'net.researchgate:gradle-release:2.4.0'
 		classpath 'org.ajoberstar:gradle-git:1.5.1'
-		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
 		classpath 'no.nils:wsdl2java:0.10'
 	}
 
@@ -21,16 +20,12 @@ buildscript {
 
 plugins {
 	id 'net.researchgate.release' version '2.4.0'
-	id "org.sonarqube" version "2.6.2"
 }
 apply plugin: 'scala'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'groovy'
-apply plugin: 'org.ajoberstar.grgit'
-apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco'
 apply plugin: 'idea'
 apply plugin: 'no.nils.wsdl2java'
 
@@ -155,45 +150,10 @@ bootRun {
 	systemProperties System.properties
 }
 
-task removeReleases(type: Exec) {
-	commandLine "bash", "-c", " cd releases; ls -t | tail -n 2 | xargs rm"
-}
-
-task backupJar(type: Copy, dependsOn: removeReleases) {
-	from "build/libs/unopay-api-${version}.jar"
-	into 'releases'
-	doLast {
-		grgit.add(patterns: ['releases'])
-		grgit.commit(message: "Committing release jar version ${version}", amend: true)
-		grgit.pull()
-		grgit.push()
-	}
-}
-
-task copyJacoco(type: Copy) {
-	from "build/jacoco/test.exec"
-	into "releases"
-	rename ('test.exec', "jacoco-api-${version}.exec")
-	doLast {
-		grgit.add(patterns: ['releases'])
-		grgit.commit(message: "Committing jacoco report to version: ${version}", amend: true)
-		grgit.pull()
-		grgit.push()
-	}
-}
 
 compileJava.dependsOn compileScala
 compileScala.dependsOn.remove("compileJava")
 
-// test.finalizedBy('sonarqube')
-
-sonarqube {
-    properties {
-        property 'sonar.projectName', 'unopay-api'
-		property 'sonar.projectKey', 'unopay-api'
-		property 'sonar.exclusions', ['**/*.html']
-    }
-}
 
 sourceSets {
 	main {
