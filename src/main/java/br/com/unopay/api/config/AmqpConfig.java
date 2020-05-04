@@ -24,24 +24,14 @@ class AmqpConfig {
 
 
     @Bean
-    public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory,
-                                                                                      RabbitTemplate rabbitTemplate) {
+    public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDefaultRequeueRejected(false);
         factory.setMissingQueuesFatal(false);
-        factory.setAdviceChain(retryWithDelayedQueueInterceptor());
         factory.setMaxConcurrentConsumers(10);
         factory.setConcurrentConsumers(5);
         return factory;
-    }
-
-    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor() {
-        RejectAndDontRequeueRecoverer recover = new RejectAndDontRequeueRecoverer();
-        return RetryInterceptorBuilder.stateless()
-                .maxAttempts(1)
-                .recoverer(recover)
-                .build();
     }
 
     @Bean
@@ -79,13 +69,6 @@ class AmqpConfig {
         Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName);
         amqpAdmin.declareExchange(exchange);
         amqpAdmin.declareQueue(queue);
-        amqpAdmin.declareBinding(binding);
-    }
-
-    private void declareBinding(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {
-        Exchange exchange = new FanoutExchange(exchangeName);
-        Queue queue = new Queue(queueName, true);
-        Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName).noargs();
         amqpAdmin.declareBinding(binding);
     }
 }
