@@ -1,6 +1,6 @@
 package br.com.unopay.api.network.model.filter
 
-import br.com.wingoo.reusable.repository.filter.SearchableField
+import br.com.unopay.bootcommons.repository.filter.SearchableField
 
 import scala.beans.BeanProperty
 

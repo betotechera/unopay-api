@@ -14,6 +14,8 @@ buildscript {
 		classpath 'net.researchgate:gradle-release:2.4.0'
 		classpath 'org.ajoberstar:gradle-git:1.5.1'
 		classpath 'no.nils:wsdl2java:0.10'
+		classpath 'ru.vyarus:gradle-pom-plugin:1.1.0'
+
 	}
 
 }
@@ -53,10 +55,16 @@ repositories {
 	mavenLocal()
     mavenCentral()
 	jcenter()
-	maven { url "${nexusUrl}/content/repositories/thirdparty/" }
-	maven { url "${nexusUrl}/content/repositories/releases/" }
-	maven { url "${nexusUrl}/content/repositories/Unovation_Releases/" }
-	maven { url "${nexusUrl}/content/repositories/Unovation/" }
+	maven {
+		url 'https://plugins.gradle.org/m2/'
+	}
+	maven {
+		url 'https://mymavenrepo.com/repo/ajlejeQRlUZnaAQLI1nJ/releases'
+		credentials {
+			username 'myMavenRepo'
+			password '286J3EEhcnRW'
+		}
+	}
 }
 
 springBoot {
@@ -64,13 +72,14 @@ springBoot {
 }
 
 dependencies {
-	compile 'br.com.unopay:unopay-common-dependencies:0.0.7'
 	compile 'br.com.unopay:itau-autorizador-boletos:0.0.2'
-	compile 'br.com.wingoo:wingoo-user-client:0.0.20'
-	compile 'br.com.wingoo:wingoo-reusable:0.0.17'
-	compile 'br.com.unopay:unopay-boot-commons:0.0.42'
+	compile 'br.com.wingoo:wingoo-user-client:0.0.21'
+	compile 'br.com.unopay:unopay-boot-commons:0.0.45'
 	compile 'io.springfox:springfox-swagger2:2.4.0'
-
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'org.springframework.boot:spring-boot-starter-actuator'
+	compile 'org.springframework.boot:spring-boot-starter-data-redis'
+	compile 'org.springframework.boot:spring-boot-starter-aop'
 	compile 'org.springframework.boot:spring-boot-starter-security'
 	compile 'org.springframework.security.oauth:spring-security-oauth2'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'

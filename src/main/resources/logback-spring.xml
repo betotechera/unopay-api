@@ -20,7 +20,7 @@
         </encoder>
     </appender>
 
-    <springProfile name="qa">
+    <!--<springProfile name="qa">
         <appender name="SYSLOG_QA" class="ch.qos.logback.classic.net.SyslogAppender">
             <syslogHost>splunk.unvlocal.com.br</syslogHost>
             <port>5501</port>
@@ -37,19 +37,19 @@
             <suffixPattern>${suffixPattern}</suffixPattern>
             <throwableExcluded>true</throwableExcluded>
         </appender>
-    </springProfile>
+    </springProfile>-->
 
     <logger name="br.com.unopay" level="INFO" />
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="dailyRollingFile" />
-        <springProfile name="qa">
+        <!--<springProfile name="qa">
             <appender-ref ref="SYSLOG_QA" />
         </springProfile>
         <springProfile name="prod">
             <appender-ref ref="SYSLOG_PROD" />
-        </springProfile>
+        </springProfile>-->
     </root>
 
 
