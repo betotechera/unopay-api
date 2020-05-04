@@ -81,11 +81,6 @@ spring:
   redis:
     host: redis-qa.unvlocal.com.br
     port: 6379
-  rabbitmq:
-    host: rabbit-qa.unvlocal.com.br
-    port: 5672
-    username: unopay
-    password: unopay
   mail:
     default-encoding: UTF-8
     host: smtp.unvlocal.com.br

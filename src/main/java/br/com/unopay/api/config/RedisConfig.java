@@ -12,9 +12,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 class RedisConfig {
-
     @Autowired
     RedisTemplate redisTemplate;
+
 
     @Bean
     @Primary

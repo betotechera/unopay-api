@@ -1,8 +1,6 @@
 package br.com.unopay.api.config;
 
 import br.com.unopay.bootcommons.amqp.RetryMessageRecoverer;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -14,11 +12,9 @@ import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -28,39 +24,21 @@ import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 @Profile("!test")
 class AmqpConfig {
 
-    @Autowired
-    RabbitMessagingTemplate amqpTemplate;
 
     @Bean
-    public ConnectionFactory connectionFactory() {
-        final URI rabbitMqUrl;
-        try {
-            rabbitMqUrl = new URI(System.getenv("CLOUDAMQP_URL"));
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        final CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setUsername(rabbitMqUrl.getUserInfo().split(":")[0]);
-        factory.setPassword(rabbitMqUrl.getUserInfo().split(":")[1]);
-        factory.setHost(rabbitMqUrl.getHost());
-        factory.setPort(rabbitMqUrl.getPort());
-        factory.setVirtualHost(rabbitMqUrl.getPath().substring(1));
-        return factory;
-    }
-
-    @Bean
-    public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+    public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory,
+                                                                                      RabbitMessagingTemplate amqpTemplate) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDefaultRequeueRejected(false);
         factory.setMissingQueuesFatal(false);
-        factory.setAdviceChain(retryWithDelayedQueueInterceptor());
+        factory.setAdviceChain(retryWithDelayedQueueInterceptor(amqpTemplate));
         factory.setMaxConcurrentConsumers(10);
         factory.setConcurrentConsumers(5);
         return factory;
     }
 
-    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor() {
+    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor(RabbitMessagingTemplate amqpTemplate) {
         RetryMessageRecoverer recover = new RetryMessageRecoverer(amqpTemplate, 5,2,60);
         return RetryInterceptorBuilder.stateless()
                 .maxAttempts(1)

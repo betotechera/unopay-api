@@ -82,11 +82,6 @@ spring:
   redis:
     host: redis-prod.unvlocal.com.br
     port: 6379
-  rabbitmq:
-    host: rabbit-prod.unvlocal.com.br
-    port: 5672
-    username: unopay
-    password: unopay
   mail:
     default-encoding: UTF-8
     host: smtp.sendgrid.net
