@@ -1,6 +1,8 @@
 package br.com.unopay.api.config;
 
 import br.com.unopay.bootcommons.amqp.RetryMessageRecoverer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -12,6 +14,7 @@ import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +30,23 @@ class AmqpConfig {
 
     @Autowired
     RabbitMessagingTemplate amqpTemplate;
+
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        final URI rabbitMqUrl;
+        try {
+            rabbitMqUrl = new URI(System.getenv("CLOUDAMQP_URL"));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        final CachingConnectionFactory factory = new CachingConnectionFactory();
+        factory.setUsername(rabbitMqUrl.getUserInfo().split(":")[0]);
+        factory.setPassword(rabbitMqUrl.getUserInfo().split(":")[1]);
+        factory.setHost(rabbitMqUrl.getHost());
+        factory.setPort(rabbitMqUrl.getPort());
+        factory.setVirtualHost(rabbitMqUrl.getPath().substring(1));
+        return factory;
+    }
 
     @Bean
     public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
