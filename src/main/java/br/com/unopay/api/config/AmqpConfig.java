@@ -29,9 +29,18 @@ class AmqpConfig {
         factory.setConnectionFactory(connectionFactory);
         factory.setDefaultRequeueRejected(false);
         factory.setMissingQueuesFatal(false);
+        factory.setAdviceChain(retryWithDelayedQueueInterceptor());
         factory.setMaxConcurrentConsumers(10);
         factory.setConcurrentConsumers(5);
         return factory;
+    }
+
+    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor() {
+        RejectAndDontRequeueRecoverer recover = new RejectAndDontRequeueRecoverer();
+        return RetryInterceptorBuilder.stateless()
+                .maxAttempts(1)
+                .recoverer(recover)
+                .build();
     }
 
     @Bean
@@ -64,7 +73,6 @@ class AmqpConfig {
 
     private void declareQueue(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {
         DirectExchange exchange = new DirectExchange(exchangeName);
-        exchange.setDelayed(true);
         Queue queue = new Queue(queueName, true);
         Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName);
         amqpAdmin.declareExchange(exchange);

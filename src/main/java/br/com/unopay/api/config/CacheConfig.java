@@ -2,6 +2,8 @@ package br.com.unopay.api.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -28,22 +30,37 @@ public class CacheConfig {
     public static final long DEFAULT_EXPIRATION_SECONDS = TimeUnit.MINUTES.toSeconds(30);
     public static final Map<String, Long> EXPIRATION_MAP = new HashMap<>();
 
-    public RedisTemplate redisTemplate() {
+
+    public RedisTemplate redisTemplate() throws URISyntaxException {
+        JedisConnectionFactory jedisConnectionFactory = getJedisConnectionFactory();
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(jedisConnectionFactory);
+        return redisTemplate;
+    }
+
+    private JedisConnectionFactory getJedisConnectionFactory() throws URISyntaxException {
+        JedisPoolConfig poolConfig = getJedisPoolConfig();
+        URI redisURI = new URI(System.getenv("REDIS_URL"));
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);
+        jedisConnectionFactory.setHostName(redisURI.getHost());
+        jedisConnectionFactory.setPort(redisURI.getPort());
+        jedisConnectionFactory.setPassword(redisURI.getUserInfo().split(":")[1]);
+        return jedisConnectionFactory;
+    }
+
+    private JedisPoolConfig getJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxIdle(5);
         poolConfig.setMinIdle(1);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);
-        RedisTemplate redisTemplate = new RedisTemplate();
-        redisTemplate.setConnectionFactory(jedisConnectionFactory);
-        return redisTemplate;
+        return poolConfig;
     }
 
-    @Primary
     @Bean
-    public RedisCacheManager cacheManager(ObjectMapper objectMapper) {
+    @Primary
+    public RedisCacheManager cacheManager(ObjectMapper objectMapper) throws URISyntaxException {
         RedisTemplate redisTemplate = redisTemplate();
         RedisCacheManager cache = new RedisCacheManager(redisTemplate);
         cache.setDefaultExpiration(0);
