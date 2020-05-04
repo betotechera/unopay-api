@@ -14,12 +14,31 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 @Configuration
 public class DataSourceConfig {
 
-    @Profile({"qa", "dev", "prod"})
+    /*@Profile({"qa", "dev", "prod"})
     @Primary
     @Bean(name = "datasource")
     @ConfigurationProperties(prefix="spring.datasource")
     public DataSource datasource() {
         return DataSourceBuilder.create().build();
+    }*/
+
+    @Bean
+    @Profile({"qa", "dev", "prod"})
+    @Primary
+    @Bean(name = "datasource")
+    public BasicDataSource dataSource() throws URISyntaxException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+
+        BasicDataSource basicDataSource = new BasicDataSource();
+        basicDataSource.setUrl(dbUrl);
+        basicDataSource.setUsername(username);
+        basicDataSource.setPassword(password);
+
+        return basicDataSource;
     }
 
     @Primary
