@@ -1,19 +1,17 @@
 package br.com.unopay.api.config;
 
-import br.com.unopay.bootcommons.amqp.RetryMessageRecoverer;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.CustomExchange;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,19 +25,19 @@ class AmqpConfig {
 
     @Bean
     public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory,
-                                                                                      RabbitMessagingTemplate amqpTemplate) {
+                                                                                      RabbitTemplate rabbitTemplate) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDefaultRequeueRejected(false);
         factory.setMissingQueuesFatal(false);
-        factory.setAdviceChain(retryWithDelayedQueueInterceptor(amqpTemplate));
+        factory.setAdviceChain(retryWithDelayedQueueInterceptor());
         factory.setMaxConcurrentConsumers(10);
         factory.setConcurrentConsumers(5);
         return factory;
     }
 
-    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor(RabbitMessagingTemplate amqpTemplate) {
-        RetryMessageRecoverer recover = new RetryMessageRecoverer(amqpTemplate, 5,2,60);
+    private RetryOperationsInterceptor retryWithDelayedQueueInterceptor() {
+        RejectAndDontRequeueRecoverer recover = new RejectAndDontRequeueRecoverer();
         return RetryInterceptorBuilder.stateless()
                 .maxAttempts(1)
                 .recoverer(recover)
@@ -75,19 +73,13 @@ class AmqpConfig {
     }
 
     private void declareQueue(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {
-        Map<String,Object> args = getArgsMap();
-        Exchange exchange = new CustomExchange(exchangeName, "x-delayed-message", true, false, args);
+        DirectExchange exchange = new DirectExchange(exchangeName);
+        exchange.setDelayed(true);
         Queue queue = new Queue(queueName, true);
-        Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName).and(args);
+        Binding binding = BindingBuilder.bind(queue).to(exchange).with(exchangeName);
         amqpAdmin.declareExchange(exchange);
         amqpAdmin.declareQueue(queue);
         amqpAdmin.declareBinding(binding);
-    }
-
-    private Map<String, Object> getArgsMap() {
-        Map<String, Object> argsMap = new HashMap<>();
-        argsMap.put("x-delayed-type", "direct");
-        return argsMap;
     }
 
     private void declareBinding(AmqpAdmin amqpAdmin, String queueName, String exchangeName) {

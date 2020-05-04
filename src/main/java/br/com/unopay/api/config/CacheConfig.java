@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 @Profile({"!test"})
@@ -27,12 +28,23 @@ public class CacheConfig {
     public static final long DEFAULT_EXPIRATION_SECONDS = TimeUnit.MINUTES.toSeconds(30);
     public static final Map<String, Long> EXPIRATION_MAP = new HashMap<>();
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    public RedisTemplate redisTemplate() {
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxIdle(5);
+        poolConfig.setMinIdle(1);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(jedisConnectionFactory);
+        return redisTemplate;
+    }
 
     @Primary
     @Bean
     public RedisCacheManager cacheManager(ObjectMapper objectMapper) {
+        RedisTemplate redisTemplate = redisTemplate();
         RedisCacheManager cache = new RedisCacheManager(redisTemplate);
         cache.setDefaultExpiration(0);
         cache.setUsePrefix(true);
