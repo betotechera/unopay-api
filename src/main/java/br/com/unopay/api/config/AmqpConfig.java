@@ -4,13 +4,10 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +18,6 @@ import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 @Configuration
 @Profile("!test")
 class AmqpConfig {
-
 
     @Bean
     public SimpleRabbitListenerContainerFactory durableRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
