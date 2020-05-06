@@ -83,8 +83,13 @@ spring:
     port: 6379
   mail:
     default-encoding: UTF-8
-    host: smtp.unvlocal.com.br
-    port: 1025
-    test-connection: false
+    host: smtp.sendgrid.net
+    username: apikey
+    password: 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
+    port: 587
+    test-connection: true
     properties:
       mail.smtp.host: smtp.gmail.com
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.timeout: 60000
