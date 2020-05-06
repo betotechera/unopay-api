@@ -110,8 +110,7 @@ public class OrderValidator {
 
     public void checkContractorRules(Order order) {
         Optional<Contractor> contractor = contractorService.getOptionalByDocument(order.getDocumentNumber());
-        checkAdhesionWhenRequired(order, contractor.orElse(null));
-
+        checkAdhesionWhenRequired(order);
         if (!contractor.isPresent() || order.isType(INSTALLMENT_PAYMENT)) {
             order.setPaymentInstrument(null);
         }
@@ -121,14 +120,11 @@ public class OrderValidator {
         contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
     }
 
-    private void checkAdhesionWhenRequired(Order order, Contractor contractor) {
+    private void checkAdhesionWhenRequired(Order order) {
         Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
         if(order.isType(OrderType.ADHESION)) {
             if (existingUser.isPresent() && order.mustCreateUser()) {
                 throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
-            }
-            if (contractor!=null) {
-                throw UnovationExceptions.conflict().withErrors(EXISTING_CONTRACTOR);
             }
             if(order.hasBillingMail()) {
                 this.mailValidator.check(order.getBillingMail());

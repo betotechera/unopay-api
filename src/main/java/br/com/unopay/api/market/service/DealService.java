@@ -83,9 +83,7 @@ public class DealService {
     @Transactional
     public Contract closeWithIssuerAsHirer(final Order order, Set<AuthorizedMemberCandidate> candidates){
         Deal deal = new Deal(order, candidates);
-        checkContractor(deal.getPerson().documentNumber());
-        Contractor contractor = contractorService.create(new Contractor(deal.getPerson()));
-        return close(deal, contractor);
+        return close(deal, getExistingContractorOrCreate(deal.getPerson()));
     }
 
     @Transactional
@@ -96,11 +94,13 @@ public class DealService {
     @Transactional
     public Contract close(final Person person, final String productCode, final String hirerDocument, final Boolean createUser){
         Deal deal = new Deal(person, hirerDocument, productCode, createUser);
-        Optional<Contractor> currentContractor = contractorService.getOptionalByDocument(person.documentNumber());
-        Contractor contractor = currentContractor.orElseGet(() -> contractorService.create(new Contractor(person)));
-        return close(deal, contractor);
+        return close(deal, getExistingContractorOrCreate(person));
     }
 
+    private Contractor getExistingContractorOrCreate(Person person) {
+        Optional<Contractor> currentContractor = contractorService.getOptionalByDocument(person.documentNumber());
+        return currentContractor.orElseGet(() -> contractorService.create(new Contractor(person)));
+    }
 
     @SneakyThrows
     @Transactional
