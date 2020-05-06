@@ -40,10 +40,6 @@ jar {
 	version = version
 }
 
-idea {
-	targetVersion = "13"
-}
-
 springBoot {
 	executable = true
 }
