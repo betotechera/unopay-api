@@ -15,7 +15,7 @@ addressSearch:
   url: http://api.postmon.com.br/v1/cep/
 management:
   security:
-    enabled: false
+    enabled: true
   context-path: /devops
 spring:
   mvc:
