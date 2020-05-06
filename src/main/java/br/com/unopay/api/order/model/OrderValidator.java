@@ -117,7 +117,9 @@ public class OrderValidator {
         if(order.isType(OrderType.CREDIT)) {
             contractor.ifPresent(it -> checkCreditRules(order));
         }
-        contractor.ifPresent(c -> order.setContract(contractService.findById(order.getContractId())));
+        if (!order.isType(OrderType.ADHESION) && contractor.isPresent()){
+            order.setContract(contractService.findById(order.getContractId()));
+        }
     }
 
     private void checkAdhesionWhenRequired(Order order) {
