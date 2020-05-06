@@ -275,7 +275,7 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'ORDER_NOT_FOUND'
     }
 
-    def 'given a known contractor and adhesion order should return error'(){
+    def 'given a known contractor and adhesion order should not return error'(){
         given:
         def contractor = fixtureCreator.createContractor()
         def product = fixtureCreator.createProduct()
@@ -288,11 +288,11 @@ class OrderServiceTest extends SpockApplicationTests{
         }})
 
         when:
-        service.create(creditOrder)
+        def created = service.create(creditOrder)
+        def result = service.findById(created.id)
 
         then:
-        def ex = thrown(ConflictException)
-        assert ex.errors.first().logref == 'EXISTING_CONTRACTOR'
+        result
     }
 
     def 'given a known contractor and Credit order without payment instrument should return error'(){

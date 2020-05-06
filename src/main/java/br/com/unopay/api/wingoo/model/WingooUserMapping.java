@@ -20,7 +20,9 @@ public class WingooUserMapping implements Serializable{
         user.setBirthDate(contractor.getPerson().getPhysicalPersonDetail().getBirthDate());
         user.setDocumentNumber(contractor.getDocumentNumber());
         user.setCellphone(contractor.getPerson().getCellPhone());
-        user.setGender(contractor.getPerson().getPhysicalPersonDetail().getGender().getDescription());
+        if(contractor.getPerson().getPhysicalPersonDetail().getGender() != null) {
+            user.setGender(contractor.getPerson().getPhysicalPersonDetail().getGender().getDescription());
+        }
         Address address = contractor.getPerson().getAddress();
         String originalZipCode = address.getZipCode();
         user.setZipCode(String.format(FORMAT, originalZipCode.substring(0, 5), originalZipCode.substring(5)));

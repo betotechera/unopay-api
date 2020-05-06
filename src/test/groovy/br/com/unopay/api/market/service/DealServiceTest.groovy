@@ -444,18 +444,18 @@ class DealServiceTest extends SpockApplicationTests{
         assert result.id != null
     }
 
-    def 'when deal close for known contractor should return error'(){
+    def 'when deal close for known contractor should not return error'(){
         given:
         def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         def contractor = fixtureCreator.createContractor()
 
         when:
-        service.closeWithIssuerAsHirer(new Order(contractor.person, product, createUser), candidates)
+        def created = service.closeWithIssuerAsHirer(new Order(contractor.person, product, createUser), candidates as Set<AuthorizedMemberCandidate>)
+        def result = installmentService.findByContractId(created.id)
 
         then:
-        def ex = thrown(ConflictException)
-        assert ex.errors.first().logref == 'EXISTING_CONTRACTOR'
+        result
     }
 
 
