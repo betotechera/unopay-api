@@ -5,7 +5,6 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
-import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.model.Contract;
@@ -31,7 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +90,7 @@ public class ContractService {
 
     public Contract create(Contract contract, Boolean forHirer) {
         try {
-            checkContract(contract);
+            checkContract(contract.getContractor().getDocumentNumber(), contract.getProduct().getCode());
             validateReferences(contract);
             contract.validate();
             contract.checkFields();
@@ -119,12 +117,11 @@ public class ContractService {
         installmentService.create(created);
     }
 
-    private void checkContract(Contract contract) {
-        Optional<Contract> contractOptional = findByContractorAndProduct(contract.getContractor().getDocumentNumber(),
-                contract.getProduct().getCode());
-        contractOptional.ifPresent((ThrowingConsumer)-> {
+    public void checkContract(String contractorDocument, String productCode) {
+        Optional<Contract> contractOptional = findByContractorAndProduct(contractorDocument, productCode);
+        contractOptional.ifPresent(it -> {
             throw UnovationExceptions.conflict()
-                    .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(contract.getCode()));
+                    .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(it.getCode()));
         });
     }
 
@@ -244,8 +241,8 @@ public class ContractService {
         return repository.findByHirerIdAndSituation(hirerId, ContractSituation.ACTIVE);
     }
 
-    public Optional<Contract> findByContractorAndProduct(String document, String productId) {
-        return repository.findByContractorPersonDocumentNumberAndProductId(document, productId);
+    public Optional<Contract> findByContractorAndProduct(String document, String productCode) {
+        return repository.findByContractorPersonDocumentNumberAndProductCode(document, productCode);
     }
 
     public List<Contract> getMeValidContracts(String userEmail, String productCode) {

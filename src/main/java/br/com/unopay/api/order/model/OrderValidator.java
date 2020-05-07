@@ -123,14 +123,15 @@ public class OrderValidator {
     }
 
     private void checkAdhesionWhenRequired(Order order) {
-        Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
         if(order.isType(OrderType.ADHESION)) {
-            if (existingUser.isPresent() && order.mustCreateUser()) {
-                throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
-            }
             if(order.hasBillingMail()) {
                 this.mailValidator.check(order.getBillingMail());
             }
+            Optional<UserDetail> existingUser = userDetailService.getByEmailOptional(order.getBillingMail());
+            if (existingUser.isPresent() && order.mustCreateUser()) {
+                throw UnovationExceptions.conflict().withErrors(USER_ALREADY_EXISTS);
+            }
+            contractService.checkContract(order.getDocumentNumber(), order.getProductCode());
         }
 
     }

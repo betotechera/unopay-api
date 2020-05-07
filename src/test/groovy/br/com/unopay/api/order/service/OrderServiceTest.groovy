@@ -78,6 +78,23 @@ class OrderServiceTest extends SpockApplicationTests{
         result != null
     }
 
+    def 'given an previous contract for the same contractor and product should return error in an adhesion order'(){
+        given:
+        Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
+            add("type", OrderType.ADHESION)
+            add("status", PaymentStatus.WAITING_PAYMENT)
+            add("person", contractUnderTest.getContractor().getPerson())
+            add("product", contractUnderTest.getProduct())
+        }})
+
+        when:
+        service.create(creditOrder)
+
+        then:
+        def ex = thrown(ConflictException)
+        assert ex.errors.first().logref == 'CONTRACT_ALREADY_EXISTS'
+    }
+
     def 'given a unknown order when trying process the payment should return error'(){
         given:
         Order unknownOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
