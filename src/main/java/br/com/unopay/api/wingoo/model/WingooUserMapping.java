@@ -4,9 +4,13 @@ import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.uaa.config.PasswordEncoderConfig;
 import br.com.wingoo.userclient.model.User;
+import java.io.IOException;
 import java.io.Serializable;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.codehaus.jackson.map.ObjectMapper;
 
+@Slf4j
 @Data
 public class WingooUserMapping implements Serializable{
 
@@ -37,6 +41,13 @@ public class WingooUserMapping implements Serializable{
             user.setEncryptedPassword(new PasswordEncoderConfig().passwordEncoder().encode(contractor.getPassword()));
         }
         user.setHirerDocument(contractor.getHirerDocument());
+        try {
+            log.info("Sending a user to the Wingoo system");
+            String userAsString = new ObjectMapper().writeValueAsString(user);
+            log.info(userAsString);
+        } catch (IOException e) {
+            log.warn("Error when trying to serializer the wingoo user model {}", e.getMessage());
+        }
         return user;
     }
 }
