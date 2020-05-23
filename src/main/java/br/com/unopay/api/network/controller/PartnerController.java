@@ -93,7 +93,7 @@ public class PartnerController {
 
     @JsonView(Views.Partner.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/partners", method = RequestMethod.GET)
     public Results<Partner> getByParams(PartnerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Partner with filter={}", filter);

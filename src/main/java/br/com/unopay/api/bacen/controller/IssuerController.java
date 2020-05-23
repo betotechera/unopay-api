@@ -206,7 +206,7 @@ public class IssuerController {
 
     @JsonView(Views.Issuer.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/issuers", method = RequestMethod.GET)
     public Results<Issuer> getByParams(IssuerFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search issuer with filter={}", filter);

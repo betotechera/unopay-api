@@ -33,7 +33,7 @@ public class BankController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/banks", method = RequestMethod.GET)
     public Results<Bank> getAll(@Validated UnovationPageRequest pageable) {
         log.info("get banks");

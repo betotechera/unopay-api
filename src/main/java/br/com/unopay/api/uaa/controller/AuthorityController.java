@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Timed(prefix = "api")
-@PreAuthorize("#oauth2.isClient()")
+@PreAuthorize("isAuthenticated()")
 public class AuthorityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorityController.class);

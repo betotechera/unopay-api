@@ -68,7 +68,7 @@ public class OrderController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(CREATED)
-    @PreAuthorize("#oauth2.isClient() || #oauth2.isUser()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/orders", method = POST, params = "type=ADHESION")
     public ResponseEntity<Order> createAdhesion(@Validated(Create.Order.Adhesion.class) @RequestBody Order order) {
         log.info("creating adhesion order {}", order);
@@ -107,7 +107,7 @@ public class OrderController {
 
     @JsonView(Views.Order.Detail.class)
     @ResponseStatus(ACCEPTED)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/orders/{id}", method = PUT, params = "request-payment")
     public Order create(@PathVariable  String id,
                                         @Validated(Create.Order.class) @RequestBody PaymentRequest paymentRequest) {
@@ -116,7 +116,7 @@ public class OrderController {
     }
 
     @ResponseStatus(OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/orders/summaries", method = GET, params = "document")
     public Set<OrderSummary> summarize(@RequestParam String document) {
         log.info("new payment for order={}", document);

@@ -81,7 +81,7 @@ public class ServiceController {
 
     @JsonView(Views.Service.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient() || #oauth2.isUser()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public Results<Service> getByParams(ServiceFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Service by filter with filter={}", filter);

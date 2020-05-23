@@ -179,7 +179,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/users/password", method = PUT)
     public void updatePasswordByToken(@RequestBody @Validated NewPassword passwordChange) {
         LOGGER.info("password token change request. token={}", passwordChange.getToken());
@@ -212,7 +212,7 @@ public class UserDetailController {
     }
 
     @ResponseStatus(NO_CONTENT)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/users/password", method = GET, params = "email")
     public void resetPasswordByEmail(HttpServletRequest request, @RequestParam String origin) {
         String email = request.getParameter("email");

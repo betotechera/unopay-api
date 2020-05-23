@@ -38,7 +38,7 @@ public class UserTypeController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/user-types", method = RequestMethod.GET)
     public Results<UserType> findAll() {
         LOGGER.info("find all user types");

@@ -25,7 +25,7 @@ public class PersonController {
 
     @JsonView(Views.Person.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/persons", method = RequestMethod.GET)
     public ResponseEntity<Person> findPerson(PersonFilter filter) {
         log.info("find Person  with filter={}", filter);
@@ -35,7 +35,7 @@ public class PersonController {
 
     @JsonView(Views.Person.Detail.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/persons/{documentNumber}", method = RequestMethod.GET)
     public ResponseEntity<Person> findPersonByDocument(@PathVariable String documentNumber) {
         log.info("find Person  by document={}", documentNumber);

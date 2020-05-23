@@ -85,7 +85,7 @@ public class PaymentRuleGroupController {
 
     @JsonView(Views.PaymentRuleGroup.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/payment-rule-groups", method = RequestMethod.GET)
     public Results<PaymentRuleGroup> getByParams(PaymentRuleGroupFilter filter,
                                                  @Validated UnovationPageRequest pageable) {

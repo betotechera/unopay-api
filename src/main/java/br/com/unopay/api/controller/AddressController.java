@@ -26,7 +26,7 @@ public class AddressController {
 
     @JsonView(Views.Address.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/addresses", method = RequestMethod.GET)
     public ResponseEntity<Address> searchAddress(@RequestParam @Valid
                                                  @Pattern(regexp = "\\d{8}", message = "invalid zipCode!")

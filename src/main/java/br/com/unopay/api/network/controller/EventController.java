@@ -82,7 +82,7 @@ public class EventController {
 
     @JsonView(Views.Event.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient() || #oauth2.isUser()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/events", method = RequestMethod.GET)
     public Results<Event> getByParams(EventFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search event with filter={}", filter);

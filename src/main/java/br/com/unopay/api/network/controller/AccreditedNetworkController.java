@@ -149,7 +149,7 @@ public class AccreditedNetworkController {
 
     @JsonView(Views.AccreditedNetwork.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/accredited-networks", method = RequestMethod.GET)
     public Results<AccreditedNetwork> getByParams(AccreditedNetworkFilter filter,
                                                   @Validated UnovationPageRequest pageable) {

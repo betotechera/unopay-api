@@ -89,7 +89,7 @@ public class InstitutionController {
 
     @JsonView(Views.Institution.List.class)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#oauth2.isClient()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/institutions", method = RequestMethod.GET)
     public Results<Institution> getByParams(InstitutionFilter filter, @Validated UnovationPageRequest pageable) {
         log.info("search Institution with filter={}", filter);
