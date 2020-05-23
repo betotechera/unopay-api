@@ -1,7 +1,9 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Institution;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.network.repository.AccreditedNetworkRepository;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
@@ -139,6 +141,13 @@ public class PaymentRuleGroupService {
     public void delete(String id) {
         getById(id);
         deleteIfPossible(id);
+    }
+
+    public List<PaymentRuleGroup> listForMenu() {
+        PaymentRuleGroupFilter filter = new PaymentRuleGroupFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
     private void deleteIfPossible(String id) {

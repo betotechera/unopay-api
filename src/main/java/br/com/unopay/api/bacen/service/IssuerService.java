@@ -1,7 +1,9 @@
 package br.com.unopay.api.bacen.service;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.PaymentBankAccount;
+import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.repository.IssuerRepository;
 import br.com.unopay.api.job.RemittanceJob;
@@ -12,6 +14,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.Setter;
@@ -119,6 +122,13 @@ public class IssuerService {
 
     public Page<Issuer> findByFilter(IssuerFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+
+    public List<Issuer> listForMenu() {
+        IssuerFilter filter = new IssuerFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
     private void createRequiredReferences(Issuer issuer) {

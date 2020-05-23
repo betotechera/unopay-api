@@ -6,11 +6,13 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.ContractorFilter;
 import br.com.unopay.api.bacen.repository.ContractorRepository;
 import br.com.unopay.api.model.Contract;
+import br.com.unopay.api.model.filter.ContractFilter;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.repository.UserDetailRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -145,6 +147,13 @@ public class ContractorService {
             throw UnovationExceptions.conflict().withErrors(CONTRACTOR_WITH_USERS);
         }
         repository.delete(id);
+    }
+
+    public List<Contractor> listForMenu() {
+        ContractorFilter filter = new ContractorFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
     private Boolean hasUser(String id) {

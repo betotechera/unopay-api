@@ -1,5 +1,6 @@
 package br.com.unopay.api.bacen.controller;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.PaymentRuleGroup;
 import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.service.PaymentRuleGroupService;
@@ -12,6 +13,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,6 +96,14 @@ public class PaymentRuleGroupController {
         Page<PaymentRuleGroup> page =  paymentRuleGroupService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/payment-rule-groups", api));
+    }
+
+    @JsonView(Views.PaymentRuleGroup.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/payment-rule-groups/menu")
+    List<PaymentRuleGroup> listForMenu() {
+        return paymentRuleGroupService.listForMenu();
     }
 
 }

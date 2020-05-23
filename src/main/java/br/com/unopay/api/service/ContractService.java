@@ -3,6 +3,8 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.PaymentRuleGroup;
+import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.config.Queues;
@@ -107,6 +109,13 @@ public class ContractService {
 
     public Contract save(Contract contract) {
         return repository.save(contract);
+    }
+
+    public List<Contract> listForMenu() {
+        ContractFilter filter = new ContractFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
     private void createInstallment(Boolean forHirer, Contract created) {

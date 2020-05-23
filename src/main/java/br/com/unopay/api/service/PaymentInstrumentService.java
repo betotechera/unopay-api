@@ -2,6 +2,7 @@ package br.com.unopay.api.service;
 
 import br.com.unopay.api.InstrumentNumberGenerator;
 import br.com.unopay.api.bacen.model.Issuer;
+import br.com.unopay.api.bacen.model.filter.IssuerFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.PaymentInstrumentSituation;
@@ -206,5 +207,12 @@ public class PaymentInstrumentService {
             current.cancel();
             repository.save(current);
         });
+    }
+
+    public List<PaymentInstrument> listForMenu() {
+        PaymentInstrumentFilter filter = new PaymentInstrumentFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 }

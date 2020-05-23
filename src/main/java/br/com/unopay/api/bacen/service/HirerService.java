@@ -5,12 +5,14 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.model.filter.HirerFilter;
 import br.com.unopay.api.bacen.repository.HirerRepository;
 import br.com.unopay.api.market.repository.HirerNegotiationRepository;
+import br.com.unopay.api.model.filter.ProductFilter;
 import br.com.unopay.api.service.PersonService;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,13 @@ public class HirerService {
             throw UnovationExceptions.conflict().withErrors(Errors.HIRER_WITH_NEGOTIATION.withOnlyArgument(id));
         }
         repository.delete(id);
+    }
+
+    public List<Hirer> listForMenu() {
+        HirerFilter filter = new HirerFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
     public boolean hasNegotiation(String id) {

@@ -1,5 +1,6 @@
 package br.com.unopay.api.controller;
 
+import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.ContractEstablishment;
 import br.com.unopay.api.model.filter.ContractFilter;
@@ -13,13 +14,16 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,6 +127,14 @@ public class ContractController {
     public void removeEstablishment(@PathVariable  String id, @PathVariable String contractEstablishmentId) {
         log.info("Removing ContractEstablishment {} to contractId={}", contractEstablishmentId,id);
         service.removeEstablishment(id,contractEstablishmentId);
+    }
+
+    @JsonView(Views.Contract.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/contracts/menu")
+    List<Contract> listForMenu() {
+        return service.listForMenu();
     }
 
 }

@@ -13,7 +13,7 @@ public class PaymentInstrumentFilter  implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
-    PaymentInstrumentFilter(){}
+    public PaymentInstrumentFilter(){}
 
     @SearchableField
     private String number;
