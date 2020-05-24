@@ -1,6 +1,8 @@
 package br.com.unopay.api.network.service;
 
 import br.com.unopay.api.bacen.service.BankAccountService;
+import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.filter.PaymentInstrumentFilter;
 import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.network.repository.AccreditedNetworkRepository;
@@ -9,6 +11,7 @@ import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.api.uaa.service.UserDetailService;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +78,13 @@ public class AccreditedNetworkService {
         }
 
         repository.delete(id);
+    }
+
+    public List<AccreditedNetwork> listForMenu() {
+        AccreditedNetworkFilter filter = new AccreditedNetworkFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 
 }

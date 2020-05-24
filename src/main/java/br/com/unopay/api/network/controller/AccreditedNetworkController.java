@@ -38,6 +38,7 @@ import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
 import br.com.unopay.bootcommons.stopwatch.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.net.URI;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -425,6 +426,14 @@ public class AccreditedNetworkController {
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(),
                 String.format("%s/accredited-networks/me/authorized-members", api));
+    }
+
+    @JsonView(Views.AccreditedNetwork.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/accredited-networks/menu")
+    List<AccreditedNetwork> listForMenu() {
+        return service.listForMenu();
     }
 
 }

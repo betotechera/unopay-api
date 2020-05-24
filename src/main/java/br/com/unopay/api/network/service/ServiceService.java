@@ -1,12 +1,15 @@
 package br.com.unopay.api.network.service;
 
+import br.com.unopay.api.network.model.AccreditedNetwork;
 import br.com.unopay.api.network.model.Service;
+import br.com.unopay.api.network.model.filter.AccreditedNetworkFilter;
 import br.com.unopay.api.network.model.filter.ServiceFilter;
 import br.com.unopay.api.network.repository.EventRepository;
 import br.com.unopay.api.network.repository.ServiceRepository;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import br.com.unopay.bootcommons.jsoncollections.UnovationPageRequest;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -90,5 +93,11 @@ public class ServiceService {
 
     public Page<Service> findByFilter(ServiceFilter filter, UnovationPageRequest pageable) {
         return repository.findAll(filter, new PageRequest(pageable.getPageStartingAtZero(), pageable.getSize()));
+    }
+    public List<Service> listForMenu() {
+        ServiceFilter filter = new ServiceFilter();
+        UnovationPageRequest pageable = new UnovationPageRequest();
+        pageable.setSize(50);
+        return findByFilter(filter, pageable).getContent();
     }
 }
