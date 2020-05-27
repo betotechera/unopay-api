@@ -3,6 +3,7 @@ package br.com.unopay.api.wingoo.receiver;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.config.Queues;
+import br.com.unopay.api.market.model.ContractorProduct;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Product;
 import br.com.unopay.api.service.PaymentInstrumentService;
@@ -36,7 +37,7 @@ public class WingooReceiver {
 
     @RabbitListener(queues = Queues.CONTRACTOR_CREATED, containerFactory = Queues.DURABLE_CONTAINER)
     public void wingooReceiptNotify(String objectAsString) {
-        Contractor contractor = genericObjectMapper.getAsObject(objectAsString, Contractor.class);
+        ContractorProduct contractor = genericObjectMapper.getAsObject(objectAsString, ContractorProduct.class);
         log.info("sending the contractor={} of the hirer={} to the Wingoo's system", contractor.getDocumentNumber(), contractor.getHirerDocument());
         service.create(contractor);
         log.info("the contractor={} was sent to the wingoo's system", contractor.getDocumentNumber());

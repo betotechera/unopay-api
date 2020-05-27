@@ -1,6 +1,7 @@
 package br.com.unopay.api.wingoo.model;
 
 import br.com.unopay.api.bacen.model.Contractor;
+import br.com.unopay.api.market.model.ContractorProduct;
 import br.com.unopay.api.model.Address;
 import br.com.unopay.api.uaa.config.PasswordEncoderConfig;
 import br.com.wingoo.userclient.model.User;
@@ -16,7 +17,8 @@ public class WingooUserMapping implements Serializable{
 
     public static final String FORMAT = "%s-%s";
 
-    public static User fromContractor(Contractor contractor){
+    public static WingooPaymentInfo fromContractor(ContractorProduct contractorProduct){
+        Contractor contractor = contractorProduct.getContractor();
         User user = new User();
         user.setName(contractor.getPerson().getShortName());
         user.setLastName(contractor.getPerson().getName().replaceAll(contractor.getPerson().getShortName(), "").trim());
@@ -48,6 +50,6 @@ public class WingooUserMapping implements Serializable{
         } catch (IOException e) {
             log.warn("Error when trying to serializer the wingoo user model {}", e.getMessage());
         }
-        return user;
+        return new WingooPaymentInfo(user, new WingooProductInformation(contractorProduct.getProduct()));
     }
 }

@@ -9,6 +9,7 @@ import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
+import br.com.unopay.api.market.model.ContractorProduct;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.Deal;
 import br.com.unopay.api.model.PaymentInstrument;
@@ -167,7 +168,7 @@ public class DealService {
     private void sendContractorToPartner(Contractor contractor, Product product) {
         if(product.withClub()) {
             log.info("Notifier contractor created.");
-            notifier.notify(Queues.CONTRACTOR_CREATED, contractor);
+            notifier.notify(Queues.CONTRACTOR_CREATED, new ContractorProduct(contractor, product));
         }
     }
 
