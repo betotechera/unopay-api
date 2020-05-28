@@ -9,6 +9,8 @@ public class ContractorProduct {
     private Contractor contractor;
     private Product product;
 
+    public ContractorProduct() {}
+
     public ContractorProduct(Contractor contractor, Product product) {
         if (contractor == null) throw new AssertionError();
         if (product == null) throw new AssertionError();
