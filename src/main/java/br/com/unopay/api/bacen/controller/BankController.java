@@ -35,9 +35,8 @@ public class BankController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/banks", method = RequestMethod.GET)
-    public Results<Bank> getAll(@Validated UnovationPageRequest pageable) {
+    public List<Bank> getAll(@Validated UnovationPageRequest pageable) {
         log.info("get banks");
-        List<Bank> banks =  service.findAll("all");
-        return new Results<>(banks);
+        return  service.findAll("all");
     }
 }

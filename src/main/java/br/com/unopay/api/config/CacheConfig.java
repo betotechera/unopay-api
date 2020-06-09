@@ -31,6 +31,8 @@ public class CacheConfig {
     public static final Map<String, Long> EXPIRATION_MAP = new HashMap<>();
 
 
+    @Bean
+    @Primary
     public RedisTemplate redisTemplate() throws URISyntaxException {
         JedisConnectionFactory jedisConnectionFactory = getJedisConnectionFactory();
         RedisTemplate redisTemplate = new RedisTemplate();
@@ -38,7 +40,9 @@ public class CacheConfig {
         return redisTemplate;
     }
 
-    private JedisConnectionFactory getJedisConnectionFactory() throws URISyntaxException {
+    @Bean
+    @Primary
+    public JedisConnectionFactory getJedisConnectionFactory() throws URISyntaxException {
         JedisPoolConfig poolConfig = getJedisPoolConfig();
         URI redisURI = new URI(System.getenv("REDIS_URL"));
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);

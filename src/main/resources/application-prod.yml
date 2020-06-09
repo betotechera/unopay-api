@@ -79,9 +79,6 @@ spring:
           use_jdbc_metadata_defaults: false
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     generate-ddl: false
-  redis:
-    host: redis-prod.unvlocal.com.br
-    port: 6379
   mail:
     default-encoding: UTF-8
     host: smtp.sendgrid.net
