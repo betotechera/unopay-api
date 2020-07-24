@@ -33,7 +33,7 @@ public class WingooService {
     public void create(ContractorProduct contractor){
         try {
             wingooOauth2RestTemplate(contractor.getIssuerDocument())
-                    .postForObject(String.format("%s/users/payment-returning", wingooApi),
+                    .postForObject(String.format("%s/subscription/enrollments/payment-returning", wingooApi),
                             WingooUserMapping.fromContractor(contractor), Void.class);
         } catch (HttpClientErrorException e){
             log.error(e.getResponseBodyAsString());
