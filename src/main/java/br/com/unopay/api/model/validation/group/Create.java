@@ -6,5 +6,5 @@ public interface Create {
         interface Adhesion extends Order{}
     }
 
-    interface UserCreditCard extends Create { }
+    interface PersonCreditCard extends Create { }
 }

@@ -10,8 +10,8 @@ import br.com.unopay.api.billing.creditcard.model.Gateway
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
 import br.com.unopay.api.billing.creditcard.model.Transaction
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService
 import br.com.unopay.api.credit.service.ContractorInstrumentCreditService
 import br.com.unopay.api.market.model.ContractorBonus
 import br.com.unopay.api.model.PaymentInstrument
@@ -51,7 +51,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
     ContractorInstrumentCreditService contractorInstrumentCreditService
 
     @Autowired
-    UserCreditCardService userCreditCardService
+    PersonCreditCardService userCreditCardService
 
     @Autowired
     ContractInstallmentService contractInstallmentService
@@ -301,8 +301,8 @@ class ContractorControllerTest extends AuthServerApplicationTests {
                 .content(toJson(order)))
 
         when:
-        UserCreditCard found = userCreditCardService
-                .findByNumberForUser(creditCard.number, user)
+        PersonCreditCard found = userCreditCardService
+                .findByNumberForPerson(creditCard.number, user.getContractor().getPerson())
         then:
         found
     }
@@ -498,7 +498,7 @@ class ContractorControllerTest extends AuthServerApplicationTests {
         Fixture.from(Contractor.class).gimme("valid")
     }
 
-    private Order createOrderWithStoreCard(creditCard) {
+    private Order createOrderWithStoreCard(CreditCard creditCard) {
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
             add("method", PaymentMethod.CARD)
             add("storeCard", true)

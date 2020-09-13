@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
@@ -63,7 +62,7 @@ public class CreditCard implements Serializable {
 
     private String token;
 
-    @NotNull(groups = Create.UserCreditCard.class)
+    @NotNull(groups = Create.PersonCreditCard.class)
     private String issuerDocument;
 
     public void normalize() {

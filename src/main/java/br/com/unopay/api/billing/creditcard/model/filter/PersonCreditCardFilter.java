@@ -8,14 +8,14 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class UserCreditCardFilter implements Serializable{
+public class PersonCreditCardFilter implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
-    public UserCreditCardFilter(){}
+    public PersonCreditCardFilter(){}
 
-    @SearchableField(field = "user.id")
-    private String user;
+    @SearchableField(field = "person.id")
+    private String person;
 
     @SearchableField
     private String lastFourDigits;

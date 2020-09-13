@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.infra.NumberGenerator;
@@ -50,7 +50,7 @@ public class OrderService {
     private ContractService contractService;
     private UserDetailService userDetailService;
     @Setter private Notifier notifier;
-    private UserCreditCardService userCreditCardService;
+    private PersonCreditCardService personCreditCardService;
     private OrderValidator orderValidator;
     private NumberGenerator numberGenerator;
 
@@ -62,14 +62,14 @@ public class OrderService {
                         ContractService contractService,
                         UserDetailService userDetailService,
                         Notifier notifier,
-                        UserCreditCardService userCreditCardService,
+                        PersonCreditCardService personCreditCardService,
                         OrderValidator orderValidator){
         this.repository = repository;
         this.personService = personService;
         this.contractService = contractService;
         this.userDetailService = userDetailService;
         this.notifier = notifier;
-        this.userCreditCardService = userCreditCardService;
+        this.personCreditCardService = personCreditCardService;
         this.orderValidator = orderValidator;
         this.numberGenerator = new NumberGenerator(repository);
     }
@@ -142,8 +142,8 @@ public class OrderService {
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         order.setPerson(currentUser.myContractor()
                 .map(Contractor::getPerson).orElseThrow(UnovationExceptions::unauthorized));
-        storeCreditCardForUserWhenRequired(currentUser, order);
-        orderValidator.checkCreditCardWhenRequired(currentUser, order);
+        storeCreditCardForUserWhenRequired(order.getPerson(), order);
+        orderValidator.checkCreditCardWhenRequired(order.getPerson(), order);
         return create(order);
     }
 
@@ -157,7 +157,7 @@ public class OrderService {
 
     private void defineCardTokenWhenRequired(Order order) {
         if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
-            String token = userCreditCardService.getLastActiveTokenByUser(order.personEmail());
+            String token = personCreditCardService.getLastActiveTokenByUser(order.personEmail());
             if(token == null && !order.hasCardToken()) {
                 log.info("The credit card token was not found and the store flag is={}", order.shouldStoreCard());
                 if(order.shouldStoreCard()){
@@ -265,10 +265,10 @@ public class OrderService {
         }
     }
 
-    private void storeCreditCardForUserWhenRequired(UserDetail userDetail, Order order) {
+    private void storeCreditCardForUserWhenRequired(Person person, Order order) {
         if (order.shouldStoreCard()) {
-            userDetail.setIssuerDocument(order.issuerDocumentNumber());
-            userCreditCardService.storeForUser(userDetail, order.getPaymentRequest().getCreditCard());
+            person.setIssuerDocument(order.issuerDocumentNumber());
+            personCreditCardService.storeForUser(person, order.getPaymentRequest().getCreditCard());
         }
     }
 
@@ -276,7 +276,7 @@ public class OrderService {
         if (order.shouldStoreCard() && order.hasCard()) {
             Person person = order.getPerson();
             person.setIssuerDocument(order.issuerDocumentNumber());
-            CreditCard creditCard = userCreditCardService.storeCard(person, order.creditCard());
+            CreditCard creditCard = personCreditCardService.storeCard(person, order.creditCard());
             if(creditCard != null) {
                 order.defineCardToken(creditCard.getToken());
             }

@@ -113,7 +113,7 @@ public class UserDetail implements Serializable, Updatable, StoreCard {
 
     @ManyToOne
     @JoinColumn(name="contractor_id")
-    @JsonView({Views.User.Detail.class, Views.UserCreditCard.List.class})
+    @JsonView({Views.User.Detail.class, Views.PersonCreditCard.List.class})
     private Contractor contractor;
 
     @ManyToOne
@@ -137,7 +137,7 @@ public class UserDetail implements Serializable, Updatable, StoreCard {
     private Set<Group> groups;
 
     @Transient
-    @NotNull(groups = Create.UserCreditCard.class)
+    @NotNull(groups = Create.PersonCreditCard.class)
     private String issuerDocument;
 
     @Version

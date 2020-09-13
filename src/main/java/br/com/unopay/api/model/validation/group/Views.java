@@ -158,7 +158,7 @@ public interface Views {
         interface Private extends Detail {}
     }
 
-    interface UserCreditCard {
+    interface PersonCreditCard {
         interface Detail extends List {}
         interface List {}
     }

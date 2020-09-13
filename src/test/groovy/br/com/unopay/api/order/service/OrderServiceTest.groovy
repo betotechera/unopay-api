@@ -5,12 +5,11 @@ import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.creditcard.model.CardBrand
 import br.com.unopay.api.billing.creditcard.model.CreditCard
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService
 import br.com.unopay.api.config.Queues
 import br.com.unopay.api.infra.Notifier
 import br.com.unopay.api.market.service.AuthorizedMemberCandidateService
@@ -20,7 +19,6 @@ import br.com.unopay.api.model.Person
 import br.com.unopay.api.order.model.Order
 import br.com.unopay.api.order.model.OrderType
 import br.com.unopay.api.order.model.PaymentStatus
-import br.com.unopay.api.order.model.RecurrencePaymentInformation
 import br.com.unopay.api.service.ContractInstallmentService
 import br.com.unopay.api.service.ContractService
 import br.com.unopay.api.service.PersonService
@@ -47,7 +45,7 @@ class OrderServiceTest extends SpockApplicationTests{
     @Autowired
     private ContractService contractService
     @Autowired
-    private UserCreditCardService userCreditCardService
+    private PersonCreditCardService userCreditCardService
     @Autowired
     private FixtureCreator fixtureCreator
     @Autowired
@@ -1265,7 +1263,7 @@ class OrderServiceTest extends SpockApplicationTests{
         UserDetail userDetail = crateOrderWithStoreCard(creditCard)
 
         when:
-        UserCreditCard found = userCreditCardService.findByNumberForUser(creditCard.number, userDetail)
+        PersonCreditCard found = userCreditCardService.findByNumberForPerson(creditCard.number, userDetail)
 
         then:
         found

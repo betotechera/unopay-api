@@ -5,7 +5,7 @@ import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.csv.ContractorCsv;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate;
@@ -54,7 +54,7 @@ public class DealService {
     private AuthorizedMemberService authorizedMemberService;
     private Validator validator;
     private Notifier notifier;
-    private UserCreditCardService userCreditCardService;
+    private PersonCreditCardService personCreditCardService;
 
     public static final String EMPTY = "";
     private static final char SEMICOLON = ';';
@@ -67,7 +67,7 @@ public class DealService {
                        ContractInstallmentService installmentService,
                        AuthorizedMemberService authorizedMemberService,
                        Validator validator, Notifier notifier,
-                       UserCreditCardService userCreditCardService) {
+                       PersonCreditCardService personCreditCardService) {
         this.contractService = contractService;
         this.hirerService = hirerService;
         this.contractorService = contractorService;
@@ -78,7 +78,7 @@ public class DealService {
         this.authorizedMemberService = authorizedMemberService;
         this.validator = validator;
         this.notifier = notifier;
-        this.userCreditCardService = userCreditCardService;
+        this.personCreditCardService = personCreditCardService;
     }
 
     @Transactional
@@ -151,9 +151,9 @@ public class DealService {
     }
 
     private void processUserFlow(Deal deal, Contractor contractor, Product product) {
-        UserDetail userDetail = createUserWhenRequired(contractor, product, deal.getPassword());
+        createUserWhenRequired(contractor, product, deal.getPassword());
         if(deal.hasRecurrenceCardInformation()) {
-            userCreditCardService.create(deal.getRecurrencePaymentInformation().toUserCreditCard(userDetail));
+            personCreditCardService.create(deal.getRecurrencePaymentInformation().toPersonCreditCard(contractor.getPerson()));
         }
         contractor.setPassword(deal.getPassword());
     }
