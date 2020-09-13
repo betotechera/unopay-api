@@ -297,7 +297,7 @@ public class ContractService {
     }
 
     private Contract getContract(Order order) {
-        Optional<Contract> contract = findByContractorAndProductCode(order.getDocumentNumber(), order.getProductId());
+        Optional<Contract> contract = findByContractorAndProductCode(order.getDocumentNumber(), order.getProductCode());
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 

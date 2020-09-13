@@ -472,7 +472,7 @@ class DealServiceTest extends SpockApplicationTests{
 
         when:
         contractService.markInstallmentAsPaidFrom(order)
-        def result = contractService.findByContractorAndProductCode(person.documentNumber(), product.id)
+        def result = contractService.findByContractorAndProductCode(person.documentNumber(), product.code)
 
         then:
         def installment = result.get().contractInstallments.find {

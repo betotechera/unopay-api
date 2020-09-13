@@ -174,7 +174,7 @@ public class AuthorizedMemberService {
 
     public Contract getContractByCsv(AuthorizedMemberCsv csvSource) {
         Product product = productService.findByCode(csvSource.getProductCode());
-        Contract contract = getContractByContractorAndProduct(csvSource.getContractorDocumentNumber(), product.getId());
+        Contract contract = getContractByContractorAndProductCode(csvSource.getContractorDocumentNumber(), product.getCode());
 
         if(!contract.hirerDocumentEquals(csvSource.getHirerDocumentNumber())) {
             throw UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND);
@@ -183,8 +183,8 @@ public class AuthorizedMemberService {
         return contract;
     }
 
-    private Contract getContractByContractorAndProduct(String contractorDocumentNumber, String productId) {
-        return contractService.findByContractorAndProductCode(contractorDocumentNumber, productId)
+    private Contract getContractByContractorAndProductCode(String contractorDocumentNumber, String productCode) {
+        return contractService.findByContractorAndProductCode(contractorDocumentNumber, productCode)
                 .orElseThrow(()->
                         UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
     }
