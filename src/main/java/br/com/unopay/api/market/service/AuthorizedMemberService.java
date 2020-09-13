@@ -184,7 +184,7 @@ public class AuthorizedMemberService {
     }
 
     private Contract getContractByContractorAndProduct(String contractorDocumentNumber, String productId) {
-        return contractService.findByContractorAndProduct(contractorDocumentNumber, productId)
+        return contractService.findByContractorAndProductCode(contractorDocumentNumber, productId)
                 .orElseThrow(()->
                         UnovationExceptions.notFound().withErrors(Errors.CONTRACT_NOT_FOUND));
     }

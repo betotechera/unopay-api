@@ -8,13 +8,11 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.CardBrand
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard
 import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.model.HirerNegotiation
 import br.com.unopay.api.model.Contract
-import br.com.unopay.api.model.Deal
 import br.com.unopay.api.model.PaymentInstrument
 import br.com.unopay.api.model.Person
 import br.com.unopay.api.model.Product
@@ -28,7 +26,6 @@ import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.api.uaa.service.UserDetailService
 import br.com.unopay.api.util.Time
 import br.com.unopay.bootcommons.exception.BadRequestException
-import br.com.unopay.bootcommons.exception.ConflictException
 import br.com.unopay.bootcommons.exception.NotFoundException
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.springframework.beans.factory.annotation.Autowired
@@ -475,7 +472,7 @@ class DealServiceTest extends SpockApplicationTests{
 
         when:
         contractService.markInstallmentAsPaidFrom(order)
-        def result = contractService.findByContractorAndProduct(person.documentNumber(), product.id)
+        def result = contractService.findByContractorAndProductCode(person.documentNumber(), product.id)
 
         then:
         def installment = result.get().contractInstallments.find {

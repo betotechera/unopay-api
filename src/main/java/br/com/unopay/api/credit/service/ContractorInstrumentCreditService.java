@@ -81,8 +81,9 @@ public class ContractorInstrumentCreditService {
                 UnovationExceptions.notFound().withErrors(CONTRACTOR_INSTRUMENT_CREDIT_NOT_FOUND));
     }
 
+    @Transactional
     public ContractorInstrumentCredit processOrder(Order order) {
-        Contract contract = getContract(order.getDocumentNumber(), order.getProductId());
+        Contract contract = getContract(order.getDocumentNumber(), order.getProductCode());
         PaymentInstrument paymentInstrument = getContractorPaymentInstrument(order);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, new CreditPaymentAccount(order));
         ContractorInstrumentCredit credit = createInstrumentCredit(contract, paymentInstrument, creditPaymentAccount);
@@ -98,7 +99,7 @@ public class ContractorInstrumentCreditService {
 
     private void processBonus(Issuer issuer, ContractorBonus contractorBonus) {
         String contractorDocument = contractorBonus.getContractor().getDocumentNumber();
-        Contract contract = getContract(contractorDocument, contractorBonus.productId());
+        Contract contract = getContract(contractorDocument, contractorBonus.productCode());
         PaymentInstrument paymentInstrument = findContractorDigitalWallet(contractorDocument);
         CreditPaymentAccount paymentAccount = new CreditPaymentAccount(contract.hirerDocumentNumber(), contractorBonus, issuer);
         CreditPaymentAccount creditPaymentAccount = getCreditPaymentAccount(contract, paymentAccount);
@@ -276,9 +277,9 @@ public class ContractorInstrumentCreditService {
         return  instrumentCredit;
     }
 
-    private Contract getContract(String contractorDocument, String productId) {
-        Optional<Contract> existing = contractService.findByContractorAndProduct(contractorDocument,
-                productId);
+    private Contract getContract(String contractorDocument, String productCode) {
+        Optional<Contract> existing = contractService.findByContractorAndProductCode(contractorDocument,
+                productCode);
         return existing.orElseThrow(()-> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 }

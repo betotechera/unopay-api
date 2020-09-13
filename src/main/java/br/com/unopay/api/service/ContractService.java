@@ -3,8 +3,6 @@ package br.com.unopay.api.service;
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Hirer;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.bacen.model.PaymentRuleGroup;
-import br.com.unopay.api.bacen.model.filter.PaymentRuleGroupFilter;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.config.Queues;
@@ -127,7 +125,7 @@ public class ContractService {
     }
 
     public void checkContract(String contractorDocument, String productCode) {
-        Optional<Contract> contractOptional = findByContractorAndProduct(contractorDocument, productCode);
+        Optional<Contract> contractOptional = findByContractorAndProductCode(contractorDocument, productCode);
         contractOptional.ifPresent(it -> {
             throw UnovationExceptions.conflict()
                     .withErrors(CONTRACT_ALREADY_EXISTS.withOnlyArgument(it.getCode()));
@@ -250,7 +248,7 @@ public class ContractService {
         return repository.findByHirerIdAndSituation(hirerId, ContractSituation.ACTIVE);
     }
 
-    public Optional<Contract> findByContractorAndProduct(String document, String productCode) {
+    public Optional<Contract> findByContractorAndProductCode(String document, String productCode) {
         return repository.findByContractorPersonDocumentNumberAndProductCode(document, productCode);
     }
 
@@ -299,7 +297,7 @@ public class ContractService {
     }
 
     private Contract getContract(Order order) {
-        Optional<Contract> contract = findByContractorAndProduct(order.getDocumentNumber(), order.getProductId());
+        Optional<Contract> contract = findByContractorAndProductCode(order.getDocumentNumber(), order.getProductId());
         return contract.orElseThrow(() -> UnovationExceptions.notFound().withErrors(CONTRACT_NOT_FOUND));
     }
 

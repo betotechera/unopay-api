@@ -76,7 +76,7 @@ class OrderProcessorTest extends SpockApplicationTests{
 
         when:
         processor.process(paid)
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
+        Optional<Contract> contract = contractService.findByContractorAndProductCode(person.documentNumber(), paid.getProductId())
 
         then:
         contract.isPresent()
@@ -118,7 +118,7 @@ class OrderProcessorTest extends SpockApplicationTests{
 
         when:
         processor.process(paid)
-        Optional<Contract> contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.getProductId())
+        Optional<Contract> contract = contractService.findByContractorAndProductCode(person.documentNumber(), paid.getProductId())
 
         then:
         authorizedMemberService.countByContract(contract.get().id) == 1
@@ -147,7 +147,7 @@ class OrderProcessorTest extends SpockApplicationTests{
         processor.process(paid)
 
         then:
-        def contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId)
+        def contract = contractService.findByContractorAndProductCode(person.documentNumber(), paid.productId)
         def result = installmentService.findByContractId(contract.get().id)
         result.sort{ it.installmentNumber }.find().paymentValue == paid.productInstallmentValue
     }
@@ -162,7 +162,7 @@ class OrderProcessorTest extends SpockApplicationTests{
         processor.process(paid)
 
         then:
-        def contract = contractService.findByContractorAndProduct(person.documentNumber(), paid.productId)
+        def contract = contractService.findByContractorAndProductCode(person.documentNumber(), paid.productId)
         def result = installmentService.findByContractId(contract.get().id)
         !result.sort{ it.installmentNumber }.find().paymentValue
     }

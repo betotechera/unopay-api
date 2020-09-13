@@ -182,6 +182,13 @@ public class ContractorBonus implements Serializable, Updatable {
         return null;
     }
 
+    public String productCode() {
+        if (getProduct() != null) {
+            return getProduct().getCode();
+        }
+        return null;
+    }
+
     public String contractorId() {
         if (getContractor() != null) {
             return getContractor().getId();

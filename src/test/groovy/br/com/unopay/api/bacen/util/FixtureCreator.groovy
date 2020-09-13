@@ -210,8 +210,8 @@ class FixtureCreator {
                 createHirer(), ContractSituation.ACTIVE, membershipFee)
     }
 
-    Contract createPersistedContract(contractor = createContractor(), Product product = createProduct(),
-                                     hirer = createHirer(), situation = ContractSituation.ACTIVE,
+    Contract createPersistedContract(Contractor contractor = createContractor(), Product product = createProduct(),
+                                     Hirer hirer = createHirer(), ContractSituation situation = ContractSituation.ACTIVE,
                                      BigDecimal membershipFee = (Math.random() * 100)) {
         from(Contract.class).uses(jpaProcessor).gimme("valid", new Rule() {
             {
