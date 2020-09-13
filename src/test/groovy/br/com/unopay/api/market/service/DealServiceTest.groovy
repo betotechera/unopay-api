@@ -147,7 +147,7 @@ class DealServiceTest extends SpockApplicationTests{
 
     void 'when deal close with a password should create user with the same password'(){
         given:
-        def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
+        Set<AuthorizedMemberCandidate> candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         Person person = Fixture.from(Person.class).uses(jpaProcessor).gimme("physical")
         def expectedPassword = '123458@@$$'
@@ -445,7 +445,7 @@ class DealServiceTest extends SpockApplicationTests{
         given:
         def candidates = Fixture.from(AuthorizedMemberCandidate).gimme(2, "valid") as Set
         def product = fixtureCreator.createProductWithSameIssuerOfHirer()
-        def contractor = fixtureCreator.createContractor()
+        def contractor = fixtureCreator.createContractor("physical")
 
         when:
         def created = service.closeWithIssuerAsHirer(new Order(contractor.person, product, createUser), candidates as Set<AuthorizedMemberCandidate>)

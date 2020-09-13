@@ -25,10 +25,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         argumentResolvers.add(userTypeArgumentResolver);
     }
 
-    @Bean
-    public RestTemplate getRestTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
-
-
 }

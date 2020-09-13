@@ -295,7 +295,7 @@ class OrderServiceTest extends SpockApplicationTests{
     def 'given a known contractor and adhesion order should not return error'(){
         given:
         def contractor = fixtureCreator.createContractor()
-        def product = fixtureCreator.createProduct()
+        def product = fixtureCreator.createProductWithSameIssuerOfHirer()
         fixtureCreator.createInstrumentToProduct(product, contractor)
         Order creditOrder = Fixture.from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
