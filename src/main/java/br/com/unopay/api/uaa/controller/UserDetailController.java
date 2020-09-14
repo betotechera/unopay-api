@@ -1,9 +1,9 @@
 package br.com.unopay.api.uaa.controller;
 
+import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
-import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
+import br.com.unopay.api.billing.creditcard.model.filter.PersonCreditCardFilter;
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.PasswordRequired;
 import br.com.unopay.api.model.validation.group.Update;
@@ -59,7 +59,7 @@ public class UserDetailController {
     private UserDetailService userDetailService;
     private TokenStore tokenStore;
     private GroupService groupService;
-    private UserCreditCardService userCreditCardService;
+    private PersonCreditCardService personCreditCardService;
 
     @Value("${unopay.api}")
     private String api;
@@ -68,11 +68,11 @@ public class UserDetailController {
     public UserDetailController(UserDetailService userDetailService,
                                 TokenStore tokenStore,
                                 GroupService groupService,
-                                UserCreditCardService userCreditCardService) {
+                                PersonCreditCardService personCreditCardService) {
         this.userDetailService = userDetailService;
         this.tokenStore = tokenStore;
         this.groupService = groupService;
-        this.userCreditCardService = userCreditCardService;
+        this.personCreditCardService = personCreditCardService;
     }
 
     @JsonView(Views.User.Detail.class)
@@ -220,34 +220,34 @@ public class UserDetailController {
         userDetailService.resetPasswordByEmail(email, origin);
     }
 
-    @JsonView(Views.UserCreditCard.List.class)
+    @JsonView(Views.PersonCreditCard.List.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.GET)
-    public Results<UserCreditCard> getUserCreditCardByParams(UserDetail userDetail,
-                                                             UserCreditCardFilter filter,
-                                                             @Validated UnovationPageRequest pageable) {
+    public Results<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> getUserCreditCardByParams(Contractor userDetail,
+                                                                                                          PersonCreditCardFilter filter,
+                                                                                                          @Validated UnovationPageRequest pageable) {
         LOGGER.info("search user credit card with filter={} for user={}", filter, userDetail.getId());
-        filter.setUser(userDetail.getId());
-        Page<UserCreditCard> page = userCreditCardService.findByFilter(filter, pageable);
+        filter.setPerson(userDetail.getPerson().getId());
+        Page<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> page = personCreditCardService.findByFilter(filter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/users/me/credit-cards", api));
     }
 
-    @JsonView(Views.UserCreditCard.Detail.class)
+    @JsonView(Views.PersonCreditCard.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.GET)
-    public UserCreditCard getUserCreditCard(UserDetail userDetail, @PathVariable String id) {
-        LOGGER.info("get user credit card={} for user={}", id, userDetail.getId());
-        return userCreditCardService.findByIdForUser(id, userDetail);
+    public br.com.unopay.api.billing.creditcard.model.PersonCreditCard getUserCreditCard(Contractor contractor, @PathVariable String id) {
+        LOGGER.info("get user credit card={} for contractor={}", id, contractor.getId());
+        return personCreditCardService.findByIdForUser(id, contractor.getPerson());
     }
 
-    @JsonView(Views.UserCreditCard.Detail.class)
+    @JsonView(Views.PersonCreditCard.Detail.class)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/users/me/credit-cards", method = RequestMethod.POST)
-    public ResponseEntity<UserCreditCard> createCreditCard(@Validated(Create.class) @RequestBody CreditCard creditCard,
-                                                           UserDetail user) {
-        LOGGER.info("adding a user credit card to user={}", user);
-        UserCreditCard created = userCreditCardService.storeForUser(user, creditCard);
+    public ResponseEntity<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> createCreditCard(@Validated(Create.class) @RequestBody CreditCard creditCard,
+                                                                                                        Contractor contractor) {
+        LOGGER.info("adding a contractor credit card to contractor={}", contractor.getId());
+        br.com.unopay.api.billing.creditcard.model.PersonCreditCard created = personCreditCardService.storeForUser(contractor.getPerson(), creditCard);
         return ResponseEntity
                 .created(URI.create("/users/me/credit-cards"+created.getId()))
                 .body(created);
@@ -256,9 +256,9 @@ public class UserDetailController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/users/me/credit-cards/{id}", method = RequestMethod.DELETE)
-    public void removeUserCreditCard(UserDetail userDetail, @PathVariable String id){
-        LOGGER.info("removing user credit card id={} for user={}", id, userDetail.getId());
-        userCreditCardService.deleteForUser(id, userDetail);
+    public void removeUserCreditCard(Contractor contractor, @PathVariable String id){
+        LOGGER.info("removing user credit card id={} for user={}", id, contractor.getId());
+        personCreditCardService.deleteForUser(id, contractor.getPerson());
     }
 
 }

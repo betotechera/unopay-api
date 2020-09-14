@@ -1,8 +1,8 @@
 package br.com.unopay.api.billing.creditcard.controller;
 
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
-import br.com.unopay.api.billing.creditcard.model.filter.UserCreditCardFilter;
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard;
+import br.com.unopay.api.billing.creditcard.model.filter.PersonCreditCardFilter;
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.bootcommons.jsoncollections.PageableResults;
 import br.com.unopay.bootcommons.jsoncollections.Results;
@@ -25,37 +25,37 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @Timed(prefix = "api")
-public class UserCreditCardController {
+public class PersonCreditCardController {
 
     @Value("${unopay.api}")
     private String api;
 
-    private UserCreditCardService userCreditCardService;
+    private PersonCreditCardService personCreditCardService;
 
     @Autowired
-    public UserCreditCardController(UserCreditCardService userCreditCardService) {
-        this.userCreditCardService = userCreditCardService;
+    public PersonCreditCardController(PersonCreditCardService personCreditCardService) {
+        this.personCreditCardService = personCreditCardService;
     }
 
-    @JsonView(Views.UserCreditCard.List.class)
+    @JsonView(Views.PersonCreditCard.List.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_USER_CREDIT_CARD')")
     @RequestMapping(value = "/credit-cards", method = RequestMethod.GET)
-    public Results<UserCreditCard> getByParams(UserCreditCardFilter userCreditCardFilter,
-                                               @Validated UnovationPageRequest pageable) {
-        log.info("search user credit card with filter={}", userCreditCardFilter);
-        Page<UserCreditCard> page = userCreditCardService.findByFilter(userCreditCardFilter, pageable);
+    public Results<PersonCreditCard> getByParams(PersonCreditCardFilter personCreditCardFilter,
+                                                                                            @Validated UnovationPageRequest pageable) {
+        log.info("search user credit card with filter={}", personCreditCardFilter);
+        Page<PersonCreditCard> page = personCreditCardService.findByFilter(personCreditCardFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/credit-cards", api));
     }
 
-    @JsonView(Views.UserCreditCard.Detail.class)
+    @JsonView(Views.PersonCreditCard.Detail.class)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_USER_CREDIT_CARD')")
     @RequestMapping(value = "/credit-cards/{id}", method = RequestMethod.GET)
-    public UserCreditCard get(@PathVariable String id) {
+    public PersonCreditCard get(@PathVariable String id) {
         log.info("get user credit card={}", id);
-        return userCreditCardService.findById(id);
+        return personCreditCardService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -63,7 +63,7 @@ public class UserCreditCardController {
     @RequestMapping(value = "/credit-cards/{id}", method = RequestMethod.DELETE)
     public void remove(@PathVariable  String id) {
         log.info("removing user credit card id={}", id);
-        userCreditCardService.delete(id);
+        personCreditCardService.delete(id);
     }
 
 }

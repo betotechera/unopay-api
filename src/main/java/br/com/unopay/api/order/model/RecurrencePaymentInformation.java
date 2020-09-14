@@ -3,16 +3,12 @@ package br.com.unopay.api.order.model;
 import br.com.unopay.api.billing.creditcard.model.CardBrand;
 import br.com.unopay.api.billing.creditcard.model.GatewaySource;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.model.UserDetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -60,17 +56,17 @@ public class RecurrencePaymentInformation {
     private String creditCardHolderName;
 
 
-    public UserCreditCard toUserCreditCard(UserDetail user){
-        UserCreditCard userCreditCard = new UserCreditCard();
-        userCreditCard.setUser(user);
-        userCreditCard.setHolderName(this.creditCardHolderName);
-        userCreditCard.setBrand(this.creditCardBrand);
-        userCreditCard.setLastFourDigits(this.creditCardLastFourDigits);
-        userCreditCard.setExpirationMonth(this.creditCardMonth);
-        userCreditCard.setExpirationYear(this.creditCardYear);
-        userCreditCard.setGatewaySource(GatewaySource.PAYZEN);
-        userCreditCard.setGatewayToken(this.creditCardToken);
-        return userCreditCard;
+    public PersonCreditCard toPersonCreditCard(Person person){
+        PersonCreditCard personCreditCard = new PersonCreditCard();
+        personCreditCard.setPerson(person);
+        personCreditCard.setHolderName(this.creditCardHolderName);
+        personCreditCard.setBrand(this.creditCardBrand);
+        personCreditCard.setLastFourDigits(this.creditCardLastFourDigits);
+        personCreditCard.setExpirationMonth(this.creditCardMonth);
+        personCreditCard.setExpirationYear(this.creditCardYear);
+        personCreditCard.setGatewaySource(GatewaySource.PAYZEN);
+        personCreditCard.setGatewayToken(this.creditCardToken);
+        return personCreditCard;
     }
 
     public boolean isValid() {

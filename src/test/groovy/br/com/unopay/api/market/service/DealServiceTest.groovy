@@ -8,7 +8,7 @@ import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.bacen.service.ContractorService
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.CardBrand
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService
 import static br.com.unopay.api.function.FixtureFunctions.instant
 import br.com.unopay.api.market.model.AuthorizedMemberCandidate
 import br.com.unopay.api.market.model.HirerNegotiation
@@ -55,7 +55,7 @@ class DealServiceTest extends SpockApplicationTests{
     @Autowired
     private ContractInstallmentService installmentService
     @Autowired
-    private UserCreditCardService userCreditCardService
+    private PersonCreditCardService userCreditCardService
 
     private Boolean createUser = true
 
@@ -108,8 +108,7 @@ class DealServiceTest extends SpockApplicationTests{
 
         when:
         service.closeWithIssuerAsHirer(order, [] as Set)
-        def user = userDetailService.getByEmail(person.physicalPersonEmail)
-        def userCreditCard = userCreditCardService.findByTokenForUser(token, user)
+        def userCreditCard = userCreditCardService.findByTokenForPerson(token, person)
 
         then:
         userCreditCard

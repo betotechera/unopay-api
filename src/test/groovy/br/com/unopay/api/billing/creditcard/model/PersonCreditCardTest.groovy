@@ -3,19 +3,20 @@ package br.com.unopay.api.billing.creditcard.model
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.FixtureApplicationTest
+import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.uaa.model.UserDetail
 import br.com.unopay.bootcommons.exception.UnprocessableEntityException
 import org.joda.time.DateTime
 import spock.lang.Unroll
 
-class UserCreditCardTest extends FixtureApplicationTest {
+class PersonCreditCardTest extends FixtureApplicationTest {
 
     def 'when creating UserCreditCard, expiration date should be set at 0 hour of 1st day of given expiration month and given expiration year'() {
 
         given:
         String expirationYear = '2118'
         String expirationMonth = '10'
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expirationYear)
                 add("expirationMonth", expirationMonth)
@@ -41,7 +42,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         given:
         String expirationYear = '2118'
         String expirationMonth = '10'
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expirationYear)
                 add("expirationMonth", expirationMonth)
@@ -67,7 +68,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         def invalidValue = notAnIntValue
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationMonth", invalidValue)
             }
@@ -93,7 +94,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         String expirationMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationMonth", expirationMonth)
             }
@@ -117,7 +118,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         String expirationMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationMonth", expirationMonth)
             }
@@ -142,7 +143,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         def invalidValue = notAnIntValue
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", invalidValue)
             }
@@ -171,7 +172,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expirationYear)
             }
@@ -199,7 +200,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         given:
         def limit = surplusLimit
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expirationYear)
             }
@@ -223,7 +224,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         String expirationMoth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationMonth", expirationMoth)
             }
@@ -247,7 +248,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         String expirationYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expirationYear)
             }
@@ -274,7 +275,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         Date invalidValue = blankOrNull
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationDate", invalidValue)
             }
@@ -296,7 +297,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         def expMonth = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationMonth", expMonth)
             }
@@ -322,7 +323,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         def expYear = value
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule() {
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule() {
             {
                 add("expirationYear", expYear)
             }
@@ -349,7 +350,7 @@ class UserCreditCardTest extends FixtureApplicationTest {
         given:
         def expMonth = monthValue
         def expYear = yearValue
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule(){{
             add("expirationMonth", expMonth)
             add("expirationYear", expYear)
         }})
@@ -377,14 +378,14 @@ class UserCreditCardTest extends FixtureApplicationTest {
 
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        UserDetail userDetail = Fixture.from(UserDetail).gimme("without-group")
+        Contractor contractor = Fixture.from(Contractor).gimme("valid")
 
 
         when:
-        UserCreditCard userCreditCard = new UserCreditCard(userDetail, creditCard)
+        PersonCreditCard userCreditCard = new PersonCreditCard(contractor.getPerson(), creditCard)
 
         then:
-        userCreditCard.user == userDetail
+        userCreditCard.person == contractor.person
         userCreditCard.expirationMonth == creditCard.expiryMonth
         userCreditCard.expirationYear == creditCard.expiryYear
         userCreditCard.lastFourDigits == creditCard.lastValidFourDigits()

@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
+import spock.lang.Ignore
 
 class FileUploaderServiceTest extends SpockApplicationTests {
 
@@ -20,6 +21,7 @@ class FileUploaderServiceTest extends SpockApplicationTests {
     @Value('${amazon.s3.cdn.uri}')
     String cdn
 
+    @Ignore
     def'given a existing file should be uploaded'(){
         given:
         Resource createPassword  = resourceLoader.getResource("classpath:/create-password.html")

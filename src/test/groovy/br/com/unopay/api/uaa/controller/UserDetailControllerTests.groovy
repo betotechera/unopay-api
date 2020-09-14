@@ -3,8 +3,8 @@ package br.com.unopay.api.uaa.controller
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.unopay.api.bacen.util.FixtureCreator
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService
 import br.com.unopay.api.notification.service.NotificationService
 import br.com.unopay.api.uaa.AuthServerApplicationTests
 import br.com.unopay.api.uaa.model.NewPassword
@@ -39,7 +39,7 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     private static final String GROUP_ENDPOINT = '/users/{id}/groups?access_token={access_token}'
 
     @Autowired
-    private UserCreditCardService userCreditCardService
+    private PersonCreditCardService userCreditCardService
 
     @Autowired
     private FixtureCreator fixtureCreator
@@ -294,9 +294,9 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     void 'should return all me user credit cards'(){
 
         given:
-        UserDetail user = fixtureCreator.createUser()
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user)
+        UserDetail user = fixtureCreator.createContractorUser()
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule(){{
+            add("person", user.getContractor().getPerson())
         }})
         userCreditCardService.create(userCreditCard)
         String accessToken = getUserAccessToken(user.email, user.password)
@@ -314,9 +314,10 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     void 'known me user credit card should be found'(){
 
         given:
-        UserDetail user = fixtureCreator.createUser()
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user)
+        UserDetail user = fixtureCreator.createContractorUser()
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule(){{
+            add("person", user.getContractor().getPerson())
+
         }})
         userCreditCardService.create(userCreditCard)
         String accessToken = getUserAccessToken(user.email, user.password)
@@ -350,9 +351,9 @@ class UserDetailControllerTests extends AuthServerApplicationTests {
     void 'known me user credit card should be deleted'(){
 
         given:
-        UserDetail user = fixtureCreator.createUser()
-        UserCreditCard userCreditCard = Fixture.from(UserCreditCard).gimme("valid", new Rule(){{
-            add("user", user)
+        UserDetail user = fixtureCreator.createContractorUser()
+        PersonCreditCard userCreditCard = Fixture.from(PersonCreditCard).gimme("valid", new Rule(){{
+            add("person", user.getContractor().getPerson())
         }})
         userCreditCardService.create(userCreditCard)
         String accessToken = getUserAccessToken(user.email, user.password)

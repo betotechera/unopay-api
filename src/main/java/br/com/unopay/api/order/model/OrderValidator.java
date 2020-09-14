@@ -5,8 +5,9 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.bacen.service.ContractorService;
 import br.com.unopay.api.bacen.service.HirerService;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
-import br.com.unopay.api.billing.creditcard.service.UserCreditCardService;
+import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.model.PaymentInstrument;
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.notification.engine.MailValidator;
 import br.com.unopay.api.service.ContractService;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Component;
 
 import static br.com.unopay.api.order.model.OrderType.INSTALLMENT_PAYMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_REQUIRED;
-import static br.com.unopay.api.uaa.exception.Errors.EXISTING_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_IS_NOT_FOR_PRODUCT;
 import static br.com.unopay.api.uaa.exception.Errors.INSTRUMENT_NOT_BELONGS_TO_CONTRACTOR;
 import static br.com.unopay.api.uaa.exception.Errors.PAYMENT_INSTRUMENT_REQUIRED;
@@ -47,7 +47,7 @@ public class OrderValidator {
     private HirerService hirerService;
     private MailValidator mailValidator;
     private Validator validator;
-    private UserCreditCardService userCreditCardService;
+    private PersonCreditCardService personCreditCardService;
 
     public OrderValidator(ProductService productService,
                           ContractorService contractorService,
@@ -57,7 +57,7 @@ public class OrderValidator {
                           HirerService hirerService,
                           MailValidator mailValidator,
                           Validator validator,
-                          UserCreditCardService userCreditCardService) {
+                          PersonCreditCardService personCreditCardService) {
         this.productService = productService;
         this.contractorService = contractorService;
         this.contractService = contractService;
@@ -66,10 +66,10 @@ public class OrderValidator {
         this.hirerService = hirerService;
         this.mailValidator = mailValidator;
         this.validator = validator;
-        this.userCreditCardService = userCreditCardService;
+        this.personCreditCardService = personCreditCardService;
     }
 
-    public void checkCreditCardWhenRequired(UserDetail user, Order order) {
+    public void checkCreditCardWhenRequired(Person person, Order order) {
         if(!order.hasCardToken()){
             Set<ConstraintViolation<PaymentRequest>> violations = validator
                     .validate(order.getPaymentRequest(),Create.class);
@@ -83,7 +83,7 @@ public class OrderValidator {
             }
             return;
         }
-        userCreditCardService.findByTokenForUser(order.creditCardToken(), user);
+        personCreditCardService.findByTokenForPerson(order.creditCardToken(), person);
     }
 
     public void validateReferences(Order order) {

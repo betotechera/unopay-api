@@ -12,8 +12,8 @@ import br.com.unopay.api.billing.creditcard.model.CurrencyCode;
 import br.com.unopay.api.billing.creditcard.model.GatewaySource;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard;
 import br.com.unopay.api.billing.creditcard.model.Transaction;
-import br.com.unopay.api.billing.creditcard.model.UserCreditCard;
 import br.com.unopay.api.model.Contract;
 import br.com.unopay.api.model.PaymentInstrument;
 import br.com.unopay.api.model.Person;
@@ -102,7 +102,7 @@ public class BillingTemplateLoader  implements TemplateLoader {
             add("paymentSource", random(TicketPaymentSource.class));
         }});
 
-        Fixture.of(UserCreditCard.class).addTemplate("valid", new Rule() {{
+        Fixture.of(PersonCreditCard.class).addTemplate("valid", new Rule() {{
             add("holderName", regex("\\w{16}"));
             add("brand", random(CardBrand.class));
             add("lastFourDigits", regex("\\d{4}"));

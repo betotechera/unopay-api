@@ -1,10 +1,10 @@
 package br.com.unopay.api.billing.creditcard.model;
 
+import br.com.unopay.api.model.Person;
 import br.com.unopay.api.model.Updatable;
 import br.com.unopay.api.model.validation.group.Create;
 import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
-import br.com.unopay.api.uaa.model.UserDetail;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -36,8 +36,8 @@ import static org.joda.time.DateTimeConstants.JANUARY;
 
 @Data
 @Entity
-@Table(name = "user_credit_card")
-public class UserCreditCard implements Serializable, Updatable {
+@Table(name = "person_credit_card")
+public class PersonCreditCard implements Serializable, Updatable {
 
     private static final long serialVersionUID = 5937994323928296733L;
     private static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
@@ -53,73 +53,73 @@ public class UserCreditCard implements Serializable, Updatable {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="person_id")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
-    private UserDetail user;
+    @JsonView({Views.PersonCreditCard.Detail.class})
+    private Person person;
 
     @Column(name = "holder_name")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.PersonCreditCard.List.class})
     private String holderName;
 
     @Column(name = "brand")
     @Enumerated(STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.PersonCreditCard.List.class})
     private CardBrand brand;
 
     @Column(name = "last_four_digits")
     @Pattern(message = "Must have 4 digits", regexp = "\\d{4}")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.PersonCreditCard.List.class})
     private String lastFourDigits;
 
     @Transient
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.PersonCreditCard.Detail.class})
     private String expirationMonth;
 
     @Transient
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.PersonCreditCard.Detail.class})
     private String expirationYear;
 
     @Column(name = "expiration_date")
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.PersonCreditCard.Detail.class})
     private Date expirationDate;
 
     @Column(name = "gateway_source")
     @Enumerated(STRING)
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.Detail.class})
+    @JsonView({Views.PersonCreditCard.Detail.class})
     private GatewaySource gatewaySource;
 
     @Column(name = "gateway_token")
     @NotNull(groups = {Create.class, Update.class})
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.PersonCreditCard.List.class})
     private String gatewayToken;
 
     @Column(name = "created_date_time")
-    @JsonView({Views.UserCreditCard.List.class})
+    @JsonView({Views.PersonCreditCard.List.class})
     private Date createdDateTime;
 
     @JsonIgnore
     @Version
     private Integer version;
 
-    public UserCreditCard() {}
+    public PersonCreditCard() {}
 
-    public UserCreditCard(UserDetail userDetail, CreditCard creditCard) {
+    public PersonCreditCard(Person person, CreditCard creditCard) {
         creditCard.checkMe();
-        user = userDetail;
-        holderName = creditCard.getHolderName();
-        brand = CardBrand.fromCardNumber(creditCard.getNumber());
-        lastFourDigits = creditCard.lastValidFourDigits();
-        expirationMonth = creditCard.getExpiryMonth();
-        expirationYear = creditCard.getExpiryYear();
-        gatewaySource = GatewaySource.PAYZEN;
-        gatewayToken = creditCard.getToken();
+        this.person = person;
+        this.holderName = creditCard.getHolderName();
+        this.brand = CardBrand.fromCardNumber(creditCard.getNumber());
+        this.lastFourDigits = creditCard.lastValidFourDigits();
+        this.expirationMonth = creditCard.getExpiryMonth();
+        this.expirationYear = creditCard.getExpiryYear();
+        this.gatewaySource = GatewaySource.PAYZEN;
+        this.gatewayToken = creditCard.getToken();
     }
 
     public void setupMyCreate(){
@@ -173,7 +173,7 @@ public class UserCreditCard implements Serializable, Updatable {
         expirationYear = String.valueOf(expirationDate.getYear() + YEAR_OFFSET);
     }
 
-    public UserCreditCard defineMonthAndYearBasedOnExpirationDate(){
+    public PersonCreditCard defineMonthAndYearBasedOnExpirationDate(){
         defineMonthBasedOnExpirationDate();
         defineYearBasedOnExpirationDate();
         return this;
@@ -198,9 +198,9 @@ public class UserCreditCard implements Serializable, Updatable {
         }
     }
 
-    public String userId(){
-        if (getUser() != null){
-            return getUser().getId();
+    public String personId(){
+        if (getPerson() != null){
+            return getPerson().getId();
         }
         return null;
     }
