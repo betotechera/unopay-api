@@ -41,7 +41,7 @@ public class PersonCreditCardController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_LIST_USER_CREDIT_CARD')")
     @RequestMapping(value = "/credit-cards", method = RequestMethod.GET)
-    public Results<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> getByParams(PersonCreditCardFilter personCreditCardFilter,
+    public Results<PersonCreditCard> getByParams(PersonCreditCardFilter personCreditCardFilter,
                                                                                             @Validated UnovationPageRequest pageable) {
         log.info("search user credit card with filter={}", personCreditCardFilter);
         Page<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> page = personCreditCardService.findByFilter(personCreditCardFilter, pageable);
