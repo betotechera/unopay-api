@@ -44,7 +44,7 @@ public class PersonCreditCardController {
     public Results<PersonCreditCard> getByParams(PersonCreditCardFilter personCreditCardFilter,
                                                                                             @Validated UnovationPageRequest pageable) {
         log.info("search user credit card with filter={}", personCreditCardFilter);
-        Page<br.com.unopay.api.billing.creditcard.model.PersonCreditCard> page = personCreditCardService.findByFilter(personCreditCardFilter, pageable);
+        Page<PersonCreditCard> page = personCreditCardService.findByFilter(personCreditCardFilter, pageable);
         pageable.setTotal(page.getTotalElements());
         return PageableResults.create(pageable, page.getContent(), String.format("%s/credit-cards", api));
     }
