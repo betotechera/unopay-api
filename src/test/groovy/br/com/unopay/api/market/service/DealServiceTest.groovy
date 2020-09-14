@@ -108,8 +108,7 @@ class DealServiceTest extends SpockApplicationTests{
 
         when:
         service.closeWithIssuerAsHirer(order, [] as Set)
-        def user = userDetailService.getByEmail(person.physicalPersonEmail)
-        def userCreditCard = userCreditCardService.findByTokenForUser(token, user)
+        def userCreditCard = userCreditCardService.findByTokenForPerson(token, person)
 
         then:
         userCreditCard

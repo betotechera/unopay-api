@@ -95,7 +95,7 @@ public class PersonCreditCardService {
                 .map(PersonCreditCard::getGatewayToken).orElse(null);
     }
 
-    public PersonCreditCard findByTokenForUser(String token, Person person) {
+    public PersonCreditCard findByTokenForPerson(String token, Person person) {
         return getUserCreditCardWithMonthAndYear(token, () ->
                 personCreditCardRepository.findByGatewayTokenAndPersonId(token, person.getId()));
     }

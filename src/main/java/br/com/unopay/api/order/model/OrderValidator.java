@@ -83,7 +83,7 @@ public class OrderValidator {
             }
             return;
         }
-        personCreditCardService.findByTokenForUser(order.creditCardToken(), person);
+        personCreditCardService.findByTokenForPerson(order.creditCardToken(), person);
     }
 
     public void validateReferences(Order order) {

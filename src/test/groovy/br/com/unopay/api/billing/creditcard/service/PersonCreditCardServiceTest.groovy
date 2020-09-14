@@ -315,7 +315,7 @@ class PersonCreditCardServiceTest extends SpockApplicationTests {
         personCreditCardService.storeForUser(userDetail.getContractor().getPerson(), creditCard)
 
         then:
-        1 * gatewayMock.storeCard(userDetail, creditCard)
+        1 * gatewayMock.storeCard(userDetail.getContractor().getPerson(), creditCard)
     }
 
     def 'given valid UserCreditCard and a different User should return error'(){

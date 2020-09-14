@@ -1260,10 +1260,10 @@ class OrderServiceTest extends SpockApplicationTests{
                     equals true should create UserCreditCard for UserDetail and Order.creditCard"""(){
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
-        UserDetail userDetail = crateOrderWithStoreCard(creditCard)
+        Order orderWithStoreCard = crateOrderWithStoreCard(creditCard)
 
         when:
-        PersonCreditCard found = userCreditCardService.findByNumberForPerson(creditCard.number, userDetail)
+        PersonCreditCard found = userCreditCardService.findByNumberForPerson(creditCard.number, orderWithStoreCard.getPerson())
 
         then:
         found
@@ -1311,7 +1311,7 @@ class OrderServiceTest extends SpockApplicationTests{
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
-    private UserDetail crateOrderWithStoreCard(creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true,
+    private Order crateOrderWithStoreCard(creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true,
                                                UserDetail userDetail = fixtureCreator.createContractorUser()) {
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
                 add("method", PaymentMethod.CARD)
@@ -1322,7 +1322,7 @@ class OrderServiceTest extends SpockApplicationTests{
         order.type = OrderType.INSTALLMENT_PAYMENT
         order.paymentRequest = paymentRequest
         service.create(userDetail.email, order)
-        userDetail
+        order
     }
 
 
