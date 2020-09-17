@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class FixtureApplicationTest extends Specification {
 
-    DateTimeComparator timeComparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfDay())
+    DateTimeComparator timeComparator = DateTimeComparator.getInstance(DateTimeFieldType.minuteOfHour())
 
     void setup(){
         FixtureFactoryLoader.loadTemplates("br.com.unopay.api")

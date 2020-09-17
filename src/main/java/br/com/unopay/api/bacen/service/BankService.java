@@ -3,8 +3,10 @@ package br.com.unopay.api.bacen.service;
 import br.com.unopay.api.bacen.model.Bank;
 import br.com.unopay.api.bacen.repository.BankRepository;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class BankService {
         return bank.orElseThrow(()->UnovationExceptions.notFound().withErrors(BANK_NOT_FOUND));
     }
 
-    public List<Bank> findAll(String key){
-        return repository.findAll();
+    public List<Bank> findAll(){
+        return new ArrayList<>(repository.findAll());
     }
 }

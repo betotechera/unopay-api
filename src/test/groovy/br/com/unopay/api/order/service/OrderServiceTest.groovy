@@ -1274,10 +1274,11 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
         creditCard.token = 'DSDSFSDFDSFSD'
-        def user = crateOrderWithStoreCard(creditCard, true)
+        def contractor = fixtureCreator.createContractor()
+        crateOrderWithStoreCard(creditCard, true, contractor)
 
         when:
-        crateOrderWithStoreCard(creditCard, false, user)
+        crateOrderWithStoreCard(creditCard, false, contractor)
 
         then:
         that userCreditCardService.findAll(), hasSize(1)
@@ -1300,28 +1301,29 @@ class OrderServiceTest extends SpockApplicationTests{
         given:
         CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard")
         creditCard.token = null
-        def user = crateOrderWithStoreCard(creditCard, false)
+        crateOrderWithStoreCard(creditCard, false)
         creditCard.token = 'DSDSFSDFDSFSD'
 
         when:
-        crateOrderWithStoreCard(creditCard, false,user)
+        crateOrderWithStoreCard(creditCard, false)
 
         then:
         def ex = thrown(NotFoundException)
         assert ex.errors.first().logref == 'USER_CREDIT_CARD_NOT_FOUND'
     }
 
-    private Order crateOrderWithStoreCard(creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true,
-                                               UserDetail userDetail = fixtureCreator.createContractorUser()) {
+    private Order crateOrderWithStoreCard(CreditCard creditCard = Fixture.from(CreditCard).gimme("payzenCard"), Boolean storeCard = true,
+                                          Contractor contractor = fixtureCreator.createContractor()) {
         PaymentRequest paymentRequest = Fixture.from(PaymentRequest).gimme("creditCard", new Rule() {{
                 add("method", PaymentMethod.CARD)
                 add("storeCard", storeCard)
                 add("creditCard", creditCard)
         }})
-        Order order = fixtureCreator.createOrder(contractUnderTest)
+        def user = fixtureCreator.createContractorUser(contractor)
+        Order order = fixtureCreator.createOrder(contractUnderTest, contractor)
         order.type = OrderType.INSTALLMENT_PAYMENT
         order.paymentRequest = paymentRequest
-        service.create(userDetail.email, order)
+        service.create(user.email, order)
         order
     }
 

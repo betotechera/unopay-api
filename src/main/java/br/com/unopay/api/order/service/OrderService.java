@@ -137,7 +137,6 @@ public class OrderService {
         return orderNumbers.isEmpty() ? numbers : intersection;
     }
 
-    @Transactional
     public Order create(String userEmail, Order order){
         UserDetail currentUser = userDetailService.getByEmail(userEmail);
         order.setPerson(currentUser.myContractor()

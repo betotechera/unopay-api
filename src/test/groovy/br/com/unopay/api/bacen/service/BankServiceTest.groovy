@@ -10,7 +10,7 @@ class BankServiceTest extends SpockApplicationTests {
 
     def 'should return when find'(){
         when:
-        def result = service.findAll("all")
+        def result = service.findAll()
 
         then:
         !result.isEmpty()

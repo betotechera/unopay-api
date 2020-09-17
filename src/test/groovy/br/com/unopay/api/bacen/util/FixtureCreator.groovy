@@ -541,8 +541,7 @@ class FixtureCreator {
         })
     }
 
-    Order createOrder(Contract contract = createPersistedContract()){
-        def contractor = createContractor("physical")
+    Order createOrder(Contract contract = createPersistedContract(), Contractor contractor = createContractor("physical")){
         def instrument = createInstrumentToProduct(contract.product, contractor)
         return from(Order.class).gimme("valid", new Rule(){{
             add("person", contractor.person)
