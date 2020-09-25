@@ -47,9 +47,9 @@ amazon:
   s3:
     bucketName: unopay-files
     cdn:
-      uri: https://s3-us-west-2.amazonaws.com/unopay-files
-    accessKey: AKIAIVBZ43OSHKREK4XQ
-    secretKey: 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
+      uri: https://s3.amazonaws.com/unopay-files
+    accessKey: AKIAIJYT3ZABNMWWQYJQ
+    secretKey: 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
 multipart:
   max-file-size: 9000Kb
 spring:
