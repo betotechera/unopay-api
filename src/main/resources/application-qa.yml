@@ -1,5 +1,5 @@
 wingoo:
-  api: https://api-qa.wingoo.com.br
+  api: http://api-qa.wingoo.com.br
   security:
     oauth2:
       resource:
