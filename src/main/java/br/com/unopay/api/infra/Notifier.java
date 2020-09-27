@@ -24,6 +24,7 @@ public class Notifier {
     }
 
     public void notify(String queue, Object notification) {
+        log.info("Notifying the queue={}", queue);
         String payLoadAsString = getNotificationAsString(notification);
         messagingTemplate.convertAndSend(queue,queue,payLoadAsString);
     }

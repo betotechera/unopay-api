@@ -9,6 +9,7 @@ import br.com.unopay.bootcommons.exception.UnovationExceptions;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
@@ -30,6 +31,7 @@ import static br.com.unopay.api.model.ContractInstallment.ONE_INSTALLMENT;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENTS_NOT_FOUND;
 import static br.com.unopay.api.uaa.exception.Errors.CONTRACT_INSTALLMENT_NOT_FOUND;
 
+@Slf4j
 @Service
 public class ContractInstallmentService {
 
@@ -114,6 +116,7 @@ public class ContractInstallmentService {
 
     public Set<ContractInstallment> findAllNotPaidInstallments(){
         Set<ContractInstallment> installments = repository.findAllNotPaidInstallments();
+        log.info("An total of={} installments were fond to be processed", installments.size());
         return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer()).collect(Collectors.toSet());
     }
 
