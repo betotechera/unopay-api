@@ -116,7 +116,7 @@ public class ContractInstallmentService {
 
     public Set<ContractInstallment> findAllNotPaidInstallments(){
         Set<ContractInstallment> installments = repository.findAllNotPaidInstallments();
-        log.info("An total of={} installments were fond to be processed", installments.size());
+        log.info("A total of={} installments were found to be processed", installments.size());
         return installments.stream().filter(installment -> installment.getContract().withIssuerAsHirer()).collect(Collectors.toSet());
     }
 
