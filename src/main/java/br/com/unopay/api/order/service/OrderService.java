@@ -80,22 +80,22 @@ public class OrderService {
 
     public Order findById(String id) {
         Optional<Order> order = repository.findById(id);
-        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Order findByIdForContractor(String id, Contractor contractor) {
         Optional<Order> order = repository.findByIdAndPersonDocumentNumber(id, contractor.getDocumentNumber());
-        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Order findByNumber(String number) {
         Optional<Order> order = repository.findByNumber(number);
-        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND.withOnlyArgument(number)));
     }
 
     public Order findByIdForIssuer(String id, Issuer issuer) {
         Optional<Order> order = repository.findByIdAndProductIssuerId(id, issuer.getId());
-        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND));
+        return order.orElseThrow(()-> UnovationExceptions.notFound().withErrors(ORDER_NOT_FOUND.withOnlyArgument(id)));
     }
 
     public Set<String> findIdsByPersonEmail(String email) {
