@@ -17,7 +17,7 @@ public interface ContractInstallmentRepository
     @Query("SELECT c FROM ContractInstallment c WHERE c.expiration  >=  ?1 and c.expiration  <= ?2 and paymentDateTime is null")
     Set<ContractInstallment> findInstallmentAboutToExpire(Date expiration, Date expirationEnd);
 
-    @Query("SELECT c FROM ContractInstallment c WHERE paymentDateTime is null and installmentNumber = 1")
+    @Query("SELECT c FROM ContractInstallment c WHERE paymentDateTime is null and installmentNumber = 1 and c.contract.recurrencePaymentMethod = 'CARD'")
     Set<ContractInstallment> findAllNotPaidInstallments();
 
 }

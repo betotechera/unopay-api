@@ -90,7 +90,7 @@ public class PersonCreditCardService {
 
     public Optional<String> getLastActiveTokenByUser(String userEmail) {
         return personCreditCardRepository
-                .findByPersonPhysicalPersonDetailEmailAndExpirationDateGreaterThanEqual(userEmail, new Date())
+                .findFirstByPersonPhysicalPersonDetailEmailAndExpirationDateGreaterThanEqual(userEmail, new Date())
                 .map(PersonCreditCard::getGatewayToken);
     }
 

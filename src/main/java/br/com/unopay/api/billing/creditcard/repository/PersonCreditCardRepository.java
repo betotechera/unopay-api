@@ -13,7 +13,7 @@ public interface PersonCreditCardRepository
 
     Optional<PersonCreditCard> findByIdAndPersonId(String id, String personId);
 
-    Optional<PersonCreditCard> findByPersonPhysicalPersonDetailEmailAndExpirationDateGreaterThanEqual(String userEmail, Date date);
+    Optional<PersonCreditCard> findFirstByPersonPhysicalPersonDetailEmailAndExpirationDateGreaterThanEqual(String userEmail, Date date);
 
     Optional<PersonCreditCard> findByGatewayTokenAndPersonId(String token, String personId);
 
