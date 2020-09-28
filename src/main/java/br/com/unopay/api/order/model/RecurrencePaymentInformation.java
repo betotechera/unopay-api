@@ -23,7 +23,7 @@ public class RecurrencePaymentInformation {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "recurrence_payment_method")
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonView({Views.Order.Detail.class})
     private PaymentMethod paymentMethod;
 
     @JsonIgnore
