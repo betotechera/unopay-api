@@ -160,7 +160,7 @@ public class OrderService {
             if(token == null && !order.hasCardToken()) {
                 log.info("The credit card token was not found and the store flag is={}", order.shouldStoreCard());
                 if(order.shouldStoreCard()){
-                    generatorCardTokenWhenRequired(order);
+                    generatorCardTokenAndStoreWhenRequired(order);
                     return;
                 }
                 order.definePaymentMethod(PaymentMethod.BOLETO);
@@ -271,12 +271,13 @@ public class OrderService {
         }
     }
 
-    private void generatorCardTokenWhenRequired(Order order) {
+    private void generatorCardTokenAndStoreWhenRequired(Order order) {
         if (order.shouldStoreCard() && order.hasCard()) {
             Person person = order.getPerson();
             person.setIssuerDocument(order.issuerDocumentNumber());
             CreditCard creditCard = personCreditCardService.storeCard(person, order.creditCard());
             if(creditCard != null) {
+                personCreditCardService.storeForUser(person, creditCard);
                 order.defineCardToken(creditCard.getToken());
             }
         }
