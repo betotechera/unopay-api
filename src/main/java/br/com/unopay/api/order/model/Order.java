@@ -201,7 +201,6 @@ public class Order implements Updatable, Billable, Serializable {
         if(getPaymentRequest().getCreditCard() != null) {
             getPaymentRequest().setMethod(PaymentMethod.CARD);
             getPaymentRequest().getCreditCard().setToken(token);
-            return this;
         }
         if(getPaymentRequest().getCreditCard() == null) {
             getPaymentRequest().setMethod(PaymentMethod.CARD);
