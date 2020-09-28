@@ -20,6 +20,7 @@ import br.com.unopay.api.model.validation.group.Update;
 import br.com.unopay.api.model.validation.group.Views;
 import br.com.unopay.api.uaa.exception.Errors;
 import br.com.unopay.bootcommons.exception.UnovationExceptions;
+import br.com.unopay.bootcommons.exception.UnprocessableEntityException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -59,6 +60,7 @@ import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTU
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.CAPTURE_RECEIVED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.DENIED;
 import static br.com.unopay.api.billing.creditcard.model.TransactionStatus.REFUND;
+import static br.com.unopay.api.uaa.exception.Errors.PERSON_EMAIL_IS_REQUIRED;
 
 @Data
 @Entity
@@ -358,27 +360,37 @@ public class Order implements Updatable, Billable, Serializable {
         checkType();
         setCreateDateTime(new Date());
         if (isType(OrderType.ADHESION)) {
-            if(this.candidates!= null) {
-                this.candidates.forEach(candidate -> {
-                    candidate.validateMe();
-                    candidate.setMeUp();
-                });
+            checkCandidates();
+            checkProduct();
+            checkPaymentRecurrenceInformation(recurrencePaymentInformation.isCardPayment(), "the payment method is card");
+            if(personEmail() == null){
+                throw UnovationExceptions.unprocessableEntity().withErrors(PERSON_EMAIL_IS_REQUIRED);
             }
-            if(this.product == null){
-                throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PRODUCT_REQUIRED);
-            }
-            if(this.product.acceptOnlyCard() &&
-                    !recurrencePaymentInformation.isValid()){
-                    throw UnovationExceptions.unprocessableEntity()
-                            .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED
-                                    .withOnlyArguments("the product accepts only card","all the following fields are required", recurrencePaymentInformation.fieldsStatus()));
-            }
-            if(recurrencePaymentInformation.isCardPayment() &&
-                   !recurrencePaymentInformation.isValid()){
-                throw UnovationExceptions.unprocessableEntity()
-                        .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED
-                                .withOnlyArguments("the payment method is card", "all the following fields are required",recurrencePaymentInformation.fieldsStatus()));
-            }
+        }
+    }
+
+    private void checkPaymentRecurrenceInformation(boolean cardPayment, String s) {
+        if (cardPayment &&
+                !recurrencePaymentInformation.isValid()) {
+            throw UnovationExceptions.unprocessableEntity()
+                    .withErrors(Errors.RECURRENCE_PAYMENT_INFORMATION_REQUIRED
+                            .withOnlyArguments(s, "all the following fields are required", recurrencePaymentInformation.fieldsStatus()));
+        }
+    }
+
+    private void checkProduct() {
+        if(this.product == null){
+            throw UnovationExceptions.unprocessableEntity().withErrors(Errors.PRODUCT_REQUIRED);
+        }
+        checkPaymentRecurrenceInformation(this.product.acceptOnlyCard(), "the product accepts only card");
+    }
+
+    private void checkCandidates() {
+        if(this.candidates!= null) {
+            this.candidates.forEach(candidate -> {
+                candidate.validateMe();
+                candidate.setMeUp();
+            });
         }
     }
 
