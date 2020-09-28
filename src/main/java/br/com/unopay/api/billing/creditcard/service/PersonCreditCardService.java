@@ -51,7 +51,8 @@ public class PersonCreditCardService {
     public PersonCreditCard storeForUser(Person person, CreditCard creditCard) {
         Optional<PersonCreditCard> found = findOptionalByLastFourDigitsForUser(creditCard.lastValidFourDigits(), person);
         return found.orElseGet(() -> {
-            PersonCreditCard personCreditCard = new PersonCreditCard(person, gateway.storeCard(person, creditCard));
+            gateway.storeCard(person, creditCard);
+            PersonCreditCard personCreditCard = new PersonCreditCard(person, creditCard);
             return create(personCreditCard);
         });
     }
