@@ -5,6 +5,7 @@ import br.com.unopay.api.bacen.model.Issuer;
 import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
+import br.com.unopay.api.billing.creditcard.model.PersonCreditCard;
 import br.com.unopay.api.billing.creditcard.service.PersonCreditCardService;
 import br.com.unopay.api.config.Queues;
 import br.com.unopay.api.infra.Notifier;
@@ -275,10 +276,9 @@ public class OrderService {
         if (order.shouldStoreCard() && order.hasCard()) {
             Person person = order.getPerson();
             person.setIssuerDocument(order.issuerDocumentNumber());
-            CreditCard creditCard = personCreditCardService.storeCard(person, order.creditCard());
+            PersonCreditCard creditCard = personCreditCardService.storeForUser(person, order.creditCard());
             if(creditCard != null) {
-                personCreditCardService.storeForUser(person, creditCard);
-                order.defineCardToken(creditCard.getToken());
+                order.defineCardToken(creditCard.getGatewayToken());
             }
         }
     }
