@@ -441,7 +441,7 @@ class FixtureCreator {
         from(Hirer.class).uses(jpaProcessor).gimme("valid",  new Rule())
     }
 
-    Contractor createContractor(String label = "valid") {
+    Contractor createContractor(String label = "physical") {
         from(Contractor.class).uses(jpaProcessor).gimme(label)
     }
 

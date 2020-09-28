@@ -2,7 +2,6 @@ package br.com.unopay.api.order.service;
 
 import br.com.unopay.api.bacen.model.Contractor;
 import br.com.unopay.api.bacen.model.Issuer;
-import br.com.unopay.api.billing.creditcard.model.CreditCard;
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod;
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest;
 import br.com.unopay.api.billing.creditcard.model.PersonCreditCard;
@@ -151,24 +150,25 @@ public class OrderService {
     public Order create(Order order) {
         log.info("Creating order={}", order);
         orderValidator.validateProduct(order);
-        defineCardTokenWhenRequired(order);
         return createOrder(order);
     }
 
-    private void defineCardTokenWhenRequired(Order order) {
+    private Order getTheBestPaymentMethodAvailable(Order order) {
         if(order.is(PaymentMethod.CARD) && !order.hasCardToken()){
-            String token = personCreditCardService.getLastActiveTokenByUser(order.personEmail());
-            if(token == null && !order.hasCardToken()) {
-                log.info("The credit card token was not found and the store flag is={}", order.shouldStoreCard());
-                if(order.shouldStoreCard()){
-                    generatorCardTokenAndStoreWhenRequired(order);
-                    return;
-                }
-                order.definePaymentMethod(PaymentMethod.BOLETO);
-                return;
-            }
-            order.defineCardToken(token);
+            return personCreditCardService
+                    .getLastActiveTokenByUser(order.personEmail())
+                    .map(order::defineCardToken)
+                    .orElseGet(() -> definePaymentMethod(order));
         }
+        return order;
+    }
+
+    private Order definePaymentMethod(Order order) {
+        log.info("The credit card token was not found and the store flag is={}", order.shouldStoreCard());
+        if(order.shouldStoreCard()){
+            return generatorCardTokenAndStoreWhenRequired(order);
+        }
+        return order.definePaymentMethod(PaymentMethod.BOLETO);
     }
 
     @Transactional
@@ -183,6 +183,7 @@ public class OrderService {
         orderValidator.validateReferences(order);
         order.normalize();
         order.setPerson(getOrCreatePerson(order));
+        getTheBestPaymentMethodAvailable(order);
         incrementNumber(order);
         orderValidator.checkContractorRules(order);
         definePaymentValueWhenRequired(order);
@@ -272,15 +273,16 @@ public class OrderService {
         }
     }
 
-    private void generatorCardTokenAndStoreWhenRequired(Order order) {
+    private Order generatorCardTokenAndStoreWhenRequired(Order order) {
         if (order.shouldStoreCard() && order.hasCard()) {
             Person person = order.getPerson();
             person.setIssuerDocument(order.issuerDocumentNumber());
             PersonCreditCard creditCard = personCreditCardService.storeForUser(person, order.creditCard());
             if(creditCard != null) {
-                order.defineCardToken(creditCard.getGatewayToken());
+                return order.defineCardToken(creditCard.getGatewayToken());
             }
         }
+        return order;
     }
 
     private void incrementNumber(Order order) {

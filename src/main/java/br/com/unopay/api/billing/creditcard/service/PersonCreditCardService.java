@@ -51,9 +51,7 @@ public class PersonCreditCardService {
     public PersonCreditCard storeForUser(Person person, CreditCard creditCard) {
         Optional<PersonCreditCard> found = findOptionalByLastFourDigitsForUser(creditCard.lastValidFourDigits(), person);
         return found.orElseGet(() -> {
-            person.setIssuerDocument(creditCard.getIssuerDocument());
-            gateway.storeCard(person, creditCard);
-            PersonCreditCard personCreditCard = new PersonCreditCard(person, creditCard);
+            PersonCreditCard personCreditCard = new PersonCreditCard(person, gateway.storeCard(person, creditCard));
             return create(personCreditCard);
         });
     }
@@ -89,10 +87,10 @@ public class PersonCreditCardService {
         return getUserCreditCardWithMonthAndYear(id, () -> personCreditCardRepository.findById(id));
     }
 
-    public String getLastActiveTokenByUser(String userEmail) {
+    public Optional<String> getLastActiveTokenByUser(String userEmail) {
         return personCreditCardRepository
                 .findByPersonPhysicalPersonDetailEmailAndExpirationDateGreaterThanEqual(userEmail, new Date())
-                .map(PersonCreditCard::getGatewayToken).orElse(null);
+                .map(PersonCreditCard::getGatewayToken);
     }
 
     public PersonCreditCard findByTokenForPerson(String token, Person person) {

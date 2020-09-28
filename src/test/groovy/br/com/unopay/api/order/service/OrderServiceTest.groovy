@@ -6,6 +6,7 @@ import br.com.unopay.api.SpockApplicationTests
 import br.com.unopay.api.bacen.model.Contractor
 import br.com.unopay.api.bacen.util.FixtureCreator
 import br.com.unopay.api.billing.creditcard.model.CreditCard
+import br.com.unopay.api.billing.creditcard.model.Gateway
 import br.com.unopay.api.billing.creditcard.model.PaymentMethod
 import br.com.unopay.api.billing.creditcard.model.PaymentRequest
 import br.com.unopay.api.billing.creditcard.model.PersonCreditCard
@@ -1057,7 +1058,7 @@ class OrderServiceTest extends SpockApplicationTests{
         'ze@'      | false
     }
 
-    def "given an adhesion order for an unknown contractor with an empty email and createUser disable should not return error"(){
+    def "given an adhesion order for an unknown contractor with an empty email and createUser disable should return error"(){
         given:
         Person person = Fixture.from(Person.class).gimme("physical", new Rule(){{
             add("physicalPersonDetail.email", null)
@@ -1072,7 +1073,8 @@ class OrderServiceTest extends SpockApplicationTests{
         service.create(creditOrder)
 
         then:
-        notThrown(ConflictException)
+        def ex = thrown(UnprocessableEntityException)
+        assert ex.errors.first().logref == 'PERSON_EMAIL_IS_REQUIRED'
 
         where:
         _ | createUser

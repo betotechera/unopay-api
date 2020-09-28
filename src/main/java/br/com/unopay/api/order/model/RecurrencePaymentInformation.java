@@ -72,12 +72,11 @@ public class RecurrencePaymentInformation {
     public boolean isValid() {
         return  this.creditCardBrand != null && this.creditCardHolderName != null &&
                 this.creditCardLastFourDigits != null && this.creditCardMonth != null &&
-                this.creditCardYear != null && this.creditCardToken != null;
+                this.creditCardYear != null;
     }
 
     public String fieldsStatus() {
         return  "paymentMethod=" + getFieldStatus(paymentMethod) +
-                ", creditCardToken='" + getFieldStatus(creditCardToken) + '\'' +
                 ", creditCardMonth='" + getFieldStatus(creditCardMonth) + '\'' +
                 ", creditCardYear='" + getFieldStatus(creditCardYear) + '\'' +
                 ", creditCardLastFourDigits='" + getFieldStatus(creditCardLastFourDigits) + '\'' +

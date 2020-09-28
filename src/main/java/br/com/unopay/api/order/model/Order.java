@@ -194,20 +194,24 @@ public class Order implements Updatable, Billable, Serializable {
         }
     }
 
-    public void defineCardToken(String token){
+    public Order defineCardToken(String token){
         if(getPaymentRequest() == null){
             setPaymentRequest(new PaymentRequest());
         }
         if(getPaymentRequest().getCreditCard() != null) {
             getPaymentRequest().setMethod(PaymentMethod.CARD);
             getPaymentRequest().getCreditCard().setToken(token);
-            return;
+            return this;
         }
         if(getPaymentRequest().getCreditCard() == null) {
             getPaymentRequest().setMethod(PaymentMethod.CARD);
             getPaymentRequest().setCreditCard(new CreditCard());
             getPaymentRequest().getCreditCard().setToken(token);
         }
+        if(getRecurrencePaymentInformation() != null){
+            getRecurrencePaymentInformation().setCreditCardToken(token);
+        }
+        return this;
     }
 
     public void defineStatus(TransactionStatus transactionStatus) {
@@ -338,9 +342,8 @@ public class Order implements Updatable, Billable, Serializable {
         this.status = PaymentStatus.WAITING_PAYMENT;
 
         if(isType(OrderType.ADHESION)){
-            if(this.recurrencePaymentInformation == null &&
-                    this.paymentRequest != null &&
-                    this.paymentRequest.isMethod(PaymentMethod.CARD)){
+            if(this.paymentRequest != null &&
+               this.paymentRequest.isMethod(PaymentMethod.CARD)){
                 this.recurrencePaymentInformation = this.paymentRequest.toRecurrencePaymentInformation();
                 return;
             }
@@ -540,13 +543,14 @@ public class Order implements Updatable, Billable, Serializable {
         return null;
     }
 
-    public void definePaymentIssuer(String issuerDocumentNumber) {
+    public Order definePaymentIssuer(String issuerDocumentNumber) {
         if(this.paymentRequest != null){
             this.paymentRequest.setIssuerDocument(issuerDocumentNumber);
         }
+        return this;
     }
 
-    public void definePaymentMethod(PaymentMethod method) {
+    public Order definePaymentMethod(PaymentMethod method) {
         this.paymentMethod = method;
         if(hasPaymentRequest()){
             this.paymentRequest.setMethod(method);
@@ -554,6 +558,7 @@ public class Order implements Updatable, Billable, Serializable {
         if(hasPaymentInformation()){
             this.getRecurrencePaymentInformation().setPaymentMethod(method);
         }
+        return this;
     }
 
     private boolean hasPaymentInformation() {
