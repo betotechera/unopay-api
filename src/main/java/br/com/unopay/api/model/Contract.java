@@ -208,7 +208,7 @@ public class Contract implements Serializable {
     @Enumerated(EnumType.STRING)
     @NotNull(groups = {Create.class, Update.class})
     @Column(name = "recurrence_payment_method")
-    @JsonView({Views.Establishment.Detail.class})
+    @JsonView({Views.Contract.Detail.class})
     private PaymentMethod recurrencePaymentMethod;
 
     @JsonIgnore
