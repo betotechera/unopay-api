@@ -286,6 +286,9 @@ public class Order implements Updatable, Billable, Serializable {
         if(paymentMethod != null) {
             return paymentMethod.equals(method);
         }
+        if (recurrencePaymentInformation != null && recurrencePaymentInformation.getPaymentMethod() != null){
+            return recurrencePaymentInformation.getPaymentMethod().equals(method);
+        }
         return false;
     }
 
