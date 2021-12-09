@@ -7,9 +7,9 @@ public enum PaymentTransferOption implements DescriptableEnum {
     CURRENT_ACCOUNT_CREDIT("CRÉDITO EM CONTA CORRENTE", "01"),
     PAYCHECK("CHEQUE PAGAMENTO / ADMINISTRATIVO", "02"),
     DOC_TED("DOC/TED", "03"),
-    PAY_CARD("CARTÃO SALÁRIO (SOMENTE PARA TIPO DE ERVIÇO = '30'", "04"),
-    SAVINGS_ACCOUNT_CREDIT("CRÉDITO EM CONTA POUPANÇA", "05"),
-    AVAILABLE("OP À DISPOSIÇÃO", "10"),;
+    PAY_CARD("CARTÃO SALARIO (SOMENTE PARA TIPO DE SERVICO = '30'", "04"),
+    SAVINGS_ACCOUNT_CREDIT("CREDITO EM CONTA POUPANCA", "05"),
+    AVAILABLE("OP À DISPOSICAO", "10"),;
     private String code;
     private String description;
 

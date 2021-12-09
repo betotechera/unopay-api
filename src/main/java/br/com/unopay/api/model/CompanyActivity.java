@@ -4,27 +4,27 @@ import br.com.unopay.api.http.DescriptableEnum;
 
 public enum CompanyActivity implements DescriptableEnum {
 
-    AGRICULTURE("Agricultura, pecuária, produção florestal, pesca e aqüicultura"),
-    EXTRACTIVE_INDUSTRY("Indústrias extrativas"),
-    TRANSFORMATION_INDUSTRY("Indústrias de transformação"),
-    ENERGY("Eletricidade e gás"),
-    WATER_COMPANY("Água, esgoto, atividades de gestão de resíduos e descontaminação"),
-    CONSTRUCTION("Construção"),
-    AUTO_REPAIR("Comércio; reparação de veículos automotores e motocicletas"),
+    AGRICULTURE("Agricultura, pecuaria, producao florestal, pesca e aquicultura"),
+    EXTRACTIVE_INDUSTRY("Industrias extrativas"),
+    TRANSFORMATION_INDUSTRY("Industrias de transformacao"),
+    ENERGY("Eletricidade e gas"),
+    WATER_COMPANY("Agua, esgoto, atividades de gestao de resíduos e descontaminacao"),
+    CONSTRUCTION("Construcao"),
+    AUTO_REPAIR("Comércio; reparacao de veículos automotores e motocicletas"),
     TRANSPORT("Transporte, armazenagem e correio"),
-    HOUSING("Alojamento e alimentação"),
-    COMMUNICATION("Informação e comunicação"),
-    FINANCE("Atividades financeiras, de seguros e serviços relacionados"),
-    REAL_ESTATE("Atividades imobiliárias"),
+    HOUSING("Alojamento e alimentacao"),
+    COMMUNICATION("Informacao e comunicacao"),
+    FINANCE("Atividades financeiras, de seguros e servicos relacionados"),
+    REAL_ESTATE("Atividades imobiliarias"),
     SCIENTIFIC("Atividades profissionais, científicas e técnicas"),
-    ADMINISTRATIVE("Atividades administrativas e serviços complementares"),
-    PUBLIC_ADMINISTRATION("Administração pública, defesa e seguridade social"),
-    EDUCATION("Educação"),
-    HEALTH("Saúde humana e serviços sociais"),
-    ARTS("Artes, cultura, esporte e recreação"),
-    OTHER("Outras atividades de serviços"),
-    DOMESTIC("Serviços domésticos"),
-    INTERNATIONAL("Organismos internacionais e outras instituições extraterritoriais");
+    ADMINISTRATIVE("Atividades administrativas e servicos complementares"),
+    PUBLIC_ADMINISTRATION("Administracao publica, defesa e seguridade social"),
+    EDUCATION("Educacao"),
+    HEALTH("Saude humana e servicos sociais"),
+    ARTS("Artes, cultura, esporte e recreacao"),
+    OTHER("Outras atividades de servicos"),
+    DOMESTIC("Servicos domésticos"),
+    INTERNATIONAL("Organismos internacionais e outras instituicões extraterritoriais");
     private String description;
 
     CompanyActivity(String description) {

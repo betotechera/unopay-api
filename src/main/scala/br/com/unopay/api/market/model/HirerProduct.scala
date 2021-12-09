@@ -1,20 +1,17 @@
 package br.com.unopay.api.market.model
 
-import java.io.Serializable
-import java.util.Date
-
 import br.com.unopay.api.bacen.model.Hirer
 import br.com.unopay.api.model.validation.group.{Create, Update, Views}
 import br.com.unopay.api.model.{Product, Updatable}
 import br.com.unopay.api.uaa.exception.Errors
 import br.com.unopay.bootcommons.exception.UnovationExceptions
 import com.fasterxml.jackson.annotation.JsonView
-import javax.persistence._
-import javax.validation.Valid
-import javax.validation.constraints.NotNull
 import lombok.Data
 import org.hibernate.annotations.GenericGenerator
 
+import java.io.Serializable
+import java.util.Date
+import javax.persistence._
 import scala.beans.BeanProperty
 
 @Data
